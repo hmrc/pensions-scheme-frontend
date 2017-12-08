@@ -1,0 +1,4 @@
+# microservice specific routesGET        /test               controllers.register.TestController.onPageLoad(mode: Mode = NormalMode)
+POST       /test               controllers.register.TestController.onSubmit(mode: Mode = NormalMode)
+GET        /changeTest               controllers.register.TestController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeTest               controllers.register.TestController.onSubmit(mode: Mode = CheckMode)
