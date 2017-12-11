@@ -1,7 +1,7 @@
-package forms
+package forms.$routeFile$
 
 import javax.inject.Inject
-
+import forms.FormErrorHelper
 import forms.mappings.Mappings
 import play.api.data.Form
 
