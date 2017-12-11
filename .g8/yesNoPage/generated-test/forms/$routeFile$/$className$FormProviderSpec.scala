@@ -1,4 +1,6 @@
-package forms
+package forms.$routeFile$
+
+import forms.FormSpec
 
 class $className$FormProviderSpec extends FormSpec {
 
