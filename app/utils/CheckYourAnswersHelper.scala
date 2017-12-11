@@ -16,7 +16,6 @@
 
 package utils
 
-import controllers.register.routes
 import models.CheckMode
 import viewmodels.AnswerRow
 
