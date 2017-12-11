@@ -5,11 +5,11 @@ echo "Applying migration $className;format="snake"$"
 echo "Adding routes to $routeFile$.routes"
 
 echo "" >> ../conf/$routeFile$.routes
-echo "GET        /$className;format="decap"$                       controllers.$className$Controller.onPageLoad(mode: Mode = NormalMode)" >> ../conf/$routeFile$.routes
-echo "POST       /$className;format="decap"$                       controllers.$className$Controller.onSubmit(mode: Mode = NormalMode)" >> ../conf/$routeFile$.routes
+echo "GET        /$className;format="decap"$                       controllers.$routeFile$.$className$Controller.onPageLoad(mode: Mode = NormalMode)" >> ../conf/$routeFile$.routes
+echo "POST       /$className;format="decap"$                       controllers.$routeFile$.$className$Controller.onSubmit(mode: Mode = NormalMode)" >> ../conf/$routeFile$.routes
 
-echo "GET        /change$className$                       controllers.$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/$routeFile$.routes
-echo "POST       /change$className$                       controllers.$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/$routeFile$.routes
+echo "GET        /change$className$                       controllers.$routeFile$.$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/$routeFile$.routes
+echo "POST       /change$className$                       controllers.$routeFile$.$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/$routeFile$.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
@@ -30,7 +30,7 @@ awk '/class/ {\
      print;\
      print "";\
      print "  def $className;format="decap"$: Option[AnswerRow] = userAnswers.$className;format="decap"$ map {";\
-     print "    x => AnswerRow(\"$className;format="decap"$.checkYourAnswersLabel\", if(x) \"site.yes\" else \"site.no\", true, routes.$className$Controller.onPageLoad(CheckMode).url)"; print "  }";\
+     print "    x => AnswerRow(\"$className;format="decap"$.checkYourAnswersLabel\", if(x) \"site.yes\" else \"site.no\", true, controllers.$routeFile$.routes.$className$Controller.onPageLoad(CheckMode).url)"; print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
