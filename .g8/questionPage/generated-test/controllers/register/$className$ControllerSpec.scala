@@ -1,20 +1,22 @@
-package controllers
+package controllers.$routeFile$
 
 import play.api.data.Form
-import play.api.libs.json.JsNumber
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.$className$FormProvider
-import identifiers.$className$Id
+import forms.$routeFile$.$className$FormProvider
+import identifiers.$routeFile$.$className$Id
 import models.NormalMode
-import views.html.$className;format="decap"$
+import models.$className$
+import views.html.$routeFile$.$className;format="decap"$
+import controllers.ControllerSpecBase
 
 class $className$ControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = routes.IndexController.onPageLoad()
+  def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new $className$FormProvider()
   val form = formProvider()
@@ -24,8 +26,6 @@ class $className$ControllerSpec extends ControllerSpecBase {
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form) = $className;format="decap"$(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
-
-  val testNumber = 123
 
   "$className$ Controller" must {
 
@@ -37,16 +37,16 @@ class $className$ControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map($className$Id.toString -> JsNumber(testNumber))
+      val validData = Map($className$Id.toString -> Json.toJson($className$("value 1", "value 2")))
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(testNumber))
+      contentAsString(result) mustBe viewAsString(form.fill($className$("value 1", "value 2")))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testNumber.toString))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("field1", "value 1"), ("field2", "value 2"))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -68,15 +68,15 @@ class $className$ControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testNumber.toString))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("field1", "value 1"), ("field2", "value 2"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
 }

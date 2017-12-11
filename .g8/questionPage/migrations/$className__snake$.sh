@@ -5,11 +5,11 @@ echo "Applying migration $className;format="snake"$"
 echo "Adding routes to $routeFile$.routes"
 
 echo "" >> ../conf/$routeFile$.routes
-echo "GET        /$className;format="decap"$                       controllers.$className$Controller.onPageLoad(mode: Mode = NormalMode)" >> ../conf/$routeFile$.routes
-echo "POST       /$className;format="decap"$                       controllers.$className$Controller.onSubmit(mode: Mode = NormalMode)" >> ../conf/$routeFile$.routes
+echo "GET        /$className;format="decap"$                       controllers.$routeFile$.$className$Controller.onPageLoad(mode: Mode = NormalMode)" >> ../conf/$routeFile$.routes
+echo "POST       /$className;format="decap"$                       controllers.$routeFile$.$className$Controller.onSubmit(mode: Mode = NormalMode)" >> ../conf/$routeFile$.routes
 
-echo "GET        /change$className$                       controllers.$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/$routeFile$.routes
-echo "POST       /change$className$                       controllers.$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/$routeFile$.routes
+echo "GET        /change$className$                       controllers.$routeFile$.$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/$routeFile$.routes
+echo "POST       /change$className$                       controllers.$routeFile$.$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/$routeFile$.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en

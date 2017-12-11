@@ -1,4 +1,4 @@
-package forms
+package forms.$routeFile$
 
 import javax.inject.Inject
 
