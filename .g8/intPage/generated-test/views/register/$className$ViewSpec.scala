@@ -1,11 +1,11 @@
-package views
+package views.$routeFile$
 
 import play.api.data.Form
-import controllers.routes
-import forms.$className$FormProvider
+import controllers.$routeFile$.routes
+import forms.$routeFile$.$className$FormProvider
 import models.NormalMode
 import views.behaviours.IntViewBehaviours
-import views.html.$className;format="decap"$
+import views.html.$routeFile$.$className;format="decap"$
 
 class $className$ViewSpec extends IntViewBehaviours {
 
