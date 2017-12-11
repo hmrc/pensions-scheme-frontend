@@ -1,4 +1,4 @@
-package models.$routeFile$
+package models
 
 import utils.{Enumerable, RadioOption, WithName}
 

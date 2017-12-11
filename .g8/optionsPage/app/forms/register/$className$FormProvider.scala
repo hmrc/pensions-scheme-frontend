@@ -4,7 +4,7 @@ import javax.inject.Inject
 import forms.FormErrorHelper
 import forms.mappings.Mappings
 import play.api.data.Form
-import models.$routeFile$.$className$
+import models.$className$
 
 class $className$FormProvider @Inject() extends FormErrorHelper with Mappings {
 

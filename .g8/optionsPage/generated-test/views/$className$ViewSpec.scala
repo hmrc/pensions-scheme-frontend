@@ -2,8 +2,7 @@ package views.$routeFile$
 
 import play.api.data.Form
 import forms.$routeFile$.$className$FormProvider
-import models.NormalMode
-import models.$routeFile$.$className$
+import models.{NormalMode, $className$}
 import views.behaviours.ViewBehaviours
 import views.html.$routeFile$.$className;format="decap"$
 
