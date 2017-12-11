@@ -1,4 +1,4 @@
-package controllers
+package controllers.$routeFile$
 
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -7,14 +7,16 @@ import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.$className$FormProvider
-import identifiers.$className$Id
-import models.{NormalMode, $className$}
-import views.html.$className;format="decap"$
+import forms.$routeFile$.$className$FormProvider
+import identifiers.$routeFile$.$className$Id
+import models.NormalMode
+import models.$className$
+import views.html.$routeFile$.$className;format="decap"$
+import controllers.ControllerSpecBase
 
 class $className$ControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = routes.IndexController.onPageLoad()
+  def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new $className$FormProvider()
   val form = formProvider()
@@ -66,7 +68,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
@@ -74,7 +76,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
       val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.SessionExpiredController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
 }

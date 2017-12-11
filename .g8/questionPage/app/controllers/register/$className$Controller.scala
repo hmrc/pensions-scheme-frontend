@@ -1,4 +1,4 @@
-package controllers
+package controllers.$routeFile$
 
 import javax.inject.Inject
 
@@ -8,11 +8,12 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.$className$FormProvider
-import identifiers.$className$Id
-import models.{Mode, $className$}
+import forms.$routeFile$.$className$FormProvider
+import identifiers.$routeFile$.$className$Id
+import models.Mode
+import models.$className$
 import utils.{Navigator, UserAnswers}
-import views.html.$className;format="decap"$
+import views.html.$routeFile$.$className;format="decap"$
 
 import scala.concurrent.Future
 
