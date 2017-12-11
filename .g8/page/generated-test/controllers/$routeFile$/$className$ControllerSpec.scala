@@ -9,6 +9,7 @@ import controllers.actions._
 import play.api.test.Helpers._
 import models.NormalMode
 import views.html.$routeFile$.$className;format="decap"$
+import controllers.ControllerSpecBase
 
 class $className$ControllerSpec extends ControllerSpecBase {
 
