@@ -43,5 +43,12 @@ site.textarea.char_limit = (Limit is {0} characters)
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-whatYouWillNeed.title = whatYouWillNeed
-whatYouWillNeed.heading = whatYouWillNeed
+whatYouWillNeed.title = What you’ll need
+whatYouWillNeed.heading = What you’ll need
+whatYouWillNeed.para = To register a pension scheme you will need:
+whatYouWillNeed.li.utr = a Self Assessment, Partnership or Corporation Tax Unique Taxpayer Reference number
+whatYouWillNeed.li.company_info = the names, addresses, previous address and National Insurance numbers of any directors, trustees and partners associated with the pension scheme
+whatYouWillNeed.li.contact_info = the telephone numbers and email addresses of any directors, trustees and partners associated with the pension scheme
+whatYouWillNeed.li.contact_info_establisher = the name, contact details and address of the establisher
+whatYouWillNeed.li.reg_info = PAYE, Company Registration and VAT Registration numbers
+whatYouWillNeed.button = Start

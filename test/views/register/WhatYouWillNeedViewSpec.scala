@@ -16,10 +16,9 @@
 
 package views.register
 
-import play.api.data.Form
-import controllers.routes
+import controllers.register.routes
 import views.behaviours.ViewBehaviours
-import models.NormalMode
+import org.jsoup.Jsoup
 import views.html.register.whatYouWillNeed
 
 class WhatYouWillNeedViewSpec extends ViewBehaviours {
@@ -29,6 +28,10 @@ class WhatYouWillNeedViewSpec extends ViewBehaviours {
   def createView = () => whatYouWillNeed(frontendAppConfig)(fakeRequest, messages)
 
   "WhatYouWillNeed view" must {
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, "para", "li.utr", "li.company_info", "li.contact_info", "li.contact_info_establisher", "li.reg_info", "button")
+
+    "have link" in {
+      Jsoup.parse(createView().toString()).select("a.button") must haveLink(routes.WhatYouWillNeedController.onPageLoad().url)
+    }
   }
 }

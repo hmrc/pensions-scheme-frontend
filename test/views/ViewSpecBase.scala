@@ -20,8 +20,20 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.twirl.api.Html
 import base.SpecBase
+import org.jsoup.select.Elements
+import org.scalatest.matchers.{MatchResult, Matcher}
 
 trait ViewSpecBase extends SpecBase {
+
+  def haveLink(url: String): Matcher[Elements] = Matcher[Elements] {
+    elements =>
+      val href = elements.attr("href")
+      MatchResult(
+        href == url,
+        s"href $href is not equal to the url $url",
+        s"href $href is equal to the url $url"
+      )
+  }
 
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())
 

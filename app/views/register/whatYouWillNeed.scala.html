@@ -16,7 +16,7 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.routes._
+@import controllers.register.routes
 @import models.Mode
 @import utils.FormHelpers
 
@@ -28,4 +28,15 @@
     bodyClasses = None) {
 
     @components.heading("whatYouWillNeed.heading")
+
+    <p>@messages("whatYouWillNeed.para")</p>
+    <ul class="list list-bullet">
+        <li>@messages("whatYouWillNeed.li.utr")</li>
+        <li>@messages("whatYouWillNeed.li.company_info")</li>
+        <li>@messages("whatYouWillNeed.li.contact_info")</li>
+        <li>@messages("whatYouWillNeed.li.contact_info_establisher")</li>
+        <li>@messages("whatYouWillNeed.li.reg_info")</li>
+    </ul>
+
+    @components.button_link("whatYouWillNeed.button", routes.WhatYouWillNeedController.onPageLoad.url)
 }
