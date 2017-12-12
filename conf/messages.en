@@ -42,3 +42,6 @@ site.textarea.char_limit = (Limit is {0} characters)
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+whatYouWillNeed.title = whatYouWillNeed
+whatYouWillNeed.heading = whatYouWillNeed
