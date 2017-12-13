@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import models.SchemeType
 import play.api.data.FormError
 import play.api.data.format.Formatter
 import utils.Enumerable
@@ -91,4 +92,15 @@ trait Formatters {
       override def unbind(key: String, value: A): Map[String, String] =
         baseFormatter.unbind(key, value.toString)
     }
+  private[mappings] def schemeTypeFormatter(errorKey: String): Formatter[SchemeType] = new Formatter[SchemeType] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+      data.get(key) match {
+        case None | Some("") => Left(Seq(FormError(key, errorKey)))
+        case Some(s) => Right(SchemeType.)
+      }
+
+    override def unbind(key: String, value: String): Map[String, String] =
+      Map(key -> value)
+  }
 }

@@ -27,8 +27,8 @@ class SchemeDetailsFormProvider @Inject() extends Mappings {
 
    def apply(): Form[SchemeDetails] = Form(
      mapping(
-      "field1" -> text("schemeDetails.error.field1.required"),
-      "field2" -> text("schemeDetails.error.field2.required")
+      "schemeName" -> text("schemeDetails.error.field1.required"),
+      "schemeType" -> SchemeType("schemeDetails.error.field2.required")
     )(SchemeDetails.apply)(SchemeDetails.unapply)
    )
  }

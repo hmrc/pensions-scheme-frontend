@@ -59,4 +59,19 @@ class SchemeTypeSpec extends WordSpecLike with MustMatchers with OptionValues {
     }
   }
 
+  "Writes" must {
+     "return successfully write single trust" in {
+       Json.toJson[SchemeType](SchemeType.SingleTrust) mustEqual Json.obj("name" -> "singleTrust")
+     }
+    "return successfully write GroupLifeDeath" in {
+      Json.toJson[SchemeType](SchemeType.GroupLifeDeath) mustEqual Json.obj("name" -> "groupLifeDeath")
+    }
+    "return successfully write body Corporate" in {
+      Json.toJson[SchemeType](SchemeType.BodyCorporate) mustEqual Json.obj("name" -> "bodyCorporate")
+    }
+    "return successfully write other" in {
+      Json.toJson[SchemeType](SchemeType.Other("Some Scheme")) mustEqual Json.obj("name" -> "other","otherValue"->"Some Scheme")
+    }
+  }
+
 }
