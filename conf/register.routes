@@ -1,3 +1,5 @@
 # microservice specific routes
 
 
+
+GET        /whatYouWillNeed                       controllers.register.WhatYouWillNeedController.onPageLoad()
