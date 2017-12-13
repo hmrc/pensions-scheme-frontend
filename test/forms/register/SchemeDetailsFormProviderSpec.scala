@@ -17,24 +17,24 @@
 package forms.register
 
 import forms.behaviours.FormBehaviours
-import models.{Field, Required}
-import models.SchemeDetails
+import models.{Field, Required, SchemeDetails, SchemeType}
 
 class SchemeDetailsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
-    "field1" -> "value 1",
-    "field2" -> "value 2"
+    "schemeName" -> "scheme Name 1",
+    "schemeType" -> "other",
+    "otherValue" -> "some value"
   )
 
   val form = new SchemeDetailsFormProvider()()
 
   "SchemeDetails form" must {
-    behave like questionForm(SchemeDetails("value 1", "value 2"))
+    behave like questionForm(SchemeDetails("scheme Name 1", SchemeType.Other("some value")))
 
-    behave like formWithMandatoryTextFields(
+    /*behave like formWithMandatoryTextFields(
       Field("field1", Required -> "schemeDetails.error.field1.required"),
       Field("field2", Required -> "schemeDetails.error.field2.required")
-    )
+    )*/
   }
 }

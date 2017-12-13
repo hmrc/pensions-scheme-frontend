@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import models.SchemeType
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
 import utils.Enumerable
@@ -38,4 +39,7 @@ trait Mappings extends Formatters with Constraints {
   protected def enumerable[A](requiredKey: String = "error.required",
                               invalidKey: String = "error.invalid")(implicit ev: Enumerable[A]): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey))
+
+  protected def schemeType(errorKeyMandatory: String, errorKeyInvalid: String): FieldMapping[SchemeType] =
+    of(schemeTypeFormatter(errorKeyMandatory, errorKeyInvalid))
 }

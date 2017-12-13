@@ -25,8 +25,7 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.SchemeDetailsFormProvider
 import identifiers.register.SchemeDetailsId
-import models.NormalMode
-import models.SchemeDetails
+import models.{NormalMode, SchemeDetails, SchemeType}
 import views.html.register.schemeDetails
 import controllers.ControllerSpecBase
 
@@ -53,16 +52,16 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("value 1", "value 2")))
+      val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("value 1", SchemeType.SingleTrust)))
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(SchemeDetails("value 1", "value 2")))
+      contentAsString(result) mustBe viewAsString(form.fill(SchemeDetails("value 1", SchemeType.SingleTrust)))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("field1", "value 1"), ("field2", "value 2"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"), ("schemeType", "singleTrust"))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -88,7 +87,7 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("field1", "value 1"), ("field2", "value 2"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"), ("schemeType", "singleTrust"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER

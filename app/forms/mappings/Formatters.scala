@@ -17,6 +17,7 @@
 package forms.mappings
 
 import models.SchemeType
+import models.SchemeType.{BodyCorporate, GroupLifeDeath, SingleTrust}
 import play.api.data.FormError
 import play.api.data.format.Formatter
 import utils.Enumerable
@@ -92,15 +93,29 @@ trait Formatters {
       override def unbind(key: String, value: A): Map[String, String] =
         baseFormatter.unbind(key, value.toString)
     }
-  private[mappings] def schemeTypeFormatter(errorKey: String): Formatter[SchemeType] = new Formatter[SchemeType] {
 
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+  private[mappings] def schemeTypeFormatter(errorKeyMandatory: String, errorKeyInvalid: String): Formatter[SchemeType] = new Formatter[SchemeType] {
+
+    val schemeTypes : Map[String, SchemeType] = Seq(
+      SingleTrust,
+      GroupLifeDeath,
+      BodyCorporate
+    ).map(v => (v.toString, v)).toMap
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SchemeType] =
       data.get(key) match {
-        case None | Some("") => Left(Seq(FormError(key, errorKey)))
-        case Some(s) => Right(SchemeType.)
+        case None | Some("") => Left(Seq(FormError(key, errorKeyMandatory)))
+        case Some(schemeTypeName) if schemeTypeName == "other" =>
+          if(data.get("otherValue").nonEmpty) {
+            Right(SchemeType.Other(data.apply("otherValue")))
+          } else {
+            Left(Seq(FormError(key, errorKeyInvalid)))
+          }
+        case Some(schemeTypeName) if schemeTypes.keySet.contains(schemeTypeName)=> Right(schemeTypes.apply(schemeTypeName))
+        case _ => Left(Seq(FormError(key, errorKeyInvalid)))
       }
 
-    override def unbind(key: String, value: String): Map[String, String] =
-      Map(key -> value)
+    override def unbind(key: String, value: SchemeType): Map[String, String] =
+      Map(key -> value.toString)
   }
 }
