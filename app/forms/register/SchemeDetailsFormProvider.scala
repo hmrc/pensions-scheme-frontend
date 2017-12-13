@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package utils
+package forms.register
 
-import identifiers.register.SchemeDetailsId
-import uk.gov.hmrc.http.cache.client.CacheMap
-import models._
+import javax.inject.Inject
 
-class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits {
-  def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)
+import forms.mappings.Mappings
+import play.api.data.Form
+import play.api.data.Forms._
+import models.SchemeDetails
 
-}
+class SchemeDetailsFormProvider @Inject() extends Mappings {
+
+   def apply(): Form[SchemeDetails] = Form(
+     mapping(
+      "field1" -> text("schemeDetails.error.field1.required"),
+      "field2" -> text("schemeDetails.error.field2.required")
+    )(SchemeDetails.apply)(SchemeDetails.unapply)
+   )
+ }

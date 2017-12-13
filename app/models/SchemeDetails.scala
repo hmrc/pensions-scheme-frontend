@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-import identifiers.register.SchemeDetailsId
-import uk.gov.hmrc.http.cache.client.CacheMap
-import models._
+import play.api.libs.json._
 
-class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits {
-  def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)
+case class SchemeDetails (field1: String, field2: String)
 
+object SchemeDetails {
+  implicit val format = Json.format[SchemeDetails]
 }

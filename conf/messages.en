@@ -53,3 +53,11 @@ whatYouWillNeed.li.contact_info = the telephone numbers and email addresses of a
 whatYouWillNeed.li.contact_info_establisher = the name, contact details and address of the establisher
 whatYouWillNeed.li.reg_info = PAYE, Company Registration and VAT Registration numbers
 whatYouWillNeed.button = Start
+
+schemeDetails.title = schemeDetails
+schemeDetails.heading = schemeDetails
+schemeDetails.field1 = Field 1
+schemeDetails.field2 = Field 2
+schemeDetails.checkYourAnswersLabel = schemeDetails
+schemeDetails.error.field1.required = Please give an answer for field1
+schemeDetails.error.field2.required = Please give an answer for field2
