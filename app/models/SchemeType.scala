@@ -17,7 +17,7 @@
 package models
 
 import play.api.libs.json._
-import utils.WithName
+import utils.{InputOption, RadioOption, WithName}
 
 sealed trait SchemeType
 
@@ -37,10 +37,17 @@ object SchemeType {
     BodyCorporate
   ).map(v => (v.toString, v)).toMap
 
+  def options: Seq[InputOption] = Seq(
+    InputOption(SingleTrust.toString, s"schemeType.${SingleTrust.toString}"),
+    InputOption(GroupLifeDeath.toString, s"schemeType.${GroupLifeDeath.toString}"),
+    InputOption(BodyCorporate.toString, s"schemeType.${BodyCorporate.toString}"),
+    InputOption(Other.toString, s"schemeType.${Other.toString}", Some("schemeTypeDetails-form"))
+  )
+
   implicit val reads: Reads[SchemeType] =  {
     (JsPath \ "name").read[String].flatMap {
-      case s if s == "other" =>
-        (JsPath \ "otherValue").read[String]
+      case schemeTypeName if schemeTypeName == "other" =>
+        (JsPath \ "schemeTypeDetails").read[String]
           .map[SchemeType](Other.apply)
           .orElse(Reads[SchemeType](_ => JsError("Other Value expected")))
       case s if mappings.keySet.contains(s) => {
@@ -50,11 +57,13 @@ object SchemeType {
     }
   }
 
-  implicit lazy val writes: Writes[SchemeType] =new Writes[SchemeType]{
+  implicit lazy val writes: Writes[SchemeType] = new Writes[SchemeType]{
     override def writes(o: SchemeType) = {
       o match {
-        case SchemeType.Other(schemeTypeDetails)=>Json.obj("name"->o.toString,"otherValue"->schemeTypeDetails)
-        case s if mappings.keySet.contains(s.toString)=> Json.obj("name"->s.toString)
+        case SchemeType.Other(schemeTypeDetails)=>
+          Json.obj("name" -> o.toString,"schemeTypeDetails" -> schemeTypeDetails)
+        case s if mappings.keySet.contains(s.toString)=>
+          Json.obj("name"->s.toString)
       }
     }
   }

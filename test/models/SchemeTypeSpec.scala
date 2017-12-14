@@ -23,7 +23,7 @@ class SchemeTypeSpec extends WordSpecLike with MustMatchers with OptionValues {
 
   "Reads" must {
     "succcessfully read Other" in {
-      val json = Json.obj("name" -> "other", "otherValue" -> "some value")
+      val json = Json.obj("name" -> "other", "schemeTypeDetails" -> "some value")
 
       Json.fromJson[SchemeType](json).asOpt.value mustEqual SchemeType.Other("some value")
     }
@@ -70,7 +70,7 @@ class SchemeTypeSpec extends WordSpecLike with MustMatchers with OptionValues {
       Json.toJson[SchemeType](SchemeType.BodyCorporate) mustEqual Json.obj("name" -> "bodyCorporate")
     }
     "return successfully write other" in {
-      Json.toJson[SchemeType](SchemeType.Other("Some Scheme")) mustEqual Json.obj("name" -> "other","otherValue"->"Some Scheme")
+      Json.toJson[SchemeType](SchemeType.Other("Some Scheme")) mustEqual Json.obj("name" -> "other", "schemeTypeDetails"->"Some Scheme")
     }
   }
 

@@ -35,6 +35,19 @@ trait ViewSpecBase extends SpecBase {
       )
   }
 
+  def haveLabelAndValue(forElement: String, expectedLabel: String, expectedValue: String): Matcher[Document] = Matcher[Document] {
+    document =>
+      val labels = document.getElementsByAttributeValue("for", forElement)
+      val label = labels.first.text
+      val value = document.getElementById(forElement).attr("value")
+
+      MatchResult(
+        label == expectedLabel &&  value == expectedValue,
+        s"text box with label: $label and value : $value is not correct",
+        s"text box has correct label: $label and correct value: $value"
+      )
+  }
+
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())
 
   def assertEqualsMessage(doc: Document, cssSelector: String, expectedMessageKey: String) =

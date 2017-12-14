@@ -4,9 +4,8 @@ $(document).ready(function() {
   // Initialise show-hide-content
   // Toggles additional content based on radio/checkbox input state
   // =====================================================
-  var showHideContent, mediaQueryList;
-  showHideContent = new GOVUK.ShowHideContent()
-  showHideContent.init()
+      var showHideContent = new GOVUK.ShowHideContent()
+      showHideContent.init()
 
   // =====================================================
   // Handle number inputs

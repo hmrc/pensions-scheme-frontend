@@ -94,7 +94,8 @@ trait Formatters {
         baseFormatter.unbind(key, value.toString)
     }
 
-  private[mappings] def schemeTypeFormatter(errorKeyMandatory: String, errorKeyInvalid: String): Formatter[SchemeType] = new Formatter[SchemeType] {
+  private[mappings] def schemeTypeFormatter(errorKeyMandatory: String, errorKeyInvalid: String): Formatter[SchemeType] =
+    new Formatter[SchemeType] {
 
     val schemeTypes : Map[String, SchemeType] = Seq(
       SingleTrust,
@@ -102,20 +103,23 @@ trait Formatters {
       BodyCorporate
     ).map(v => (v.toString, v)).toMap
 
+    private val baseFormatter = stringFormatter(errorKeyMandatory)
+
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SchemeType] =
-      data.get(key) match {
-        case None | Some("") => Left(Seq(FormError(key, errorKeyMandatory)))
-        case Some(schemeTypeName) if schemeTypeName == "other" =>
-          if(data.get("otherValue").nonEmpty) {
-            Right(SchemeType.Other(data.apply("otherValue")))
-          } else {
-            Left(Seq(FormError(key, errorKeyInvalid)))
-          }
-        case Some(schemeTypeName) if schemeTypes.keySet.contains(schemeTypeName)=> Right(schemeTypes.apply(schemeTypeName))
-        case _ => Left(Seq(FormError(key, errorKeyInvalid)))
+      baseFormatter.bind(key, data).right.flatMap {
+        case schemeTypeName if schemeTypeName == "other" =>
+          val baseFormatter = stringFormatter(errorKeyInvalid)
+          baseFormatter.bind("schemeTypeDetails", data).right.map(SchemeType.Other.apply)
+        case schemeTypeName if schemeTypes.keySet.contains(schemeTypeName)=>
+          Right(schemeTypes.apply(schemeTypeName))
+        case _ =>
+          Left(Seq(FormError(key, errorKeyInvalid)))
       }
 
     override def unbind(key: String, value: SchemeType): Map[String, String] =
-      Map(key -> value.toString)
+      value match {
+        case SchemeType.Other(schemeTypeDetails) => Map(key -> value.toString, "schemeTypeDetails" -> schemeTypeDetails)
+        case _ => Map(key -> value.toString)
+      }
   }
 }

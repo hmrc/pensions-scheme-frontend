@@ -19,12 +19,23 @@ package forms.behaviours
 import play.api.data.Form
 import forms.FormSpec
 import models._
+import org.scalatest.matchers.{MatchResult, Matcher}
 
 trait FormBehaviours extends FormSpec {
 
   val validData: Map[String, String]
 
   val form: Form[_]
+
+  def haveTextWithRadioButton(expectedResult: SchemeType): Matcher[Form[_]] = Matcher[Form[_]] {
+    form => form.bind(validData)
+
+      MatchResult(
+        form.bind(validData).get == expectedResult,
+        "",
+        ""
+      )
+  }
 
   def questionForm[A](expectedResult: A) = {
     "bind valid values correctly" in {

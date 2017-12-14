@@ -40,6 +40,6 @@ trait Mappings extends Formatters with Constraints {
                               invalidKey: String = "error.invalid")(implicit ev: Enumerable[A]): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey))
 
-  protected def schemeType(errorKeyMandatory: String, errorKeyInvalid: String): FieldMapping[SchemeType] =
+  protected def schemeType(errorKeyMandatory: String = "error.required", errorKeyInvalid: String = "error.invalid"): FieldMapping[SchemeType] =
     of(schemeTypeFormatter(errorKeyMandatory, errorKeyInvalid))
 }

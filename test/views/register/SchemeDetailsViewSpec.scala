@@ -19,9 +19,9 @@ package views.register
 import play.api.data.Form
 import controllers.register.routes
 import forms.register.SchemeDetailsFormProvider
-import models.NormalMode
-import models.SchemeDetails
-import views.behaviours.QuestionViewBehaviours
+import models.{NormalMode, SchemeDetails, SchemeType}
+import org.jsoup.Jsoup
+import views.behaviours.{QuestionViewBehaviours, StringViewBehaviours, ViewBehaviours}
 import views.html.register.schemeDetails
 
 class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
@@ -38,7 +38,37 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
   "SchemeDetails view" must {
 
     behave like normalPage(createView, messageKeyPrefix)
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.SchemeDetailsController.onSubmit(NormalMode).url,
+      "schemeName")
+  }
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.SchemeDetailsController.onSubmit(NormalMode).url, "field1", "field2")
+  "SchemeDetails view" when {
+    "rendered" must {
+      "contain radio buttons for the value" in {
+        val doc = asDocument(createViewUsingForm(form))
+        for(option <- SchemeType.options) {
+          assertContainsRadioButton(doc, option.label.replace(".", "-"), "schemeType", option.value, false)
+        }
+      }
+
+      for(option <- SchemeType.options) {
+        s"rendered with a value of '${option.value}'" must {
+          s"have the '${option.value}' radio button selected" in {
+            val doc = asDocument(createViewUsingForm(form.bind(Map("schemeType" -> s"${option.value}"))))
+            assertContainsRadioButton(doc, option.label.replace(".", "-"), "schemeType", option.value, true)
+
+            for(unselectedOption <- SchemeType.options.filterNot(o => o == option)) {
+              assertContainsRadioButton(doc, unselectedOption.label.replace(".", "-"), "schemeType", unselectedOption.value, false)
+            }
+          }
+        }
+      }
+
+      "display an input text box with the value when the other is selected" in {
+        val expectedValue = "some value"
+        val doc = asDocument(createViewUsingForm(form.bind(Map("schemeType" -> "other", "schemeTypeDetails" -> expectedValue))))
+        doc must haveLabelAndValue("schemeTypeDetails", messages("schemeDetails.schemeTypeDetails"), expectedValue)
+      }
+    }
   }
 }

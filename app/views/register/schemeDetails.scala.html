@@ -35,13 +35,21 @@
         @components.heading("schemeDetails.heading")
 
         @components.input_text(
-            field = form("field1"),
-            label = messages("schemeDetails.field1")
+            field = form("schemeName"),
+            label = messages("schemeDetails.schemeName"),
+            hint = Some(messages("schemeDetails.schemeName.hint"))
+        )
+
+        @components.input_radio(
+            field = form("schemeType"),
+            legend = messages("schemeDetails.heading"),
+            inputs = SchemeType.options
         )
 
         @components.input_text(
-            field = form("field2"),
-            label = messages("schemeDetails.field2")
+            field = form("schemeTypeDetails"),
+            label = messages("schemeDetails.schemeTypeDetails"),
+            groupClass = Some("js-hidden panel panel-border-narrow")
         )
 
         @components.submit_button()

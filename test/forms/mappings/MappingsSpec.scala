@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import models.SchemeType
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.data.{Form, FormError}
 import utils.Enumerable
@@ -158,6 +159,54 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     "not bind an empty map" in {
       val result = testForm.bind(Map.empty[String, String])
       result.errors must contain(FormError("value", "error.required"))
+    }
+  }
+
+  "schemeType" must {
+
+    val testForm: Form[SchemeType] = Form(
+      "value" -> schemeType()
+    )
+
+    "bind a valid schemeType SingleTrust" in {
+      val result = testForm.bind(Map("value" -> "singleTrust"))
+      result.get mustEqual SchemeType.SingleTrust
+    }
+
+    "bind a valid schemeType GroupLifeDeath" in {
+      val result = testForm.bind(Map("value" -> "groupLifeDeath"))
+      result.get mustEqual SchemeType.GroupLifeDeath
+    }
+
+    "bind a valid schemeType BodyCorporate" in {
+      val result = testForm.bind(Map("value" -> "bodyCorporate"))
+      result.get mustEqual SchemeType.BodyCorporate
+    }
+
+    "bind a valid schemeType Other" in {
+      val result = testForm.bind(Map("value" -> "other", "schemeTypeDetails" -> "some value"))
+      result.get mustEqual SchemeType.Other("some value")
+    }
+
+    "unbind a valid schemeType SingleTrust" in {
+      val result = testForm.fill(SchemeType.SingleTrust)
+      result.apply("value").value.value mustEqual "singleTrust"
+    }
+
+    "unbind a valid schemeType GroupLifeDeath" in {
+      val result = testForm.fill(SchemeType.GroupLifeDeath)
+      result.apply("value").value.value mustEqual "groupLifeDeath"
+    }
+
+    "unbind a valid schemeType BodyCorporate" in {
+      val result = testForm.fill(SchemeType.BodyCorporate)
+      result.apply("value").value.value mustEqual "bodyCorporate"
+    }
+
+    "unbind a valid schemeType Other" in {
+      val result = testForm.fill(SchemeType.Other("some value"))
+      result.apply("value").value.value mustEqual "other"
+      result.apply("schemeTypeDetails").value.value mustEqual "some value"
     }
   }
 }

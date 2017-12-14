@@ -14,21 +14,6 @@
  * limitations under the License.
  */
 
-package forms.register
+package utils
 
-import javax.inject.Inject
-
-import forms.mappings.Mappings
-import play.api.data.Form
-import play.api.data.Forms._
-import models.SchemeDetails
-
-class SchemeDetailsFormProvider @Inject() extends Mappings {
-
-   def apply(): Form[SchemeDetails] = Form(
-     mapping(
-      "schemeName" -> text("schemeDetails.schemeName.error.required"),
-      "schemeType" -> schemeType("schemeDetails.schemeType.error.required", "schemeDetails.schemeType.error.invalid")
-    )(SchemeDetails.apply)(SchemeDetails.unapply)
-   )
- }
+case class InputOption(value: String, label: String, dataTarget: Option[String] = None)

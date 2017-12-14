@@ -39,21 +39,20 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
                                                   formProvider: SchemeDetailsFormProvider) extends FrontendController with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode) = (authenticate andThen getData) {
     implicit request =>
-      val preparedForm = request.userAnswers.schemeDetails match {
+      val preparedForm = request.userAnswers.flatMap(x => x.schemeDetails) match {
         case None => form
         case Some(value) => form.fill(value)
       }
       Ok(schemeDetails(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode) = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
