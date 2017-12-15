@@ -16,7 +16,7 @@
 
 package utils
 
-import identifiers.register.SchemeDetailsId
+import identifiers.register._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
 
