@@ -23,10 +23,12 @@ import controllers.register.routes
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def investmentRegulated: Option[AnswerRow] = userAnswers.investmentRegulated map {
-    x => AnswerRow("investmentRegulated.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, routes.InvestmentRegulatedController.onPageLoad(CheckMode).url)
+    x => AnswerRow("investmentRegulated.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
+      routes.InvestmentRegulatedController.onPageLoad(CheckMode).url)
   }
 
   def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {
-    x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false, routes.SchemeDetailsController.onPageLoad(CheckMode).url)
+    x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false,
+      routes.SchemeDetailsController.onPageLoad(CheckMode).url)
   }
 }
