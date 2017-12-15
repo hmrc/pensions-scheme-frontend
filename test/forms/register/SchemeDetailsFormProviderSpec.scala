@@ -23,9 +23,8 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
     "schemeName" -> "scheme Name 1",
-    "schemeType" -> "other",
-    "schemeTypeDetails" -> "some value"
-  )
+    "schemeType.type" -> "Other",
+    "schemeType.schemeTypeDetails" -> "some value")
 
   val form = new SchemeDetailsFormProvider()()
 
@@ -33,7 +32,7 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
 
     behave like formWithMandatoryTextFields(
       Field("schemeName", Required -> "schemeDetails.schemeName.error.required"),
-      Field("schemeType", Required -> "schemeDetails.schemeType.error.required"))
+      Field("schemeType.type", Required -> "schemeDetails.schemeType.error.required"))
 
     "successfully bind when the schemeType is other with schemeTypeDetails and have valid scheme name" in {
       val result = form.bind(validData).get
@@ -44,7 +43,7 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
     "successfully bind when the schemeType is singleTrust and have valid scheme name" in {
       val result = form.bind(Map(
         "schemeName" -> "scheme Name 1",
-        "schemeType" -> "singleTrust")).get
+        "schemeType.type" -> "singleTrust")).get
 
       result shouldEqual SchemeDetails("scheme Name 1", SchemeType.SingleTrust)
     }
@@ -52,7 +51,7 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
     "successfully bind when the schemeType is GroupLifeDeath and have valid scheme name" in {
       val result = form.bind(Map(
         "schemeName" -> "scheme Name 1",
-        "schemeType" -> "groupLifeDeath")).get
+        "schemeType.type" -> "groupLifeDeath")).get
 
       result shouldEqual SchemeDetails("scheme Name 1", SchemeType.GroupLifeDeath)
     }
@@ -60,7 +59,7 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
     "successfully bind when the schemeType is BodyCorporate and have valid scheme name" in {
       val result = form.bind(Map(
         "schemeName" -> "scheme Name 1",
-        "schemeType" -> "bodyCorporate")).get
+        "schemeType.type" -> "bodyCorporate")).get
 
       result shouldEqual SchemeDetails("scheme Name 1", SchemeType.BodyCorporate)
     }
@@ -68,15 +67,15 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
     "fail to bind when there is no schemeType" in {
       val data = Map(
         "schemeName" -> "scheme Name 1")
-      val expectedError = error("schemeType", "schemeDetails.schemeType.error.required")
+      val expectedError = error("schemeType.type", "schemeDetails.schemeType.error.required")
       checkForError(form, data, expectedError)
     }
 
     "fail to bind when the the schemeType is other without any schemeTypeDetails" in {
       val data = Map(
         "schemeName" -> "scheme Name 1",
-        "schemeType" -> "other")
-      val expectedError = error("schemeTypeDetails", "schemeDetails.schemeType.error.invalid")
+        "schemeType.type" -> "Other")
+      val expectedError = error("schemeType.schemeTypeDetails", "schemeDetails.schemeType.other.error.required")
       checkForError(form, data, expectedError)
     }
   }

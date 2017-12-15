@@ -17,17 +17,23 @@
 package forms.register
 
 import javax.inject.Inject
-import forms.mappings.Mappings
+
+import uk.gov.voa.play.form.ConditionalMappings._
+import forms.mappings.{Constraints, Mappings}
 import play.api.data.Form
 import play.api.data.Forms._
-import models.SchemeDetails
+import models.{SchemeDetails, SchemeType}
 
-class SchemeDetailsFormProvider @Inject() extends Mappings {
+class SchemeDetailsFormProvider @Inject() extends Mappings with Constraints {
 
-   def apply(): Form[SchemeDetails] = Form(
-     mapping(
-      "schemeName" -> text("schemeDetails.schemeName.error.required"),
-      "schemeType" -> schemeType("schemeDetails.schemeType.error.required", "schemeDetails.schemeType.error.invalid")
-    )(SchemeDetails.apply)(SchemeDetails.unapply)
-   )
- }
+  def apply(): Form[SchemeDetails] = Form(mapping(
+    "schemeName" -> text(
+      "schemeDetails.schemeName.error.required").
+      verifying(maxLength(20, "schemeDetails.schemeName.error.length")),
+    "schemeType" -> schemeTypeMapping(
+      "schemeDetails.schemeType.error.required",
+      "schemeDetails.schemeType.error.invalid",
+      "schemeDetails.schemeType.other.error.required",
+      "schemeDetails.schemeType.other.error.length")
+  )(SchemeDetails.apply)(SchemeDetails.unapply))
+}

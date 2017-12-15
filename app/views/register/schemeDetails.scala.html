@@ -41,13 +41,13 @@
         )
 
         @components.input_radio(
-            field = form("schemeType"),
+            field = form("schemeType_type"),
             legend = messages("schemeDetails.heading"),
             inputs = SchemeType.options
         )
 
         @components.input_text(
-            field = form("schemeTypeDetails"),
+            field = form("schemeType.schemeTypeDetails"),
             label = messages("schemeDetails.schemeTypeDetails"),
             groupClass = Some("js-hidden panel panel-border-narrow")
         )
