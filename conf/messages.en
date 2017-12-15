@@ -67,7 +67,8 @@ schemeType.groupLifeDeath = Group Life/Death
 schemeType.bodyCorporate = Body Corporate
 schemeType.Other = Other
 
-securedBenefits.title = securedBenefits
-securedBenefits.heading = securedBenefits
-securedBenefits.checkYourAnswersLabel = securedBenefits
-securedBenefits.error.required = Please give an answer for securedBenefits
+securedBenefits.title = Are any of the scheme benefits secured by a contract?
+securedBenefits.heading = Are any of the scheme benefits secured by a contract?
+securedBenefits.para = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
+securedBenefits.error.required = You must make a selection
+

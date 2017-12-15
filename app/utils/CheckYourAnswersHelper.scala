@@ -18,6 +18,7 @@ package utils
 
 import models.CheckMode
 import viewmodels.AnswerRow
+import controllers.register.routes
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
@@ -26,6 +27,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
   }
 
   def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {
-    x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false, controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url)
+    x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false, routes.SchemeDetailsController.onPageLoad(CheckMode).url)
   }
 }
