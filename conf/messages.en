@@ -66,3 +66,8 @@ schemeType.singleTrust = Single Trust
 schemeType.groupLifeDeath = Group Life/Death
 schemeType.bodyCorporate = Body Corporate
 schemeType.Other = Other
+
+investmentRegulated.title = investmentRegulated
+investmentRegulated.heading = investmentRegulated
+investmentRegulated.checkYourAnswersLabel = investmentRegulated
+investmentRegulated.error.required = Please give an answer for investmentRegulated

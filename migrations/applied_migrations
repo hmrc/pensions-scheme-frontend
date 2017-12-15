@@ -1,30 +1,27 @@
 #!/bin/bash
 
-echo "Applying migration SchemeDetails"
+echo "Applying migration InvestmentRegulated"
 
 echo "Adding routes to register.routes"
 
 echo "" >> ../conf/register.routes
-echo "GET        /schemeDetails                       controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
-echo "POST       /schemeDetails                       controllers.register.SchemeDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "GET        /investmentRegulated                       controllers.register.InvestmentRegulatedController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "POST       /investmentRegulated                       controllers.register.InvestmentRegulatedController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
 
-echo "GET        /changeSchemeDetails                       controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
-echo "POST       /changeSchemeDetails                       controllers.register.SchemeDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "GET        /changeInvestmentRegulated                       controllers.register.InvestmentRegulatedController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "POST       /changeInvestmentRegulated                       controllers.register.InvestmentRegulatedController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "schemeDetails.title = schemeDetails" >> ../conf/messages.en
-echo "schemeDetails.heading = schemeDetails" >> ../conf/messages.en
-echo "schemeDetails.field1 = Field 1" >> ../conf/messages.en
-echo "schemeDetails.field2 = Field 2" >> ../conf/messages.en
-echo "schemeDetails.checkYourAnswersLabel = schemeDetails" >> ../conf/messages.en
-echo "schemeDetails.error.field1.required = Please give an answer for field1" >> ../conf/messages.en
-echo "schemeDetails.error.field2.required = Please give an answer for field2" >> ../conf/messages.en
+echo "investmentRegulated.title = investmentRegulated" >> ../conf/messages.en
+echo "investmentRegulated.heading = investmentRegulated" >> ../conf/messages.en
+echo "investmentRegulated.checkYourAnswersLabel = investmentRegulated" >> ../conf/messages.en
+echo "investmentRegulated.error.required = Please give an answer for investmentRegulated" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)";\
+     print "  def investmentRegulated: Option[Boolean] = cacheMap.getEntry[Boolean](InvestmentRegulatedId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -32,13 +29,12 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {";\
-     print "    x => AnswerRow(\"schemeDetails.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.SchemeDetailsController.onPageLoad(CheckMode).url)";\
-     print "  }";\
+     print "  def investmentRegulated: Option[AnswerRow] = userAnswers.investmentRegulated map {";\
+     print "    x => AnswerRow(\"investmentRegulated.checkYourAnswersLabel\", if(x) \"site.yes\" else \"site.no\", true, routes.InvestmentRegulatedController.onPageLoad(CheckMode).url)"; print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration SchemeDetails completed"
+echo "Migration InvestmentRegulated completed"
