@@ -8,3 +8,8 @@ GET        /schemeDetails                       controllers.register.SchemeDetai
 POST       /schemeDetails                       controllers.register.SchemeDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /changeSchemeDetails                       controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeSchemeDetails                       controllers.register.SchemeDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /occupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onPageLoad(mode: Mode = NormalMode)
+POST       /occupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onSubmit(mode: Mode = NormalMode)
+GET        /changeOccupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeOccupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onSubmit(mode: Mode = CheckMode)

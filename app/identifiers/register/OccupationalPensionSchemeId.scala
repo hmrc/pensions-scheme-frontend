@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package utils
+package identifiers.register
+import identifiers._
 
-import identifiers.register._
-import uk.gov.hmrc.http.cache.client.CacheMap
-import models._
-
-class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits {
-  def occupationalPensionScheme: Option[Boolean] = cacheMap.getEntry[Boolean](OccupationalPensionSchemeId.toString)
-
-  def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)
-
+case object OccupationalPensionSchemeId extends Identifier {
+  override def toString: String = "occupationalPensionScheme"
 }

@@ -66,3 +66,7 @@ schemeType.singleTrust = Single Trust
 schemeType.groupLifeDeath = Group Life/Death
 schemeType.bodyCorporate = Body Corporate
 schemeType.Other = Other
+
+occupationalPensionScheme.title = Is the scheme an Occupational Pension Scheme?
+occupationalPensionScheme.heading = Is the scheme an Occupational Pension Scheme?
+occupationalPensionScheme.error.required = You must make a selection

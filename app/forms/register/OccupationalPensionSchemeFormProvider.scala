@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package utils
+package forms.register
 
-import identifiers.register._
-import uk.gov.hmrc.http.cache.client.CacheMap
-import models._
+import javax.inject.Inject
+import forms.FormErrorHelper
+import forms.mappings.Mappings
+import play.api.data.Form
 
-class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits {
-  def occupationalPensionScheme: Option[Boolean] = cacheMap.getEntry[Boolean](OccupationalPensionSchemeId.toString)
+class OccupationalPensionSchemeFormProvider @Inject() extends FormErrorHelper with Mappings {
 
-  def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)
-
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("occupationalPensionScheme.error.required")
+    )
 }

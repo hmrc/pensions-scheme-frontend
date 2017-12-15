@@ -18,10 +18,17 @@ package utils
 
 import models.CheckMode
 import viewmodels.AnswerRow
+import controllers.register.routes
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def occupationalPensionScheme: Option[AnswerRow] = userAnswers.occupationalPensionScheme map {
+    x => AnswerRow("occupationalPensionScheme.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
+      routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url)
+  }
+
   def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {
-    x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false, controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url)
+    x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false,
+      routes.SchemeDetailsController.onPageLoad(CheckMode).url)
   }
 }
