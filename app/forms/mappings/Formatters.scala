@@ -97,29 +97,33 @@ trait Formatters {
   private[mappings] def schemeTypeFormatter(errorKeyMandatory: String, errorKeyInvalid: String): Formatter[SchemeType] =
     new Formatter[SchemeType] {
 
-    val schemeTypes : Map[String, SchemeType] = Seq(
-      SingleTrust,
-      GroupLifeDeath,
-      BodyCorporate
-    ).map(v => (v.toString, v)).toMap
+      val schemeTypes: Map[String, SchemeType] = Seq(
+        SingleTrust,
+        GroupLifeDeath,
+        BodyCorporate
+      ).map(v => (v.toString, v)).toMap
 
-    private val baseFormatter = stringFormatter(errorKeyMandatory)
+      private val baseFormatter = stringFormatter(errorKeyMandatory)
 
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SchemeType] =
-      baseFormatter.bind(key, data).right.flatMap {
-        case schemeTypeName if schemeTypeName == "other" =>
-          val baseFormatter = stringFormatter(errorKeyInvalid)
-          baseFormatter.bind("schemeTypeDetails", data).right.map(SchemeType.Other.apply)
-        case schemeTypeName if schemeTypes.keySet.contains(schemeTypeName)=>
-          Right(schemeTypes.apply(schemeTypeName))
-        case _ =>
-          Left(Seq(FormError(key, errorKeyInvalid)))
-      }
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SchemeType] =
 
-    override def unbind(key: String, value: SchemeType): Map[String, String] =
-      value match {
-        case SchemeType.Other(schemeTypeDetails) => Map(key -> value.toString, "schemeTypeDetails" -> schemeTypeDetails)
-        case _ => Map(key -> value.toString)
-      }
-  }
+        baseFormatter.bind(key, data).right.flatMap {
+
+          case schemeTypeName if schemeTypeName == "other" =>
+            val baseFormatter = stringFormatter(errorKeyInvalid)
+            baseFormatter.bind("schemeTypeDetails", data).right.map(SchemeType.Other.apply)
+
+          case schemeTypeName if schemeTypes.keySet.contains(schemeTypeName) =>
+            Right(schemeTypes.apply(schemeTypeName))
+
+          case _ =>
+            Left(Seq(FormError(key, errorKeyInvalid)))
+        }
+
+      override def unbind(key: String, value: SchemeType): Map[String, String] =
+        value match {
+          case SchemeType.Other(schemeTypeDetails) => Map(key -> value.toString, "schemeTypeDetails" -> schemeTypeDetails)
+          case _ => Map(key -> value.toString)
+        }
+    }
 }

@@ -22,7 +22,7 @@ import play.api.libs.json.{JsError, Json}
 class SchemeTypeSpec extends WordSpecLike with MustMatchers with OptionValues {
 
   "Reads" must {
-    "succcessfully read Other" in {
+    "successfully read Other" in {
       val json = Json.obj("name" -> "other", "schemeTypeDetails" -> "some value")
 
       Json.fromJson[SchemeType](json).asOpt.value mustEqual SchemeType.Other("some value")
@@ -73,5 +73,4 @@ class SchemeTypeSpec extends WordSpecLike with MustMatchers with OptionValues {
       Json.toJson[SchemeType](SchemeType.Other("Some Scheme")) mustEqual Json.obj("name" -> "other", "schemeTypeDetails"->"Some Scheme")
     }
   }
-
 }

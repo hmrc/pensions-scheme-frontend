@@ -18,7 +18,6 @@ package forms.register
 
 import forms.behaviours.FormBehaviours
 import models.{Field, Required, SchemeDetails, SchemeType}
-import org.scalatest.MustMatchers
 
 class SchemeDetailsFormProviderSpec extends FormBehaviours {
 
@@ -37,10 +36,7 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
       Field("schemeType", Required -> "schemeDetails.schemeType.error.required"))
 
     "successfully bind when the schemeType is other with schemeTypeDetails and have valid scheme name" in {
-      val result = form.bind(Map(
-        "schemeName" -> "scheme Name 1",
-        "schemeType" -> "other",
-        "schemeTypeDetails" -> "some value")).get
+      val result = form.bind(validData).get
 
       result shouldEqual SchemeDetails("scheme Name 1", SchemeType.Other("some value"))
     }

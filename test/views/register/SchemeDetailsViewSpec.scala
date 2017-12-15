@@ -20,8 +20,7 @@ import play.api.data.Form
 import controllers.register.routes
 import forms.register.SchemeDetailsFormProvider
 import models.{NormalMode, SchemeDetails, SchemeType}
-import org.jsoup.Jsoup
-import views.behaviours.{QuestionViewBehaviours, StringViewBehaviours, ViewBehaviours}
+import views.behaviours.QuestionViewBehaviours
 import views.html.register.schemeDetails
 
 class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
@@ -34,7 +33,6 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
 
   def createViewUsingForm = (form: Form[_]) => schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-
   "SchemeDetails view" must {
 
     behave like normalPage(createView, messageKeyPrefix)
@@ -46,19 +44,19 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for(option <- SchemeType.options) {
-          assertContainsRadioButton(doc, option.label.replace(".", "-"), "schemeType", option.value, false)
+        for (option <- SchemeType.options) {
+          assertContainsRadioButton(doc, option.label.replace(".", "-"), "schemeType", option.value, isChecked = false)
         }
       }
 
-      for(option <- SchemeType.options) {
+      for (option <- SchemeType.options) {
         s"rendered with a value of '${option.value}'" must {
           s"have the '${option.value}' radio button selected" in {
             val doc = asDocument(createViewUsingForm(form.bind(Map("schemeType" -> s"${option.value}"))))
-            assertContainsRadioButton(doc, option.label.replace(".", "-"), "schemeType", option.value, true)
+            assertContainsRadioButton(doc, option.label.replace(".", "-"), "schemeType", option.value, isChecked = true)
 
-            for(unselectedOption <- SchemeType.options.filterNot(o => o == option)) {
-              assertContainsRadioButton(doc, unselectedOption.label.replace(".", "-"), "schemeType", unselectedOption.value, false)
+            for (unselectedOption <- SchemeType.options.filterNot(o => o == option)) {
+              assertContainsRadioButton(doc, unselectedOption.label.replace(".", "-"), "schemeType", unselectedOption.value, isChecked = false)
             }
           }
         }

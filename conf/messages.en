@@ -58,7 +58,6 @@ schemeDetails.title = schemeDetails
 schemeDetails.heading = What type of scheme is it?
 schemeDetails.schemeName = Name of the scheme
 schemeDetails.schemeName.hint = The scheme name cannot be the same as the PSA or the scheme establisher
-schemeDetails.checkYourAnswersLabel = schemeDetails
 schemeDetails.schemeName.error.required = Enter the name of the scheme
 schemeDetails.schemeType.error.required = You must make a selection
 schemeDetails.schemeType.error.invalid = Enter more information about the scheme

@@ -17,7 +17,7 @@
 package models
 
 import play.api.libs.json._
-import utils.{InputOption, RadioOption, WithName}
+import utils.{InputOption, WithName}
 
 sealed trait SchemeType
 
@@ -31,7 +31,7 @@ object SchemeType {
 
   case class Other(schemeTypeDetails: String) extends WithName("other") with SchemeType
 
-  val mappings : Map[String, SchemeType] = Seq(
+  val mappings: Map[String, SchemeType] = Seq(
     SingleTrust,
     GroupLifeDeath,
     BodyCorporate
@@ -44,27 +44,28 @@ object SchemeType {
     InputOption(Other.toString, s"schemeType.${Other.toString}", Some("schemeTypeDetails-form"))
   )
 
-  implicit val reads: Reads[SchemeType] =  {
+  implicit val reads: Reads[SchemeType] = {
+
     (JsPath \ "name").read[String].flatMap {
+
       case schemeTypeName if schemeTypeName == "other" =>
         (JsPath \ "schemeTypeDetails").read[String]
           .map[SchemeType](Other.apply)
           .orElse(Reads[SchemeType](_ => JsError("Other Value expected")))
-      case s if mappings.keySet.contains(s) => {
+
+      case s if mappings.keySet.contains(s) =>
         Reads(_ => JsSuccess(mappings.apply(s)))
-      }
+
       case _ => Reads(_ => JsError("Invalid Scheme Type"))
     }
   }
 
-  implicit lazy val writes: Writes[SchemeType] = new Writes[SchemeType]{
-    override def writes(o: SchemeType) = {
-      o match {
-        case SchemeType.Other(schemeTypeDetails)=>
-          Json.obj("name" -> o.toString,"schemeTypeDetails" -> schemeTypeDetails)
-        case s if mappings.keySet.contains(s.toString)=>
-          Json.obj("name"->s.toString)
-      }
+  implicit lazy val writes: Writes[SchemeType] = (o: SchemeType) => {
+    o match {
+      case SchemeType.Other(schemeTypeDetails) =>
+        Json.obj("name" -> o.toString, "schemeTypeDetails" -> schemeTypeDetails)
+      case s if mappings.keySet.contains(s.toString) =>
+        Json.obj("name" -> s.toString)
     }
   }
 }

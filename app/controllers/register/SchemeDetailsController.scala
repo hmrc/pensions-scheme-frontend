@@ -45,7 +45,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode) = (authenticate andThen getData) {
     implicit request =>
-      val preparedForm = request.userAnswers.flatMap(x => x.schemeDetails) match {
+      val preparedForm = request.userAnswers.flatMap(_.schemeDetails) match {
         case None => form
         case Some(value) => form.fill(value)
       }
