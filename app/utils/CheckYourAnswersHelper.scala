@@ -21,6 +21,10 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def securedBenefits: Option[AnswerRow] = userAnswers.securedBenefits map {
+    x => AnswerRow("securedBenefits.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, routes.SecuredBenefitsController.onPageLoad(CheckMode).url)
+  }
+
   def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {
     x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false, controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url)
   }

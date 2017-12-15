@@ -66,3 +66,8 @@ schemeType.singleTrust = Single Trust
 schemeType.groupLifeDeath = Group Life/Death
 schemeType.bodyCorporate = Body Corporate
 schemeType.Other = Other
+
+securedBenefits.title = securedBenefits
+securedBenefits.heading = securedBenefits
+securedBenefits.checkYourAnswersLabel = securedBenefits
+securedBenefits.error.required = Please give an answer for securedBenefits
