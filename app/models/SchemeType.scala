@@ -60,12 +60,14 @@ object SchemeType {
     }
   }
 
-  implicit lazy val writes: Writes[SchemeType] = (o: SchemeType) => {
-    o match {
-      case SchemeType.Other(schemeTypeDetails) =>
-        Json.obj("name" -> o.toString, "schemeTypeDetails" -> schemeTypeDetails)
-      case s if mappings.keySet.contains(s.toString) =>
-        Json.obj("name" -> s.toString)
+  implicit lazy val writes: Writes[SchemeType] = new Writes[SchemeType]{
+    override def writes(o: SchemeType) = {
+      o match {
+        case SchemeType.Other(schemeTypeDetails)=>
+          Json.obj("name" -> o.toString,"schemeTypeDetails" -> schemeTypeDetails)
+        case s if mappings.keySet.contains(s.toString)=>
+          Json.obj("name"->s.toString)
+      }
     }
   }
 }
