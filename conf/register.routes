@@ -28,3 +28,8 @@ GET        /securedBenefits                       controllers.register.SecuredBe
 POST       /securedBenefits                       controllers.register.SecuredBenefitsController.onSubmit(mode: Mode = NormalMode)
 GET        /changeSecuredBenefits                       controllers.register.SecuredBenefitsController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeSecuredBenefits                       controllers.register.SecuredBenefitsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /occupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onPageLoad(mode: Mode = NormalMode)
+POST       /occupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onSubmit(mode: Mode = NormalMode)
+GET        /changeOccupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeOccupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onSubmit(mode: Mode = CheckMode)

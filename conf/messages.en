@@ -101,3 +101,6 @@ securedBenefits.heading = Are any of the scheme benefits secured by a contract?
 securedBenefits.para = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
 securedBenefits.error.required = You must make a selection
 
+occupationalPensionScheme.title = Is the scheme an Occupational Pension Scheme?
+occupationalPensionScheme.heading = Is the scheme an Occupational Pension Scheme?
+occupationalPensionScheme.error.required = You must make a selection

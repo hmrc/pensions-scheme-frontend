@@ -1,27 +1,27 @@
 #!/bin/bash
 
-echo "Applying migration SecuredBenefits"
+echo "Applying migration OccupationalPensionScheme"
 
 echo "Adding routes to register.routes"
 
 echo "" >> ../conf/register.routes
-echo "GET        /securedBenefits                       controllers.register.SecuredBenefitsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
-echo "POST       /securedBenefits                       controllers.register.SecuredBenefitsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "GET        /occupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "POST       /occupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
 
-echo "GET        /changeSecuredBenefits                       controllers.register.SecuredBenefitsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
-echo "POST       /changeSecuredBenefits                       controllers.register.SecuredBenefitsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "GET        /changeOccupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "POST       /changeOccupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "securedBenefits.title = securedBenefits" >> ../conf/messages.en
-echo "securedBenefits.heading = securedBenefits" >> ../conf/messages.en
-echo "securedBenefits.checkYourAnswersLabel = securedBenefits" >> ../conf/messages.en
-echo "securedBenefits.error.required = Please give an answer for securedBenefits" >> ../conf/messages.en
+echo "occupationalPensionScheme.title = occupationalPensionScheme" >> ../conf/messages.en
+echo "occupationalPensionScheme.heading = occupationalPensionScheme" >> ../conf/messages.en
+echo "occupationalPensionScheme.checkYourAnswersLabel = occupationalPensionScheme" >> ../conf/messages.en
+echo "occupationalPensionScheme.error.required = Please give an answer for occupationalPensionScheme" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def securedBenefits: Option[Boolean] = cacheMap.getEntry[Boolean](SecuredBenefitsId.toString)";\
+     print "  def occupationalPensionScheme: Option[Boolean] = cacheMap.getEntry[Boolean](OccupationalPensionSchemeId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -29,12 +29,12 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def securedBenefits: Option[AnswerRow] = userAnswers.securedBenefits map {";\
-     print "    x => AnswerRow(\"securedBenefits.checkYourAnswersLabel\", if(x) \"site.yes\" else \"site.no\", true, routes.SecuredBenefitsController.onPageLoad(CheckMode).url)"; print "  }";\
+     print "  def occupationalPensionScheme: Option[AnswerRow] = userAnswers.occupationalPensionScheme map {";\
+     print "    x => AnswerRow(\"occupationalPensionScheme.checkYourAnswersLabel\", if(x) \"site.yes\" else \"site.no\", true, routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url)"; print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration SecuredBenefits completed"
+echo "Migration OccupationalPensionScheme completed"
