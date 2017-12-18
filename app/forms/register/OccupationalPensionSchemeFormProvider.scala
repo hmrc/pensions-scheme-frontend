@@ -17,11 +17,10 @@
 package forms.register
 
 import javax.inject.Inject
-import forms.FormErrorHelper
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class OccupationalPensionSchemeFormProvider @Inject() extends FormErrorHelper with Mappings {
+class OccupationalPensionSchemeFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(

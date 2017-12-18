@@ -18,24 +18,19 @@ package controllers.register
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
 import config.FrontendAppConfig
-import models.Mode
-import utils.{Navigator, UserAnswers}
+import controllers.actions._
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.register.whatYouWillNeed
-
-import scala.concurrent.Future
 
 class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction) extends FrontendController with I18nSupport {
 
-  def onPageLoad = (authenticate andThen getData) {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
       Ok(whatYouWillNeed(appConfig))
   }

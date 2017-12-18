@@ -17,17 +17,18 @@
 package forms.register
 
 import javax.inject.Inject
-import forms.mappings.Mappings
+import forms.mappings.{Constraints, Mappings}
 import play.api.data.Form
 import play.api.data.Forms._
-import models.SchemeDetails
+import models.{SchemeDetails, SchemeType}
 
-class SchemeDetailsFormProvider @Inject() extends Mappings {
+class SchemeDetailsFormProvider @Inject() extends Mappings with Constraints {
+  val schemeNameMaxLength = 255
 
-   def apply(): Form[SchemeDetails] = Form(
-     mapping(
-      "schemeName" -> text("schemeDetails.schemeName.error.required"),
-      "schemeType" -> schemeType("schemeDetails.schemeType.error.required", "schemeDetails.schemeType.error.invalid")
-    )(SchemeDetails.apply)(SchemeDetails.unapply)
-   )
- }
+  def apply(): Form[SchemeDetails] = Form(mapping(
+    "schemeName" -> text(
+      "schemeDetails.schemeName.error.required").
+      verifying(maxLength(schemeNameMaxLength, "schemeDetails.schemeName.error.length")),
+    "schemeType" -> schemeTypeMapping()
+  )(SchemeDetails.apply)(SchemeDetails.unapply))
+}

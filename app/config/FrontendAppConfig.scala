@@ -20,6 +20,7 @@ import com.google.inject.{Inject, Singleton}
 import play.api.{Configuration, Environment}
 import play.api.i18n.Lang
 import controllers.routes
+import play.api.mvc.Call
 import uk.gov.hmrc.play.config.ServicesConfig
 
 @Singleton
@@ -47,5 +48,5 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy"))
-  def routeToSwitchLanguage = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
+  def routeToSwitchLanguage: (String => Call) = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
 }

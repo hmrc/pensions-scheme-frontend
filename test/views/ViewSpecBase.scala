@@ -109,6 +109,7 @@ trait ViewSpecBase extends SpecBase {
   def assertContainsRadioButton(doc: Document, id: String, name: String, value: String, isChecked: Boolean) = {
     assertRenderedById(doc, id)
     val radio = doc.getElementById(id)
+
     assert(radio.attr("name") == name, s"\n\nElement $id does not have name $name")
     assert(radio.attr("value") == value, s"\n\nElement $id does not have value $value")
     isChecked match {

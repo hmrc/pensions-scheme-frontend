@@ -207,5 +207,6 @@ trait FormBehaviours extends FormSpec {
       val expectedError = error("dateOfBirth", "error.invalid_date")
       checkForError(form, data, expectedError)
     }
+
   }
 }

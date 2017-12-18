@@ -54,18 +54,52 @@ whatYouWillNeed.li.contact_info_establisher = the name, contact details and addr
 whatYouWillNeed.li.reg_info = PAYE, Company Registration and VAT Registration numbers
 whatYouWillNeed.button = Start
 
-schemeDetails.title = schemeDetails
+schemeDetails.title = Scheme details
 schemeDetails.heading = What type of scheme is it?
 schemeDetails.schemeName = Name of the scheme
 schemeDetails.schemeName.hint = The scheme name cannot be the same as the PSA or the scheme establisher
 schemeDetails.schemeName.error.required = Enter the name of the scheme
+schemeDetails.schemeName.error.length = The scheme name cannot be more than 255 characters
 schemeDetails.schemeType.error.required = You must make a selection
-schemeDetails.schemeType.error.invalid = Enter more information about the scheme
-schemeDetails.schemeTypeDetails = Details of the scheme type
-schemeType.singleTrust = Single Trust
-schemeType.groupLifeDeath = Group Life/Death
-schemeType.bodyCorporate = Body Corporate
-schemeType.Other = Other
+schemeDetails.schemeType.error.invalid = You must select a valid scheme type
+schemeType.type.singleTrust = Single trust
+schemeType.type.groupLifeDeath = Group life/death
+schemeType.type.bodyCorporate = Body corporate
+schemeType.type.Other = Other
+schemeType.schemeTypeDetails = Details of the scheme type
+schemeType.schemeTypeDetails.error.required = Enter more information about the scheme
+schemeType.schemeTypeDetails.error.length = The other scheme type cannot be more than 150 characters
+
+membership.title = How many scheme members are there?
+membership.heading = How many scheme members are there?
+membership.none = None
+membership.one = 1
+membership.twoToEleven = 2 - 11
+membership.twelveToFifty = 12 - 50
+membership.fiftyOneToTenThousand = 51 - 10,000
+membership.moreThanTenThousand = more than 10,000
+membership.checkYourAnswersLabel = How many scheme members are there?
+membership.error.required = You must make a selection
+
+membershipFuture.title = How many scheme members could there be in the next 12 months?
+membershipFuture.heading = How many scheme members could there be in the next 12 months?
+membershipFuture.none = None
+membershipFuture.one = 1
+membershipFuture.twoToEleven = 2 - 11
+membershipFuture.twelveToFifty = 12 - 50
+membershipFuture.fiftyOneToTenThousand = 51 - 10,000
+membershipFuture.moreThanTenThousand = more than 10,000
+membershipFuture.checkYourAnswersLabel = How many scheme members could there be?
+membershipFuture.error.required = You must make a selection
+
+investmentRegulated.title = Is the scheme investment regulated?
+investmentRegulated.heading = Is the scheme investment regulated?
+investmentRegulated.error.required = You must make a selection
+
+securedBenefits.title = Are any of the scheme benefits secured by a contract?
+securedBenefits.heading = Are any of the scheme benefits secured by a contract?
+securedBenefits.para = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
+securedBenefits.error.required = You must make a selection
 
 occupationalPensionScheme.title = Is the scheme an Occupational Pension Scheme?
 occupationalPensionScheme.heading = Is the scheme an Occupational Pension Scheme?

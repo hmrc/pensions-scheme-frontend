@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package utils
+package identifiers.register
+import identifiers._
 
-import play.api.data.Form
-
-object FormHelpers {
-
-  def getErrorByKey[A](form: Form[_], errorKey: String) = {
-    form.error(errorKey) match {
-      case None => ""
-      case Some(error) => error.message
-    }
-  }
+case object SecuredBenefitsId extends Identifier {
+  override def toString: String = "securedBenefits"
 }
