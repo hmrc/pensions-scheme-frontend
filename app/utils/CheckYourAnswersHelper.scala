@@ -23,11 +23,13 @@ import controllers.register.routes
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def membership: Option[AnswerRow] = userAnswers.membership map {
-    x => AnswerRow("membership.checkYourAnswersLabel", s"membership.$x", true, routes.MembershipController.onPageLoad(CheckMode).url)
+    x => AnswerRow("membership.checkYourAnswersLabel", s"membership.$x", true,
+      routes.MembershipController.onPageLoad(CheckMode).url)
   }
 
   def membershipFuture: Option[AnswerRow] = userAnswers.membershipFuture map {
-    x => AnswerRow("membershipFuture.checkYourAnswersLabel", s"membershipFuture.$x", true, routes.MembershipFutureController.onPageLoad(CheckMode).url)
+    x => AnswerRow("membershipFuture.checkYourAnswersLabel", s"membershipFuture.$x", true,
+      routes.MembershipFutureController.onPageLoad(CheckMode).url)
   }
 
   def investmentRegulated: Option[AnswerRow] = userAnswers.investmentRegulated map {
@@ -35,7 +37,13 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       routes.InvestmentRegulatedController.onPageLoad(CheckMode).url)
   }
 
+  def securedBenefits: Option[AnswerRow] = userAnswers.securedBenefits map {
+    x => AnswerRow("securedBenefits.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
+      routes.SecuredBenefitsController.onPageLoad(CheckMode).url)
+  }
+
   def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {
-    x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false, routes.SchemeDetailsController.onPageLoad(CheckMode).url)
+    x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false,
+      routes.SchemeDetailsController.onPageLoad(CheckMode).url)
   }
 }

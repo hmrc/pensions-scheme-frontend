@@ -27,6 +27,8 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits {
 
   def investmentRegulated: Option[Boolean] = cacheMap.getEntry[Boolean](InvestmentRegulatedId.toString)
 
+  def securedBenefits: Option[Boolean] = cacheMap.getEntry[Boolean](SecuredBenefitsId.toString)
+
   def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)
 
 }

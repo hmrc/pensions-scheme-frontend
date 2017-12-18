@@ -95,3 +95,9 @@ membershipFuture.error.required = You must make a selection
 investmentRegulated.title = Is the scheme investment regulated?
 investmentRegulated.heading = Is the scheme investment regulated?
 investmentRegulated.error.required = You must make a selection
+
+securedBenefits.title = Are any of the scheme benefits secured by a contract?
+securedBenefits.heading = Are any of the scheme benefits secured by a contract?
+securedBenefits.para = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
+securedBenefits.error.required = You must make a selection
+
