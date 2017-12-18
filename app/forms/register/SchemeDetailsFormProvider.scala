@@ -17,8 +17,6 @@
 package forms.register
 
 import javax.inject.Inject
-
-import uk.gov.voa.play.form.ConditionalMappings._
 import forms.mappings.{Constraints, Mappings}
 import play.api.data.Form
 import play.api.data.Forms._

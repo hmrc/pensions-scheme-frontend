@@ -28,6 +28,7 @@ import forms.register.SchemeDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import models.Mode
 import models.SchemeDetails
+import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.schemeDetails
 
@@ -43,7 +44,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.schemeDetails) match {
         case None => form
@@ -52,7 +53,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
       Ok(schemeDetails(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
