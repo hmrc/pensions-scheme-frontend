@@ -18,6 +18,7 @@ package forms.register
 
 import forms.behaviours.FormBehaviours
 import models.{Field, Required, SchemeDetails, SchemeType}
+import org.apache.commons.lang3.RandomStringUtils
 
 class SchemeDetailsFormProviderSpec extends FormBehaviours {
 
@@ -33,6 +34,15 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
     behave like formWithMandatoryTextFields(
       Field("schemeName", Required -> "schemeDetails.schemeName.error.required"),
       Field("schemeType.type", Required -> "schemeDetails.schemeType.error.required"))
+
+    "fail to bind when the scheme name exceeds max length 250" in {
+      val testString = RandomStringUtils.random(256)
+      val data = Map(
+        "schemeName" -> testString,
+        "schemeType.type" -> "singleTrust")
+      val expectedError = error("schemeName", "schemeDetails.schemeName.error.length", 255)
+      checkForError(form, data, expectedError)
+    }
 
     "successfully bind when the schemeType is other with schemeTypeDetails and have valid scheme name" in {
       val result = form.bind(validData).get
@@ -71,7 +81,7 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
       checkForError(form, data, expectedError)
     }
 
-    "fail to bind when the the schemeType is other without any schemeTypeDetails" in {
+    "fail to bind when the schemeType is other without any schemeTypeDetails" in {
       val data = Map(
         "schemeName" -> "scheme Name 1",
         "schemeType.type" -> "Other")

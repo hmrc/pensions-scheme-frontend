@@ -29,7 +29,7 @@ class SchemeDetailsFormProvider @Inject() extends Mappings with Constraints {
   def apply(): Form[SchemeDetails] = Form(mapping(
     "schemeName" -> text(
       "schemeDetails.schemeName.error.required").
-      verifying(maxLength(20, "schemeDetails.schemeName.error.length")),
+      verifying(maxLength(255, "schemeDetails.schemeName.error.length")),
     "schemeType" -> schemeTypeMapping(
       "schemeDetails.schemeType.error.required",
       "schemeDetails.schemeType.error.invalid",

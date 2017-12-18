@@ -44,33 +44,34 @@ trait Mappings extends Formatters with Constraints {
 
   protected def schemeTypeMapping(requiredTypeKey: String, invalidTypeKey: String,
                                   requiredOtherKey: String, invalidOtherKey: String): Mapping[SchemeType] = {
+
+    def fromSchemeType(schemeType: SchemeType): (String, Option[String]) = {
+      schemeType match {
+        case SchemeType.Other(someValue) => ("Other", Some(someValue))
+        case _ => (schemeType.toString, None)
+      }
+    }
+
+    def toSchemeType(schemeTypeTuple: (String, Option[String])): SchemeType = {
+
+      val mappings: Map[String, SchemeType] = Seq(
+        SingleTrust,
+        GroupLifeDeath,
+        BodyCorporate
+      ).map(v => (v.toString, v)).toMap
+
+      schemeTypeTuple match {
+        case ("Other", Some(value)) => Other(value)
+        case (key, _) if mappings.keySet.contains(key) => {
+          mappings.apply(key)
+        }
+      }
+    }
+
     tuple(
       "type" -> text(requiredTypeKey).verifying(schemeTypeConstraint(invalidTypeKey)),
       "schemeTypeDetails" -> mandatoryIfEqual("schemeType.type", "Other", text(requiredOtherKey).
         verifying(maxLength(150, invalidOtherKey)))
     ).transform(toSchemeType, fromSchemeType)
-  }
-
-  def fromSchemeType(schemeType: SchemeType): (String, Option[String]) = {
-    schemeType match {
-      case SchemeType.Other(someValue) => ("Other", Some(someValue))
-      case _ => (schemeType.toString, None)
-    }
-  }
-
-  def toSchemeType(schemeTypeTuple: (String, Option[String])): SchemeType = {
-
-    val mappings: Map[String, SchemeType] = Seq(
-      SingleTrust,
-      GroupLifeDeath,
-      BodyCorporate
-    ).map(v => (v.toString, v)).toMap
-
-    schemeTypeTuple match {
-      case ("Other", Some(value)) => Other(value)
-      case (key, _) if mappings.keySet.contains(key) => {
-        mappings.apply(key)
-      }
-    }
   }
 }
