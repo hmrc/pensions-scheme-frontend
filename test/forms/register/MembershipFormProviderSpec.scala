@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 
-package utils
+package forms.register
 
-import play.api.data.Form
+import forms.behaviours.FormBehaviours
+import models.{Field, Invalid, Required, Membership}
 
-object FormHelpers {
+class MembershipFormProviderSpec extends FormBehaviours {
 
-  def getErrorByKey[A](form: Form[_], errorKey: String) = {
-    form.error(errorKey) match {
-      case None => ""
-      case Some(error) => error.message
-    }
+  val validData: Map[String, String] = Map(
+    "value" -> Membership.options.head.value
+  )
+
+  val form = new MembershipFormProvider()()
+
+  "Membership form" must {
+
+    behave like questionForm[Membership](Membership.values.head)
+
+    behave like formWithOptionField(
+      Field(
+        "value",
+        Required -> "membership.error.required",
+        Invalid -> "error.invalid"),
+      Membership.options.map(_.value): _*)
   }
 }

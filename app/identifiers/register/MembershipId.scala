@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers
+package identifiers.register
 
-trait Identifier
+import identifiers.Identifier
+
+case object MembershipId extends Identifier {
+  override def toString: String = "membership"
+}

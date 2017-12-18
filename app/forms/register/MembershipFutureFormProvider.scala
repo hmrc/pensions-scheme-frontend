@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package forms
+package forms.register
 
-import play.api.data.FormError
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.MembershipFuture
 
-trait FormErrorHelper {
-  def produceError(key: String, error: String) = Left(Seq(FormError(key, error)))
+class MembershipFutureFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[MembershipFuture] =
+    Form(
+      "value" -> enumerable[MembershipFuture]("membershipFuture.error.required")
+    )
 }
