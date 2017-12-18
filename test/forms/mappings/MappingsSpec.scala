@@ -205,7 +205,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
       result.errors must contain(FormError("schemeType.schemeTypeDetails", "schemeType.schemeTypeDetails.error.required"))
     }
 
-    "not bind a Map with type other and schemeTypeDetails exceeds max lenght 150" in {
+    "not bind a Map with type other and schemeTypeDetails exceeds max length 150" in {
       val testString = RandomStringUtils.random(151)
       val result = testForm.bind(Map("schemeType.type" -> "Other", "schemeType.schemeTypeDetails" -> testString))
       result.errors must contain(FormError("schemeType.schemeTypeDetails", "schemeType.schemeTypeDetails.error.length", Seq(150)))

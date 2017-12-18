@@ -53,15 +53,15 @@ object SchemeType {
           .map[SchemeType](Other.apply)
           .orElse(Reads[SchemeType](_ => JsError("Other Value expected")))
 
-      case s if mappings.keySet.contains(s) =>
-        Reads(_ => JsSuccess(mappings.apply(s)))
+      case schemeTypeName if mappings.keySet.contains(schemeTypeName) =>
+        Reads(_ => JsSuccess(mappings.apply(schemeTypeName)))
 
       case _ => Reads(_ => JsError("Invalid Scheme Type"))
     }
   }
 
-  implicit lazy val writes: Writes[SchemeType] = new Writes[SchemeType]{
-    override def writes(o: SchemeType) = {
+  implicit lazy val writes = new Writes[SchemeType]{
+    def writes(o: SchemeType) = {
       o match {
         case SchemeType.Other(schemeTypeDetails)=>
           Json.obj("name" -> o.toString,"schemeTypeDetails" -> schemeTypeDetails)
