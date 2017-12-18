@@ -27,6 +27,7 @@ import config.FrontendAppConfig
 import forms.register.InvestmentRegulatedFormProvider
 import identifiers.register.InvestmentRegulatedId
 import models.Mode
+import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.investmentRegulated
 
@@ -43,7 +44,7 @@ class InvestmentRegulatedController @Inject()(appConfig: FrontendAppConfig,
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       val preparedForm = request.userAnswers.investmentRegulated match {
         case None => form
@@ -52,7 +53,7 @@ class InvestmentRegulatedController @Inject()(appConfig: FrontendAppConfig,
       Ok(investmentRegulated(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

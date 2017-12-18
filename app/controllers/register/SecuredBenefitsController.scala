@@ -27,6 +27,7 @@ import config.FrontendAppConfig
 import forms.register.SecuredBenefitsFormProvider
 import identifiers.register.SecuredBenefitsId
 import models.Mode
+import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.securedBenefits
 
@@ -43,7 +44,7 @@ class SecuredBenefitsController @Inject()(appConfig: FrontendAppConfig,
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       val preparedForm = request.userAnswers.securedBenefits match {
         case None => form
@@ -52,7 +53,7 @@ class SecuredBenefitsController @Inject()(appConfig: FrontendAppConfig,
       Ok(securedBenefits(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
