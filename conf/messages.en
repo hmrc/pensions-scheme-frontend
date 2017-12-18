@@ -91,3 +91,14 @@ membershipFuture.fiftyOneToTenThousand = 51 - 10,000
 membershipFuture.moreThanTenThousand = more than 10,000
 membershipFuture.checkYourAnswersLabel = How many scheme members could there be?
 membershipFuture.error.required = You must make a selection
+
+benefitsInsurer.title = Benefits insurer
+benefitsInsurer.heading = Benefits insurer
+benefitsInsurer.companyName = Name of insurance company
+benefitsInsurer.policyNumber = Policy number
+benefitsInsurer.checkYourAnswersLabel = Benefits insurer
+benefitsInsurer.error.companyName.required = Enter the company name
+benefitsInsurer.error.policyNumber.required = Enter the policy number
+benefitsInsurer.error.length.companyName = The company name cannot be more than 255 characters
+benefitsInsurer.error.length.policyNumber = The policy number cannot be more than 255 characters
+

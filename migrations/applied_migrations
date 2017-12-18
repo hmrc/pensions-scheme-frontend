@@ -1,29 +1,30 @@
 #!/bin/bash
 
-echo "Applying migration Membership"
+echo "Applying migration BenefitsInsurer"
 
-echo "Adding routes to conf/register.routes"
+echo "Adding routes to register.routes"
 
-echo "" >> ../conf/app.routes
-echo "GET        /membership               controllers.register.MembershipController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
-echo "POST       /membership               controllers.register.MembershipController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "" >> ../conf/register.routes
+echo "GET        /benefitsInsurer                       controllers.register.BenefitsInsurerController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "POST       /benefitsInsurer                       controllers.register.BenefitsInsurerController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
 
-echo "GET        /changeMembership               controllers.register.MembershipController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
-echo "POST       /changeMembership               controllers.register.MembershipController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "GET        /changeBenefitsInsurer                       controllers.register.BenefitsInsurerController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "POST       /changeBenefitsInsurer                       controllers.register.BenefitsInsurerController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "membership.title = membership" >> ../conf/messages.en
-echo "membership.heading = membership" >> ../conf/messages.en
-echo "membership.option1 = membership" Option 1 >> ../conf/messages.en
-echo "membership.option2 = membership" Option 2 >> ../conf/messages.en
-echo "membership.checkYourAnswersLabel = membership" >> ../conf/messages.en
-echo "membership.error.required = Please give an answer for membership" >> ../conf/messages.en
+echo "benefitsInsurer.title = benefitsInsurer" >> ../conf/messages.en
+echo "benefitsInsurer.heading = benefitsInsurer" >> ../conf/messages.en
+echo "benefitsInsurer.field1 = Field 1" >> ../conf/messages.en
+echo "benefitsInsurer.field2 = Field 2" >> ../conf/messages.en
+echo "benefitsInsurer.checkYourAnswersLabel = benefitsInsurer" >> ../conf/messages.en
+echo "benefitsInsurer.error.field1.required = Please give an answer for field1" >> ../conf/messages.en
+echo "benefitsInsurer.error.field2.required = Please give an answer for field2" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def membership: Option[Membership] = cacheMap.getEntry[Membership](MembershipId.toString)";\
+     print "  def benefitsInsurer: Option[BenefitsInsurer] = cacheMap.getEntry[BenefitsInsurer](BenefitsInsurerId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -31,8 +32,8 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def membership: Option[AnswerRow] = userAnswers.membership map {";\
-     print "    x => AnswerRow(\"membership.checkYourAnswersLabel\", s\"membership.$x\", true, controllers.register.routes.MembershipController.onPageLoad(CheckMode).url)";\
+     print "  def benefitsInsurer: Option[AnswerRow] = userAnswers.benefitsInsurer map {";\
+     print "    x => AnswerRow(\"benefitsInsurer.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.BenefitsInsurerController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -40,4 +41,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration Membership completed"
+echo "Migration BenefitsInsurer completed"

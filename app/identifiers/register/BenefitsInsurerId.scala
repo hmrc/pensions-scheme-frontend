@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package utils
+package identifiers.register
 
-import identifiers.register._
-import uk.gov.hmrc.http.cache.client.CacheMap
-import models._
+import identifiers.Identifier
 
-class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits {
-  def benefitsInsurer: Option[BenefitsInsurer] = cacheMap.getEntry[BenefitsInsurer](BenefitsInsurerId.toString)
-
-  def membership: Option[Membership] = cacheMap.getEntry[Membership](MembershipId.toString)
-
-  def membershipFuture: Option[MembershipFuture] = cacheMap.getEntry[MembershipFuture](MembershipFutureId.toString)
-
-  def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)
-
+case object BenefitsInsurerId extends Identifier {
+  override def toString: String = "benefitsInsurer"
 }

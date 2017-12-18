@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-import identifiers.register._
-import uk.gov.hmrc.http.cache.client.CacheMap
-import models._
+import play.api.libs.json._
 
-class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits {
-  def benefitsInsurer: Option[BenefitsInsurer] = cacheMap.getEntry[BenefitsInsurer](BenefitsInsurerId.toString)
+case class BenefitsInsurer (companyName: String, policyNumber: String)
 
-  def membership: Option[Membership] = cacheMap.getEntry[Membership](MembershipId.toString)
-
-  def membershipFuture: Option[MembershipFuture] = cacheMap.getEntry[MembershipFuture](MembershipFutureId.toString)
-
-  def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)
-
+object BenefitsInsurer {
+  implicit val format = Json.format[BenefitsInsurer]
 }

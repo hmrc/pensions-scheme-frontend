@@ -16,17 +16,22 @@
 
 package utils
 
+import controllers.register.routes
 import models.CheckMode
 import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def benefitsInsurer: Option[AnswerRow] = userAnswers.benefitsInsurer map {
+    x => AnswerRow("benefitsInsurer.checkYourAnswersLabel", s"${x.companyName} ${x.policyNumber}", false, routes.BenefitsInsurerController.onPageLoad(CheckMode).url)
+  }
+
   def membership: Option[AnswerRow] = userAnswers.membership map {
-    x => AnswerRow("membership.checkYourAnswersLabel", s"membership.$x", true, controllers.register.routes.MembershipController.onPageLoad(CheckMode).url)
+    x => AnswerRow("membership.checkYourAnswersLabel", s"membership.$x", true, routes.MembershipController.onPageLoad(CheckMode).url)
   }
 
   def membershipFuture: Option[AnswerRow] = userAnswers.membershipFuture map {
-    x => AnswerRow("membershipFuture.checkYourAnswersLabel", s"membershipFuture.$x", true, controllers.register.routes.MembershipFutureController.onPageLoad(CheckMode).url)
+    x => AnswerRow("membershipFuture.checkYourAnswersLabel", s"membershipFuture.$x", true, routes.MembershipFutureController.onPageLoad(CheckMode).url)
   }
 
   def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {
