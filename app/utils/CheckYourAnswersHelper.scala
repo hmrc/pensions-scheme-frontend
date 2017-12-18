@@ -22,6 +22,10 @@ import controllers.register.routes
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def benefits: Option[AnswerRow] = userAnswers.benefits map {
+    x => AnswerRow("benefits.checkYourAnswersLabel", s"benefits.$x", true, controllers.register.routes.BenefitsController.onPageLoad(CheckMode).url)
+  }
+
   def membership: Option[AnswerRow] = userAnswers.membership map {
     x => AnswerRow("membership.checkYourAnswersLabel", s"membership.$x", true,
       routes.MembershipController.onPageLoad(CheckMode).url)
