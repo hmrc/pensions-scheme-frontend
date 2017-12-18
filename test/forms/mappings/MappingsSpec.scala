@@ -228,7 +228,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
 
     "unbind a valid schemeType Other" in {
       val result = testForm.fill(SchemeType.Other("some value"))
-      result.apply("schemeType.type").value.value mustEqual "Other"
+      result.apply("schemeType.type").value.value mustEqual "other"
       result.apply("schemeType.schemeTypeDetails").value.value mustEqual "some value"
     }
   }

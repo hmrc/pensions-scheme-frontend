@@ -169,4 +169,5 @@
 
   GOVUK.ShowHideContent = ShowHideContent
   global.GOVUK = GOVUK
+
 })(window)

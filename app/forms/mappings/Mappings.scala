@@ -42,12 +42,14 @@ trait Mappings extends Formatters with Constraints {
                               invalidKey: String = "error.invalid")(implicit ev: Enumerable[A]): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey))
 
-  protected def schemeTypeMapping(requiredTypeKey: String, invalidTypeKey: String,
-                                  requiredOtherKey: String, invalidOtherKey: String): Mapping[SchemeType] = {
+  protected def schemeTypeMapping(requiredTypeKey: String = "schemeDetails.schemeType.error.required",
+                                  invalidTypeKey: String = "schemeDetails.schemeType.error.invalid",
+                                  requiredOtherKey: String = "schemeType.schemeTypeDetails.error.required",
+                                  invalidOtherKey: String = "schemeType.schemeTypeDetails.error.length"): Mapping[SchemeType] = {
 
     def fromSchemeType(schemeType: SchemeType): (String, Option[String]) = {
       schemeType match {
-        case SchemeType.Other(someValue) => ("Other", Some(someValue))
+        case SchemeType.Other(someValue) => (schemeType.toString, Some(someValue))
         case _ => (schemeType.toString, None)
       }
     }
@@ -61,7 +63,7 @@ trait Mappings extends Formatters with Constraints {
       ).map(v => (v.toString, v)).toMap
 
       schemeTypeTuple match {
-        case ("Other", Some(value)) => Other(value)
+        case (key, Some(value)) if(key == SchemeType.Other.toString) => Other(value)
         case (key, _) if mappings.keySet.contains(key) => {
           mappings.apply(key)
         }
@@ -70,7 +72,7 @@ trait Mappings extends Formatters with Constraints {
 
     tuple(
       "type" -> text(requiredTypeKey).verifying(schemeTypeConstraint(invalidTypeKey)),
-      "schemeTypeDetails" -> mandatoryIfEqual("schemeType.type", "Other", text(requiredOtherKey).
+      "schemeTypeDetails" -> mandatoryIfEqual("schemeType.type", SchemeType.Other.toString, text(requiredOtherKey).
         verifying(maxLength(150, invalidOtherKey)))
     ).transform(toSchemeType, fromSchemeType)
   }

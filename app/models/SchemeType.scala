@@ -37,12 +37,12 @@ object SchemeType {
     BodyCorporate
   ).map(v => (v.toString, v)).toMap
 
-  def options: Seq[InputOption] = Seq(
-    InputOption(SingleTrust.toString, s"schemeType.type.${SingleTrust.toString}"),
-    InputOption(GroupLifeDeath.toString, s"schemeType.type.${GroupLifeDeath.toString}"),
-    InputOption(BodyCorporate.toString, s"schemeType.type.${BodyCorporate.toString}"),
-    InputOption(Other.toString, s"schemeType.type.${Other.toString}", Some("schemeType_schemeTypeDetails-form"))
-  )
+  def options: Seq[InputOption] =
+    mappings.map { schemeMappings =>
+      val schemeType = schemeMappings._2.toString
+      InputOption(schemeType, s"schemeType.type.$schemeType")
+    }.toSeq :+ InputOption("other", s"schemeType.type.other",
+      Some("schemeType_schemeTypeDetails-form"))
 
   implicit val reads: Reads[SchemeType] = {
 
@@ -60,13 +60,13 @@ object SchemeType {
     }
   }
 
-  implicit lazy val writes = new Writes[SchemeType]{
+  implicit lazy val writes = new Writes[SchemeType] {
     def writes(o: SchemeType) = {
       o match {
-        case SchemeType.Other(schemeTypeDetails)=>
-          Json.obj("name" -> o.toString,"schemeTypeDetails" -> schemeTypeDetails)
-        case s if mappings.keySet.contains(s.toString)=>
-          Json.obj("name"->s.toString)
+        case SchemeType.Other(schemeTypeDetails) =>
+          Json.obj("name" -> o.toString, "schemeTypeDetails" -> schemeTypeDetails)
+        case s if mappings.keySet.contains(s.toString) =>
+          Json.obj("name" -> s.toString)
       }
     }
   }

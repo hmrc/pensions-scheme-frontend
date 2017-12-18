@@ -28,10 +28,6 @@ class SchemeDetailsFormProvider @Inject() extends Mappings with Constraints {
     "schemeName" -> text(
       "schemeDetails.schemeName.error.required").
       verifying(maxLength(255, "schemeDetails.schemeName.error.length")),
-    "schemeType" -> schemeTypeMapping(
-      "schemeDetails.schemeType.error.required",
-      "schemeDetails.schemeType.error.invalid",
-      "schemeType.schemeTypeDetails.error.required",
-      "schemeType.schemeTypeDetails.error.length")
+    "schemeType" -> schemeTypeMapping()
   )(SchemeDetails.apply)(SchemeDetails.unapply))
 }
