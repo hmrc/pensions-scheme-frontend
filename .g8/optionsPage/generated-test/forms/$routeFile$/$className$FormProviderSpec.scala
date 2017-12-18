@@ -20,6 +20,6 @@ class $className$FormProviderSpec extends FormBehaviours {
         "value",
         Required -> "$className;format="decap"$.error.required",
         Invalid -> "error.invalid"),
-      $className$.options.toSeq.map(_.value): _*)
+      $className$.options.map(_.value): _*)
   }
 }
