@@ -66,3 +66,14 @@ schemeType.singleTrust = Single Trust
 schemeType.groupLifeDeath = Group Life/Death
 schemeType.bodyCorporate = Body Corporate
 schemeType.Other = Other
+
+membershipFuture.title = How many scheme members could there be in the next 12 months?
+membershipFuture.heading = How many scheme members could there be in the next 12 months?
+membershipFuture.none = None
+membershipFuture.one = 1
+membershipFuture.twoToEleven = 2 - 11
+membershipFuture.twelveToFifty = 12 - 50
+membershipFuture.fiftyOneToTenThousand = 51 - 10,000
+membershipFuture.moreThanTenThousand = more than 10,000
+membershipFuture.checkYourAnswersLabel = How many scheme members could there be?
+membershipFuture.error.required = You must make a selection

@@ -21,6 +21,10 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def membershipFuture: Option[AnswerRow] = userAnswers.membershipFuture map {
+    x => AnswerRow("membershipFuture.checkYourAnswersLabel", s"membershipFuture.$x", true, controllers.register.routes.MembershipFutureController.onPageLoad(CheckMode).url)
+  }
+
   def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {
     x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false, controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url)
   }
