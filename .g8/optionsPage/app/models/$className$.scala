@@ -15,7 +15,7 @@ object $className$ {
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, "myOptionsPage")
+      InputOption(value.toString, s"myOptionsPage.\${value.toString}")
   }
 
   implicit val enumerable: Enumerable[$className$] =
