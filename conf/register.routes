@@ -23,3 +23,18 @@ GET        /benefitsInsurer                       controllers.register.BenefitsI
 POST       /benefitsInsurer                       controllers.register.BenefitsInsurerController.onSubmit(mode: Mode = NormalMode)
 GET        /changeBenefitsInsurer                       controllers.register.BenefitsInsurerController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeBenefitsInsurer                       controllers.register.BenefitsInsurerController.onSubmit(mode: Mode = CheckMode)
+
+GET        /investmentRegulated                       controllers.register.InvestmentRegulatedController.onPageLoad(mode: Mode = NormalMode)
+POST       /investmentRegulated                       controllers.register.InvestmentRegulatedController.onSubmit(mode: Mode = NormalMode)
+GET        /changeInvestmentRegulated                       controllers.register.InvestmentRegulatedController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeInvestmentRegulated                       controllers.register.InvestmentRegulatedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /securedBenefits                       controllers.register.SecuredBenefitsController.onPageLoad(mode: Mode = NormalMode)
+POST       /securedBenefits                       controllers.register.SecuredBenefitsController.onSubmit(mode: Mode = NormalMode)
+GET        /changeSecuredBenefits                       controllers.register.SecuredBenefitsController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeSecuredBenefits                       controllers.register.SecuredBenefitsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /occupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onPageLoad(mode: Mode = NormalMode)
+POST       /occupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onSubmit(mode: Mode = NormalMode)
+GET        /changeOccupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeOccupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onSubmit(mode: Mode = CheckMode)

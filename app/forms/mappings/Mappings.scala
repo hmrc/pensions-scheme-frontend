@@ -46,6 +46,7 @@ trait Mappings extends Formatters with Constraints {
                                   invalidTypeKey: String = "schemeDetails.schemeType.error.invalid",
                                   requiredOtherKey: String = "schemeType.schemeTypeDetails.error.required",
                                   invalidOtherKey: String = "schemeType.schemeTypeDetails.error.length"): Mapping[SchemeType] = {
+    val schemeTypeDetailsMaxLength = 150
 
     def fromSchemeType(schemeType: SchemeType): (String, Option[String]) = {
       schemeType match {
@@ -73,7 +74,7 @@ trait Mappings extends Formatters with Constraints {
     tuple(
       "type" -> text(requiredTypeKey).verifying(schemeTypeConstraint(invalidTypeKey)),
       "schemeTypeDetails" -> mandatoryIfEqual("schemeType.type", SchemeType.Other.toString, text(requiredOtherKey).
-        verifying(maxLength(150, invalidOtherKey)))
+        verifying(maxLength(schemeTypeDetailsMaxLength, invalidOtherKey)))
     ).transform(toSchemeType, fromSchemeType)
   }
 }

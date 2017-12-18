@@ -92,6 +92,19 @@ membershipFuture.moreThanTenThousand = more than 10,000
 membershipFuture.checkYourAnswersLabel = How many scheme members could there be?
 membershipFuture.error.required = You must make a selection
 
+investmentRegulated.title = Is the scheme investment regulated?
+investmentRegulated.heading = Is the scheme investment regulated?
+investmentRegulated.error.required = You must make a selection
+
+securedBenefits.title = Are any of the scheme benefits secured by a contract?
+securedBenefits.heading = Are any of the scheme benefits secured by a contract?
+securedBenefits.para = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
+securedBenefits.error.required = You must make a selection
+
+occupationalPensionScheme.title = Is the scheme an Occupational Pension Scheme?
+occupationalPensionScheme.heading = Is the scheme an Occupational Pension Scheme?
+occupationalPensionScheme.error.required = You must make a selection
+
 benefitsInsurer.title = Benefits insurer
 benefitsInsurer.heading = Benefits insurer
 benefitsInsurer.companyName = Name of insurance company

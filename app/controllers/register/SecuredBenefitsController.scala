@@ -24,44 +24,43 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.MembershipFormProvider
-import identifiers.register.MembershipId
-import models.{Membership, Mode}
+import forms.register.SecuredBenefitsFormProvider
+import identifiers.register.SecuredBenefitsId
+import models.Mode
 import play.api.mvc.{Action, AnyContent}
-import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.membership
+import utils.{Navigator, UserAnswers}
+import views.html.register.securedBenefits
 
 import scala.concurrent.Future
 
-class MembershipController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: MembershipFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
+class SecuredBenefitsController @Inject()(appConfig: FrontendAppConfig,
+                                         override val messagesApi: MessagesApi,
+                                         dataCacheConnector: DataCacheConnector,
+                                         navigator: Navigator,
+                                         authenticate: AuthAction,
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         formProvider: SecuredBenefitsFormProvider) extends FrontendController with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.membership match {
+      val preparedForm = request.userAnswers.securedBenefits match {
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(membership(appConfig, preparedForm, mode))
+      Ok(securedBenefits(appConfig, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(membership(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(securedBenefits(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[Membership](request.externalId, MembershipId.toString, value).map(cacheMap =>
-            Redirect(navigator.nextPage(MembershipId, mode)(new UserAnswers(cacheMap))))
+          dataCacheConnector.save[Boolean](request.externalId, SecuredBenefitsId.toString, value).map(cacheMap =>
+            Redirect(navigator.nextPage(SecuredBenefitsId, mode)(new UserAnswers(cacheMap))))
       )
   }
 }
