@@ -17,12 +17,11 @@
 package forms.register
 
 import javax.inject.Inject
-import forms.FormErrorHelper
 import forms.mappings.Mappings
 import play.api.data.Form
 import models.Membership
 
-class MembershipFormProvider @Inject() extends FormErrorHelper with Mappings {
+class MembershipFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Membership] =
     Form(
