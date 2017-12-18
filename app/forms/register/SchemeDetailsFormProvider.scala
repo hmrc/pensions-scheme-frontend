@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
-package identifiers
+package forms.register
 
-trait Identifier
+import javax.inject.Inject
+import forms.mappings.{Constraints, Mappings}
+import play.api.data.Form
+import play.api.data.Forms._
+import models.{SchemeDetails, SchemeType}
+
+class SchemeDetailsFormProvider @Inject() extends Mappings with Constraints {
+
+  def apply(): Form[SchemeDetails] = Form(mapping(
+    "schemeName" -> text(
+      "schemeDetails.schemeName.error.required").
+      verifying(maxLength(255, "schemeDetails.schemeName.error.length")),
+    "schemeType" -> schemeTypeMapping()
+  )(SchemeDetails.apply)(SchemeDetails.unapply))
+}

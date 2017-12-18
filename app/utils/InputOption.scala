@@ -16,14 +16,4 @@
 
 package utils
 
-import play.api.data.Form
-
-object FormHelpers {
-
-  def getErrorByKey[A](form: Form[_], errorKey: String) = {
-    form.error(errorKey) match {
-      case None => ""
-      case Some(error) => error.message
-    }
-  }
-}
+case class InputOption(value: String, label: String, dataTarget: Option[String] = None)

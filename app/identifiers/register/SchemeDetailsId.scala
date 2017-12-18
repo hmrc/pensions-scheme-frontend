@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers
+package identifiers.register
 
-trait Identifier
+import identifiers.Identifier
+
+case object SchemeDetailsId extends Identifier {
+  override def toString: String = "schemeDetails"
+}

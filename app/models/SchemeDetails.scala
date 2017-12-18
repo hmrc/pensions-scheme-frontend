@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
-package identifiers
+package models
 
-trait Identifier
+import play.api.libs.json._
+
+case class SchemeDetails (schemeName: String, schemeType: SchemeType)
+
+object SchemeDetails {
+  implicit val format = Json.format[SchemeDetails]
+}

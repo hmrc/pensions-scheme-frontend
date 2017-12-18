@@ -16,6 +16,8 @@
 
 package forms.mappings
 
+import models.SchemeType
+import org.apache.commons.lang3.RandomStringUtils
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.data.{Form, FormError}
 import utils.Enumerable
@@ -158,6 +160,76 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     "not bind an empty map" in {
       val result = testForm.bind(Map.empty[String, String])
       result.errors must contain(FormError("value", "error.required"))
+    }
+  }
+
+  "schemeType" must {
+
+    val testForm: Form[SchemeType] = Form(
+      "schemeType" -> schemeTypeMapping("schemeType.error.required", "schemeType.error.invalid",
+        "schemeType.schemeTypeDetails.error.required", "schemeType.schemeTypeDetails.error.length")
+    )
+
+    "bind a valid schemeType SingleTrust" in {
+      val result = testForm.bind(Map("schemeType.type" -> "singleTrust"))
+      result.get mustEqual SchemeType.SingleTrust
+    }
+
+    "bind a valid schemeType GroupLifeDeath" in {
+      val result = testForm.bind(Map("schemeType.type" -> "groupLifeDeath"))
+      result.get mustEqual SchemeType.GroupLifeDeath
+    }
+
+    "bind a valid schemeType BodyCorporate" in {
+      val result = testForm.bind(Map("schemeType.type" -> "bodyCorporate"))
+      result.get mustEqual SchemeType.BodyCorporate
+    }
+
+    "bind a valid schemeType Other" in {
+      val result = testForm.bind(Map("schemeType.type" -> "Other", "schemeType.schemeTypeDetails" -> "some value"))
+      result.get mustEqual SchemeType.Other("some value")
+    }
+
+    "not bind an empty Map" in {
+      val result = testForm.bind(Map.empty[String, String])
+      result.errors must contain(FormError("schemeType.type", "schemeType.error.required"))
+    }
+
+    "not bind a Map with invalid schemeType" in {
+      val result = testForm.bind(Map("schemeType.type" -> "Invalid"))
+      result.errors must contain(FormError("schemeType.type", "schemeType.error.invalid"))
+    }
+
+    "not bind a Map with type other but no schemeTypeDetails" in {
+      val result = testForm.bind(Map("schemeType.type" -> "Other"))
+      result.errors must contain(FormError("schemeType.schemeTypeDetails", "schemeType.schemeTypeDetails.error.required"))
+    }
+
+    "not bind a Map with type other and schemeTypeDetails exceeds max length 150" in {
+      val testString = RandomStringUtils.random(151)
+      val result = testForm.bind(Map("schemeType.type" -> "Other", "schemeType.schemeTypeDetails" -> testString))
+      result.errors must contain(FormError("schemeType.schemeTypeDetails", "schemeType.schemeTypeDetails.error.length", Seq(150)))
+    }
+
+    "unbind a valid schemeType SingleTrust" in {
+      val result = testForm.fill(SchemeType.SingleTrust)
+      result.apply("schemeType.type").value.value mustEqual "singleTrust"
+    }
+
+    "unbind a valid schemeType GroupLifeDeath" in {
+      val result = testForm.fill(SchemeType.GroupLifeDeath)
+      result.apply("schemeType.type").value.value mustEqual "groupLifeDeath"
+    }
+
+    "unbind a valid schemeType BodyCorporate" in {
+      val result = testForm.fill(SchemeType.BodyCorporate)
+      result.apply("schemeType.type").value.value mustEqual "bodyCorporate"
+    }
+
+    "unbind a valid schemeType Other" in {
+      val result = testForm.fill(SchemeType.Other("some value"))
+      result.apply("schemeType.type").value.value mustEqual "other"
+      result.apply("schemeType.schemeTypeDetails").value.value mustEqual "some value"
     }
   }
 }
