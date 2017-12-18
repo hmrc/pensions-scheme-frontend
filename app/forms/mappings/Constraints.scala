@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import models.SchemeType._
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 trait Constraints {
@@ -70,4 +71,15 @@ trait Constraints {
       case _ =>
         Invalid(errorKey, maximum)
     }
+
+  protected def schemeTypeConstraint(invalidKey: String): Constraint[String] = {
+
+    val validSchemeTypes: Seq[String] = Seq(SingleTrust.toString,
+      GroupLifeDeath.toString, BodyCorporate.toString, Other.toString)
+
+    Constraint {
+      case schemeType if(validSchemeTypes.contains(schemeType)) => Valid
+      case _ => Invalid(invalidKey)
+    }
+  }
 }

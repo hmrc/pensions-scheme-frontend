@@ -17,7 +17,6 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.routes._
-@import utils.FormHelpers
 @import models.Mode
 @import models.SchemeDetails
 
@@ -41,14 +40,14 @@
         )
 
         @components.input_radio(
-            field = form("schemeType"),
+            field = form("schemeType.type"),
             legend = messages("schemeDetails.heading"),
             inputs = SchemeType.options
         )
 
         @components.input_text(
-            field = form("schemeTypeDetails"),
-            label = messages("schemeDetails.schemeTypeDetails"),
+            field = form("schemeType.schemeTypeDetails"),
+            label = messages("schemeType.schemeTypeDetails"),
             groupClass = Some("js-hidden panel panel-border-narrow")
         )
 
