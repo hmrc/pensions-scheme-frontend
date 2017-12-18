@@ -14,18 +14,28 @@
  * limitations under the License.
  */
 
-package utils
+package forms.register
 
-import models.CheckMode
-import viewmodels.AnswerRow
+import forms.behaviours.FormBehaviours
+import models.{Field, Invalid, Required, Membership}
 
-class CheckYourAnswersHelper(userAnswers: UserAnswers) {
+class MembershipFormProviderSpec extends FormBehaviours {
 
-  def membership: Option[AnswerRow] = userAnswers.membership map {
-    x => AnswerRow("membership.checkYourAnswersLabel", s"membership.$x", true, controllers.register.routes.MembershipController.onPageLoad(CheckMode).url)
-  }
+  val validData: Map[String, String] = Map(
+    "value" -> Membership.options.head.value
+  )
 
-  def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {
-    x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false, controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url)
+  val form = new MembershipFormProvider()()
+
+  "Membership form" must {
+
+    behave like questionForm[Membership](Membership.values.head)
+
+    behave like formWithOptionField(
+      Field(
+        "value",
+        Required -> "membership.error.required",
+        Invalid -> "error.invalid"),
+      Membership.options.map(_.value): _*)
   }
 }

@@ -1,30 +1,29 @@
 #!/bin/bash
 
-echo "Applying migration SchemeDetails"
+echo "Applying migration Membership"
 
-echo "Adding routes to register.routes"
+echo "Adding routes to conf/register.routes"
 
-echo "" >> ../conf/register.routes
-echo "GET        /schemeDetails                       controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
-echo "POST       /schemeDetails                       controllers.register.SchemeDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "" >> ../conf/app.routes
+echo "GET        /membership               controllers.register.MembershipController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "POST       /membership               controllers.register.MembershipController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
 
-echo "GET        /changeSchemeDetails                       controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
-echo "POST       /changeSchemeDetails                       controllers.register.SchemeDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "GET        /changeMembership               controllers.register.MembershipController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "POST       /changeMembership               controllers.register.MembershipController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "schemeDetails.title = schemeDetails" >> ../conf/messages.en
-echo "schemeDetails.heading = schemeDetails" >> ../conf/messages.en
-echo "schemeDetails.field1 = Field 1" >> ../conf/messages.en
-echo "schemeDetails.field2 = Field 2" >> ../conf/messages.en
-echo "schemeDetails.checkYourAnswersLabel = schemeDetails" >> ../conf/messages.en
-echo "schemeDetails.error.field1.required = Please give an answer for field1" >> ../conf/messages.en
-echo "schemeDetails.error.field2.required = Please give an answer for field2" >> ../conf/messages.en
+echo "membership.title = membership" >> ../conf/messages.en
+echo "membership.heading = membership" >> ../conf/messages.en
+echo "membership.option1 = membership" Option 1 >> ../conf/messages.en
+echo "membership.option2 = membership" Option 2 >> ../conf/messages.en
+echo "membership.checkYourAnswersLabel = membership" >> ../conf/messages.en
+echo "membership.error.required = Please give an answer for membership" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)";\
+     print "  def membership: Option[Membership] = cacheMap.getEntry[Membership](MembershipId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -32,8 +31,8 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {";\
-     print "    x => AnswerRow(\"schemeDetails.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.SchemeDetailsController.onPageLoad(CheckMode).url)";\
+     print "  def membership: Option[AnswerRow] = userAnswers.membership map {";\
+     print "    x => AnswerRow(\"membership.checkYourAnswersLabel\", s\"membership.$x\", true, controllers.register.routes.MembershipController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -41,4 +40,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration SchemeDetails completed"
+echo "Migration Membership completed"

@@ -8,3 +8,7 @@ GET        /schemeDetails                       controllers.register.SchemeDetai
 POST       /schemeDetails                       controllers.register.SchemeDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /changeSchemeDetails                       controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeSchemeDetails                       controllers.register.SchemeDetailsController.onSubmit(mode: Mode = CheckMode)
+GET        /membership               controllers.register.MembershipController.onPageLoad(mode: Mode = NormalMode)
+POST       /membership               controllers.register.MembershipController.onSubmit(mode: Mode = NormalMode)
+GET        /changeMembership               controllers.register.MembershipController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeMembership               controllers.register.MembershipController.onSubmit(mode: Mode = CheckMode)

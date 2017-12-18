@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package utils
+package identifiers.register
 
-import models.CheckMode
-import viewmodels.AnswerRow
+import identifiers.Identifier
 
-class CheckYourAnswersHelper(userAnswers: UserAnswers) {
-
-  def membership: Option[AnswerRow] = userAnswers.membership map {
-    x => AnswerRow("membership.checkYourAnswersLabel", s"membership.$x", true, controllers.register.routes.MembershipController.onPageLoad(CheckMode).url)
-  }
-
-  def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {
-    x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false, controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url)
-  }
+case object MembershipId extends Identifier {
+  override def toString: String = "membership"
 }
