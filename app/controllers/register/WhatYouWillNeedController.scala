@@ -18,17 +18,11 @@ package controllers.register
 
 import javax.inject.Inject
 
-import play.api.data.Form
+import config.FrontendAppConfig
+import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
-import config.FrontendAppConfig
-import models.Mode
-import utils.{Navigator, UserAnswers}
 import views.html.register.whatYouWillNeed
-
-import scala.concurrent.Future
 
 class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
-package identifiers
+package identifiers.register
+import identifiers._
 
-trait Identifier
+case object InvestmentRegulatedId extends Identifier {
+  override def toString: String = "investmentRegulated"
+}

@@ -20,7 +20,7 @@
             field = form("value"),
             legend = messages("$className;format="decap"$.heading"),
             legendClass = Some("visually-hidden"),
-            inputs = $className$.options.toSeq
+            inputs = $className$.options
         )
 
         @components.submit_button()

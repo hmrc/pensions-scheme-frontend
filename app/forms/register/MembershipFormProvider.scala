@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
-package identifiers
+package forms.register
 
-trait Identifier
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.Membership
+
+class MembershipFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Membership] =
+    Form(
+      "value" -> enumerable[Membership]("membership.error.required")
+    )
+}

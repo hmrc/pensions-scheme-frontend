@@ -9,6 +9,21 @@ POST       /schemeDetails                       controllers.register.SchemeDetai
 GET        /changeSchemeDetails                       controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeSchemeDetails                       controllers.register.SchemeDetailsController.onSubmit(mode: Mode = CheckMode)
 
+GET        /membership               controllers.register.MembershipController.onPageLoad(mode: Mode = NormalMode)
+POST       /membership               controllers.register.MembershipController.onSubmit(mode: Mode = NormalMode)
+GET        /changeMembership               controllers.register.MembershipController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeMembership               controllers.register.MembershipController.onSubmit(mode: Mode = CheckMode)
+
+GET        /membershipFuture               controllers.register.MembershipFutureController.onPageLoad(mode: Mode = NormalMode)
+POST       /membershipFuture               controllers.register.MembershipFutureController.onSubmit(mode: Mode = NormalMode)
+GET        /changeMembershipFuture               controllers.register.MembershipFutureController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeMembershipFuture               controllers.register.MembershipFutureController.onSubmit(mode: Mode = CheckMode)
+
+GET        /investmentRegulated                       controllers.register.InvestmentRegulatedController.onPageLoad(mode: Mode = NormalMode)
+POST       /investmentRegulated                       controllers.register.InvestmentRegulatedController.onSubmit(mode: Mode = NormalMode)
+GET        /changeInvestmentRegulated                       controllers.register.InvestmentRegulatedController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeInvestmentRegulated                       controllers.register.InvestmentRegulatedController.onSubmit(mode: Mode = CheckMode)
+
 GET        /securedBenefits                       controllers.register.SecuredBenefitsController.onPageLoad(mode: Mode = NormalMode)
 POST       /securedBenefits                       controllers.register.SecuredBenefitsController.onSubmit(mode: Mode = NormalMode)
 GET        /changeSecuredBenefits                       controllers.register.SecuredBenefitsController.onPageLoad(mode: Mode = CheckMode)

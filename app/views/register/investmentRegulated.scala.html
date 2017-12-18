@@ -18,37 +18,24 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.routes._
 @import models.Mode
-@import models.SchemeDetails
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("schemeDetails.title"),
+    title = messages("investmentRegulated.title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = SchemeDetailsController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = InvestmentRegulatedController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
-        @components.heading("schemeDetails.heading")
+        @components.heading("investmentRegulated.heading")
 
-        @components.input_text(
-            field = form("schemeName"),
-            label = messages("schemeDetails.schemeName"),
-            hint = Some(messages("schemeDetails.schemeName.hint"))
-        )
-
-        @components.input_radio(
-            field = form("schemeType.type"),
-            legend = messages("schemeDetails.heading"),
-            inputs = SchemeType.options
-        )
-
-        @components.input_text(
-            field = form("schemeType.schemeTypeDetails"),
-            label = messages("schemeType.schemeTypeDetails"),
-            groupClass = Some("js-hidden panel panel-border-narrow")
+        @components.input_yes_no(
+            field = form("value"),
+            label = messages("investmentRegulated.heading"),
+            labelClass = Some("visually-hidden")
         )
 
         @components.submit_button()

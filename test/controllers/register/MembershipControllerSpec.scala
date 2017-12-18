@@ -17,32 +17,32 @@
 package controllers.register
 
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.JsString
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.SchemeDetailsFormProvider
-import identifiers.register.SchemeDetailsId
-import models.{NormalMode, SchemeDetails, SchemeType}
-import views.html.register.schemeDetails
+import forms.register.MembershipFormProvider
+import identifiers.register.MembershipId
+import models.{NormalMode, Membership}
+import views.html.register.membership
 import controllers.ControllerSpecBase
 
-class SchemeDetailsControllerSpec extends ControllerSpecBase {
+class MembershipControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new SchemeDetailsFormProvider()
+  val formProvider = new MembershipFormProvider()
   val form = formProvider()
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
-    new SchemeDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, formProvider)
+    new MembershipController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = membership(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
 
-  "SchemeDetails Controller" must {
+  "Membership Controller" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode)(fakeRequest)
@@ -52,16 +52,16 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("value 1", SchemeType.SingleTrust)))
+      val validData = Map(MembershipId.toString -> JsString(Membership.values.head.toString))
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(SchemeDetails("value 1", SchemeType.SingleTrust)))
+      contentAsString(result) mustBe viewAsString(form.fill(Membership.values.head))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"), ("schemeType.type", "singleTrust"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", Membership.options.head.value))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -79,15 +79,15 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
-    "redirect to Session Expired for a GET if no existing data is found" ignore {
+    "redirect to Session Expired for a GET if no existing data is found" in {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "redirect to Session Expired for a POST if no existing data is found" ignore {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"), ("schemeType.type", "singleTrust"))
+    "redirect to Session Expired for a POST if no existing data is found" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", Membership.options.head.value))
       val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER
