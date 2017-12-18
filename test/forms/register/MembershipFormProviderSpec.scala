@@ -14,17 +14,28 @@
  * limitations under the License.
  */
 
-package utils
+package forms.register
 
-import identifiers.register._
-import uk.gov.hmrc.http.cache.client.CacheMap
-import models._
+import forms.behaviours.FormBehaviours
+import models.{Field, Invalid, Required, Membership}
 
-class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits {
-  def membership: Option[Membership] = cacheMap.getEntry[Membership](MembershipId.toString)
+class MembershipFormProviderSpec extends FormBehaviours {
 
-  def membershipFuture: Option[MembershipFuture] = cacheMap.getEntry[MembershipFuture](MembershipFutureId.toString)
+  val validData: Map[String, String] = Map(
+    "value" -> Membership.options.head.value
+  )
 
-  def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)
+  val form = new MembershipFormProvider()()
 
+  "Membership form" must {
+
+    behave like questionForm[Membership](Membership.values.head)
+
+    behave like formWithOptionField(
+      Field(
+        "value",
+        Required -> "membership.error.required",
+        Invalid -> "error.invalid"),
+      Membership.options.map(_.value): _*)
+  }
 }

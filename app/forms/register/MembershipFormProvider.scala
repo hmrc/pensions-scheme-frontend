@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package utils
+package forms.register
 
-import identifiers.register._
-import uk.gov.hmrc.http.cache.client.CacheMap
-import models._
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.Membership
 
-class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits {
-  def membership: Option[Membership] = cacheMap.getEntry[Membership](MembershipId.toString)
+class MembershipFormProvider @Inject() extends Mappings {
 
-  def membershipFuture: Option[MembershipFuture] = cacheMap.getEntry[MembershipFuture](MembershipFutureId.toString)
-
-  def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)
-
+  def apply(): Form[Membership] =
+    Form(
+      "value" -> enumerable[Membership]("membership.error.required")
+    )
 }

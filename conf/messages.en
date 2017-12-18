@@ -70,6 +70,17 @@ schemeType.schemeTypeDetails = Details of the scheme type
 schemeType.schemeTypeDetails.error.required = Enter more information about the scheme
 schemeType.schemeTypeDetails.error.length = The other scheme type cannot be more than 150 characters
 
+membership.title = How many scheme members are there?
+membership.heading = How many scheme members are there?
+membership.none = None
+membership.one = 1
+membership.twoToEleven = 2 - 11
+membership.twelveToFifty = 12 - 50
+membership.fiftyOneToTenThousand = 51 - 10,000
+membership.moreThanTenThousand = more than 10,000
+membership.checkYourAnswersLabel = How many scheme members are there?
+membership.error.required = You must make a selection
+
 membershipFuture.title = How many scheme members could there be in the next 12 months?
 membershipFuture.heading = How many scheme members could there be in the next 12 months?
 membershipFuture.none = None
