@@ -110,7 +110,6 @@ trait ViewSpecBase extends SpecBase {
     assertRenderedById(doc, id)
     val radio = doc.getElementById(id)
 
-    println("\n\n radio:"+radio)
     assert(radio.attr("name") == name, s"\n\nElement $id does not have name $name")
     assert(radio.attr("value") == value, s"\n\nElement $id does not have value $value")
     isChecked match {

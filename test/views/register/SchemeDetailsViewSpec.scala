@@ -42,31 +42,31 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
 
   "SchemeDetails view" when {
     "rendered" must {
-      /*"contain radio buttons for the value" in {
+      "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
         for (option <- SchemeType.options) {
-          assertContainsRadioButton(doc, option.label.replace(".", "-"), "schemeType.type", option.value, isChecked = false)
+          assertContainsRadioButton(doc, s"schemeType_type-${option.value}", "schemeType.type", option.value, isChecked = false)
         }
-      }*/
+      }
 
       for (option <- SchemeType.options) {
         s"rendered with a value of '${option.value}'" must {
           s"have the '${option.value}' radio button selected" in {
-            val doc = asDocument(createViewUsingForm(form.bind(Map("schemeType" -> s"${option.value}"))))
-            assertContainsRadioButton(doc, option.label.replace(".", "-"), "schemeType.type", option.value, isChecked = true)
+            val doc = asDocument(createViewUsingForm(form.bind(Map("schemeType.type" -> s"${option.value}"))))
+            assertContainsRadioButton(doc, s"schemeType_type-${option.value}", "schemeType.type", option.value, isChecked = true)
 
             for (unselectedOption <- SchemeType.options.filterNot(o => o == option)) {
-              assertContainsRadioButton(doc, unselectedOption.label.replace(".", "-"), "schemeType.type", unselectedOption.value, isChecked = false)
+              assertContainsRadioButton(doc, s"schemeType_type-${unselectedOption.value}", "schemeType.type", unselectedOption.value, isChecked = false)
             }
           }
         }
       }
 
-      /*"display an input text box with the value when the other is selected" in {
+      "display an input text box with the value when the other is selected" in {
         val expectedValue = "some value"
         val doc = asDocument(createViewUsingForm(form.bind(Map("schemeType.type" -> "Other", "schemeType.schemeTypeDetails" -> expectedValue))))
-        doc must haveLabelAndValue("schemeTypeDetails", messages("schemeDetails.schemeType.schemeTypeDetails"), expectedValue)
-      }*/
+        doc must haveLabelAndValue("schemeType_schemeTypeDetails", messages("schemeType.schemeTypeDetails"), expectedValue)
+      }
     }
   }
 }

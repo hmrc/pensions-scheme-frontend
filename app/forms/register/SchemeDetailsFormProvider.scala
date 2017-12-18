@@ -33,7 +33,7 @@ class SchemeDetailsFormProvider @Inject() extends Mappings with Constraints {
     "schemeType" -> schemeTypeMapping(
       "schemeDetails.schemeType.error.required",
       "schemeDetails.schemeType.error.invalid",
-      "schemeDetails.schemeType.other.error.required",
-      "schemeDetails.schemeType.other.error.length")
+      "schemeType.schemeTypeDetails.error.required",
+      "schemeType.schemeTypeDetails.error.length")
   )(SchemeDetails.apply)(SchemeDetails.unapply))
 }

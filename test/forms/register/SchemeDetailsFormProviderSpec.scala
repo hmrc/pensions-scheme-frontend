@@ -75,7 +75,7 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
       val data = Map(
         "schemeName" -> "scheme Name 1",
         "schemeType.type" -> "Other")
-      val expectedError = error("schemeType.schemeTypeDetails", "schemeDetails.schemeType.other.error.required")
+      val expectedError = error("schemeType.schemeTypeDetails", "schemeType.schemeTypeDetails.error.required")
       checkForError(form, data, expectedError)
     }
   }
