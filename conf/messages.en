@@ -91,3 +91,7 @@ membershipFuture.fiftyOneToTenThousand = 51 - 10,000
 membershipFuture.moreThanTenThousand = more than 10,000
 membershipFuture.checkYourAnswersLabel = How many scheme members could there be?
 membershipFuture.error.required = You must make a selection
+
+investmentRegulated.title = Is the scheme investment regulated?
+investmentRegulated.heading = Is the scheme investment regulated?
+investmentRegulated.error.required = You must make a selection

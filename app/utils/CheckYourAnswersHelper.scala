@@ -18,19 +18,24 @@ package utils
 
 import models.CheckMode
 import viewmodels.AnswerRow
+import controllers.register.routes
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def membership: Option[AnswerRow] = userAnswers.membership map {
-    x => AnswerRow("membership.checkYourAnswersLabel", s"membership.$x", true, controllers.register.routes.MembershipController.onPageLoad(CheckMode).url)
+    x => AnswerRow("membership.checkYourAnswersLabel", s"membership.$x", true, routes.MembershipController.onPageLoad(CheckMode).url)
   }
 
   def membershipFuture: Option[AnswerRow] = userAnswers.membershipFuture map {
-    x => AnswerRow("membershipFuture.checkYourAnswersLabel", s"membershipFuture.$x", true, controllers.register.routes.MembershipFutureController.onPageLoad(CheckMode).url)
+    x => AnswerRow("membershipFuture.checkYourAnswersLabel", s"membershipFuture.$x", true, routes.MembershipFutureController.onPageLoad(CheckMode).url)
+  }
+
+  def investmentRegulated: Option[AnswerRow] = userAnswers.investmentRegulated map {
+    x => AnswerRow("investmentRegulated.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
+      routes.InvestmentRegulatedController.onPageLoad(CheckMode).url)
   }
 
   def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {
-    x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false,
-      controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url)
+    x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false, routes.SchemeDetailsController.onPageLoad(CheckMode).url)
   }
 }

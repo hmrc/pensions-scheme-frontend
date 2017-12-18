@@ -1,29 +1,27 @@
 #!/bin/bash
 
-echo "Applying migration Membership"
+echo "Applying migration InvestmentRegulated"
 
-echo "Adding routes to conf/register.routes"
+echo "Adding routes to register.routes"
 
-echo "" >> ../conf/app.routes
-echo "GET        /membership               controllers.register.MembershipController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
-echo "POST       /membership               controllers.register.MembershipController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "" >> ../conf/register.routes
+echo "GET        /investmentRegulated                       controllers.register.InvestmentRegulatedController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "POST       /investmentRegulated                       controllers.register.InvestmentRegulatedController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
 
-echo "GET        /changeMembership               controllers.register.MembershipController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
-echo "POST       /changeMembership               controllers.register.MembershipController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "GET        /changeInvestmentRegulated                       controllers.register.InvestmentRegulatedController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "POST       /changeInvestmentRegulated                       controllers.register.InvestmentRegulatedController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "membership.title = membership" >> ../conf/messages.en
-echo "membership.heading = membership" >> ../conf/messages.en
-echo "membership.option1 = membership" Option 1 >> ../conf/messages.en
-echo "membership.option2 = membership" Option 2 >> ../conf/messages.en
-echo "membership.checkYourAnswersLabel = membership" >> ../conf/messages.en
-echo "membership.error.required = Please give an answer for membership" >> ../conf/messages.en
+echo "investmentRegulated.title = investmentRegulated" >> ../conf/messages.en
+echo "investmentRegulated.heading = investmentRegulated" >> ../conf/messages.en
+echo "investmentRegulated.checkYourAnswersLabel = investmentRegulated" >> ../conf/messages.en
+echo "investmentRegulated.error.required = Please give an answer for investmentRegulated" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def membership: Option[Membership] = cacheMap.getEntry[Membership](MembershipId.toString)";\
+     print "  def investmentRegulated: Option[Boolean] = cacheMap.getEntry[Boolean](InvestmentRegulatedId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -31,13 +29,12 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def membership: Option[AnswerRow] = userAnswers.membership map {";\
-     print "    x => AnswerRow(\"membership.checkYourAnswersLabel\", s\"membership.$x\", true, controllers.register.routes.MembershipController.onPageLoad(CheckMode).url)";\
-     print "  }";\
+     print "  def investmentRegulated: Option[AnswerRow] = userAnswers.investmentRegulated map {";\
+     print "    x => AnswerRow(\"investmentRegulated.checkYourAnswersLabel\", if(x) \"site.yes\" else \"site.no\", true, routes.InvestmentRegulatedController.onPageLoad(CheckMode).url)"; print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration Membership completed"
+echo "Migration InvestmentRegulated completed"
