@@ -186,7 +186,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
 
     "bind a valid schemeType Other" in {
-      val result = testForm.bind(Map("schemeType.type" -> "Other", "schemeType.schemeTypeDetails" -> "some value"))
+      val result = testForm.bind(Map("schemeType.type" -> "other", "schemeType.schemeTypeDetails" -> "some value"))
       result.get mustEqual SchemeType.Other("some value")
     }
 
@@ -201,13 +201,13 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
 
     "not bind a Map with type other but no schemeTypeDetails" in {
-      val result = testForm.bind(Map("schemeType.type" -> "Other"))
+      val result = testForm.bind(Map("schemeType.type" -> "other"))
       result.errors must contain(FormError("schemeType.schemeTypeDetails", "schemeType.schemeTypeDetails.error.required"))
     }
 
     "not bind a Map with type other and schemeTypeDetails exceeds max length 150" in {
       val testString = RandomStringUtils.random(151)
-      val result = testForm.bind(Map("schemeType.type" -> "Other", "schemeType.schemeTypeDetails" -> testString))
+      val result = testForm.bind(Map("schemeType.type" -> "other", "schemeType.schemeTypeDetails" -> testString))
       result.errors must contain(FormError("schemeType.schemeTypeDetails", "schemeType.schemeTypeDetails.error.length", Seq(150)))
     }
 

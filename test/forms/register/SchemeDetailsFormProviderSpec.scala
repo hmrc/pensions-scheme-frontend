@@ -24,7 +24,7 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
     "schemeName" -> "scheme Name 1",
-    "schemeType.type" -> "Other",
+    "schemeType.type" -> "other",
     "schemeType.schemeTypeDetails" -> "some value")
 
   val form = new SchemeDetailsFormProvider()()
@@ -84,7 +84,7 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
     "fail to bind when the schemeType is other without any schemeTypeDetails" in {
       val data = Map(
         "schemeName" -> "scheme Name 1",
-        "schemeType.type" -> "Other")
+        "schemeType.type" -> "other")
       val expectedError = error("schemeType.schemeTypeDetails", "schemeType.schemeTypeDetails.error.required")
       checkForError(form, data, expectedError)
     }
