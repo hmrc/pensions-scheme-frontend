@@ -18,7 +18,7 @@ error.integer = Give an answer in whole numbers
 error.non_numeric = Give a value using only numbers
 error.number = Please enter a valid number
 error.required = Please enter a value
-error.summary.title = There’s been a problem
+error.summary.title = There was a problem with the page
 error.summary.text = Check the following
 
 index.title = pensions-scheme-frontend
@@ -105,9 +105,9 @@ occupationalPensionScheme.title = Is the scheme an Occupational Pension Scheme?
 occupationalPensionScheme.heading = Is the scheme an Occupational Pension Scheme?
 occupationalPensionScheme.error.required = You must make a selection
 
-benefits.title = benefits
-benefits.heading = benefits
-benefits.option1 = benefits Option 1
-benefits.option2 = benefits Option 2
-benefits.checkYourAnswersLabel = benefits
-benefits.error.required = Please give an answer for benefits
+benefits.title = How does the scheme provide benefits?
+benefits.heading = How does the scheme provide benefits?
+benefits.moneyPurchaseBenefit = Money Purchase benefits only (defined contribution)
+benefits.definedBenefit = Defined Benefits only
+benefits.moneyPurchaseDefinedBenefitMix = Mixture of money purchase benefits and defined benefits
+benefits.error.required = You must make a selection

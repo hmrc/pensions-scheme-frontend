@@ -22,16 +22,17 @@ sealed trait Benefits
 
 object Benefits {
 
-  case object Option1 extends WithName("option1") with Benefits
-  case object Option2 extends WithName("option2") with Benefits
+  case object MoneyPurchase extends WithName("moneyPurchaseBenefit") with Benefits
+  case object Defined extends WithName("definedBenefit") with Benefits
+  case object MoneyPurchaseDefinedMix extends WithName("moneyPurchaseDefinedBenefitMix") with Benefits
 
   val values: Seq[Benefits] = Seq(
-    Option1, Option2
+    MoneyPurchase, Defined, MoneyPurchaseDefinedMix
   )
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"myOptionsPage.${value.toString}")
+      InputOption(value.toString, s"benefits.${value.toString}")
   }
 
   implicit val enumerable: Enumerable[Benefits] =

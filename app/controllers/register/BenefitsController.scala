@@ -26,7 +26,8 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.BenefitsFormProvider
 import identifiers.register.BenefitsId
-import models.{Mode, Benefits}
+import models.{Benefits, Mode}
+import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.benefits
 
@@ -44,7 +45,7 @@ class BenefitsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       val preparedForm = request.userAnswers.benefits match {
         case None => form
@@ -53,7 +54,7 @@ class BenefitsController @Inject()(
       Ok(benefits(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
