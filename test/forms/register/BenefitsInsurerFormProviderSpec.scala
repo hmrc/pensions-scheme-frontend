@@ -19,6 +19,7 @@ package forms.register
 import forms.behaviours.FormBehaviours
 import models.{Field, Required}
 import models.BenefitsInsurer
+import org.apache.commons.lang3.RandomStringUtils
 
 class BenefitsInsurerFormProviderSpec extends FormBehaviours {
 
@@ -26,6 +27,9 @@ class BenefitsInsurerFormProviderSpec extends FormBehaviours {
     "companyName" -> "value 1",
     "policyNumber" -> "value 2"
   )
+
+  val validMaxLength = 255
+  val invalidMaxLength = 256
 
   val form = new BenefitsInsurerFormProvider()()
 
@@ -36,5 +40,23 @@ class BenefitsInsurerFormProviderSpec extends FormBehaviours {
       Field("companyName", Required -> "benefitsInsurer.error.companyName.required"),
       Field("policyNumber", Required -> "benefitsInsurer.error.policyNumber.required")
     )
+  }
+
+  "fail to bind when the company name exceeds max length 255" in {
+    val testString = RandomStringUtils.random(invalidMaxLength)
+    val data = Map(
+      "companyName" -> testString,
+      "policyNumber" -> "value 2")
+    val expectedError = error("companyName", "benefitsInsurer.error.length.companyName", validMaxLength)
+    checkForError(form, data, expectedError)
+  }
+
+  "fail to bind when the policy number exceeds max length 255" in {
+    val testString = RandomStringUtils.random(invalidMaxLength)
+    val data = Map(
+      "companyName" -> "value 1",
+      "policyNumber" -> testString)
+    val expectedError = error("policyNumber", "benefitsInsurer.error.length.policyNumber", validMaxLength)
+    checkForError(form, data, expectedError)
   }
 }
