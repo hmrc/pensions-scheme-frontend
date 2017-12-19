@@ -27,6 +27,9 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
     "schemeType.type" -> "other",
     "schemeType.schemeTypeDetails" -> "some value")
 
+  val validMaxLength = 255
+  val invalidLength = 256
+
   val form = new SchemeDetailsFormProvider()()
 
   "SchemeDetails form" must {
@@ -35,12 +38,12 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
       Field("schemeName", Required -> "schemeDetails.schemeName.error.required"),
       Field("schemeType.type", Required -> "schemeDetails.schemeType.error.required"))
 
-    "fail to bind when the scheme name exceeds max length 250" in {
-      val testString = RandomStringUtils.random(256)
+    "fail to bind when the scheme name exceeds max length 255" in {
+      val testString = RandomStringUtils.random(invalidLength)
       val data = Map(
         "schemeName" -> testString,
         "schemeType.type" -> "singleTrust")
-      val expectedError = error("schemeName", "schemeDetails.schemeName.error.length", 255)
+      val expectedError = error("schemeName", "schemeDetails.schemeName.error.length", validMaxLength)
       checkForError(form, data, expectedError)
     }
 

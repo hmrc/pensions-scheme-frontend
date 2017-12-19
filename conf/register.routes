@@ -17,6 +17,11 @@ POST       /membershipFuture               controllers.register.MembershipFuture
 GET        /changeMembershipFuture               controllers.register.MembershipFutureController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeMembershipFuture               controllers.register.MembershipFutureController.onSubmit(mode: Mode = CheckMode)
 
+GET        /benefitsInsurer                       controllers.register.BenefitsInsurerController.onPageLoad(mode: Mode = NormalMode)
+POST       /benefitsInsurer                       controllers.register.BenefitsInsurerController.onSubmit(mode: Mode = NormalMode)
+GET        /changeBenefitsInsurer                       controllers.register.BenefitsInsurerController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeBenefitsInsurer                       controllers.register.BenefitsInsurerController.onSubmit(mode: Mode = CheckMode)
+
 GET        /investmentRegulated                       controllers.register.InvestmentRegulatedController.onPageLoad(mode: Mode = NormalMode)
 POST       /investmentRegulated                       controllers.register.InvestmentRegulatedController.onSubmit(mode: Mode = NormalMode)
 GET        /changeInvestmentRegulated                       controllers.register.InvestmentRegulatedController.onPageLoad(mode: Mode = CheckMode)

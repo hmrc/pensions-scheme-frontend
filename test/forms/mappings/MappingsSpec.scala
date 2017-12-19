@@ -164,6 +164,8 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
   }
 
   "schemeType" must {
+    val validSchemeTypeDetailsLength = 150
+    val invalidSchemeTypeDetailsLength = 151
 
     val testForm: Form[SchemeType] = Form(
       "schemeType" -> schemeTypeMapping("schemeType.error.required", "schemeType.error.invalid",
@@ -206,9 +208,10 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
 
     "not bind a Map with type other and schemeTypeDetails exceeds max length 150" in {
-      val testString = RandomStringUtils.random(151)
+      val testString = RandomStringUtils.random(invalidSchemeTypeDetailsLength)
       val result = testForm.bind(Map("schemeType.type" -> "other", "schemeType.schemeTypeDetails" -> testString))
-      result.errors must contain(FormError("schemeType.schemeTypeDetails", "schemeType.schemeTypeDetails.error.length", Seq(150)))
+      result.errors must contain(FormError("schemeType.schemeTypeDetails", "schemeType.schemeTypeDetails.error.length",
+        Seq(validSchemeTypeDetailsLength)))
     }
 
     "unbind a valid schemeType SingleTrust" in {
