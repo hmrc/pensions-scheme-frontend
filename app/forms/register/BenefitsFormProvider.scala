@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(errors: Seq[FormError])(implicit messages: Messages)
-@if(errors.nonEmpty) {
-    <div class="error-summary error-summary--show" role="group" aria-labelledby="error-summary-heading" tabindex="-1">
+package forms.register
 
-        <h2 class="h2-heading error-summary-heading" id="error-summary-heading">
-        @messages("error.summary.title")
-        </h2>
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.Benefits
 
-        <ul role="list" class="error-summary-list">
-            @for(error <- errors) {
-                <li><a href="#@{error.key.replace('.', '_')}">@messages(error.message, error.args:_*)</a></li>
-            }
-        </ul>
+class BenefitsFormProvider @Inject() extends Mappings {
 
-    </div>
+  def apply(): Form[Benefits] =
+    Form(
+      "value" -> enumerable[Benefits]("benefits.error.required")
+    )
 }

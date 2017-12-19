@@ -20,20 +20,7 @@ $(document).ready(function() {
     window.history.back();
   })
 
-  // =====================================================
-  // Adds data-focuses attribute to all containers of inputs listed in an error summary
-  // This allows validatorFocus to bring viewport to correct scroll point
-  // =====================================================
-      function assignFocus () {
-          var counter = 0;
-          $('.error-summary-list a').each(function(){
-              var linkhash = $(this).attr("href").split('#')[1];
-              $('#' + linkhash).parents('.form-field, .form-group').first().attr('id', 'f-' + counter);
-              $(this).attr('data-focuses', 'f-' + counter);
-              counter++;
-          });
-      }
-      assignFocus();
+
 
       function beforePrintCall(){
           if($('.no-details').length > 0){

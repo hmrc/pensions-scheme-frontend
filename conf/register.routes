@@ -1,7 +1,5 @@
 # microservice specific routes
 
-
-
 GET        /whatYouWillNeed                       controllers.register.WhatYouWillNeedController.onPageLoad()
 
 GET        /schemeDetails                       controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = NormalMode)
@@ -38,3 +36,8 @@ GET        /occupationalPensionScheme                       controllers.register
 POST       /occupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onSubmit(mode: Mode = NormalMode)
 GET        /changeOccupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeOccupationalPensionScheme                       controllers.register.OccupationalPensionSchemeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /benefits               controllers.register.BenefitsController.onPageLoad(mode: Mode = NormalMode)
+POST       /benefits               controllers.register.BenefitsController.onSubmit(mode: Mode = NormalMode)
+GET        /changeBenefits               controllers.register.BenefitsController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeBenefits               controllers.register.BenefitsController.onSubmit(mode: Mode = CheckMode)

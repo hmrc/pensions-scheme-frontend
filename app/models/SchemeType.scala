@@ -31,24 +31,25 @@ object SchemeType {
 
   case class Other(schemeTypeDetails: String) extends WithName("other") with SchemeType
 
+  val other = "other"
   val mappings: Map[String, SchemeType] = Seq(
     SingleTrust,
     GroupLifeDeath,
     BodyCorporate
   ).map(v => (v.toString, v)).toMap
 
-  def options: Seq[InputOption] =
-    mappings.map { schemeMappings =>
-      val schemeType = schemeMappings._2.toString
-      InputOption(schemeType, s"schemeType.type.$schemeType")
-    }.toSeq :+ InputOption("other", s"schemeType.type.other",
-      Some("schemeType_schemeTypeDetails-form"))
+  def options: Seq[InputOption] = Seq(
+    InputOption(SingleTrust.toString, s"schemeType.type.${SingleTrust.toString}"),
+    InputOption(GroupLifeDeath.toString, s"schemeType.type.${GroupLifeDeath.toString}"),
+    InputOption(BodyCorporate.toString, s"schemeType.type.${BodyCorporate.toString}"),
+    InputOption(other, s"schemeType.type.$other", Some("schemeType_schemeTypeDetails-form"))
+  )
 
   implicit val reads: Reads[SchemeType] = {
 
     (JsPath \ "name").read[String].flatMap {
 
-      case schemeTypeName if schemeTypeName == "other" =>
+      case schemeTypeName if schemeTypeName == other =>
         (JsPath \ "schemeTypeDetails").read[String]
           .map[SchemeType](Other.apply)
           .orElse(Reads[SchemeType](_ => JsError("Other Value expected")))
@@ -64,7 +65,7 @@ object SchemeType {
     def writes(o: SchemeType) = {
       o match {
         case SchemeType.Other(schemeTypeDetails) =>
-          Json.obj("name" -> o.toString, "schemeTypeDetails" -> schemeTypeDetails)
+          Json.obj("name" -> other, "schemeTypeDetails" -> schemeTypeDetails)
         case s if mappings.keySet.contains(s.toString) =>
           Json.obj("name" -> s.toString)
       }

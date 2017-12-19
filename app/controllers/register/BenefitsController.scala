@@ -24,44 +24,44 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.BenefitsInsurerFormProvider
-import identifiers.register.BenefitsInsurerId
-import models.Mode
-import models.BenefitsInsurer
+import forms.register.BenefitsFormProvider
+import identifiers.register.BenefitsId
+import models.{Benefits, Mode}
 import play.api.mvc.{Action, AnyContent}
-import utils.{Navigator, UserAnswers}
-import views.html.register.benefitsInsurer
+import utils.{Enumerable, Navigator, UserAnswers}
+import views.html.register.benefits
 
 import scala.concurrent.Future
 
-class BenefitsInsurerController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  dataCacheConnector: DataCacheConnector,
-                                                  navigator: Navigator,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: BenefitsInsurerFormProvider) extends FrontendController with I18nSupport {
+class BenefitsController @Inject()(
+                                        appConfig: FrontendAppConfig,
+                                        override val messagesApi: MessagesApi,
+                                        dataCacheConnector: DataCacheConnector,
+                                        navigator: Navigator,
+                                        authenticate: AuthAction,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
+                                        formProvider: BenefitsFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.benefitsInsurer match {
+      val preparedForm = request.userAnswers.benefits match {
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(benefitsInsurer(appConfig, preparedForm, mode))
+      Ok(benefits(appConfig, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(benefitsInsurer(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(benefits(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[BenefitsInsurer](request.externalId, BenefitsInsurerId.toString, value).map(cacheMap =>
-            Redirect(navigator.nextPage(BenefitsInsurerId, mode)(new UserAnswers(cacheMap))))
+          dataCacheConnector.save[Benefits](request.externalId, BenefitsId.toString, value).map(cacheMap =>
+            Redirect(navigator.nextPage(BenefitsId, mode)(new UserAnswers(cacheMap))))
       )
   }
 }
