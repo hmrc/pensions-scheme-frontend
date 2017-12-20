@@ -122,7 +122,8 @@ benefitsInsurer.error.length.companyName = The company name cannot be more than 
 benefitsInsurer.error.length.policyNumber = The policy number cannot be more than 255 characters
 
 
-schemeEstablishedCountry.title = schemeEstablishedCountry
-schemeEstablishedCountry.heading = schemeEstablishedCountry
+schemeEstablishedCountry.title = Where was the scheme established?
+schemeEstablishedCountry.heading = Where was the scheme established?
 schemeEstablishedCountry.checkYourAnswersLabel = schemeEstablishedCountry
-schemeEstablishedCountry.error.required = Please give an answer for schemeEstablishedCountry
+schemeEstablishedCountry.error.required = Enter a recognised country
+schemeEstablishedCountry.hint = Enter the country where the scheme was established
