@@ -17,10 +17,13 @@
 package utils
 
 import identifiers.register._
+import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits {
+  def addressYears: Option[AddressYears] = cacheMap.getEntry[AddressYears](AddressYearsId.toString)
+
   def benefits: Option[Benefits] = cacheMap.getEntry[Benefits](BenefitsId.toString)
 
   def benefitsInsurer: Option[BenefitsInsurer] = cacheMap.getEntry[BenefitsInsurer](BenefitsInsurerId.toString)
