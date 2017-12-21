@@ -127,3 +127,5 @@ schemeEstablishedCountry.heading = Where was the scheme established?
 schemeEstablishedCountry.checkYourAnswersLabel = schemeEstablishedCountry
 schemeEstablishedCountry.error.required = Enter a recognised country
 schemeEstablishedCountry.hint = Enter the country where the scheme was established
+
+messages__common__pick_country = Select a country
