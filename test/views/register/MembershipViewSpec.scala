@@ -24,7 +24,7 @@ import views.html.register.membership
 
 class MembershipViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "membership"
+  val messageKeyPrefix = "membership_curent"
 
   val form = new MembershipFormProvider()()
 

@@ -17,7 +17,7 @@
 package controllers.register.establishers.individual
 
 import play.api.data.Form
-import play.api.libs.json.JsString
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
@@ -25,22 +25,25 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.individual.AddressYearsFormProvider
 import identifiers.register.establishers.individual.AddressYearsId
-import models.{NormalMode, AddressYears}
+import models.{AddressYears, NormalMode}
 import views.html.register.establishers.individual.addressYears
 import controllers.ControllerSpecBase
+import play.api.mvc.Call
 
 class AddressYearsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new AddressYearsFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): AddressYearsController =
     new AddressYearsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = addressYears(frontendAppConfig, form, NormalMode, 0)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = addressYears(frontendAppConfig, form, NormalMode, 0)(fakeRequest, messages).toString
+
+  val validData = Map(AddressYearsId.toString -> Json.obj("0" -> AddressYears.options.head.value.toString))
 
   "AddressYears Controller" must {
 
@@ -52,7 +55,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(AddressYearsId.toString -> JsString(AddressYears.values.head.toString))
+
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, 0)(fakeRequest)

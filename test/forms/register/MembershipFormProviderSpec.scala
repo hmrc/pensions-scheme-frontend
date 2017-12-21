@@ -34,7 +34,7 @@ class MembershipFormProviderSpec extends FormBehaviours {
     behave like formWithOptionField(
       Field(
         "value",
-        Required -> "membership.error.required",
+        Required -> "messages__error__selection",
         Invalid -> "error.invalid"),
       Membership.options.map(_.value): _*)
   }

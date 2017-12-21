@@ -27,8 +27,8 @@ class BenefitsInsurerFormProvider @Inject() extends Mappings {
    val maxLength = 255
    def apply(): Form[BenefitsInsurer] = Form(
      mapping(
-      "companyName" -> text("benefitsInsurer.error.companyName.required").verifying(maxLength(maxLength, "benefitsInsurer.error.length.companyName")),
-      "policyNumber" -> text("benefitsInsurer.error.policyNumber.required").verifying(maxLength(maxLength, "benefitsInsurer.error.length.policyNumber"))
+      "companyName" -> text("messages__error__company_name").verifying(maxLength(maxLength, "messages__error__companyName_length")),
+      "policyNumber" -> text("messages__error__benefits_insurance__policy").verifying(maxLength(maxLength, "messages__error__policyNumber_length"))
     )(BenefitsInsurer.apply)(BenefitsInsurer.unapply)
    )
  }

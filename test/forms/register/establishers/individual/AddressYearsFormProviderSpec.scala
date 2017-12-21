@@ -34,7 +34,7 @@ class AddressYearsFormProviderSpec extends FormBehaviours {
     behave like formWithOptionField(
       Field(
         "value",
-        Required -> "addressYears.error.required",
+        Required -> "messages__error__address_years",
         Invalid -> "error.invalid"),
       AddressYears.options.map(_.value): _*)
   }

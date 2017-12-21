@@ -24,7 +24,7 @@ import views.html.register.establishers.individual.addressYears
 
 class AddressYearsViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "addressYears"
+  val messageKeyPrefix = "establisher_address_years"
 
   val form = new AddressYearsFormProvider()()
 

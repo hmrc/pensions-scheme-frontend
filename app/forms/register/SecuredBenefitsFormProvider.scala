@@ -24,6 +24,6 @@ class SecuredBenefitsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("securedBenefits.error.required")
+      "value" -> boolean("messages__error__selection")
     )
 }

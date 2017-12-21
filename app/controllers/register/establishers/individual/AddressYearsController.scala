@@ -61,7 +61,8 @@ class AddressYearsController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(addressYears(appConfig, formWithErrors, mode, index))),
         (value) =>
-          dataCacheConnector.save[AddressYears](request.externalId, AddressYearsId.toString, value).map(cacheMap =>
+
+          dataCacheConnector.saveMap[AddressYears](request.externalId, AddressYearsId.toString, index, value).map(cacheMap =>
             Redirect(navigator.nextPage(AddressYearsId, mode)(new UserAnswers(cacheMap))))
       )
   }

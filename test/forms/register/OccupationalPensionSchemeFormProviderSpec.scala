@@ -20,7 +20,7 @@ import forms.FormSpec
 
 class OccupationalPensionSchemeFormProviderSpec extends FormSpec {
 
-  val requiredKey = "occupationalPensionScheme.error.required"
+  val requiredKey = "messages__error__selection"
   val invalidKey = "error.boolean"
 
   val formProvider = new OccupationalPensionSchemeFormProvider()

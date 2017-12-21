@@ -23,11 +23,11 @@ sealed trait SchemeType
 
 object SchemeType {
 
-  case object SingleTrust extends WithName("singleTrust") with SchemeType
+  case object SingleTrust extends WithName("single") with SchemeType
 
-  case object GroupLifeDeath extends WithName("groupLifeDeath") with SchemeType
+  case object GroupLifeDeath extends WithName("group") with SchemeType
 
-  case object BodyCorporate extends WithName("bodyCorporate") with SchemeType
+  case object BodyCorporate extends WithName("corp") with SchemeType
 
   case class Other(schemeTypeDetails: String) extends WithName("other") with SchemeType
 
@@ -39,10 +39,10 @@ object SchemeType {
   ).map(v => (v.toString, v)).toMap
 
   def options: Seq[InputOption] = Seq(
-    InputOption(SingleTrust.toString, s"schemeType.type.${SingleTrust.toString}"),
-    InputOption(GroupLifeDeath.toString, s"schemeType.type.${GroupLifeDeath.toString}"),
-    InputOption(BodyCorporate.toString, s"schemeType.type.${BodyCorporate.toString}"),
-    InputOption(other, s"schemeType.type.$other", Some("schemeType_schemeTypeDetails-form"))
+    InputOption(SingleTrust.toString, s"scheme_details__type__${SingleTrust.toString}"),
+    InputOption(GroupLifeDeath.toString, s"scheme_details__type__${GroupLifeDeath.toString}"),
+    InputOption(BodyCorporate.toString, s"scheme_details__type__${BodyCorporate.toString}"),
+    InputOption(other, s"scheme_details__type_${other}_more", Some("schemeType_schemeTypeDetails-form"))
   )
 
   implicit val reads: Reads[SchemeType] = {

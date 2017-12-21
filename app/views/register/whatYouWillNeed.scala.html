@@ -22,20 +22,20 @@
 @(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("whatYouWillNeed.title"),
+    title = messages("messages__what_you_will_need__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @components.heading("whatYouWillNeed.heading")
+    @components.heading("messages__what_you_will_need__title")
 
-    <p>@messages("whatYouWillNeed.para")</p>
+    <p>@messages("messages__what_you_will_need__lede")</p>
     <ul class="list list-bullet">
-        <li>@messages("whatYouWillNeed.li.utr")</li>
-        <li>@messages("whatYouWillNeed.li.company_info")</li>
-        <li>@messages("whatYouWillNeed.li.contact_info")</li>
-        <li>@messages("whatYouWillNeed.li.contact_info_establisher")</li>
-        <li>@messages("whatYouWillNeed.li.reg_info")</li>
+        <li>@messages("messages__what_you_will_need__item_1")</li>
+        <li>@messages("messages__what_you_will_need__item_2")</li>
+        <li>@messages("messages__what_you_will_need__item_3")</li>
+        <li>@messages("messages__what_you_will_need__item_4")</li>
+        <li>@messages("messages__what_you_will_need__item_5")</li>
     </ul>
 
-    @components.button_link("whatYouWillNeed.button", routes.WhatYouWillNeedController.onPageLoad.url)
+    @components.button_link("messages__common__start", routes.WhatYouWillNeedController.onPageLoad.url)
 }
