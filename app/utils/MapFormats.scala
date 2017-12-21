@@ -49,4 +49,8 @@ trait MapFormats {
           }
         }
     }
+
+
+  implicit def intMapFormat[V](implicit evReads: Reads[Map[String, V]], evWrites: Writes[Map[String, V]]) : Format[Map[Int, V]] =
+    Format(intMapReads[V], intMapWrites[V])
 }
