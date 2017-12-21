@@ -22,16 +22,16 @@ sealed trait AddressYears
 
 object AddressYears {
 
-  case object Option1 extends WithName("option1") with AddressYears
-  case object Option2 extends WithName("option2") with AddressYears
+  case object UnderAYear extends WithName("under_a_year") with AddressYears
+  case object OverAYear extends WithName("over_a_year") with AddressYears
 
   val values: Seq[AddressYears] = Seq(
-    Option1, Option2
+    UnderAYear, OverAYear
   )
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"myOptionsPage.${value.toString}")
+      InputOption(value.toString, s"messages__common__${value.toString}")
   }
 
   implicit val enumerable: Enumerable[AddressYears] =

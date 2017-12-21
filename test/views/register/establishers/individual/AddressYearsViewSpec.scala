@@ -28,9 +28,9 @@ class AddressYearsViewSpec extends ViewBehaviours {
 
   val form = new AddressYearsFormProvider()()
 
-  def createView = () => addressYears(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView = () => addressYears(frontendAppConfig, form, NormalMode, 0)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => addressYears(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => addressYears(frontendAppConfig, form, NormalMode, 0)(fakeRequest, messages)
 
   "AddressYears view" must {
     behave like normalPage(createView, messageKeyPrefix)

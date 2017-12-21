@@ -21,8 +21,10 @@ import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
 
-class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits {
-  def addressYears: Option[AddressYears] = cacheMap.getEntry[AddressYears](AddressYearsId.toString)
+class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
+  def addressYears: Option[Map[Int, AddressYears]] = cacheMap.getEntry[Map[Int, AddressYears]](AddressYearsId.toString)
+
+  def addressYears(index: Int): Option[AddressYears] = addressYears.flatMap(_.get(index))
 
   def benefits: Option[Benefits] = cacheMap.getEntry[Benefits](BenefitsId.toString)
 

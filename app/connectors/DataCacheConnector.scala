@@ -34,6 +34,23 @@ class DataCacheConnectorImpl @Inject()(val sessionRepository: SessionRepository,
     }
   }
 
+  def save[A](cacheId: String, key: String, index: Int, value: A)(implicit fmt: Format[A]): Future[CacheMap] = {
+    sessionRepository().get(cacheId).flatMap { optionalCacheMap =>
+
+      val updatedMap = optionalCacheMap.flatMap{ cacheMap =>
+
+        cacheMap.getEntry[Map[Int, A]](key).map{
+          optionalData => optionalData + (index -> value)
+        }
+      }.getOrElse(Map.empty)
+
+      val updatedCacheMap = cascadeUpsert[Map[Int, A]](key,
+        updatedMap, optionalCacheMap.getOrElse(new CacheMap(cacheId, Map())))
+
+      sessionRepository().upsert(updatedCacheMap).map {_ => updatedCacheMap}
+    }
+  }
+
   def remove(cacheId: String, key: String): Future[Boolean] = {
     sessionRepository().get(cacheId).flatMap { optionalCacheMap =>
       optionalCacheMap.fold(Future(false)) { cacheMap =>
@@ -88,6 +105,8 @@ class DataCacheConnectorImpl @Inject()(val sessionRepository: SessionRepository,
 @ImplementedBy(classOf[DataCacheConnectorImpl])
 trait DataCacheConnector {
   def save[A](cacheId: String, key: String, value: A)(implicit fmt: Format[A]): Future[CacheMap]
+
+  def saveMap[A](cacheId: String, key: String, index: Int, value: A)( implicit fmt: Format[A]) : Future[CacheMap]
 
   def remove(cacheId: String, key: String): Future[Boolean]
 

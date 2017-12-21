@@ -1,4 +1,4 @@
-GET        /addressYears               controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = NormalMode)
-POST       /addressYears               controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = NormalMode)
-GET        /changeAddressYears               controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeAddressYears               controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = CheckMode)
+GET        /addressYears/:index               controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Int)
+POST       /addressYears/:index                controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = NormalMode, index: Int)
+GET        /changeAddressYears/:index               controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Int)
+POST       /changeAddressYears/:index                controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = CheckMode, index: Int)
