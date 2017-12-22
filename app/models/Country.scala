@@ -22,10 +22,11 @@ case class Country(country: String, countryCode: String)
 
 object Country {
 
+  def options: Seq[InputOption] = {
 
-
-  def options: Seq[InputOption] = Seq(InputOption("Abu Dhabi", "territory:AE-AZ"),
-    InputOption("Afghanistan", "country:AF"))
+    Seq(InputOption("Abu Dhabi", "territory:AE-AZ"),
+      InputOption("Afghanistan", "country:AF"))
+  }
 }
 
 

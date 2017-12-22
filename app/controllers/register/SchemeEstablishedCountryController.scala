@@ -27,7 +27,7 @@ import config.FrontendAppConfig
 import forms.register.SchemeEstablishedCountryFormProvider
 import identifiers.register.SchemeEstablishedCountryId
 import models.Mode
-import utils.{Navigator, UserAnswers}
+import utils.{CountryOptions, Navigator, UserAnswers}
 import views.html.register.schemeEstablishedCountry
 
 import scala.concurrent.Future
@@ -40,7 +40,8 @@ class SchemeEstablishedCountryController @Inject()(
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: SchemeEstablishedCountryFormProvider) extends FrontendController with I18nSupport {
+                                        formProvider: SchemeEstablishedCountryFormProvider,
+                                        countryOptions: CountryOptions) extends FrontendController with I18nSupport {
 
   val form = formProvider()
 
@@ -50,14 +51,14 @@ class SchemeEstablishedCountryController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(schemeEstablishedCountry(appConfig, preparedForm, mode))
+      Ok(schemeEstablishedCountry(appConfig, preparedForm, mode, countryOptions.options))
   }
 
   def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(schemeEstablishedCountry(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(schemeEstablishedCountry(appConfig, formWithErrors, mode, countryOptions.options))),
         (value) =>
           dataCacheConnector.save[String](request.externalId, SchemeEstablishedCountryId.toString, value).map(cacheMap =>
             Redirect(navigator.nextPage(SchemeEstablishedCountryId, mode)(new UserAnswers(cacheMap))))
