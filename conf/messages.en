@@ -21,7 +21,7 @@ error.required = Please enter a value
 error.summary.title = There was a problem with the page
 
 messages__index__title = pensions-scheme-frontend
-essages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
+messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
 messages__session_expired__title = For your security, this service has been reset
 messages__session_expired__guidance = The details you have given have been deleted because you did not continue the service for 1 hour.

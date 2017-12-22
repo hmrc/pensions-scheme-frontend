@@ -32,7 +32,7 @@ object Benefits {
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"messages__common__${value.toString}")
+      InputOption(value.toString, s"messages__benefits__${value.toString}")
   }
 
   implicit val enumerable: Enumerable[Benefits] =

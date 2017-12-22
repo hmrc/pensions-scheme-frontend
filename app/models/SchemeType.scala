@@ -39,10 +39,10 @@ object SchemeType {
   ).map(v => (v.toString, v)).toMap
 
   def options: Seq[InputOption] = Seq(
-    InputOption(SingleTrust.toString, s"scheme_details__type__${SingleTrust.toString}"),
-    InputOption(GroupLifeDeath.toString, s"scheme_details__type__${GroupLifeDeath.toString}"),
-    InputOption(BodyCorporate.toString, s"scheme_details__type__${BodyCorporate.toString}"),
-    InputOption(other, s"scheme_details__type_${other}_more", Some("schemeType_schemeTypeDetails-form"))
+    InputOption(SingleTrust.toString, s"messages__scheme_details__type_${SingleTrust.toString}"),
+    InputOption(GroupLifeDeath.toString, s"messages__scheme_details__type_${GroupLifeDeath.toString}"),
+    InputOption(BodyCorporate.toString, s"messages__scheme_details__type_${BodyCorporate.toString}"),
+    InputOption(other, s"messages__scheme_details__type_${other}", Some("schemeType_schemeTypeDetails-form"))
   )
 
   implicit val reads: Reads[SchemeType] = {
