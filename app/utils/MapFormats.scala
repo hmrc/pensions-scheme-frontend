@@ -17,7 +17,6 @@
 package utils
 
 import play.api.libs.json._
-
 import scala.util.{Failure, Success, Try}
 
 trait MapFormats {
