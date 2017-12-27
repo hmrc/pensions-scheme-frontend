@@ -25,6 +25,6 @@ class BenefitsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Benefits] =
     Form(
-      "value" -> enumerable[Benefits]("benefits.error.required")
+      "value" -> enumerable[Benefits]("messages__error__selection")
     )
 }

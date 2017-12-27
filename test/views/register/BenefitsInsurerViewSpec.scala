@@ -26,7 +26,7 @@ import views.html.register.benefitsInsurer
 
 class BenefitsInsurerViewSpec extends QuestionViewBehaviours[BenefitsInsurer] {
 
-  val messageKeyPrefix = "benefitsInsurer"
+  val messageKeyPrefix = "benefits_insurance"
 
   override val form = new BenefitsInsurerFormProvider()()
 

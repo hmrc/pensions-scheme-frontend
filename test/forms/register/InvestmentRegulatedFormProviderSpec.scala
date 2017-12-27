@@ -20,7 +20,7 @@ import forms.FormSpec
 
 class InvestmentRegulatedFormProviderSpec extends FormSpec {
 
-  val requiredKey = "investmentRegulated.error.required"
+  val requiredKey = "messages__error__selection"
   val invalidKey = "error.boolean"
 
   val formProvider = new InvestmentRegulatedFormProvider()

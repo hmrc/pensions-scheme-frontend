@@ -22,12 +22,12 @@ sealed trait Membership
 
 object Membership {
 
-  case object None extends WithName("none") with Membership
-  case object One extends WithName("one") with Membership
-  case object TwoToEleven extends WithName("twoToEleven") with Membership
-  case object TwelveToFifty extends WithName("twelveToFifty") with Membership
-  case object FiftyOneToTenThousand extends WithName("fiftyOneToTenThousand") with Membership
-  case object MoreThanTenThousand extends WithName("moreThanTenThousand") with Membership
+  case object None extends WithName("opt1") with Membership
+  case object One extends WithName("opt2") with Membership
+  case object TwoToEleven extends WithName("opt3") with Membership
+  case object TwelveToFifty extends WithName("opt4") with Membership
+  case object FiftyOneToTenThousand extends WithName("opt5") with Membership
+  case object MoreThanTenThousand extends WithName("opt6") with Membership
 
   val values: Seq[Membership] = Seq(
     None, One, TwoToEleven, TwelveToFifty,FiftyOneToTenThousand, MoreThanTenThousand
@@ -35,7 +35,7 @@ object Membership {
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"membership.${value.toString}")
+      InputOption(value.toString, s"messages__membership__${value.toString}")
   }
 
   implicit val enumerable: Enumerable[Membership] =

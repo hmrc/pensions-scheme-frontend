@@ -22,7 +22,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("benefits.title"),
+    title = messages("messages__benefits__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -30,11 +30,11 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("benefits.heading")
+        @components.heading("messages__benefits__title")
 
         @components.input_radio(
             field = form("value"),
-            legend = messages("benefits.heading"),
+            legend = messages("messages__benefits__title"),
             legendClass = Some("visually-hidden"),
             inputs = Benefits.options
         )

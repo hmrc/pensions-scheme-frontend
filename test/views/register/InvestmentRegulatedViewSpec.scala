@@ -25,7 +25,7 @@ import views.html.register.investmentRegulated
 
 class InvestmentRegulatedViewSpec extends YesNoViewBehaviours {
 
-  val messageKeyPrefix = "investmentRegulated"
+  val messageKeyPrefix = "investment_regulated"
 
   val form = new InvestmentRegulatedFormProvider()()
 

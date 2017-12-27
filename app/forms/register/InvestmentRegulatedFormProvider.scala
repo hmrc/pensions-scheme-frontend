@@ -24,6 +24,6 @@ class InvestmentRegulatedFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("investmentRegulated.error.required")
+      "value" -> boolean("messages__error__selection")
     )
 }
