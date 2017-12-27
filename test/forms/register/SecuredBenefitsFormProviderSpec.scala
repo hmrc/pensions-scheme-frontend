@@ -20,7 +20,7 @@ import forms.FormSpec
 
 class SecuredBenefitsFormProviderSpec extends FormSpec {
 
-  val requiredKey = "securedBenefits.error.required"
+  val requiredKey = "messages__error__selection"
   val invalidKey = "error.boolean"
 
   val formProvider = new SecuredBenefitsFormProvider()

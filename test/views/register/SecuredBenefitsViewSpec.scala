@@ -25,7 +25,7 @@ import views.html.register.securedBenefits
 
 class SecuredBenefitsViewSpec extends YesNoViewBehaviours {
 
-  val messageKeyPrefix = "securedBenefits"
+  val messageKeyPrefix = "contractofinsurance_pension_scheme"
 
   val form = new SecuredBenefitsFormProvider()()
 
@@ -35,7 +35,7 @@ class SecuredBenefitsViewSpec extends YesNoViewBehaviours {
 
   "SecuredBenefits view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, "para")
+    behave like normalPage(createView, messageKeyPrefix, "copy")
 
     behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.SecuredBenefitsController.onSubmit(NormalMode).url)
   }

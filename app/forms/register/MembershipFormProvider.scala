@@ -25,6 +25,6 @@ class MembershipFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Membership] =
     Form(
-      "value" -> enumerable[Membership]("membership.error.required")
+      "value" -> enumerable[Membership]("messages__error__selection")
     )
 }

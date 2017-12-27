@@ -24,6 +24,6 @@ class OccupationalPensionSchemeFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("occupationalPensionScheme.error.required")
+      "value" -> boolean("messages__error__selection")
     )
 }

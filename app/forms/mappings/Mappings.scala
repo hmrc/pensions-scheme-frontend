@@ -42,10 +42,10 @@ trait Mappings extends Formatters with Constraints {
                               invalidKey: String = "error.invalid")(implicit ev: Enumerable[A]): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey))
 
-  protected def schemeTypeMapping(requiredTypeKey: String = "schemeDetails.schemeType.error.required",
-                                  invalidTypeKey: String = "schemeDetails.schemeType.error.invalid",
-                                  requiredOtherKey: String = "schemeType.schemeTypeDetails.error.required",
-                                  invalidOtherKey: String = "schemeType.schemeTypeDetails.error.length"): Mapping[SchemeType] = {
+  protected def schemeTypeMapping(requiredTypeKey: String = "messages__error__selection",
+                                  invalidTypeKey: String = "messages__error__scheme_type_invalid",
+                                  requiredOtherKey: String = "messages__error__scheme_type_information",
+                                  invalidOtherKey: String = "messages__error__scheme_type_length"): Mapping[SchemeType] = {
     val schemeTypeDetailsMaxLength = 150
     val other = "other"
 

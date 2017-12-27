@@ -37,8 +37,8 @@ class BenefitsInsurerFormProviderSpec extends FormBehaviours {
     behave like questionForm(BenefitsInsurer("value 1", "value 2"))
 
     behave like formWithMandatoryTextFields(
-      Field("companyName", Required -> "benefitsInsurer.error.companyName.required"),
-      Field("policyNumber", Required -> "benefitsInsurer.error.policyNumber.required")
+      Field("companyName", Required -> "messages__error__company_name"),
+      Field("policyNumber", Required -> "messages__error__benefits_insurance__policy")
     )
   }
 
@@ -47,7 +47,7 @@ class BenefitsInsurerFormProviderSpec extends FormBehaviours {
     val data = Map(
       "companyName" -> testString,
       "policyNumber" -> "value 2")
-    val expectedError = error("companyName", "benefitsInsurer.error.length.companyName", validMaxLength)
+    val expectedError = error("companyName", "messages__error__companyName_length", validMaxLength)
     checkForError(form, data, expectedError)
   }
 
@@ -56,7 +56,8 @@ class BenefitsInsurerFormProviderSpec extends FormBehaviours {
     val data = Map(
       "companyName" -> "value 1",
       "policyNumber" -> testString)
-    val expectedError = error("policyNumber", "benefitsInsurer.error.length.policyNumber", validMaxLength)
+    val expectedError = error("policyNumber", "messages__error__policyNumber_length", validMaxLength)
     checkForError(form, data, expectedError)
   }
 }
+

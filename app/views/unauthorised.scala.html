@@ -19,10 +19,10 @@
 @(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("unauthorised.title"),
+    title = messages("messages__unauthorised__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    <h1 class="heading-xlarge">@messages("unauthorised.heading")</h1>
+    <h1 class="heading-xlarge">@messages("messages__unauthorised__title")</h1>
 
 }

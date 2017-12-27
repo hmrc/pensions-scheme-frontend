@@ -25,7 +25,7 @@ import views.html.register.occupationalPensionScheme
 
 class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
 
-  val messageKeyPrefix = "occupationalPensionScheme"
+  val messageKeyPrefix = "occupational_pension_scheme"
 
   val form = new OccupationalPensionSchemeFormProvider()()
 

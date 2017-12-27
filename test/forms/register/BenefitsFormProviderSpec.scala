@@ -34,7 +34,7 @@ class BenefitsFormProviderSpec extends FormBehaviours {
     behave like formWithOptionField(
       Field(
         "value",
-        Required -> "benefits.error.required",
+        Required -> "messages__error__selection",
         Invalid -> "error.invalid"),
       Benefits.options.map(_.value): _*)
   }
