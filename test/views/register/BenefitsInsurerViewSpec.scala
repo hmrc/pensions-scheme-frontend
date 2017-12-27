@@ -37,7 +37,7 @@ class BenefitsInsurerViewSpec extends QuestionViewBehaviours[BenefitsInsurer] {
 
   "BenefitsInsurer view" must {
 
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.BenefitsInsurerController.onSubmit(NormalMode).url, "companyName", "policyNumber")
   }

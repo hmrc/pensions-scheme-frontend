@@ -16,9 +16,10 @@
 
 @(
 messageKey: String = "",
-href: String
+href: String,
+buttonClass: Option[String] = Some("button-start")
 )(implicit messages: Messages)
 
 <div class="section">
-    <a href="@href" role="button" class="button button-start">@messages(messageKey)</a>
+    <a href="@href" role="button" class="button @buttonClass">@messages(messageKey)</a>
 </div>

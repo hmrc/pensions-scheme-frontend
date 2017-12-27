@@ -33,7 +33,7 @@ class BenefitsViewSpec extends ViewBehaviours {
   def createViewUsingForm = (form: Form[_]) => benefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   "Benefits view" must {
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
   }
 
   "Benefits view" when {

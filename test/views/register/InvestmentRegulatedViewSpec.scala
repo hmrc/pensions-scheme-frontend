@@ -35,7 +35,7 @@ class InvestmentRegulatedViewSpec extends YesNoViewBehaviours {
 
   "InvestmentRegulated view" must {
 
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.InvestmentRegulatedController.onSubmit(NormalMode).url)
   }

@@ -20,6 +20,7 @@ import play.api.data.Form
 import controllers.register.routes
 import forms.register.SchemeDetailsFormProvider
 import models.{NormalMode, SchemeDetails, SchemeType}
+import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.schemeDetails
 
@@ -29,13 +30,14 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
 
   override val form = new SchemeDetailsFormProvider()()
 
-  def createView = () => schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   "SchemeDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.SchemeDetailsController.onSubmit(NormalMode).url,
       "schemeName")
   }

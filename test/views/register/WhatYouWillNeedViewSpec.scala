@@ -28,7 +28,8 @@ class WhatYouWillNeedViewSpec extends ViewBehaviours {
   def createView = () => whatYouWillNeed(frontendAppConfig)(fakeRequest, messages)
 
   "WhatYouWillNeed view" must {
-    behave like normalPage(createView, messageKeyPrefix, "lede", "item_1", "item_2", "item_3", "item_4", "item_5")
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title") ,
+      "lede", "item_1", "item_2", "item_3", "item_4", "item_5")
 
     "have link" in {
       Jsoup.parse(createView().toString()).select("a.button") must haveLink(routes.WhatYouWillNeedController.onPageLoad().url)

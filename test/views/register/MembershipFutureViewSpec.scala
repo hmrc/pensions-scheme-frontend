@@ -33,7 +33,7 @@ class MembershipFutureViewSpec extends ViewBehaviours {
   def createViewUsingForm = (form: Form[_]) => membershipFuture(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   "MembershipFuture view" must {
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
   }
 
   "MembershipFuture view" when {
