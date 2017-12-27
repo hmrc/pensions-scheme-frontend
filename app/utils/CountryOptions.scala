@@ -18,13 +18,16 @@ package utils
 
 import javax.inject.Inject
 
+import config.FrontendAppConfig
 import play.api.Environment
 import play.api.libs.json.{Json, Reads}
 
-class CountryOptions @Inject()(environment: Environment) {
+class CountryOptions @Inject()(environment: Environment, config: FrontendAppConfig) {
+
+  lazy val locationCanonicalList: String = config.locationCanonicalList
 
   def options(implicit ev: Reads[Map[String, String]]): Seq[InputOption] = {
-    val locationStream = environment.resourceAsStream("location-autocomplete-canonical-list.json")
+    val locationStream = environment.resourceAsStream(locationCanonicalList)
 
     locationStream.flatMap { in =>
       val locationJsValue = Json.parse(in)

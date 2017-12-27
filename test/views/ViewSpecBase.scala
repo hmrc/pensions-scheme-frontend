@@ -93,7 +93,10 @@ trait ViewSpecBase extends SpecBase {
   def assertContainsLabel(doc: Document, forElement: String, expectedText: String, expectedHintText: Option[String] = None) = {
     val labels = doc.getElementsByAttributeValue("for", forElement)
     assert(labels.size == 1, s"\n\nLabel for $forElement was not rendered on the page.")
+
+    println("labels : "+labels)
     val label = labels.first
+    println("\n\n\nlabel : "+label)
     assert(label.text() == expectedText, s"\n\nLabel for $forElement was not $expectedText")
 
     if (expectedHintText.isDefined) {

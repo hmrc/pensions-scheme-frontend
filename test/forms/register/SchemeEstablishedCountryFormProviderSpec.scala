@@ -20,7 +20,7 @@ import forms.FormSpec
 
 class SchemeEstablishedCountryFormProviderSpec extends FormSpec {
 
-  val requiredKey = "schemeEstablishedCountry.error.required"
+  val requiredKey = "messages__error__scheme_country"
 
   "SchemeEstablishedCountry Form" must {
 

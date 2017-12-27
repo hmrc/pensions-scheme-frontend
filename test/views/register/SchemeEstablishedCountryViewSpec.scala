@@ -25,19 +25,21 @@ import views.html.register.schemeEstablishedCountry
 
 class SchemeEstablishedCountryViewSpec extends StringViewBehaviours {
 
-  val messageKeyPrefix = "schemeEstablishedCountry"
+  val messageKeyPrefix = "scheme_country"
 
   val form = new SchemeEstablishedCountryFormProvider()()
 
-  def createView = () => schemeEstablishedCountry(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView = () => schemeEstablishedCountry(frontendAppConfig, form, NormalMode, Seq.empty)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[String]) => schemeEstablishedCountry(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[String]) => schemeEstablishedCountry(frontendAppConfig, form, NormalMode,
+    Seq.empty)(fakeRequest, messages)
 
   "SchemeEstablishedCountry view" must {
     behave like normalPage(createView, messageKeyPrefix)
 
     behave like pageWithBackLink(createView)
 
-    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.SchemeEstablishedCountryController.onSubmit(NormalMode).url)
+    /*behave like stringPage(createViewUsingForm, messageKeyPrefix,
+      routes.SchemeEstablishedCountryController.onSubmit(NormalMode).url, Some("hint"))*/
   }
 }

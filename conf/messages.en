@@ -42,7 +42,7 @@ site.textarea.char_limit = (Limit is {0} characters)
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-pensionSchemeRegistration.title = Pension Scheme Registration - GOV.UK
+messages__pension_scheme_registration__title = Pension Scheme Registration - GOV.UK
 whatYouWillNeed.title = What you’ll need
 whatYouWillNeed.heading = What you’ll need
 whatYouWillNeed.para = To register a pension scheme you will need:
@@ -121,11 +121,7 @@ benefitsInsurer.error.policyNumber.required = Enter the policy number
 benefitsInsurer.error.length.companyName = The company name cannot be more than 255 characters
 benefitsInsurer.error.length.policyNumber = The policy number cannot be more than 255 characters
 
-
-schemeEstablishedCountry.title = Where was the scheme established?
-schemeEstablishedCountry.heading = Where was the scheme established?
-schemeEstablishedCountry.checkYourAnswersLabel = schemeEstablishedCountry
-schemeEstablishedCountry.error.required = Enter a recognised country
-schemeEstablishedCountry.hint = Enter the country where the scheme was established
-
+messages__scheme_country__title = Where was the scheme established?
+messages__error__scheme_country = Enter a recognised country
+messages__scheme_country__hint = Enter the country where the scheme was established
 messages__common__pick_country = Select a country

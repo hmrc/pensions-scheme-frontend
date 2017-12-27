@@ -19,7 +19,7 @@ package controllers.register
 import play.api.data.Form
 import play.api.libs.json.JsString
 import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
+import utils.{CountryOptions, FakeNavigator, InputOption}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
@@ -28,21 +28,28 @@ import identifiers.register.SchemeEstablishedCountryId
 import models.NormalMode
 import views.html.register.schemeEstablishedCountry
 import controllers.ControllerSpecBase
+import play.api.mvc.Call
 
 class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new SchemeEstablishedCountryFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
-    new SchemeEstablishedCountryController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  def countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig){
+    override lazy val locationCanonicalList: String = "country-canonical-list-test.json"
+  }
 
-  def viewAsString(form: Form[_] = form) = schemeEstablishedCountry(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): SchemeEstablishedCountryController =
+    new SchemeEstablishedCountryController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl,
+      formProvider, countryOptions){}
 
-  val testAnswer = "answer"
+  def viewAsString(form: Form[_] = form): String = schemeEstablishedCountry(frontendAppConfig, form, NormalMode,
+    Seq(InputOption("Abu Dhabi","territory:AE-AZ"), InputOption("Afghanistan","country:AF")))(fakeRequest, messages).toString
+
+  val testAnswer = "territory:AE-AZ"
 
   "SchemeEstablishedCountry Controller" must {
 

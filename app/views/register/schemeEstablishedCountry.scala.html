@@ -23,7 +23,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, options: Seq[InputOption])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("schemeEstablishedCountry.title"),
+    title = messages("messages__scheme_country__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -33,11 +33,11 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("schemeEstablishedCountry.heading")
+        @components.heading("messages__scheme_country__title")
 
         @components.select(field = form("value"),
-            label = messages("schemeEstablishedCountry.heading"),
-            hint = Some(messages("schemeEstablishedCountry.hint")),
+            label = messages("messages__scheme_country__title"),
+            hint = Some(messages("messages__scheme_country__hint")),
             options = options,
             placeholder = Some("messages__common__pick_country"),
             formGroupClasses = Set("autocomplete-wrapper"),

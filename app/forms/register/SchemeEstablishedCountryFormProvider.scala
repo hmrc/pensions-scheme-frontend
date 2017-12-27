@@ -25,6 +25,6 @@ class SchemeEstablishedCountryFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("schemeEstablishedCountry.error.required")
+      "value" -> text("messages__error__scheme_country")
     )
 }
