@@ -104,3 +104,5 @@ messages__establisher_address_years__title = How long has the establisher been a
 messages__common__under_a_year = Less than 12 months
 messages__common__over_a_year = More than 12 months
 messages__error__address_years = Select how long they have been at the current address
+
+messages__uk_bank_account__title = Does the scheme have a UK bank account?

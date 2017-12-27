@@ -41,3 +41,8 @@ GET        /benefits               controllers.register.BenefitsController.onPag
 POST       /benefits               controllers.register.BenefitsController.onSubmit(mode: Mode = NormalMode)
 GET        /changeBenefits               controllers.register.BenefitsController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeBenefits               controllers.register.BenefitsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /uKBankAccount                       controllers.register.UKBankAccountController.onPageLoad(mode: Mode = NormalMode)
+POST       /uKBankAccount                       controllers.register.UKBankAccountController.onSubmit(mode: Mode = NormalMode)
+GET        /changeUKBankAccount                       controllers.register.UKBankAccountController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeUKBankAccount                       controllers.register.UKBankAccountController.onSubmit(mode: Mode = CheckMode)
