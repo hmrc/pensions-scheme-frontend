@@ -18,8 +18,7 @@ package models
 
 import play.api.libs.json._
 
-case class UKBankDetails (bankName: String, accountName: String, sortCode: String, accountNumber: String,
-                          day: Int, month: Int, year: Int)
+case class UKBankDetails (bankName: String, accountName: String, sortCode: String, accountNumber: String, date: Date)
 
 object UKBankDetails {
   implicit val format = Json.format[UKBankDetails]

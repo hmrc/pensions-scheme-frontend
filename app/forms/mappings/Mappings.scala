@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.SchemeType
+import models.{Date, SchemeType}
 import models.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
 import play.api.data.{FieldMapping, Mapping}
 import play.api.data.Forms.of
@@ -77,5 +77,20 @@ trait Mappings extends Formatters with Constraints {
       "schemeTypeDetails" -> mandatoryIfEqual("schemeType.type", other, text(requiredOtherKey).
         verifying(maxLength(schemeTypeDetailsMaxLength, invalidOtherKey)))
     ).transform(toSchemeType, fromSchemeType)
+  }
+
+  protected def dateMapping(invalidKey: String): Mapping[Date] = {
+
+    def fromDatePart(date: Date): (Int, Int, Int) = {
+      (date.day, date.month, date.year)
+    }
+
+    def toDatePart(dateTuple: (Int, Int, Int)): Date = {
+      Date(dateTuple._1, dateTuple._2, dateTuple._3)
+    }
+
+    tuple("day" -> int(invalidKey, invalidKey, invalidKey),
+    "month" -> int(invalidKey, invalidKey, invalidKey),
+    "year" -> int(invalidKey, invalidKey, invalidKey)).transform(toDatePart, fromDatePart)
   }
 }

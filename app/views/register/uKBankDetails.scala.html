@@ -53,6 +53,12 @@
             field = form("accountNumber"),
             label = messages("messages__uk_bank_account_details__account_number")
         )
+
+        @components.input_date(
+            field = form("date"),
+            label = messages("messages__uk_bank_account_details__date_bank_account"),
+            hint = Some(messages("messages__common__dob__hint"))
+        )
         @components.submit_button()
     }
 }

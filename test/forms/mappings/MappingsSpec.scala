@@ -16,8 +16,9 @@
 
 package forms.mappings
 
-import models.SchemeType
+import models.{Date, SchemeType}
 import org.apache.commons.lang3.RandomStringUtils
+import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.data.{Form, FormError}
 import utils.Enumerable
@@ -233,6 +234,28 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
       val result = testForm.fill(SchemeType.Other("some value"))
       result.apply("schemeType.type").value.value mustEqual "other"
       result.apply("schemeType.schemeTypeDetails").value.value mustEqual "some value"
+    }
+  }
+
+  "date" must {
+    val testForm: Form[Date] = Form("date"->dateMapping("messages__error__date"))
+
+    "bind a valid date" in {
+      val result = testForm.bind(Map("date.day" -> "1", "date.month" -> "1", "date.year" -> LocalDate.now().getYear.toString))
+      result.get mustEqual Date(1, 1, LocalDate.now().getYear)
+    }
+
+    "not bind an empty Map" in {
+      val result = testForm.bind(Map.empty[String, String])
+      result.errors mustEqual Seq(FormError("date.day", "messages__error__date"),
+        FormError("date.month", "messages__error__date"), FormError("date.year", "messages__error__date"))
+    }
+
+    "unbind a valid date" in {
+      val result = testForm.fill(Date(1, 1, LocalDate.now().getYear))
+      result.apply("date.day").value.value mustEqual "1"
+      result.apply("date.month").value.value mustEqual "1"
+      result.apply("date.year").value.value mustEqual LocalDate.now().getYear.toString
     }
   }
 }

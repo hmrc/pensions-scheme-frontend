@@ -25,19 +25,33 @@ import models.UKBankDetails
 
 class UKBankDetailsFormProvider @Inject() extends Mappings {
 
-  val regex = """[0-9 -]*""".r.toString()
+  val regexAccountNo = """[0-9]*""".r.toString()
+  val regexSortCode = """[0-9 -]*""".r.toString()
+  val nameMaxLength = 28
+  val accountNoMaxLength = 8
+  val sortCodeMaxLength = 6
 
   def apply(): Form[UKBankDetails] = Form(
     mapping(
-      "bankName" -> text("messages__error__bank_name").verifying(maxLength(28, "messages__error__bank_name_length")),
-      "accountName" -> text("messages__error__account_name").verifying(maxLength(28, "messages__error__account_name_length")),
-      "sortCode" -> text("messages__error__sort_code").verifying(regexp(regex, "messages__error__sort_code_invalid")).verifying(
-        maxLength(6, "messages__error__sort_code_length")
-      ),
-      "accountNumber" -> text("messages__error__account_number"),
-      "day" -> int("messages__error__date"),
-      "month" -> int("messages__error__date"),
-      "year" -> int("messages__error__date")
+      "bankName" ->
+        text("messages__error__bank_name").
+        verifying(maxLength(nameMaxLength, "messages__error__bank_name_length")),
+      "accountName" ->
+        text("messages__error__account_name").
+        verifying(maxLength(nameMaxLength, "messages__error__account_name_length")),
+      "sortCode" ->
+        text("messages__error__sort_code").
+        verifying(regexMaxLength(
+          regexSortCode, sortCodeMaxLength,
+          "messages__error__sort_code_invalid", "messages__error__sort_code_length")),
+      "accountNumber" ->
+        text("messages__error__account_number").
+        verifying(regexMaxLength(
+          regexAccountNo, accountNoMaxLength,
+          "messages__error__account_number_invalid",
+          "messages__error__account_number_length")),
+      "date" ->
+        dateMapping("messages__error__date")
     )(UKBankDetails.apply)(UKBankDetails.unapply)
   )
 }

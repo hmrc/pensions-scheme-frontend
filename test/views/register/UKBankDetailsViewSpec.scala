@@ -21,6 +21,8 @@ import controllers.register.routes
 import forms.register.UKBankDetailsFormProvider
 import models.NormalMode
 import models.UKBankDetails
+import org.apache.commons.lang3.RandomUtils
+import org.joda.time.LocalDate
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.uKBankDetails
 
@@ -34,11 +36,37 @@ class UKBankDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
 
   def createViewUsingForm = (form: Form[_]) => uKBankDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
+  val validData: Map[String, String] = Map(
+    "bankName" -> "test bank",
+    "accountName" -> "test account",
+    "sortCode" -> RandomUtils.nextInt(100000, 999999).toString,
+    "accountNumber" -> RandomUtils.nextInt(10000000, 99999999).toString,
+    "date.day" -> "1",
+    "date.month" -> "2",
+    "date.year" -> LocalDate.now().getYear.toString
+  )
 
   "UKBankDetails view" must {
 
     behave like normalPage(createView, messageKeyPrefix)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.UKBankDetailsController.onSubmit(NormalMode).url, "field1", "field2")
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
+      routes.UKBankDetailsController.onSubmit(NormalMode).url, "bankName", "accountName", "sortCode",
+      "accountNumber")
+
+    "display an input text box with the correct label and value for day" in {
+      val doc = asDocument(createViewUsingForm(form.bind(validData)))
+      doc must haveLabelAndValue("date_day", messages("messages__common__day"), "1")
+    }
+
+    "display an input text box with the correct label and value for month" in {
+      val doc = asDocument(createViewUsingForm(form.bind(validData)))
+      doc must haveLabelAndValue("date_month", messages("messages__common__month"), "2")
+    }
+
+    "display an input text box with the correct label and value for year" in {
+      val doc = asDocument(createViewUsingForm(form.bind(validData)))
+      doc must haveLabelAndValue("date_year", messages("messages__common__year"), LocalDate.now().getYear.toString)
+    }
   }
 }
