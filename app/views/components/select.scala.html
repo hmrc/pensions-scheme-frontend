@@ -26,7 +26,7 @@
 
 <div id="@field.id-form" class="form-group @formGroupClasses.mkString(" ") @if(field.hasErrors) {form-group-error}">
  <label for="@field.id">
-  <span class="labelClasses.mkString(" ")">@messages(label)
+  <span class="@labelClasses.mkString(" ")">@messages(label)
   </span>
 
   @hint.map{ hintText =>
@@ -39,16 +39,16 @@
 
  </label>
 
- <select class="form-control selectClasses.mkString(" ")" id="@field.id" name="@field.name">
+ <select class="form-control @selectClasses.mkString(" ")" id="@field.id" name="@field.name">
  @placeholder.map{ ph =>
    <option value="">@messages(ph)</option>
  }
 
  @options.map{ valueOption =>
-  <option value="@valueOption.label"
+  <option id="value-@{valueOption.value}" value="@valueOption.value"
    @if(field.value.contains(valueOption.value)){
     selected
-   }>@messages(valueOption.value)</option>
+   }>@messages(valueOption.label)</option>
  }
  </select>
 </div>

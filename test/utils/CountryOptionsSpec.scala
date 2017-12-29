@@ -17,18 +17,20 @@
 package utils
 
 import base.SpecBase
+import models.CountryOptions
 
 class CountryOptionsSpec extends SpecBase {
 
-  def countryOption(jsonFile: String = "country-canonical-list-test.json"): CountryOptions = new CountryOptions(environment, frontendAppConfig){
+  def countryOption(jsonFile: String = "country-canonical-list-test.json"): CountryOptions =
+    new CountryOptions(environment, frontendAppConfig){
     override lazy val locationCanonicalList: String = jsonFile
   }
 
   "Country Options" must {
 
     "build correctly the InputOptions with country list and country code" in {
-      countryOption().options mustEqual Seq(InputOption("Abu Dhabi","territory:AE-AZ"),
-        InputOption("Afghanistan","country:AF"))
+      countryOption().options mustEqual Seq(InputOption("territory:AE-AZ", "Abu Dhabi"),
+        InputOption("country:AF", "Afghanistan"))
     }
 
     "build the empty list if the file name is not correct" in {

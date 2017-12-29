@@ -19,12 +19,14 @@ package forms.register
 import javax.inject.Inject
 
 import forms.mappings.Mappings
+import models.CountryOptions
 import play.api.data.Form
 
-class SchemeEstablishedCountryFormProvider @Inject() extends Mappings {
+class SchemeEstablishedCountryFormProvider @Inject()(countries: CountryOptions) extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("messages__error__scheme_country")
+      "value" -> text("messages__error__scheme_country").verifying(
+        validCountries("messages__error__scheme_country", countries))
     )
 }

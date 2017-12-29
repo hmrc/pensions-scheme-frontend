@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
 import javax.inject.Inject
 
 import config.FrontendAppConfig
 import play.api.Environment
 import play.api.libs.json.{Json, Reads}
+import utils.InputOption
 
 class CountryOptions @Inject()(environment: Environment, config: FrontendAppConfig) {
 
@@ -34,7 +35,7 @@ class CountryOptions @Inject()(environment: Environment, config: FrontendAppConf
 
       Json.fromJson[Seq[Seq[String]]](locationJsValue).asOpt.map {
         _.map { countryList =>
-          InputOption(countryList(0), countryList(1))
+          InputOption(countryList(1), countryList(0))
         }
       }
     }.getOrElse(Seq.empty)

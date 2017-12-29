@@ -17,9 +17,10 @@
 package views.register
 
 import play.api.data.Form
-import controllers.register.routes
 import forms.register.SchemeEstablishedCountryFormProvider
-import models.NormalMode
+import models.{CountryOptions, NormalMode}
+import play.twirl.api.HtmlFormat
+import utils.InputOption
 import views.behaviours.StringViewBehaviours
 import views.html.register.schemeEstablishedCountry
 
@@ -27,19 +28,39 @@ class SchemeEstablishedCountryViewSpec extends StringViewBehaviours {
 
   val messageKeyPrefix = "scheme_country"
 
-  val form = new SchemeEstablishedCountryFormProvider()()
+  def countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig){
+    override lazy val locationCanonicalList: String = "country-canonical-list-test.json"
+  }
+  val form = new SchemeEstablishedCountryFormProvider(countryOptions)()
 
-  def createView = () => schemeEstablishedCountry(frontendAppConfig, form, NormalMode, Seq.empty)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => schemeEstablishedCountry(frontendAppConfig, form, NormalMode, Seq.empty)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[String]) => schemeEstablishedCountry(frontendAppConfig, form, NormalMode,
-    Seq.empty)(fakeRequest, messages)
+  val validData: Seq[InputOption] = Seq(InputOption("country:AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
+
+  def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) => schemeEstablishedCountry(frontendAppConfig, form, NormalMode,
+    validData)(fakeRequest, messages)
 
   "SchemeEstablishedCountry view" must {
     behave like normalPage(createView, messageKeyPrefix)
 
     behave like pageWithBackLink(createView)
 
-    /*behave like stringPage(createViewUsingForm, messageKeyPrefix,
-      routes.SchemeEstablishedCountryController.onSubmit(NormalMode).url, Some("hint"))*/
+    "contain select input options for the value" in {
+      val doc = asDocument(createViewUsingForm(form))
+      for (option <- validData) {
+        assertContainsSelectOption(doc, s"value-${option.value}", option.label, option.value, false)
+      }
+    }
+
+    for (option <- validData) {
+      s"have the '${option.value}' select option selected" in {
+        val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
+        assertContainsSelectOption(doc, s"value-${option.value}", option.label, option.value, true)
+
+        for (unselectedOption <- validData.filterNot(o => o == option)) {
+          assertContainsSelectOption(doc, s"value-${unselectedOption.value}", unselectedOption.label, unselectedOption.value, false)
+        }
+      }
+    }
   }
 }

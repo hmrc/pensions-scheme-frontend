@@ -19,13 +19,13 @@ package controllers.register
 import play.api.data.Form
 import play.api.libs.json.JsString
 import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.{CountryOptions, FakeNavigator, InputOption}
+import utils.{FakeNavigator, InputOption}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.SchemeEstablishedCountryFormProvider
 import identifiers.register.SchemeEstablishedCountryId
-import models.NormalMode
+import models.{CountryOptions, NormalMode}
 import views.html.register.schemeEstablishedCountry
 import controllers.ControllerSpecBase
 import play.api.mvc.Call
@@ -34,12 +34,11 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new SchemeEstablishedCountryFormProvider()
-  val form = formProvider()
-
   def countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig){
     override lazy val locationCanonicalList: String = "country-canonical-list-test.json"
   }
+  val formProvider = new SchemeEstablishedCountryFormProvider(countryOptions)
+  val form = formProvider()
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): SchemeEstablishedCountryController =
     new SchemeEstablishedCountryController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
@@ -47,7 +46,7 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
       formProvider, countryOptions){}
 
   def viewAsString(form: Form[_] = form): String = schemeEstablishedCountry(frontendAppConfig, form, NormalMode,
-    Seq(InputOption("Abu Dhabi","territory:AE-AZ"), InputOption("Afghanistan","country:AF")))(fakeRequest, messages).toString
+    Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan")))(fakeRequest, messages).toString
 
   val testAnswer = "territory:AE-AZ"
 

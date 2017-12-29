@@ -17,6 +17,7 @@
 package forms.register
 
 import forms.FormSpec
+import models.CountryOptions
 
 class SchemeEstablishedCountryFormProviderSpec extends FormSpec {
 
@@ -24,11 +25,19 @@ class SchemeEstablishedCountryFormProviderSpec extends FormSpec {
 
   "SchemeEstablishedCountry Form" must {
 
-    val formProvider = new SchemeEstablishedCountryFormProvider()
+    def countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig){
+      override lazy val locationCanonicalList: String = "country-canonical-list-test.json"
+    }
+    val formProvider = new SchemeEstablishedCountryFormProvider(countryOptions)
 
-    "bind a string" in {
-      val form = formProvider().bind(Map("value" -> "answer"))
-      form.get shouldBe "answer"
+    "bind a valid country" in {
+      val form = formProvider().bind(Map("value" -> "territory:AE-AZ"))
+      form.get shouldBe "territory:AE-AZ"
+    }
+
+    "fail to bind an invalid country" in {
+      val expectedError = error("value", requiredKey)
+      checkForError(formProvider(), Map("value" -> "test"), expectedError)
     }
 
     "fail to bind a blank value" in {
