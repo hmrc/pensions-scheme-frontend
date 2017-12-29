@@ -34,11 +34,10 @@ hint: Option[String] = None
         <span class="form-hint" id="@{field.id}-date-hint">@hint</span>
         }
 
-        @for(f <- Seq(field, field("day"), field("month"), field("year"))) {
-            @f.errors.map { error =>
-                <span class="error-notification" id="error-message-@{f.id}">@messages(error.messages.head)</span>
-            }
+        @if(field("day").errors.nonEmpty || field("month").errors.nonEmpty || field("year").errors.nonEmpty){
+            <span class="error-notification" id="error-message-date">@messages("messages__error__date")</span>
         }
+
     </legend>
     <div class="form-date">
         <div class="form-group form-group-day">

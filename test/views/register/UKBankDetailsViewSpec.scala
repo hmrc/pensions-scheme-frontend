@@ -16,7 +16,7 @@
 
 package views.register
 
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import controllers.register.routes
 import forms.register.UKBankDetailsFormProvider
 import models.NormalMode
@@ -67,6 +67,36 @@ class UKBankDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
     "display an input text box with the correct label and value for year" in {
       val doc = asDocument(createViewUsingForm(form.bind(validData)))
       doc must haveLabelAndValue("date_year", messages("messages__common__year"), LocalDate.now().getYear.toString)
+    }
+
+    "display error for day field on error summary" in {
+      val error = "error"
+      val doc = asDocument(createViewUsingForm(form.withError(FormError("date.day", error))))
+      doc must haveErrorOnSummary("date_day", error)
+    }
+
+    "display error for month field on error summary" in {
+      val error = "error"
+      val doc = asDocument(createViewUsingForm(form.withError(FormError("date.month", error))))
+      doc must haveErrorOnSummary("date_month", error)
+    }
+
+    "display error for year field on error summary" in {
+      val error = "error"
+      val doc = asDocument(createViewUsingForm(form.withError(FormError("date.year", error))))
+      doc must haveErrorOnSummary("date_year", error)
+    }
+
+    "display only one date error when all the date fields are missing" in {
+      val expectedError = messages("messages__error__date")
+      val invalidData: Map[String, String] = Map(
+        "bankName" -> "test bank",
+        "accountName" -> "test account",
+        "sortCode" -> RandomUtils.nextInt(100000, 999999).toString,
+        "accountNumber" -> RandomUtils.nextInt(10000000, 99999999).toString
+      )
+      val doc = asDocument(createViewUsingForm(form.bind(invalidData)))
+      doc.select("span.error-notification").text() mustEqual expectedError
     }
   }
 }
