@@ -97,8 +97,8 @@ messages__benefits_insurance__name = Name of insurance company
 messages__benefits_insurance__policy = Policy number
 messages__error__company_name = Enter the company name
 messages__error__benefits_insurance__policy = Enter the policy number
-messages__error__companyName_length = The company name cannot be more than 255 characters
-messages__error__policyNumber_length = The policy number cannot be more than 255 characters
+messages__error__company_name_length = The company name cannot be more than 255 characters
+messages__error__benefits_insurance__policy_length = The policy number cannot be more than 255 characters
 
 messages__establisher_address_years__title = How long has the establisher been at this address?
 messages__common__under_a_year = Less than 12 months
