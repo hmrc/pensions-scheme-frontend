@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,17 @@ package forms.register
 
 import forms.FormSpec
 import models.CountryOptions
+import utils.InputOption
 
 class SchemeEstablishedCountryFormProviderSpec extends FormSpec {
 
   val requiredKey = "messages__error__scheme_country"
+  val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
   "SchemeEstablishedCountry Form" must {
 
-    def countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig){
-      override lazy val locationCanonicalList: String = "country-canonical-list-test.json"
-    }
+    val countryOptions: CountryOptions = new CountryOptions(options)
+
     val formProvider = new SchemeEstablishedCountryFormProvider(countryOptions)
 
     "bind a valid country" in {

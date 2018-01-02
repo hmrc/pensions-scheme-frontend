@@ -16,33 +16,34 @@
 
 package forms.mappings
 
-import forms.FormSpec
 import models.CountryOptions
-import org.scalatest.WordSpec
+import org.scalatest.{MustMatchers, WordSpec}
 import play.api.data.validation.{Invalid, Valid}
+import utils.InputOption
 
-class ConstraintsSpec extends WordSpec with FormSpec with Constraints {
+class ConstraintsSpec extends WordSpec with MustMatchers with Constraints {
+
 
   "firstError" must {
 
     "return Valid when all constraints pass" in {
       val result = firstError(maxLength(10, "error.length"), regexp("""^\w+$""", "error.regexp"))("foo")
-      result shouldEqual Valid
+      result mustEqual Valid
     }
 
     "return Invalid when the first constraint fails" in {
       val result = firstError(maxLength(10, "error.length"), regexp("""^\w+$""", "error.regexp"))("a" * 11)
-      result shouldEqual Invalid("error.length", 10)
+      result mustEqual Invalid("error.length", 10)
     }
 
     "return Invalid when the second constraint fails" in {
       val result = firstError(maxLength(10, "error.length"), regexp("""^\w+$""", "error.regexp"))("")
-      result shouldEqual Invalid("error.regexp", """^\w+$""")
+      result mustEqual Invalid("error.regexp", """^\w+$""")
     }
 
     "return Invalid for the first error when both constraints fail" in {
       val result = firstError(maxLength(-1, "error.length"), regexp("""^\w+$""", "error.regexp"))("")
-      result shouldEqual Invalid("error.length", -1)
+      result mustEqual Invalid("error.length", -1)
     }
   }
 
@@ -50,17 +51,17 @@ class ConstraintsSpec extends WordSpec with FormSpec with Constraints {
 
     "return Valid for a number greater than the threshold" in {
       val result = minimumValue(1, "error.min").apply(2)
-      result shouldEqual Valid
+      result mustEqual Valid
     }
 
     "return Valid for a number equal to the threshold" in {
       val result = minimumValue(1, "error.min").apply(1)
-      result shouldEqual Valid
+      result mustEqual Valid
     }
 
     "return Invalid for a number below the threshold" in {
       val result = minimumValue(1, "error.min").apply(0)
-      result shouldEqual Invalid("error.min", 1)
+      result mustEqual Invalid("error.min", 1)
     }
   }
 
@@ -68,17 +69,17 @@ class ConstraintsSpec extends WordSpec with FormSpec with Constraints {
 
     "return Valid for a number less than the threshold" in {
       val result = maximumValue(1, "error.max").apply(0)
-      result shouldEqual Valid
+      result mustEqual Valid
     }
 
     "return Valid for a number equal to the threshold" in {
       val result = maximumValue(1, "error.max").apply(1)
-      result shouldEqual Valid
+      result mustEqual Valid
     }
 
     "return Invalid for a number above the threshold" in {
       val result = maximumValue(1, "error.max").apply(2)
-      result shouldEqual Invalid("error.max", 1)
+      result mustEqual Invalid("error.max", 1)
     }
   }
 
@@ -86,12 +87,12 @@ class ConstraintsSpec extends WordSpec with FormSpec with Constraints {
 
     "return Valid for an input that matches the expression" in {
       val result = regexp("""^\w+$""", "error.invalid")("foo")
-      result shouldEqual Valid
+      result mustEqual Valid
     }
 
     "return Invalid for an input that does not match the expression" in {
       val result = regexp("""^\d+$""", "error.invalid")("foo")
-      result shouldEqual Invalid("error.invalid", """^\d+$""")
+      result mustEqual Invalid("error.invalid", """^\d+$""")
     }
   }
 
@@ -99,38 +100,39 @@ class ConstraintsSpec extends WordSpec with FormSpec with Constraints {
 
     "return Valid for a string shorter than the allowed length" in {
       val result = maxLength(10, "error.length")("a" * 9)
-      result shouldEqual Valid
+      result mustEqual Valid
     }
 
     "return Valid for an empty string" in {
       val result = maxLength(10, "error.length")("")
-      result shouldEqual Valid
+      result mustEqual Valid
     }
 
     "return Valid for a string equal to the allowed length" in {
       val result = maxLength(10, "error.length")("a" * 10)
-      result shouldEqual Valid
+      result mustEqual Valid
     }
 
     "return Invalid for a string longer than the allowed length" in {
       val result = maxLength(10, "error.length")("a" * 11)
-      result shouldEqual Invalid("error.length", 10)
+      result mustEqual Invalid("error.length", 10)
     }
   }
 
   "validCountries" must {
-    def countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig) {
-      override lazy val locationCanonicalList: String = "country-canonical-list-test.json"
-    }
+
+    val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
+
+    val countryOptions: CountryOptions = new CountryOptions(options)
 
     "return Valid for a string which is in the recognised country list" in {
       val result = validCountries("error.invalid", countryOptions)("territory:AE-AZ")
-      result shouldEqual Valid
+      result mustEqual Valid
     }
 
     "return Invalid for a string which is not in the recognised country list" in {
       val result = validCountries("error.invalid", countryOptions)("territory:FF")
-      result shouldEqual Invalid("error.invalid")
+      result mustEqual Invalid("error.invalid")
     }
   }
 }

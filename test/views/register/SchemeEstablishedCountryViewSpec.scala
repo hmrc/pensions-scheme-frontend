@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,15 +27,12 @@ import views.html.register.schemeEstablishedCountry
 class SchemeEstablishedCountryViewSpec extends StringViewBehaviours {
 
   val messageKeyPrefix = "scheme_country"
+  val validData: Seq[InputOption] = Seq(InputOption("country:AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
+  val countryOptions: CountryOptions = new CountryOptions(validData)
 
-  def countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig){
-    override lazy val locationCanonicalList: String = "country-canonical-list-test.json"
-  }
   val form = new SchemeEstablishedCountryFormProvider(countryOptions)()
 
   def createView: () => HtmlFormat.Appendable = () => schemeEstablishedCountry(frontendAppConfig, form, NormalMode, Seq.empty)(fakeRequest, messages)
-
-  val validData: Seq[InputOption] = Seq(InputOption("country:AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
 
   def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) => schemeEstablishedCountry(frontendAppConfig, form, NormalMode,
     validData)(fakeRequest, messages)

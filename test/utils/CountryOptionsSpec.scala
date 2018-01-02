@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,48 @@
 package utils
 
 import base.SpecBase
+import com.typesafe.config.ConfigException
 import models.CountryOptions
+import play.api.test.Helpers._
+import play.api.inject.guice.GuiceApplicationBuilder
 
 class CountryOptionsSpec extends SpecBase {
-
-  def countryOption(jsonFile: String = "country-canonical-list-test.json"): CountryOptions =
-    new CountryOptions(environment, frontendAppConfig){
-    override lazy val locationCanonicalList: String = jsonFile
-  }
 
   "Country Options" must {
 
     "build correctly the InputOptions with country list and country code" in {
-      countryOption().options mustEqual Seq(InputOption("territory:AE-AZ", "Abu Dhabi"),
-        InputOption("country:AF", "Afghanistan"))
+
+      val app =
+        new GuiceApplicationBuilder()
+          .configure(Map(
+            "location.canonical.list" -> "country-canonical-list-test.json",
+            "metrics.enabled" -> "false"
+          )).build()
+
+      running(app) {
+
+        val countryOption: CountryOptions = app.injector.instanceOf[CountryOptions]
+
+        countryOption.options mustEqual Seq(InputOption("territory:AE-AZ", "Abu Dhabi"),
+          InputOption("country:AF", "Afghanistan"))
+      }
     }
 
-    "build the empty list if the file name is not correct" in {
-      countryOption("country-canonical-list-test").options mustEqual Seq.empty
+    "throw the error if the country json does not exist" in {
+
+      val app =
+        new GuiceApplicationBuilder()
+          .configure(Map(
+            "location.canonical.list" -> "country-canonical-empty-test.json",
+            "metrics.enabled" -> "false"
+          )).build()
+
+      running(app) {
+        val countryOption: CountryOptions = app.injector.instanceOf[CountryOptions]
+        an[ConfigException.BadValue] should be thrownBy {
+          countryOption.options
+        }
+      }
     }
   }
 }

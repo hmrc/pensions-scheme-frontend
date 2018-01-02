@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,31 @@
 
 package models
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
 import play.api.Environment
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.Json
 import utils.InputOption
 
-class CountryOptions @Inject()(environment: Environment, config: FrontendAppConfig) {
+@Singleton
+class CountryOptions(val options: Seq[InputOption]) {
 
-  lazy val locationCanonicalList: String = config.locationCanonicalList
-
-  def options(implicit ev: Reads[Map[String, String]]): Seq[InputOption] = {
-    val locationStream = environment.resourceAsStream(locationCanonicalList)
-
-    locationStream.flatMap { in =>
-      val locationJsValue = Json.parse(in)
-
-      Json.fromJson[Seq[Seq[String]]](locationJsValue).asOpt.map {
-        _.map { countryList =>
-          InputOption(countryList(1), countryList(0))
-        }
+  @Inject()
+  def this(environment: Environment, config: FrontendAppConfig) {
+    this(
+      environment.resourceAsStream(config.locationCanonicalList).flatMap {
+        in =>
+          val locationJsValue = Json.parse(in)
+          Json.fromJson[Seq[Seq[String]]](locationJsValue).asOpt.map {
+            _.map { countryList =>
+              InputOption(countryList(1), countryList(0))
+            }
+          }
+      }.getOrElse{
+        throw new ConfigException.BadValue(config.locationCanonicalList, "country json does not exist")
       }
-    }.getOrElse(Seq.empty)
+    )
   }
 }

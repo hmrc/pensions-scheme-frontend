@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,9 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def countryOptions: CountryOptions = new CountryOptions(environment, frontendAppConfig){
-    override lazy val locationCanonicalList: String = "country-canonical-list-test.json"
-  }
+  val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
+
+  def countryOptions: CountryOptions = new CountryOptions(options)
   val formProvider = new SchemeEstablishedCountryFormProvider(countryOptions)
   val form = formProvider()
 
@@ -45,8 +45,7 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl,
       formProvider, countryOptions){}
 
-  def viewAsString(form: Form[_] = form): String = schemeEstablishedCountry(frontendAppConfig, form, NormalMode,
-    Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan")))(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = schemeEstablishedCountry(frontendAppConfig, form, NormalMode, options)(fakeRequest, messages).toString
 
   val testAnswer = "territory:AE-AZ"
 
