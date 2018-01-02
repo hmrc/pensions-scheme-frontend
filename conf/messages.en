@@ -103,3 +103,5 @@ messages__scheme_country__title = Where was the scheme established?
 messages__error__scheme_country = Enter a recognised country
 messages__scheme_country__hint = Enter the country where the scheme was established
 messages__common__pick_country = Select a country
+
+messages__uk_bank_account__title = Does the scheme have a UK bank account?
