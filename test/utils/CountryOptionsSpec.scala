@@ -17,7 +17,9 @@
 package utils
 
 import base.SpecBase
+import com.google.inject.ProvisionException
 import com.typesafe.config.ConfigException
+import config.FrontendAppConfig
 import models.CountryOptions
 import play.api.test.Helpers._
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -27,7 +29,6 @@ class CountryOptionsSpec extends SpecBase {
   "Country Options" must {
 
     "build correctly the InputOptions with country list and country code" in {
-
       val app =
         new GuiceApplicationBuilder()
           .configure(Map(
@@ -38,26 +39,20 @@ class CountryOptionsSpec extends SpecBase {
       running(app) {
 
         val countryOption: CountryOptions = app.injector.instanceOf[CountryOptions]
-
         countryOption.options mustEqual Seq(InputOption("territory:AE-AZ", "Abu Dhabi"),
           InputOption("country:AF", "Afghanistan"))
       }
     }
 
     "throw the error if the country json does not exist" in {
+      val builder = new GuiceApplicationBuilder()
+        .configure(Map(
+          "location.canonical.list" -> "country-canonical-test.json",
+          "metrics.enabled" -> "false"
+        ))
 
-      val app =
-        new GuiceApplicationBuilder()
-          .configure(Map(
-            "location.canonical.list" -> "country-canonical-empty-test.json",
-            "metrics.enabled" -> "false"
-          )).build()
-
-      running(app) {
-        val countryOption: CountryOptions = app.injector.instanceOf[CountryOptions]
-        an[ConfigException.BadValue] should be thrownBy {
-          countryOption.options
-        }
+      an[ConfigException.BadValue] shouldBe thrownBy {
+        new CountryOptions(builder.environment, builder.injector.instanceOf[FrontendAppConfig])
       }
     }
   }
