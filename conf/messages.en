@@ -67,8 +67,7 @@ messages__error__scheme_name_length = The scheme name cannot be more than 255 ch
 messages__error__scheme_type_invalid = You must select a valid scheme type
 messages__error__scheme_type_length = The other scheme type cannot be more than 150 characters
 
-messages__membership_curent__title = How many scheme members are there?
-messages__membership_curent__title_short = Current membership
+messages__membership_current__title = How many scheme members are there?
 
 messages__membership__title = How many scheme members could there be in the next 12 months?
 messages__membership__title_short = Membership within 12 months
@@ -97,8 +96,8 @@ messages__benefits_insurance__name = Name of insurance company
 messages__benefits_insurance__policy = Policy number
 messages__error__company_name = Enter the company name
 messages__error__benefits_insurance__policy = Enter the policy number
-messages__error__companyName_length = The company name cannot be more than 255 characters
-messages__error__policyNumber_length = The policy number cannot be more than 255 characters
+messages__error__company_name_length = The company name cannot be more than 255 characters
+messages__error__benefits_insurance__policy_length = The policy number cannot be more than 255 characters
 
 messages__scheme_country__title = Where was the scheme established?
 messages__error__scheme_country = Enter a recognised country
