@@ -34,7 +34,7 @@ hint: Option[String] = None
         <span class="form-hint" id="@{field.id}-date-hint">@hint</span>
         }
 
-        @if(field("day").errors.nonEmpty || field("month").errors.nonEmpty || field("year").errors.nonEmpty || field("date").errors.nonEmpty){
+        @if(field("day").errors.nonEmpty || field("month").errors.nonEmpty || field("year").errors.nonEmpty || field.errors.nonEmpty){
             <span class="error-notification" id="error-message-date">@messages("messages__error__date")</span>
         }
 
