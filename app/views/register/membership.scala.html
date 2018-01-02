@@ -1,5 +1,5 @@
 @*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__membership_curent__title"),
+    title = messages("messages__membership_current__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -30,11 +30,11 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__membership_curent__title")
+        @components.heading("messages__membership_current__title")
 
         @components.input_radio(
             field = form("value"),
-            legend = messages("messages__membership_curent__title"),
+            legend = messages("messages__membership_current__title"),
             legendClass = Some("visually-hidden"),
             inputs = Membership.options
         )
