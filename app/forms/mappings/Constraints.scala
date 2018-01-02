@@ -72,16 +72,6 @@ trait Constraints {
         Invalid(errorKey, maximum)
     }
 
-  protected def regexMaxLength(regex: String, maxLength: Int, invalidKey: String, maxErrorKey: String): Constraint[String] =
-    Constraint {
-      case str if (!(str.matches(regex))) =>
-        Invalid(invalidKey, regex)
-      case str if ((str.replaceAll("""[- ]*""".r.toString(), "").length) > maxLength) =>
-        Invalid(maxErrorKey, maxLength)
-      case _ => Valid
-    }
-
-
   protected def schemeTypeConstraint(invalidKey: String): Constraint[String] = {
 
     val validSchemeTypes: Seq[String] = Seq(SchemeType.SingleTrust.toString,
@@ -99,6 +89,13 @@ trait Constraints {
     Constraint {
       case country if(validCountries.contains(country)) => Valid
       case _ => Invalid(invalidKey)
+    }
+  }
+
+  def returnOnFirstFailure[T](constraints: Constraint[T]*): Constraint[T] = Constraint { field: T =>
+    constraints.toList dropWhile (_(field) == Valid) match {
+      case Nil => Valid
+      case constraint :: _ => constraint(field)
     }
   }
 }

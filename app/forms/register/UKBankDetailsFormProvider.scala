@@ -40,16 +40,13 @@ class UKBankDetailsFormProvider @Inject() extends Mappings {
         text("messages__error__account_name").
         verifying(maxLength(nameMaxLength, "messages__error__account_name_length")),
       "sortCode" ->
-        text("messages__error__sort_code").
-        verifying(regexMaxLength(
-          regexSortCode, sortCodeMaxLength,
-          "messages__error__sort_code_invalid", "messages__error__sort_code_length")),
+        sortCodeMapping("messages__error__sort_code",
+        "messages__error__sort_code_invalid",
+        "messages__error__sort_code_length"),
       "accountNumber" ->
         text("messages__error__account_number").
-        verifying(regexMaxLength(
-          regexAccountNo, accountNoMaxLength,
-          "messages__error__account_number_invalid",
-          "messages__error__account_number_length")),
+          verifying(returnOnFirstFailure(regexp(regexAccountNo, "messages__error__account_number_invalid"),
+            maxLength(accountNoMaxLength, "messages__error__account_number_length"))),
       "date" ->
         dateMapping("messages__error__date")
     )(UKBankDetails.apply)(UKBankDetails.unapply)

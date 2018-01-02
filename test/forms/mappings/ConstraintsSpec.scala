@@ -135,23 +135,4 @@ class ConstraintsSpec extends WordSpec with MustMatchers with Constraints {
       result mustEqual Invalid("error.invalid")
     }
   }
-
-  "regexMaxLength" must {
-
-    val regex = """[0-9]*""".r.toString()
-    "return Valid for an input that matches the expression and have valid length" in {
-      val result = regexMaxLength(regex, 6, "error.invalid", "error.length")("121212")
-      result mustEqual Valid
-    }
-
-    "return Invalid for an input that does not match the expression" in {
-      val result = regexMaxLength(regex, 6, "error.invalid", "error.length")("12%12%12")
-      result mustEqual Invalid("error.invalid", regex)
-    }
-
-    "return Invalid for an input that matches the expression but does not have proper length" in {
-      val result = regexMaxLength(regex, 6, "error.invalid", "error.length")("12121223")
-      result mustEqual Invalid("error.length", 6)
-    }
-  }
 }

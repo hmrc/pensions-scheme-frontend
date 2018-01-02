@@ -16,13 +16,17 @@
 
 package forms.mappings
 
-import models.{Date, SchemeType}
+import models.{Date, SchemeType, SortCode}
 import models.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
-import play.api.data.{FieldMapping, Mapping}
+import org.joda.time.LocalDate
+import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import play.api.data.Forms.of
 import utils.Enumerable
 import play.api.data.Forms._
+import play.api.data.format.Formatter
 import uk.gov.voa.play.form.ConditionalMappings._
+
+import scala.util.Try
 
 trait Mappings extends Formatters with Constraints {
 
@@ -79,18 +83,56 @@ trait Mappings extends Formatters with Constraints {
     ).transform(toSchemeType, fromSchemeType)
   }
 
-  protected def dateMapping(invalidKey: String): Mapping[Date] = {
+  protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
-    def fromDatePart(date: Date): (Int, Int, Int) = {
-      (date.day, date.month, date.year)
+    def toLocalDate(date: (String, String, String)): LocalDate =
+    {
+      date match {
+        case (day, month, year) =>
+          new LocalDate(year.toInt, month.toInt, day.toInt)
+      }
     }
 
-    def toDatePart(dateTuple: (Int, Int, Int)): Date = {
-      Date(dateTuple._1, dateTuple._2, dateTuple._3)
+    def fromLocalDate(date: LocalDate): (String, String, String) = {
+      (date.getDayOfMonth.toString, date.getMonthOfYear.toString, date.getYear.toString)
     }
 
-    tuple("day" -> int(invalidKey, invalidKey, invalidKey),
-    "month" -> int(invalidKey, invalidKey, invalidKey),
-    "year" -> int(invalidKey, invalidKey, invalidKey)).transform(toDatePart, fromDatePart)
+
+    def validate(t: (String, String, String)): Boolean =
+      Try(toLocalDate(t)).isSuccess
+
+    tuple("day" -> text(invalidKey),
+    "month" -> text(invalidKey),
+    "year" -> text(invalidKey)).verifying(invalidKey, validate(_)).transform(toLocalDate, fromLocalDate)
+  }
+
+  protected def sortCodeMapping(requiredKey: String = "error.required", invalidKey: String, maxErrorKey: String): Mapping[SortCode] = {
+
+    val formatter: Formatter[SortCode] = new Formatter[SortCode] {
+
+      val baseFormatter = stringFormatter(requiredKey)
+      val regexSortCode = """\d*""".r.toString()
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SortCode] = {
+
+
+        baseFormatter.bind(key, data)
+          .right.map(_.trim.replaceAll("[ -]", ""))
+          .right.flatMap {
+          case str if !str.matches(regexSortCode)  =>
+            Left(Seq(FormError(key, invalidKey)))
+          case str if str.trim.replaceAll("[- ]", "").length > 6 =>
+            Left(Seq(FormError(key, maxErrorKey)))
+          case str =>
+            val a :: b :: c :: Nil = str.sliding(2, 2).toList
+            Right(SortCode(a, b, c))
+        }
+      }
+
+      override def unbind(key: String, value: SortCode): Map[String, String] =
+        baseFormatter.unbind(key, s"${value.first} ${value.second} ${value.third}")
+    }
+
+    Forms.of(formatter)
   }
 }

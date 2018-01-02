@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.{Date, SchemeType}
+import models.{Date, SchemeType, SortCode}
 import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -238,11 +238,16 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
   }
 
   "date" must {
-    val testForm: Form[Date] = Form("date"->dateMapping("messages__error__date"))
+    val testForm: Form[LocalDate] = Form("date"->dateMapping("messages__error__date"))
 
     "bind a valid date" in {
       val result = testForm.bind(Map("date.day" -> "1", "date.month" -> "1", "date.year" -> LocalDate.now().getYear.toString))
-      result.get mustEqual Date(1, 1, LocalDate.now().getYear)
+      result.get mustEqual new LocalDate(LocalDate.now().getYear, 1, 1)
+    }
+
+    "not bind an invalid Date" in {
+      val result = testForm.bind(Map("date.day" -> "31", "date.month" -> "2", "date.year" -> LocalDate.now().getYear.toString))
+      result.errors mustEqual Seq(FormError("date", "messages__error__date"))
     }
 
     "not bind an empty Map" in {
@@ -252,10 +257,39 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
 
     "unbind a valid date" in {
-      val result = testForm.fill(Date(1, 1, LocalDate.now().getYear))
+      val result = testForm.fill(new LocalDate(LocalDate.now().getYear, 1, 1))
       result.apply("date.day").value.value mustEqual "1"
       result.apply("date.month").value.value mustEqual "1"
       result.apply("date.year").value.value mustEqual LocalDate.now().getYear.toString
+    }
+  }
+
+  "sortCode" must {
+
+    val testForm: Form[SortCode] = Form("sortCode" -> sortCodeMapping("error.required", "error.invalid", "error.max.error"))
+
+    "bind a valid sort code" in {
+      val result = testForm.bind(Map("sortCode" -> "12 34 56"))
+      result.get mustEqual SortCode("12", "34", "56")
+    }
+
+    "not bind an empty Map" in {
+      val result = testForm.bind(Map.empty[String, String])
+      result.errors mustEqual Seq(FormError("sortCode", "error.required"))
+    }
+
+    Seq("12%34&56", "abdgfg").foreach { sortCode =>
+      s"not bind an invalid sort code $sortCode" in {
+        val result = testForm.bind(Map("sortCode" -> sortCode))
+        result.errors mustEqual Seq(FormError("sortCode", "error.invalid"))
+      }
+    }
+
+    Seq("12 34 56 56", "12345678").foreach { sortCode =>
+      s"not bind a sort code $sortCode which exceeds max length" in {
+        val result = testForm.bind(Map("sortCode" -> sortCode))
+        result.errors mustEqual Seq(FormError("sortCode", "error.max.error"))
+      }
     }
   }
 }

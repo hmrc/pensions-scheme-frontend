@@ -17,19 +17,19 @@
 package forms.register
 
 import forms.behaviours.FormBehaviours
-import models.{Date, Field, Required, UKBankDetails}
+import models._
 import org.apache.commons.lang3.{RandomStringUtils, RandomUtils}
 import org.joda.time.LocalDate
 
 class UKBankDetailsFormProviderSpec extends FormBehaviours {
 
-  val testSortCode: String = RandomUtils.nextInt(100000, 999999).toString
+  val testSortCode = SortCode("24", "56", "56")
   val testAccountNumber: String = RandomUtils.nextInt(10000000, 99999999).toString
 
   val validData: Map[String, String] = Map(
     "bankName" -> "test bank",
     "accountName" -> "test account",
-    "sortCode" -> testSortCode,
+    "sortCode" -> "24 56 56",
     "accountNumber" -> testAccountNumber,
     "date.day" -> "1",
     "date.month" -> "1",
@@ -37,7 +37,7 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours {
   )
 
   val bankDetails = UKBankDetails("test bank", "test account",
-    testSortCode, testAccountNumber, Date(1, 1, LocalDate.now().getYear))
+    testSortCode, testAccountNumber, new LocalDate(LocalDate.now().getYear, 1, 1))
 
   val form = new UKBankDetailsFormProvider()()
 
@@ -76,7 +76,7 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours {
         val regexSortCode = """[0-9 -]*""".r.toString()
         val data = validData + ("sortCode" -> code)
 
-        val expectedError = error("sortCode", "messages__error__sort_code_invalid", regexSortCode)
+        val expectedError = error("sortCode", "messages__error__sort_code_invalid")
         checkForError(form, data, expectedError)
       }
     }
@@ -85,7 +85,7 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours {
       s"fail to bind when sort code $code exceeds max length 6" in {
         val data = validData + ("sortCode" -> code)
 
-        val expectedError = error("sortCode", "messages__error__sort_code_length", 6)
+        val expectedError = error("sortCode", "messages__error__sort_code_length")
         checkForError(form, data, expectedError)
       }
     }
@@ -104,6 +104,13 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours {
       val data = validData + ("accountNumber" -> "123456789")
 
       val expectedError = error("accountNumber", "messages__error__account_number_length", 8)
+      checkForError(form, data, expectedError)
+    }
+
+    "fail to bind when the date is invalid" in {
+      val data = validData + ("date.day" -> "31", "date.month" -> "2")
+
+      val expectedError = error("date", "messages__error__date")
       checkForError(form, data, expectedError)
     }
   }

@@ -25,7 +25,7 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.UKBankDetailsFormProvider
 import identifiers.register.UKBankDetailsId
-import models.{Date, NormalMode, UKBankDetails}
+import models.{Date, NormalMode, SortCode, UKBankDetails}
 import views.html.register.uKBankDetails
 import controllers.ControllerSpecBase
 import org.apache.commons.lang3.RandomUtils
@@ -56,7 +56,7 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val bankDetails = UKBankDetails("test bank name", "test account name",
-        "test sort code", "test account number", Date(1,1,LocalDate.now().getYear))
+        SortCode("", "", ""), "test account number", new LocalDate(LocalDate.now().getYear, 1, 1))
 
       val validData = Map(UKBankDetailsId.toString -> Json.toJson(bankDetails))
 

@@ -16,11 +16,10 @@
 
 package models
 
-import org.joda.time.LocalDate
-import play.api.libs.json._
+import play.api.libs.json.{Format, JsPath, Json}
 
-case class UKBankDetails (bankName: String, accountName: String, sortCode: SortCode, accountNumber: String, date: LocalDate)
+case class SortCode(first: String, second: String, third: String)
 
-object UKBankDetails {
-  implicit val format = Json.format[UKBankDetails]
+object SortCode {
+  implicit val format = Json.format[SortCode]
 }
