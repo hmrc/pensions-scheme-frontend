@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,9 +60,9 @@ class SchemeTypeSpec extends WordSpecLike with MustMatchers with OptionValues {
   }
 
   "Writes" must {
-     "return successfully write single trust" in {
-       Json.toJson[SchemeType](SchemeType.SingleTrust) mustEqual Json.obj("name" -> "single")
-     }
+    "return successfully write single trust" in {
+      Json.toJson[SchemeType](SchemeType.SingleTrust) mustEqual Json.obj("name" -> "single")
+    }
     "return successfully write GroupLifeDeath" in {
       Json.toJson[SchemeType](SchemeType.GroupLifeDeath) mustEqual Json.obj("name" -> "group")
     }
