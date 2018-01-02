@@ -3,6 +3,8 @@
 
 !.gitignore
 
+node_modules
+
 .cache
 /.classpath
 db

@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package identifiers.register
+package forms.register
 
-import identifiers.Identifier
+import javax.inject.Inject
 
-case object UKBankDetailsId extends Identifier {
-  override def toString: String = "uKBankDetails"
+import forms.mappings.Mappings
+import models.CountryOptions
+import play.api.data.Form
+
+class SchemeEstablishedCountryFormProvider @Inject()(countries: CountryOptions) extends Mappings {
+
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("messages__error__scheme_country").verifying(
+        validCountries("messages__error__scheme_country", countries))
+    )
 }

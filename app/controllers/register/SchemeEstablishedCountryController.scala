@@ -24,44 +24,45 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.UKBankDetailsFormProvider
-import identifiers.register.UKBankDetailsId
-import models.Mode
-import models.UKBankDetails
+import forms.register.SchemeEstablishedCountryFormProvider
+import identifiers.register.SchemeEstablishedCountryId
+import models.{CountryOptions, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
-import views.html.register.uKBankDetails
+import views.html.register.schemeEstablishedCountry
 
 import scala.concurrent.Future
 
-class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  dataCacheConnector: DataCacheConnector,
-                                                  navigator: Navigator,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: UKBankDetailsFormProvider) extends FrontendController with I18nSupport {
+class SchemeEstablishedCountryController @Inject()(
+                                        appConfig: FrontendAppConfig,
+                                        override val messagesApi: MessagesApi,
+                                        dataCacheConnector: DataCacheConnector,
+                                        navigator: Navigator,
+                                        authenticate: AuthAction,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
+                                        formProvider: SchemeEstablishedCountryFormProvider,
+                                        countryOptions: CountryOptions) extends FrontendController with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.uKBankDetails match {
+      val preparedForm = request.userAnswers.schemeEstablishedCountry match {
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(uKBankDetails(appConfig, preparedForm, mode))
+      Ok(schemeEstablishedCountry(appConfig, preparedForm, mode, countryOptions.options))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(uKBankDetails(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(schemeEstablishedCountry(appConfig, formWithErrors, mode, countryOptions.options))),
         (value) =>
-          dataCacheConnector.save[UKBankDetails](request.externalId, UKBankDetailsId.toString, value).map(cacheMap =>
-            Redirect(navigator.nextPage(UKBankDetailsId, mode)(new UserAnswers(cacheMap))))
+          dataCacheConnector.save[String](request.externalId, SchemeEstablishedCountryId.toString, value).map(cacheMap =>
+            Redirect(navigator.nextPage(SchemeEstablishedCountryId, mode)(new UserAnswers(cacheMap))))
       )
   }
 }

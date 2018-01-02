@@ -128,3 +128,7 @@ messages__error__sort_code_length = The sort code cannot be more than 6 numbers
 messages__error__sort_code_invalid = The sort code can only contain numbers
 messages__error__account_number_length = The account number cannot be more than 8 numbers
 messages__error__account_number_invalid = The account number can only contain numbers
+messages__scheme_country__title = Where was the scheme established?
+messages__error__scheme_country = Enter a recognised country
+messages__scheme_country__hint = Enter the country where the scheme was established
+messages__common__pick_country = Select a country

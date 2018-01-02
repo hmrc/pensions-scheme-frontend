@@ -17,35 +17,39 @@
 package controllers.register
 
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.JsString
 import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
+import utils.{FakeNavigator, InputOption}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.UKBankDetailsFormProvider
-import identifiers.register.UKBankDetailsId
-import models.{Date, NormalMode, UKBankDetails}
-import views.html.register.uKBankDetails
+import forms.register.SchemeEstablishedCountryFormProvider
+import identifiers.register.SchemeEstablishedCountryId
+import models.{CountryOptions, NormalMode}
+import views.html.register.schemeEstablishedCountry
 import controllers.ControllerSpecBase
-import org.apache.commons.lang3.RandomUtils
-import org.joda.time.LocalDate
 import play.api.mvc.Call
 
-class UKBankDetailsControllerSpec extends ControllerSpecBase {
+class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new UKBankDetailsFormProvider()
+  val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
+
+  def countryOptions: CountryOptions = new CountryOptions(options)
+  val formProvider = new SchemeEstablishedCountryFormProvider(countryOptions)
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): UKBankDetailsController =
-    new UKBankDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): SchemeEstablishedCountryController =
+    new SchemeEstablishedCountryController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl,
+      formProvider, countryOptions){}
 
-  def viewAsString(form: Form[_] = form): String = uKBankDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = schemeEstablishedCountry(frontendAppConfig, form, NormalMode, options)(fakeRequest, messages).toString
 
-  "UKBankDetails Controller" must {
+  val testAnswer = "territory:AE-AZ"
+
+  "SchemeEstablishedCountry Controller" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode)(fakeRequest)
@@ -55,23 +59,16 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val bankDetails = UKBankDetails("test bank name", "test account name",
-        "test sort code", "test account number", Date(1,1,LocalDate.now().getYear))
-
-      val validData = Map(UKBankDetailsId.toString -> Json.toJson(bankDetails))
-
+      val validData = Map(SchemeEstablishedCountryId.toString -> JsString(testAnswer))
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(bankDetails))
+      contentAsString(result) mustBe viewAsString(form.fill(testAnswer))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("bankName", "test bank"),
-        ("accountName", "test account"), ("sortCode", RandomUtils.nextInt(100000, 999999).toString),
-        ("accountNumber", RandomUtils.nextInt(10000000, 99999999).toString),
-        ("date.day", "1"), ("date.month", "1"), ("date.year", LocalDate.now().getYear.toString))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -80,8 +77,8 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -97,11 +94,7 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("bankName", "test bank"),
-        ("accountName", "test account"), ("sortCode", RandomUtils.nextInt(100000, 999999).toString),
-        ("accountNumber", RandomUtils.nextInt(10000000, 99999999).toString),
-        ("date.day", "1"), ("date.month", "1"), ("date.year", LocalDate.now().getYear.toString))
-
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
       val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER

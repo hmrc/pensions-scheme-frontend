@@ -21,6 +21,8 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits {
+  def schemeEstablishedCountry: Option[String] = cacheMap.getEntry[String](SchemeEstablishedCountryId.toString)
+
   def uKBankDetails: Option[UKBankDetails] = cacheMap.getEntry[UKBankDetails](UKBankDetailsId.toString)
 
   def benefits: Option[Benefits] = cacheMap.getEntry[Benefits](BenefitsId.toString)

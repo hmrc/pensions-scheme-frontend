@@ -16,10 +16,16 @@
 
 package forms
 
+import config.FrontendAppConfig
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Environment
 import play.api.data.{Form, FormError}
+import play.api.inject.Injector
 import uk.gov.hmrc.play.test.UnitSpec
 
-trait FormSpec extends UnitSpec {
+trait FormSpec extends UnitSpec with GuiceOneAppPerSuite{
+
+  def injector: Injector = app.injector
 
   def checkForError(form: Form[_], data: Map[String, String], expectedErrors: Seq[FormError]) = {
 
@@ -35,6 +41,9 @@ trait FormSpec extends UnitSpec {
   }
 
   def error(key: String, value: String, args: Any*) = Seq(FormError(key, value, args))
+
+  def environment: Environment = injector.instanceOf[Environment]
+  def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
 
   lazy val emptyForm = Map[String, String]()
 }

@@ -18,6 +18,6 @@ package identifiers.register
 
 import identifiers.Identifier
 
-case object UKBankDetailsId extends Identifier {
-  override def toString: String = "uKBankDetails"
+case object SchemeEstablishedCountryId extends Identifier {
+  override def toString: String = "schemeEstablishedCountry"
 }
