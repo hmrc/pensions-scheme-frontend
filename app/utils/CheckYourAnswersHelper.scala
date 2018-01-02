@@ -26,6 +26,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     x => AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", s"$x", false, routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)
   }
 
+  def uKBankAccount: Option[AnswerRow] = userAnswers.uKBankAccount map {
+    x => AnswerRow("uKBankAccount.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, routes.UKBankAccountController.onPageLoad(CheckMode).url)
+  }
+
   def uKBankDetails: Option[AnswerRow] = userAnswers.uKBankDetails map {
     x => AnswerRow("uKBankDetails.checkYourAnswersLabel", s"${x.accountName} ${x.bankName}", false, routes.UKBankDetailsController.onPageLoad(CheckMode).url)
   }
