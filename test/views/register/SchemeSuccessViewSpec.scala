@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package views.register
 
 import controllers.register.routes
+import org.joda.time.LocalDate
 import views.behaviours.ViewBehaviours
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
@@ -27,8 +28,9 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "complete"
 
   val testScheme = "test scheme name"
+  //TODO: Replace the harcoded application number to the actual application number
   def createView: () => HtmlFormat.Appendable = () => schemeSuccess(frontendAppConfig, Some(testScheme),
-    "", "1234")(fakeRequest, messages)
+    LocalDate.now(), "1234")(fakeRequest, messages)
 
   "SchemeSuccess view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", testScheme),

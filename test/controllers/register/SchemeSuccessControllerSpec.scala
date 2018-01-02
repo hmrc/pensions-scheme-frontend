@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +34,11 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase {
   def controller(dataRetrievalAction: DataRetrievalAction =
                  new FakeDataRetrievalAction(Some(validSchemeDataCacheMap))):SchemeSuccessController =
     new SchemeSuccessController(frontendAppConfig, messagesApi, FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl){
-      override val currentDate: LocalDate = new LocalDate(2017, 3, 3)
-    }
+      dataRetrievalAction, new DataRequiredActionImpl)
 
+  //TODO: Change the hardcoded reference number
   def viewAsString(): String = schemeSuccess(frontendAppConfig, Some("test scheme name"),
-    "3 March 2017", "")(fakeRequest, messages).toString
+    LocalDate.now(), "XX123456789132")(fakeRequest, messages).toString
 
   "SchemeSuccess Controller" must {
 

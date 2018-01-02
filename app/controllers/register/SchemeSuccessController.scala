@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,18 +33,14 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction) extends FrontendController with I18nSupport {
 
-  val currentDate = LocalDate.now()
-
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val dateFormatToBeDisplayed = "d MMMM yyyy"
-      val dateFormat = DateTimeFormat.forPattern(dateFormatToBeDisplayed)
 
       //TODO: Replace the harcoded application number to the actual application number
       Ok(schemeSuccess(
         appConfig,
         request.userAnswers.schemeDetails.map(_.schemeName),
-        dateFormat.print(currentDate),
+        LocalDate.now(),
         "XX123456789132"))
   }
 }

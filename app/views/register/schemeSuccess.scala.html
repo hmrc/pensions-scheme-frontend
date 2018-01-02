@@ -1,5 +1,5 @@
 @*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.routes
 @import models.Mode
+@import org.joda.time.LocalDate
+@import utils.DateHelper
 
-@(appConfig: FrontendAppConfig, schemeName: Option[String], currentDate: String, applicationNumber: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, schemeName: Option[String], currentDate: LocalDate, applicationNumber: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__complete__title"),
@@ -28,9 +30,9 @@
 
     <div class="govuk-box-highlight">
         @schemeName.map{ name =>
-            @components.heading("messages__complete__heading", "heading-xlarge", name)
+            @components.heading(messages("messages__complete__heading", name), "heading-xlarge")
         }
-        <p class="font-large">@currentDate</p>
+        <p class="font-large">@DateHelper.formatDate(currentDate)</p>
     </div>
 
     <p class="bold-small">@messages("messages__complete__email")</p>
