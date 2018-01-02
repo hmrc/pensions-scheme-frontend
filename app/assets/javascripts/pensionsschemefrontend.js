@@ -20,7 +20,15 @@ $(document).ready(function() {
     window.history.back();
   })
 
+    if(document.querySelectorAll('select').length > 0){
+        var graphUrl = '/assets/javascripts/autocomplete/location-autocomplete-graph.json'
 
+        openregisterLocationPicker({
+            defaultValue: '',
+            selectElement: document.querySelector('select'),
+            url: graphUrl
+        })
+    }
 
       function beforePrintCall(){
           if($('.no-details').length > 0){
