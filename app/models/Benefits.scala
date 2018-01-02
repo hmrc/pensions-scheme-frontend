@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ sealed trait Benefits
 
 object Benefits {
 
-  case object MoneyPurchase extends WithName("moneyPurchaseBenefit") with Benefits
-  case object Defined extends WithName("definedBenefit") with Benefits
-  case object MoneyPurchaseDefinedMix extends WithName("moneyPurchaseDefinedBenefitMix") with Benefits
+  case object MoneyPurchase extends WithName("opt1") with Benefits
+  case object Defined extends WithName("opt2") with Benefits
+  case object MoneyPurchaseDefinedMix extends WithName("opt3") with Benefits
 
   val values: Seq[Benefits] = Seq(
     MoneyPurchase, Defined, MoneyPurchaseDefinedMix
@@ -32,7 +32,7 @@ object Benefits {
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"benefits.${value.toString}")
+      InputOption(value.toString, s"messages__benefits__${value.toString}")
   }
 
   implicit val enumerable: Enumerable[Benefits] =

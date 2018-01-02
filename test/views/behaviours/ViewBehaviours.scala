@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,17 +36,17 @@ trait ViewBehaviours extends ViewSpecBase {
 
         "display the correct browser title" in {
           val doc = asDocument(view())
-          assertEqualsMessage(doc, "title", messagesApi(s"$messageKeyPrefix.title")+" - "+messagesApi("pensionSchemeRegistration.title"))
+          assertEqualsMessage(doc, "title", messagesApi(s"messages__${messageKeyPrefix}__title")+" - "+messagesApi("messages__pension_scheme_registration__title"))
         }
 
         "display the correct page title" in {
           val doc = asDocument(view())
-          assertPageTitleEqualsMessage(doc, s"$messageKeyPrefix.heading")
+          assertPageTitleEqualsMessage(doc, s"messages__${messageKeyPrefix}__title")
         }
 
         "display the correct guidance" in {
           val doc = asDocument(view())
-          for (key <- expectedGuidanceKeys) assertContainsText(doc, messages(s"$messageKeyPrefix.$key"))
+          for (key <- expectedGuidanceKeys) assertContainsText(doc, messages(s"messages__${messageKeyPrefix}__$key"))
         }
 
         "display language toggles" in {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ class SchemeDetailsFormProvider @Inject() extends Mappings with Constraints {
 
   def apply(): Form[SchemeDetails] = Form(mapping(
     "schemeName" -> text(
-      "schemeDetails.schemeName.error.required").
-      verifying(maxLength(schemeNameMaxLength, "schemeDetails.schemeName.error.length")),
+      "messages__error__scheme_name").
+      verifying(maxLength(schemeNameMaxLength, "messages__error__scheme_name_length")),
     "schemeType" -> schemeTypeMapping()
   )(SchemeDetails.apply)(SchemeDetails.unapply))
 }

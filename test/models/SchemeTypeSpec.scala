@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,19 +29,19 @@ class SchemeTypeSpec extends WordSpecLike with MustMatchers with OptionValues {
     }
 
     "successfully read Single Trust" in {
-      val json = Json.obj("name" -> "singleTrust")
+      val json = Json.obj("name" -> "single")
 
       Json.fromJson[SchemeType](json).asOpt.value mustEqual SchemeType.SingleTrust
     }
 
     "successfully read Group Life Death" in {
-      val json = Json.obj("name" -> "groupLifeDeath")
+      val json = Json.obj("name" -> "group")
 
       Json.fromJson[SchemeType](json).asOpt.value mustEqual SchemeType.GroupLifeDeath
     }
 
     "successfully read Body Corporate" in {
-      val json = Json.obj("name" -> "bodyCorporate")
+      val json = Json.obj("name" -> "corp")
 
       Json.fromJson[SchemeType](json).asOpt.value mustEqual SchemeType.BodyCorporate
     }
@@ -60,14 +60,14 @@ class SchemeTypeSpec extends WordSpecLike with MustMatchers with OptionValues {
   }
 
   "Writes" must {
-     "return successfully write single trust" in {
-       Json.toJson[SchemeType](SchemeType.SingleTrust) mustEqual Json.obj("name" -> "singleTrust")
-     }
+    "return successfully write single trust" in {
+      Json.toJson[SchemeType](SchemeType.SingleTrust) mustEqual Json.obj("name" -> "single")
+    }
     "return successfully write GroupLifeDeath" in {
-      Json.toJson[SchemeType](SchemeType.GroupLifeDeath) mustEqual Json.obj("name" -> "groupLifeDeath")
+      Json.toJson[SchemeType](SchemeType.GroupLifeDeath) mustEqual Json.obj("name" -> "group")
     }
     "return successfully write body Corporate" in {
-      Json.toJson[SchemeType](SchemeType.BodyCorporate) mustEqual Json.obj("name" -> "bodyCorporate")
+      Json.toJson[SchemeType](SchemeType.BodyCorporate) mustEqual Json.obj("name" -> "corp")
     }
     "return successfully write other" in {
       Json.toJson[SchemeType](SchemeType.Other("Some Scheme")) mustEqual Json.obj("name" -> "other", "schemeTypeDetails"->"Some Scheme")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@ sealed trait SchemeType
 
 object SchemeType {
 
-  case object SingleTrust extends WithName("singleTrust") with SchemeType
+  case object SingleTrust extends WithName("single") with SchemeType
 
-  case object GroupLifeDeath extends WithName("groupLifeDeath") with SchemeType
+  case object GroupLifeDeath extends WithName("group") with SchemeType
 
-  case object BodyCorporate extends WithName("bodyCorporate") with SchemeType
+  case object BodyCorporate extends WithName("corp") with SchemeType
 
   case class Other(schemeTypeDetails: String) extends WithName("other") with SchemeType
 
@@ -39,10 +39,10 @@ object SchemeType {
   ).map(v => (v.toString, v)).toMap
 
   def options: Seq[InputOption] = Seq(
-    InputOption(SingleTrust.toString, s"schemeType.type.${SingleTrust.toString}"),
-    InputOption(GroupLifeDeath.toString, s"schemeType.type.${GroupLifeDeath.toString}"),
-    InputOption(BodyCorporate.toString, s"schemeType.type.${BodyCorporate.toString}"),
-    InputOption(other, s"schemeType.type.$other", Some("schemeType_schemeTypeDetails-form"))
+    InputOption(SingleTrust.toString, s"messages__scheme_details__type_${SingleTrust.toString}"),
+    InputOption(GroupLifeDeath.toString, s"messages__scheme_details__type_${GroupLifeDeath.toString}"),
+    InputOption(BodyCorporate.toString, s"messages__scheme_details__type_${BodyCorporate.toString}"),
+    InputOption(other, s"messages__scheme_details__type_${other}", Some("schemeType_schemeTypeDetails-form"))
   )
 
   implicit val reads: Reads[SchemeType] = {
@@ -72,4 +72,3 @@ object SchemeType {
     }
   }
 }
-

@@ -1,5 +1,5 @@
 @*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@
 @(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("index.title"),
+    title = messages("messages__index__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    <h1 class="heading-xlarge">@messages("index.heading")</h1>
+    <h1 class="heading-xlarge">@messages("messages__index__title")</h1>
 
-    <p>@messages("index.guidance")</p>
+    <p>@messages("messages__index__guidance")</p>
 }

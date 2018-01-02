@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import views.html.register.schemeDetails
 
 class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
 
-  val messageKeyPrefix = "schemeDetails"
+  val messageKeyPrefix = "scheme_details"
 
   override val form = new SchemeDetailsFormProvider()()
 
@@ -65,7 +65,7 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
       "display an input text box with the value when the other is selected" in {
         val expectedValue = "some value"
         val doc = asDocument(createViewUsingForm(form.bind(Map("schemeType.type" -> "Other", "schemeType.schemeTypeDetails" -> expectedValue))))
-        doc must haveLabelAndValue("schemeType_schemeTypeDetails", messages("schemeType.schemeTypeDetails"), expectedValue)
+        doc must haveLabelAndValue("schemeType_schemeTypeDetails", messages("messages__scheme_details__type_other_more"), expectedValue)
       }
     }
   }

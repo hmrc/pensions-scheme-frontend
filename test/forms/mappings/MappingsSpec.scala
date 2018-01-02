@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -169,21 +169,21 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
 
     val testForm: Form[SchemeType] = Form(
       "schemeType" -> schemeTypeMapping("schemeType.error.required", "schemeType.error.invalid",
-        "schemeType.schemeTypeDetails.error.required", "schemeType.schemeTypeDetails.error.length")
+        "messages__error__scheme_type_information", "messages__error__scheme_type_length")
     )
 
     "bind a valid schemeType SingleTrust" in {
-      val result = testForm.bind(Map("schemeType.type" -> "singleTrust"))
+      val result = testForm.bind(Map("schemeType.type" -> "single"))
       result.get mustEqual SchemeType.SingleTrust
     }
 
     "bind a valid schemeType GroupLifeDeath" in {
-      val result = testForm.bind(Map("schemeType.type" -> "groupLifeDeath"))
+      val result = testForm.bind(Map("schemeType.type" -> "group"))
       result.get mustEqual SchemeType.GroupLifeDeath
     }
 
     "bind a valid schemeType BodyCorporate" in {
-      val result = testForm.bind(Map("schemeType.type" -> "bodyCorporate"))
+      val result = testForm.bind(Map("schemeType.type" -> "corp"))
       result.get mustEqual SchemeType.BodyCorporate
     }
 
@@ -204,29 +204,29 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
 
     "not bind a Map with type other but no schemeTypeDetails" in {
       val result = testForm.bind(Map("schemeType.type" -> "other"))
-      result.errors must contain(FormError("schemeType.schemeTypeDetails", "schemeType.schemeTypeDetails.error.required"))
+      result.errors must contain(FormError("schemeType.schemeTypeDetails", "messages__error__scheme_type_information"))
     }
 
     "not bind a Map with type other and schemeTypeDetails exceeds max length 150" in {
       val testString = RandomStringUtils.random(invalidSchemeTypeDetailsLength)
       val result = testForm.bind(Map("schemeType.type" -> "other", "schemeType.schemeTypeDetails" -> testString))
-      result.errors must contain(FormError("schemeType.schemeTypeDetails", "schemeType.schemeTypeDetails.error.length",
+      result.errors must contain(FormError("schemeType.schemeTypeDetails", "messages__error__scheme_type_length",
         Seq(validSchemeTypeDetailsLength)))
     }
 
     "unbind a valid schemeType SingleTrust" in {
       val result = testForm.fill(SchemeType.SingleTrust)
-      result.apply("schemeType.type").value.value mustEqual "singleTrust"
+      result.apply("schemeType.type").value.value mustEqual "single"
     }
 
     "unbind a valid schemeType GroupLifeDeath" in {
       val result = testForm.fill(SchemeType.GroupLifeDeath)
-      result.apply("schemeType.type").value.value mustEqual "groupLifeDeath"
+      result.apply("schemeType.type").value.value mustEqual "group"
     }
 
     "unbind a valid schemeType BodyCorporate" in {
       val result = testForm.fill(SchemeType.BodyCorporate)
-      result.apply("schemeType.type").value.value mustEqual "bodyCorporate"
+      result.apply("schemeType.type").value.value mustEqual "corp"
     }
 
     "unbind a valid schemeType Other" in {

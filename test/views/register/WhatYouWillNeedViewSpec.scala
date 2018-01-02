@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,12 @@ import views.html.register.whatYouWillNeed
 
 class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "whatYouWillNeed"
+  val messageKeyPrefix = "what_you_will_need"
 
   def createView = () => whatYouWillNeed(frontendAppConfig)(fakeRequest, messages)
 
   "WhatYouWillNeed view" must {
-    behave like normalPage(createView, messageKeyPrefix, "para", "li.utr", "li.company_info", "li.contact_info", "li.contact_info_establisher", "li.reg_info", "button")
+    behave like normalPage(createView, messageKeyPrefix, "lede", "item_1", "item_2", "item_3", "item_4", "item_5")
 
     "have link" in {
       Jsoup.parse(createView().toString()).select("a.button") must haveLink(routes.WhatYouWillNeedController.onPageLoad().url)

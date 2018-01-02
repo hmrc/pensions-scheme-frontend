@@ -1,5 +1,5 @@
 @*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("benefitsInsurer.title"),
+    title = messages("messages__benefits_insurance__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -31,16 +31,16 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("benefitsInsurer.heading")
+        @components.heading("messages__benefits_insurance__title")
 
         @components.input_text(
             field = form("companyName"),
-            label = messages("benefitsInsurer.companyName")
+            label = messages("messages__benefits_insurance__name")
         )
 
         @components.input_text(
             field = form("policyNumber"),
-            label = messages("benefitsInsurer.policyNumber")
+            label = messages("messages__benefits_insurance__policy")
         )
 
         @components.submit_button()

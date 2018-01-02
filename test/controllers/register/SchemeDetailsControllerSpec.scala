@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"), ("schemeType.type", "singleTrust"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"), ("schemeType.type", "single"))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -87,7 +87,7 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" ignore {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"), ("schemeType.type", "singleTrust"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"), ("schemeType.type", "single"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER

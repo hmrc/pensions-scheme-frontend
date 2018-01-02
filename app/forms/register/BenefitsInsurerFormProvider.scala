@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,12 @@ import play.api.data.Forms._
 import models.BenefitsInsurer
 
 class BenefitsInsurerFormProvider @Inject() extends Mappings {
-   val maxLength = 255
-   def apply(): Form[BenefitsInsurer] = Form(
-     mapping(
-      "companyName" -> text("benefitsInsurer.error.companyName.required").verifying(maxLength(maxLength, "benefitsInsurer.error.length.companyName")),
-      "policyNumber" -> text("benefitsInsurer.error.policyNumber.required").verifying(maxLength(maxLength, "benefitsInsurer.error.length.policyNumber"))
+  val maxLength = 255
+  def apply(): Form[BenefitsInsurer] = Form(
+    mapping(
+      "companyName" -> text("messages__error__company_name").verifying(maxLength(maxLength, "messages__error__company_name_length")),
+      "policyNumber" -> text("messages__error__benefits_insurance__policy").verifying(maxLength(maxLength,
+        "messages__error__benefits_insurance__policy_length"))
     )(BenefitsInsurer.apply)(BenefitsInsurer.unapply)
-   )
- }
+  )
+}
