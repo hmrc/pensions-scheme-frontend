@@ -49,6 +49,16 @@ trait ViewSpecBase extends SpecBase {
       )
   }
 
+  def haveErrorOnSummary(id: String, expectedErrorMessage: String): Matcher[Document] = Matcher[Document] {
+    document =>
+      val href = document.select(s"a[href='#${id}']").text()
+      MatchResult(
+        (document.select("#error-summary-heading").size() != 0 && href == expectedErrorMessage),
+        s"Error $expectedErrorMessage for field with id $id is not displayed on error summary",
+        s"Error $expectedErrorMessage for field with id $id is displayed on error summary"
+      )
+  }
+
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())
 
   def assertEqualsMessage(doc: Document, cssSelector: String, expectedMessageKey: String): Assertion =
