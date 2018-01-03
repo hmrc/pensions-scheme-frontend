@@ -63,6 +63,15 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form.fill(AddressYears.values.head))
     }
 
+    "redirect to session expired from a GET when the index is invalid" in {
+      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+
+      val result = controller(getRelevantData).onPageLoad(NormalMode, 11)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
 

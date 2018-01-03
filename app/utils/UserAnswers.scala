@@ -21,13 +21,18 @@ import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
 
-class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats{
+import scala.util.{Success, Try}
+
+class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
 
   def schemeEstablishedCountry: Option[String] = cacheMap.getEntry[String](SchemeEstablishedCountryId.toString)
 
-  def addressYears: Option[Map[Int, AddressYears]] = cacheMap.getEntry[Map[Int, AddressYears]](AddressYearsId.toString)
+  def addressYears: Option[AddressYearsMap] = cacheMap.getEntry[AddressYearsMap](AddressYearsId.toString)
 
-  def addressYears(index: Int): Option[AddressYears] = addressYears.flatMap(_.get(index))
+  def addressYears(index: Int): Try[Option[AddressYears]] = {
+
+    addressYears.map(_.get(index)).getOrElse(Success(None))
+  }
 
   def uKBankAccount: Option[Boolean] = cacheMap.getEntry[Boolean](UKBankAccountId.toString)
 
@@ -46,5 +51,4 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapF
   def occupationalPensionScheme: Option[Boolean] = cacheMap.getEntry[Boolean](OccupationalPensionSchemeId.toString)
 
   def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)
-
 }

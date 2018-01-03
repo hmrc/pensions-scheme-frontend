@@ -20,6 +20,8 @@ import models.CheckMode
 import viewmodels.AnswerRow
 import controllers.register.routes
 
+import scala.util.Success
+
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def schemeEstablishedCountry: Option[AnswerRow] = userAnswers.schemeEstablishedCountry map {
@@ -30,9 +32,12 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     x => AnswerRow("uKBankAccount.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, routes.UKBankAccountController.onPageLoad(CheckMode).url)
   }
 
-  def addressYears(index: Int): Option[AnswerRow] = userAnswers.addressYears(index) map {
-    x => AnswerRow("addressYears.checkYourAnswersLabel", s"addressYears.$x", true,
-      controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, index).url)
+  def addressYears(index: Int): Option[AnswerRow] = {
+    userAnswers.addressYears(index) match {
+      case Success(Some(x)) => Some(AnswerRow("addressYears.checkYourAnswersLabel", s"addressYears.$x", true,
+        controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, index).url))
+      case _ => None
+    }
   }
 
   def benefits: Option[AnswerRow] = userAnswers.benefits map {

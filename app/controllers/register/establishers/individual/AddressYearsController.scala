@@ -32,6 +32,7 @@ import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual.addressYears
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 class AddressYearsController @Inject()(
                                         appConfig: FrontendAppConfig,
@@ -42,17 +43,17 @@ class AddressYearsController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: AddressYearsFormProvider
-                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats{
+                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.addressYears(index) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      request.userAnswers.addressYears(index) match {
+        case Success(None) => Ok(addressYears(appConfig, form, mode, index))
+        case Success(Some(value)) => Ok(addressYears(appConfig, form.fill(value), mode, index))
+        case Failure(e) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
-      Ok(addressYears(appConfig, preparedForm, mode, index))
   }
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
