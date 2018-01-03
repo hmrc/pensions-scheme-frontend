@@ -60,4 +60,3 @@ class BenefitsInsurerFormProviderSpec extends FormBehaviours {
     checkForError(form, data, expectedError)
   }
 }
-

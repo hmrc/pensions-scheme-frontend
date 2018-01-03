@@ -1,30 +1,29 @@
 #!/bin/bash
 
-echo "Applying migration UKBankDetails"
+echo "Applying migration AddressYears"
 
-echo "Adding routes to register.routes"
+echo "Adding routes to conf/register.establishers.individual.routes"
 
-echo "" >> ../conf/register.routes
-echo "GET        /uKBankDetails                       controllers.register.UKBankDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
-echo "POST       /uKBankDetails                       controllers.register.UKBankDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "" >> ../conf/app.routes
+echo "GET        /addressYears               controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
+echo "POST       /addressYears               controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
 
-echo "GET        /changeUKBankDetails                       controllers.register.UKBankDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
-echo "POST       /changeUKBankDetails                       controllers.register.UKBankDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "GET        /changeAddressYears               controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
+echo "POST       /changeAddressYears               controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "uKBankDetails.title = uKBankDetails" >> ../conf/messages.en
-echo "uKBankDetails.heading = uKBankDetails" >> ../conf/messages.en
-echo "uKBankDetails.field1 = Field 1" >> ../conf/messages.en
-echo "uKBankDetails.field2 = Field 2" >> ../conf/messages.en
-echo "uKBankDetails.checkYourAnswersLabel = uKBankDetails" >> ../conf/messages.en
-echo "uKBankDetails.error.field1.required = Please give an answer for field1" >> ../conf/messages.en
-echo "uKBankDetails.error.field2.required = Please give an answer for field2" >> ../conf/messages.en
+echo "addressYears.title = addressYears" >> ../conf/messages.en
+echo "addressYears.heading = addressYears" >> ../conf/messages.en
+echo "addressYears.option1 = addressYears" Option 1 >> ../conf/messages.en
+echo "addressYears.option2 = addressYears" Option 2 >> ../conf/messages.en
+echo "addressYears.checkYourAnswersLabel = addressYears" >> ../conf/messages.en
+echo "addressYears.error.required = Please give an answer for addressYears" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def uKBankDetails: Option[UKBankDetails] = cacheMap.getEntry[UKBankDetails](UKBankDetailsId.toString)";\
+     print "  def addressYears: Option[AddressYears] = cacheMap.getEntry[AddressYears](AddressYearsId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -32,8 +31,8 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def uKBankDetails: Option[AnswerRow] = userAnswers.uKBankDetails map {";\
-     print "    x => AnswerRow(\"uKBankDetails.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.UKBankDetailsController.onPageLoad(CheckMode).url)";\
+     print "  def addressYears: Option[AnswerRow] = userAnswers.addressYears map {";\
+     print "    x => AnswerRow(\"addressYears.checkYourAnswersLabel\", s\"addressYears.$x\", true, controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -41,4 +40,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration UKBankDetails completed"
+echo "Migration AddressYears completed"
