@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package forms.register
 
-import utils.{Enumerable, InputOption, WithName}
+import javax.inject.Inject
 
-sealed trait AddressYears
+import forms.mappings.Mappings
+import models.CountryOptions
+import play.api.data.Form
 
-object AddressYears {
+class SchemeEstablishedCountryFormProvider @Inject()(countries: CountryOptions) extends Mappings {
 
-  case object UnderAYear extends WithName("under_a_year") with AddressYears
-  case object OverAYear extends WithName("over_a_year") with AddressYears
-
-  val values: Seq[AddressYears] = Seq(
-    UnderAYear, OverAYear
-  )
-
-  val options: Seq[InputOption] = values.map {
-    value =>
-      InputOption(value.toString, s"messages__common__${value.toString}")
-  }
-
-  implicit val enumerable: Enumerable[AddressYears] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("messages__error__scheme_country").verifying(
+        validCountries("messages__error__scheme_country", countries))
+    )
 }

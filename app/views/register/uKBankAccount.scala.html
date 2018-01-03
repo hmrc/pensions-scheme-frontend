@@ -16,27 +16,26 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.establishers.individual.routes._
-@import models.{AddressYears, Mode}
+@import controllers.register.routes._
+@import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Int)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__establisher_address_years__title"),
+    title = messages("messages__uk_bank_account__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = AddressYearsController.onSubmit(mode, index), 'autoComplete -> "off") {
+    @helpers.form(action = UKBankAccountController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__establisher_address_years__title")
+        @components.heading("messages__uk_bank_account__title")
 
-        @components.input_radio(
+        @components.input_yes_no(
             field = form("value"),
-            legend = messages("messages__establisher_address_years__title"),
-            legendClass = Some("visually-hidden"),
-            inputs = AddressYears.options
+            label = messages("messages__uk_bank_account__title"),
+            labelClass = Some("visually-hidden")
         )
 
         @components.submit_button()

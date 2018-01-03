@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.individual
+package controllers.register
 
 import javax.inject.Inject
 
@@ -24,16 +24,16 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.establishers.individual.AddressYearsFormProvider
-import identifiers.register.establishers.individual.AddressYearsId
-import models.{AddressYears, Mode}
+import forms.register.SchemeEstablishedCountryFormProvider
+import identifiers.register.SchemeEstablishedCountryId
+import models.{CountryOptions, Mode}
 import play.api.mvc.{Action, AnyContent}
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
-import views.html.register.establishers.individual.addressYears
+import utils.{Navigator, UserAnswers}
+import views.html.register.schemeEstablishedCountry
 
 import scala.concurrent.Future
 
-class AddressYearsController @Inject()(
+class SchemeEstablishedCountryController @Inject()(
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
@@ -41,29 +41,28 @@ class AddressYearsController @Inject()(
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: AddressYearsFormProvider
-                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats{
+                                        formProvider: SchemeEstablishedCountryFormProvider,
+                                        countryOptions: CountryOptions) extends FrontendController with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.addressYears(index) match {
+      val preparedForm = request.userAnswers.schemeEstablishedCountry match {
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(addressYears(appConfig, preparedForm, mode, index))
+      Ok(schemeEstablishedCountry(appConfig, preparedForm, mode, countryOptions.options))
   }
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(addressYears(appConfig, formWithErrors, mode, index))),
+          Future.successful(BadRequest(schemeEstablishedCountry(appConfig, formWithErrors, mode, countryOptions.options))),
         (value) =>
-
-          dataCacheConnector.saveMap[AddressYears](request.externalId, AddressYearsId.toString, index, value).map(cacheMap =>
-            Redirect(navigator.nextPage(AddressYearsId, mode)(new UserAnswers(cacheMap))))
+          dataCacheConnector.save[String](request.externalId, SchemeEstablishedCountryId.toString, value).map(cacheMap =>
+            Redirect(navigator.nextPage(SchemeEstablishedCountryId, mode)(new UserAnswers(cacheMap))))
       )
   }
 }

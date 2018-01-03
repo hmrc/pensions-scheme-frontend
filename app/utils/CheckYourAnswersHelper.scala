@@ -22,6 +22,14 @@ import controllers.register.routes
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def schemeEstablishedCountry: Option[AnswerRow] = userAnswers.schemeEstablishedCountry map {
+    x => AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", s"$x", false, routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)
+  }
+
+  def uKBankAccount: Option[AnswerRow] = userAnswers.uKBankAccount map {
+    x => AnswerRow("uKBankAccount.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, routes.UKBankAccountController.onPageLoad(CheckMode).url)
+  }
+
   def addressYears(index: Int): Option[AnswerRow] = userAnswers.addressYears(index) map {
     x => AnswerRow("addressYears.checkYourAnswersLabel", s"addressYears.$x", true,
       controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, index).url)

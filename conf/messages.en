@@ -99,6 +99,13 @@ messages__error__benefits_insurance__policy = Enter the policy number
 messages__error__company_name_length = The company name cannot be more than 255 characters
 messages__error__benefits_insurance__policy_length = The policy number cannot be more than 255 characters
 
+messages__scheme_country__title = Where was the scheme established?
+messages__error__scheme_country = Enter a recognised country
+messages__scheme_country__hint = Enter the country where the scheme was established
+messages__common__pick_country = Select a country
+
+messages__uk_bank_account__title = Does the scheme have a UK bank account?
+
 messages__establisher_address_years__title = How long has the establisher been at this address?
 messages__common__under_a_year = Less than 12 months
 messages__common__over_a_year = More than 12 months

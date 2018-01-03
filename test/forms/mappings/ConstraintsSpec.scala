@@ -16,8 +16,10 @@
 
 package forms.mappings
 
+import models.CountryOptions
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.data.validation.{Invalid, Valid}
+import utils.InputOption
 
 class ConstraintsSpec extends WordSpec with MustMatchers with Constraints {
 
@@ -114,6 +116,23 @@ class ConstraintsSpec extends WordSpec with MustMatchers with Constraints {
     "return Invalid for a string longer than the allowed length" in {
       val result = maxLength(10, "error.length")("a" * 11)
       result mustEqual Invalid("error.length", 10)
+    }
+  }
+
+  "validCountries" must {
+
+    val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
+
+    val countryOptions: CountryOptions = new CountryOptions(options)
+
+    "return Valid for a string which is in the recognised country list" in {
+      val result = validCountries("error.invalid", countryOptions)("territory:AE-AZ")
+      result mustEqual Valid
+    }
+
+    "return Invalid for a string which is not in the recognised country list" in {
+      val result = validCountries("error.invalid", countryOptions)("territory:FF")
+      result mustEqual Invalid("error.invalid")
     }
   }
 }

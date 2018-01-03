@@ -14,26 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package identifiers.register
+import identifiers._
 
-import utils.{Enumerable, InputOption, WithName}
-
-sealed trait AddressYears
-
-object AddressYears {
-
-  case object UnderAYear extends WithName("under_a_year") with AddressYears
-  case object OverAYear extends WithName("over_a_year") with AddressYears
-
-  val values: Seq[AddressYears] = Seq(
-    UnderAYear, OverAYear
-  )
-
-  val options: Seq[InputOption] = values.map {
-    value =>
-      InputOption(value.toString, s"messages__common__${value.toString}")
-  }
-
-  implicit val enumerable: Enumerable[AddressYears] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+case object UKBankAccountId extends Identifier {
+  override def toString: String = "uKBankAccount"
 }
