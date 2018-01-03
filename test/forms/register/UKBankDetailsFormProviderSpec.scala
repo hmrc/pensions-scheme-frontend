@@ -106,12 +106,5 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours {
       val expectedError = error("accountNumber", "messages__error__account_number_length", 8)
       checkForError(form, data, expectedError)
     }
-
-    "fail to bind when the date is invalid" in {
-      val data = validData + ("date.day" -> "31", "date.month" -> "2")
-
-      val expectedError = error("date", "messages__error__date")
-      checkForError(form, data, expectedError)
-    }
   }
 }

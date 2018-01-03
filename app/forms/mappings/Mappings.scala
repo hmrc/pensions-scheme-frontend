@@ -97,7 +97,6 @@ trait Mappings extends Formatters with Constraints {
       (date.getDayOfMonth.toString, date.getMonthOfYear.toString, date.getYear.toString)
     }
 
-
     def validateDate(date: (String, String, String)): Boolean =
       Try(toLocalDate(date)).isSuccess
 
@@ -114,7 +113,6 @@ trait Mappings extends Formatters with Constraints {
       val regexSortCode = """\d*""".r.toString()
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SortCode] = {
-
 
         baseFormatter.bind(key, data)
           .right.map(_.trim.replaceAll("[ -]", ""))

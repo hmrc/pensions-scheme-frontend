@@ -92,10 +92,12 @@ trait Constraints {
     }
   }
 
-  def returnOnFirstFailure[T](constraints: Constraint[T]*): Constraint[T] = Constraint { field: T =>
-    constraints.toList dropWhile (_(field) == Valid) match {
-      case Nil => Valid
-      case constraint :: _ => constraint(field)
-    }
+  def returnOnFirstFailure[T](constraints: Constraint[T]*): Constraint[T] =
+    Constraint {
+      field =>
+        constraints
+          .map(_.apply(field))
+          .filterNot(_ == Valid)
+          .headOption.getOrElse(Valid)
   }
 }

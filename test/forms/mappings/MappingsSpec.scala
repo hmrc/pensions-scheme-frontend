@@ -257,9 +257,9 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
 
     "unbind a valid date" in {
-      val result = testForm.fill(new LocalDate(LocalDate.now().getYear, 1, 1))
+      val result = testForm.fill(new LocalDate(LocalDate.now().getYear, 6, 1))
       result.apply("date.day").value.value mustEqual "1"
-      result.apply("date.month").value.value mustEqual "1"
+      result.apply("date.month").value.value mustEqual "6"
       result.apply("date.year").value.value mustEqual LocalDate.now().getYear.toString
     }
   }
@@ -268,9 +268,11 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
 
     val testForm: Form[SortCode] = Form("sortCode" -> sortCodeMapping("error.required", "error.invalid", "error.max.error"))
 
-    "bind a valid sort code" in {
-      val result = testForm.bind(Map("sortCode" -> "12 34 56"))
-      result.get mustEqual SortCode("12", "34", "56")
+    Seq("12 34 56", "12-34-56", " 123456").foreach{ sortCode =>
+      s"bind a valid sort code $sortCode" in {
+        val result = testForm.bind(Map("sortCode" -> sortCode))
+        result.get mustEqual SortCode("12", "34", "56")
+      }
     }
 
     "not bind an empty Map" in {
