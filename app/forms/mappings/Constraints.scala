@@ -91,4 +91,13 @@ trait Constraints {
       case _ => Invalid(invalidKey)
     }
   }
+
+  def returnOnFirstFailure[T](constraints: Constraint[T]*): Constraint[T] =
+    Constraint {
+      field =>
+        constraints
+          .map(_.apply(field))
+          .filterNot(_ == Valid)
+          .headOption.getOrElse(Valid)
+  }
 }

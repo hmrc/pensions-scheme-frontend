@@ -51,3 +51,8 @@ GET        /uKBankAccount                       controllers.register.UKBankAccou
 POST       /uKBankAccount                       controllers.register.UKBankAccountController.onSubmit(mode: Mode = NormalMode)
 GET        /changeUKBankAccount                       controllers.register.UKBankAccountController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeUKBankAccount                       controllers.register.UKBankAccountController.onSubmit(mode: Mode = CheckMode)
+
+GET        /uKBankDetails                       controllers.register.UKBankDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /uKBankDetails                       controllers.register.UKBankDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /changeUKBankDetails                       controllers.register.UKBankDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeUKBankDetails                       controllers.register.UKBankDetailsController.onSubmit(mode: Mode = CheckMode)

@@ -30,6 +30,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     x => AnswerRow("uKBankAccount.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, routes.UKBankAccountController.onPageLoad(CheckMode).url)
   }
 
+  def uKBankDetails: Option[AnswerRow] = userAnswers.uKBankDetails map {
+    x => AnswerRow("uKBankDetails.checkYourAnswersLabel", s"${x.accountName} ${x.bankName}", false, routes.UKBankDetailsController.onPageLoad(CheckMode).url)
+  }
+
   def benefits: Option[AnswerRow] = userAnswers.benefits map {
     x => AnswerRow("benefits.checkYourAnswersLabel", s"benefits.$x", true,
       controllers.register.routes.BenefitsController.onPageLoad(CheckMode).url)
