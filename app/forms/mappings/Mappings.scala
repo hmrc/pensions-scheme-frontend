@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.{Date, SchemeType, SortCode}
+import models.{SchemeType, SortCode}
 import models.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
 import org.joda.time.LocalDate
 import play.api.data.{FieldMapping, FormError, Forms, Mapping}
@@ -98,12 +98,12 @@ trait Mappings extends Formatters with Constraints {
     }
 
 
-    def validate(t: (String, String, String)): Boolean =
-      Try(toLocalDate(t)).isSuccess
+    def validateDate(date: (String, String, String)): Boolean =
+      Try(toLocalDate(date)).isSuccess
 
     tuple("day" -> text(invalidKey),
     "month" -> text(invalidKey),
-    "year" -> text(invalidKey)).verifying(invalidKey, validate(_)).transform(toLocalDate, fromLocalDate)
+    "year" -> text(invalidKey)).verifying(invalidKey, validateDate(_)).transform(toLocalDate, fromLocalDate)
   }
 
   protected def sortCodeMapping(requiredKey: String = "error.required", invalidKey: String, maxErrorKey: String): Mapping[SortCode] = {

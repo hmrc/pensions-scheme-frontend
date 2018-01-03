@@ -25,7 +25,7 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.UKBankDetailsFormProvider
 import identifiers.register.UKBankDetailsId
-import models.{Date, NormalMode, SortCode, UKBankDetails}
+import models.{NormalMode, SortCode, UKBankDetails}
 import views.html.register.uKBankDetails
 import controllers.ControllerSpecBase
 import org.apache.commons.lang3.RandomUtils
@@ -45,6 +45,9 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
 
   def viewAsString(form: Form[_] = form): String = uKBankDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
 
+  val accountNo = RandomUtils.nextInt(10000000, 99999999).toString
+  val sortCode = RandomUtils.nextInt(100000, 999999).toString
+
   "UKBankDetails Controller" must {
 
     "return OK and the correct view for a GET" in {
@@ -56,7 +59,8 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val bankDetails = UKBankDetails("test bank name", "test account name",
-        SortCode("", "", ""), "test account number", new LocalDate(LocalDate.now().getYear, 1, 1))
+        SortCode("34", "45", "67"), "test account number", new LocalDate(LocalDate.now().getYear,
+          LocalDate.now().getMonthOfYear, LocalDate.now().getDayOfYear))
 
       val validData = Map(UKBankDetailsId.toString -> Json.toJson(bankDetails))
 
@@ -69,9 +73,10 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("bankName", "test bank"),
-        ("accountName", "test account"), ("sortCode", RandomUtils.nextInt(100000, 999999).toString),
-        ("accountNumber", RandomUtils.nextInt(10000000, 99999999).toString),
-        ("date.day", "1"), ("date.month", "1"), ("date.year", LocalDate.now().getYear.toString))
+        ("accountName", "test account"), ("sortCode", sortCode),
+        ("accountNumber", accountNo),
+        ("date.day", LocalDate.now().getDayOfMonth.toString), ("date.month", LocalDate.now().getMonthOfYear.toString),
+        ("date.year", LocalDate.now().getYear.toString))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -98,9 +103,10 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("bankName", "test bank"),
-        ("accountName", "test account"), ("sortCode", RandomUtils.nextInt(100000, 999999).toString),
-        ("accountNumber", RandomUtils.nextInt(10000000, 99999999).toString),
-        ("date.day", "1"), ("date.month", "1"), ("date.year", LocalDate.now().getYear.toString))
+        ("accountName", "test account"), ("sortCode", sortCode),
+        ("accountNumber", accountNo),
+        ("date.day", LocalDate.now().getDayOfMonth.toString), ("date.month", LocalDate.now().getMonthOfYear.toString),
+        ("date.year", LocalDate.now().getYear.toString))
 
       val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
 

@@ -26,10 +26,8 @@ import models.UKBankDetails
 class UKBankDetailsFormProvider @Inject() extends Mappings {
 
   val regexAccountNo = """[0-9]*""".r.toString()
-  val regexSortCode = """[0-9 -]*""".r.toString()
   val nameMaxLength = 28
   val accountNoMaxLength = 8
-  val sortCodeMaxLength = 6
 
   def apply(): Form[UKBankDetails] = Form(
     mapping(
@@ -41,8 +39,7 @@ class UKBankDetailsFormProvider @Inject() extends Mappings {
         verifying(maxLength(nameMaxLength, "messages__error__account_name_length")),
       "sortCode" ->
         sortCodeMapping("messages__error__sort_code",
-        "messages__error__sort_code_invalid",
-        "messages__error__sort_code_length"),
+        "messages__error__sort_code_invalid", "messages__error__sort_code_length"),
       "accountNumber" ->
         text("messages__error__account_number").
           verifying(returnOnFirstFailure(regexp(regexAccountNo, "messages__error__account_number_invalid"),

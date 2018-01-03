@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.{Date, SchemeType, SortCode}
+import models.{SchemeType, SortCode}
 import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -241,8 +241,8 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     val testForm: Form[LocalDate] = Form("date"->dateMapping("messages__error__date"))
 
     "bind a valid date" in {
-      val result = testForm.bind(Map("date.day" -> "1", "date.month" -> "1", "date.year" -> LocalDate.now().getYear.toString))
-      result.get mustEqual new LocalDate(LocalDate.now().getYear, 1, 1)
+      val result = testForm.bind(Map("date.day" -> "1", "date.month" -> "5", "date.year" -> LocalDate.now().getYear.toString))
+      result.get mustEqual new LocalDate(LocalDate.now().getYear, 5, 1)
     }
 
     "not bind an invalid Date" in {

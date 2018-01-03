@@ -32,12 +32,12 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours {
     "sortCode" -> "24 56 56",
     "accountNumber" -> testAccountNumber,
     "date.day" -> "1",
-    "date.month" -> "1",
+    "date.month" -> "5",
     "date.year" -> LocalDate.now().getYear.toString
   )
 
   val bankDetails = UKBankDetails("test bank", "test account",
-    testSortCode, testAccountNumber, new LocalDate(LocalDate.now().getYear, 1, 1))
+    testSortCode, testAccountNumber, new LocalDate(LocalDate.now().getYear, 5, 1))
 
   val form = new UKBankDetailsFormProvider()()
 
