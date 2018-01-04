@@ -24,6 +24,10 @@ import scala.util.Success
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def addEstablisher: Option[AnswerRow] = userAnswers.addEstablisher map {
+    x => AnswerRow("addEstablisher.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, routes.AddEstablisherController.onPageLoad(CheckMode).url)
+  }
+
   def schemeEstablishedCountry: Option[AnswerRow] = userAnswers.schemeEstablishedCountry map {
     x => AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", s"$x", false, routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)
   }

@@ -1,29 +1,27 @@
 #!/bin/bash
 
-echo "Applying migration AddressYears"
+echo "Applying migration AddEstablisher"
 
-echo "Adding routes to conf/register.establishers.individual.routes"
+echo "Adding routes to register.routes"
 
-echo "" >> ../conf/app.routes
-echo "GET        /addressYears               controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /addressYears               controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
+echo "" >> ../conf/register.routes
+echo "GET        /addEstablisher                       controllers.register.AddEstablisherController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "POST       /addEstablisher                       controllers.register.AddEstablisherController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
 
-echo "GET        /changeAddressYears               controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /changeAddressYears               controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
+echo "GET        /changeAddEstablisher                       controllers.register.AddEstablisherController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "POST       /changeAddEstablisher                       controllers.register.AddEstablisherController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "addressYears.title = addressYears" >> ../conf/messages.en
-echo "addressYears.heading = addressYears" >> ../conf/messages.en
-echo "addressYears.option1 = addressYears" Option 1 >> ../conf/messages.en
-echo "addressYears.option2 = addressYears" Option 2 >> ../conf/messages.en
-echo "addressYears.checkYourAnswersLabel = addressYears" >> ../conf/messages.en
-echo "addressYears.error.required = Please give an answer for addressYears" >> ../conf/messages.en
+echo "addEstablisher.title = addEstablisher" >> ../conf/messages.en
+echo "addEstablisher.heading = addEstablisher" >> ../conf/messages.en
+echo "addEstablisher.checkYourAnswersLabel = addEstablisher" >> ../conf/messages.en
+echo "addEstablisher.error.required = Please give an answer for addEstablisher" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def addressYears: Option[AddressYears] = cacheMap.getEntry[AddressYears](AddressYearsId.toString)";\
+     print "  def addEstablisher: Option[Boolean] = cacheMap.getEntry[Boolean](AddEstablisherId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -31,13 +29,12 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def addressYears: Option[AnswerRow] = userAnswers.addressYears map {";\
-     print "    x => AnswerRow(\"addressYears.checkYourAnswersLabel\", s\"addressYears.$x\", true, controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode).url)";\
-     print "  }";\
+     print "  def addEstablisher: Option[AnswerRow] = userAnswers.addEstablisher map {";\
+     print "    x => AnswerRow(\"addEstablisher.checkYourAnswersLabel\", if(x) \"site.yes\" else \"site.no\", true, routes.AddEstablisherController.onPageLoad(CheckMode).url)"; print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration AddressYears completed"
+echo "Migration AddEstablisher completed"

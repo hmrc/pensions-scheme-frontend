@@ -57,3 +57,8 @@ GET        /uKBankDetails                       controllers.register.UKBankDetai
 POST       /uKBankDetails                       controllers.register.UKBankDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /changeUKBankDetails                       controllers.register.UKBankDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeUKBankDetails                       controllers.register.UKBankDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /addEstablisher                       controllers.register.AddEstablisherController.onPageLoad(mode: Mode = NormalMode)
+POST       /addEstablisher                       controllers.register.AddEstablisherController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAddEstablisher                       controllers.register.AddEstablisherController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAddEstablisher                       controllers.register.AddEstablisherController.onSubmit(mode: Mode = CheckMode)
