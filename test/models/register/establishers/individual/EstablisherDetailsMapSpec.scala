@@ -16,7 +16,7 @@
 
 package models.register.establishers.individual
 
-import models.EstablisherDetails
+import models.{EstablisherDetails, EstablisherDetailsMap}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json._

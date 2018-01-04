@@ -20,7 +20,6 @@ import identifiers.register._
 import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
-import models.register.establishers.individual.EstablisherDetailsMap
 
 import scala.util.{Success, Try}
 

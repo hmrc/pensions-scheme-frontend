@@ -30,7 +30,7 @@ messages__common__year = Year
 messages__error__first_name = Enter the first name
 messages__error__last_name = Enter the last name
 messages__error__date = Enter a valid date
-messages__error__date_future = Date cannot be in the future
+messages__error__date_future = Date cannot be a date in the future
 messages__error__selection = You must make a selection
 
 messages__index__title = pensions-scheme-frontend
@@ -160,7 +160,7 @@ messages__error__address_years = Select how long they have been at the current a
 messages__establisher_individual__title = Establisher details
 messages__error__first_name_length = The first name cannot be more than 35 characters
 messages__error__first_name_invalid = Enter the valid first name
-messages__error__last_name_length = The first name cannot be more than 35 characters
+messages__error__last_name_length = The last name cannot be more than 35 characters
 messages__error__last_name_invalid = Enter the valid last name
 
 establisherDetails.checkYourAnswersLabel = establisherDetails

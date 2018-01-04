@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package models.register.establishers.individual
+package models
 
-import models.EstablisherDetails
 import play.api.libs.json.{Reads, Writes}
-
 import scala.util.Try
 
 case class EstablisherDetailsMap(private val data: Map[Int, EstablisherDetails]){
@@ -32,10 +30,10 @@ case class EstablisherDetailsMap(private val data: Map[Int, EstablisherDetails])
 
 object EstablisherDetailsMap {
 
-  implicit def addressReads(implicit ev: Reads[Map[Int, EstablisherDetails]]): Reads[EstablisherDetailsMap] =
+  implicit def reads(implicit ev: Reads[Map[Int, EstablisherDetails]]): Reads[EstablisherDetailsMap] =
     ev.map(EstablisherDetailsMap.apply)
 
-  implicit def addressWrites(implicit ev: Writes[Map[Int, EstablisherDetails]]): Writes[EstablisherDetailsMap] =
+  implicit def writes(implicit ev: Writes[Map[Int, EstablisherDetails]]): Writes[EstablisherDetailsMap] =
     Writes {
       model =>
         ev.writes(model.data)
