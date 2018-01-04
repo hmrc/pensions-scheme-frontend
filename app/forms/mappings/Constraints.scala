@@ -17,6 +17,8 @@
 package forms.mappings
 
 import models._
+import org.joda.time
+import org.joda.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 trait Constraints {
@@ -89,6 +91,13 @@ trait Constraints {
     Constraint {
       case country if(validCountries.contains(country)) => Valid
       case _ => Invalid(invalidKey)
+    }
+  }
+
+  protected def futureDate(invalidKey: String): Constraint[LocalDate] = {
+    Constraint {
+      case date if(date.isAfter(LocalDate.now())) => Invalid(invalidKey)
+      case _ => Valid
     }
   }
 

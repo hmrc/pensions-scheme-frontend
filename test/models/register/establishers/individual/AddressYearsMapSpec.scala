@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package models.register.establishers.individual
 
+import models.{AddressYears, AddressYearsMap}
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json._
 import utils.{Enumerable, MapFormats}

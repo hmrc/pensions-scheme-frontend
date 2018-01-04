@@ -20,19 +20,21 @@ import identifiers.register._
 import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
+import models.register.establishers.individual.EstablisherDetailsMap
 
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
 
+  def establisherDetails: Option[EstablisherDetailsMap] = cacheMap.getEntry[EstablisherDetailsMap](EstablisherDetailsId.toString)
+
+  def establisherDetails(index: Int): Try[Option[EstablisherDetails]] = establisherDetails.map(_.get(index)).getOrElse(Success(None))
+
   def schemeEstablishedCountry: Option[String] = cacheMap.getEntry[String](SchemeEstablishedCountryId.toString)
 
   def addressYears: Option[AddressYearsMap] = cacheMap.getEntry[AddressYearsMap](AddressYearsId.toString)
 
-  def addressYears(index: Int): Try[Option[AddressYears]] = {
-
-    addressYears.map(_.get(index)).getOrElse(Success(None))
-  }
+  def addressYears(index: Int): Try[Option[AddressYears]] = addressYears.map(_.get(index)).getOrElse(Success(None))
 
   def uKBankAccount: Option[Boolean] = cacheMap.getEntry[Boolean](UKBankAccountId.toString)
 
