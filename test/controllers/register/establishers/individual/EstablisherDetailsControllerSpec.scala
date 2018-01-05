@@ -40,12 +40,15 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): EstablisherDetailsController =
+  val minimalDataCacheMap = new FakeDataRetrievalAction(Some(CacheMap("id", Map(
+    SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust))))))
+
+  def controller(dataRetrievalAction: DataRetrievalAction = minimalDataCacheMap): EstablisherDetailsController =
     new EstablisherDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form, optSchemeName: Option[String] = None): String =
-    establisherDetails(frontendAppConfig, form, NormalMode, optSchemeName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    establisherDetails(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   val day = LocalDate.now().getDayOfMonth
   val month = LocalDate.now().getMonthOfYear
@@ -53,11 +56,18 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
 
   "EstablisherDetails Controller" must {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET when scheme name is present" in {
       val result = controller().onPageLoad(NormalMode, 1)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+    }
+
+    "redirect to session expired page on a GET when scheme name is not present" in {
+      val result = controller(getEmptyCacheMap).onPageLoad(NormalMode, 1)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
@@ -69,7 +79,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
       val result = controller(getRelevantData).onPageLoad(NormalMode, 1)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(EstablisherDetails("firstName", "lastName",
-        new LocalDate(year, month, day))), optSchemeName = Some(schemeName))
+        new LocalDate(year, month, day))))
     }
 
     "redirect to session expired page on a GET when the index is not valid" in {

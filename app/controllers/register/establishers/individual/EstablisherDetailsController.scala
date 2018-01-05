@@ -28,47 +28,59 @@ import forms.register.establishers.individual.EstablisherDetailsFormProvider
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models.Mode
 import models.EstablisherDetails
+import models.requests.DataRequest
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual.establisherDetails
-
+import play.api.mvc.Result
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  dataCacheConnector: DataCacheConnector,
-                                                  navigator: Navigator,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: EstablisherDetailsFormProvider) extends FrontendController
-                                                  with I18nSupport with Enumerable.Implicits with MapFormats {
+                                             override val messagesApi: MessagesApi,
+                                             dataCacheConnector: DataCacheConnector,
+                                             navigator: Navigator,
+                                             authenticate: AuthAction,
+                                             getData: DataRetrievalAction,
+                                             requireData: DataRequiredAction,
+                                             formProvider: EstablisherDetailsFormProvider) extends FrontendController
+  with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val userAnswers = request.userAnswers
-      val schemeName = userAnswers.schemeDetails.map(_.schemeName)
-
-      userAnswers.establisherDetails(index) match {
-        case Success(None) => Ok(establisherDetails(appConfig, form, mode, schemeName))
-        case Success(Some(value)) => Ok(establisherDetails(appConfig, form.fill(value), mode, schemeName))
-        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+      retrieveSchemeName {
+        schemeName =>
+          val redirectResult = request.userAnswers.establisherDetails(index) match {
+            case Success(None) => Ok(establisherDetails(appConfig, form, mode, schemeName))
+            case Success(Some(value)) => Ok(establisherDetails(appConfig, form.fill(value), mode, schemeName))
+            case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+          }
+        Future.successful(redirectResult)
       }
   }
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode,
-            request.userAnswers.schemeDetails.map(_.schemeName)))),
-        (value) =>
-          dataCacheConnector.saveMap[EstablisherDetails](request.externalId,
-            EstablisherDetailsId.toString, index, value).map(cacheMap =>
-            Redirect(navigator.nextPage(EstablisherDetailsId, mode)(new UserAnswers(cacheMap))))
-      )
+      retrieveSchemeName {
+        schemeName =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode,
+                schemeName))),
+            (value) =>
+              dataCacheConnector.saveMap[EstablisherDetails](request.externalId,
+                EstablisherDetailsId.toString, index, value).map(cacheMap =>
+                Redirect(navigator.nextPage(EstablisherDetailsId, mode)(new UserAnswers(cacheMap))))
+          )
+      }
+  }
+
+  private def retrieveSchemeName(block: String => Future[Result])
+                           (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    request.userAnswers.schemeDetails.map { schemeDetails =>
+      block(schemeDetails.schemeName)
+    }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
   }
 }

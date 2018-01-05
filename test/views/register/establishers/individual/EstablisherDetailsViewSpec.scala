@@ -35,10 +35,10 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[EstablisherDetai
   val schemeName = "test scheme name"
 
   def createView: () => HtmlFormat.Appendable = () =>
-    establisherDetails(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
+    establisherDetails(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    establisherDetails(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
+    establisherDetails(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   val day = LocalDate.now().getDayOfMonth
   val year = LocalDate.now().getYear
