@@ -26,18 +26,22 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours {
   val testSortCode = SortCode("24", "56", "56")
   val testAccountNumber: String = RandomUtils.nextInt(10000000, 99999999).toString
 
+  val day = LocalDate.now().getDayOfMonth
+  val month = LocalDate.now().getMonthOfYear
+  val year = LocalDate.now().getYear
+
   val validData: Map[String, String] = Map(
     "bankName" -> "test bank",
     "accountName" -> "test account",
     "sortCode" -> "24 56 56",
     "accountNumber" -> testAccountNumber,
-    "date.day" -> "1",
-    "date.month" -> "5",
-    "date.year" -> LocalDate.now().getYear.toString
+    "date.day" -> s"$day",
+    "date.month" -> s"$month",
+    "date.year" -> s"${year - 20}"
   )
 
   val bankDetails = UKBankDetails("test bank", "test account",
-    testSortCode, testAccountNumber, new LocalDate(LocalDate.now().getYear, 5, 1))
+    testSortCode, testAccountNumber, new LocalDate(year - 20, month, day))
 
   val form = new UKBankDetailsFormProvider()()
 
@@ -73,7 +77,7 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours {
 
     Seq("12$12£14", "asdcffdsf", "11 23%12").foreach { code =>
       s"fail to bind when sort code $code is invalid" in {
-        val regexSortCode = """[0-9 -]*""".r.toString()
+        val regexSortCode = "[0-9 -]*"
         val data = validData + ("sortCode" -> code)
 
         val expectedError = error("sortCode", "messages__error__sort_code_invalid")
@@ -104,6 +108,13 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours {
       val data = validData + ("accountNumber" -> "123456789")
 
       val expectedError = error("accountNumber", "messages__error__account_number_length", 8)
+      checkForError(form, data, expectedError)
+    }
+
+    "fail to bind when the date is in future" in {
+      val data = validData + ("date.day" -> s"${day+1}", "date.month" -> s"$month", "date.year" -> s"$year")
+
+      val expectedError = error("date", "messages__error__date_future")
       checkForError(form, data, expectedError)
     }
   }

@@ -19,21 +19,21 @@ package models
 import play.api.libs.json.{Reads, Writes}
 import scala.util.Try
 
-case class AddressYearsMap(private val data: Map[Int, AddressYears]){
+case class EstablishersIndividualMap[A](private val data: Map[Int, A]){
 
-  def get(index: Int): Try[Option[AddressYears]] =
+  def get(index: Int): Try[Option[A]] =
     Try {
       require(index <= data.size + 1 && index <= 10)
       data.get(index)
     }
 }
 
-object AddressYearsMap {
+object EstablishersIndividualMap {
 
-  implicit def addressReads(implicit ev: Reads[Map[Int, AddressYears]]): Reads[AddressYearsMap] =
-    ev.map(AddressYearsMap.apply)
+  implicit def reads[A](implicit ev: Reads[Map[Int, A]]): Reads[EstablishersIndividualMap[A]] =
+    ev.map(EstablishersIndividualMap.apply)
 
-  implicit def addressWrites(implicit ev: Writes[Map[Int, AddressYears]]): Writes[AddressYearsMap] =
+  implicit def writes[A](implicit ev: Writes[Map[Int, A]]): Writes[EstablishersIndividualMap[A]] =
     Writes {
       model =>
         ev.writes(model.data)

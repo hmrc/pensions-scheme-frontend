@@ -27,6 +27,7 @@ import config.FrontendAppConfig
 import forms.register.UKBankAccountFormProvider
 import identifiers.register.UKBankAccountId
 import models.Mode
+import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.uKBankAccount
 
@@ -43,7 +44,7 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       val preparedForm = request.userAnswers.uKBankAccount match {
         case None => form
@@ -52,7 +53,7 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
       Ok(uKBankAccount(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
