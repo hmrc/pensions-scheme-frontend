@@ -24,6 +24,12 @@ import scala.util.Success
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def establisherDetails(index: Int): Option[AnswerRow] = userAnswers.establisherDetails(index) match {
+    case Success(Some(x)) => Some(AnswerRow("establisherDetails.checkYourAnswersLabel", s"${x.firstName} ${x.lastName}", false,
+      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, 0).url))
+    case _ => None
+  }
+
   def schemeEstablishedCountry: Option[AnswerRow] = userAnswers.schemeEstablishedCountry map {
     x => AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", s"$x", false, routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)
   }

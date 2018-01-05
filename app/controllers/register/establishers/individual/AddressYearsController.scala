@@ -52,7 +52,7 @@ class AddressYearsController @Inject()(
       request.userAnswers.addressYears(index) match {
         case Success(None) => Ok(addressYears(appConfig, form, mode, index))
         case Success(Some(value)) => Ok(addressYears(appConfig, form.fill(value), mode, index))
-        case Failure(e) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
   }
 
