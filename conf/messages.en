@@ -144,3 +144,14 @@ messages__establisher_address_years__title = How long has the establisher been a
 messages__common__under_a_year = Less than 12 months
 messages__common__over_a_year = More than 12 months
 messages__error__address_years = Select how long they have been at the current address
+
+messages__establishers__add__title=Establishers
+messages__establishers__add__heading=Establishers
+messages__establishers__add__opt__company=Company
+messages__establishers__add__opt__individual=Individual
+messages__establishers__add__opt__partnership=Partnership
+messages__establishers__add__legend = What kind of establisher are you adding?
+messages__establishers__add__legend_more = Do you want to add another establisher?
+messages__establishers__add__hint = You must add at least one establisher. You can add up to 10.
+messages__establishers__add__limit = You have added the maximum number of establishers
+messages__establishers__add__error_required=You must make a selection

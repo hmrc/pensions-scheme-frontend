@@ -17,6 +17,7 @@
 package utils
 
 import identifiers.register._
+import identifiers.register.establishers._
 import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
@@ -24,6 +25,8 @@ import models._
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
+  def establisherKind: Option[EstablisherKind] = cacheMap.getEntry[EstablisherKind](EstablisherKindId.toString)
+
 
   def schemeEstablishedCountry: Option[String] = cacheMap.getEntry[String](SchemeEstablishedCountryId.toString)
 
