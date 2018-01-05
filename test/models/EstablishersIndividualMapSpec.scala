@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package models.register.establishers.individual
+package models
 
-import models.{AddressYears, AddressYearsMap}
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json._
 import utils.{Enumerable, MapFormats}
 
 import scala.util.Success
 
-class AddressYearsMapSpec extends WordSpecLike with MustMatchers with MapFormats with Enumerable.Implicits {
+class EstablishersIndividualMapSpec extends WordSpecLike with MustMatchers with MapFormats with Enumerable.Implicits {
 
   "addressYearsMap writes" must {
     "write correctly formatted JSON" in {
-      val testMap: AddressYearsMap = AddressYearsMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
+      val testMap: EstablishersIndividualMap[AddressYears] =
+        EstablishersIndividualMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
 
       val expectedData = Json.obj(
         "1" -> "under_a_year",
         "2" -> "over_a_year"
       )
-      val result = Json.toJson[AddressYearsMap](testMap)
+      val result = Json.toJson[EstablishersIndividualMap[AddressYears]](testMap)
       result mustEqual expectedData
     }
   }
@@ -41,32 +41,36 @@ class AddressYearsMapSpec extends WordSpecLike with MustMatchers with MapFormats
   "addressYearsMap read" must {
     "read successfully AddressYearsMap" in {
 
-      val expectedData: AddressYearsMap = AddressYearsMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
+      val expectedData: EstablishersIndividualMap[AddressYears] =
+        EstablishersIndividualMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
 
       val testJson = Json.obj(
         "1" -> "under_a_year",
         "2" -> "over_a_year"
       )
-      val result = Json.fromJson[AddressYearsMap](testJson).get
+      val result = Json.fromJson[EstablishersIndividualMap[AddressYears]](testJson).get
       result mustEqual expectedData
     }
   }
 
   "get" must {
     "return the appropriate Address Years for the given index" in {
-      val testMap: AddressYearsMap = AddressYearsMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
+      val testMap: EstablishersIndividualMap[AddressYears] =
+        EstablishersIndividualMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
 
       testMap.get(1) mustEqual Success(Some(AddressYears.UnderAYear))
     }
 
     "return None for the valid index but don't have relevant data" in {
-      val testMap: AddressYearsMap = AddressYearsMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
+      val testMap: EstablishersIndividualMap[AddressYears] =
+        EstablishersIndividualMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
 
       testMap.get(3) mustEqual Success(None)
     }
 
     "return failure if the index is invalid" in {
-      val testMap: AddressYearsMap = AddressYearsMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
+      val testMap: EstablishersIndividualMap[AddressYears] =
+        EstablishersIndividualMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
 
       testMap.get(11).isFailure mustEqual true
     }

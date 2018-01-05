@@ -25,10 +25,10 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.individual.EstablisherDetailsFormProvider
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import models.NormalMode
-import models.EstablisherDetails
+import models.{EstablisherDetails, NormalMode, SchemeDetails, SchemeType}
 import views.html.register.establishers.individual.establisherDetails
 import controllers.ControllerSpecBase
+import identifiers.register.SchemeDetailsId
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 
@@ -38,12 +38,14 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
 
   val formProvider = new EstablisherDetailsFormProvider()
   val form = formProvider()
+  val schemeName = "Test Scheme Name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): EstablisherDetailsController =
     new EstablisherDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = establisherDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form, optSchemeName: Option[String] = None): String =
+    establisherDetails(frontendAppConfig, form, NormalMode, optSchemeName)(fakeRequest, messages).toString
 
   val day = LocalDate.now().getDayOfMonth
   val month = LocalDate.now().getMonthOfYear
@@ -59,14 +61,15 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(EstablisherDetailsId.toString -> Json.obj("1" -> EstablisherDetails("firstName", "lastName", new LocalDate(year, month, day))))
+      val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
+        EstablisherDetailsId.toString -> Json.obj("1" -> EstablisherDetails("firstName", "lastName", new LocalDate(year, month, day))))
 
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, 1)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(EstablisherDetails("firstName", "lastName",
-        new LocalDate(year, month, day))))
+        new LocalDate(year, month, day))), optSchemeName = Some(schemeName))
     }
 
     "redirect to session expired page on a GET when the index is not valid" in {

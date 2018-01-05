@@ -47,7 +47,7 @@ site.hidden-edit = Change {0}
 site.no = No
 site.yes = Yes
 site.save_and_continue = Save and continue
-site.service_name = pensions-scheme-frontend
+site.service_name = Pension Scheme Registrations
 site.textarea.char_limit = (Limit is {0} characters)
 
 messages__unauthorised__title = You can’t access this service with this account

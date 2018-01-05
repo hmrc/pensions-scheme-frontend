@@ -20,18 +20,20 @@
 @import models.Mode
 @import models.EstablisherDetails
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, optSchemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__establisher_individual__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
+    @components.back_link()
+
     @helpers.form(action = EstablisherDetailsController.onSubmit(mode, 0), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__establisher_individual__title")
+        @components.heading(headingKey = "messages__establisher_individual__title", secondaryHeaderKey = optSchemeName)
 
         @components.input_text(
             field = form("firstName"),

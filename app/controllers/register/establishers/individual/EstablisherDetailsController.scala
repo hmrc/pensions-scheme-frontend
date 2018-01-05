@@ -49,9 +49,12 @@ class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      request.userAnswers.establisherDetails(index) match {
-        case Success(None) => Ok(establisherDetails(appConfig, form, mode))
-        case Success(Some(value)) => Ok(establisherDetails(appConfig, form.fill(value), mode))
+      val userAnswers = request.userAnswers
+      val schemeName = userAnswers.schemeDetails.map(_.schemeName)
+
+      userAnswers.establisherDetails(index) match {
+        case Success(None) => Ok(establisherDetails(appConfig, form, mode, schemeName))
+        case Success(Some(value)) => Ok(establisherDetails(appConfig, form.fill(value), mode, schemeName))
         case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
   }
@@ -60,7 +63,8 @@ class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode,
+            request.userAnswers.schemeDetails.map(_.schemeName)))),
         (value) =>
           dataCacheConnector.saveMap[EstablisherDetails](request.externalId,
             EstablisherDetailsId.toString, index, value).map(cacheMap =>

@@ -22,6 +22,7 @@ import forms.register.establishers.individual.EstablisherDetailsFormProvider
 import models.NormalMode
 import models.EstablisherDetails
 import org.joda.time.LocalDate
+import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.individual.establisherDetails
 
@@ -31,9 +32,13 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[EstablisherDetai
 
   override val form = new EstablisherDetailsFormProvider()()
 
-  def createView = () => establisherDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  val schemeName = "test scheme name"
 
-  def createViewUsingForm = (form: Form[_]) => establisherDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () =>
+    establisherDetails(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
+
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    establisherDetails(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   val day = LocalDate.now().getDayOfMonth
   val year = LocalDate.now().getYear
