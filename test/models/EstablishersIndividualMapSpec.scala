@@ -27,11 +27,11 @@ class EstablishersIndividualMapSpec extends WordSpecLike with MustMatchers with 
   "addressYearsMap writes" must {
     "write correctly formatted JSON" in {
       val testMap: EstablishersIndividualMap[AddressYears] =
-        EstablishersIndividualMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
+        EstablishersIndividualMap(Map(0 -> AddressYears.UnderAYear, 1 -> AddressYears.OverAYear))
 
       val expectedData = Json.obj(
-        "1" -> "under_a_year",
-        "2" -> "over_a_year"
+        "0" -> "under_a_year",
+        "1" -> "over_a_year"
       )
       val result = Json.toJson[EstablishersIndividualMap[AddressYears]](testMap)
       result mustEqual expectedData
@@ -42,11 +42,11 @@ class EstablishersIndividualMapSpec extends WordSpecLike with MustMatchers with 
     "read successfully AddressYearsMap" in {
 
       val expectedData: EstablishersIndividualMap[AddressYears] =
-        EstablishersIndividualMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
+        EstablishersIndividualMap(Map(0 -> AddressYears.UnderAYear, 1 -> AddressYears.OverAYear))
 
       val testJson = Json.obj(
-        "1" -> "under_a_year",
-        "2" -> "over_a_year"
+        "0" -> "under_a_year",
+        "1" -> "over_a_year"
       )
       val result = Json.fromJson[EstablishersIndividualMap[AddressYears]](testJson).get
       result mustEqual expectedData
@@ -56,21 +56,21 @@ class EstablishersIndividualMapSpec extends WordSpecLike with MustMatchers with 
   "get" must {
     "return the appropriate Address Years for the given index" in {
       val testMap: EstablishersIndividualMap[AddressYears] =
-        EstablishersIndividualMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
+        EstablishersIndividualMap(Map(0 -> AddressYears.UnderAYear, 1 -> AddressYears.OverAYear))
 
-      testMap.get(1) mustEqual Success(Some(AddressYears.UnderAYear))
+      testMap.get(0) mustEqual Success(Some(AddressYears.UnderAYear))
     }
 
     "return None for the valid index but don't have relevant data" in {
       val testMap: EstablishersIndividualMap[AddressYears] =
-        EstablishersIndividualMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
+        EstablishersIndividualMap(Map(0 -> AddressYears.UnderAYear, 1 -> AddressYears.OverAYear))
 
-      testMap.get(3) mustEqual Success(None)
+      testMap.get(2) mustEqual Success(None)
     }
 
     "return failure if the index is invalid" in {
       val testMap: EstablishersIndividualMap[AddressYears] =
-        EstablishersIndividualMap(Map(1 -> AddressYears.UnderAYear, 2 -> AddressYears.OverAYear))
+        EstablishersIndividualMap(Map(0 -> AddressYears.UnderAYear, 1 -> AddressYears.OverAYear))
 
       testMap.get(11).isFailure mustEqual true
     }

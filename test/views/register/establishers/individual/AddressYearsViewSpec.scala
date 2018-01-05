@@ -18,7 +18,8 @@ package views.register.establishers.individual
 
 import play.api.data.Form
 import forms.register.establishers.individual.AddressYearsFormProvider
-import models.{NormalMode, AddressYears}
+import models.{AddressYears, Index, NormalMode}
+import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.individual.addressYears
 
@@ -28,9 +29,10 @@ class AddressYearsViewSpec extends ViewBehaviours {
 
   val form = new AddressYearsFormProvider()()
 
-  def createView = () => addressYears(frontendAppConfig, form, NormalMode, 0)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => addressYears(frontendAppConfig, form, NormalMode, Index(0))(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => addressYears(frontendAppConfig, form, NormalMode, 0)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    addressYears(frontendAppConfig, form, NormalMode, Index(0))(fakeRequest, messages)
 
   "AddressYears view" must {
     behave like normalPage(createView, messageKeyPrefix)
