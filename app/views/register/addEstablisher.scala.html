@@ -32,10 +32,14 @@
 
         @components.heading("messages__common__establishers")
 
+        <p>@messages("messages__establishers__add_hint")</p>
+
         @components.input_yes_no(
             field = form("value"),
+            fieldsetClass = Some(" "),
             label = messages("messages__establishers__add_legend_more"),
-            labelClass = Some("visually-hidden")
+            labelClass = Some("bold-small"),
+            hint = Some(messages("messages__establishers__add_hint"))
         )
 
         @components.submit_button()
