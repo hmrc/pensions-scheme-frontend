@@ -18,19 +18,29 @@ package connectors
 
 import com.google.inject.{ImplementedBy, Inject}
 import play.api.libs.json.{Format, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
 import repositories.SessionRepository
+import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.CascadeUpsert
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import scala.concurrent.Future
 
-class DataCacheConnectorImpl @Inject()(val sessionRepository: SessionRepository, val cascadeUpsert: CascadeUpsert) extends DataCacheConnector {
+class DataCacheConnectorImpl @Inject()(val sessionRepository: SessionRepository, val cascadeUpsert: CascadeUpsert) extends DataCacheConnector{
 
   def save[A](cacheId: String, key: String, value: A)(implicit fmt: Format[A]): Future[CacheMap] = {
     sessionRepository().get(cacheId).flatMap { optionalCacheMap =>
       val updatedCacheMap = cascadeUpsert(key, value, optionalCacheMap.getOrElse(new CacheMap(cacheId, Map())))
       sessionRepository().upsert(updatedCacheMap).map {_ => updatedCacheMap}
+    }
+  }
+
+  def saveMap[A](cacheId: String, key: String, index: Int, value: A)(implicit fmt: Format[Map[Int, A]]): Future[CacheMap] = {
+    sessionRepository().get(cacheId).flatMap { optionalCacheMap =>
+      val updatedMap = optionalCacheMap.flatMap { cacheMap =>
+        cacheMap.getEntry[Map[Int, A]](key).map(_ + (index -> value))
+      }.getOrElse(Map.empty)
+      val updatedCacheMap = cascadeUpsert[Map[Int, A]](key,
+        updatedMap, optionalCacheMap.getOrElse(new CacheMap(cacheId, Map())))
+      sessionRepository().upsert(updatedCacheMap).map { _ => updatedCacheMap }
     }
   }
 
@@ -88,6 +98,8 @@ class DataCacheConnectorImpl @Inject()(val sessionRepository: SessionRepository,
 @ImplementedBy(classOf[DataCacheConnectorImpl])
 trait DataCacheConnector {
   def save[A](cacheId: String, key: String, value: A)(implicit fmt: Format[A]): Future[CacheMap]
+
+  def saveMap[A](cacheId: String, key: String, index: Int, value: A)(implicit fmt: Format[Map[Int, A]]) : Future[CacheMap]
 
   def remove(cacheId: String, key: String): Future[Boolean]
 

@@ -16,7 +16,9 @@
 
 package forms.mappings
 
-import models.SchemeType._
+import models._
+import org.joda.time
+import org.joda.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 trait Constraints {
@@ -74,12 +76,37 @@ trait Constraints {
 
   protected def schemeTypeConstraint(invalidKey: String): Constraint[String] = {
 
-    val validSchemeTypes: Seq[String] = Seq(SingleTrust.toString,
-      GroupLifeDeath.toString, BodyCorporate.toString, "other")
+    val validSchemeTypes: Seq[String] = Seq(SchemeType.SingleTrust.toString,
+      SchemeType.GroupLifeDeath.toString, SchemeType.BodyCorporate.toString, "other")
 
     Constraint {
       case schemeType if(validSchemeTypes.contains(schemeType)) => Valid
       case _ => Invalid(invalidKey)
     }
+  }
+
+  protected def validCountries(invalidKey: String, countries: CountryOptions): Constraint[String] = {
+    val validCountries = countries.options.map(_.value)
+
+    Constraint {
+      case country if(validCountries.contains(country)) => Valid
+      case _ => Invalid(invalidKey)
+    }
+  }
+
+  protected def futureDate(invalidKey: String): Constraint[LocalDate] = {
+    Constraint {
+      case date if(date.isAfter(LocalDate.now())) => Invalid(invalidKey)
+      case _ => Valid
+    }
+  }
+
+  def returnOnFirstFailure[T](constraints: Constraint[T]*): Constraint[T] =
+    Constraint {
+      field =>
+        constraints
+          .map(_.apply(field))
+          .filterNot(_ == Valid)
+          .headOption.getOrElse(Valid)
   }
 }

@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package identifiers.register
+import identifiers._
 
-import play.api.libs.json._
-
-case class Date (day: Int, month: Int, year: Int) {}
-
-object Date {
-  implicit val format = Json.format[Date]
+case object UKBankAccountId extends Identifier {
+  override def toString: String = "uKBankAccount"
 }
-
-sealed abstract class DatePart
-case object Day extends DatePart
-case object Month extends DatePart
-case object Year extends DatePart
