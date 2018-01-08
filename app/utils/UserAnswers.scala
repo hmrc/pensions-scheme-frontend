@@ -24,13 +24,18 @@ import models._
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
-  def addEstablisher: Option[Boolean] = cacheMap.getEntry[Boolean](AddEstablisherId.toString)
 
+  def addEstablisher: Option[Boolean] = cacheMap.getEntry[Boolean](AddEstablisherId.toString)
 
   def establisherDetails: Option[EstablishersIndividualMap[EstablisherDetails]] =
     cacheMap.getEntry[EstablishersIndividualMap[EstablisherDetails]](EstablisherDetailsId.toString)
 
-  def establisherDetails(index: Int): Try[Option[EstablisherDetails]] = establisherDetails.map(_.get(index)).getOrElse(Success(None))
+  def establisherDetails(index: Int): Try[Option[EstablisherDetails]] = establisherDetails.map(_.get(index)).getOrElse(
+    Success(None))
+
+  def allIndvEstablisherNames: Option[Seq[String]] = establisherDetails.map(_.getValues.map{ values =>
+      s"${values.firstName} ${values.lastName}"
+    })
 
   def schemeEstablishedCountry: Option[String] = cacheMap.getEntry[String](SchemeEstablishedCountryId.toString)
 

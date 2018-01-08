@@ -19,7 +19,7 @@
 @import controllers.register.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, allEstablishers: Option[scala.Seq[String]])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__common__establishers"),
@@ -32,7 +32,32 @@
 
         @components.heading("messages__common__establishers")
 
+<div class = "form-group">
+        <ul class="govuk-check-your-answers form-group cya-questions-short">
+            @allEstablishers.map { es =>
+
+            @for(name <- es){
+            <li>
+                <div class="cya-question">
+                    <h2 class="bold">@name </h2>
+                </div>
+                <div class="cya-answer">
+                    <p></p>
+                </div>
+                <div class="cya-change">
+                    @components.button_link("messages__common__start", controllers.register.routes.WhatYouWillNeedController.onPageLoad.url)
+                </div>
+
+            </li>
+            }
+
+            }
+        </ul>
+</div>
+
         <p>@messages("messages__establishers__add_hint")</p>
+
+
 
         @components.input_yes_no(
             field = form("value"),

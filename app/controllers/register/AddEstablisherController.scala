@@ -46,18 +46,22 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
+
+      val allEstablishers = request.userAnswers.allIndvEstablisherNames
+
       val preparedForm = request.userAnswers.addEstablisher match {
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(addEstablisher(appConfig, preparedForm, mode))
+      Ok(addEstablisher(appConfig, preparedForm, mode, allEstablishers))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
+      val allEstablishers = request.userAnswers.allIndvEstablisherNames
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode, allEstablishers))),
         (value) =>
           dataCacheConnector.save[Boolean](request.externalId, AddEstablisherId.toString, value).map(cacheMap =>
             Redirect(navigator.nextPage(AddEstablisherId, mode)(new UserAnswers(cacheMap))))
