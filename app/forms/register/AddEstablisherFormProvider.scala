@@ -24,6 +24,6 @@ class AddEstablisherFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("addEstablisher.error.required")
+      "value" -> boolean("messages__error__selection")
     )
 }

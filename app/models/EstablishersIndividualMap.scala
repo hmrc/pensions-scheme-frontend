@@ -23,13 +23,9 @@ case class EstablishersIndividualMap[A](private val data: Map[Int, A]){
 
   def get(index: Int): Try[Option[A]] =
     Try {
-      require(index <= data.size + 1 && index <= 10)
+      require(index <= data.size && index <= 10)
       data.get(index)
     }
-
-  def size: Int = {
-    data.size
-  }
 
   def getValues: Seq[A] ={
     data.values.toSeq

@@ -17,7 +17,7 @@
 package controllers.register
 
 import play.api.data.Form
-import play.api.libs.json.JsBoolean
+import play.api.libs.json.{JsBoolean, Json}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
@@ -25,8 +25,8 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.AddEstablisherFormProvider
-import identifiers.register.AddEstablisherId
-import models.NormalMode
+import identifiers.register.{AddEstablisherId, SchemeDetailsId}
+import models.{NormalMode, SchemeDetails, SchemeType}
 import views.html.register.addEstablisher
 
 class AddEstablisherControllerSpec extends ControllerSpecBase {
@@ -35,24 +35,37 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
 
   val formProvider = new AddEstablisherFormProvider()
   val form = formProvider()
+  val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
-    new AddEstablisherController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameCacheMap): AddEstablisherController =
+    new AddEstablisherController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = addEstablisher(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  val allEstablisherNames = Some(Seq("Jo Wilson", "Paul Douglas"))
+
+  def viewAsString(form: Form[_] = form, allEstablishers: Option[Seq[String]] = None): String = addEstablisher(frontendAppConfig,
+    form, NormalMode, allEstablishers, schemeName)(fakeRequest, messages).toString
 
   "AddEstablisher Controller" must {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET when scheme name is present" in {
       val result = controller().onPageLoad(NormalMode)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
+    "redirect to session expired page on a GET when scheme name is not present" in {
+      val result = controller(getEmptyCacheMap).onPageLoad(NormalMode)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(AddEstablisherId.toString -> JsBoolean(true))
+      val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
+        AddEstablisherId.toString -> JsBoolean(true))
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)

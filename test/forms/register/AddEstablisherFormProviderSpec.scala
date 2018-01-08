@@ -20,7 +20,7 @@ import forms.FormSpec
 
 class AddEstablisherFormProviderSpec extends FormSpec {
 
-  val requiredKey = "addEstablisher.error.required"
+  val requiredKey = "messages__error__selection"
   val invalidKey = "error.boolean"
 
   val formProvider = new AddEstablisherFormProvider()

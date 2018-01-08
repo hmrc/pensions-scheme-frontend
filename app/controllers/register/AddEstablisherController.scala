@@ -17,7 +17,6 @@
 package controllers.register
 
 import javax.inject.Inject
-
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -27,10 +26,10 @@ import config.FrontendAppConfig
 import forms.register.AddEstablisherFormProvider
 import identifiers.register.AddEstablisherId
 import models.Mode
-import play.api.mvc.{Action, AnyContent}
+import models.requests.DataRequest
+import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Navigator, UserAnswers}
 import views.html.register.addEstablisher
-
 import scala.concurrent.Future
 
 class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
@@ -44,27 +43,40 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
+      retrieveSchemeName {
+        schemeName =>
 
-      val allEstablishers = request.userAnswers.allIndvEstablisherNames
-
-      val preparedForm = request.userAnswers.addEstablisher match {
-        case None => form
-        case Some(value) => form.fill(value)
+          val preparedForm = request.userAnswers.addEstablisher match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          Future.successful(Ok(addEstablisher(appConfig, preparedForm, mode,
+            request.userAnswers.allEstablisherNames, schemeName)))
       }
-      Ok(addEstablisher(appConfig, preparedForm, mode, allEstablishers))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val allEstablishers = request.userAnswers.allIndvEstablisherNames
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode, allEstablishers))),
-        (value) =>
-          dataCacheConnector.save[Boolean](request.externalId, AddEstablisherId.toString, value).map(cacheMap =>
-            Redirect(navigator.nextPage(AddEstablisherId, mode)(new UserAnswers(cacheMap))))
-      )
+      retrieveSchemeName {
+        schemeName =>
+
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
+                request.userAnswers.allEstablisherNames, schemeName))),
+            (value) =>
+              dataCacheConnector.save[Boolean](request.externalId, AddEstablisherId.toString, value).map(cacheMap =>
+                Redirect(navigator.nextPage(AddEstablisherId, mode)(new UserAnswers(cacheMap))))
+          )
+      }
+  }
+
+  private def retrieveSchemeName(block: String => Future[Result])
+                                (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    request.userAnswers.schemeDetails.map { schemeDetails =>
+      block(schemeDetails.schemeName)
+    }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
   }
 }

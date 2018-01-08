@@ -36,6 +36,16 @@ trait ViewSpecBase extends SpecBase {
       )
   }
 
+  def haveDynamicText(messageKey: String, args: Any*): Matcher[Document] = Matcher[Document] {
+    document =>
+      val text = messages(messageKey, args:_*)
+      MatchResult(
+        document.toString.contains(messages(messageKey, args:_*)),
+        s"text $text is not rendered on the page",
+        s"text $text is rendered on the page"
+      )
+  }
+
   def haveLabelAndValue(forElement: String, expectedLabel: String, expectedValue: String): Matcher[Document] = Matcher[Document] {
     document =>
       val labels = document.getElementsByAttributeValue("for", forElement)
@@ -73,10 +83,10 @@ trait ViewSpecBase extends SpecBase {
     assert(elements.first().html().replace("\n", "") == expectedValue)
   }
 
-  def assertPageTitleEqualsMessage(doc: Document, expectedMessageKey: String, args: Any*): Assertion = {
+  def assertPageTitleEqualsMessage(doc: Document, expectedMessage: String) = {
     val headers = doc.getElementsByTag("h1")
     headers.size mustBe 1
-    headers.first.text.replaceAll("\u00a0", " ") mustBe messages(expectedMessageKey, args:_*).replaceAll("&nbsp;", " ")
+    headers.first.text.replaceAll("\u00a0", " ") mustBe expectedMessage.replaceAll("&nbsp;", " ")
   }
 
   def assertContainsText(doc:Document, text: String): Assertion = assert(doc.toString.contains(text), "\n\ntext " + text + " was not rendered on the page.\n")

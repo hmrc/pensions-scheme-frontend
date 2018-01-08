@@ -21,22 +21,57 @@ import controllers.register.routes
 import forms.register.AddEstablisherFormProvider
 import views.behaviours.YesNoViewBehaviours
 import models.NormalMode
+import org.apache.commons.lang3.RandomStringUtils
+import org.jsoup.Jsoup
+import play.twirl.api.Html
 import views.html.register.addEstablisher
+
+import scala.util.Random
 
 class AddEstablisherViewSpec extends YesNoViewBehaviours {
 
-  val messageKeyPrefix = "addEstablisher"
+  val messageKeyPrefix = "establishers__add"
 
   val form = new AddEstablisherFormProvider()()
+  val allEstablisherNames = Some(Seq("Jo Wilson", "Paul Douglas"))
+  val schemeName = "Test Scheme Name"
 
-  def createView = () => addEstablisher(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView = () => addEstablisher(frontendAppConfig, form, NormalMode, None, schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => addEstablisher(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => addEstablisher(frontendAppConfig, form, NormalMode,
+    allEstablisherNames, schemeName)(fakeRequest, messages)
+
+  def createView(establishers: Option[Seq[String]] = None): Html = addEstablisher(frontendAppConfig, form, NormalMode,
+    establishers, schemeName)(fakeRequest, messages)
 
   "AddEstablisher view" must {
 
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.AddEstablisherController.onSubmit(NormalMode).url)
+    behave like yesNoPage(createViewUsingForm, messageKeyPrefix, "legend_more",
+      routes.AddEstablisherController.onSubmit(NormalMode).url)
+
+    "display the empty message if no establishers are added yet" in {
+      val doc = Jsoup.parse(createViewUsingForm(form).toString())
+      doc must haveDynamicText("messages__establishers__add_hint")
+    }
+
+    "display all the existing establisher names with yesNo Button if the maximum establishers are not added yet" in {
+      val doc = Jsoup.parse(createViewUsingForm(form).toString())
+      doc must haveDynamicText("Jo Wilson")
+      doc must haveDynamicText("Paul Douglas")
+      doc.select("#value-yes").size() mustEqual 1
+      doc.select("#value-no").size() mustEqual 1
+      doc.select("a[id=edit-link]") must haveLink(controllers.register.routes.AddEstablisherController.onPageLoad(NormalMode).url)
+    }
+
+    "display all the existing establisher names with the maximum limit message if all 10 establishers are already added" in {
+      val establishers: Seq[String] = Seq.fill[String](10)(s"${RandomStringUtils.randomAlphabetic(3)} ${RandomStringUtils.randomAlphabetic(5)}")
+      val doc = Jsoup.parse(createView(Some(establishers)).toString())
+      establishers.foreach{ name =>
+        doc must haveDynamicText(name)
+      }
+      doc must haveDynamicText("messages__establishers__add_limit")
+    }
   }
 }

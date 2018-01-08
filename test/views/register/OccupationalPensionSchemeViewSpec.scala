@@ -21,6 +21,7 @@ import controllers.register.routes
 import forms.register.OccupationalPensionSchemeFormProvider
 import views.behaviours.YesNoViewBehaviours
 import models.NormalMode
+import play.twirl.api.HtmlFormat
 import views.html.register.occupationalPensionScheme
 
 class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
@@ -29,14 +30,15 @@ class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
 
   val form = new OccupationalPensionSchemeFormProvider()()
 
-  def createView = () => occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   "OccupationalPensionScheme view" must {
 
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.OccupationalPensionSchemeController.onSubmit(NormalMode).url)
+    behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = routes.OccupationalPensionSchemeController.onSubmit(NormalMode).url)
   }
 }

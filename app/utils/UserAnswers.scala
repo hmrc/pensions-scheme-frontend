@@ -33,9 +33,7 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapF
   def establisherDetails(index: Int): Try[Option[EstablisherDetails]] = establisherDetails.map(_.get(index)).getOrElse(
     Success(None))
 
-  def allIndvEstablisherNames: Option[Seq[String]] = establisherDetails.map(_.getValues.map{ values =>
-      s"${values.firstName} ${values.lastName}"
-    })
+  def allEstablisherNames: Option[Seq[String]] = establisherDetails.map(_.getValues.map(_.establisherName))
 
   def schemeEstablishedCountry: Option[String] = cacheMap.getEntry[String](SchemeEstablishedCountryId.toString)
 
