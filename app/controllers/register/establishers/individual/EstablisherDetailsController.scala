@@ -26,13 +26,13 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.EstablisherDetailsFormProvider
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import models.Mode
-import models.EstablisherDetails
+import models.{EstablisherDetails, Index, Mode}
 import models.requests.DataRequest
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual.establisherDetails
 import play.api.mvc.Result
+
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
@@ -48,26 +48,26 @@ class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
           val redirectResult = request.userAnswers.establisherDetails(index) match {
-            case Success(None) => Ok(establisherDetails(appConfig, form, mode, schemeName))
-            case Success(Some(value)) => Ok(establisherDetails(appConfig, form.fill(value), mode, schemeName))
+            case Success(None) => Ok(establisherDetails(appConfig, form, mode, index, schemeName))
+            case Success(Some(value)) => Ok(establisherDetails(appConfig, form.fill(value), mode, index, schemeName))
             case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
           }
         Future.successful(redirectResult)
       }
   }
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode,
+              Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index,
                 schemeName))),
             (value) =>
               dataCacheConnector.saveMap[EstablisherDetails](request.externalId,
