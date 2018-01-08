@@ -35,7 +35,7 @@ class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
 
   "OccupationalPensionScheme view" must {
 
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.OccupationalPensionSchemeController.onSubmit(NormalMode).url)
   }

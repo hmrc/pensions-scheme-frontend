@@ -33,7 +33,7 @@ class AddressYearsViewSpec extends ViewBehaviours {
   def createViewUsingForm = (form: Form[_]) => addressYears(frontendAppConfig, form, NormalMode, 0)(fakeRequest, messages)
 
   "AddressYears view" must {
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
   }
 
   "AddressYears view" when {

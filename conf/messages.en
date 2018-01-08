@@ -116,6 +116,21 @@ messages__common__under_a_year = Less than 12 months
 messages__common__over_a_year = More than 12 months
 messages__error__address_years = Select how long they have been at the current address
 
+messages__common__what_you_need_to_know = What you need to know
+messages__complete__title = Your application has been successfully submitted
+messages__complete__heading = Your application to register {0} has been successfully submitted
+messages__complete__email = You will receive an email confirmation
+messages__complete__application_number_is = Your application reference number is {0}
+messages__complete__copy_1 = Your scheme is not yet registered. HMRC will consider your application and make a decision.
+messages__complete__copy_2 = We may contact you and request further information to support your application.
+messages__complete__copy_3 = If the scheme administrator does not meet the criteria to be a fit and proper person we may refuse your application.
+messages__complete__register_pensions_regulator = If your scheme has more than 2 members you need to
+messages__complete__register_pensions_regulator_link = register with the Pensions Regulator
+messages__complete__register_vat = You can also
+messages__complete__register_vat_link = register the scheme for VAT
+messages__complete__finish = Finish and sign out
+
+
 messages__uk_bank_account_details__title = Bank account details
 messages__uk_bank_account_details__bank_name = Bank name
 messages__uk_bank_account_details__account_name = Account name
