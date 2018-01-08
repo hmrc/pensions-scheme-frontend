@@ -24,7 +24,7 @@ import scala.util.Success
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
-  def establisherDetails(index: Index): Option[AnswerRow] = userAnswers.establisherDetails(index) match {
+  def establisherDetails(index: Int): Option[AnswerRow] = userAnswers.establisherDetails(index) match {
     case Success(Some(x)) => Some(AnswerRow("establisherDetails.checkYourAnswersLabel", s"${x.firstName} ${x.lastName}", false,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, index).url))
     case _ => None

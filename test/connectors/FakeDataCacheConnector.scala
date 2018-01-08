@@ -26,7 +26,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object FakeDataCacheConnector extends DataCacheConnector {
   override def save[A](cacheId: String, key: String, value: A)(implicit fmt: Format[A]): Future[CacheMap] = Future(CacheMap(cacheId, Map()))
 
-  override def saveMap[A](cacheId: String, key: String, index: Index, value: A)(implicit fmt: Format[Map[Int, A]]) : Future[CacheMap] =
+  override def saveMap[A](cacheId: String, key: String, index: Int, value: A)(implicit fmt: Format[Map[Int, A]]) : Future[CacheMap] =
     Future(CacheMap(cacheId, Map()))
 
   override def remove(cacheId: String, key: String): Future[Boolean] = ???

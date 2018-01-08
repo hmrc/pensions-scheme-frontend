@@ -19,7 +19,7 @@
 @import controllers.register.establishers.individual.routes._
 @import models.{AddressYears, Mode}
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Int)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__establisher_address_years__title"),
