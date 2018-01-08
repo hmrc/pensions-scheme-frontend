@@ -19,14 +19,13 @@ package utils
 import models.{CheckMode, Index}
 import viewmodels.AnswerRow
 import controllers.register.routes
-
 import scala.util.Success
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def establisherDetails(index: Int): Option[AnswerRow] = userAnswers.establisherDetails(index) match {
     case Success(Some(x)) => Some(AnswerRow("establisherDetails.checkYourAnswersLabel", s"${x.firstName} ${x.lastName}", false,
-      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, index).url))
+      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 
@@ -42,10 +41,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     x => AnswerRow("uKBankDetails.checkYourAnswersLabel", s"${x.accountName} ${x.bankName}", false, routes.UKBankDetailsController.onPageLoad(CheckMode).url)
   }
 
-  def addressYears(index: Index): Option[AnswerRow] = {
+  def addressYears(index: Int): Option[AnswerRow] = {
     userAnswers.addressYears(index) match {
       case Success(Some(x)) => Some(AnswerRow("addressYears.checkYourAnswersLabel", s"addressYears.$x", true,
-        controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, index).url))
+        controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, Index(index)).url))
       case _ => None
     }
   }

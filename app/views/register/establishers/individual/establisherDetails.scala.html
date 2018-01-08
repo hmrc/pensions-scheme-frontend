@@ -20,7 +20,7 @@
 @import models.Mode
 @import models.EstablisherDetails
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Int, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__establisher_individual__title"),
