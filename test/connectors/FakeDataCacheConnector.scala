@@ -16,11 +16,11 @@
 
 package connectors
 
-import models.Index
 import play.api.libs.json.Format
 import uk.gov.hmrc.http.cache.client.CacheMap
 
 import scala.concurrent.Future
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object FakeDataCacheConnector extends DataCacheConnector {
