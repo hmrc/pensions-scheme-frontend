@@ -1,30 +1,29 @@
 #!/bin/bash
 
-echo "Applying migration EstablisherDetails"
+echo "Applying migration EstablisherNino"
 
-echo "Adding routes to register.establishers.individual.routes"
+echo "Adding routes to conf/register.establishers.individual.routes"
 
-echo "" >> ../conf/register.establishers.individual.routes
-echo "GET        /establisherDetails                       controllers.register.establishers.individual.EstablisherDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /establisherDetails                       controllers.register.establishers.individual.EstablisherDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
+echo "" >> ../conf/app.routes
+echo "GET        /establisherNino               controllers.register.establishers.individual.EstablisherNinoController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
+echo "POST       /establisherNino               controllers.register.establishers.individual.EstablisherNinoController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
 
-echo "GET        /changeEstablisherDetails                       controllers.register.establishers.individual.EstablisherDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /changeEstablisherDetails                       controllers.register.establishers.individual.EstablisherDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
+echo "GET        /changeEstablisherNino               controllers.register.establishers.individual.EstablisherNinoController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
+echo "POST       /changeEstablisherNino               controllers.register.establishers.individual.EstablisherNinoController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "establisherDetails.title = establisherDetails" >> ../conf/messages.en
-echo "establisherDetails.heading = establisherDetails" >> ../conf/messages.en
-echo "establisherDetails.field1 = Field 1" >> ../conf/messages.en
-echo "establisherDetails.field2 = Field 2" >> ../conf/messages.en
-echo "establisherDetails.checkYourAnswersLabel = establisherDetails" >> ../conf/messages.en
-echo "establisherDetails.error.field1.required = Please give an answer for field1" >> ../conf/messages.en
-echo "establisherDetails.error.field2.required = Please give an answer for field2" >> ../conf/messages.en
+echo "establisherNino.title = establisherNino" >> ../conf/messages.en
+echo "establisherNino.heading = establisherNino" >> ../conf/messages.en
+echo "establisherNino.option1 = establisherNino" Option 1 >> ../conf/messages.en
+echo "establisherNino.option2 = establisherNino" Option 2 >> ../conf/messages.en
+echo "establisherNino.checkYourAnswersLabel = establisherNino" >> ../conf/messages.en
+echo "establisherNino.error.required = Please give an answer for establisherNino" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def establisherDetails: Option[EstablisherDetails] = cacheMap.getEntry[EstablisherDetails](EstablisherDetailsId.toString)";\
+     print "  def establisherNino: Option[EstablisherNino] = cacheMap.getEntry[EstablisherNino](EstablisherNinoId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -32,8 +31,8 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def establisherDetails: Option[AnswerRow] = userAnswers.establisherDetails map {";\
-     print "    x => AnswerRow(\"establisherDetails.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.EstablisherDetailsController.onPageLoad(CheckMode).url)";\
+     print "  def establisherNino: Option[AnswerRow] = userAnswers.establisherNino map {";\
+     print "    x => AnswerRow(\"establisherNino.checkYourAnswersLabel\", s\"establisherNino.$x\", true, controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -41,4 +40,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration EstablisherDetails completed"
+echo "Migration EstablisherNino completed"

@@ -9,3 +9,8 @@ GET        /:index/individual/establisherDetails          controllers.register.e
 POST       /:index/individual/establisherDetails          controllers.register.establishers.individual.EstablisherDetailsController.onSubmit(mode: Mode = NormalMode, index: Int)
 GET        /:index/individual/changeEstablisherDetails    controllers.register.establishers.individual.EstablisherDetailsController.onPageLoad(mode: Mode = CheckMode, index: Int)
 POST       /:index/individual/changeEstablisherDetails    controllers.register.establishers.individual.EstablisherDetailsController.onSubmit(mode: Mode = CheckMode, index: Int)
+
+GET        /individual/establisherNino             controllers.register.establishers.individual.EstablisherNinoController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/establisherNino             controllers.register.establishers.individual.EstablisherNinoController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/changeEstablisherNino       controllers.register.establishers.individual.EstablisherNinoController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/changeEstablisherNino       controllers.register.establishers.individual.EstablisherNinoController.onSubmit(mode: Mode = CheckMode)
