@@ -27,9 +27,7 @@ case class EstablishersIndividualMap[A](private val data: Map[Int, A]){
       data.get(index)
     }
 
-  def getValues: Seq[A] ={
-    data.values.toSeq
-  }
+  def getValues: Seq[A] = data.values.toSeq
 }
 
 object EstablishersIndividualMap {

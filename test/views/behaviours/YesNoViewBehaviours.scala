@@ -32,7 +32,6 @@ trait YesNoViewBehaviours extends QuestionViewBehaviours[Boolean] {
           val doc = asDocument(createView(form))
           val legends = doc.getElementsByTag("legend")
           legends.size mustBe 1
-
           legends.select("span").first.text mustBe messages(s"messages__${messageKeyPrefix}_$legendKey")
         }
 

@@ -21,6 +21,7 @@ import controllers.register.routes
 import forms.register.SecuredBenefitsFormProvider
 import views.behaviours.YesNoViewBehaviours
 import models.NormalMode
+import play.twirl.api.HtmlFormat
 import views.html.register.securedBenefits
 
 class SecuredBenefitsViewSpec extends YesNoViewBehaviours {
@@ -29,9 +30,10 @@ class SecuredBenefitsViewSpec extends YesNoViewBehaviours {
 
   val form = new SecuredBenefitsFormProvider()()
 
-  def createView = () => securedBenefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => securedBenefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => securedBenefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => securedBenefits(
+    frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   "SecuredBenefits view" must {
 

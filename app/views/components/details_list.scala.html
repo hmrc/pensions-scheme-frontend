@@ -14,25 +14,26 @@
  * limitations under the License.
  *@
 
-@import viewmodels.AnswerRow
-
 @(detailsList: Seq[String], cyaUrl: String)(implicit messages: Messages)
 
-<div class = "form-group">
+<div class="form-group">
     <ul class="govuk-check-your-answers form-group cya-questions-short">
         @for(listItem <- detailsList){
         <li>
             <div class="cya-question">
                 <h2 class="bold">@listItem </h2>
             </div>
+
             <div class="cya-answer">
                 <p></p>
             </div>
+
             <div class="cya-change">
                 <a id="edit-link" href="@cyaUrl">
                     @messages(s"messages__common__edit")
                 </a>
             </div>
+
         </li>
         }
     </ul>

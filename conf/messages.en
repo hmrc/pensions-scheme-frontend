@@ -52,8 +52,6 @@ site.save_and_continue = Save and continue
 site.service_name = Pension Scheme Registrations
 site.textarea.char_limit = (Limit is {0} characters)
 
-messages__common__establishers = Establishers
-
 messages__unauthorised__title = You can’t access this service with this account
 
 messages__pension_scheme_registration__title = Pension Scheme Registration - GOV.UK

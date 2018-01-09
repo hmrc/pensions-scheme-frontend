@@ -41,19 +41,19 @@
 
                 @components.input_yes_no(
                     field = form("value"),
-                    fieldsetClass = Some(" "),
+                    fieldsetClass = None,
                     label = messages("messages__establishers__add_legend_more"),
                     labelClass = Some("bold-small"),
                     hint = Some(messages("messages__establishers__add_hint"))
                 )
 
             } else {
-                @components.heading(headingKey = "messages__common__establishers", secondaryHeaderKey = Some(schemeName))
+                @components.heading(headingKey = "messages__establishers__add__title", secondaryHeaderKey = Some(schemeName))
                 @components.details_list(establishers, routes.AddEstablisherController.onPageLoad(mode).url)
                 <p>@messages("messages__establishers__add_limit")</p>
             }
         }.getOrElse{
-            @components.heading(headingKey = "messages__common__establishers", secondaryHeaderKey = Some(schemeName))
+            @components.heading(headingKey = "messages__establishers__add__title", secondaryHeaderKey = Some(schemeName))
             <p>@messages("messages__establishers__add_hint")</p>
         }
 

@@ -27,7 +27,9 @@ import forms.register.establishers.AddEstablisherFormProvider
 import play.api.test.Helpers._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.AddEstablisherId
-import models.{NormalMode, SchemeDetails, SchemeType}
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import models.{EstablisherDetails, NormalMode, SchemeDetails, SchemeType}
+import org.joda.time.LocalDate
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherControllerSpec extends ControllerSpecBase {
@@ -37,13 +39,14 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
   val formProvider = new AddEstablisherFormProvider()
   val form = formProvider()
   val schemeName = "Test Scheme Name"
+  val day = LocalDate.now().getDayOfMonth
+  val month = LocalDate.now().getMonthOfYear
+  val year = LocalDate.now().getYear - 20
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameCacheMap): AddEstablisherController =
     new AddEstablisherController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
-
-  val allEstablisherNames = Some(Seq("Jo Wilson", "Paul Douglas"))
 
   def viewAsString(form: Form[_] = form, allEstablishers: Option[Seq[String]] = None): String = addEstablisher(frontendAppConfig,
     form, NormalMode, allEstablishers, schemeName)(fakeRequest, messages).toString
@@ -66,12 +69,14 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
-        AddEstablisherId.toString -> JsBoolean(true))
+        AddEstablisherId.toString -> JsBoolean(true), EstablisherDetailsId.toString ->
+          Json.obj("0" -> EstablisherDetails("firstName", "lastName", new LocalDate(year, month, day))))
+
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(true))
+      contentAsString(result) mustBe viewAsString(form.fill(true), Some(Seq("firstName lastName")))
     }
 
     "redirect to the next page when valid data is submitted" in {

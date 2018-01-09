@@ -18,7 +18,7 @@
         field: Field,
         label: String,
         secondaryLabel: Option[String] = None,
-        fieldsetClass: Option[String] = None,
+        fieldsetClass: Option[String] = Some("inline"),
         hint: Option[String] = None,
         yesAssoc: Option[String] = None,
         noAssoc: Option[String] = None,
@@ -27,7 +27,7 @@
 
 
 <div class="form-group @if(field.hasErrors){form-field--error}">
-    <fieldset @if(fieldsetClass.nonEmpty){class="@fieldsetClass"} else {class="inline"} id="@{field.id}">
+    <fieldset class="@fieldsetClass" id="@{field.id}">
 
         <legend>
             <span @if(labelClass.nonEmpty){class="@labelClass"}>@label</span>

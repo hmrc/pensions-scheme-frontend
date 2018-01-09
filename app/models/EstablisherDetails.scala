@@ -21,9 +21,7 @@ import play.api.libs.json._
 
 case class EstablisherDetails (firstName: String, lastName: String, date: LocalDate) {
 
-  def establisherName: String = {
-    s"$firstName $lastName"
-  }
+  def establisherName: String = s"$firstName $lastName"
 }
 
 object EstablisherDetails {

@@ -21,6 +21,7 @@ import controllers.register.routes
 import forms.register.UKBankAccountFormProvider
 import views.behaviours.YesNoViewBehaviours
 import models.NormalMode
+import play.twirl.api.HtmlFormat
 import views.html.register.uKBankAccount
 
 class UKBankAccountViewSpec extends YesNoViewBehaviours {
@@ -29,9 +30,10 @@ class UKBankAccountViewSpec extends YesNoViewBehaviours {
 
   val form = new UKBankAccountFormProvider()()
 
-  def createView = () => uKBankAccount(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => uKBankAccount(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => uKBankAccount(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => uKBankAccount(
+    frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   "UKBankAccount view" must {
 

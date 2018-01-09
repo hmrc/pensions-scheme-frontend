@@ -33,10 +33,11 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
   val form = new AddEstablisherFormProvider()()
   val schemeName = "Test Scheme Name"
 
-  def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, None, schemeName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, None,
+    schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addEstablisher(frontendAppConfig, form, NormalMode,
-    Some(Seq("Jo Wilson", "Paul Douglas")), schemeName)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addEstablisher(frontendAppConfig,
+    form, NormalMode, Some(Seq("Jo Wilson", "Paul Douglas")), schemeName)(fakeRequest, messages)
 
   def createView(establishers: Option[Seq[String]] = None): Html = addEstablisher(frontendAppConfig, form, NormalMode,
     establishers, schemeName)(fakeRequest, messages)
@@ -58,6 +59,7 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
 
     "display all the partially added establisher names with yes/No buttons if the maximum establishers are not added yet" in {
       val doc = Jsoup.parse(createViewUsingForm(form).toString())
+
       doc must haveDynamicText("Jo Wilson")
       doc must haveDynamicText("Paul Douglas")
       doc.select("#value-yes").size() mustEqual 1
@@ -65,12 +67,13 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
       doc.select("a[id=edit-link]") must haveLink(routes.AddEstablisherController.onPageLoad(NormalMode).url)
     }
 
-    "display all the added establisher names with the maximum limit message without yes/no buttons if all 10 establishers are already added" in {
+    "display all the added establisher names with the maximum limit message without yes/no buttons if all maximum 10" +
+      " establishers are already added" in {
       val establishers: Seq[String] = Seq.fill[String](10)(s"${RandomStringUtils.randomAlphabetic(3)} " +
         s"${RandomStringUtils.randomAlphabetic(5)}")
 
       val doc = Jsoup.parse(createView(Some(establishers)).toString())
-      establishers.foreach{ name =>
+      establishers.foreach { name =>
         doc must haveDynamicText(name)
       }
       doc must haveDynamicText("messages__establishers__add_limit")

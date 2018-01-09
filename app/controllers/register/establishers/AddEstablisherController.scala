@@ -31,7 +31,6 @@ import models.requests.DataRequest
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.addEstablisher
-
 import scala.concurrent.Future
 
 class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
