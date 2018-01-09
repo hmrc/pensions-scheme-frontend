@@ -17,6 +17,7 @@
 package utils
 
 import identifiers.register._
+import identifiers.register.establishers.AddEstablisherId
 import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._

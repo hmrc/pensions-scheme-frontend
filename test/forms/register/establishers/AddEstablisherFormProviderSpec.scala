@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.register
+package forms.register.establishers
 
 import forms.FormSpec
 

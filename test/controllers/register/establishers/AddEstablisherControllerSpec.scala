@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers.register.establishers
 
 import play.api.data.Form
 import play.api.libs.json.{JsBoolean, Json}
@@ -23,11 +23,12 @@ import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
+import forms.register.establishers.AddEstablisherFormProvider
 import play.api.test.Helpers._
-import forms.register.AddEstablisherFormProvider
-import identifiers.register.{AddEstablisherId, SchemeDetailsId}
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.AddEstablisherId
 import models.{NormalMode, SchemeDetails, SchemeType}
-import views.html.register.addEstablisher
+import views.html.register.establishers.addEstablisher
 
 class AddEstablisherControllerSpec extends ControllerSpecBase {
 

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package views.register
+package views.register.establishers
 
 import play.api.data.Form
-import controllers.register.routes
-import forms.register.AddEstablisherFormProvider
+import controllers.register.establishers.routes
+import forms.register.establishers.AddEstablisherFormProvider
 import views.behaviours.YesNoViewBehaviours
 import models.NormalMode
 import org.apache.commons.lang3.RandomStringUtils
 import org.jsoup.Jsoup
 import play.twirl.api.{Html, HtmlFormat}
-import views.html.register.addEstablisher
+import views.html.register.establishers.addEstablisher
 
 class AddEstablisherViewSpec extends YesNoViewBehaviours {
 
@@ -62,7 +62,7 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
       doc must haveDynamicText("Paul Douglas")
       doc.select("#value-yes").size() mustEqual 1
       doc.select("#value-no").size() mustEqual 1
-      doc.select("a[id=edit-link]") must haveLink(controllers.register.routes.AddEstablisherController.onPageLoad(NormalMode).url)
+      doc.select("a[id=edit-link]") must haveLink(routes.AddEstablisherController.onPageLoad(NormalMode).url)
     }
 
     "display all the added establisher names with the maximum limit message without yes/no buttons if all 10 establishers are already added" in {

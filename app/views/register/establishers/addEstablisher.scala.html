@@ -16,7 +16,7 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.routes._
+@import controllers.register.establishers.routes
 @import models.Mode
 @import utils.Constants._
 
@@ -27,7 +27,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = AddEstablisherController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = routes.AddEstablisherController.onSubmit(mode), 'autoComplete -> "off") {
 
         @allEstablishers.map { establishers =>
 
@@ -37,7 +37,7 @@
 
             @components.heading(headingKey = "messages__establishers__add__title", secondaryHeaderKey = Some(schemeName))
 
-            @components.details_list(establishers, controllers.register.routes.AddEstablisherController.onPageLoad(mode).url)
+            @components.details_list(establishers, routes.AddEstablisherController.onPageLoad(mode).url)
 
                 @components.input_yes_no(
                     field = form("value"),
@@ -49,7 +49,7 @@
 
             } else {
                 @components.heading(headingKey = "messages__common__establishers", secondaryHeaderKey = Some(schemeName))
-                @components.details_list(establishers, controllers.register.routes.AddEstablisherController.onPageLoad(mode).url)
+                @components.details_list(establishers, routes.AddEstablisherController.onPageLoad(mode).url)
                 <p>@messages("messages__establishers__add_limit")</p>
             }
         }.getOrElse{

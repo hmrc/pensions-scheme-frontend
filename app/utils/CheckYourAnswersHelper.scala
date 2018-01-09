@@ -30,19 +30,23 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
   }
 
   def addEstablisher: Option[AnswerRow] = userAnswers.addEstablisher map {
-    x => AnswerRow("addEstablisher.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, routes.AddEstablisherController.onPageLoad(CheckMode).url)
+    x => AnswerRow("addEstablisher.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(CheckMode).url)
   }
 
   def schemeEstablishedCountry: Option[AnswerRow] = userAnswers.schemeEstablishedCountry map {
-    x => AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", s"$x", false, routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)
+    x => AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", s"$x", false,
+      routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)
   }
 
   def uKBankAccount: Option[AnswerRow] = userAnswers.uKBankAccount map {
-    x => AnswerRow("uKBankAccount.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, routes.UKBankAccountController.onPageLoad(CheckMode).url)
+    x => AnswerRow("uKBankAccount.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
+      routes.UKBankAccountController.onPageLoad(CheckMode).url)
   }
 
   def uKBankDetails: Option[AnswerRow] = userAnswers.uKBankDetails map {
-    x => AnswerRow("uKBankDetails.checkYourAnswersLabel", s"${x.accountName} ${x.bankName}", false, routes.UKBankDetailsController.onPageLoad(CheckMode).url)
+    x => AnswerRow("uKBankDetails.checkYourAnswersLabel", s"${x.accountName} ${x.bankName}", false,
+      routes.UKBankDetailsController.onPageLoad(CheckMode).url)
   }
 
   def addressYears(index: Int): Option[AnswerRow] = {

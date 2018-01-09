@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers.register.establishers
 
 import javax.inject.Inject
+
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.AddEstablisherFormProvider
-import identifiers.register.AddEstablisherId
+import forms.register.establishers.AddEstablisherFormProvider
+import identifiers.register.establishers.AddEstablisherId
 import models.Mode
 import models.requests.DataRequest
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Navigator, UserAnswers}
-import views.html.register.addEstablisher
+import views.html.register.establishers.addEstablisher
+
 import scala.concurrent.Future
 
 class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,

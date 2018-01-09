@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-package identifiers.register
-import identifiers._
+package forms.register.establishers
 
-case object AddEstablisherId extends Identifier {
-  override def toString: String = "addEstablisher"
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+
+class AddEstablisherFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__error__selection")
+    )
 }
