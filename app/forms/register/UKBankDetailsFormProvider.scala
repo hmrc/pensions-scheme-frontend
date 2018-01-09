@@ -25,7 +25,7 @@ import models.UKBankDetails
 
 class UKBankDetailsFormProvider @Inject() extends Mappings {
 
-  val regexAccountNo = """[0-9]*""".r.toString()
+  val regexAccountNo = "[0-9]*"
   val nameMaxLength = 28
   val accountNoMaxLength = 8
 
@@ -45,7 +45,7 @@ class UKBankDetailsFormProvider @Inject() extends Mappings {
           verifying(returnOnFirstFailure(regexp(regexAccountNo, "messages__error__account_number_invalid"),
             maxLength(accountNoMaxLength, "messages__error__account_number_length"))),
       "date" ->
-        dateMapping("messages__error__date")
+        dateMapping("messages__error__date").verifying(futureDate("messages__error__date_future"))
     )(UKBankDetails.apply)(UKBankDetails.unapply)
   )
 }

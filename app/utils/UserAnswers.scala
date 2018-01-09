@@ -28,14 +28,17 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapF
   def establisherKind: Option[EstablisherKind] = cacheMap.getEntry[EstablisherKind](EstablisherKindId.toString)
 
 
+  def establisherDetails: Option[EstablishersIndividualMap[EstablisherDetails]] =
+    cacheMap.getEntry[EstablishersIndividualMap[EstablisherDetails]](EstablisherDetailsId.toString)
+
+  def establisherDetails(index: Int): Try[Option[EstablisherDetails]] = establisherDetails.map(_.get(index)).getOrElse(Success(None))
+
   def schemeEstablishedCountry: Option[String] = cacheMap.getEntry[String](SchemeEstablishedCountryId.toString)
 
-  def addressYears: Option[AddressYearsMap] = cacheMap.getEntry[AddressYearsMap](AddressYearsId.toString)
+  def addressYears: Option[EstablishersIndividualMap[AddressYears]] =
+    cacheMap.getEntry[EstablishersIndividualMap[AddressYears]](AddressYearsId.toString)
 
-  def addressYears(index: Int): Try[Option[AddressYears]] = {
-
-    addressYears.map(_.get(index)).getOrElse(Success(None))
-  }
+  def addressYears(index: Int): Try[Option[AddressYears]] = addressYears.map(_.get(index)).getOrElse(Success(None))
 
   def uKBankAccount: Option[Boolean] = cacheMap.getEntry[Boolean](UKBankAccountId.toString)
 

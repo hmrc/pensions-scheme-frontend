@@ -35,7 +35,7 @@ class SecuredBenefitsViewSpec extends YesNoViewBehaviours {
 
   "SecuredBenefits view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, "copy")
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "copy")
 
     behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.SecuredBenefitsController.onSubmit(NormalMode).url)
   }

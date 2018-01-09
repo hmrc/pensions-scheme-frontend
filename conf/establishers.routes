@@ -1,9 +1,14 @@
 # routes for establishers
 
-GET        /:index/individual/addressYears                controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Int)
-POST       /:index/individual/addressYears                controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = NormalMode, index: Int)
-GET        /:index/individual/changeAddressYears          controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Int)
-POST       /:index/individual/changeAddressYears          controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = CheckMode, index: Int)
+GET        /:index/individual/addressYears                controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/addressYears                controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeAddressYears          controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeAddressYears          controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/individual/establisherDetails          controllers.register.establishers.individual.EstablisherDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/establisherDetails          controllers.register.establishers.individual.EstablisherDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeEstablisherDetails    controllers.register.establishers.individual.EstablisherDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeEstablisherDetails    controllers.register.establishers.individual.EstablisherDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
 
 GET        /establisherKind               controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode)
 POST       /establisherKind               controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode)

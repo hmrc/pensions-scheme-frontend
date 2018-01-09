@@ -26,7 +26,7 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressYearsFormProvider
 import identifiers.register.establishers.individual.AddressYearsId
-import models.{AddressYears, Mode}
+import models.{AddressYears, Index, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual.addressYears
@@ -47,16 +47,16 @@ class AddressYearsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       request.userAnswers.addressYears(index) match {
         case Success(None) => Ok(addressYears(appConfig, form, mode, index))
         case Success(Some(value)) => Ok(addressYears(appConfig, form.fill(value), mode, index))
-        case Failure(e) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
   }
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>

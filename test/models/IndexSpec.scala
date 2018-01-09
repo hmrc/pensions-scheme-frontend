@@ -16,26 +16,23 @@
 
 package models
 
-import play.api.libs.json.{Reads, Writes}
-import scala.util.Try
+import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 
-case class AddressYearsMap(private val data: Map[Int, AddressYears]){
+class IndexSpec extends WordSpecLike with MustMatchers with OptionValues {
 
-  def get(index: Int): Try[Option[AddressYears]] =
-    Try {
-      require(index <= data.size + 1 && index <= 10)
-      data.get(index)
+  "indexPathBindable" must {
+    val binder = Index.indexPathBindable
+    
+    "bind a valid index" in {
+      binder.bind("index", "1") mustEqual Right(Index(0))
     }
-}
 
-object AddressYearsMap {
-
-  implicit def addressReads(implicit ev: Reads[Map[Int, AddressYears]]): Reads[AddressYearsMap] =
-    ev.map(AddressYearsMap.apply)
-
-  implicit def addressWrites(implicit ev: Writes[Map[Int, AddressYears]]): Writes[AddressYearsMap] =
-    Writes {
-      model =>
-        ev.writes(model.data)
+    "fail to bind an index with negative value" in {
+      binder.bind("index", "-1") mustEqual Left("Index binding failed")
     }
+
+    "unbind an index" in {
+      binder.unbind("index", Index(0)) mustEqual "1"
+    }
+  }
 }
