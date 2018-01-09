@@ -25,6 +25,8 @@ import models._
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
+  def uniqueTaxReference: Option[Boolean] = cacheMap.getEntry[Boolean](UniqueTaxReferenceId.toString)
+
 
   def addEstablisher: Option[Boolean] = cacheMap.getEntry[Boolean](AddEstablisherId.toString)
 

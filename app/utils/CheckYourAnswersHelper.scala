@@ -23,6 +23,10 @@ import scala.util.Success
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def uniqueTaxReference: Option[AnswerRow] = userAnswers.uniqueTaxReference map {
+    x => AnswerRow("uniqueTaxReference.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode).url)
+  }
+
   def establisherDetails(index: Int): Option[AnswerRow] = userAnswers.establisherDetails(index) match {
     case Success(Some(x)) => Some(AnswerRow("establisherDetails.checkYourAnswersLabel", s"${x.firstName} ${x.lastName}", false,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
