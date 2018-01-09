@@ -23,23 +23,20 @@ import views.behaviours.YesNoViewBehaviours
 import models.NormalMode
 import org.apache.commons.lang3.RandomStringUtils
 import org.jsoup.Jsoup
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
 import views.html.register.addEstablisher
-
-import scala.util.Random
 
 class AddEstablisherViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "establishers__add"
 
   val form = new AddEstablisherFormProvider()()
-  val allEstablisherNames = Some(Seq("Jo Wilson", "Paul Douglas"))
   val schemeName = "Test Scheme Name"
 
-  def createView = () => addEstablisher(frontendAppConfig, form, NormalMode, None, schemeName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, None, schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => addEstablisher(frontendAppConfig, form, NormalMode,
-    allEstablisherNames, schemeName)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addEstablisher(frontendAppConfig, form, NormalMode,
+    Some(Seq("Jo Wilson", "Paul Douglas")), schemeName)(fakeRequest, messages)
 
   def createView(establishers: Option[Seq[String]] = None): Html = addEstablisher(frontendAppConfig, form, NormalMode,
     establishers, schemeName)(fakeRequest, messages)
@@ -51,12 +48,15 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
     behave like yesNoPage(createViewUsingForm, messageKeyPrefix, "legend_more",
       routes.AddEstablisherController.onSubmit(NormalMode).url)
 
-    "display the empty message if no establishers are added yet" in {
-      val doc = Jsoup.parse(createViewUsingForm(form).toString())
+    "display the initial message without yes/no buttons if no establishers are added yet" in {
+      val doc = Jsoup.parse(createView(None).toString())
+
       doc must haveDynamicText("messages__establishers__add_hint")
+      doc.select("#value-yes").size() mustEqual 0
+      doc.select("#value-no").size() mustEqual 0
     }
 
-    "display all the existing establisher names with yesNo Button if the maximum establishers are not added yet" in {
+    "display all the partially added establisher names with yes/No buttons if the maximum establishers are not added yet" in {
       val doc = Jsoup.parse(createViewUsingForm(form).toString())
       doc must haveDynamicText("Jo Wilson")
       doc must haveDynamicText("Paul Douglas")
@@ -65,13 +65,17 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
       doc.select("a[id=edit-link]") must haveLink(controllers.register.routes.AddEstablisherController.onPageLoad(NormalMode).url)
     }
 
-    "display all the existing establisher names with the maximum limit message if all 10 establishers are already added" in {
-      val establishers: Seq[String] = Seq.fill[String](10)(s"${RandomStringUtils.randomAlphabetic(3)} ${RandomStringUtils.randomAlphabetic(5)}")
+    "display all the added establisher names with the maximum limit message without yes/no buttons if all 10 establishers are already added" in {
+      val establishers: Seq[String] = Seq.fill[String](10)(s"${RandomStringUtils.randomAlphabetic(3)} " +
+        s"${RandomStringUtils.randomAlphabetic(5)}")
+
       val doc = Jsoup.parse(createView(Some(establishers)).toString())
       establishers.foreach{ name =>
         doc must haveDynamicText(name)
       }
       doc must haveDynamicText("messages__establishers__add_limit")
+      doc.select("#value-yes").size() mustEqual 0
+      doc.select("#value-no").size() mustEqual 0
     }
   }
 }
