@@ -72,7 +72,7 @@ class EstablishersIndividualMapSpec extends WordSpecLike with MustMatchers with 
       val testMap: EstablishersIndividualMap[AddressYears] =
         EstablishersIndividualMap(Map(0 -> AddressYears.UnderAYear, 1 -> AddressYears.OverAYear))
 
-      testMap.get(11).isFailure mustEqual true
+      testMap.get(10).isFailure mustEqual true
     }
   }
 }
