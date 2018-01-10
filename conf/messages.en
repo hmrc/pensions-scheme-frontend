@@ -197,7 +197,4 @@ establisherDetails.checkYourAnswersLabel = establisherDetails
 messages__establisher__has_sautr__title = Does the establisher have a Self Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__establisher__no_utr = Tell us why the establisher does not have a UTR
 messages__error__has_sautr_establisher = Select yes if the establisher has a UTR
-uniqueTaxReference.title = uniqueTaxReference
-uniqueTaxReference.heading = uniqueTaxReference
 uniqueTaxReference.checkYourAnswersLabel = uniqueTaxReference
-uniqueTaxReference.error.required = Please give an answer for uniqueTaxReference
