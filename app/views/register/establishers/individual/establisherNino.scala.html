@@ -36,12 +36,25 @@
             field = form("value"),
             legend = messages("messages__establisherNino__title"),
             legendClass = Some("visually-hidden"),
-            inputs = EstablisherNino.options
+            inputs = EstablisherNino.yes
         )
 
         @components.input_text(
-            field = form("schemeType.schemeTypeDetails"),
-            label = messages("messages__scheme_details__type_other_more"),
+            field = form("enterNino"),
+            label = messages("messages__common__nino"),
+            hint = Some(messages("messages__common__nino_hint")),
+            groupClass = Some("js-hidden panel panel-border-narrow")
+        )
+
+        @components.input_radio(
+            field = form("value"),
+            legend = messages("messages__establisherNino__title"),
+            legendClass = Some("visually-hidden"),
+            inputs = EstablisherNino.no
+)
+        @components.input_text(
+            field = form("whyNoNino"),
+            label = messages("messages__establisher__no_nino"),
             groupClass = Some("js-hidden panel panel-border-narrow")
         )
 

@@ -23,8 +23,7 @@ import models.EstablisherNino
 
 class EstablisherNinoFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[EstablisherNino] = Form(mapping(
-      "value" -> enumerable[EstablisherNino]("messages__error__has_nino_establisher"),
-      "establisher_nino" ->
-    ))
+  def apply(): Form[EstablisherNino] = Form(
+      "value" -> enumerable[EstablisherNino]("messages__error__has_nino_establisher")
+    )
 }

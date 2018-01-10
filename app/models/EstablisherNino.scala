@@ -25,14 +25,13 @@ object EstablisherNino {
   case object Yes extends WithName("Yes") with EstablisherNino
   case object No extends WithName("No") with EstablisherNino
 
-  val values: Seq[EstablisherNino] = Seq(
-    Yes, No
+  val yes: Seq[InputOption] = Yes (
+      InputOption(Yes.toString)
   )
 
-  val options: Seq[InputOption] = values.map {
-    value =>
-      InputOption(value.toString, value.toString)
-  }
+  val no: Seq[InputOption] = No (
+      InputOption(No.toString)
+  )
 
   implicit val enumerable: Enumerable[EstablisherNino] =
     Enumerable(values.map(v => v.toString -> v): _*)

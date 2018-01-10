@@ -25,7 +25,8 @@ import scala.util.Success
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def establisherNino: Option[AnswerRow] = userAnswers.establisherNino map {
-    x => AnswerRow("establisherNino.checkYourAnswersLabel", s"establisherNino.$x", true, controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode).url)
+    x => AnswerRow("establisherNino.checkYourAnswersLabel", s"establisherNino.$x", true,
+      controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode).url)
   }
 
   def establisherDetails(index: Int): Option[AnswerRow] = userAnswers.establisherDetails(index) match {
@@ -35,15 +36,18 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
   }
 
   def schemeEstablishedCountry: Option[AnswerRow] = userAnswers.schemeEstablishedCountry map {
-    x => AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", s"$x", false, routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)
+    x => AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", s"$x", false,
+      routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)
   }
 
   def uKBankAccount: Option[AnswerRow] = userAnswers.uKBankAccount map {
-    x => AnswerRow("uKBankAccount.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, routes.UKBankAccountController.onPageLoad(CheckMode).url)
+    x => AnswerRow("uKBankAccount.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
+      routes.UKBankAccountController.onPageLoad(CheckMode).url)
   }
 
   def uKBankDetails: Option[AnswerRow] = userAnswers.uKBankDetails map {
-    x => AnswerRow("uKBankDetails.checkYourAnswersLabel", s"${x.accountName} ${x.bankName}", false, routes.UKBankDetailsController.onPageLoad(CheckMode).url)
+    x => AnswerRow("uKBankDetails.checkYourAnswersLabel", s"${x.accountName} ${x.bankName}", false,
+      routes.UKBankDetailsController.onPageLoad(CheckMode).url)
   }
 
   def addressYears(index: Int): Option[AnswerRow] = {
