@@ -16,15 +16,18 @@
 
 package utils
 
-import models.{CheckMode, Index}
+import models.{CheckMode, Index, UniqueTaxReference}
 import viewmodels.AnswerRow
 import controllers.register.routes
+
 import scala.util.Success
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
-  def uniqueTaxReference: Option[AnswerRow] = userAnswers.uniqueTaxReference map {
-    x => AnswerRow("uniqueTaxReference.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode).url)
+  def uniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.uniqueTaxReference(index) match {
+    case Success(Some(x)) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
+      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
+    case _ => None
   }
 
   def establisherDetails(index: Int): Option[AnswerRow] = userAnswers.establisherDetails(index) match {

@@ -19,27 +19,54 @@
 @import controllers.register.establishers.individual.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, establisherName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__establisher__has_sautr__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = UniqueTaxReferenceController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = UniqueTaxReferenceController.onSubmit(mode, index), 'autoComplete -> "off") {
 
-        @components.error_summary(form.errors)
+    @components.error_summary(form.errors)
 
-        @components.heading("messages__establisher__has_sautr__title")
+    @components.heading(headingKey = "messages__establisher__has_sautr__title", secondaryHeaderKey = Some(establisherName))
 
-        @components.input_yes_no(
-            field = form("value"),
-            fieldsetClass = Some(" "),
-            label = messages("messages__establisher__has_sautr__title"),
-            labelClass = Some("visually-hidden"),
-            hint = Some(messages("messages__common__utr_hint"))
+    @components.fieldSet(
+        field = form("uniqueTaxReference.hasUtr"),
+        legend = "messages__establisher__has_sautr__title",
+        hint = Some("messages__common__utr_hint"),
+        hiddenLegend = true
+    ){
+        @components.radio(
+        field = form("uniqueTaxReference.hasUtr"),
+        label = messages("site.yes"),
+        value = "yes",
+        dataTarget = Some("uniqueTaxReference_utr-form")
         )
 
-        @components.submit_button()
+        @components.input_text(
+        field = form("uniqueTaxReference.utr"),
+        label = messages("messages__common__utr"),
+        groupClass = Some("js-hidden panel panel-border-narrow"),
+        hint = Some(messages("messages__common__utr_hint_format"))
+        )
+
+        @components.radio(
+        field = form("uniqueTaxReference.hasUtr"),
+        label = messages("site.no"),
+        value = "no",
+        dataTarget = Some("uniqueTaxReference_reason-form")
+        )
+
+        @components.input_text(
+        field = form("uniqueTaxReference.reason"),
+        label = messages("messages__establisher__no_utr"),
+        groupClass = Some("js-hidden panel panel-border-narrow")
+        )
+    }
+
+    @components.submit_button()
+
     }
 }

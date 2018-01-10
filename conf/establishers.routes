@@ -15,7 +15,7 @@ POST       /:index/individual/establisherDetails          controllers.register.e
 GET        /:index/individual/changeEstablisherDetails    controllers.register.establishers.individual.EstablisherDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeEstablisherDetails    controllers.register.establishers.individual.EstablisherDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
 
-GET        /individual/uniqueTaxReference                            controllers.register.establishers.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/uniqueTaxReference                            controllers.register.establishers.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/changeUniqueTaxReference                      controllers.register.establishers.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/changeUniqueTaxReference                      controllers.register.establishers.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode)
+GET        /:index/individual/uniqueTaxReference          controllers.register.establishers.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/uniqueTaxReference          controllers.register.establishers.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeUniqueTaxReference    controllers.register.establishers.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeUniqueTaxReference    controllers.register.establishers.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode, index: Index)

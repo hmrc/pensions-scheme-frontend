@@ -16,8 +16,9 @@
 
 package forms.mappings
 
-import models.{SchemeType, SortCode}
+import models.{SchemeType, SortCode, UniqueTaxReference}
 import models.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
+import models.UniqueTaxReference.{No, Yes}
 import org.joda.time.LocalDate
 import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import play.api.data.Forms.of
@@ -81,6 +82,35 @@ trait Mappings extends Formatters with Constraints {
       "schemeTypeDetails" -> mandatoryIfEqual("schemeType.type", other, text(requiredOtherKey).
         verifying(maxLength(schemeTypeDetailsMaxLength, invalidOtherKey)))
     ).transform(toSchemeType, fromSchemeType)
+  }
+
+  protected def uniqueTaxReferenceMapping(requiredKey: String = "messages__error__has_sautr_establisher",
+                                          requiredUtrKey: String = "messages__error__sautr",
+                                          requiredReasonKey: String = "messages__error__no_sautr_establisher",
+                                          invalidUtrKey: String = "messages__error__sautr_invalid"):
+    Mapping[UniqueTaxReference] = {
+
+    val regexUtr = "\\d{10}"
+    def fromUniqueTaxReference(utr: UniqueTaxReference): (String, Option[String], Option[String]) = {
+      utr match {
+        case UniqueTaxReference.Yes(utr) => ("yes", Some(utr), None)
+        case UniqueTaxReference.No(reason) =>  ("no", None, Some(reason))
+      }
+    }
+
+    def toUniqueTaxReference(utrTuple: (String, Option[String], Option[String])) = {
+
+      utrTuple match {
+        case (hasUtr, Some(utr), _) if(hasUtr == "yes") => Yes(utr)
+        case (hasUtr, _, Some(reason)) if(hasUtr == "no") => No(reason)
+      }
+    }
+
+    tuple("hasUtr" -> text(requiredKey),
+    "utr" -> mandatoryIfEqual("uniqueTaxReference.hasUtr", "yes",
+      text(requiredUtrKey).verifying(regexp(regexUtr, invalidUtrKey))),
+    "reason" -> mandatoryIfEqual("uniqueTaxReference.hasUtr", "no", text(requiredReasonKey))).
+      transform(toUniqueTaxReference, fromUniqueTaxReference)
   }
 
   protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {

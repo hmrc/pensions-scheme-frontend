@@ -17,13 +17,14 @@
 package forms.register.establishers.individual
 
 import javax.inject.Inject
+
 import forms.mappings.Mappings
+import models.UniqueTaxReference
 import play.api.data.Form
 
 class UniqueTaxReferenceFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("messages__error__selection")
-    )
+  def apply(): Form[UniqueTaxReference] = Form(
+    "uniqueTaxReference" -> uniqueTaxReferenceMapping()
+  )
 }

@@ -37,8 +37,9 @@ messages__error__last_name = Enter the last name
 messages__error__date = Enter a valid date
 messages__error__date_future = Date cannot be a date in the future
 messages__error__selection = You must make a selection
-messages__error__utr = Enter the Self Assessment Unique Tax Reference number
-messages__error__no_utr_establisher = You need to tell us why the establisher does not have a UTR
+messages__error__sautr = Enter the Self Assessment Unique Tax Reference number
+messages__error__sautr_invalid = Enter a valid 10 digit Self Assessment Unique Taxpayer Reference number
+messages__error__no_sautr_establisher = You need to tell us why the establisher does not have a SAUTR
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -195,6 +196,7 @@ establisherDetails.checkYourAnswersLabel = establisherDetails
 
 messages__establisher__has_sautr__title = Does the establisher have a Self Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__establisher__no_utr = Tell us why the establisher does not have a UTR
+messages__error__has_sautr_establisher = Select yes if the establisher has a UTR
 uniqueTaxReference.title = uniqueTaxReference
 uniqueTaxReference.heading = uniqueTaxReference
 uniqueTaxReference.checkYourAnswersLabel = uniqueTaxReference
