@@ -26,11 +26,12 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.EstablisherKindFormProvider
 import identifiers.register.establishers.EstablisherKindId
-import models.{Mode, EstablisherKind}
-import utils.{Enumerable, Navigator, UserAnswers}
+import models.{EstablisherKind, Index, Mode}
+import utils.{Enumerable, MapFormats,Navigator, UserAnswers}
 import views.html.register.establishers.establisherKind
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 class EstablisherKindController @Inject()(
                                         appConfig: FrontendAppConfig,
@@ -40,26 +41,26 @@ class EstablisherKindController @Inject()(
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: EstablisherKindFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                        formProvider: EstablisherKindFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.establisherKind match {
-        case None => form
-        case Some(value) => form.fill(value)
+       request.userAnswers.establisherKind(index) match {
+        case Success(None) => Ok(establisherKind(appConfig, form, mode, index))
+        case Success(Some(value)) => Ok(establisherKind(appConfig, form.fill(value), mode, index))
+        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
-      Ok(establisherKind(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode,index))),
         (value) =>
-          dataCacheConnector.save[EstablisherKind](request.externalId, EstablisherKindId.toString, value).map(cacheMap =>
+          dataCacheConnector.saveMap[EstablisherKind](request.externalId, EstablisherKindId.toString, index,value).map(cacheMap =>
             Redirect(navigator.nextPage(EstablisherKindId, mode)(new UserAnswers(cacheMap))))
       )
   }

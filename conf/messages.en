@@ -190,3 +190,5 @@ messages__establishers__add__legend_more = Do you want to add another establishe
 messages__establishers__add__hint = You must add at least one establisher. You can add up to 10.
 messages__establishers__add__limit = You have added the maximum number of establishers
 messages__establishers__add__error_required=You must make a selection
+
+establisherKind.checkYourAnswersLabel = establisherKind

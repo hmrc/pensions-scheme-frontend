@@ -1,0 +1,16 @@
+[1mdiff --git a/conf/establishers.routes b/conf/establishers.routes[m
+[1mindex db3b7f2..b221ae7 100644[m
+[1m--- a/conf/establishers.routes[m
+[1m+++ b/conf/establishers.routes[m
+[36m@@ -5,7 +5,7 @@[m [mPOST       /:index/individual/addressYears                controllers.register.e[m
+ GET        /:index/individual/changeAddressYears          controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Int)[m
+ POST       /:index/individual/changeAddressYears          controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = CheckMode, index: Int)[m
+ [m
+[31m-GET        /establisherKind               controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode)[m
+[31m-POST       /establisherKind               controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode)[m
+[31m-GET        /changeEstablisherKind               controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = CheckMode)[m
+[31m-POST       /changeEstablisherKind               controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = CheckMode)[m
+[32m+[m[32mGET        /:index/establisherKind               controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode,index:Int)[m
+[32m+[m[32mPOST       /:index/establisherKind               controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode,index:Int)[m
+[32m+[m[32mGET        /:index/changeEstablisherKind               controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = CheckMode,index:Int)[m
+[32m+[m[32mPOST       /:index/changeEstablisherKind               controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = CheckMode,index:Int)[m

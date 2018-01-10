@@ -18,7 +18,7 @@ package views.register.establishers
 
 import play.api.data.Form
 import forms.register.establishers.EstablisherKindFormProvider
-import models.{NormalMode, EstablisherKind}
+import models.{EstablisherKind, Index, NormalMode}
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.establisherKind
 
@@ -28,12 +28,12 @@ class EstablisherKindViewSpec extends ViewBehaviours {
 
   val form = new EstablisherKindFormProvider()()
 
-  def createView = () => establisherKind(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView = () => establisherKind(frontendAppConfig, form, NormalMode,Index(1))(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => establisherKind(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => establisherKind(frontendAppConfig, form, NormalMode,Index(1))(fakeRequest, messages)
 
   "EstablisherKind view" must {
-    behave like normalPage(createView, messageKeyPrefix,"legend","hint")
+    behave like normalPage(createView, messageKeyPrefix,messages("messages__establishers__add__heading"),"legend","hint")
   }
 
   "EstablisherKind view" when {
