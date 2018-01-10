@@ -17,20 +17,13 @@
 package models
 
 import play.api.libs.json._
-import utils.WithName
 
-sealed trait UniqueTaxReference {
-  def value: String
-}
+sealed trait UniqueTaxReference
 
 object UniqueTaxReference {
 
-  case class Yes(utr: String) extends WithName("yes") with UniqueTaxReference {
-    val value = "yes"
-  }
-  case class No(reason: String) extends WithName("no") with UniqueTaxReference {
-    val value = "no"
-  }
+  case class Yes(utr: String) extends UniqueTaxReference
+  case class No(reason: String) extends UniqueTaxReference
 
   implicit val reads: Reads[UniqueTaxReference] = {
 
