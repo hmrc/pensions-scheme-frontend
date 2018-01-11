@@ -27,8 +27,8 @@ class ContactDetailsFormProvider @Inject() extends Mappings {
 
    def apply(): Form[ContactDetails] = Form(
      mapping(
-      "field1" -> text("contactDetails.error.field1.required"),
-      "field2" -> text("contactDetails.error.field2.required")
+      "emailAddress" -> text("messages__error__email"),
+      "phoneNumber" -> text("messages__error__phone")
     )(ContactDetails.apply)(ContactDetails.unapply)
    )
  }

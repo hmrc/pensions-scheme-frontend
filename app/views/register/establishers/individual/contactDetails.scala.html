@@ -23,7 +23,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("contactDetails.title"),
+    title = messages("messages__establisher_individual_contact_details__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -31,16 +31,16 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("contactDetails.heading")
+        @components.heading("messages__establisher_individual_contact_details__title")
 
         @components.input_text(
-            field = form("field1"),
-            label = messages("contactDetails.field1")
+            field = form("emailAddress"),
+            label = messages("messages__common__email")
         )
 
         @components.input_text(
-            field = form("field2"),
-            label = messages("contactDetails.field2")
+            field = form("phoneNumber"),
+            label = messages("messages__common__phone")
         )
 
         @components.submit_button()

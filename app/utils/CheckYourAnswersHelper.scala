@@ -24,7 +24,7 @@ import scala.util.Success
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def contactDetails: Option[AnswerRow] = userAnswers.contactDetails map {
-    x => AnswerRow("contactDetails.checkYourAnswersLabel", s"${x.field1} ${x.field2}", false, controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode).url)
+    x => AnswerRow("contactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false, controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode).url)
   }
 
   def establisherDetails(index: Int): Option[AnswerRow] = userAnswers.establisherDetails(index) match {
