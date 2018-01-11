@@ -16,24 +16,43 @@
 
 package models
 
-import utils.{Enumerable, InputOption, WithName}
+import models.SchemeType.{Other, mappings}
+import play.api.libs.json.{JsError, JsPath, JsSuccess, Reads}
+import utils.{InputOption, WithName}
 
 sealed trait EstablisherNino
 
 object EstablisherNino {
 
-  case object Yes extends WithName("Yes") with EstablisherNino
-  case object No extends WithName("No") with EstablisherNino
+  case class Yes(establisherNino: String) extends WithName("yes") with EstablisherNino
+  case class No(establisherNino: String) extends WithName("no") with EstablisherNino
 
-  val values: Seq[EstablisherNino] = Seq(
-    Yes, No
+  val yes = "yes"
+  val no = "no"
+
+  def options: Seq[InputOption] = Seq(
+    InputOption(yes, s"messages__establisherNino__$yes", Some("establisherNino__yes-form")),
+    InputOption(no, s"messages__establisherNino__$no", Some("establisherNino__no-form"))
   )
 
-  val options: Seq[InputOption] = values.map {
-    value =>
-      InputOption(value.toString, value.toString)
-  }
+  implicit val reads: Reads[EstablisherNino] = {
 
-  implicit val enumerable: Enumerable[EstablisherNino] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    (JsPath \ "name").read[String].flatMap {
+
+      case establisherNino if establisherNino == yes =>
+        (JsPath \ "establisherNino").read[String]
+          .map[EstablisherNino](Yes.apply)
+          .orElse(Reads[EstablisherNino](_ => JsError("Other Value expected")))
+
+      case establisherNino if establisherNino == no =>
+        (JsPath \ "establisherNino").read[String]
+          .map[EstablisherNino](No.apply)
+          .orElse(Reads[EstablisherNino](_ => JsError("Other Value expected")))
+
+      case establisherNino if mappings.keySet.contains(establisherNino) =>
+        Reads(_ => JsSuccess(mappings.apply(establisherNino)))
+
+      case _ => Reads(_ => JsError("Invalid Scheme Type"))
+    }
+  }
 }

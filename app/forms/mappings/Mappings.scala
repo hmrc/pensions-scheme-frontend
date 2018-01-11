@@ -83,6 +83,8 @@ trait Mappings extends Formatters with Constraints {
     ).transform(toSchemeType, fromSchemeType)
   }
 
+  protected def establisherNinoMapping(){}
+
   protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
     def toLocalDate(date: (String, String, String)): LocalDate =
