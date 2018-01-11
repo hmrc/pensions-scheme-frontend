@@ -17,6 +17,7 @@
 package models
 
 import play.api.libs.json._
+import utils.InputOption
 
 sealed trait UniqueTaxReference
 
@@ -24,6 +25,11 @@ object UniqueTaxReference {
 
   case class Yes(utr: String) extends UniqueTaxReference
   case class No(reason: String) extends UniqueTaxReference
+
+  def options: Seq[InputOption] = Seq(
+    InputOption("yes", "site.yes", Some("uniqueTaxReference_utr-form")),
+    InputOption("no", "site.no", Some("uniqueTaxReference_reason-form"))
+  )
 
   implicit val reads: Reads[UniqueTaxReference] = {
 

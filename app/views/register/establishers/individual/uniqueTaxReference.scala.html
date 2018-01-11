@@ -18,8 +18,13 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.individual.routes._
 @import models.Mode
+@import models.UniqueTaxReference._
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, establisherName: String)(implicit request: Request[_], messages: Messages)
+
+@_options = @{
+    UniqueTaxReference.options
+}
 
 @main_template(
     title = messages("messages__establisher__has_sautr__title"),
@@ -40,9 +45,9 @@
     ){
         @components.radio(
         field = form("uniqueTaxReference.hasUtr"),
-        label = messages("site.yes"),
-        value = "yes",
-        dataTarget = Some("uniqueTaxReference_utr-form")
+        label = _options(0).label,
+        value = _options(0).value,
+        dataTarget = _options(0).dataTarget
         )
 
         @components.input_text(
@@ -54,9 +59,9 @@
 
         @components.radio(
         field = form("uniqueTaxReference.hasUtr"),
-        label = messages("site.no"),
-        value = "no",
-        dataTarget = Some("uniqueTaxReference_reason-form")
+        label = _options(1).label,
+        value = _options(1).value,
+        dataTarget = _options(1).dataTarget
         )
 
         @components.input_text(
