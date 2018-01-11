@@ -31,6 +31,7 @@ import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.individual.contactDetails
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
@@ -45,11 +46,11 @@ class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.contactDetails match {
-        case None => form
-        case Some(value) => form.fill(value)
+      request.userAnswers.contactDetails(index) match {
+        case Success(None) => Ok(contactDetails(appConfig, form, mode, index))
+        case Success(Some(value)) => Ok(contactDetails(appConfig, form.fill(value), mode, index))
+        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
-      Ok(contactDetails(appConfig, preparedForm, mode, index))
   }
 
   def onSubmit(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {
