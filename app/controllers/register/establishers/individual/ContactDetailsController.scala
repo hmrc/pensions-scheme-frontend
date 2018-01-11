@@ -26,8 +26,7 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.ContactDetailsFormProvider
 import identifiers.register.establishers.individual.ContactDetailsId
-import models.Mode
-import models.ContactDetails
+import models.{ContactDetails, Index, Mode}
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.individual.contactDetails
 
@@ -44,20 +43,20 @@ class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData) {
     implicit request =>
       val preparedForm = request.userAnswers.contactDetails match {
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(contactDetails(appConfig, preparedForm, mode))
+      Ok(contactDetails(appConfig, preparedForm, mode, index))
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(contactDetails(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(contactDetails(appConfig, formWithErrors, mode, index))),
         (value) =>
           dataCacheConnector.save[ContactDetails](request.externalId, ContactDetailsId.toString, value).map(cacheMap =>
             Redirect(navigator.nextPage(ContactDetailsId, mode)(new UserAnswers(cacheMap))))

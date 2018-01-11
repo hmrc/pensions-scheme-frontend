@@ -10,7 +10,7 @@ POST       /:index/individual/establisherDetails          controllers.register.e
 GET        /:index/individual/changeEstablisherDetails    controllers.register.establishers.individual.EstablisherDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeEstablisherDetails    controllers.register.establishers.individual.EstablisherDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
 
-GET        /individual/contactDetails                     controllers.register.establishers.individual.ContactDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/contactDetails                     controllers.register.establishers.individual.ContactDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/changeContactDetails               controllers.register.establishers.individual.ContactDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/changeContactDetails               controllers.register.establishers.individual.ContactDetailsController.onSubmit(mode: Mode = CheckMode)
+GET        /:index/individual/contactDetails              controllers.register.establishers.individual.ContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/contactDetails              controllers.register.establishers.individual.ContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeContactDetails        controllers.register.establishers.individual.ContactDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeContactDetails        controllers.register.establishers.individual.ContactDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)

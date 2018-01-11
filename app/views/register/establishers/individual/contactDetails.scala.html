@@ -20,14 +20,14 @@
 @import models.Mode
 @import models.ContactDetails
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__establisher_individual_contact_details__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = ContactDetailsController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = ContactDetailsController.onSubmit(mode, index), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
