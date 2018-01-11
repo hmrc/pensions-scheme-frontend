@@ -179,3 +179,11 @@ messages__error__last_name_length = The last name cannot be more than 35 charact
 messages__error__last_name_invalid = Enter the valid last name
 
 establisherDetails.checkYourAnswersLabel = establisherDetails
+
+contactDetails.title = contactDetails
+contactDetails.heading = contactDetails
+contactDetails.field1 = Field 1
+contactDetails.field2 = Field 2
+contactDetails.checkYourAnswersLabel = contactDetails
+contactDetails.error.field1.required = Please give an answer for field1
+contactDetails.error.field2.required = Please give an answer for field2
