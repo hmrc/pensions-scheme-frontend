@@ -75,7 +75,7 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
       "display an input text box with the value when no is selected" in {
         val expectedValue = "don't have utr"
         val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "no", "uniqueTaxReference.reason" -> expectedValue))))
-        doc must haveLabelAndValue("uniqueTaxReference_reason", messages("messages__establisher__no_utr"), expectedValue)
+        doc must haveLabelAndValue("uniqueTaxReference_reason", messages("messages__establisher__no_sautr"), expectedValue)
       }
     }
   }
