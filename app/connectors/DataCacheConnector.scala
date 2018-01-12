@@ -37,7 +37,7 @@ class DataCacheConnectorImpl @Inject()(val sessionRepository: SessionRepository,
     sessionRepository().get(cacheId).flatMap { optionalCacheMap =>
       val updatedMap = optionalCacheMap.flatMap { cacheMap =>
         cacheMap.getEntry[Map[Int, A]](key).map(_ + (index -> value))
-      }.getOrElse(Map.empty)
+      }.getOrElse(Map(index -> value))
       val updatedCacheMap = cascadeUpsert[Map[Int, A]](key,
         updatedMap, optionalCacheMap.getOrElse(new CacheMap(cacheId, Map())))
       sessionRepository().upsert(updatedCacheMap).map { _ => updatedCacheMap }

@@ -53,7 +53,8 @@
             @components.input_text(
                 field = form("establisherNino.nino"),
                 label = messages("messages__common__nino"),
-                groupClass = Some("js-hidden panel panel-border-narrow")
+                groupClass = Some("js-hidden panel panel-border-narrow"),
+                hint = Some(messages("messages__common__nino_hint"))
             )
 
             @components.radio(

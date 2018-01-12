@@ -87,10 +87,9 @@ trait Mappings extends Formatters with Constraints {
   protected def establisherNinoMapping(requiredKey: String = "messages__error__has_nino_establisher",
                                        requiredNinoKey: String = "messages__error__nino",
                                        requiredReasonKey: String = "messages__establisher__no_nino",
-                                       invalidNinoKey: String = "messages__error__no_nino_establisher"):
+                                       invalidNinoKey: String = "messages__error__nino_invalid"):
   Mapping[EstablisherNino] = {
 
-    val regexNino = "\\d{10}"
     def fromEstablisherNino(nino: EstablisherNino): (String, Option[String], Option[String]) = {
       nino match {
         case EstablisherNino.Yes(nino) => ("yes", Some(nino), None)
@@ -108,7 +107,7 @@ trait Mappings extends Formatters with Constraints {
 
     tuple("hasNino" -> text(requiredKey),
       "nino" -> mandatoryIfEqual("establisherNino.hasNino", "yes",
-        text(requiredNinoKey).verifying(regexp(regexNino, invalidNinoKey))),
+        text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
       "reason" -> mandatoryIfEqual("establisherNino.hasNino", "no", text(requiredReasonKey))).
       transform(toEstablisherNino, fromEstablisherNino)
   }
