@@ -26,8 +26,10 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.EstablisherKindFormProvider
 import identifiers.register.establishers.EstablisherKindId
+import models.requests.DataRequest
 import models.{EstablisherKind, Index, Mode}
-import utils.{Enumerable, MapFormats,Navigator, UserAnswers}
+import play.api.mvc.{AnyContent, Result}
+import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.establisherKind
 
 import scala.concurrent.Future
@@ -45,23 +47,38 @@ class EstablisherKindController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-       request.userAnswers.establisherKind(index) match {
-        case Success(None) => Ok(establisherKind(appConfig, form, mode, index))
-        case Success(Some(value)) => Ok(establisherKind(appConfig, form.fill(value), mode, index))
-        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+      retrieveSchemeName {
+        schemeName =>
+          val redirectResult=request.userAnswers.establisherKind(index) match {
+            case Success(None) => Ok(establisherKind(appConfig, form, mode, index,schemeName))
+            case Success(Some(value)) => Ok(establisherKind(appConfig, form.fill(value), mode, index,schemeName))
+            case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+          }
+          Future.successful(redirectResult)
       }
   }
 
   def onSubmit(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode,index))),
-        (value) =>
-          dataCacheConnector.saveMap[EstablisherKind](request.externalId, EstablisherKindId.toString, index,value).map(cacheMap =>
-            Redirect(navigator.nextPage(EstablisherKindId, mode)(new UserAnswers(cacheMap))))
-      )
+      retrieveSchemeName {
+        schemeName=>
+          form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index,schemeName))),
+          (value) =>
+            dataCacheConnector.saveMap[EstablisherKind](request.externalId,
+              EstablisherKindId.toString, index, value).map(cacheMap =>
+              Redirect(navigator.nextPage(EstablisherKindId, mode)(new UserAnswers(cacheMap))))
+        )
+      }
+  }
+
+  private def retrieveSchemeName(block: String => Future[Result])
+                                (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    request.userAnswers.schemeDetails.map { schemeDetails =>
+      block(schemeDetails.schemeName)
+    }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
   }
 }

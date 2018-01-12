@@ -28,9 +28,11 @@ class EstablisherKindViewSpec extends ViewBehaviours {
 
   val form = new EstablisherKindFormProvider()()
 
-  def createView = () => establisherKind(frontendAppConfig, form, NormalMode,Index(1))(fakeRequest, messages)
+  val schemeName="test scheme name"
 
-  def createViewUsingForm = (form: Form[_]) => establisherKind(frontendAppConfig, form, NormalMode,Index(1))(fakeRequest, messages)
+  def createView = () => establisherKind(frontendAppConfig, form, NormalMode,Index(1),schemeName)(fakeRequest, messages)
+
+  def createViewUsingForm = (form: Form[_]) => establisherKind(frontendAppConfig, form, NormalMode,Index(1),schemeName)(fakeRequest, messages)
 
   "EstablisherKind view" must {
     behave like normalPage(createView, messageKeyPrefix,messages("messages__establishers__add__heading"),"legend","hint")

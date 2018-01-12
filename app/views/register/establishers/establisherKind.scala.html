@@ -19,7 +19,7 @@
 @import controllers.register.establishers.routes._
 @import models.{EstablisherKind, Mode}
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index:Index)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index:Index,schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__establishers__add__title"),
@@ -30,7 +30,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__establishers__add__heading")
+        @components.heading("messages__establishers__add__heading",secondaryHeaderKey = Some(schemeName))
 
         @components.input_radio(
             field = form("value"),

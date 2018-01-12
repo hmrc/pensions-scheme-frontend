@@ -25,9 +25,10 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.EstablisherKindFormProvider
 import identifiers.register.establishers.EstablisherKindId
-import models.{EstablisherKind, Index, NormalMode}
+import models._
 import views.html.register.establishers.establisherKind
 import controllers.ControllerSpecBase
+import identifiers.register.SchemeDetailsId
 
 class EstablisherKindControllerSpec extends ControllerSpecBase {
 
@@ -35,16 +36,25 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
 
   val formProvider = new EstablisherKindFormProvider()
   val form = formProvider()
+  val schemeName = "Test Scheme Name"
+
   val firstIndex = Index(1)
   val invalidIndex = Index(11)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap):EstablisherKindController =
+  val minimalDataCacheMap = new FakeDataRetrievalAction(Some(CacheMap("id", Map(
+    SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust))))))
+
+
+  def validData=Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
+    EstablisherKindId.toString->Json.obj("1"->EstablisherKind.options.head.value.toString))
+
+  def controller(dataRetrievalAction: DataRetrievalAction = minimalDataCacheMap):EstablisherKindController =
     new EstablisherKindController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = establisherKind(frontendAppConfig, form, NormalMode,firstIndex)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = establisherKind(frontendAppConfig, form, NormalMode,firstIndex,schemeName)(fakeRequest, messages).toString
 
-  def validData=Map(EstablisherKindId.toString->Json.obj("1"->EstablisherKind.options.head.value.toString))
+
 
   "EstablisherKind Controller" must {
 
