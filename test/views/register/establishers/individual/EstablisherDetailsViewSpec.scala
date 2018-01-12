@@ -19,8 +19,7 @@ package views.register.establishers.individual
 import play.api.data.{Form, FormError}
 import controllers.register.establishers.individual.routes
 import forms.register.establishers.individual.EstablisherDetailsFormProvider
-import models.NormalMode
-import models.EstablisherDetails
+import models.{EstablisherDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
@@ -35,10 +34,10 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[EstablisherDetai
   val schemeName = "test scheme name"
 
   def createView: () => HtmlFormat.Appendable = () =>
-    establisherDetails(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    establisherDetails(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), schemeName)(fakeRequest, messages)
 
   val day = LocalDate.now().getDayOfMonth
   val year = LocalDate.now().getYear
@@ -54,10 +53,10 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[EstablisherDetai
 
   "EstablisherDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.EstablisherDetailsController.onSubmit(NormalMode, 0).url, "firstName", "lastName")
+      routes.EstablisherDetailsController.onSubmit(NormalMode, Index(0)).url, "firstName", "lastName")
 
     "display an input text box with the correct label and value for day" in {
       val doc = asDocument(createViewUsingForm(form.bind(validData)))

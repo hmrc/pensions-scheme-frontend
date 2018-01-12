@@ -19,17 +19,12 @@ package forms.register.establishers.individual
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import models.{EstablisherNino, EstablisherNinoYes, SchemeDetails}
+import models.EstablisherNino
 import play.api.data.Form
-import play.api.data.Forms.mapping
 
 class EstablisherNinoFormProvider @Inject() extends Mappings {
-  val ninoMaxLength = 9
 
-  def apply(): Form[EstablisherNino] = Form(mapping(
-    "ninoEntry" -> text(
-      "messages__error__nino").
-      verifying(maxLength(ninoMaxLength, "messages__error__scheme_name_length")),
-    "yesNo" -> establisherNinoMapping()
-  )(EstablisherNinoYes.apply)(EstablisherNinoYes.unapply))
+  def apply(): Form[EstablisherNino] = Form(
+    "establisherNino" -> establisherNinoMapping()
+  )
 }

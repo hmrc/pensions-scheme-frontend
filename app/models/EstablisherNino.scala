@@ -16,43 +16,47 @@
 
 package models
 
-import models.SchemeType.{Other, mappings}
-import play.api.libs.json.{JsError, JsPath, JsSuccess, Reads}
-import utils.{InputOption, WithName}
+import play.api.libs.json._
+import utils.InputOption
 
 sealed trait EstablisherNino
 
 object EstablisherNino {
 
-  case class Yes(establisherNino: String) extends WithName("yes") with EstablisherNino
-  case class No(establisherNino: String) extends WithName("no") with EstablisherNino
-
-  val yes = "yes"
-  val no = "no"
+  case class Yes(nino: String) extends EstablisherNino
+  case class No(reason: String) extends EstablisherNino
 
   def options: Seq[InputOption] = Seq(
-    InputOption(yes, s"messages__establisherNino__$yes", Some("establisherNino__yes-form")),
-    InputOption(no, s"messages__establisherNino__$no", Some("establisherNino__no-form"))
+    InputOption("yes", "site.yes", Some("establisherNino_nino-form")),
+    InputOption("no", "site.no", Some("establisherNino_reason-form"))
   )
 
   implicit val reads: Reads[EstablisherNino] = {
 
-    (JsPath \ "name").read[String].flatMap {
+    (JsPath \ "hasNino").read[String].flatMap {
 
-      case establisherNino if establisherNino == yes =>
-        (JsPath \ "establisherNino").read[String]
+      case hasNino if hasNino == "yes" =>
+        (JsPath \ "nino").read[String]
           .map[EstablisherNino](Yes.apply)
-          .orElse(Reads[EstablisherNino](_ => JsError("Other Value expected")))
+          .orElse(Reads[EstablisherNino](_ => JsError("NINO Value expected")))
 
-      case establisherNino if establisherNino == no =>
-        (JsPath \ "establisherNino").read[String]
+      case hasNino if hasNino == "no" =>
+        (JsPath \ "reason").read[String]
           .map[EstablisherNino](No.apply)
-          .orElse(Reads[EstablisherNino](_ => JsError("Other Value expected")))
+          .orElse(Reads[EstablisherNino](_ => JsError("Reason expected")))
 
-      case establisherNino if mappings.keySet.contains(establisherNino) =>
-        Reads(_ => JsSuccess(mappings.apply(establisherNino)))
+      case _ => Reads(_ => JsError("Invalid selection"))
+    }
+  }
 
-      case _ => Reads(_ => JsError("Invalid Scheme Type"))
+  implicit lazy val writes = new Writes[EstablisherNino] {
+    def writes(o: EstablisherNino) = {
+      o match {
+        case EstablisherNino.Yes(nino) =>
+          Json.obj("hasNino" -> "yes", "nino" -> nino)
+        case EstablisherNino.No(reason) =>
+          Json.obj("hasNino" -> "no", "reason" -> reason)
+      }
     }
   }
 }

@@ -16,7 +16,8 @@
 
 package forms.mappings
 
-import models.{SchemeType, SortCode}
+import models.EstablisherNino.{No, Yes}
+import models.{EstablisherNino, SchemeType, SortCode}
 import models.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
 import org.joda.time.LocalDate
 import play.api.data.{FieldMapping, FormError, Forms, Mapping}
@@ -83,7 +84,34 @@ trait Mappings extends Formatters with Constraints {
     ).transform(toSchemeType, fromSchemeType)
   }
 
-  protected def establisherNinoMapping(){}
+  protected def establisherNinoMapping(requiredKey: String = "messages__error__has_nino_establisher",
+                                       requiredNinoKey: String = "messages__error__nino",
+                                       requiredReasonKey: String = "messages__establisher__no_nino",
+                                       invalidNinoKey: String = "messages__error__no_nino_establisher"):
+  Mapping[EstablisherNino] = {
+
+    val regexNino = "\\d{10}"
+    def fromEstablisherNino(nino: EstablisherNino): (String, Option[String], Option[String]) = {
+      nino match {
+        case EstablisherNino.Yes(nino) => ("yes", Some(nino), None)
+        case EstablisherNino.No(reason) =>  ("no", None, Some(reason))
+      }
+    }
+
+    def toEstablisherNino(ninoTuple: (String, Option[String], Option[String])) = {
+
+      ninoTuple match {
+        case (hasNino, Some(nino), _) if hasNino == "yes" => Yes(nino)
+        case (hasNino, _, Some(reason)) if hasNino == "no" => No(reason)
+      }
+    }
+
+    tuple("hasNino" -> text(requiredKey),
+      "nino" -> mandatoryIfEqual("establisherNino.hasNino", "yes",
+        text(requiredNinoKey).verifying(regexp(regexNino, invalidNinoKey))),
+      "reason" -> mandatoryIfEqual("establisherNino.hasNino", "no", text(requiredReasonKey))).
+      transform(toEstablisherNino, fromEstablisherNino)
+  }
 
   protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 

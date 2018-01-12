@@ -16,7 +16,7 @@
 
 package identifiers.register.establishers.individual
 
-import identifiers.Identifier
+import identifiers._
 
 case object EstablisherNinoId extends Identifier {
   override def toString: String = "establisherNino"

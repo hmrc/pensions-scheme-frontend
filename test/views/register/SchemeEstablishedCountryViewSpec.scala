@@ -38,7 +38,7 @@ class SchemeEstablishedCountryViewSpec extends StringViewBehaviours {
     validData)(fakeRequest, messages)
 
   "SchemeEstablishedCountry view" must {
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
 
