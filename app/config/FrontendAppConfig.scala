@@ -50,4 +50,6 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
     "cymraeg" -> Lang("cy"))
   def routeToSwitchLanguage: (String => Call) = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
   lazy val locationCanonicalList = loadConfig("location.canonical.list")
+  lazy val appName = loadConfig("appName")
+  lazy val addressLookUp = baseUrl("address-lookup")
 }
