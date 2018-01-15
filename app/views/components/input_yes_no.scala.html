@@ -18,7 +18,7 @@
         field: Field,
         label: String,
         secondaryLabel: Option[String] = None,
-        inputClass: Option[String] = None,
+        fieldsetClass: Option[String] = Some("inline"),
         hint: Option[String] = None,
         yesAssoc: Option[String] = None,
         noAssoc: Option[String] = None,
@@ -26,8 +26,8 @@
 )(implicit messages: Messages)
 
 
-<div class="form-field @if(field.hasErrors){form-field--error}">
-    <fieldset class="inline" id="@{field.id}">
+<div class="form-group @if(field.hasErrors){form-field--error}">
+    <fieldset class="@fieldsetClass" id="@{field.id}">
 
         <legend>
             <span @if(labelClass.nonEmpty){class="@labelClass"}>@label</span>

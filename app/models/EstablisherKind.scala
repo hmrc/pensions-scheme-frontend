@@ -27,7 +27,7 @@ object EstablisherKind {
   case object Partnership extends WithName("partnership") with EstablisherKind
 
   val values: Seq[EstablisherKind] = Seq(
-    Company,Indivdual,Partnership
+    Company, Indivdual, Partnership
   )
 
   val options: Seq[InputOption] = values.map {

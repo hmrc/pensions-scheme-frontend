@@ -27,11 +27,20 @@ messages__common__dob__hint = Example 30 09 1990
 messages__common__day = Day
 messages__common__month = Month
 messages__common__year = Year
+messages__common__edit = Edit
+messages__common__continue = Continue
+messages__common__utr = Unique Taxpayer Reference number
+messages__common__utr_hint = A UTR is issued by HMRC when you register your business or for Self assessment.
+messages__common__utr_hint_format = A UTR is 10 or 13 digits, if it is 13 digits only enter the last 10.
 messages__error__first_name = Enter the first name
 messages__error__last_name = Enter the last name
 messages__error__date = Enter a valid date
 messages__error__date_future = Date cannot be a date in the future
 messages__error__selection = You must make a selection
+messages__error__sautr = Enter the Self Assessment Unique Tax Reference number
+messages__error__sautr_invalid = Enter a valid 10 digit Self Assessment Unique Taxpayer Reference number
+messages__error__no_sautr_establisher = You need to tell us why the establisher does not have a SAUTR
+messages__error__no_sautr_length = The reason cannot be more than 150 characters
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -172,6 +181,12 @@ messages__common__under_a_year = Less than 12 months
 messages__common__over_a_year = More than 12 months
 messages__error__address_years = Select how long they have been at the current address
 
+messages__establishers__add__title = Establishers
+messages__establishers__add_legend_more = Do you want to add another establisher?
+messages__establishers__add_hint = You must add at least one establisher. You can add up to 10.
+messages__establishers__add_limit = You have added the maximum number of establishers
+addEstablisher.checkYourAnswersLabel = addEstablisher
+
 messages__establisher_individual__title = Establisher details
 messages__error__first_name_length = The first name cannot be more than 35 characters
 messages__error__first_name_invalid = Enter the valid first name
@@ -180,15 +195,14 @@ messages__error__last_name_invalid = Enter the valid last name
 
 establisherDetails.checkYourAnswersLabel = establisherDetails
 
-messages__establishers__add__title=Establishers
-messages__establishers__add__heading=Establishers
 messages__establishers__add__opt__company=Company
 messages__establishers__add__opt__individual=Individual
 messages__establishers__add__opt__partnership=Partnership
-messages__establishers__add__legend = What kind of establisher are you adding?
-messages__establishers__add__legend_more = Do you want to add another establisher?
-messages__establishers__add__hint = You must add at least one establisher. You can add up to 10.
-messages__establishers__add__limit = You have added the maximum number of establishers
-messages__establishers__add__error_required=You must make a selection
+messages__establishers__add_legend = What kind of establisher are you adding?
 
 establisherKind.checkYourAnswersLabel = establisherKind
+
+messages__establisher__has_sautr__title = Does the establisher have a Self Assessment Unique Taxpayer Reference number (SAUTR)?
+messages__establisher__no_sautr = Tell us why the establisher does not have a SAUTR
+messages__error__has_sautr_establisher = Select yes if the establisher has a SAUTR
+uniqueTaxReference.checkYourAnswersLabel = uniqueTaxReference

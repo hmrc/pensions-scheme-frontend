@@ -42,15 +42,12 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(1)
   val invalidIndex = Index(11)
 
-  val minimalDataCacheMap = new FakeDataRetrievalAction(Some(CacheMap("id", Map(
-    SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust))))))
-
   def validData: Map[String, JsValue] = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
     EstablisherKindId.toString->Json.obj("1"->EstablisherKind.options.head.value.toString))
 
-  def controller(dataRetrievalAction: DataRetrievalAction = minimalDataCacheMap):EstablisherKindController =
-    new EstablisherKindController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameCacheMap):EstablisherKindController =
+    new EstablisherKindController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = establisherKind(frontendAppConfig, form, NormalMode,firstIndex,schemeName)(fakeRequest, messages).toString
 

@@ -21,22 +21,36 @@ import identifiers.register.establishers._
 import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
+import controllers.register.establishers.routes
 
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
 
-  def establisherKind(index: Int): Try[Option[EstablisherKind]] ={
-    establisherKind.map(_.get(index)).getOrElse(Success(None))
-  }
-  def establisherKind: Option[EstablishersIndividualMap[EstablisherKind]] = {
-   cacheMap.getEntry[EstablishersIndividualMap[EstablisherKind]](EstablisherKindId.toString)
-  }
+  def uniqueTaxReference: Option[EstablishersIndividualMap[UniqueTaxReference]] =
+    cacheMap.getEntry[EstablishersIndividualMap[UniqueTaxReference]](UniqueTaxReferenceId.toString)
+
+  def uniqueTaxReference(index: Int): Try[Option[UniqueTaxReference]] = uniqueTaxReference.map(_.get(index)).getOrElse(
+    Success(None))
+
+  def addEstablisher(): Option[Boolean] = cacheMap.getEntry[Boolean](AddEstablisherId.toString)
+
+  def establisherKind(index: Int): Try[Option[EstablisherKind]] = establisherKind.map(_.get(index)).getOrElse(Success(None))
+
+  def establisherKind: Option[EstablishersIndividualMap[EstablisherKind]] = cacheMap.getEntry[EstablishersIndividualMap[EstablisherKind]](
+    EstablisherKindId.toString)
 
   def establisherDetails: Option[EstablishersIndividualMap[EstablisherDetails]] =
     cacheMap.getEntry[EstablishersIndividualMap[EstablisherDetails]](EstablisherDetailsId.toString)
 
-  def establisherDetails(index: Int): Try[Option[EstablisherDetails]] = establisherDetails.map(_.get(index)).getOrElse(Success(None))
+  def establisherDetails(index: Int): Try[Option[EstablisherDetails]] = establisherDetails.map(_.get(index)).getOrElse(
+    Success(None))
+
+  def allEstablishers: Option[Map[String, String]] = {
+    establisherDetails.map(_.getValues.map{ estDetails =>
+      (estDetails.establisherName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
+    }.toMap)
+  }
 
   def schemeEstablishedCountry: Option[String] = cacheMap.getEntry[String](SchemeEstablishedCountryId.toString)
 

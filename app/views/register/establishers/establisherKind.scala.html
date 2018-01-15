@@ -30,12 +30,12 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__establishers__add__heading",secondaryHeaderKey = Some(schemeName))
+        @components.heading("messages__establishers__add__title",secondaryHeaderKey = Some(schemeName))
 
         @components.input_radio(
             field = form("value"),
-            legend = messages("messages__establishers__add__legend"),
-            hint=Some(messages("messages__establishers__add__hint")),
+            legend = messages("messages__establishers__add_legend"),
+            hint=Some(messages("messages__establishers__add_hint")),
             inputs = EstablisherKind.options
         )
 

@@ -29,7 +29,7 @@ class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
   "WhatYouWillNeed view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title") ,
-      "lede", "item_1", "item_2", "item_3", "item_4", "item_5")
+      "_lede", "_item_1", "_item_2", "_item_3", "_item_4", "_item_5")
 
     "have link" in {
       Jsoup.parse(createView().toString()).select("a.button") must haveLink(routes.WhatYouWillNeedController.onPageLoad().url)

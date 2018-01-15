@@ -25,6 +25,6 @@ class IndexViewSpec extends ViewBehaviours {
 
   "Index view" must {
 
-    behave like normalPage(view, "index", messages("messages__index__title"), "guidance")
+    behave like normalPage(view, "index", messages("messages__index__title"), "_guidance")
   }
 }

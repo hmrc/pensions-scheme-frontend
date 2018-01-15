@@ -34,7 +34,7 @@ class EstablisherKindFormProviderSpec extends FormBehaviours {
     behave like formWithOptionField(
       Field(
         "value",
-        Required -> "messages__establishers__add__error_required",
+        Required -> "messages__error__selection",
         Invalid -> "error.invalid"),
       EstablisherKind.options.map(_.value): _*)
   }
