@@ -17,7 +17,7 @@
 package controllers.register.establishers
 
 import play.api.data.Form
-import play.api.libs.json.{JsString, Json}
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
@@ -29,10 +29,11 @@ import models._
 import views.html.register.establishers.establisherKind
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
+import play.api.mvc.Call
 
 class EstablisherKindControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new EstablisherKindFormProvider()
   val form = formProvider()
@@ -44,29 +45,32 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
   val minimalDataCacheMap = new FakeDataRetrievalAction(Some(CacheMap("id", Map(
     SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust))))))
 
-
-  def validData=Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
+  def validData: Map[String, JsValue] = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
     EstablisherKindId.toString->Json.obj("1"->EstablisherKind.options.head.value.toString))
 
   def controller(dataRetrievalAction: DataRetrievalAction = minimalDataCacheMap):EstablisherKindController =
     new EstablisherKindController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = establisherKind(frontendAppConfig, form, NormalMode,firstIndex,schemeName)(fakeRequest, messages).toString
-
-
+  def viewAsString(form: Form[_] = form): String = establisherKind(frontendAppConfig, form, NormalMode,firstIndex,schemeName)(fakeRequest, messages).toString
 
   "EstablisherKind Controller" must {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET when scheme name is present" in {
       val result = controller().onPageLoad(NormalMode,firstIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
+    "redirect to session expired from a GET when the scheme name is not present" in {
+      val result = controller(getEmptyCacheMap).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
     "populate the view correctly on a GET when the question has previously been answered" in {
-    //  val validData = Map(EstablisherKindId.toString -> JsString(EstablisherKind.values.head.toString))
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode,firstIndex)(fakeRequest)

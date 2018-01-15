@@ -28,7 +28,7 @@ import forms.register.establishers.EstablisherKindFormProvider
 import identifiers.register.establishers.EstablisherKindId
 import models.requests.DataRequest
 import models.{EstablisherKind, Index, Mode}
-import play.api.mvc.{AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.establisherKind
 
@@ -47,7 +47,7 @@ class EstablisherKindController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode,index:Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
@@ -60,7 +60,7 @@ class EstablisherKindController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode,index:Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName=>
