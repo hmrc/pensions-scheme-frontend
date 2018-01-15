@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(messageKey: String = "site.save_and_continue")(implicit messages: Messages)
+package identifiers.register.establishers.individual
+import identifiers._
 
-<div class="section">
-    <button id="submit" class="button">@messages(messageKey)</button>
-</div>
+case object UniqueTaxReferenceId extends Identifier {
+  override def toString: String = "uniqueTaxReference"
+}

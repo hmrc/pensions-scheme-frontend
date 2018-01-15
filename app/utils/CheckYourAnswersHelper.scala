@@ -16,13 +16,19 @@
 
 package utils
 
-import models.{CheckMode, EstablisherNino, Index}
+import models.{CheckMode, Index, UniqueTaxReference, EstablisherNino}
 import viewmodels.AnswerRow
 import controllers.register.routes
 
 import scala.util.Success
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
+
+  def uniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.uniqueTaxReference(index) match {
+    case Success(Some(x)) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
+      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
+    case _ => None
+  }
 
   def establisherNino(index: Int): Option[AnswerRow] = userAnswers.establisherNino(index) match {
     case Success(Some(x)) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${EstablisherNino.Yes} ${EstablisherNino.No}", false,
@@ -34,6 +40,11 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     case Success(Some(x)) => Some(AnswerRow("establisherDetails.checkYourAnswersLabel", s"${x.firstName} ${x.lastName}", false,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
+  }
+
+  def addEstablisher: Option[AnswerRow] = userAnswers.addEstablisher map {
+    x => AnswerRow("addEstablisher.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(CheckMode).url)
   }
 
   def schemeEstablishedCountry: Option[AnswerRow] = userAnswers.schemeEstablishedCountry map {

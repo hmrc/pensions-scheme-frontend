@@ -18,7 +18,9 @@ package forms.mappings
 
 import models.EstablisherNino.{No, Yes}
 import models.{EstablisherNino, SchemeType, SortCode}
+import models.{SchemeType, SortCode, UniqueTaxReference}
 import models.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
+import models.UniqueTaxReference.{No, Yes}
 import org.joda.time.LocalDate
 import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import play.api.data.Forms.of
@@ -82,6 +84,38 @@ trait Mappings extends Formatters with Constraints {
       "schemeTypeDetails" -> mandatoryIfEqual("schemeType.type", other, text(requiredOtherKey).
         verifying(maxLength(schemeTypeDetailsMaxLength, invalidOtherKey)))
     ).transform(toSchemeType, fromSchemeType)
+  }
+
+  protected def uniqueTaxReferenceMapping(requiredKey: String = "messages__error__has_sautr_establisher",
+                                          requiredUtrKey: String = "messages__error__sautr",
+                                          requiredReasonKey: String = "messages__error__no_sautr_establisher",
+                                          invalidUtrKey: String = "messages__error__sautr_invalid",
+                                          maxLengthReasonKey: String = "messages__error__no_sautr_length"):
+    Mapping[UniqueTaxReference] = {
+
+    val regexUtr = "\\d{10}"
+    val reasonMaxLength = 150
+    def fromUniqueTaxReference(utr: UniqueTaxReference): (Boolean, Option[String], Option[String]) = {
+      utr match {
+        case UniqueTaxReference.Yes(utr) => (true, Some(utr), None)
+        case UniqueTaxReference.No(reason) =>  (false, None, Some(reason))
+      }
+    }
+
+    def toUniqueTaxReference(utrTuple: (Boolean, Option[String], Option[String])) = {
+
+      utrTuple match {
+        case (true, Some(utr), None) => Yes(utr)
+        case (false, None, Some(reason)) => No(reason)
+        case _ => throw new RuntimeException("Invalid selection")
+      }
+    }
+
+    tuple("hasUtr" -> boolean(requiredKey),
+    "utr" -> mandatoryIfTrue("uniqueTaxReference.hasUtr", text(requiredUtrKey).verifying(regexp(regexUtr, invalidUtrKey))),
+    "reason" -> mandatoryIfFalse("uniqueTaxReference.hasUtr",
+      text(requiredReasonKey).verifying(maxLength(reasonMaxLength, maxLengthReasonKey)))).
+      transform(toUniqueTaxReference, fromUniqueTaxReference)
   }
 
   protected def establisherNinoMapping(requiredKey: String = "messages__error__has_nino_establisher",
