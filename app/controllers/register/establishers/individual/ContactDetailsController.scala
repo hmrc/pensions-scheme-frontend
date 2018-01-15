@@ -26,9 +26,11 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.ContactDetailsFormProvider
 import identifiers.register.establishers.individual.ContactDetailsId
+import models.requests.DataRequest
 import models.{ContactDetails, Index, Mode}
-import utils.{Navigator, UserAnswers}
-import views.html.register.establishers.individual.contactDetails
+import play.api.mvc.{Action, AnyContent, Result}
+import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import views.html.register.establishers.individual._
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -40,27 +42,45 @@ class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
-                                                  formProvider: ContactDetailsFormProvider) extends FrontendController with I18nSupport {
+                                                  formProvider: ContactDetailsFormProvider) extends FrontendController
+  with I18nSupport with Enumerable.Implicits with MapFormats {
 
-  val form = formProvider()
+  val form: Form[ContactDetails] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      request.userAnswers.contactDetails(index) match {
-        case Success(None) => Ok(contactDetails(appConfig, form, mode, index))
-        case Success(Some(value)) => Ok(contactDetails(appConfig, form.fill(value), mode, index))
-        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
-      }
+      retrieveEstablisherName {
+        establisherName =>
+          val redirectResult = request.userAnswers.contactDetails(index) match {
+            case Success(None) => Ok(contactDetails(appConfig, form, mode, index, establisherName))
+            case Success(Some(value)) => Ok(contactDetails(appConfig, form.fill(value), mode, index, establisherName))
+            case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+          }
+          Future.successful(redirectResult)
+      }(index)
   }
 
-  def onSubmit(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(contactDetails(appConfig, formWithErrors, mode, index))),
-        (value) =>
-          dataCacheConnector.save[ContactDetails](request.externalId, ContactDetailsId.toString, value).map(cacheMap =>
-            Redirect(navigator.nextPage(ContactDetailsId, mode)(new UserAnswers(cacheMap))))
-      )
+      retrieveEstablisherName {
+        establisherName =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(contactDetails(appConfig, formWithErrors, mode, index, establisherName))),
+            (value) =>
+              dataCacheConnector.saveMap[ContactDetails](request.externalId, ContactDetailsId.toString, index, value).map(cacheMap =>
+                Redirect(navigator.nextPage(ContactDetailsId, mode)(new UserAnswers(cacheMap))))
+          )
+      }(index)
   }
+  private def retrieveEstablisherName(block: String => Future[Result])(index:Int)
+                                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    request.userAnswers.establisherDetails(index) match {
+      case Success(Some(value)) => block(value.firstName)
+      case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    }
+  }
+
 }
+
+
