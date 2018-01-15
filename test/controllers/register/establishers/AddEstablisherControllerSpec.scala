@@ -48,7 +48,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form, allEstablishers: Option[Seq[String]] = None): String = addEstablisher(frontendAppConfig,
+  def viewAsString(form: Form[_] = form, allEstablishers: Option[Map[String, String]] = None): String = addEstablisher(frontendAppConfig,
     form, NormalMode, allEstablishers, schemeName)(fakeRequest, messages).toString
 
   "AddEstablisher Controller" must {
@@ -65,18 +65,6 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
-        AddEstablisherId.toString -> JsBoolean(true), EstablisherDetailsId.toString ->
-          Json.obj("0" -> EstablisherDetails("firstName", "lastName", new LocalDate(year, month, day))))
-
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
-
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
-
-      contentAsString(result) mustBe viewAsString(form.fill(true), Some(Seq("firstName lastName")))
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -96,21 +84,6 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
-    }
-
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
 }

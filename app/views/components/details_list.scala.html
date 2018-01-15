@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@(detailsList: Seq[String], cyaUrl: String)(implicit messages: Messages)
+@(detailsList: Map[String, String])(implicit messages: Messages)
 
 <div class="form-group">
     <ul class="govuk-check-your-answers form-group cya-questions-short">
-        @for(listItem <- detailsList){
+        @for((listItem, url) <- detailsList){
         <li>
             <div class="cya-question">
                 <h2 class="bold">@listItem </h2>
@@ -29,7 +29,7 @@
             </div>
 
             <div class="cya-change">
-                <a id="edit-link" href="@cyaUrl">
+                <a id="edit-link" href="@url">
                     @messages(s"messages__common__edit")
                 </a>
             </div>

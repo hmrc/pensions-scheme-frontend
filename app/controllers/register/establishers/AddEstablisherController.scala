@@ -29,7 +29,7 @@ import identifiers.register.establishers.AddEstablisherId
 import models.Mode
 import models.requests.DataRequest
 import play.api.mvc.{Action, AnyContent, Result}
-import utils.{Navigator, UserAnswers}
+import utils.Navigator
 import views.html.register.establishers.addEstablisher
 import scala.concurrent.Future
 
@@ -48,13 +48,8 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-
-          val preparedForm = request.userAnswers.addEstablisher match {
-            case None => form
-            case Some(value) => form.fill(value)
-          }
-          Future.successful(Ok(addEstablisher(appConfig, preparedForm, mode,
-            request.userAnswers.allEstablisherNames, schemeName)))
+          Future.successful(Ok(addEstablisher(appConfig, form, mode,
+            request.userAnswers.allEstablishers, schemeName)))
       }
   }
 
@@ -62,14 +57,12 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
-                request.userAnswers.allEstablisherNames, schemeName))),
-            (value) =>
-              dataCacheConnector.save[Boolean](request.externalId, AddEstablisherId.toString, value).map(cacheMap =>
-                Redirect(navigator.nextPage(AddEstablisherId, mode)(new UserAnswers(cacheMap))))
+                request.userAnswers.allEstablishers, schemeName))),
+            (_) =>
+                Future.successful(Redirect(navigator.nextPage(AddEstablisherId, mode)(request.userAnswers)))
           )
       }
   }
