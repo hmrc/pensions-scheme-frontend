@@ -87,10 +87,12 @@ trait Mappings extends Formatters with Constraints {
   protected def uniqueTaxReferenceMapping(requiredKey: String = "messages__error__has_sautr_establisher",
                                           requiredUtrKey: String = "messages__error__sautr",
                                           requiredReasonKey: String = "messages__error__no_sautr_establisher",
-                                          invalidUtrKey: String = "messages__error__sautr_invalid"):
+                                          invalidUtrKey: String = "messages__error__sautr_invalid",
+                                          maxLengthReasonKey: String = "messages__error__no_sautr_length"):
     Mapping[UniqueTaxReference] = {
 
     val regexUtr = "\\d{10}"
+    val reasonMaxLength = 150
     def fromUniqueTaxReference(utr: UniqueTaxReference): (String, Option[String], Option[String]) = {
       utr match {
         case UniqueTaxReference.Yes(utr) => ("yes", Some(utr), None)
@@ -109,7 +111,8 @@ trait Mappings extends Formatters with Constraints {
     tuple("hasUtr" -> text(requiredKey),
     "utr" -> mandatoryIfEqual("uniqueTaxReference.hasUtr", "yes",
       text(requiredUtrKey).verifying(regexp(regexUtr, invalidUtrKey))),
-    "reason" -> mandatoryIfEqual("uniqueTaxReference.hasUtr", "no", text(requiredReasonKey))).
+    "reason" -> mandatoryIfEqual("uniqueTaxReference.hasUtr", "no",
+      text(requiredReasonKey).verifying(maxLength(reasonMaxLength, maxLengthReasonKey)))).
       transform(toUniqueTaxReference, fromUniqueTaxReference)
   }
 

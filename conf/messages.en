@@ -40,6 +40,7 @@ messages__error__selection = You must make a selection
 messages__error__sautr = Enter the Self Assessment Unique Tax Reference number
 messages__error__sautr_invalid = Enter a valid 10 digit Self Assessment Unique Taxpayer Reference number
 messages__error__no_sautr_establisher = You need to tell us why the establisher does not have a SAUTR
+messages__error__no_sautr_length = The reason cannot be more than 150 characters
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.

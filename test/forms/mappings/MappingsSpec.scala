@@ -300,7 +300,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     val regexUtr = "\\d{10}"
 
     val testForm: Form[UniqueTaxReference] = Form("uniqueTaxReference" -> uniqueTaxReferenceMapping("error.required",
-      "error.utr.required", "error.reason.required", "error.utr.invalid"))
+      "error.utr.required", "error.reason.required", "error.utr.invalid", "error.reason.length"))
 
     "bind a valid uniqueTaxReference with utr when yes is selected" in {
       val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "yes", "uniqueTaxReference.utr" -> "12345678791"))
@@ -330,6 +330,12 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     "not bind a uniqueTaxReference without reason when no is selected" in {
       val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "no"))
       result.errors mustEqual Seq(FormError("uniqueTaxReference.reason", "error.reason.required"))
+    }
+
+    "not bind a reason greater than 150 characters" in {
+      val reason = RandomStringUtils.randomAlphabetic(151)
+      val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "no", "uniqueTaxReference.reason" -> reason))
+      result.errors mustEqual Seq(FormError("uniqueTaxReference.reason", "error.reason.length", Seq(150)))
     }
   }
 }
