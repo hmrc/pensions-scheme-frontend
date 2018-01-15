@@ -22,32 +22,26 @@ import play.api.libs.json.{JsError, Json}
 class UniqueTaxReferenceSpec extends WordSpecLike with MustMatchers with OptionValues {
 
   "Reads" must {
-    "successfully read Yes" in {
-      val json = Json.obj("hasUtr" -> "yes", "utr" -> "1234567891")
+    "successfully read true" in {
+      val json = Json.obj("hasUtr" -> true, "utr" -> "1234567891")
 
       Json.fromJson[UniqueTaxReference](json).asOpt.value mustEqual UniqueTaxReference.Yes("1234567891")
     }
 
-    "successfully read No" in {
-      val json = Json.obj("hasUtr" -> "no", "reason" -> "haven't got utr")
+    "successfully read false" in {
+      val json = Json.obj("hasUtr" -> false, "reason" -> "haven't got utr")
 
       Json.fromJson[UniqueTaxReference](json).asOpt.value mustEqual UniqueTaxReference.No("haven't got utr")
     }
 
-    "return failure for Invalid scheme type" in {
-      val json = Json.obj("hasUtr" -> "invalidSelection")
-
-      Json.fromJson[UniqueTaxReference](json) mustEqual JsError("Invalid selection")
-    }
-
-    "return failure for yes without utr" in {
-      val json = Json.obj("hasUtr" -> "yes")
+    "return failure for true without utr" in {
+      val json = Json.obj("hasUtr" -> true)
 
       Json.fromJson[UniqueTaxReference](json) mustEqual JsError("Utr Value expected")
     }
 
-    "return failure for no without reason" in {
-      val json = Json.obj("hasUtr" -> "no")
+    "return failure for false without reason" in {
+      val json = Json.obj("hasUtr" -> false)
 
       Json.fromJson[UniqueTaxReference](json) mustEqual JsError("Reason expected")
     }
@@ -55,10 +49,10 @@ class UniqueTaxReferenceSpec extends WordSpecLike with MustMatchers with OptionV
 
   "Writes" must {
     "return successfully write Yes" in {
-      Json.toJson[UniqueTaxReference](UniqueTaxReference.Yes("1234567891")) mustEqual Json.obj("hasUtr" -> "yes", "utr" -> "1234567891")
+      Json.toJson[UniqueTaxReference](UniqueTaxReference.Yes("1234567891")) mustEqual Json.obj("hasUtr" -> true, "utr" -> "1234567891")
     }
     "return successfully write No" in {
-      Json.toJson[UniqueTaxReference](UniqueTaxReference.No("haven't got utr")) mustEqual Json.obj("hasUtr" -> "no", "reason" -> "haven't got utr")
+      Json.toJson[UniqueTaxReference](UniqueTaxReference.No("haven't got utr")) mustEqual Json.obj("hasUtr" -> false, "reason" -> "haven't got utr")
     }
   }
 }

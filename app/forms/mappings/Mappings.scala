@@ -93,25 +93,24 @@ trait Mappings extends Formatters with Constraints {
 
     val regexUtr = "\\d{10}"
     val reasonMaxLength = 150
-    def fromUniqueTaxReference(utr: UniqueTaxReference): (String, Option[String], Option[String]) = {
+    def fromUniqueTaxReference(utr: UniqueTaxReference): (Boolean, Option[String], Option[String]) = {
       utr match {
-        case UniqueTaxReference.Yes(utr) => ("yes", Some(utr), None)
-        case UniqueTaxReference.No(reason) =>  ("no", None, Some(reason))
+        case UniqueTaxReference.Yes(utr) => (true, Some(utr), None)
+        case UniqueTaxReference.No(reason) =>  (false, None, Some(reason))
       }
     }
 
-    def toUniqueTaxReference(utrTuple: (String, Option[String], Option[String])) = {
+    def toUniqueTaxReference(utrTuple: (Boolean, Option[String], Option[String])) = {
 
       utrTuple match {
-        case (hasUtr, Some(utr), _) if(hasUtr == "yes") => Yes(utr)
-        case (hasUtr, _, Some(reason)) if(hasUtr == "no") => No(reason)
+        case (hasUtr, Some(utr), None) if(hasUtr) => Yes(utr)
+        case (hasUtr, None, Some(reason)) if(!hasUtr) => No(reason)
       }
     }
 
-    tuple("hasUtr" -> text(requiredKey),
-    "utr" -> mandatoryIfEqual("uniqueTaxReference.hasUtr", "yes",
-      text(requiredUtrKey).verifying(regexp(regexUtr, invalidUtrKey))),
-    "reason" -> mandatoryIfEqual("uniqueTaxReference.hasUtr", "no",
+    tuple("hasUtr" -> boolean(requiredKey),
+    "utr" -> mandatoryIfTrue("uniqueTaxReference.hasUtr", text(requiredUtrKey).verifying(regexp(regexUtr, invalidUtrKey))),
+    "reason" -> mandatoryIfFalse("uniqueTaxReference.hasUtr",
       text(requiredReasonKey).verifying(maxLength(reasonMaxLength, maxLengthReasonKey)))).
       transform(toUniqueTaxReference, fromUniqueTaxReference)
   }

@@ -27,25 +27,23 @@ object UniqueTaxReference {
   case class No(reason: String) extends UniqueTaxReference
 
   def options: Seq[InputOption] = Seq(
-    InputOption("yes", "site.yes", Some("uniqueTaxReference_utr-form")),
-    InputOption("no", "site.no", Some("uniqueTaxReference_reason-form"))
+    InputOption("true", "site.yes", Some("uniqueTaxReference_utr-form")),
+    InputOption("false", "site.no", Some("uniqueTaxReference_reason-form"))
   )
 
   implicit val reads: Reads[UniqueTaxReference] = {
 
-    (JsPath \ "hasUtr").read[String].flatMap {
+    (JsPath \ "hasUtr").read[Boolean].flatMap {
 
-      case hasUtr if hasUtr == "yes" =>
+      case true =>
         (JsPath \ "utr").read[String]
           .map[UniqueTaxReference](Yes.apply)
           .orElse(Reads[UniqueTaxReference](_ => JsError("Utr Value expected")))
 
-      case hasUtr if hasUtr == "no" =>
+      case false =>
         (JsPath \ "reason").read[String]
           .map[UniqueTaxReference](No.apply)
           .orElse(Reads[UniqueTaxReference](_ => JsError("Reason expected")))
-
-      case _ => Reads(_ => JsError("Invalid selection"))
     }
   }
 
@@ -53,9 +51,9 @@ object UniqueTaxReference {
     def writes(o: UniqueTaxReference) = {
       o match {
         case UniqueTaxReference.Yes(utr) =>
-          Json.obj("hasUtr" -> "yes", "utr" -> utr)
+          Json.obj("hasUtr" -> true, "utr" -> utr)
         case UniqueTaxReference.No(reason) =>
-          Json.obj("hasUtr" -> "no", "reason" -> reason)
+          Json.obj("hasUtr" -> false, "reason" -> reason)
       }
     }
   }

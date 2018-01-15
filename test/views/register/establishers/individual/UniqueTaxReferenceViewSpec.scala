@@ -44,7 +44,7 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   "UniqueTaxReference view" when {
     "rendered" must {
-      val utrOptions = Seq("yes", "no")
+      val utrOptions = Seq("true", "false")
 
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
@@ -68,13 +68,13 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
 
       "display an input text box with the value when yes is selected" in {
         val expectedValue = "1234567891"
-        val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "yes", "uniqueTaxReference.utr" -> expectedValue))))
+        val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" -> expectedValue))))
         doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__common__utr")} ${messages("messages__common__utr_hint_format")}", expectedValue)
       }
 
       "display an input text box with the value when no is selected" in {
         val expectedValue = "don't have utr"
-        val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "no", "uniqueTaxReference.reason" -> expectedValue))))
+        val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" -> expectedValue))))
         doc must haveLabelAndValue("uniqueTaxReference_reason", messages("messages__establisher__no_sautr"), expectedValue)
       }
     }

@@ -31,12 +31,12 @@ class UniqueTaxReferenceFormProviderSpec extends FormSpec {
   "UniqueTaxReference Form Provider" must {
 
     "successfully bind when the utr is provided and yes is selected" in {
-      val form = formProvider().bind(Map("uniqueTaxReference.hasUtr" -> "yes", "uniqueTaxReference.utr" -> "1234556676"))
+      val form = formProvider().bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" -> "1234556676"))
       form.get shouldBe UniqueTaxReference.Yes("1234556676")
     }
 
     "successfully bind when the reason is provided and no is selected" in {
-      val form = formProvider().bind(Map("uniqueTaxReference.hasUtr" -> "no", "uniqueTaxReference.reason" -> "haven't got utr"))
+      val form = formProvider().bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" -> "haven't got utr"))
       form.get shouldBe UniqueTaxReference.No("haven't got utr")
     }
 
@@ -47,12 +47,12 @@ class UniqueTaxReferenceFormProviderSpec extends FormSpec {
 
     "fail to bind when yes is selected but utr is not provided" in {
       val expectedError = error("uniqueTaxReference.utr", requiredUtrKey)
-      checkForError(formProvider(), Map("uniqueTaxReference.hasUtr" -> "yes"), expectedError)
+      checkForError(formProvider(), Map("uniqueTaxReference.hasUtr" -> "true"), expectedError)
     }
 
     "fail to bind when no is selected and reason is not provided" in {
       val expectedError = error("uniqueTaxReference.reason", requiredReasonKey)
-      checkForError(formProvider(), Map("uniqueTaxReference.hasUtr" -> "no"), expectedError)
+      checkForError(formProvider(), Map("uniqueTaxReference.hasUtr" -> "false"), expectedError)
     }
   }
 }
