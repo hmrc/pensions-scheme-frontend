@@ -27,25 +27,23 @@ object EstablisherNino {
   case class No(reason: String) extends EstablisherNino
 
   def options: Seq[InputOption] = Seq(
-    InputOption("yes", "site.yes", Some("establisherNino_nino-form")),
-    InputOption("no", "site.no", Some("establisherNino_reason-form"))
+    InputOption("true", "site.yes", Some("establisherNino_nino-form")),
+    InputOption("false", "site.no", Some("establisherNino_reason-form"))
   )
 
   implicit val reads: Reads[EstablisherNino] = {
 
-    (JsPath \ "hasNino").read[String].flatMap {
+    (JsPath \ "hasNino").read[Boolean].flatMap {
 
-      case hasNino if hasNino == "yes" =>
+      case true =>
         (JsPath \ "nino").read[String]
           .map[EstablisherNino](Yes.apply)
           .orElse(Reads[EstablisherNino](_ => JsError("NINO Value expected")))
 
-      case hasNino if hasNino == "no" =>
+      case false =>
         (JsPath \ "reason").read[String]
           .map[EstablisherNino](No.apply)
           .orElse(Reads[EstablisherNino](_ => JsError("Reason expected")))
-
-      case _ => Reads(_ => JsError("Invalid selection"))
     }
   }
 
@@ -53,9 +51,9 @@ object EstablisherNino {
     def writes(o: EstablisherNino) = {
       o match {
         case EstablisherNino.Yes(nino) =>
-          Json.obj("hasNino" -> "yes", "nino" -> nino)
+          Json.obj("hasNino" -> true, "nino" -> nino)
         case EstablisherNino.No(reason) =>
-          Json.obj("hasNino" -> "no", "reason" -> reason)
+          Json.obj("hasNino" -> false, "reason" -> reason)
       }
     }
   }

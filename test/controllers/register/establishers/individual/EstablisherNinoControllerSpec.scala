@@ -79,7 +79,7 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
 
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("establisherNino.hasNino", "yes"), ("establisherNino.nino", "CS700100A"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("establisherNino.hasNino", "true"), ("establisherNino.nino", "CS700100A"))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 

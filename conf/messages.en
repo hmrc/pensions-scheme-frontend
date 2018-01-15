@@ -204,14 +204,6 @@ messages__error__nino = Enter the National Insurance number
 messages__error__no_nino_establisher = You need to tell us why the establisher does not have a National Insurance number
 messages__error__nino_invalid = Enter a valid National Insurance number
 
-establisherNino.title = establisherNino
-establisherNino.heading = establisherNino
-establisherNino.option1 = establisherNino Option 1
-establisherNino.option2 = establisherNino Option 2
-establisherNino.checkYourAnswersLabel = establisherNino
-establisherNino.error.required = Please give an answer for establisherNino
-
-
 messages__establisher__has_sautr__title = Does the establisher have a Self Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__establisher__no_sautr = Tell us why the establisher does not have a SAUTR
 messages__error__has_sautr_establisher = Select yes if the establisher has a SAUTR

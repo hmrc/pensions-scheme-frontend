@@ -16,10 +16,10 @@
 
 package forms.register.establishers.individual
 
-import forms.behaviours.FormBehaviours
-import models.{Field, Invalid, Required, EstablisherNino}
+import forms.FormSpec
+import models.EstablisherNino
 
-class EstablisherNinoFormProviderSpec extends FormBehaviours {
+class EstablisherNinoFormProviderSpec extends FormSpec {
 
   val requiredKey = "messages__error__has_nino_establisher"
   val requiredNinoKey = "messages__error__nino"
@@ -31,27 +31,28 @@ class EstablisherNinoFormProviderSpec extends FormBehaviours {
   "EstablisherNino form provider" must {
 
     "successfully bind when yes is selected and valid NINO is provided" in {
-      val form = formProvider().bind(Map("establisherNino.hasNino" -> "yes", "establisherNino.nino" -> "AB020202A"))
+      val form = formProvider().bind(Map("establisherNino.hasNino" -> "true", "establisherNino.nino" -> "AB020202A"))
       form.get shouldBe EstablisherNino.Yes("AB020202A")
     }
 
     "successfully bind when no is selected and reason is provided" in {
-      val form = formProvider().bind(Map("establisherNino." -> "no", "establisherNino.reason" -> "Reason"))
-      form.get shouldBe EstablisherNino.No("Reason")
+      val form = formProvider().bind(Map("establisherNino.hasNino" -> "false", "establisherNino.reason" -> "haven't got Nino"))
+      form.get shouldBe EstablisherNino.No("haven't got Nino")
     }
 
-    "fail to bind when yes is selected and nothing is provided" in {
-      val form = formProvider().bind(Map("establisherNino." -> "yes", "establisherNino.nino" -> ""))
-      
+    "fail to bind when value is omitted" in {
+      val expectedError = error("establisherNino.hasNino", requiredKey)
+      checkForError(formProvider(), emptyForm, expectedError)
     }
 
-    behave like questionForm[EstablisherNino](EstablisherNino)
+    "fail to bind when yes is selected but NINO is not provided" in {
+      val expectedError = error("establisherNino.nino", requiredNinoKey)
+      checkForError(formProvider(), Map("establisherNino.hasNino" -> "true"), expectedError)
+    }
 
-    behave like formWithOptionField(
-      Field(
-        "value",
-        Required -> "messages__error__has_nino_establisher",
-        Invalid -> "error.invalid"),
-      EstablisherNino.options.map(_.value): _*)
+    "fail to bind when no is selected but reason is not provided" in {
+      val expectedError = error("establisherNino.reason", requiredReasonKey)
+      checkForError(formProvider(), Map("establisherNino.hasNino" -> "false"), expectedError)
+    }
   }
 }

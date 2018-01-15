@@ -16,18 +16,14 @@
 
 package forms.mappings
 
-import models.EstablisherNino.{No, Yes}
-import models.{EstablisherNino, SchemeType, SortCode}
-import models.{SchemeType, SortCode, UniqueTaxReference}
 import models.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
-import models.UniqueTaxReference.{No, Yes}
+import models.{EstablisherNino, SchemeType, SortCode, UniqueTaxReference}
 import org.joda.time.LocalDate
-import play.api.data.{FieldMapping, FormError, Forms, Mapping}
-import play.api.data.Forms.of
-import utils.Enumerable
-import play.api.data.Forms._
+import play.api.data.Forms.{of, _}
 import play.api.data.format.Formatter
+import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import uk.gov.voa.play.form.ConditionalMappings._
+import utils.Enumerable
 
 import scala.util.Try
 
@@ -105,8 +101,8 @@ trait Mappings extends Formatters with Constraints {
     def toUniqueTaxReference(utrTuple: (Boolean, Option[String], Option[String])) = {
 
       utrTuple match {
-        case (true, Some(utr), None) => Yes(utr)
-        case (false, None, Some(reason)) => No(reason)
+        case (true, Some(utr), None) => UniqueTaxReference.Yes(utr)
+        case (false, None, Some(reason)) => UniqueTaxReference.No(reason)
         case _ => throw new RuntimeException("Invalid selection")
       }
     }
@@ -124,29 +120,29 @@ trait Mappings extends Formatters with Constraints {
                                        invalidNinoKey: String = "messages__error__nino_invalid"):
   Mapping[EstablisherNino] = {
 
-    def fromEstablisherNino(nino: EstablisherNino): (String, Option[String], Option[String]) = {
+    def fromEstablisherNino(nino: EstablisherNino): (Boolean, Option[String], Option[String]) = {
       nino match {
-        case EstablisherNino.Yes(nino) => ("yes", Some(nino), None)
-        case EstablisherNino.No(reason) =>  ("no", None, Some(reason))
+        case EstablisherNino.Yes(nino) => (true, Some(nino), None)
+        case EstablisherNino.No(reason) =>  (false, None, Some(reason))
       }
     }
 
-    def toEstablisherNino(ninoTuple: (String, Option[String], Option[String])) = {
+    def toEstablisherNino(ninoTuple: (Boolean, Option[String], Option[String])) = {
 
       ninoTuple match {
-        case (hasNino, Some(nino), _) if hasNino == "yes" => Yes(nino)
-        case (hasNino, _, Some(reason)) if hasNino == "no" => No(reason)
+        case (true, Some(nino), None)  => EstablisherNino.Yes(nino)
+        case (false, None, Some(reason))  => EstablisherNino.No(reason)
+        case _ => throw new RuntimeException("Invalid selection")
       }
     }
 
-    tuple("hasNino" -> text(requiredKey),
-      "nino" -> mandatoryIfEqual("establisherNino.hasNino", "yes",
-        text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
-      "reason" -> mandatoryIfEqual("establisherNino.hasNino", "no", text(requiredReasonKey))).
-      transform(toEstablisherNino, fromEstablisherNino)
+    tuple("hasNino" -> boolean(requiredKey),
+      "nino" -> mandatoryIfTrue("establisherNino.hasNino", text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
+      "reason" -> mandatoryIfFalse("establisherNino.hasNino", text(requiredReasonKey))).transform(toEstablisherNino, fromEstablisherNino)
   }
 
-  protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
+
+protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
     def toLocalDate(date: (String, String, String)): LocalDate =
     {

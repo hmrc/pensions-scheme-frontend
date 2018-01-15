@@ -16,46 +16,64 @@
 
 package views.register.establishers.individual
 
-import play.api.data.Form
 import forms.register.establishers.individual.EstablisherNinoFormProvider
-import models.{NormalMode, EstablisherNino}
+import models.{Index, NormalMode}
+import play.api.data.Form
+import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.individual.establisherNino
 
 class EstablisherNinoViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "establisherNino"
+  val index = Index(1)
+  val establisherName = "test name"
 
   val form = new EstablisherNinoFormProvider()()
 
-  def createView = () => establisherNino(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => establisherNino(frontendAppConfig, form, NormalMode, index, establisherName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => establisherNino(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => establisherNino(frontendAppConfig, form, NormalMode,
+    index, establisherName)(fakeRequest, messages)
 
   "EstablisherNino view" must {
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages("messages__establisherNino__title"))
   }
 
   "EstablisherNino view" when {
     "rendered" must {
+      val ninoOptions = Seq("true", "false")
+
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- EstablisherNino.options) {
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, false)
+        for (option <- ninoOptions) {
+          assertContainsRadioButton(doc, s"establisherNino_hasNino-$option", "establisherNino.hasNino", option, isChecked = false)
         }
       }
-    }
 
-    for(option <- EstablisherNino.options) {
-      s"rendered with a value of '${option.value}'" must {
-        s"have the '${option.value}' radio button selected" in {
-          val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
+      for (option <- ninoOptions) {
+        s"rendered with a value of '$option'" must {
+          s"have the '$option' radio button selected" in {
+            val doc = asDocument(createViewUsingForm(form.bind(Map("establisherNino.hasNino" -> s"$option"))))
+            assertContainsRadioButton(doc, s"establisherNino_hasNino-$option", "establisherNino.hasNino", option, isChecked = true)
 
-          for(unselectedOption <- EstablisherNino.options.filterNot(o => o == option)) {
-            assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
+            for (unselectedOption <- ninoOptions.filterNot(o => o == option)) {
+              assertContainsRadioButton(doc, s"establisherNino_hasNino-$unselectedOption", "establisherNino.hasNino", unselectedOption, isChecked = false)
+            }
           }
         }
+      }
+
+      "display an input text box with the value when yes is selected" in {
+        val expectedValue = "AB020202A"
+        val doc = asDocument(createViewUsingForm(form.bind(Map("establisherNino.hasNino" -> "true", "establisherNino.nino" -> expectedValue))))
+        doc must haveLabelAndValue("establisherNino_nino", s"${messages("messages__common__nino")} ${messages("messages__common__nino_hint")}", expectedValue)
+      }
+
+      "display an input text box with the value when no is selected" in {
+        val expectedValue = "don't have nino"
+        val doc = asDocument(createViewUsingForm(form.bind(Map("establisherNino.hasNino" -> "false", "establisherNino.reason" -> expectedValue))))
+        doc must haveLabelAndValue("establisherNino_reason", messages("messages__establisher__no_nino"), expectedValue)
       }
     }
   }
