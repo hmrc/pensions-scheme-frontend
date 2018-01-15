@@ -27,6 +27,8 @@ messages__common__dob__hint = Example 30 09 1990
 messages__common__day = Day
 messages__common__month = Month
 messages__common__year = Year
+messages__common__edit = Edit
+messages__common__continue = Continue
 messages__error__first_name = Enter the first name
 messages__error__last_name = Enter the last name
 messages__error__date = Enter a valid date
@@ -171,6 +173,12 @@ messages__establisher_address_years__title = How long has the establisher been a
 messages__common__under_a_year = Less than 12 months
 messages__common__over_a_year = More than 12 months
 messages__error__address_years = Select how long they have been at the current address
+
+messages__establishers__add__title = Establishers
+messages__establishers__add_legend_more = Do you want to add another establisher?
+messages__establishers__add_hint = You must add at least one establisher. You can add up to 10.
+messages__establishers__add_limit = You have added the maximum number of establishers
+addEstablisher.checkYourAnswersLabel = addEstablisher
 
 messages__establisher_individual__title = Establisher details
 messages__error__first_name_length = The first name cannot be more than 35 characters
