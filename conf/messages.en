@@ -199,3 +199,6 @@ messages__establisher__has_sautr__title = Does the establisher have a Self Asses
 messages__establisher__no_sautr = Tell us why the establisher does not have a SAUTR
 messages__error__has_sautr_establisher = Select yes if the establisher has a SAUTR
 uniqueTaxReference.checkYourAnswersLabel = uniqueTaxReference
+
+companyAddressYears.checkYourAnswersLabel = companyAddressYears
+companyAddressYears.error.required = Please give an answer for companyAddressYears
