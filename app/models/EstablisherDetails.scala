@@ -19,7 +19,10 @@ package models
 import org.joda.time.LocalDate
 import play.api.libs.json._
 
-case class EstablisherDetails (firstName: String, lastName: String, date: LocalDate)
+case class EstablisherDetails (firstName: String, lastName: String, date: LocalDate) {
+
+  def establisherName: String = s"$firstName $lastName"
+}
 
 object EstablisherDetails {
   implicit val format = Json.format[EstablisherDetails]

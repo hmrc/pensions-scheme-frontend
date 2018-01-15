@@ -16,12 +16,19 @@
 
 package utils
 
-import models.{CheckMode, Index}
+import models.{CheckMode, Index, UniqueTaxReference}
 import viewmodels.AnswerRow
 import controllers.register.routes
+
 import scala.util.Success
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
+
+  def uniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.uniqueTaxReference(index) match {
+    case Success(Some(x)) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
+      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
+    case _ => None
+  }
 
   def contactDetails(index: Int): Option[AnswerRow] = userAnswers.contactDetails(index) match {
     case Success(Some(x)) => Some(AnswerRow("contactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
@@ -35,16 +42,24 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     case _ => None
   }
 
+  def addEstablisher: Option[AnswerRow] = userAnswers.addEstablisher map {
+    x => AnswerRow("addEstablisher.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(CheckMode).url)
+  }
+
   def schemeEstablishedCountry: Option[AnswerRow] = userAnswers.schemeEstablishedCountry map {
-    x => AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", s"$x", false, routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)
+    x => AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", s"$x", false,
+      routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)
   }
 
   def uKBankAccount: Option[AnswerRow] = userAnswers.uKBankAccount map {
-    x => AnswerRow("uKBankAccount.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true, routes.UKBankAccountController.onPageLoad(CheckMode).url)
+    x => AnswerRow("uKBankAccount.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
+      routes.UKBankAccountController.onPageLoad(CheckMode).url)
   }
 
   def uKBankDetails: Option[AnswerRow] = userAnswers.uKBankDetails map {
-    x => AnswerRow("uKBankDetails.checkYourAnswersLabel", s"${x.accountName} ${x.bankName}", false, routes.UKBankDetailsController.onPageLoad(CheckMode).url)
+    x => AnswerRow("uKBankDetails.checkYourAnswersLabel", s"${x.accountName} ${x.bankName}", false,
+      routes.UKBankDetailsController.onPageLoad(CheckMode).url)
   }
 
   def addressYears(index: Int): Option[AnswerRow] = {
