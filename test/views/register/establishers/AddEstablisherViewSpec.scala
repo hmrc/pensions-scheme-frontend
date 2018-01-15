@@ -32,12 +32,13 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
 
   val form = new AddEstablisherFormProvider()()
   val schemeName = "Test Scheme Name"
+  val allEstablishers = Seq("Jo Wilson", "Paul Douglas")
 
   def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, None,
     schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addEstablisher(frontendAppConfig,
-    form, NormalMode, Some(Seq("Jo Wilson", "Paul Douglas")), schemeName)(fakeRequest, messages)
+    form, NormalMode, Some(allEstablishers), schemeName)(fakeRequest, messages)
 
   def createView(establishers: Option[Seq[String]] = None): Html = addEstablisher(frontendAppConfig, form, NormalMode,
     establishers, schemeName)(fakeRequest, messages)
@@ -59,9 +60,9 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
 
     "display all the partially added establisher names with yes/No buttons if the maximum establishers are not added yet" in {
       val doc = Jsoup.parse(createViewUsingForm(form).toString())
-
-      doc must haveDynamicText("Jo Wilson")
-      doc must haveDynamicText("Paul Douglas")
+      allEstablishers.foreach { establisherName =>
+        doc must haveDynamicText(establisherName)
+      }
       doc.select("#value-yes").size() mustEqual 1
       doc.select("#value-no").size() mustEqual 1
       doc.select("a[id=edit-link]") must haveLink(routes.AddEstablisherController.onPageLoad(NormalMode).url)
