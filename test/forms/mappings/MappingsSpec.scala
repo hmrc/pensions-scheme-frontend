@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.{SchemeType, SortCode}
+import models.{SchemeType, SortCode, UniqueTaxReference}
 import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -292,6 +292,50 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
         val result = testForm.bind(Map("sortCode" -> sortCode))
         result.errors mustEqual Seq(FormError("sortCode", "error.max.error"))
       }
+    }
+  }
+
+  "uniqueTaxReference" must {
+
+    val regexUtr = "\\d{10}"
+
+    val testForm: Form[UniqueTaxReference] = Form("uniqueTaxReference" -> uniqueTaxReferenceMapping("error.required",
+      "error.utr.required", "error.reason.required", "error.utr.invalid", "error.reason.length"))
+
+    "bind a valid uniqueTaxReference with utr when yes is selected" in {
+      val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" -> "12345678791"))
+    }
+
+    "bind a valid uniqueTaxReference with reason when no is selected" in {
+      val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" -> "haven't got utr"))
+    }
+
+    "not bind an empty Map" in {
+      val result = testForm.bind(Map.empty[String, String])
+      result.errors mustEqual Seq(FormError("uniqueTaxReference.hasUtr", "error.required"))
+    }
+
+    Seq("1234", "12345678766655", "sdfghjkloi").foreach { utr =>
+      s"not bind an invalid utr $utr" in {
+        val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" -> utr))
+        result.errors mustEqual Seq(FormError("uniqueTaxReference.utr", "error.utr.invalid", Seq(regexUtr)))
+      }
+    }
+
+    "not bind a uniqueTaxReference without utr when yes is selected" in {
+      val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "true"))
+      result.errors mustEqual Seq(FormError("uniqueTaxReference.utr", "error.utr.required"))
+    }
+
+    "not bind a uniqueTaxReference without reason when no is selected" in {
+      val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "false"))
+      result.errors mustEqual Seq(FormError("uniqueTaxReference.reason", "error.reason.required"))
+    }
+
+    "not bind a reason greater than 150 characters" in {
+      val reason = RandomStringUtils.randomAlphabetic(151)
+      val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" -> reason))
+      result.errors mustEqual Seq(FormError("uniqueTaxReference.reason", "error.reason.length", Seq(150)))
     }
   }
 }

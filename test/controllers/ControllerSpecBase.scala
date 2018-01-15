@@ -20,19 +20,27 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.SchemeDetailsId
-import models.{SchemeDetails, SchemeType}
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import models.{EstablisherDetails, EstablishersIndividualMap, SchemeDetails, SchemeType}
+import org.joda.time.LocalDate
 import play.api.libs.json.Json
+import utils.{Enumerable, MapFormats}
 
-trait ControllerSpecBase extends SpecBase {
+trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapFormats{
 
   val cacheMapId = "id"
 
-  def emptyCacheMap = CacheMap(cacheMapId, Map())
+  def emptyCacheMap: CacheMap = CacheMap(cacheMapId, Map())
 
-  def getEmptyCacheMap = new FakeDataRetrievalAction(Some(emptyCacheMap))
+  def getEmptyCacheMap: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(emptyCacheMap))
 
-  def getMandatorySchemeNameCacheMap = new FakeDataRetrievalAction(Some(CacheMap("id", Map(
+  def getMandatorySchemeNameCacheMap: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(CacheMap("id", Map(
     SchemeDetailsId.toString -> Json.toJson(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust))))))
 
-  def dontGetAnyData = new FakeDataRetrievalAction(None)
+  def dontGetAnyData: FakeDataRetrievalAction = new FakeDataRetrievalAction(None)
+
+  def getMandatoryEstablisherCacheMap: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(CacheMap("id", Map(SchemeDetailsId.toString -> Json.toJson(
+    SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)), EstablisherDetailsId.toString ->
+    Json.toJson(EstablishersIndividualMap[EstablisherDetails](Map(0 -> EstablisherDetails("test first name", "test last name", LocalDate.now())))
+  )))))
 }

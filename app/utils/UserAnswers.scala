@@ -27,6 +27,12 @@ import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
 
+  def uniqueTaxReference: Option[EstablishersIndividualMap[UniqueTaxReference]] =
+    cacheMap.getEntry[EstablishersIndividualMap[UniqueTaxReference]](UniqueTaxReferenceId.toString)
+
+  def uniqueTaxReference(index: Int): Try[Option[UniqueTaxReference]] = uniqueTaxReference.map(_.get(index)).getOrElse(
+    Success(None))
+
   def addEstablisher: Option[Boolean] = cacheMap.getEntry[Boolean](AddEstablisherId.toString)
 
   def establisherDetails: Option[EstablishersIndividualMap[EstablisherDetails]] =

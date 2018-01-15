@@ -14,3 +14,8 @@ GET        /:index/individual/establisherDetails          controllers.register.e
 POST       /:index/individual/establisherDetails          controllers.register.establishers.individual.EstablisherDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/individual/changeEstablisherDetails    controllers.register.establishers.individual.EstablisherDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeEstablisherDetails    controllers.register.establishers.individual.EstablisherDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/individual/uniqueTaxReference          controllers.register.establishers.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/uniqueTaxReference          controllers.register.establishers.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeUniqueTaxReference    controllers.register.establishers.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeUniqueTaxReference    controllers.register.establishers.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode, index: Index)
