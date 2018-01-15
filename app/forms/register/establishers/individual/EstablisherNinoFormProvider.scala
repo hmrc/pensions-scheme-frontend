@@ -17,10 +17,9 @@
 package forms.register.establishers.individual
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
-import models.EstablisherNino
 import play.api.data.Form
+import models.EstablisherNino
 
 class EstablisherNinoFormProvider @Inject() extends Mappings {
 
