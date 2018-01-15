@@ -21,15 +21,31 @@ import models.{Field, Invalid, Required, EstablisherNino}
 
 class EstablisherNinoFormProviderSpec extends FormBehaviours {
 
-  val validData: Map[String, String] = Map(
-    "value" -> EstablisherNino.options.head.value
-  )
+  val requiredKey = "messages__error__has_nino_establisher"
+  val requiredNinoKey = "messages__error__nino"
+  val requiredReasonKey = "messages__establisher__no_nino"
+  val invalidNinoKey = "messages__error__nino_invalid"
 
-  val form = new EstablisherNinoFormProvider()()
+  val formProvider = new EstablisherNinoFormProvider()
 
-  "EstablisherNino form" must {
+  "EstablisherNino form provider" must {
 
-    behave like questionForm[EstablisherNino](EstablisherNino.values.head)
+    "successfully bind when yes is selected and valid NINO is provided" in {
+      val form = formProvider().bind(Map("establisherNino.hasNino" -> "yes", "establisherNino.nino" -> "AB020202A"))
+      form.get shouldBe EstablisherNino.Yes("AB020202A")
+    }
+
+    "successfully bind when no is selected and reason is provided" in {
+      val form = formProvider().bind(Map("establisherNino." -> "no", "establisherNino.reason" -> "Reason"))
+      form.get shouldBe EstablisherNino.No("Reason")
+    }
+
+    "fail to bind when yes is selected and nothing is provided" in {
+      val form = formProvider().bind(Map("establisherNino." -> "yes", "establisherNino.nino" -> ""))
+      
+    }
+
+    behave like questionForm[EstablisherNino](EstablisherNino)
 
     behave like formWithOptionField(
       Field(
