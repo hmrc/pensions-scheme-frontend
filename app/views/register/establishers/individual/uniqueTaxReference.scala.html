@@ -22,7 +22,7 @@
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, establisherName: String)(implicit request: Request[_], messages: Messages)
 
-@_options = @{
+@options = @{
     UniqueTaxReference.options
 }
 
@@ -45,9 +45,9 @@
     ){
         @components.radio(
         field = form("uniqueTaxReference.hasUtr"),
-        label = _options(0).label,
-        value = _options(0).value,
-        dataTarget = _options(0).dataTarget
+        label = options(0).label,
+        value = options(0).value,
+        dataTarget = options(0).dataTarget
         )
 
         @components.input_text(
@@ -59,9 +59,9 @@
 
         @components.radio(
         field = form("uniqueTaxReference.hasUtr"),
-        label = _options(1).label,
-        value = _options(1).value,
-        dataTarget = _options(1).dataTarget
+        label = options(1).label,
+        value = options(1).value,
+        dataTarget = options(1).dataTarget
         )
 
         @components.input_text(
