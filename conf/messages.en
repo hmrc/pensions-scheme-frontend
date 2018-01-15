@@ -205,4 +205,8 @@ messages__error__has_sautr_establisher = Select yes if the establisher has a SAU
 uniqueTaxReference.checkYourAnswersLabel = uniqueTaxReference
 
 messages__establisher_individual_contact_details__title = Establisher's contact details
+messages__error__email_length = The email address cannot be more than 132 characters
+messages__error__email_invalid = Enter a valid email address
+messages__error__phone_length = The telephone number cannot be more than 24 characters
+messages__error__phone_invalid = The telephone number can only contain numbers
 contactDetails.checkYourAnswersLabel = contactDetails

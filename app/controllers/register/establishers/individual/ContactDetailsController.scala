@@ -76,7 +76,7 @@ class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
   private def retrieveEstablisherName(block: String => Future[Result])(index:Int)
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
     request.userAnswers.establisherDetails(index) match {
-      case Success(Some(value)) => block(value.firstName)
+      case Success(Some(value)) => block(value.establisherName)
       case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
   }
