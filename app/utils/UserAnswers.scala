@@ -21,6 +21,7 @@ import identifiers.register.establishers.AddEstablisherId
 import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
+import controllers.register.establishers.routes
 
 import scala.util.{Success, Try}
 
@@ -36,7 +37,7 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapF
 
   def allEstablishers: Option[Map[String, String]] = {
     establisherDetails.map(_.getValues.map{ estDetails =>
-      (estDetails.establisherName, controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url)
+      (estDetails.establisherName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
     }.toMap)
   }
 
