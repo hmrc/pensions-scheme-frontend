@@ -103,8 +103,9 @@ trait Mappings extends Formatters with Constraints {
     def toUniqueTaxReference(utrTuple: (Boolean, Option[String], Option[String])) = {
 
       utrTuple match {
-        case (hasUtr, Some(utr), None) if(hasUtr) => Yes(utr)
-        case (hasUtr, None, Some(reason)) if(!hasUtr) => No(reason)
+        case (true, Some(utr), None) => Yes(utr)
+        case (false, None, Some(reason)) => No(reason)
+        case _ => throw new RuntimeException("Invalid selection")
       }
     }
 
