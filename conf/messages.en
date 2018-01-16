@@ -171,16 +171,6 @@ messages__common__pick_country = Select a country
 
 messages__uk_bank_account__title = Does the scheme have a UK bank account?
 
-messages__establisher_address_years__title = How long has the establisher been at this address?
-messages__common__under_a_year = Less than 12 months
-messages__common__over_a_year = More than 12 months
-messages__error__address_years = Select how long they have been at the current address
-
-messages__establisher_address_years__title = How long has the establisher been at this address?
-messages__common__under_a_year = Less than 12 months
-messages__common__over_a_year = More than 12 months
-messages__error__address_years = Select how long they have been at the current address
-
 messages__establishers__add__title = Establishers
 messages__establishers__add_legend_more = Do you want to add another establisher?
 messages__establishers__add_hint = You must add at least one establisher. You can add up to 10.
@@ -200,5 +190,6 @@ messages__establisher__no_sautr = Tell us why the establisher does not have a SA
 messages__error__has_sautr_establisher = Select yes if the establisher has a SAUTR
 uniqueTaxReference.checkYourAnswersLabel = uniqueTaxReference
 
+messages__company_address_years__title = How long has the company been at this address?
 companyAddressYears.checkYourAnswersLabel = companyAddressYears
 companyAddressYears.error.required = Please give an answer for companyAddressYears

@@ -25,6 +25,6 @@ class CompanyAddressYearsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[CompanyAddressYears] =
     Form(
-      "value" -> enumerable[CompanyAddressYears]("companyAddressYears.error.required")
+      "value" -> enumerable[CompanyAddressYears]("messages__error__selection")
     )
 }
