@@ -14,3 +14,10 @@
     display: revert;
   }
 }
+
+// Handle AF heading styles from overriding Elements
+.std-text {
+    font-size: inherit;
+    line-height: inherit;
+    margin: inherit;
+}
