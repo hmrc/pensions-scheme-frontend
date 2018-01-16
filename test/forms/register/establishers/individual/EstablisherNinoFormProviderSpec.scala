@@ -26,33 +26,45 @@ class EstablisherNinoFormProviderSpec extends FormSpec {
   val requiredReasonKey = "messages__establisher__no_nino"
   val invalidNinoKey = "messages__error__nino_invalid"
 
-  val formProvider = new EstablisherNinoFormProvider()
+  val formProvider = new EstablisherNinoFormProvider()()
+  val validData:Map[String,String] = Map(
+    "establisherNino.hasNino" ->"true",
+    "establisherNino.nino" -> "AB020202A"
+  )
 
   "EstablisherNino form provider" must {
 
     "successfully bind when yes is selected and valid NINO is provided" in {
-      val form = formProvider().bind(Map("establisherNino.hasNino" -> "true", "establisherNino.nino" -> "AB020202A"))
+      val form = formProvider.bind(Map("establisherNino.hasNino" -> "true", "establisherNino.nino" -> "AB020202A"))
       form.get shouldBe EstablisherNino.Yes("AB020202A")
     }
 
     "successfully bind when no is selected and reason is provided" in {
-      val form = formProvider().bind(Map("establisherNino.hasNino" -> "false", "establisherNino.reason" -> "haven't got Nino"))
+      val form = formProvider.bind(Map("establisherNino.hasNino" -> "false", "establisherNino.reason" -> "haven't got Nino"))
       form.get shouldBe EstablisherNino.No("haven't got Nino")
     }
 
     "fail to bind when value is omitted" in {
       val expectedError = error("establisherNino.hasNino", requiredKey)
-      checkForError(formProvider(), emptyForm, expectedError)
+      checkForError(formProvider, emptyForm, expectedError)
     }
 
     "fail to bind when yes is selected but NINO is not provided" in {
       val expectedError = error("establisherNino.nino", requiredNinoKey)
-      checkForError(formProvider(), Map("establisherNino.hasNino" -> "true"), expectedError)
+      checkForError(formProvider, Map("establisherNino.hasNino" -> "true"), expectedError)
     }
 
     "fail to bind when no is selected but reason is not provided" in {
       val expectedError = error("establisherNino.reason", requiredReasonKey)
-      checkForError(formProvider(), Map("establisherNino.hasNino" -> "false"), expectedError)
+      checkForError(formProvider, Map("establisherNino.hasNino" -> "false"), expectedError)
+    }
+
+    Seq("DE999999A", "AO111111B", "ORA12345C", "AB0202020", "AB0303030D", "AB040404E").foreach { nino =>
+      s"fail to bind when NINO $nino is invalid" in {
+        val data = validData + ("establisherNino.nino" -> nino)
+        val expectedError = error("establisherNino.nino", invalidNinoKey)
+        checkForError(formProvider, data, expectedError)
+      }
     }
   }
 }
