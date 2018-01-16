@@ -17,7 +17,7 @@
 package utils
 
 import identifiers.register._
-import identifiers.register.establishers.AddEstablisherId
+import identifiers.register.establishers._
 import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
@@ -33,7 +33,12 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapF
   def uniqueTaxReference(index: Int): Try[Option[UniqueTaxReference]] = uniqueTaxReference.map(_.get(index)).getOrElse(
     Success(None))
 
-  def addEstablisher: Option[Boolean] = cacheMap.getEntry[Boolean](AddEstablisherId.toString)
+  def addEstablisher(): Option[Boolean] = cacheMap.getEntry[Boolean](AddEstablisherId.toString)
+
+  def establisherKind(index: Int): Try[Option[EstablisherKind]] = establisherKind.map(_.get(index)).getOrElse(Success(None))
+
+  def establisherKind: Option[EstablishersIndividualMap[EstablisherKind]] = cacheMap.getEntry[EstablishersIndividualMap[EstablisherKind]](
+    EstablisherKindId.toString)
 
   def establisherDetails: Option[EstablishersIndividualMap[EstablisherDetails]] =
     cacheMap.getEntry[EstablishersIndividualMap[EstablisherDetails]](EstablisherDetailsId.toString)
