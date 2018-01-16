@@ -43,7 +43,7 @@ class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
                                                   formProvider: ContactDetailsFormProvider) extends FrontendController
-  with I18nSupport with Enumerable.Implicits with MapFormats {
+                                                  with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form: Form[ContactDetails] = formProvider()
 
@@ -73,6 +73,7 @@ class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
           )
       }(index)
   }
+
   private def retrieveEstablisherName(block: String => Future[Result])(index:Int)
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
     request.userAnswers.establisherDetails(index) match {

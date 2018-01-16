@@ -25,7 +25,7 @@ import models.ContactDetails
 
 class ContactDetailsFormProvider @Inject() extends Mappings {
 
-  val regexPhoneNumber = "\\d"
+  val regexPhoneNumber = "\\d*"
   val maxLengthPhone = 24
   val maxEmailLength = 132
   val emailRegex = "^[^@<>]+[@][^[^@<>]]+"
