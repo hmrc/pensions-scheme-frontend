@@ -43,7 +43,8 @@ class EstablisherKindController @Inject()(
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: EstablisherKindFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats {
+                                        formProvider: EstablisherKindFormProvider) extends FrontendController
+                                        with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
 
