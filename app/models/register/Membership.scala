@@ -14,27 +14,30 @@
  * limitations under the License.
  */
 
-package models
+package models.register
 
 import utils.{Enumerable, InputOption, WithName}
 
-sealed trait EstablisherKind
+sealed trait Membership
 
-object EstablisherKind {
+object Membership {
 
-  case object Company extends WithName("company") with EstablisherKind
-  case object Indivdual extends WithName("individual") with EstablisherKind
-  case object Partnership extends WithName("partnership") with EstablisherKind
+  case object None extends WithName("opt1") with Membership
+  case object One extends WithName("opt2") with Membership
+  case object TwoToEleven extends WithName("opt3") with Membership
+  case object TwelveToFifty extends WithName("opt4") with Membership
+  case object FiftyOneToTenThousand extends WithName("opt5") with Membership
+  case object MoreThanTenThousand extends WithName("opt6") with Membership
 
-  val values: Seq[EstablisherKind] = Seq(
-    Company, Indivdual, Partnership
+  val values: Seq[Membership] = Seq(
+    None, One, TwoToEleven, TwelveToFifty,FiftyOneToTenThousand, MoreThanTenThousand
   )
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"messages__establishers__add__opt__${value.toString}")
+      InputOption(value.toString, s"messages__membership__${value.toString}")
   }
 
-  implicit val enumerable: Enumerable[EstablisherKind] =
+  implicit val enumerable: Enumerable[Membership] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

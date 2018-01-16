@@ -19,7 +19,8 @@ package views.register.establishers.individual
 import play.api.data.{Form, FormError}
 import controllers.register.establishers.individual.routes
 import forms.register.establishers.individual.EstablisherDetailsFormProvider
-import models.{EstablisherDetails, Index, NormalMode}
+import models.register.establishers.individual.EstablisherDetails
+import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours

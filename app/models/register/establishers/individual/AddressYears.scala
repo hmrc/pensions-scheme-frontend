@@ -14,30 +14,26 @@
  * limitations under the License.
  */
 
-package models
+package models.register.establishers.individual
 
 import utils.{Enumerable, InputOption, WithName}
 
-sealed trait MembershipFuture
+sealed trait AddressYears
 
-object MembershipFuture {
+object AddressYears {
 
-  case object None extends WithName("opt1") with MembershipFuture
-  case object One extends WithName("opt2") with MembershipFuture
-  case object TwoToEleven extends WithName("opt3") with MembershipFuture
-  case object TwelveToFifty extends WithName("opt4") with MembershipFuture
-  case object FiftyOneToTenThousand extends WithName("opt5") with MembershipFuture
-  case object MoreThanTenThousand extends WithName("opt6") with MembershipFuture
+  case object UnderAYear extends WithName("under_a_year") with AddressYears
+  case object OverAYear extends WithName("over_a_year") with AddressYears
 
-  val values: Seq[MembershipFuture] = Seq(
-    None, One, TwoToEleven, TwelveToFifty,FiftyOneToTenThousand, MoreThanTenThousand
+  val values: Seq[AddressYears] = Seq(
+    UnderAYear, OverAYear
   )
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString,  s"messages__membership__${value.toString}")
+      InputOption(value.toString, s"messages__common__${value.toString}")
   }
 
-  implicit val enumerable: Enumerable[MembershipFuture] =
+  implicit val enumerable: Enumerable[AddressYears] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

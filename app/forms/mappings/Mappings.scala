@@ -16,9 +16,10 @@
 
 package forms.mappings
 
-import models.{SchemeType, SortCode, UniqueTaxReference}
-import models.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
-import models.UniqueTaxReference.{No, Yes}
+import models.register.{SchemeType, SortCode}
+import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
+import models.register.establishers.individual.UniqueTaxReference
+import models.register.establishers.individual.UniqueTaxReference.{No, Yes}
 import org.joda.time.LocalDate
 import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import play.api.data.Forms.of

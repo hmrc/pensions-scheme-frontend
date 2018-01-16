@@ -16,7 +16,8 @@
 
 package forms.mappings
 
-import models.{SchemeType, SortCode, UniqueTaxReference}
+import models.register.establishers.individual.UniqueTaxReference
+import models.register.{SchemeType, SortCode}
 import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}

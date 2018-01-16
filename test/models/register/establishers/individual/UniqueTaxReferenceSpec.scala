@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.register.establishers.individual
 
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 import play.api.libs.json.{JsError, Json}

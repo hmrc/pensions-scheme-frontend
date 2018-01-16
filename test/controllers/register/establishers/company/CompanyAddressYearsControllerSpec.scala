@@ -25,9 +25,10 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.company.CompanyAddressYearsFormProvider
 import identifiers.register.establishers.company.CompanyAddressYearsId
-import models.{CompanyAddressYears, Index, NormalMode}
+import models.{Index, NormalMode}
 import views.html.register.establishers.company.companyAddressYears
 import controllers.ControllerSpecBase
+import models.register.establishers.company.CompanyAddressYears
 
 class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
 

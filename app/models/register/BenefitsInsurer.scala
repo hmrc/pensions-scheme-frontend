@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.register
 
-import org.joda.time.LocalDate
 import play.api.libs.json._
 
-case class UKBankDetails (bankName: String, accountName: String, sortCode: SortCode, accountNumber: String, date: LocalDate)
+case class BenefitsInsurer (companyName: String, policyNumber: String)
 
-object UKBankDetails {
-  implicit val format = Json.format[UKBankDetails]
+object BenefitsInsurer {
+  implicit val format = Json.format[BenefitsInsurer]
 }

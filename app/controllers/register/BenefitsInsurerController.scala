@@ -27,7 +27,7 @@ import config.FrontendAppConfig
 import forms.register.BenefitsInsurerFormProvider
 import identifiers.register.BenefitsInsurerId
 import models.Mode
-import models.BenefitsInsurer
+import models.register.BenefitsInsurer
 import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.benefitsInsurer

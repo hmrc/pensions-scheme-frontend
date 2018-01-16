@@ -17,7 +17,8 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.company.routes._
-@import models.{CompanyAddressYears, Mode}
+@import models.Mode
+@import models.register.establishers.company.CompanyAddressYears
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
 

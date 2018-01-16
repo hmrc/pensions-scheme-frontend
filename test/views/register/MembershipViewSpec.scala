@@ -18,7 +18,8 @@ package views.register
 
 import play.api.data.Form
 import forms.register.MembershipFormProvider
-import models.{NormalMode, Membership}
+import models.NormalMode
+import models.register.Membership
 import views.behaviours.ViewBehaviours
 import views.html.register.membership
 

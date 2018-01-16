@@ -26,8 +26,9 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.EstablisherKindFormProvider
 import identifiers.register.establishers.EstablisherKindId
+import models.register.establishers.EstablisherKind
 import models.requests.DataRequest
-import models.{EstablisherKind, Index, Mode}
+import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.establisherKind

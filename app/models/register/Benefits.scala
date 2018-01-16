@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package models
+package models.register
 
 import utils.{Enumerable, InputOption, WithName}
 
-sealed trait AddressYears
+sealed trait Benefits
 
-object AddressYears {
+object Benefits {
 
-  case object UnderAYear extends WithName("under_a_year") with AddressYears
-  case object OverAYear extends WithName("over_a_year") with AddressYears
+  case object MoneyPurchase extends WithName("opt1") with Benefits
+  case object Defined extends WithName("opt2") with Benefits
+  case object MoneyPurchaseDefinedMix extends WithName("opt3") with Benefits
 
-  val values: Seq[AddressYears] = Seq(
-    UnderAYear, OverAYear
+  val values: Seq[Benefits] = Seq(
+    MoneyPurchase, Defined, MoneyPurchaseDefinedMix
   )
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"messages__common__${value.toString}")
+      InputOption(value.toString, s"messages__benefits__${value.toString}")
   }
 
-  implicit val enumerable: Enumerable[AddressYears] =
+  implicit val enumerable: Enumerable[Benefits] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

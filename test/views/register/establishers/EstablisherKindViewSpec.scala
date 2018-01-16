@@ -18,7 +18,8 @@ package views.register.establishers
 
 import play.api.data.Form
 import forms.register.establishers.EstablisherKindFormProvider
-import models.{EstablisherKind, Index, NormalMode}
+import models.register.establishers.EstablisherKind
+import models.{Index, NormalMode}
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.establisherKind
 

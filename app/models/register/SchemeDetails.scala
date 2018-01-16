@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.register
 
-import play.api.libs.json.{Format, JsPath, Json}
+import play.api.libs.json._
 
-case class SortCode(first: String, second: String, third: String)
+case class SchemeDetails (schemeName: String, schemeType: SchemeType)
 
-object SortCode {
-  implicit val format = Json.format[SortCode]
+object SchemeDetails {
+  implicit val format = Json.format[SchemeDetails]
 }

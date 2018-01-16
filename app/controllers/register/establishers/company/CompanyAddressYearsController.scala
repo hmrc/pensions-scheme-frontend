@@ -26,7 +26,8 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.company.CompanyAddressYearsFormProvider
 import identifiers.register.establishers.company.CompanyAddressYearsId
-import models.{CompanyAddressYears, Index, Mode}
+import models.register.establishers.company.CompanyAddressYears
+import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyAddressYears

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.register.establishers.company
 
 import utils.{Enumerable, InputOption, WithName}
 

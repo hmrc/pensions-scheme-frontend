@@ -18,7 +18,8 @@ package views.register.establishers.company
 
 import play.api.data.Form
 import forms.register.establishers.company.CompanyAddressYearsFormProvider
-import models.{CompanyAddressYears, Index, NormalMode}
+import models.register.establishers.company.CompanyAddressYears
+import models.{Index, NormalMode}
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.companyAddressYears
 

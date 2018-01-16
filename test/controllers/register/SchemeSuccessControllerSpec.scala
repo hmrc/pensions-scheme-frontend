@@ -21,7 +21,7 @@ import play.api.test.Helpers._
 import views.html.register.schemeSuccess
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
-import models.{SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.cache.client.CacheMap

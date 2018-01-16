@@ -17,7 +17,8 @@
 package forms.register.establishers.company
 
 import forms.behaviours.FormBehaviours
-import models.{Field, Invalid, Required, CompanyAddressYears}
+import models.register.establishers.company.CompanyAddressYears
+import models.{Field, Invalid, Required}
 
 class CompanyAddressYearsFormProviderSpec extends FormBehaviours {
 

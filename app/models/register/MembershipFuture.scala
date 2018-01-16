@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package models
+package models.register
 
 import utils.{Enumerable, InputOption, WithName}
 
-sealed trait Membership
+sealed trait MembershipFuture
 
-object Membership {
+object MembershipFuture {
 
-  case object None extends WithName("opt1") with Membership
-  case object One extends WithName("opt2") with Membership
-  case object TwoToEleven extends WithName("opt3") with Membership
-  case object TwelveToFifty extends WithName("opt4") with Membership
-  case object FiftyOneToTenThousand extends WithName("opt5") with Membership
-  case object MoreThanTenThousand extends WithName("opt6") with Membership
+  case object None extends WithName("opt1") with MembershipFuture
+  case object One extends WithName("opt2") with MembershipFuture
+  case object TwoToEleven extends WithName("opt3") with MembershipFuture
+  case object TwelveToFifty extends WithName("opt4") with MembershipFuture
+  case object FiftyOneToTenThousand extends WithName("opt5") with MembershipFuture
+  case object MoreThanTenThousand extends WithName("opt6") with MembershipFuture
 
-  val values: Seq[Membership] = Seq(
+  val values: Seq[MembershipFuture] = Seq(
     None, One, TwoToEleven, TwelveToFifty,FiftyOneToTenThousand, MoreThanTenThousand
   )
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"messages__membership__${value.toString}")
+      InputOption(value.toString,  s"messages__membership__${value.toString}")
   }
 
-  implicit val enumerable: Enumerable[Membership] =
+  implicit val enumerable: Enumerable[MembershipFuture] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

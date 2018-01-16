@@ -17,9 +17,10 @@
 package forms.register.establishers.company
 
 import javax.inject.Inject
+
 import forms.mappings.Mappings
+import models.register.establishers.company.CompanyAddressYears
 import play.api.data.Form
-import models.CompanyAddressYears
 
 class CompanyAddressYearsFormProvider @Inject() extends Mappings {
 

@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package models
+package models.register.establishers
 
 import utils.{Enumerable, InputOption, WithName}
 
-sealed trait Benefits
+sealed trait EstablisherKind
 
-object Benefits {
+object EstablisherKind {
 
-  case object MoneyPurchase extends WithName("opt1") with Benefits
-  case object Defined extends WithName("opt2") with Benefits
-  case object MoneyPurchaseDefinedMix extends WithName("opt3") with Benefits
+  case object Company extends WithName("company") with EstablisherKind
+  case object Indivdual extends WithName("individual") with EstablisherKind
+  case object Partnership extends WithName("partnership") with EstablisherKind
 
-  val values: Seq[Benefits] = Seq(
-    MoneyPurchase, Defined, MoneyPurchaseDefinedMix
+  val values: Seq[EstablisherKind] = Seq(
+    Company, Indivdual, Partnership
   )
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"messages__benefits__${value.toString}")
+      InputOption(value.toString, s"messages__establishers__add__opt__${value.toString}")
   }
 
-  implicit val enumerable: Enumerable[Benefits] =
+  implicit val enumerable: Enumerable[EstablisherKind] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

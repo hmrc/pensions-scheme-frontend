@@ -16,9 +16,10 @@
 
 package utils
 
-import models.{CheckMode, Index, UniqueTaxReference}
 import viewmodels.AnswerRow
 import controllers.register.routes
+import models.register.establishers.individual.UniqueTaxReference
+import models.{CheckMode, Index}
 
 import scala.util.Success
 
