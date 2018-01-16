@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package views
+package identifiers.register.establishers
 
-import views.behaviours.ViewBehaviours
-import views.html.index
+import identifiers.Identifier
 
-class IndexViewSpec extends ViewBehaviours {
-
-  def view = () => index(frontendAppConfig)(fakeRequest, messages)
-
-  "Index view" must {
-
-    behave like normalPage(view, "index", messages("messages__index__title"), "_guidance")
-  }
+case object EstablisherKindId extends Identifier {
+  override def toString: String = "establisherKind"
 }

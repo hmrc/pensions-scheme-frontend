@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package views
+package forms.register.establishers
 
-import views.behaviours.ViewBehaviours
-import views.html.index
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.EstablisherKind
 
-class IndexViewSpec extends ViewBehaviours {
+class EstablisherKindFormProvider @Inject() extends Mappings {
 
-  def view = () => index(frontendAppConfig)(fakeRequest, messages)
-
-  "Index view" must {
-
-    behave like normalPage(view, "index", messages("messages__index__title"), "_guidance")
-  }
+  def apply(): Form[EstablisherKind] =
+    Form(
+      "value" -> enumerable[EstablisherKind]("messages__error__selection")
+    )
 }

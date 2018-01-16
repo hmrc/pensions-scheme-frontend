@@ -49,6 +49,12 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       controllers.register.establishers.routes.AddEstablisherController.onPageLoad(CheckMode).url)
   }
 
+  def establisherKind(index:Int): Option[AnswerRow] = userAnswers.establisherKind(index) match {
+    case Success(Some(x))=>Some(AnswerRow("establisherKind.checkYourAnswersLabel",s"${x.toString}",false,
+      controllers.register.establishers.routes.EstablisherKindController.onPageLoad(CheckMode, Index(index)).url))
+    case _ => None
+  }
+
   def schemeEstablishedCountry: Option[AnswerRow] = userAnswers.schemeEstablishedCountry map {
     x => AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", s"$x", false,
       routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)
