@@ -17,26 +17,26 @@
 package forms.register.establishers.company
 
 import forms.behaviours.FormBehaviours
-import models.register.establishers.company.CompanyAddressYears
+import models.register.establishers.company.AddressYears
 import models.{Field, Invalid, Required}
 
 class CompanyAddressYearsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
-    "value" -> CompanyAddressYears.options.head.value
+    "value" -> AddressYears.options.head.value
   )
 
-  val form = new CompanyAddressYearsFormProvider()()
+  val form = new AddressYearsFormProvider()()
 
   "CompanyAddressYears form" must {
 
-    behave like questionForm[CompanyAddressYears](CompanyAddressYears.values.head)
+    behave like questionForm[AddressYears](AddressYears.values.head)
 
     behave like formWithOptionField(
       Field(
         "value",
         Required -> "messages__error__selection",
         Invalid -> "error.invalid"),
-      CompanyAddressYears.options.map(_.value): _*)
+      AddressYears.options.map(_.value): _*)
   }
 }

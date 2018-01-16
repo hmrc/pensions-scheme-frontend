@@ -25,17 +25,16 @@ import controllers.register.establishers.routes
 import identifiers.register.establishers.company.CompanyAddressYearsId
 import models.register._
 import models.register.establishers.EstablisherKind
-import models.register.establishers.company.CompanyAddressYears
 import models.register.establishers.individual.{AddressYears, EstablisherDetails, EstablishersIndividualMap, UniqueTaxReference}
-
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
 
-  def companyAddressYears: Option[EstablishersIndividualMap[CompanyAddressYears]] =
-    cacheMap.getEntry[EstablishersIndividualMap[CompanyAddressYears]](CompanyAddressYearsId.toString)
+  def companyAddressYears: Option[EstablishersIndividualMap[models.register.establishers.company.AddressYears]] =
+    cacheMap.getEntry[EstablishersIndividualMap[models.register.establishers.company.AddressYears]](CompanyAddressYearsId.toString)
 
-  def companyAddressYears(index: Int): Try[Option[CompanyAddressYears]] = companyAddressYears.map(_.get(index)).getOrElse(Success(None))
+  def companyAddressYears(index: Int): Try[Option[models.register.establishers.company.AddressYears]] =
+    companyAddressYears.map(_.get(index)).getOrElse(Success(None))
 
   def uniqueTaxReference: Option[EstablishersIndividualMap[UniqueTaxReference]] =
     cacheMap.getEntry[EstablishersIndividualMap[UniqueTaxReference]](UniqueTaxReferenceId.toString)

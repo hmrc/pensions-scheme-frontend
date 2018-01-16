@@ -23,29 +23,29 @@ import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.company.CompanyAddressYearsFormProvider
+import forms.register.establishers.company.AddressYearsFormProvider
 import identifiers.register.establishers.company.CompanyAddressYearsId
 import models.{Index, NormalMode}
-import views.html.register.establishers.company.companyAddressYears
+import views.html.register.establishers.company.addressYears
 import controllers.ControllerSpecBase
-import models.register.establishers.company.CompanyAddressYears
+import models.register.establishers.company.AddressYears
 
 class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new CompanyAddressYearsFormProvider()
+  val formProvider = new AddressYearsFormProvider()
   val form = formProvider()
   val firstIndex = Index(1)
   val invalidIndex = Index(11)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
-    new CompanyAddressYearsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new AddressYearsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = companyAddressYears(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = addressYears(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
 
-  val validData = Map(CompanyAddressYearsId.toString -> Json.obj("1" -> CompanyAddressYears.options.head.value.toString))
+  val validData = Map(CompanyAddressYearsId.toString -> Json.obj("1" -> AddressYears.options.head.value.toString))
 
   "CompanyAddressYears Controller" must {
 
@@ -61,7 +61,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(CompanyAddressYears.values.head))
+      contentAsString(result) mustBe viewAsString(form.fill(AddressYears.values.head))
     }
 
     "redirect to session expired from a GET when the index is invalid" in {
@@ -74,7 +74,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", CompanyAddressYears.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
@@ -100,7 +100,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", CompanyAddressYears.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER

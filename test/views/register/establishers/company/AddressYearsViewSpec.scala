@@ -17,21 +17,23 @@
 package views.register.establishers.company
 
 import play.api.data.Form
-import forms.register.establishers.company.CompanyAddressYearsFormProvider
-import models.register.establishers.company.CompanyAddressYears
+import forms.register.establishers.company.AddressYearsFormProvider
+import models.register.establishers.company.AddressYears
 import models.{Index, NormalMode}
+import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.company.companyAddressYears
+import views.html.register.establishers.company.addressYears
 
-class CompanyAddressYearsViewSpec extends ViewBehaviours {
+class AddressYearsViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "company_address_years"
 
-  val form = new CompanyAddressYearsFormProvider()()
+  val form = new AddressYearsFormProvider()()
 
-  def createView = () => companyAddressYears(frontendAppConfig, form, NormalMode, Index(0))(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => addressYears(frontendAppConfig, form, NormalMode, Index(0))(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyAddressYears(frontendAppConfig, form, NormalMode, Index(0))(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressYears(frontendAppConfig,
+    form, NormalMode, Index(0))(fakeRequest, messages)
 
   "CompanyAddressYears view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
@@ -41,20 +43,20 @@ class CompanyAddressYearsViewSpec extends ViewBehaviours {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- CompanyAddressYears.options) {
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, false)
+        for (option <- AddressYears.options) {
+          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, isChecked = false)
         }
       }
     }
 
-    for(option <- CompanyAddressYears.options) {
+    for (option <- AddressYears.options) {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
+          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, isChecked = true)
 
-          for(unselectedOption <- CompanyAddressYears.options.filterNot(o => o == option)) {
-            assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
+          for (unselectedOption <- AddressYears.options.filterNot(o => o == option)) {
+            assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, isChecked = false)
           }
         }
       }

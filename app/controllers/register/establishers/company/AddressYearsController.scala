@@ -24,18 +24,18 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.establishers.company.CompanyAddressYearsFormProvider
+import forms.register.establishers.company.AddressYearsFormProvider
 import identifiers.register.establishers.company.CompanyAddressYearsId
-import models.register.establishers.company.CompanyAddressYears
+import models.register.establishers.company.AddressYears
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
-import views.html.register.establishers.company.companyAddressYears
+import views.html.register.establishers.company.addressYears
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-class CompanyAddressYearsController @Inject()(
+class AddressYearsController @Inject()(
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
@@ -43,7 +43,7 @@ class CompanyAddressYearsController @Inject()(
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: CompanyAddressYearsFormProvider) extends FrontendController with I18nSupport
+                                        formProvider: AddressYearsFormProvider) extends FrontendController with I18nSupport
                                         with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
@@ -51,8 +51,8 @@ class CompanyAddressYearsController @Inject()(
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       request.userAnswers.companyAddressYears(index) match {
-        case Success(None) => Ok(companyAddressYears(appConfig, form, mode, index))
-        case Success(Some(value)) => Ok(companyAddressYears(appConfig, form.fill(value), mode, index))
+        case Success(None) => Ok(addressYears(appConfig, form, mode, index))
+        case Success(Some(value)) => Ok(addressYears(appConfig, form.fill(value), mode, index))
         case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
   }
@@ -61,9 +61,9 @@ class CompanyAddressYearsController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyAddressYears(appConfig, formWithErrors, mode, index))),
+          Future.successful(BadRequest(addressYears(appConfig, formWithErrors, mode, index))),
         (value) =>
-          dataCacheConnector.saveMap[CompanyAddressYears](request.externalId, CompanyAddressYearsId.toString, index, value).map(cacheMap =>
+          dataCacheConnector.saveMap[AddressYears](request.externalId, CompanyAddressYearsId.toString, index, value).map(cacheMap =>
             Redirect(navigator.nextPage(CompanyAddressYearsId, mode)(new UserAnswers(cacheMap))))
       )
   }
