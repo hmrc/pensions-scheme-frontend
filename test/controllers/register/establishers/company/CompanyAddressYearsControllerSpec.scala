@@ -36,8 +36,8 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
 
   val formProvider = new AddressYearsFormProvider()
   val form = formProvider()
-  val firstIndex = Index(1)
-  val invalidIndex = Index(11)
+  val firstIndex = Index(0)
+  val invalidIndex = Index(10)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): CompanyAddressYearsController =
     new CompanyAddressYearsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
@@ -45,7 +45,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
 
   def viewAsString(form: Form[_] = form) = companyAddressYears(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
 
-  val validData = Map(CompanyAddressYearsId.toString -> Json.obj("1" -> CompanyAddressYears.options.head.value.toString))
+  val validData = Map(CompanyAddressYearsId.toString -> Json.obj("0" -> CompanyAddressYears.options.head.value.toString))
 
   "CompanyAddressYears Controller" must {
 
