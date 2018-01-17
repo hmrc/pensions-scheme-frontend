@@ -24,9 +24,10 @@ import scala.util.Success
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
-  def companyContactDetails: Option[AnswerRow] = userAnswers.companyContactDetails map {
-    x => AnswerRow("companyContactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
-      controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(CheckMode).url)
+  def companyContactDetails(index: Int): Option[AnswerRow] = userAnswers.companyContactDetails(index) match {
+    case Success(Some(x)) => Some(AnswerRow("companyContactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
+      controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(CheckMode, Index(index)).url))
+    case _ => None
   }
 
   def uniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.uniqueTaxReference(index) match {

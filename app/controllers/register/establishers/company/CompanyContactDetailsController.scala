@@ -26,12 +26,13 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.company.CompanyContactDetailsFormProvider
 import identifiers.register.establishers.company.CompanyContactDetailsId
-import models.Mode
-import models.CompanyContactDetails
+import models.{CompanyContactDetails, Index, Mode}
+import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.company.companyContactDetails
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
@@ -42,22 +43,23 @@ class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   requireData: DataRequiredAction,
                                                   formProvider: CompanyContactDetailsFormProvider) extends FrontendController with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[CompanyContactDetails] = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.companyContactDetails match {
-        case None => form
-        case Some(value) => form.fill(value)
+      val redirectResult = request.userAnswers.companyContactDetails(index) match {
+        case Success(None) => Ok(companyContactDetails(appConfig, form, mode, index))
+        case Success(Some(value)) => Ok(companyContactDetails(appConfig, form.fill(value), mode, index))
+        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
-      Ok(companyContactDetails(appConfig, preparedForm, mode))
+      Future.successful(redirectResult)
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyContactDetails(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(companyContactDetails(appConfig, formWithErrors, mode, index))),
         (value) =>
           dataCacheConnector.save[CompanyContactDetails](request.externalId, CompanyContactDetailsId.toString, value).map(cacheMap =>
             Redirect(navigator.nextPage(CompanyContactDetailsId, mode)(new UserAnswers(cacheMap))))
