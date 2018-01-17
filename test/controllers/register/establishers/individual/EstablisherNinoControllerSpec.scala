@@ -70,8 +70,8 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form.fill(EstablisherNino.Yes("CS700100A")))
     }
 
-    " redirect to Session Expired page when establisher name is not present" in {
-      val result = controller (getEmptyCacheMap).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+    "redirect to Session Expired page when establisher name is not present" in {
+      val result = controller(getEmptyCacheMap).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -107,6 +107,14 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", EstablisherNino.options.head.value))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "redirect to Session Expired page when the index is not valid" in {
+      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val result = controller(getRelevantData).onPageLoad(NormalMode, Index(2))(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

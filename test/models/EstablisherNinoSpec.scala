@@ -17,7 +17,8 @@
 package models
 
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
-import play.api.libs.json.{JsError, Json}
+import play.api.libs.json.{JsError, JsPath, Json}
+import reactivemongo.play.json.ValidationError
 
 class EstablisherNinoSpec extends WordSpecLike with MustMatchers with OptionValues {
 
@@ -44,6 +45,13 @@ class EstablisherNinoSpec extends WordSpecLike with MustMatchers with OptionValu
       val json = Json.obj("hasNino" -> false)
 
       Json.fromJson[EstablisherNino](json) mustEqual JsError("Reason expected")
+    }
+
+    "return failure for when no input given" in {
+      val json = Json.obj("hasNino" -> "notABoolean")
+
+
+      Json.fromJson[EstablisherNino](json) mustEqual JsError(Seq((JsPath \ "hasNino", Seq(ValidationError(Seq("error.expected.jsboolean"), Seq())))))
     }
   }
 

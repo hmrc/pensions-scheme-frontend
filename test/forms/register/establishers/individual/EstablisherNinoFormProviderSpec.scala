@@ -18,7 +18,6 @@ package forms.register.establishers.individual
 
 import forms.FormSpec
 import models.EstablisherNino
-import org.apache.commons.lang3.RandomStringUtils
 
 class EstablisherNinoFormProviderSpec extends FormSpec {
 
@@ -50,33 +49,6 @@ class EstablisherNinoFormProviderSpec extends FormSpec {
     "fail to bind when value is omitted" in {
       val expectedError = error("establisherNino.hasNino", requiredKey)
       checkForError(formProvider, emptyForm, expectedError)
-    }
-
-    "fail to bind when yes is selected but NINO is not provided" in {
-      val expectedError = error("establisherNino.nino", requiredNinoKey)
-      checkForError(formProvider, Map("establisherNino.hasNino" -> "true"), expectedError)
-    }
-
-    "fail to bind when no is selected but reason is not provided" in {
-      val expectedError = error("establisherNino.reason", requiredReasonKey)
-      checkForError(formProvider, Map("establisherNino.hasNino" -> "false"), expectedError)
-    }
-
-    Seq("DE999999A", "AO111111B", "ORA12345C", "AB0202020", "AB0303030D", "AB040404E").foreach { nino =>
-      s"fail to bind when NINO $nino is invalid" in {
-        val data = validData + ("establisherNino.nino" -> nino)
-        val expectedError = error("establisherNino.nino", invalidNinoKey)
-        checkForError(formProvider, data, expectedError)
-      }
-    }
-
-    "fail to bind when no is selected and reason exceeds max length of 150" in {
-      val testString = RandomStringUtils.random(reasonInvalidLength)
-      val data = Map(
-        "establisherNino.hasNino" -> "false",
-        "establisherNino.reason" -> testString)
-      val expectedError = error("establisherNino.reason", "messages__error__no_nino_length", reasonMaxLength)
-      checkForError(formProvider, data, expectedError)
     }
   }
 }

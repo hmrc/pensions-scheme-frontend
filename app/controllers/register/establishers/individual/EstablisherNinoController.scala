@@ -50,7 +50,7 @@ class EstablisherNinoController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName {
+      retrieveEstablisherName(index) {
         establisherName =>
           val redirectResult = request.userAnswers.establisherNino(index) match {
             case Success(None) => Ok(establisherNino(appConfig, form, mode, index, establisherName))
@@ -58,12 +58,12 @@ class EstablisherNinoController @Inject()(
             case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
           }
           Future.successful(redirectResult)
-      }(index)
+      }
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName {
+      retrieveEstablisherName(index) {
         establisherName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
@@ -73,10 +73,10 @@ class EstablisherNinoController @Inject()(
                 EstablisherNinoId.toString, index, value).map(cacheMap =>
                 Redirect(navigator.nextPage(EstablisherNinoId, mode)(new UserAnswers(cacheMap))))
           )
-      }(index)
+      }
   }
 
-  private def retrieveEstablisherName(block: String => Future[Result])(index:Int)
+  private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
     request.userAnswers.establisherDetails(index) match {
       case Success(Some(value)) => block(value.establisherName)
