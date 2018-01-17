@@ -27,7 +27,7 @@ class ContactDetailsFormProviderSpec extends FormBehaviours {
     "emailAddress" -> "test@test.com",
     "phoneNumber" -> "123456789"
   )
-  val emailRegex = "^[^@<>]+[@][^[^@<>]]+"
+  val emailRegex = "^[^@<>]+@[^@<>]+$"
   val regexPhoneNumber = "\\d*"
   val form = new ContactDetailsFormProvider()()
 
