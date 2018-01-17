@@ -26,6 +26,10 @@ import controllers.register.establishers.routes
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
+  def contactDetails: Option[EstablishersIndividualMap[ContactDetails]] =
+    cacheMap.getEntry[EstablishersIndividualMap[ContactDetails]](ContactDetailsId.toString)
+
+  def contactDetails(index: Int): Try[Option[ContactDetails]] = contactDetails.map(_.get(index)).getOrElse(Success(None))
 
   def uniqueTaxReference: Option[EstablishersIndividualMap[UniqueTaxReference]] =
     cacheMap.getEntry[EstablishersIndividualMap[UniqueTaxReference]](UniqueTaxReferenceId.toString)
