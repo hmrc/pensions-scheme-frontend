@@ -218,3 +218,12 @@ messages__error__phone_length = The telephone number cannot be more than 24 char
 messages__error__phone_invalid = The telephone number can only contain numbers
 contactDetails.checkYourAnswersLabel = contactDetails
 
+messages__common__company_details__title = Company details
+messages__common__company_name = Company name
+messages__common__vat = VAT Registration number (optional)
+messages__common__vat_hint = This number issued by HMRC. It is 9 numbers, with "GB" sometimes added at the start, for example GB123456789
+messages__common__paye = PAYE number (optional)
+messages__common__paye_hint = A PAYE reference number has the format 123/A56789
+messages__error__company_name = Enter the company name
+
+companyDetails.checkYourAnswersLabel = companyDetails
