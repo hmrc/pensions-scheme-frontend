@@ -39,6 +39,12 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     case _ => None
   }
 
+  def contactDetails(index: Int): Option[AnswerRow] = userAnswers.contactDetails(index) match {
+    case Success(Some(x)) => Some(AnswerRow("contactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
+      controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, Index(index)).url))
+    case _ => None
+  }
+
   def establisherDetails(index: Int): Option[AnswerRow] = userAnswers.establisherDetails(index) match {
     case Success(Some(x)) => Some(AnswerRow("establisherDetails.checkYourAnswersLabel", s"${x.firstName} ${x.lastName}", false,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
