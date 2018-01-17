@@ -25,7 +25,7 @@ import scala.util.Success
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def companyContactDetails: Option[AnswerRow] = userAnswers.companyContactDetails map {
-    x => AnswerRow("companyContactDetails.checkYourAnswersLabel", s"${x.field1} ${x.field2}", false,
+    x => AnswerRow("companyContactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
       controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(CheckMode).url)
   }
 

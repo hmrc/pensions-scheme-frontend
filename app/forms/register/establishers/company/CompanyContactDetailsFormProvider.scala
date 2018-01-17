@@ -25,10 +25,19 @@ import models.CompanyContactDetails
 
 class CompanyContactDetailsFormProvider @Inject() extends Mappings {
 
+  val regexPhoneNumber = "\\d*"
+  val maxLengthPhone = 24
+  val maxEmailLength = 132
+  val emailRegex = "^[^@<>]+@[^@<>]+$"
+
    def apply(): Form[CompanyContactDetails] = Form(
      mapping(
-      "field1" -> text("companyContactDetails.error.field1.required"),
-      "field2" -> text("companyContactDetails.error.field2.required")
+      "emailAddress" -> text("messages__error__email").verifying(
+        returnOnFirstFailure(regexp(emailRegex, "messages__error__email_invalid"),
+          maxLength(maxEmailLength, "messages__error__email_length"))),
+      "phoneNumber" -> text("messages__error__phone").verifying(
+        returnOnFirstFailure(regexp(regexPhoneNumber, "messages__error__phone_invalid"),
+        maxLength(maxLengthPhone, "messages__error__phone_length")))
     )(CompanyContactDetails.apply)(CompanyContactDetails.unapply)
    )
  }

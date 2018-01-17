@@ -218,11 +218,5 @@ messages__error__phone_length = The telephone number cannot be more than 24 char
 messages__error__phone_invalid = The telephone number can only contain numbers
 contactDetails.checkYourAnswersLabel = contactDetails
 
-
-companyContactDetails.title = companyContactDetails
-companyContactDetails.heading = companyContactDetails
-companyContactDetails.field1 = Field 1
-companyContactDetails.field2 = Field 2
+messages__common__company_contact = Company contact details
 companyContactDetails.checkYourAnswersLabel = companyContactDetails
-companyContactDetails.error.field1.required = Please give an answer for field1
-companyContactDetails.error.field2.required = Please give an answer for field2

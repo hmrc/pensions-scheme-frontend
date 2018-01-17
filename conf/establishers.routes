@@ -30,7 +30,7 @@ POST       /:index/individual/contactDetails              controllers.register.e
 GET        /:index/individual/changeContactDetails        controllers.register.establishers.individual.ContactDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeContactDetails        controllers.register.establishers.individual.ContactDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
 
-GET        /companyContactDetails                         controllers.register.establishers.company.CompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /companyContactDetails                         controllers.register.establishers.company.CompanyContactDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /changeCompanyContactDetails                   controllers.register.establishers.company.CompanyContactDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeCompanyContactDetails                   controllers.register.establishers.company.CompanyContactDetailsController.onSubmit(mode: Mode = CheckMode)
+GET        /company/companyContactDetails                         controllers.register.establishers.company.CompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /company/companyContactDetails                         controllers.register.establishers.company.CompanyContactDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /company/changeCompanyContactDetails                   controllers.register.establishers.company.CompanyContactDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /company/changeCompanyContactDetails                   controllers.register.establishers.company.CompanyContactDetailsController.onSubmit(mode: Mode = CheckMode)
