@@ -17,11 +17,11 @@
 @(detailsList: Map[String, String])(implicit messages: Messages)
 
 <div class="form-group">
-    <ul class="govuk-check-your-answers form-group cya-questions-short">
+    <ul class="govuk-check-your-answers form-group cya-questions-long">
         @for((listItem, url) <- detailsList){
         <li>
             <div class="cya-question">
-                <h2 class="bold">@listItem </h2>
+                <h2 class="bold std-text">@listItem </h2>
             </div>
 
             <div class="cya-answer">

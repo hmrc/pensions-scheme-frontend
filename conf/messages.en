@@ -32,6 +32,8 @@ messages__common__continue = Continue
 messages__common__utr = Unique Taxpayer Reference number
 messages__common__utr_hint = A UTR is issued by HMRC when you register your business or for Self assessment.
 messages__common__utr_hint_format = A UTR is 10 or 13 digits, if it is 13 digits only enter the last 10.
+messages__common__email = Email address
+messages__common__phone = Phone number
 messages__error__first_name = Enter the first name
 messages__error__last_name = Enter the last name
 messages__error__date = Enter a valid date
@@ -41,6 +43,8 @@ messages__error__sautr = Enter the Self Assessment Unique Tax Reference number
 messages__error__sautr_invalid = Enter a valid 10 digit Self Assessment Unique Taxpayer Reference number
 messages__error__no_sautr_establisher = You need to tell us why the establisher does not have a SAUTR
 messages__error__no_sautr_length = The reason cannot be more than 150 characters
+messages__error__email = Enter an email address
+messages__error__phone = Enter a phone number
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -216,3 +220,11 @@ messages__establisher__has_sautr__title = Does the establisher have a Self Asses
 messages__establisher__no_sautr = Tell us why the establisher does not have a SAUTR
 messages__error__has_sautr_establisher = Select yes if the establisher has a SAUTR
 uniqueTaxReference.checkYourAnswersLabel = uniqueTaxReference
+
+messages__establisher_individual_contact_details__title = Establisher's contact details
+messages__error__email_length = The email address cannot be more than 132 characters
+messages__error__email_invalid = Enter a valid email address
+messages__error__phone_length = The telephone number cannot be more than 24 characters
+messages__error__phone_invalid = The telephone number can only contain numbers
+contactDetails.checkYourAnswersLabel = contactDetails
+
