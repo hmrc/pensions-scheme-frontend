@@ -21,7 +21,7 @@ class $className$ViewSpec extends QuestionViewBehaviours[$className$] {
 
   "$className$ view" must {
 
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__\${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.$className$Controller.onSubmit(NormalMode).url, "field1", "field2")
   }
