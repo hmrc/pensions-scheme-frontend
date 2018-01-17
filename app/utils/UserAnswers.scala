@@ -22,10 +22,11 @@ import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
 import controllers.register.establishers.routes
-import identifiers.register.establishers.company.CompanyAddressYearsId
+import identifiers.register.establishers.company.{CompanyAddressYearsId, TestId}
 import models.register._
 import models.register.establishers.EstablisherKind
-import models.register.establishers.individual.{AddressYears, EstablisherDetails, EstablishersIndividualMap, UniqueTaxReference}
+import models.register.establishers.individual._
+
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
@@ -55,11 +56,9 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapF
   def establisherDetails(index: Int): Try[Option[EstablisherDetails]] = establisherDetails.map(_.get(index)).getOrElse(
     Success(None))
 
-  def allEstablishers: Option[Map[String, String]] = {
-    establisherDetails.map(_.getValues.map{ estDetails =>
+  def allEstablishers: Option[Map[String, String]] = establisherDetails.map(_.getValues.map{ estDetails =>
       (estDetails.establisherName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
     }.toMap)
-  }
 
   def schemeEstablishedCountry: Option[String] = cacheMap.getEntry[String](SchemeEstablishedCountryId.toString)
 

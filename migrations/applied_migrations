@@ -1,29 +1,29 @@
 #!/bin/bash
 
-echo "Applying migration CompanyAddressYears"
+echo "Applying migration Test"
 
-echo "Adding routes to conf/register.establishers.company.routes"
+echo "Adding routes to register.establishers.company.routes"
 
-echo "" >> ../conf/app.routes
-echo "GET        /companyAddressYears               controllers.register.establishers.company.CompanyAddressYearsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /companyAddressYears               controllers.register.establishers.company.CompanyAddressYearsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "" >> ../conf/register.establishers.company.routes
+echo "GET        /test               controllers.register.establishers.company.TestController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /test               controllers.register.establishers.company.TestController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 
-echo "GET        /changeCompanyAddressYears               controllers.register.establishers.company.CompanyAddressYearsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /changeCompanyAddressYears               controllers.register.establishers.company.CompanyAddressYearsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "GET        /changeTest                        controllers.register.establishers.company.TestController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /changeTest                        controllers.register.establishers.company.TestController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "companyAddressYears.title = companyAddressYears" >> ../conf/messages.en
-echo "companyAddressYears.heading = companyAddressYears" >> ../conf/messages.en
-echo "companyAddressYears.option1 = companyAddressYears" Option 1 >> ../conf/messages.en
-echo "companyAddressYears.option2 = companyAddressYears" Option 2 >> ../conf/messages.en
-echo "companyAddressYears.checkYourAnswersLabel = companyAddressYears" >> ../conf/messages.en
-echo "companyAddressYears.error.required = Please give an answer for companyAddressYears" >> ../conf/messages.en
+echo "test.title = test" >> ../conf/messages.en
+echo "test.heading = test" >> ../conf/messages.en
+echo "test.checkYourAnswersLabel = test" >> ../conf/messages.en
+echo "test.error.nonNumeric = Please give an answer for test using numbers" >> ../conf/messages.en
+echo "test.error.required = Please give an answer for test" >> ../conf/messages.en
+echo "test.error.wholeNumber = Please give an answer for test using whole numbers" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def companyAddressYears: Option[CompanyAddressYears] = cacheMap.getEntry[CompanyAddressYears](CompanyAddressYearsId.toString)";\
+     print "  def test: Option[Int] = cacheMap.getEntry[Int](TestId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -31,8 +31,8 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def companyAddressYears: Option[AnswerRow] = userAnswers.companyAddressYears map {";\
-     print "    x => AnswerRow(\"companyAddressYears.checkYourAnswersLabel\", s\"companyAddressYears.$x\", true, controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(CheckMode).url)";\
+     print "  def test: Option[AnswerRow] = userAnswers.test map {";\
+     print "    x => AnswerRow(\"test.checkYourAnswersLabel\", s\"$x\", false, routes.TestController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -40,4 +40,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration CompanyAddressYears completed"
+echo "Migration Test completed"

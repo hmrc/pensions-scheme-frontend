@@ -10,7 +10,7 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.$routeFile$.$className$FormProvider
 import identifiers.$routeFile$.$className$Id
-import models.{Mode, $className$}
+import models.$routeFile$.$className$
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.$routeFile$.$className;format="decap"$
 

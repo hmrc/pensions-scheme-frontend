@@ -1,7 +1,8 @@
 package forms.$routeFile$
 
 import forms.behaviours.FormBehaviours
-import models.{Field, Invalid, Required, $className$}
+import models.{Field, Invalid, Required}
+import models.$routeFile$.$className$}
 
 class $className$FormProviderSpec extends FormBehaviours {
 

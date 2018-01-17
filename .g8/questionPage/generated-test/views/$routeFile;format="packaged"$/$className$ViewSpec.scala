@@ -4,7 +4,7 @@ import play.api.data.Form
 import controllers.$routeFile$.routes
 import forms.$routeFile$.$className$FormProvider
 import models.NormalMode
-import models.$className$
+import models.$routeFile$.$className$
 import views.behaviours.QuestionViewBehaviours
 import views.html.$routeFile$.$className;format="decap"$
 
