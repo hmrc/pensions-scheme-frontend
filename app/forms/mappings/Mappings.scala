@@ -117,6 +117,7 @@ trait Mappings extends Formatters with Constraints {
   protected def establisherNinoMapping(requiredKey: String = "messages__error__has_nino_establisher",
                                        requiredNinoKey: String = "messages__error__nino",
                                        requiredReasonKey: String = "messages__establisher__no_nino",
+                                       reasonLengthKey: String = "messages__error__no_nino_length",
                                        invalidNinoKey: String = "messages__error__nino_invalid"):
   Mapping[EstablisherNino] = {
 
@@ -138,7 +139,8 @@ trait Mappings extends Formatters with Constraints {
 
     tuple("hasNino" -> boolean(requiredKey),
       "nino" -> mandatoryIfTrue("establisherNino.hasNino", text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
-      "reason" -> mandatoryIfFalse("establisherNino.hasNino", text(requiredReasonKey))).transform(toEstablisherNino, fromEstablisherNino)
+      "reason" -> mandatoryIfFalse("establisherNino.hasNino", text(requiredReasonKey).
+        verifying(maxLength(150,reasonLengthKey)))).transform(toEstablisherNino, fromEstablisherNino)
   }
 
 

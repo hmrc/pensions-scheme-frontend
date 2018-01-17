@@ -18,6 +18,7 @@ package forms.register.establishers.individual
 
 import forms.FormSpec
 import models.EstablisherNino
+import org.apache.commons.lang3.RandomStringUtils
 
 class EstablisherNinoFormProviderSpec extends FormSpec {
 
@@ -26,6 +27,8 @@ class EstablisherNinoFormProviderSpec extends FormSpec {
   val requiredReasonKey = "messages__establisher__no_nino"
   val invalidNinoKey = "messages__error__nino_invalid"
 
+  val reasonMaxLength = 150
+  val reasonInvalidLength = 151
   val formProvider = new EstablisherNinoFormProvider()()
   val validData:Map[String,String] = Map(
     "establisherNino.hasNino" ->"true",
@@ -65,6 +68,15 @@ class EstablisherNinoFormProviderSpec extends FormSpec {
         val expectedError = error("establisherNino.nino", invalidNinoKey)
         checkForError(formProvider, data, expectedError)
       }
+    }
+
+    "fail to bind when no is selected and reason exceeds max length of 150" in {
+      val testString = RandomStringUtils.random(reasonInvalidLength)
+      val data = Map(
+        "establisherNino.hasNino" -> "false",
+        "establisherNino.reason" -> testString)
+      val expectedError = error("establisherNino.reason", "messages__error__no_nino_length", reasonMaxLength)
+      checkForError(formProvider, data, expectedError)
     }
   }
 }
