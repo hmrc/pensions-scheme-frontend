@@ -19,13 +19,16 @@ package forms.register.establishers.company
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import models.register.establishers.company.CompanyAddressYears
 import play.api.data.Form
+import play.api.data.Forms._
+import models.register.establishers.company.Example
 
-class AddressYearsFormProvider @Inject() extends Mappings {
+class ExampleFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[CompanyAddressYears] =
-    Form(
-      "value" -> enumerable[CompanyAddressYears]("messages__error__selection")
-    )
-}
+   def apply(): Form[Example] = Form(
+     mapping(
+      "field1" -> text("example.error.field1.required"),
+      "field2" -> text("example.error.field2.required")
+    )(Example.apply)(Example.unapply)
+   )
+ }

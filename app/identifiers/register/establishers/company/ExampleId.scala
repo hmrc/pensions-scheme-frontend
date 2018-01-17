@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package identifiers.register.establishers.company
 
-import javax.inject.Inject
+import identifiers.Identifier
 
-import forms.mappings.Mappings
-import models.register.establishers.company.CompanyAddressYears
-import play.api.data.Form
-
-class AddressYearsFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[CompanyAddressYears] =
-    Form(
-      "value" -> enumerable[CompanyAddressYears]("messages__error__selection")
-    )
+case object ExampleId extends Identifier {
+  override def toString: String = "example"
 }

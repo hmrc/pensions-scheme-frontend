@@ -22,19 +22,21 @@ import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
 import controllers.register.establishers.routes
-import identifiers.register.establishers.company.{CompanyAddressYearsId, TestId}
+import identifiers.register.establishers.company._
 import models.register._
 import models.register.establishers.EstablisherKind
 import models.register.establishers.individual._
+import models.register.establishers.company._
 
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
+  def example: Option[Example] = cacheMap.getEntry[Example](ExampleId.toString)
 
-  def companyAddressYears: Option[EstablishersIndividualMap[models.register.establishers.company.AddressYears]] =
-    cacheMap.getEntry[EstablishersIndividualMap[models.register.establishers.company.AddressYears]](CompanyAddressYearsId.toString)
+  def companyAddressYears: Option[EstablishersIndividualMap[models.register.establishers.company.CompanyAddressYears]] =
+    cacheMap.getEntry[EstablishersIndividualMap[models.register.establishers.company.CompanyAddressYears]](CompanyAddressYearsId.toString)
 
-  def companyAddressYears(index: Int): Try[Option[models.register.establishers.company.AddressYears]] =
+  def companyAddressYears(index: Int): Try[Option[models.register.establishers.company.CompanyAddressYears]] =
     companyAddressYears.map(_.get(index)).getOrElse(Success(None))
 
   def uniqueTaxReference: Option[EstablishersIndividualMap[UniqueTaxReference]] =

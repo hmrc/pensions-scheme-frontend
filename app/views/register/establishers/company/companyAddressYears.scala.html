@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.company.routes._
 @import models.Mode
-@import models.register.establishers.company.AddressYears
+@import models.register.establishers.company.CompanyAddressYears
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
 
@@ -27,7 +27,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = AddressYearsController.onSubmit(mode, index), 'autoComplete -> "off") {
+    @helpers.form(action = CompanyAddressYearsController.onSubmit(mode, index), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
@@ -37,7 +37,7 @@
             field = form("value"),
             legend = messages("messages__company_address_years__title"),
             legendClass = Some("visually-hidden"),
-            inputs = AddressYears.options
+            inputs = CompanyAddressYears.options
         )
 
         @components.submit_button()

@@ -26,16 +26,16 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.company.AddressYearsFormProvider
 import identifiers.register.establishers.company.CompanyAddressYearsId
-import models.register.establishers.company.AddressYears
+import models.register.establishers.company.CompanyAddressYears
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
-import views.html.register.establishers.company.addressYears
+import views.html.register.establishers.company.companyAddressYears
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-class AddressYearsController @Inject()(
+class CompanyAddressYearsController @Inject()(
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
@@ -51,8 +51,8 @@ class AddressYearsController @Inject()(
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       request.userAnswers.companyAddressYears(index) match {
-        case Success(None) => Ok(addressYears(appConfig, form, mode, index))
-        case Success(Some(value)) => Ok(addressYears(appConfig, form.fill(value), mode, index))
+        case Success(None) => Ok(companyAddressYears(appConfig, form, mode, index))
+        case Success(Some(value)) => Ok(companyAddressYears(appConfig, form.fill(value), mode, index))
         case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
   }
@@ -61,9 +61,9 @@ class AddressYearsController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(addressYears(appConfig, formWithErrors, mode, index))),
+          Future.successful(BadRequest(companyAddressYears(appConfig, formWithErrors, mode, index))),
         (value) =>
-          dataCacheConnector.saveMap[AddressYears](request.externalId, CompanyAddressYearsId.toString, index, value).map(cacheMap =>
+          dataCacheConnector.saveMap[CompanyAddressYears](request.externalId, CompanyAddressYearsId.toString, index, value).map(cacheMap =>
             Redirect(navigator.nextPage(CompanyAddressYearsId, mode)(new UserAnswers(cacheMap))))
       )
   }

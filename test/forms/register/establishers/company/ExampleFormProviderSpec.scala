@@ -16,16 +16,25 @@
 
 package forms.register.establishers.company
 
-import javax.inject.Inject
+import forms.behaviours.FormBehaviours
+import models.{Field, Required}
+import models.register.establishers.company.Example
 
-import forms.mappings.Mappings
-import models.register.establishers.company.CompanyAddressYears
-import play.api.data.Form
+class ExampleFormProviderSpec extends FormBehaviours {
 
-class AddressYearsFormProvider @Inject() extends Mappings {
+  val validData: Map[String, String] = Map(
+    "field1" -> "value 1",
+    "field2" -> "value 2"
+  )
 
-  def apply(): Form[CompanyAddressYears] =
-    Form(
-      "value" -> enumerable[CompanyAddressYears]("messages__error__selection")
+  val form = new ExampleFormProvider()()
+
+  "Example form" must {
+    behave like questionForm(Example("value 1", "value 2"))
+
+    behave like formWithMandatoryTextFields(
+      Field("field1", Required -> "example.error.field1.required"),
+      Field("field2", Required -> "example.error.field2.required")
     )
+  }
 }

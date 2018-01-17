@@ -13,7 +13,7 @@ import identifiers.$routeFile$.$className$Id
 import models.$routeFile$.$className$
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.$routeFile$.$className;format="decap"$
-
+import models.Mode
 import scala.concurrent.Future
 
 class $className$Controller @Inject()(

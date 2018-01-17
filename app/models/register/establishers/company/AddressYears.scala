@@ -18,14 +18,14 @@ package models.register.establishers.company
 
 import utils.{Enumerable, InputOption, WithName}
 
-sealed trait AddressYears
+sealed trait CompanyAddressYears
 
-object AddressYears {
+object CompanyAddressYears {
 
-  case object Option1 extends WithName("under_a_year") with AddressYears
-  case object Option2 extends WithName("over_a_year") with AddressYears
+  case object Option1 extends WithName("under_a_year") with CompanyAddressYears
+  case object Option2 extends WithName("over_a_year") with CompanyAddressYears
 
-  val values: Seq[AddressYears] = Seq(
+  val values: Seq[CompanyAddressYears] = Seq(
     Option1, Option2
   )
 
@@ -34,6 +34,6 @@ object AddressYears {
       InputOption(value.toString, s"messages__common__${value.toString}")
   }
 
-  implicit val enumerable: Enumerable[AddressYears] =
+  implicit val enumerable: Enumerable[CompanyAddressYears] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

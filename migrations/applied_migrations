@@ -1,29 +1,30 @@
 #!/bin/bash
 
-echo "Applying migration Test"
+echo "Applying migration Example"
 
 echo "Adding routes to register.establishers.company.routes"
 
 echo "" >> ../conf/register.establishers.company.routes
-echo "GET        /test               controllers.register.establishers.company.TestController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /test               controllers.register.establishers.company.TestController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "GET        /example                       controllers.register.establishers.company.ExampleController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /example                       controllers.register.establishers.company.ExampleController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 
-echo "GET        /changeTest                        controllers.register.establishers.company.TestController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /changeTest                        controllers.register.establishers.company.TestController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "GET        /changeExample                       controllers.register.establishers.company.ExampleController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /changeExample                       controllers.register.establishers.company.ExampleController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "test.title = test" >> ../conf/messages.en
-echo "test.heading = test" >> ../conf/messages.en
-echo "test.checkYourAnswersLabel = test" >> ../conf/messages.en
-echo "test.error.nonNumeric = Please give an answer for test using numbers" >> ../conf/messages.en
-echo "test.error.required = Please give an answer for test" >> ../conf/messages.en
-echo "test.error.wholeNumber = Please give an answer for test using whole numbers" >> ../conf/messages.en
+echo messages__"example__title = example" >> ../conf/messages.en
+echo messages__"example__heading = example" >> ../conf/messages.en
+echo messages__"example_field1 = Field 1" >> ../conf/messages.en
+echo messages__"example_field2 = Field 2" >> ../conf/messages.en
+echo messages__"example_checkYourAnswersLabel = example" >> ../conf/messages.en
+echo messages__error__"example_field1_required = Please give an answer for field1" >> ../conf/messages.en
+echo messages__error__"example_field2_required = Please give an answer for field2" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def test: Option[Int] = cacheMap.getEntry[Int](TestId.toString)";\
+     print "  def example: Option[Example] = cacheMap.getEntry[Example](ExampleId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -31,8 +32,8 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def test: Option[AnswerRow] = userAnswers.test map {";\
-     print "    x => AnswerRow(\"test.checkYourAnswersLabel\", s\"$x\", false, routes.TestController.onPageLoad(CheckMode).url)";\
+     print "  def example: Option[AnswerRow] = userAnswers.example map {";\
+     print "    x => AnswerRow(\"example.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.ExampleController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -40,4 +41,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration Test completed"
+echo "Migration Example completed"

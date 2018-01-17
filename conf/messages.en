@@ -208,3 +208,11 @@ test.checkYourAnswersLabel = test
 test.error.nonNumeric = Please give an answer for test using numbers
 test.error.required = Please give an answer for test
 test.error.wholeNumber = Please give an answer for test using whole numbers
+
+messages__example__title = example
+messages__example__heading = example
+messages__example_field1 = Field 1
+messages__example_field2 = Field 2
+messages__example_checkYourAnswersLabel = example
+messages__error__example_field1_required = Please give an answer for field1
+messages__error__example_field2_required = Please give an answer for field2
