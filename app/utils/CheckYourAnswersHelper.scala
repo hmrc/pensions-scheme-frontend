@@ -25,11 +25,6 @@ import scala.util.Success
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
-  def example: Option[AnswerRow] = userAnswers.example map {
-    x => AnswerRow("example.checkYourAnswersLabel", s"${x.field1} ${x.field2}", false,
-      controllers.register.establishers.company.routes.ExampleController.onPageLoad(CheckMode).url)
-  }
-
   def companyAddressYears(index: Int): Option[AnswerRow] = {
     userAnswers.companyAddressYears(index) match {
       case Success(Some(x)) => Some(AnswerRow("companyAddressYears.checkYourAnswersLabel", s"companyAddressYears.$x", true,

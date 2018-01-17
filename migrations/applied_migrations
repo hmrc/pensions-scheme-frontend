@@ -1,30 +1,29 @@
 #!/bin/bash
 
-echo "Applying migration Example"
+echo "Applying migration EstablisherKind"
 
-echo "Adding routes to register.establishers.company.routes"
+echo "Adding routes to conf/register.establishers.routes"
 
-echo "" >> ../conf/register.establishers.company.routes
-echo "GET        /example                       controllers.register.establishers.company.ExampleController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /example                       controllers.register.establishers.company.ExampleController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "" >> ../conf/app.routes
+echo "GET        /establisherKind               controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.routes
+echo "POST       /establisherKind               controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.routes
 
-echo "GET        /changeExample                       controllers.register.establishers.company.ExampleController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /changeExample                       controllers.register.establishers.company.ExampleController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "GET        /changeEstablisherKind               controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.routes
+echo "POST       /changeEstablisherKind               controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo messages__"example__title = example" >> ../conf/messages.en
-echo messages__"example__heading = example" >> ../conf/messages.en
-echo messages__"example_field1 = Field 1" >> ../conf/messages.en
-echo messages__"example_field2 = Field 2" >> ../conf/messages.en
-echo messages__"example_checkYourAnswersLabel = example" >> ../conf/messages.en
-echo messages__error__"example_field1_required = Please give an answer for field1" >> ../conf/messages.en
-echo messages__error__"example_field2_required = Please give an answer for field2" >> ../conf/messages.en
+echo "establisherKind.title = establisherKind" >> ../conf/messages.en
+echo "establisherKind.heading = establisherKind" >> ../conf/messages.en
+echo "establisherKind.option1 = establisherKind" Option 1 >> ../conf/messages.en
+echo "establisherKind.option2 = establisherKind" Option 2 >> ../conf/messages.en
+echo "establisherKind.checkYourAnswersLabel = establisherKind" >> ../conf/messages.en
+echo "establisherKind.error.required = Please give an answer for establisherKind" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def example: Option[Example] = cacheMap.getEntry[Example](ExampleId.toString)";\
+     print "  def establisherKind: Option[EstablisherKind] = cacheMap.getEntry[EstablisherKind](EstablisherKindId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -32,8 +31,8 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def example: Option[AnswerRow] = userAnswers.example map {";\
-     print "    x => AnswerRow(\"example.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.ExampleController.onPageLoad(CheckMode).url)";\
+     print "  def establisherKind: Option[AnswerRow] = userAnswers.establisherKind map {";\
+     print "    x => AnswerRow(\"establisherKind.checkYourAnswersLabel\", s\"establisherKind.$x\", true, controllers.register.establishers.routes.EstablisherKindController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -41,4 +40,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration Example completed"
+echo "Migration EstablisherKind completed"
