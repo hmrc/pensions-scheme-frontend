@@ -39,7 +39,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(1)
   val invalidIndex = Index(11)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): CompanyAddressYearsController =
     new CompanyAddressYearsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
