@@ -23,22 +23,28 @@ import models.NormalMode
 import models.CompanyDetails
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.company.companyDetails
+import models.Index
+import play.twirl.api.HtmlFormat
 
 class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
 
   val messageKeyPrefix = "common__company_details"
 
   override val form = new CompanyDetailsFormProvider()()
+  val firstIndex = Index(1)
+  val schemeName = "test scheme name"
 
-  def createView = () => companyDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages)
 
 
   "CompanyDetails view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.CompanyDetailsController.onSubmit(NormalMode).url, "field1", "field2")
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
+      routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex).url, "companyName", "vatNumber", "payeNumber")
   }
 }

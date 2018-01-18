@@ -225,5 +225,9 @@ messages__common__vat_hint = This number issued by HMRC. It is 9 numbers, with "
 messages__common__paye = PAYE number (optional)
 messages__common__paye_hint = A PAYE reference number has the format 123/A56789
 messages__error__company_name = Enter the company name
+messages__error__company_name_length = The company name cannot be more than 255 characters
+messages__error__vat_length = The VAT Registration number cannot be more than 9 characters
+messages__error__vat_invalid = Enter a valid VAT Registration number
+messages__error__paye_length = The PAYE number cannot be more than 13 characters
 
 companyDetails.checkYourAnswersLabel = companyDetails

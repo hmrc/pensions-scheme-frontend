@@ -26,13 +26,12 @@ import utils.Enumerable
 import play.api.data.Forms._
 import play.api.data.format.Formatter
 import uk.gov.voa.play.form.ConditionalMappings._
-import play.api.data.Forms._
 
 import scala.util.Try
 
 trait Mappings extends Formatters with Constraints {
 
-  protected def text(errorKey: String): FieldMapping[String] =
+  protected def text(errorKey: String = "error.required"): FieldMapping[String] =
     of(stringFormatter(errorKey))
 
   protected def int(requiredKey: String = "error.required",
@@ -166,5 +165,9 @@ trait Mappings extends Formatters with Constraints {
     }
 
     Forms.of(formatter)
+  }
+
+  protected def vatMapping(invalidKey: String, maxErrorKey: String): FieldMapping[String] = {
+    of(vatFormatter(invalidKey, maxErrorKey))
   }
 }

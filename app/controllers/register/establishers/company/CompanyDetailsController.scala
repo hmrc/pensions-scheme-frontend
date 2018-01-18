@@ -26,42 +26,58 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.company.CompanyDetailsFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
+import models.requests.DataRequest
 import models.{CompanyDetails, Index, Mode}
-import play.api.mvc.{Action, AnyContent}
-import utils.{Navigator, UserAnswers}
+import play.api.mvc.{Action, AnyContent, Result}
+import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyDetails
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 class CompanyDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  dataCacheConnector: DataCacheConnector,
-                                                  navigator: Navigator,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: CompanyDetailsFormProvider) extends FrontendController with I18nSupport {
+                                         override val messagesApi: MessagesApi,
+                                         dataCacheConnector: DataCacheConnector,
+                                         navigator: Navigator,
+                                         authenticate: AuthAction,
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         formProvider: CompanyDetailsFormProvider) extends FrontendController with I18nSupport
+  with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      request.userAnswers.companyDetails(index) match {
-        case Success(None) => Ok(companyDetails(appConfig, form, mode, index))
-        case Success(Some(value)) => Ok(companyDetails(appConfig, form.fill(value), mode, index))
-        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+      retrieveSchemeName {
+        schemeName =>
+          val redirectResult = request.userAnswers.companyDetails(index) match {
+            case Success(None) => Ok(companyDetails(appConfig, form, mode, index, schemeName))
+            case Success(Some(value)) => Ok(companyDetails(appConfig, form.fill(value), mode, index, schemeName))
+            case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+          }
+          Future.successful(redirectResult)
       }
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index))),
-        (value) =>
-          dataCacheConnector.saveMap[CompanyDetails](request.externalId, CompanyDetailsId.toString, index, value).map(cacheMap =>
-            Redirect(navigator.nextPage(CompanyDetailsId, mode)(new UserAnswers(cacheMap))))
-      )
+      retrieveSchemeName {
+        schemeName =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, schemeName))),
+            (value) =>
+              dataCacheConnector.saveMap[CompanyDetails](request.externalId, CompanyDetailsId.toString, index, value).map(cacheMap =>
+                Redirect(navigator.nextPage(CompanyDetailsId, mode)(new UserAnswers(cacheMap))))
+          )
+      }
+  }
+
+  private def retrieveSchemeName(block: String => Future[Result])
+                                (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    request.userAnswers.schemeDetails.map { schemeDetails =>
+      block(schemeDetails.schemeName)
+    }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
   }
 }

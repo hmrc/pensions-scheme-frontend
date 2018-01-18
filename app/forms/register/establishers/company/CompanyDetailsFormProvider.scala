@@ -25,11 +25,17 @@ import models.CompanyDetails
 
 class CompanyDetailsFormProvider @Inject() extends Mappings {
 
+  val companyNameMaxLength = 160
+  val payeNumberMaxLength = 13
+
    def apply(): Form[CompanyDetails] = Form(
      mapping(
-      "companyName" -> text("messages__error__company_name"),
-      "vatNumber" -> optional(Forms.text),
-      "payeNumber" -> optional(Forms.text)
+      "companyName" -> text("messages__error__company_name").verifying(
+        maxLength(companyNameMaxLength, "messages__error__company_name_length")),
+      "vatNumber" -> optional(
+        vatMapping("messages__error__vat_invalid", "messages__error__vat_length")),
+      "payeNumber" -> optional(Forms.text.verifying(
+        maxLength(payeNumberMaxLength, "messages__error__paye_length")))
     )(CompanyDetails.apply)(CompanyDetails.unapply)
    )
  }

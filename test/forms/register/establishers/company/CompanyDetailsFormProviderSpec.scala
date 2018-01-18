@@ -19,24 +19,51 @@ package forms.register.establishers.company
 import forms.behaviours.FormBehaviours
 import models.{Field, Required}
 import models.CompanyDetails
+import org.apache.commons.lang3.RandomStringUtils
+import play.api.data.FormError
 
 class CompanyDetailsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
-    "companyName" -> "value 1",
-    "vatNumber" -> "value 2",
-    "payeNumber" -> "value 3"
+    "companyName" -> "test company name",
+    "vatNumber" -> "GB123456789",
+    "payeNumber" -> "123/A56789"
   )
 
   val form = new CompanyDetailsFormProvider()()
 
   "CompanyDetails form" must {
-    behave like questionForm(CompanyDetails("value 1", "value 2, value 3"))
+    behave like questionForm(CompanyDetails("test company name", Some("GB123456789"), Some("123/A56789")))
 
     behave like formWithMandatoryTextFields(
-      Field("companyName", Required -> "companyDetails.error.field1.required"),
-      Field("vatNumber", Required -> "companyDetails.error.field2.required"),
-      Field("payeN", Required -> "companyDetails.error.field2.required")
+      Field("companyName", Required -> "messages__error__company_name")
     )
+
+    Seq("GB123456789", "123435464").foreach{ vatNo =>
+      s"successfully bind valid vat number $vatNo" in {
+       val coForm = form.bind(Map("companyName" -> "test company name",
+          "vatNumber" -> vatNo,
+          "payeNumber" -> "123/A56789"
+        ))
+
+        coForm.get shouldBe CompanyDetails("test company name", Some(vatNo), Some("123/A56789"))
+      }
+    }
+
+    "fail to bind when a company name exceeds max length 255" in {
+      val companyName = RandomStringUtils.randomAlphabetic(161)
+      val data = validData + ("companyName" -> companyName)
+
+      val expectedError: Seq[FormError] = error("companyName", "messages__error__company_name_length", 160)
+      checkForError(form, data, expectedError)
+    }
+
+    "fail to bind when a paye number exceeds the max length 13" in {
+      val payeNumber = RandomStringUtils.randomAlphabetic(14)
+      val data = validData + ("payeNumber" -> payeNumber)
+
+      val expectedError: Seq[FormError] = error("payeNumber", "messages__error__paye_length", 13)
+      checkForError(form, data, expectedError)
+    }
   }
 }
