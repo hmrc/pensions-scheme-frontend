@@ -58,9 +58,14 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapF
     Success(None))
 
   def allEstablishers: Option[Map[String, String]] = {
-    establisherDetails.map(_.getValues.map{ estDetails =>
-      (estDetails.establisherName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
-    }.toMap)
+    for {
+      individualEst <- establisherDetails.map(_.getValues.map(estDetails =>
+        (estDetails.establisherName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
+      ))
+      companyEst <- companyDetails.map(_.getValues.map(details =>
+        (details.companyName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
+      ))
+    } yield (individualEst ++ companyEst).toMap
   }
 
   def schemeEstablishedCountry: Option[String] = cacheMap.getEntry[String](SchemeEstablishedCountryId.toString)
