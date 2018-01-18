@@ -1,18 +1,31 @@
 #!/bin/bash
 
+echo "Applying migration CompanyDetails"
 echo "Applying migration CompanyContactDetails"
 
 echo "Adding routes to register.establishers.company.routes"
 
 echo "" >> ../conf/register.establishers.company.routes
+echo "GET        /companyDetails                       controllers.register.establishers.company.CompanyDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /companyDetails                       controllers.register.establishers.company.CompanyDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "" >> ../conf/register.establishers.company.routes
 echo "GET        /companyContactDetails                       controllers.register.establishers.company.CompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 echo "POST       /companyContactDetails                       controllers.register.establishers.company.CompanyContactDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 
+echo "GET        /changeCompanyDetails                       controllers.register.establishers.company.CompanyDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /changeCompanyDetails                       controllers.register.establishers.company.CompanyDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 echo "GET        /changeCompanyContactDetails                       controllers.register.establishers.company.CompanyContactDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 echo "POST       /changeCompanyContactDetails                       controllers.register.establishers.company.CompanyContactDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
+echo "companyDetails.title = companyDetails" >> ../conf/messages.en
+echo "companyDetails.heading = companyDetails" >> ../conf/messages.en
+echo "companyDetails.field1 = Field 1" >> ../conf/messages.en
+echo "companyDetails.field2 = Field 2" >> ../conf/messages.en
+echo "companyDetails.checkYourAnswersLabel = companyDetails" >> ../conf/messages.en
+echo "companyDetails.error.field1.required = Please give an answer for field1" >> ../conf/messages.en
+echo "companyDetails.error.field2.required = Please give an answer for field2" >> ../conf/messages.en
 echo "companyContactDetails.title = companyContactDetails" >> ../conf/messages.en
 echo "companyContactDetails.heading = companyContactDetails" >> ../conf/messages.en
 echo "companyContactDetails.field1 = Field 1" >> ../conf/messages.en
@@ -24,6 +37,7 @@ echo "companyContactDetails.error.field2.required = Please give an answer for fi
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
+     print "  def companyDetails: Option[CompanyDetails] = cacheMap.getEntry[CompanyDetails](CompanyDetailsId.toString)";\
      print "  def companyContactDetails: Option[CompanyContactDetails] = cacheMap.getEntry[CompanyContactDetails](CompanyContactDetailsId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
@@ -32,6 +46,8 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
+     print "  def companyDetails: Option[AnswerRow] = userAnswers.companyDetails map {";\
+     print "    x => AnswerRow(\"companyDetails.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.CompanyDetailsController.onPageLoad(CheckMode).url)";\
      print "  def companyContactDetails: Option[AnswerRow] = userAnswers.companyContactDetails map {";\
      print "    x => AnswerRow(\"companyContactDetails.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.CompanyContactDetailsController.onPageLoad(CheckMode).url)";\
      print "  }";\
@@ -41,4 +57,5 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
+echo "Migration CompanyDetails completed"
 echo "Migration CompanyContactDetails completed"

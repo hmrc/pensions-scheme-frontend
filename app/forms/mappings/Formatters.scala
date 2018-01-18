@@ -91,4 +91,20 @@ trait Formatters {
       override def unbind(key: String, value: A): Map[String, String] =
         baseFormatter.unbind(key, value.toString)
     }
+
+  private[mappings] def vatFormatter(invalidKey: String, maxLengthKey: String): Formatter[String] = new Formatter[String] {
+
+    val regexVatNumber = "(GB)?[0-9]+"
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+
+      data.get(key) match {
+        case Some(str) if(!str.matches(regexVatNumber)) => Left(Seq(FormError(key, invalidKey)))
+        case Some(str) if str.trim.replace("GB", "").length > 9 => Left(Seq(FormError(key, maxLengthKey)))
+        case Some(str) => Right(str)
+      }
+    }
+
+    override def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
+  }
 }

@@ -303,11 +303,13 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
       "error.utr.required", "error.reason.required", "error.utr.invalid", "error.reason.length"))
 
     "bind a valid uniqueTaxReference with utr when yes is selected" in {
-      val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" -> "12345678791"))
+      val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" -> "1234556676"))
+      result.get mustEqual UniqueTaxReference.Yes("1234556676")
     }
 
     "bind a valid uniqueTaxReference with reason when no is selected" in {
       val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" -> "haven't got utr"))
+      result.get mustEqual UniqueTaxReference.No("haven't got utr")
     }
 
     "not bind an empty Map" in {
@@ -336,6 +338,35 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
       val reason = RandomStringUtils.randomAlphabetic(151)
       val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" -> reason))
       result.errors mustEqual Seq(FormError("uniqueTaxReference.reason", "error.reason.length", Seq(150)))
+    }
+  }
+
+  "vat number" must {
+
+    val testForm = Form("vatNumber" -> vatMapping("error.invalid", "error.maxlength"))
+
+    Seq("GB123456789", "123435464").foreach{ vatNo =>
+      s"successfully bind valid vat number $vatNo" in {
+        val coForm = testForm.bind(Map("vatNumber" -> vatNo))
+
+        coForm.get mustEqual vatNo
+      }
+    }
+
+    Seq("AB123456", "GB", "12345ff56").foreach { vatNo =>
+      s"fail to bind when vat number $vatNo is not valid" in {
+        val coForm = testForm.bind(Map("vatNumber" -> vatNo))
+
+        coForm.errors mustEqual Seq(FormError("vatNumber", "error.invalid"))
+      }
+    }
+
+    Seq("GB1234568908", "1234567898").foreach { vatNo =>
+      s"fail to bind when vat number $vatNo exceeds max lenght 9" in {
+        val coForm = testForm.bind(Map("vatNumber" -> vatNo))
+
+        coForm.errors mustEqual Seq(FormError("vatNumber", "error.maxlength"))
+      }
     }
   }
 }

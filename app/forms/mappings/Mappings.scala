@@ -166,4 +166,8 @@ trait Mappings extends Formatters with Constraints {
 
     Forms.of(formatter)
   }
+
+  protected def vatMapping(invalidKey: String, maxErrorKey: String): FieldMapping[String] = {
+    of(vatFormatter(invalidKey, maxErrorKey))
+  }
 }
