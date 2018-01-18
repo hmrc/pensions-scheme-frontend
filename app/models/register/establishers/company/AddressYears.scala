@@ -22,11 +22,11 @@ sealed trait CompanyAddressYears
 
 object CompanyAddressYears {
 
-  case object Option1 extends WithName("under_a_year") with CompanyAddressYears
-  case object Option2 extends WithName("over_a_year") with CompanyAddressYears
+  case object UnderAYear extends WithName("under_a_year") with CompanyAddressYears
+  case object OverAYear extends WithName("over_a_year") with CompanyAddressYears
 
   val values: Seq[CompanyAddressYears] = Seq(
-    Option1, Option2
+    UnderAYear, OverAYear
   )
 
   val options: Seq[InputOption] = values.map {
