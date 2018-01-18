@@ -24,7 +24,7 @@ import views.html.register.establishers.company.companyRegistrationNumber
 
 class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "companyRegistrationNumber"
+  val messageKeyPrefix = "company__crn"
 
   val form = new CompanyRegistrationNumberFormProvider()()
 
@@ -33,7 +33,7 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
   def createViewUsingForm = (form: Form[_]) => companyRegistrationNumber(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   "CompanyRegistrationNumber view" must {
-    behave like normalPage(createView, messageKeyPrefix,messages("companyRegistrationNumber.title"))
+    behave like normalPage(createView, messageKeyPrefix,messages("messages__company__has_crn"))
   }
 
   "CompanyRegistrationNumber view" when {

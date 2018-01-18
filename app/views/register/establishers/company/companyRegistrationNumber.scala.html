@@ -22,7 +22,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("companyRegistrationNumber.title"),
+    title = messages("messages__company__has_crn"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -30,11 +30,12 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("companyRegistrationNumber.heading")
+        @components.heading("messages__company__has_crn")
 
         @components.input_radio(
             field = form("value"),
-            legend = messages("companyRegistrationNumber.heading"),
+            legend = messages("messages__company__has_crn"),
+            hint=Some(messages("messages__common__crn_hint")),
             legendClass = Some("visually-hidden"),
             inputs = CompanyRegistrationNumber.options
         )
