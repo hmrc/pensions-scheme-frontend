@@ -26,7 +26,6 @@ import identifiers.register.establishers.company._
 import models.register._
 import models.register.establishers.EstablisherKind
 import models.register.establishers.individual._
-import models.register.establishers.company._
 
 import scala.util.{Success, Try}
 
@@ -35,6 +34,11 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapF
     cacheMap.getEntry[EstablishersIndividualMap[ContactDetails]](ContactDetailsId.toString)
 
   def contactDetails(index: Int): Try[Option[ContactDetails]] = contactDetails.map(_.get(index)).getOrElse(Success(None))
+
+  def establisherNino: Option[EstablishersIndividualMap[EstablisherNino]] =
+    cacheMap.getEntry[EstablishersIndividualMap[EstablisherNino]](EstablisherNinoId.toString)
+
+  def establisherNino(index:Int): Try[Option[EstablisherNino]] = establisherNino.map(_.get(index)).getOrElse(Success(None))
 
   def companyAddressYears: Option[EstablishersIndividualMap[models.register.establishers.company.CompanyAddressYears]] =
     cacheMap.getEntry[EstablishersIndividualMap[models.register.establishers.company.CompanyAddressYears]](CompanyAddressYearsId.toString)
