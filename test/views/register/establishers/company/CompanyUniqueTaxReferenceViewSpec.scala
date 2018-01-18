@@ -18,14 +18,14 @@ package views.register.establishers.company
 
 import play.api.data.Form
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
-import models.{Index, NormalMode, UniqueTaxReference}
+import models.{Index, NormalMode}
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.companyUniqueTaxReference
 
 class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "companyUniqueTaxReference"
+  val messageKeyPrefix = "establisher__has_ct_utr__title"
 
   val form = new CompanyUniqueTaxReferenceFormProvider()()
 
@@ -37,27 +37,31 @@ class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
     NormalMode, index)(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__establisher__has_sautr__title"))
+
+    behave like normalPage(createView, messageKeyPrefix, messages("establisher__has_ct_utr__title"))
   }
 
   "CompanyUniqueTaxReference view" when {
     "rendered" must {
+      val utrOptions = Seq("true", "false")
+
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- UniqueTaxReference.options) {
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, false)
+        for (option <- utrOptions) {
+          assertContainsRadioButton(doc, s"companyUniqueTaxReference_hasUtr-$option", "companyUniqueTaxReference.hasUtr", option, isChecked = false)
         }
       }
-    }
 
-    for(option <- UniqueTaxReference.options) {
-      s"rendered with a value of '${option.value}'" must {
-        s"have the '${option.value}' radio button selected" in {
-          val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
 
-          for(unselectedOption <- UniqueTaxReference.options.filterNot(o => o == option)) {
-            assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
+      for (option <- utrOptions) {
+        s"rendered with a value of '$option'" must {
+          s"have the '$option' radio button selected" in {
+            val doc = asDocument(createViewUsingForm(form.bind(Map("companyUniqueTaxReference.hasUtr" -> s"$option"))))
+            assertContainsRadioButton(doc, s"companyUniqueTaxReference_hasUtr-$option", "companyUniqueTaxReference.hasUtr", option, isChecked = true)
+
+            for (unselectedOption <- utrOptions.filterNot(o => o == option)) {
+              assertContainsRadioButton(doc, s"companyUniqueTaxReference_hasUtr-$unselectedOption", "companyUniqueTaxReference.hasUtr", unselectedOption, isChecked = false)
+            }
           }
         }
       }

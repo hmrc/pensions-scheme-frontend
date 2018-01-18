@@ -70,7 +70,7 @@ trait Mappings extends Formatters with Constraints {
       ).map(v => (v.toString, v)).toMap
 
       schemeTypeTuple match {
-        case (key, Some(value)) if(key == other) => Other(value)
+        case (key, Some(value)) if key == other => Other(value)
         case (key, _) if mappings.keySet.contains(key) => {
           mappings.apply(key)
         }

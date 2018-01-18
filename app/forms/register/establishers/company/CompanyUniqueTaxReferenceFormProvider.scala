@@ -22,9 +22,15 @@ import forms.mappings.Mappings
 import play.api.data.Form
 import models.UniqueTaxReference
 
+
 class CompanyUniqueTaxReferenceFormProvider @Inject() extends Mappings {
 
   def apply(): Form[UniqueTaxReference] = Form(
-    "companyUniqueTaxReference" -> uniqueTaxReferenceMapping()
-  )
-}
+    "companyUniqueTaxReference" -> uniqueTaxReferenceMapping(
+      requiredKey = "messages__error__has_ct_utr_establisher",
+      requiredUtrKey = "messages__error__ct_utr",
+      requiredReasonKey = "messages__error__no_ct_utr_establisher",
+      invalidUtrKey = "messages__error__sautr_invalid",
+      maxLengthReasonKey = "messages__error__no_sautr_length")
+    )
+  }

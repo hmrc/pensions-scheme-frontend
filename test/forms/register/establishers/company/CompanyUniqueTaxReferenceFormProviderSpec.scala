@@ -22,11 +22,39 @@ import models.UniqueTaxReference
 
 class CompanyUniqueTaxReferenceFormProviderSpec extends FormSpec {
 
-  val form = new CompanyUniqueTaxReferenceFormProvider()()
+
+  val requiredKey = "messages__error__has_ct_utr_establisher"
+  val requiredUtrKey = "messages__error__ct_utr"
+  val requiredReasonKey = "messages__error__no_ct_utr_establisher"
+  val invalidUtrKey = "messages__error__sautr_invalid"
+
+  val formProvider = new CompanyUniqueTaxReferenceFormProvider()
 
   "CompanyUniqueTaxReference form" must {
+    "successfully bind when the utr is provided and yes is selected" in {
+      val form = formProvider().bind(Map("companyUniqueTaxReference.hasUtr" -> "true", "companyUniqueTaxReference.utr" -> "1234556676"))
+      form.get shouldBe UniqueTaxReference.Yes("1234556676")
+    }
 
+    "successfully bind when the reason is provided and no is selected" in {
+      val form = formProvider().bind(Map("companyUniqueTaxReference.hasUtr" -> "false", "companyUniqueTaxReference.reason" -> "haven't got ctutr"))
+      form.get shouldBe UniqueTaxReference.No("haven't got ctutr")
+    }
 
+    "fail to bind when value is omitted" in {
+      val expectedError = error("companyUniqueTaxReference.hasUtr", requiredKey)
+      checkForError(formProvider(), emptyForm, expectedError)
+    }
+
+    "fail to bind when yes is selected but utr is not provided" in {
+      val expectedError = error("companyUniqueTaxReference.utr", requiredUtrKey)
+      checkForError(formProvider(), Map("companyUniqueTaxReference.hasUtr" -> "true"), expectedError)
+    }
+
+    "fail to bind when no is selected and reason is not provided" in {
+      val expectedError = error("companyUniqueTaxReference.reason", requiredReasonKey)
+      checkForError(formProvider(), Map("companyUniqueTaxReference.hasUtr" -> "false"), expectedError)
+    }
 
   }
 }
