@@ -1,36 +1,29 @@
 #!/bin/bash
 
-echo "Applying migration UniqueTaxReference"
-echo "Applying migration ContactDetails"
+echo "Applying migration CompanyUniqueTaxReference"
 
-echo "Adding routes to register.establishers.individual.routes"
+echo "Adding routes to conf/register.establishers.company.routes"
 
-echo "" >> ../conf/register.establishers.individual.routes
-echo "GET        /uniqueTaxReference                       controllers.register.establishers.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /uniqueTaxReference                       controllers.register.establishers.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
+echo "" >> ../conf/app.routes
+echo "GET        /companyUniqueTaxReference               controllers.register.establishers.company.CompanyUniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /companyUniqueTaxReference               controllers.register.establishers.company.CompanyUniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 
-echo "GET        /changeUniqueTaxReference                       controllers.register.establishers.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /changeUniqueTaxReference                       controllers.register.establishers.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "Adding routes to register.establishers.individual.routes"
-
-echo "" >> ../conf/register.establishers.individual.routes
-echo "GET        /contactDetails                       controllers.register.establishers.individual.ContactDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /contactDetails                       controllers.register.establishers.individual.ContactDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-
-echo "GET        /changeContactDetails                       controllers.register.establishers.individual.ContactDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /changeContactDetails                       controllers.register.establishers.individual.ContactDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
+echo "GET        /changeCompanyUniqueTaxReference               controllers.register.establishers.company.CompanyUniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /changeCompanyUniqueTaxReference               controllers.register.establishers.company.CompanyUniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "uniqueTaxReference.title = uniqueTaxReference" >> ../conf/messages.en
-echo "uniqueTaxReference.heading = uniqueTaxReference" >> ../conf/messages.en
-echo "uniqueTaxReference.checkYourAnswersLabel = uniqueTaxReference" >> ../conf/messages.en
-echo "uniqueTaxReference.error.required = Please give an answer for uniqueTaxReference" >> ../conf/messages.en
+echo "companyUniqueTaxReference.title = companyUniqueTaxReference" >> ../conf/messages.en
+echo "companyUniqueTaxReference.heading = companyUniqueTaxReference" >> ../conf/messages.en
+echo "companyUniqueTaxReference.option1 = companyUniqueTaxReference" Option 1 >> ../conf/messages.en
+echo "companyUniqueTaxReference.option2 = companyUniqueTaxReference" Option 2 >> ../conf/messages.en
+echo "companyUniqueTaxReference.checkYourAnswersLabel = companyUniqueTaxReference" >> ../conf/messages.en
+echo "companyUniqueTaxReference.error.required = Please give an answer for companyUniqueTaxReference" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def uniqueTaxReference: Option[Boolean] = cacheMap.getEntry[Boolean](UniqueTaxReferenceId.toString)";\
+     print "  def companyUniqueTaxReference: Option[CompanyUniqueTaxReference] = cacheMap.getEntry[CompanyUniqueTaxReference](CompanyUniqueTaxReferenceId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -38,30 +31,8 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def uniqueTaxReference: Option[AnswerRow] = userAnswers.uniqueTaxReference map {";\
-     print "    x => AnswerRow(\"uniqueTaxReference.checkYourAnswersLabel\", if(x) \"site.yes\" else \"site.no\", true, routes.UniqueTaxReferenceController.onPageLoad(CheckMode).url)"; print "  }";\
-     next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
-echo "contactDetails.title = contactDetails" >> ../conf/messages.en
-echo "contactDetails.heading = contactDetails" >> ../conf/messages.en
-echo "contactDetails.field1 = Field 1" >> ../conf/messages.en
-echo "contactDetails.field2 = Field 2" >> ../conf/messages.en
-echo "contactDetails.checkYourAnswersLabel = contactDetails" >> ../conf/messages.en
-echo "contactDetails.error.field1.required = Please give an answer for field1" >> ../conf/messages.en
-echo "contactDetails.error.field2.required = Please give an answer for field2" >> ../conf/messages.en
-
-echo "Adding helper line into UserAnswers"
-awk '/class/ {\
-     print;\
-     print "  def contactDetails: Option[ContactDetails] = cacheMap.getEntry[ContactDetails](ContactDetailsId.toString)";\
-     print "";\
-     next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
-
-echo "Adding helper method to CheckYourAnswersHelper"
-awk '/class/ {\
-     print;\
-     print "";\
-     print "  def contactDetails: Option[AnswerRow] = userAnswers.contactDetails map {";\
-     print "    x => AnswerRow(\"contactDetails.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.ContactDetailsController.onPageLoad(CheckMode).url)";\
+     print "  def companyUniqueTaxReference: Option[AnswerRow] = userAnswers.companyUniqueTaxReference map {";\
+     print "    x => AnswerRow(\"companyUniqueTaxReference.checkYourAnswersLabel\", s\"companyUniqueTaxReference.$x\", true, controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -69,5 +40,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration UniqueTaxReference completed"
-echo "Migration ContactDetails completed"
+echo "Migration CompanyUniqueTaxReference completed"

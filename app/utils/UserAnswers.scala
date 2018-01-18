@@ -22,10 +22,14 @@ import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
 import controllers.register.establishers.routes
+import identifiers.register.establishers.company.CompanyUniqueTaxReferenceId
 
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
+
+  def companyUniqueTaxReference: Option[UniqueTaxReference] = cacheMap.getEntry[UniqueTaxReference](CompanyUniqueTaxReferenceId.toString)
+
   def contactDetails: Option[EstablishersIndividualMap[ContactDetails]] =
     cacheMap.getEntry[EstablishersIndividualMap[ContactDetails]](ContactDetailsId.toString)
 

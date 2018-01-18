@@ -218,3 +218,10 @@ messages__error__phone_length = The telephone number cannot be more than 24 char
 messages__error__phone_invalid = The telephone number can only contain numbers
 contactDetails.checkYourAnswersLabel = contactDetails
 
+
+companyUniqueTaxReference.title = companyUniqueTaxReference
+companyUniqueTaxReference.heading = companyUniqueTaxReference
+companyUniqueTaxReference.option1 = companyUniqueTaxReference Option 1
+companyUniqueTaxReference.option2 = companyUniqueTaxReference Option 2
+companyUniqueTaxReference.checkYourAnswersLabel = companyUniqueTaxReference
+companyUniqueTaxReference.error.required = Please give an answer for companyUniqueTaxReference
