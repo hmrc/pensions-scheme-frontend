@@ -17,7 +17,7 @@
 package controllers.register.establishers.company
 
 import play.api.data.Form
-import play.api.libs.json.JsString
+import play.api.libs.json.{JsString, Json}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
@@ -25,9 +25,10 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.company.CompanyUniqueTaxReferenceId
-import models.{Index, NormalMode, UniqueTaxReference}
+import models._
 import views.html.register.establishers.company.companyUniqueTaxReference
 import controllers.ControllerSpecBase
+import identifiers.register.SchemeDetailsId
 import play.api.mvc.Call
 
 class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
@@ -37,6 +38,9 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(0)
   val formProvider = new CompanyUniqueTaxReferenceFormProvider()
   val form = formProvider()
+
+  val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)),
+    CompanyUniqueTaxReferenceId.toString -> Json.toJson(EstablishersIndividualMap[UniqueTaxReference](Map(0 -> UniqueTaxReference.Yes("1234567891")))))
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): CompanyUniqueTaxReferenceController =
     new CompanyUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
@@ -59,11 +63,11 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(UniqueTaxReference.Yes(???)))
+      contentAsString(result) mustBe viewAsString(form.fill(UniqueTaxReference.Yes("1234567891")))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", UniqueTaxReference.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("propertyUniqueTaxReference.hasUtr", "true"), ("propertyUniqueTaxReference.utr", "1234565656"))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
@@ -89,7 +93,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", UniqueTaxReference.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
