@@ -207,3 +207,10 @@ messages__establisher__no_sautr = Tell us why the establisher does not have a SA
 messages__error__has_sautr_establisher = Select yes if the establisher has a SAUTR
 uniqueTaxReference.checkYourAnswersLabel = uniqueTaxReference
 
+
+companyRegistrationNumber.title = companyRegistrationNumber
+companyRegistrationNumber.heading = companyRegistrationNumber
+companyRegistrationNumber.option1 = companyRegistrationNumber Option 1
+companyRegistrationNumber.option2 = companyRegistrationNumber Option 2
+companyRegistrationNumber.checkYourAnswersLabel = companyRegistrationNumber
+companyRegistrationNumber.error.required = Please give an answer for companyRegistrationNumber
