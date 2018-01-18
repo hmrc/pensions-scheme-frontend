@@ -25,7 +25,7 @@ POST       /:index/establisherKind               controllers.register.establishe
 GET        /:index/changeEstablisherKind               controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = CheckMode,index:Index)
 POST       /:index/changeEstablisherKind               controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = CheckMode,index:Index)
 
-GET        /companyRegistrationNumber               controllers.register.establishers.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = NormalMode)
-POST       /companyRegistrationNumber               controllers.register.establishers.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = NormalMode)
-GET        /changeCompanyRegistrationNumber               controllers.register.establishers.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeCompanyRegistrationNumber               controllers.register.establishers.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = CheckMode)
+GET        /company/companyRegistrationNumber               controllers.register.establishers.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /company/companyRegistrationNumber               controllers.register.establishers.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /company/changeCompanyRegistrationNumber         controllers.register.establishers.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /company/changeCompanyRegistrationNumber         controllers.register.establishers.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = CheckMode)
