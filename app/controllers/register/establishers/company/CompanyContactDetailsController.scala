@@ -28,7 +28,7 @@ import forms.register.establishers.company.CompanyContactDetailsFormProvider
 import identifiers.register.establishers.company.CompanyContactDetailsId
 import models.{CompanyContactDetails, Index, Mode}
 import play.api.mvc.{Action, AnyContent, Result}
-import utils.{Navigator, UserAnswers}
+import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyContactDetails
 
 import scala.concurrent.Future
@@ -41,7 +41,8 @@ class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
-                                                  formProvider: CompanyContactDetailsFormProvider) extends FrontendController with I18nSupport {
+                                                  formProvider: CompanyContactDetailsFormProvider) extends FrontendController
+                                                  with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form: Form[CompanyContactDetails] = formProvider()
 
@@ -61,7 +62,7 @@ class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(companyContactDetails(appConfig, formWithErrors, mode, index))),
         (value) =>
-          dataCacheConnector.save[CompanyContactDetails](request.externalId, CompanyContactDetailsId.toString, value).map(cacheMap =>
+          dataCacheConnector.saveMap[CompanyContactDetails](request.externalId, CompanyContactDetailsId.toString, index, value).map(cacheMap =>
             Redirect(navigator.nextPage(CompanyContactDetailsId, mode)(new UserAnswers(cacheMap))))
       )
   }

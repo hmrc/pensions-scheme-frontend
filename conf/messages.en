@@ -218,5 +218,5 @@ messages__error__phone_length = The telephone number cannot be more than 24 char
 messages__error__phone_invalid = The telephone number can only contain numbers
 contactDetails.checkYourAnswersLabel = contactDetails
 
-messages__common__company_contact = Company contact details
+messages__establisher_company_contact_details__title = Company contact details
 companyContactDetails.checkYourAnswersLabel = companyContactDetails

@@ -23,7 +23,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__common__company_contact"),
+    title = messages("messages__establisher_company_contact_details__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -31,7 +31,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__common__company_contact")
+        @components.heading("messages__establisher_company_contact_details__title")
 
         @components.input_text(
             field = form("emailAddress"),
