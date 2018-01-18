@@ -25,7 +25,7 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.company.CompanyUniqueTaxReferenceId
-import models.{UniqueTaxReference, NormalMode}
+import models.{Index, NormalMode, UniqueTaxReference}
 import views.html.register.establishers.company.companyUniqueTaxReference
 import controllers.ControllerSpecBase
 import play.api.mvc.Call
@@ -34,6 +34,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
+  val firstIndex = Index(0)
   val formProvider = new CompanyUniqueTaxReferenceFormProvider()
   val form = formProvider()
 
@@ -41,12 +42,12 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     new CompanyUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = companyUniqueTaxReference(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = companyUniqueTaxReference(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
 
   "CompanyUniqueTaxReference Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -56,7 +57,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       val validData = Map(CompanyUniqueTaxReferenceId.toString -> JsString(UniqueTaxReference.toString))
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(UniqueTaxReference.Yes(???)))
     }
@@ -64,7 +65,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", UniqueTaxReference.options.head.value))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -74,14 +75,14 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -89,7 +90,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", UniqueTaxReference.options.head.value))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

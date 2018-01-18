@@ -24,14 +24,15 @@ import scala.util.Success
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
-  def companyUniqueTaxReference: Option[AnswerRow] = userAnswers.companyUniqueTaxReference map {
-    x => AnswerRow("companyUniqueTaxReference.checkYourAnswersLabel", s"companyUniqueTaxReference.$x", true,
-      controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode).url)
+  def companyUniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.companyUniqueTaxReference(index) match {
+    case Success(Some(x)) => Some(AnswerRow("companyUniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
+      controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url))
+    case _ => None
   }
 
   def uniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.uniqueTaxReference(index) match {
     case Success(Some(x)) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
-      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
+      controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 

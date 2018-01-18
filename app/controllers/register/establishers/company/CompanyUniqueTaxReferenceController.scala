@@ -26,12 +26,12 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.company.CompanyUniqueTaxReferenceId
-import models.{UniqueTaxReference, Mode}
+import models.{Index, Mode, UniqueTaxReference}
 import play.api.mvc.{Action, AnyContent}
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyUniqueTaxReference
-
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 class CompanyUniqueTaxReferenceController @Inject()(
                                         appConfig: FrontendAppConfig,
@@ -41,26 +41,29 @@ class CompanyUniqueTaxReferenceController @Inject()(
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: CompanyUniqueTaxReferenceFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                        formProvider: CompanyUniqueTaxReferenceFormProvider) extends FrontendController with I18nSupport
+  with Enumerable.Implicits with MapFormats {
 
-  val form = formProvider()
+  val form: Form[UniqueTaxReference] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async{
     implicit request =>
-      val preparedForm = request.userAnswers.companyUniqueTaxReference match {
-        case None => form
-        case Some(value) => form.fill(value)
+      val redirectResult = request.userAnswers.companyUniqueTaxReference(index) match {
+        case Success(None) => Ok(companyUniqueTaxReference(appConfig, form, mode, index))
+        case Success(Some(value)) => Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index))
+        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
-      Ok(companyUniqueTaxReference(appConfig, preparedForm, mode))
+    ???
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index))),
         (value) =>
-          dataCacheConnector.save[UniqueTaxReference](request.externalId, CompanyUniqueTaxReferenceId.toString, value).map(cacheMap =>
+          dataCacheConnector.save[UniqueTaxReference](request.externalId,
+            CompanyUniqueTaxReferenceId.toString, value).map(cacheMap =>
             Redirect(navigator.nextPage(CompanyUniqueTaxReferenceId, mode)(new UserAnswers(cacheMap))))
       )
   }

@@ -25,6 +25,6 @@ import models.UniqueTaxReference
 class CompanyUniqueTaxReferenceFormProvider @Inject() extends Mappings {
 
   def apply(): Form[UniqueTaxReference] = Form(
-    "uniqueTaxReference" -> uniqueTaxReferenceMapping()
+    "companyUniqueTaxReference" -> uniqueTaxReferenceMapping()
   )
 }

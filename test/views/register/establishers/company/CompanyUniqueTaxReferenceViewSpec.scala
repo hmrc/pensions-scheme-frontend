@@ -18,7 +18,7 @@ package views.register.establishers.company
 
 import play.api.data.Form
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
-import models.{NormalMode, UniqueTaxReference}
+import models.{Index, NormalMode, UniqueTaxReference}
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.companyUniqueTaxReference
@@ -29,10 +29,12 @@ class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   val form = new CompanyUniqueTaxReferenceFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => companyUniqueTaxReference(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  val index = Index(1)
+
+  def createView: () => HtmlFormat.Appendable = () => companyUniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyUniqueTaxReference(frontendAppConfig, form,
-    NormalMode)(fakeRequest, messages)
+    NormalMode, index)(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" must {
     behave like normalPage(createView, messageKeyPrefix, messages("messages__establisher__has_sautr__title"))
