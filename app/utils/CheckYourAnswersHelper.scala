@@ -16,7 +16,7 @@
 
 package utils
 
-import models.{CheckMode, Index, UniqueTaxReference}
+import models.{CheckMode, Index, UniqueTaxReference, EstablisherNino}
 import viewmodels.AnswerRow
 import controllers.register.routes
 
@@ -31,6 +31,18 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
   def uniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.uniqueTaxReference(index) match {
     case Success(Some(x)) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
+    case _ => None
+  }
+
+  def establisherNino(index: Int): Option[AnswerRow] = userAnswers.establisherNino(index) match {
+    case Success(Some(x)) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${EstablisherNino.Yes} ${EstablisherNino.No}", false,
+      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
+    case _ => None
+  }
+
+  def contactDetails(index: Int): Option[AnswerRow] = userAnswers.contactDetails(index) match {
+    case Success(Some(x)) => Some(AnswerRow("contactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
+      controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 

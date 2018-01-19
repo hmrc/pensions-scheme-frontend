@@ -17,9 +17,9 @@
 package forms.mappings
 
 import models._
-import org.joda.time
 import org.joda.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import uk.gov.hmrc.domain.Nino
 
 trait Constraints {
 
@@ -98,6 +98,13 @@ trait Constraints {
     Constraint {
       case date if(date.isAfter(LocalDate.now())) => Invalid(invalidKey)
       case _ => Valid
+    }
+  }
+
+  protected def validNino(invalidKey: String) : Constraint[String] = {
+    Constraint {
+      case nino if(Nino.isValid(nino.replaceAll(" ", "").toUpperCase)) => Valid
+      case _ => Invalid(invalidKey)
     }
   }
 

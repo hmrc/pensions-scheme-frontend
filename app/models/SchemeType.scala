@@ -42,7 +42,7 @@ object SchemeType {
     InputOption(SingleTrust.toString, s"messages__scheme_details__type_${SingleTrust.toString}"),
     InputOption(GroupLifeDeath.toString, s"messages__scheme_details__type_${GroupLifeDeath.toString}"),
     InputOption(BodyCorporate.toString, s"messages__scheme_details__type_${BodyCorporate.toString}"),
-    InputOption(other, s"messages__scheme_details__type_${other}", Some("schemeType_schemeTypeDetails-form"))
+    InputOption(other, s"messages__scheme_details__type_$other", Some("schemeType_schemeTypeDetails-form"))
   )
 
   implicit val reads: Reads[SchemeType] = {

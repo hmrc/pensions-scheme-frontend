@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package forms.register
+package models
 
-import javax.inject.Inject
-import forms.mappings.{Constraints, Mappings}
-import play.api.data.Form
-import play.api.data.Forms._
-import models.SchemeDetails
+import play.api.libs.json._
 
-class SchemeDetailsFormProvider @Inject() extends Mappings with Constraints {
-  val schemeNameMaxLength = 255
+case class ContactDetails (emailAddress: String, phoneNumber: String)
 
-  def apply(): Form[SchemeDetails] = Form(mapping(
-    "schemeName" -> text(
-      "messages__error__scheme_name").
-      verifying(maxLength(schemeNameMaxLength, "messages__error__scheme_name_length")),
-    "schemeType" -> schemeTypeMapping()
-  )(SchemeDetails.apply)(SchemeDetails.unapply))
+object ContactDetails {
+  implicit val format = Json.format[ContactDetails]
 }

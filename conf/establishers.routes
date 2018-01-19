@@ -20,10 +20,20 @@ POST       /:index/individual/uniqueTaxReference          controllers.register.e
 GET        /:index/individual/changeUniqueTaxReference    controllers.register.establishers.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeUniqueTaxReference    controllers.register.establishers.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode, index: Index)
 
-GET        /:index/establisherKind               controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode,index:Index)
-POST       /:index/establisherKind               controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode,index:Index)
-GET        /:index/changeEstablisherKind               controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = CheckMode,index:Index)
-POST       /:index/changeEstablisherKind               controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = CheckMode,index:Index)
+GET        /:index/individual/establisherNino             controllers.register.establishers.individual.EstablisherNinoController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/establisherNino             controllers.register.establishers.individual.EstablisherNinoController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeEstablisherNino       controllers.register.establishers.individual.EstablisherNinoController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeEstablisherNino       controllers.register.establishers.individual.EstablisherNinoController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/establisherKind                        controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode,index:Index)
+POST       /:index/establisherKind                        controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode,index:Index)
+GET        /:index/changeEstablisherKind                  controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = CheckMode,index:Index)
+POST       /:index/changeEstablisherKind                  controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = CheckMode,index:Index)
+
+GET        /:index/individual/contactDetails              controllers.register.establishers.individual.ContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/contactDetails              controllers.register.establishers.individual.ContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeContactDetails        controllers.register.establishers.individual.ContactDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeContactDetails        controllers.register.establishers.individual.ContactDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
 
 GET        /company/companyRegistrationNumber               controllers.register.establishers.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = NormalMode)
 POST       /company/companyRegistrationNumber               controllers.register.establishers.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = NormalMode)
