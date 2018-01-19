@@ -34,7 +34,7 @@ class CompanyRegistrationNumberFormProviderSpec extends FormBehaviours {
     behave like formWithOptionField(
       Field(
         "value",
-        Required -> "companyRegistrationNumber.error.required",
+        Required -> "messages__error__has_crn_company",
         Invalid -> "error.invalid"),
       CompanyRegistrationNumber.options.map(_.value): _*)
   }

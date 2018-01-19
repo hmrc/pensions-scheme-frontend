@@ -25,6 +25,6 @@ class CompanyRegistrationNumberFormProvider @Inject() extends Mappings {
 
   def apply(): Form[CompanyRegistrationNumber] =
     Form(
-      "value" -> enumerable[CompanyRegistrationNumber]("companyRegistrationNumber.error.required")
+      "value" -> enumerable[CompanyRegistrationNumber]("messages__error__has_crn_company")
     )
 }

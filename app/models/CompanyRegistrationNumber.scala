@@ -22,16 +22,16 @@ sealed trait CompanyRegistrationNumber
 
 object CompanyRegistrationNumber {
 
-  case object Option1 extends WithName("option1") with CompanyRegistrationNumber
-  case object Option2 extends WithName("option2") with CompanyRegistrationNumber
+  case object Yes extends WithName("yes") with CompanyRegistrationNumber
+  case object No extends WithName("no") with CompanyRegistrationNumber
 
   val values: Seq[CompanyRegistrationNumber] = Seq(
-    Option1, Option2
+    Yes, No
   )
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"myOptionsPage.${value.toString}")
+      InputOption(value.toString, s"site.${value.toString}")
   }
 
   implicit val enumerable: Enumerable[CompanyRegistrationNumber] =
