@@ -96,12 +96,18 @@ trait Formatters {
 
     val regexVatNumber = "(GB)?[0-9]+"
 
+    private val baseFormatter = stringFormatter(invalidKey)
+
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
 
-      data.get(key) match {
-        case Some(str) if(!str.matches(regexVatNumber)) => Left(Seq(FormError(key, invalidKey)))
-        case Some(str) if str.trim.replace("GB", "").length > 9 => Left(Seq(FormError(key, maxLengthKey)))
-        case Some(str) => Right(str)
+      baseFormatter.bind(key, data).right.map(_.trim.toUpperCase)
+        .right.flatMap {
+        case str if !str.matches(regexVatNumber)  =>
+          Left(Seq(FormError(key, invalidKey)))
+        case str if str.trim.replaceAll("GB", "").length > 9 =>
+          Left(Seq(FormError(key, maxLengthKey)))
+        case str =>
+          Right(str)
       }
     }
 

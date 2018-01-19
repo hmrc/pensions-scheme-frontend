@@ -345,11 +345,11 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
 
     val testForm = Form("vatNumber" -> vatMapping("error.invalid", "error.maxlength"))
 
-    Seq("GB123456789", "123435464").foreach{ vatNo =>
+    Seq("GB123456789", "123435464", "gb1234567").foreach{ vatNo =>
       s"successfully bind valid vat number $vatNo" in {
         val coForm = testForm.bind(Map("vatNumber" -> vatNo))
 
-        coForm.get mustEqual vatNo
+        coForm.get mustEqual vatNo.toUpperCase
       }
     }
 
