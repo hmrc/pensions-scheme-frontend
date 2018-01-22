@@ -39,8 +39,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   val formProvider = new CompanyUniqueTaxReferenceFormProvider()
   val form = formProvider()
 
-  val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)),
-    CompanyUniqueTaxReferenceId.toString -> Json.toJson(EstablishersIndividualMap[UniqueTaxReference](Map(0 -> UniqueTaxReference.Yes("1234567891")))))
+
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): CompanyUniqueTaxReferenceController =
     new CompanyUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),

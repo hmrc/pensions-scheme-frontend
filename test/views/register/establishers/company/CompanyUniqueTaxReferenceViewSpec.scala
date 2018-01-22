@@ -38,7 +38,7 @@ class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   "CompanyUniqueTaxReference view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("establisher__has_ct_utr__title"))
+    behave like normalPage(createView, messageKeyPrefix, messages("messages__establisher__has_ct_utr__title"))
   }
 
   "CompanyUniqueTaxReference view" when {
