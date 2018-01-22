@@ -22,7 +22,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("address.title"),
+    title = messages("messages__establisher_individual_address__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -32,14 +32,22 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("address.heading")
+        @components.heading("messages__establisher_individual_address__title")
+
+        <p>@messages("messages__common__company_address_hint")</p>
+
+        <p>@messages("messages__common__enter_postcode")
+            <a id="manual-address-link" href="@AddressController.onPageLoad(mode)">
+                @messages(s"messages__common__select_address_link")
+            </a>
+        </p>
 
         @components.input_text(
           field = form("value"),
-          label = messages("address.heading"),
-          labelClass=Some("visually-hidden")
+          label = messages("messages__common__address_postcode"),
+          hint = Some(messages("messages__common__address_postcode_hint"))
         )
 
-        @components.submit_button()
+        @components.submit_button("site.find_address")
     }
 }
