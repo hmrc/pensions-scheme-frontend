@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package forms.register
+package forms.register.establishers.individual
 
 import javax.inject.Inject
-import forms.mappings.{Constraints, Mappings}
+import forms.mappings.Mappings
 import play.api.data.Form
-import play.api.data.Forms._
-import models.SchemeDetails
+import models.EstablisherNino
 
-class SchemeDetailsFormProvider @Inject() extends Mappings with Constraints {
-  val schemeNameMaxLength = 255
+class EstablisherNinoFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[SchemeDetails] = Form(mapping(
-    "schemeName" -> text(
-      "messages__error__scheme_name").
-      verifying(maxLength(schemeNameMaxLength, "messages__error__scheme_name_length")),
-    "schemeType" -> schemeTypeMapping()
-  )(SchemeDetails.apply)(SchemeDetails.unapply))
+  def apply(): Form[EstablisherNino] = Form(
+    "establisherNino" -> establisherNinoMapping()
+  )
 }

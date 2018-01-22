@@ -38,6 +38,11 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapF
 
   def contactDetails(index: Int): Try[Option[ContactDetails]] = contactDetails.map(_.get(index)).getOrElse(Success(None))
 
+  def establisherNino: Option[EstablishersIndividualMap[EstablisherNino]] =
+    cacheMap.getEntry[EstablishersIndividualMap[EstablisherNino]](EstablisherNinoId.toString)
+
+  def establisherNino(index:Int): Try[Option[EstablisherNino]] = establisherNino.map(_.get(index)).getOrElse(Success(None))
+
   def uniqueTaxReference: Option[EstablishersIndividualMap[UniqueTaxReference]] =
     cacheMap.getEntry[EstablishersIndividualMap[UniqueTaxReference]](UniqueTaxReferenceId.toString)
 

@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.{SchemeType, SortCode, UniqueTaxReference}
+import models.{EstablisherNino, SchemeType, SortCode, UniqueTaxReference}
 import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -338,6 +338,34 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
       val reason = RandomStringUtils.randomAlphabetic(151)
       val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" -> reason))
       result.errors mustEqual Seq(FormError("uniqueTaxReference.reason", "error.reason.length", Seq(150)))
+    }
+  }
+
+  "establisherNino" must {
+
+    val testForm: Form[EstablisherNino] = Form("establisherNino" ->  establisherNinoMapping())
+
+    "fail to bind when yes is selected but NINO is not provided" in {
+      val result = testForm.bind(Map("establisherNino.hasNino" -> "true"))
+      result.errors mustEqual Seq(FormError("establisherNino.nino", "messages__error__nino"))
+    }
+
+    "fail to bind when no is selected but reason is not provided" in {
+      val result = testForm.bind(Map("establisherNino.hasNino" -> "false"))
+      result.errors mustEqual Seq(FormError("establisherNino.reason", "messages__establisher__no_nino"))
+    }
+
+    Seq("DE999999A", "AO111111B", "ORA12345C", "AB0202020", "AB0303030D", "AB040404E").foreach { nino =>
+      s"fail to bind when NINO $nino is invalid" in {
+        val result = testForm.bind(Map("establisherNino.hasNino" -> "true", "establisherNino.nino" -> nino))
+        result.errors mustEqual Seq(FormError("establisherNino.nino", "messages__error__nino_invalid"))
+      }
+    }
+
+    "fail to bind when no is selected and reason exceeds max length of 150" in {
+      val testString = RandomStringUtils.randomAlphabetic(151)
+      val result = testForm.bind(Map("establisherNino.hasNino" -> "false", "establisherNino.reason" -> testString))
+      result.errors mustEqual Seq(FormError("establisherNino.reason", "messages__error__no_nino_length", Seq(150)))
     }
   }
 
