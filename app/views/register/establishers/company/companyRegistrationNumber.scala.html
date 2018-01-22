@@ -21,6 +21,10 @@
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
+@_options = @{
+    CompanyRegistrationNumber.options
+}
+
 @main_template(
     title = messages("messages__company__has_crn"),
     appConfig = appConfig,
@@ -32,13 +36,38 @@
 
         @components.heading("messages__company__has_crn")
 
-        @components.input_radio(
-            field = form("value"),
-            legend = messages("messages__company__has_crn"),
-            hint=Some(messages("messages__common__crn_hint")),
-            legendClass = Some("visually-hidden"),
-            inputs = CompanyRegistrationNumber.options
-        )
+@components.fieldSet(
+field = form("companyRegistrationNumber.hasCrn"),
+legend = "messages__establisherNino__title",
+hiddenLegend = true
+) {
+@components.radio(
+field = form("companyRegistrationNumber.hasCrn"),
+label = _options.head.label,
+value = options.head.value,
+dataTarget = options.head.dataTarget
+)
+
+@components.input_text(
+field = form("companyRegistrationNumber.crn"),
+label = messages("messages__common__nino"),
+groupClass = Some("js-hidden panel panel-border-narrow"),
+hint = Some(messages("messages__common__nino_hint"))
+)
+
+@components.radio(
+field = form("companyRegistrationNumber.hasCrn"),
+label = _options(1).label,
+value = options(1).value,
+dataTarget = options(1).dataTarget
+)
+
+@components.input_text(
+field = form("companyRegistrationNumber.reason"),
+label = messages("messages__establisher__no_nino"),
+groupClass = Some("js-hidden panel panel-border-narrow")
+)
+}
 
         @components.submit_button()
     }

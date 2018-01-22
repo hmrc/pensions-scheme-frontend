@@ -16,24 +16,45 @@
 
 package models
 
-import utils.{Enumerable, InputOption, WithName}
+import play.api.libs.json._
+import utils.{InputOption}
 
 sealed trait CompanyRegistrationNumber
 
 object CompanyRegistrationNumber {
 
-  case object Yes extends WithName("yes") with CompanyRegistrationNumber
-  case object No extends WithName("no") with CompanyRegistrationNumber
+  case class Yes(crn:String) extends CompanyRegistrationNumber
+  case class No(reason:String) extends CompanyRegistrationNumber
 
-  val values: Seq[CompanyRegistrationNumber] = Seq(
-    Yes, No
+  def options: Seq[InputOption] = Seq(
+    InputOption("true", "site.yes", Some("establisherCrn_crn-form")),
+    InputOption("false", "site.no", Some("establisherCrn_reason-form"))
   )
 
-  val options: Seq[InputOption] = values.map {
-    value =>
-      InputOption(value.toString, s"site.${value.toString}")
+  implicit val reads: Reads[CompanyRegistrationNumber] = {
+
+    (JsPath \ "hasCrn").read[Boolean].flatMap {
+
+      case true =>
+        (JsPath \ "crn").read[String]
+          .map[CompanyRegistrationNumber](Yes.apply)
+          .orElse(Reads[CompanyRegistrationNumber](_ => JsError("CRN Value expected")))
+
+      case false =>
+        (JsPath \ "reason").read[String]
+          .map[CompanyRegistrationNumber](No.apply)
+          .orElse(Reads[CompanyRegistrationNumber](_ => JsError("Reason expected")))
+    }
   }
 
-  implicit val enumerable: Enumerable[CompanyRegistrationNumber] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+  implicit lazy val writes = new Writes[CompanyRegistrationNumber] {
+    def writes(o: CompanyRegistrationNumber) = {
+      o match {
+        case CompanyRegistrationNumber.Yes(crn) =>
+          Json.obj("hasCrn" -> true, "crn" -> crn)
+        case CompanyRegistrationNumber.No(reason) =>
+          Json.obj("hasCrn" -> false, "reason" -> reason)
+      }
+    }
+  }
 }

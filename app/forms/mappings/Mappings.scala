@@ -17,7 +17,7 @@
 package forms.mappings
 
 import models.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
-import models.{EstablisherNino, SchemeType, SortCode, UniqueTaxReference}
+import models._
 import org.joda.time.LocalDate
 import play.api.data.Forms.{of, _}
 import play.api.data.format.Formatter
@@ -193,5 +193,34 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
     }
 
     Forms.of(formatter)
+  }
+
+  protected def companyRegistrationNumberMapping(requiredKey: String = "messages__error__has_crn_company",
+                                       requiredCRNKey: String = "messages__error__crn",
+                                       requiredReasonKey: String = "messages__company__no_crn",
+                                       reasonLengthKey: String = "messages__error__no_crn_length",
+                                       invalidCRNKey: String = "messages__error__crn_invalid"):
+  Mapping[CompanyRegistrationNumber] = {
+
+    def fromCompanyRegistrationNumber(crn: CompanyRegistrationNumber): (Boolean, Option[String], Option[String]) = {
+      crn match {
+        case CompanyRegistrationNumber.Yes(crn) => (true, Some(crn), None)
+        case CompanyRegistrationNumber.No(reason) =>  (false, None, Some(reason))
+      }
+    }
+
+    def toCompanyRegistrationNumber(crnTuple: (Boolean, Option[String], Option[String])) = {
+
+      crnTuple match {
+        case (true, Some(crn), None)  => CompanyRegistrationNumber.Yes(crn)
+        case (false, None, Some(reason))  => CompanyRegistrationNumber.No(reason)
+        case _ => throw new RuntimeException("Invalid selection")
+      }
+    }
+
+    tuple("hasCrn" -> boolean(requiredKey),
+      "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey)),//.verifying(validNino(invalidCRNKey))),
+      "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(requiredReasonKey).
+        verifying(maxLength(150,reasonLengthKey)))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
   }
 }

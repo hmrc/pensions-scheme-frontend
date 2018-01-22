@@ -16,26 +16,39 @@
 
 package forms.register.establishers.company
 
+import forms.FormSpec
 import forms.behaviours.FormBehaviours
-import models.{Field, Invalid, Required, CompanyRegistrationNumber}
+import models._
 
-class CompanyRegistrationNumberFormProviderSpec extends FormBehaviours {
+class CompanyRegistrationNumberFormProviderSpec extends FormSpec {
 
-  val validData: Map[String, String] = Map(
-    "value" -> CompanyRegistrationNumber.options.head.value
+  val requiredKey: String = "messages__error__has_crn_company"
+  val requiredCRNKey: String = "messages__error__crn"
+  val requiredReasonKey : String = "messages__company__no_crn"
+  val invalidCRNKey: String = "messages__error__crn_invalid"
+
+  val formProvider = new CompanyRegistrationNumberFormProvider()()
+
+  val validData:Map[String,String] = Map(
+    "companyRegistrationNumber.hasCrn" ->"true",
+    "companyRegistrationNumber.crn" -> "1234567"
   )
-
-  val form = new CompanyRegistrationNumberFormProvider()()
 
   "CompanyRegistrationNumber form" must {
 
-    behave like questionForm[CompanyRegistrationNumber](CompanyRegistrationNumber.values.head)
+    "successfully bind when yes is selected and valid CRN is provided" in {
+      val form = formProvider.bind(Map("companyRegistrationNumber.hasCrn" -> "true", "companyRegistrationNumber.crn" -> "1234567"))
+      form.get shouldBe CompanyRegistrationNumber.Yes("1234567")
+    }
 
-    behave like formWithOptionField(
-      Field(
-        "value",
-        Required -> "messages__error__has_crn_company",
-        Invalid -> "error.invalid"),
-      CompanyRegistrationNumber.options.map(_.value): _*)
+    "successfully bind when no is selected and reason is provided" in {
+      val form = formProvider.bind(Map("companyRegistrationNumber.hasCrn" -> "false", "companyRegistrationNumber.reason" -> "haven't got Crn"))
+      form.get shouldBe CompanyRegistrationNumber.No("haven't got Crn")
+    }
+
+    "fail to bind when value is omitted" in {
+      val expectedError = error("companyRegistrationNumber.hasCrn", requiredKey)
+      checkForError(formProvider, emptyForm, expectedError)
+    }
   }
 }

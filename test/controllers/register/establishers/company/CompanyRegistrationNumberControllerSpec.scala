@@ -17,7 +17,7 @@
 package controllers.register.establishers.company
 
 import play.api.data.Form
-import play.api.libs.json.JsString
+import play.api.libs.json.{JsString, Json}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
@@ -25,7 +25,7 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.company.CompanyRegistrationNumberFormProvider
 import identifiers.register.establishers.company.CompanyRegistrationNumberId
-import models.{NormalMode, CompanyRegistrationNumber}
+import models.{CompanyRegistrationNumber, NormalMode}
 import views.html.register.establishers.company.companyRegistrationNumber
 import controllers.ControllerSpecBase
 
@@ -52,16 +52,16 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(CompanyRegistrationNumberId.toString -> JsString(CompanyRegistrationNumber.values.head.toString))
+      val validData = Map(CompanyRegistrationNumberId.toString ->Json.toJson(CompanyRegistrationNumber.Yes("1234567")))
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(CompanyRegistrationNumber.values.head))
+      contentAsString(result) mustBe viewAsString(form.fill(CompanyRegistrationNumber.Yes("1234567")))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", CompanyRegistrationNumber.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber.hasCrn","true"),("companyRegistrationNumber.crn","1234567"))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 

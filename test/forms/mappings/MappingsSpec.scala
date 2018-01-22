@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.{EstablisherNino, SchemeType, SortCode, UniqueTaxReference}
+import models._
 import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -366,4 +366,21 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
       result.errors mustEqual Seq(FormError("establisherNino.reason", "messages__error__no_nino_length", Seq(150)))
     }
   }
+
+  "companyRegistrationNumber" must {
+    val testForm:Form[CompanyRegistrationNumber]=Form("companyRegistrationNumber"-> companyRegistrationNumberMapping())
+
+    "fail to bind when yes is selected but Company Registration Number is not provided" in {
+      val result=testForm.bind(Map("companyRegistrationNumber.hasCrn"->"true"))
+      result.errors mustEqual Seq(FormError("companyRegistrationNumber.crn","messages__error__crn"))
+    }
+
+    "fail to bind when no is selected but reason is not provided" in {
+      val result=testForm.bind(Map("companyRegistrationNumber.hasCrn"->"false"))
+      result.errors mustEqual Seq(FormError("companyRegistrationNumber.reason", "messages__company__no_crn"))
+
+    }
+
+  }
+
 }
