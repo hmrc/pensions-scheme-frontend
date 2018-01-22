@@ -18,40 +18,42 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
+import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.establishers.individual.AddressId
-import models.{Index, Mode}
+import models.addresslookup.AddressRecord
+import models.Mode
 import play.api.mvc.{Action, AnyContent}
-import utils.{Navigator, UserAnswers}
+import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual.address
-
 import scala.concurrent.Future
 
 class AddressController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AddressFormProvider) extends FrontendController with I18nSupport {
+                                   appConfig: FrontendAppConfig,
+                                   override val messagesApi: MessagesApi,
+                                   dataCacheConnector: DataCacheConnector,
+                                   addressLookupConnector: AddressLookupConnector,
+                                   navigator: Navigator,
+                                   authenticate: AuthAction,
+                                   getData: DataRetrievalAction,
+                                   requireData: DataRequiredAction,
+                                   formProvider: AddressFormProvider) extends FrontendController with I18nSupport
+  with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def formWithError(messageKey: String): Form[String] = {
+    form.withError("value", messageKey)
+  }
+
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.address match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-      Ok(address(appConfig, preparedForm, mode))
+      Future.successful(Ok(address(appConfig, form, mode)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -60,8 +62,19 @@ class AddressController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(address(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[String](request.externalId, AddressId.toString, value).map(cacheMap =>
-            Redirect(navigator.nextPage(AddressId, mode)(new UserAnswers(cacheMap))))
+          addressLookupConnector.addressLookupByPostCode(value).flatMap {
+            case None =>
+              Future.successful(BadRequest(address(appConfig, formWithError("messages__error__postcode_invalid"), mode)))
+
+            case Some(Nil) =>
+              Future.successful(BadRequest(address(appConfig, formWithError("messages__error__postcode_no_results"), mode)))
+
+            case Some(addressList) =>
+              dataCacheConnector.save[List[AddressRecord]](request.externalId, AddressId.toString, addressList).map {
+                cacheMap =>
+                  Redirect(navigator.nextPage(AddressId, mode)(new UserAnswers(cacheMap)))
+              }
+          }
       )
   }
 }

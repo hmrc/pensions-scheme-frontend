@@ -20,12 +20,13 @@ import play.api.data.Form
 import controllers.register.establishers.individual.routes
 import forms.register.establishers.individual.AddressFormProvider
 import models.NormalMode
+import org.jsoup.Jsoup
 import views.behaviours.StringViewBehaviours
 import views.html.register.establishers.individual.address
 
 class AddressViewSpec extends StringViewBehaviours {
 
-  val messageKeyPrefix = "address"
+  val messageKeyPrefix = "establisher_individual_address"
 
   val form = new AddressFormProvider()()
 
@@ -34,10 +35,15 @@ class AddressViewSpec extends StringViewBehaviours {
   def createViewUsingForm = (form: Form[String]) => address(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   "Address view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "lede")
 
     behave like pageWithBackLink(createView)
 
-    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.AddressController.onSubmit(NormalMode).url)
+    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.AddressController.onSubmit(NormalMode).url,
+      Some("messages__common__address_postcode"), expectedHint = Some("messages__common__address_postcode_hint"))
+
+    "have link for enter address manually" in {
+      Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(routes.AddressController.onPageLoad(NormalMode).url)
+    }
   }
 }

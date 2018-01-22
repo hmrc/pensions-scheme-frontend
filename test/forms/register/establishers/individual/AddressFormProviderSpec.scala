@@ -20,7 +20,7 @@ import forms.FormSpec
 
 class AddressFormProviderSpec extends FormSpec {
 
-  val requiredKey = "address.error.required"
+  val requiredKey = "messages__error__postcode"
 
   "Address Form" must {
 
@@ -39,6 +39,11 @@ class AddressFormProviderSpec extends FormSpec {
     "fail to bind when value is omitted" in {
       val expectedError = error("value", requiredKey)
       checkForError(formProvider(), emptyForm, expectedError)
+    }
+
+    "fail to bind when value more then 8 characters" in {
+      val expectedError = error("value", "messages__error__postcode_length", 8)
+      checkForError(formProvider(), Map("value" -> "123456789"),expectedError)
     }
   }
 }

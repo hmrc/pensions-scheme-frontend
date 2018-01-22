@@ -25,10 +25,10 @@ POST       /:index/individual/establisherNino             controllers.register.e
 GET        /:index/individual/changeEstablisherNino       controllers.register.establishers.individual.EstablisherNinoController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeEstablisherNino       controllers.register.establishers.individual.EstablisherNinoController.onSubmit(mode: Mode = CheckMode, index: Index)
 
-GET        /individual/address                     controllers.register.establishers.individual.AddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /individual/address                     controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode = NormalMode)
-GET        /individual/changeAddress               controllers.register.establishers.individual.AddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /individual/changeAddress               controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode = CheckMode)
+GET        /individual/address                            controllers.register.establishers.individual.AddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /individual/address                            controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode = NormalMode)
+GET        /individual/changeAddress                      controllers.register.establishers.individual.AddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /individual/changeAddress                      controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /:index/establisherKind                        controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode,index:Index)
 POST       /:index/establisherKind                        controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode,index:Index)
