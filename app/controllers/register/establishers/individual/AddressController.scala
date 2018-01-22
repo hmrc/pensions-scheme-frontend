@@ -26,7 +26,8 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.establishers.individual.AddressId
-import models.Mode
+import models.{Index, Mode}
+import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.individual.address
 
@@ -44,7 +45,7 @@ class AddressController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       val preparedForm = request.userAnswers.address match {
         case None => form
@@ -53,7 +54,7 @@ class AddressController @Inject()(
       Ok(address(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
