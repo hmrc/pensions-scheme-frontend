@@ -25,9 +25,9 @@ import views.html.register.establishers.company.companyUniqueTaxReference
 
 class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "establisher__has_ct_utr__title"
+  val messageKeyPrefix = "establisher__has_ct_utr"
 
-  val form = new CompanyUniqueTaxReferenceFormProvider()()
+  val form: Form[_] = new CompanyUniqueTaxReferenceFormProvider().apply()
 
   val index = Index(1)
 
@@ -51,7 +51,6 @@ class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
           assertContainsRadioButton(doc, s"companyUniqueTaxReference_hasUtr-$option", "companyUniqueTaxReference.hasUtr", option, isChecked = false)
         }
       }
-
 
       for (option <- utrOptions) {
         s"rendered with a value of '$option'" must {

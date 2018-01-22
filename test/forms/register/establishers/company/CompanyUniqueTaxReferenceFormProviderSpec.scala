@@ -26,7 +26,7 @@ class CompanyUniqueTaxReferenceFormProviderSpec extends FormSpec {
   val requiredKey = "messages__error__has_ct_utr_establisher"
   val requiredUtrKey = "messages__error__ct_utr"
   val requiredReasonKey = "messages__error__no_ct_utr_establisher"
-  val invalidUtrKey = "messages__error__sautr_invalid"
+  val invalidUtrKey = "???"
 
   val formProvider = new CompanyUniqueTaxReferenceFormProvider()
 

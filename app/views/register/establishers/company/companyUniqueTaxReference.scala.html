@@ -17,7 +17,8 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.company.routes._
-@import models.{UniqueTaxReference, Mode}
+@import models.Mode
+@import models.UniqueTaxReference._
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
 
@@ -26,7 +27,7 @@
 }
 
 @main_template(
-    title = messages("companyUniqueTaxReference.title"),
+    title = messages("messages__establisher__has_ct_utr__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -34,7 +35,7 @@
 
     @components.error_summary(form.errors)
 
-    @components.heading(headingKey = "messages__establisher__has_ct_utr__title"))
+    @components.heading(headingKey = "messages__establisher__has_ct_utr__title")
 
     @components.fieldSet(
         field = form("companyUniqueTaxReference.hasUtr"),
@@ -48,18 +49,21 @@
         value = options(0).value,
         dataTarget = options(0).dataTarget
         )
+
         @components.input_text(
         field = form("companyUniqueTaxReference.utr"),
         label = messages("messages__establisher__ct_utr"),
         groupClass = Some("js-hidden panel panel-border-narrow"),
         hint = Some(messages("messages__establisher__ct_utr_hint_format"))
         )
+
         @components.radio(
-        field = form("companyUTaxReference.hasUtr"),
+        field = form("companyUniqueTaxReference.hasUtr"),
         label = options(1).label,
         value = options(1).value,
         dataTarget = options(1).dataTarget
         )
+
         @components.input_text(
         field = form("companyUniqueTaxReference.reason"),
         label = messages(" = Tell us why the establisher does not have a CTUTR"),
