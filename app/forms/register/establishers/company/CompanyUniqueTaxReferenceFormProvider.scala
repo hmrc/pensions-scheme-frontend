@@ -31,7 +31,7 @@ class CompanyUniqueTaxReferenceFormProvider @Inject() () extends Mappings {
       requiredKey = "messages__error__has_ct_utr_establisher",
       requiredUtrKey = "messages__error__ct_utr",
       requiredReasonKey = "messages__error__no_ct_utr_establisher",
-      invalidUtrKey = "messages__error__sautr_invalid",
+      invalidUtrKey = "messages__error__ct_utr_invalid",
       maxLengthReasonKey = "messages__error__no_sautr_length")
     )
 }

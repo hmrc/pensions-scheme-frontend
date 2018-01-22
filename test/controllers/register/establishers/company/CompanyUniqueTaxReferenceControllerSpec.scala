@@ -37,7 +37,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
   val firstIndex = Index(0)
   val formProvider = new CompanyUniqueTaxReferenceFormProvider()
-  val form = formProvider()
+  val form: Form[UniqueTaxReference] = formProvider()
 
 
 

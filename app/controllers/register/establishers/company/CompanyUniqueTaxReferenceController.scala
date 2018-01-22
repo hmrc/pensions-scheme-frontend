@@ -53,7 +53,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
         case Success(Some(value)) => Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index))
         case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
       }
-    ???
+      Future.successful(redirectResult)
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {

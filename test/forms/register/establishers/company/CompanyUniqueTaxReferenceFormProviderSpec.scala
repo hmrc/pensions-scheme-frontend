@@ -22,11 +22,11 @@ import models.UniqueTaxReference
 
 class CompanyUniqueTaxReferenceFormProviderSpec extends FormSpec {
 
-
   val requiredKey = "messages__error__has_ct_utr_establisher"
   val requiredUtrKey = "messages__error__ct_utr"
   val requiredReasonKey = "messages__error__no_ct_utr_establisher"
-  val invalidUtrKey = "???"
+  val invalidUtrKey = "messages__error__ct_utr_invalid"
+  val maxLengthReasonKey = "messages__error__no_sautr_length"
 
   val formProvider = new CompanyUniqueTaxReferenceFormProvider()
 
