@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.individual
+package controllers.register.establishers.company
 
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -23,40 +23,35 @@ import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.individual.EstablisherDetailsFormProvider
-import identifiers.register.establishers.individual.EstablisherDetailsId
+import forms.register.establishers.company.CompanyDetailsFormProvider
+import identifiers.register.establishers.company.CompanyDetailsId
 import models._
-import views.html.register.establishers.individual.establisherDetails
+import views.html.register.establishers.company.companyDetails
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
-import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
-import org.joda.time.LocalDate
 import play.api.mvc.Call
 
-class EstablisherDetailsControllerSpec extends ControllerSpecBase {
+class CompanyDetailsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new EstablisherDetailsFormProvider()
+  val formProvider = new CompanyDetailsFormProvider()
   val form = formProvider()
-  val schemeName = "Test Scheme Name"
-
   val firstIndex = Index(1)
   val invalidIndex = Index(3)
+  val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameCacheMap): EstablisherDetailsController =
-    new EstablisherDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameCacheMap): CompanyDetailsController =
+    new CompanyDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String =
-    establisherDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = companyDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages).toString
 
-  val day = LocalDate.now().getDayOfMonth
-  val month = LocalDate.now().getMonthOfYear
-  val year = LocalDate.now().getYear - 20
+  val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
+    CompanyDetailsId.toString -> Json.obj("1" -> CompanyDetails("test company name", Some("test vat number"), Some("test paye number"))))
 
-  "EstablisherDetails Controller" must {
+  "CompanyDetails Controller" must {
 
     "return OK and the correct view for a GET when scheme name is present" in {
       val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
@@ -65,7 +60,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect to session expired page on a GET when scheme name is not present" in {
+    "redirect to Session Expired page for a GET when scheme name is not present" in {
       val result = controller(getEmptyCacheMap).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
@@ -73,22 +68,14 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
-        EstablisherDetailsId.toString -> Json.obj("1" -> EstablisherDetails("firstName", "lastName",
-          new LocalDate(year, month, day))))
-
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(EstablisherDetails("firstName", "lastName",
-        new LocalDate(year, month, day))))
+      contentAsString(result) mustBe viewAsString(form.fill(CompanyDetails("test company name", Some("test vat number"), Some("test paye number"))))
     }
 
     "redirect to session expired page on a GET when the index is not valid" in {
-      val validData = Map(EstablisherDetailsId.toString -> Json.obj("1" ->
-        EstablisherDetails("firstName", "lastName", new LocalDate(year, month, day))))
-
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
@@ -98,8 +85,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"),
-        ("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("companyName", "test company name"), ("vatNumber", "GB123456789"), ("payeNumber", "1234567824"))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
@@ -125,8 +111,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"),
-        ("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("field1", "value 1"), ("field2", "value 2"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER

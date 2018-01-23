@@ -39,3 +39,8 @@ GET        /:index/company/companyAddressYears            controllers.register.e
 POST       /:index/company/companyAddressYears            controllers.register.establishers.company.CompanyAddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/company/companyAddressYears      controllers.register.establishers.company.CompanyAddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/company/companyAddressYears      controllers.register.establishers.company.CompanyAddressYearsController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/company/companyDetails                       controllers.register.establishers.company.CompanyDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/company/companyDetails                       controllers.register.establishers.company.CompanyDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/company/changeCompanyDetails                       controllers.register.establishers.company.CompanyDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/company/changeCompanyDetails                       controllers.register.establishers.company.CompanyDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)

@@ -1,42 +1,30 @@
 #!/bin/bash
 
-echo "Applying migration EstablisherNino"
+echo "Applying migration CompanyDetails"
 
-echo "Adding routes to conf/register.establishers.individual.routes"
-echo "Applying migration UniqueTaxReference"
-echo "Applying migration EstablisherKind"
+echo "Adding routes to register.establishers.company.routes"
 
-echo "Adding routes to conf/register.establishers.routes"
+echo "" >> ../conf/register.establishers.company.routes
+echo "GET        /companyDetails                       controllers.register.establishers.company.CompanyDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /companyDetails                       controllers.register.establishers.company.CompanyDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 
-echo "" >> ../conf/app.routes
-echo "GET        /establisherNino               controllers.register.establishers.individual.EstablisherNinoController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /establisherNino               controllers.register.establishers.individual.EstablisherNinoController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-
-echo "GET        /changeEstablisherNino               controllers.register.establishers.individual.EstablisherNinoController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /changeEstablisherNino               controllers.register.establishers.individual.EstablisherNinoController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "" >> ../conf/register.establishers.individual.routes
-echo "GET        /uniqueTaxReference                       controllers.register.establishers.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /uniqueTaxReference                       controllers.register.establishers.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-echo "" >> ../conf/app.routes
-echo "GET        /establisherKind               controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.routes
-echo "POST       /establisherKind               controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.routes
-
-echo "GET        /changeEstablisherKind               controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.routes
-echo "POST       /changeEstablisherKind               controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.routes
+echo "GET        /changeCompanyDetails                       controllers.register.establishers.company.CompanyDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /changeCompanyDetails                       controllers.register.establishers.company.CompanyDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "establisherNino.title = establisherNino" >> ../conf/messages.en
-echo "establisherNino.heading = establisherNino" >> ../conf/messages.en
-echo "establisherNino.option1 = establisherNino" Option 1 >> ../conf/messages.en
-echo "establisherNino.option2 = establisherNino" Option 2 >> ../conf/messages.en
-echo "establisherNino.checkYourAnswersLabel = establisherNino" >> ../conf/messages.en
-echo "establisherNino.error.required = Please give an answer for establisherNino" >> ../conf/messages.en
+echo "companyDetails.title = companyDetails" >> ../conf/messages.en
+echo "companyDetails.heading = companyDetails" >> ../conf/messages.en
+echo "companyDetails.field1 = Field 1" >> ../conf/messages.en
+echo "companyDetails.field2 = Field 2" >> ../conf/messages.en
+echo "companyDetails.checkYourAnswersLabel = companyDetails" >> ../conf/messages.en
+echo "companyDetails.error.field1.required = Please give an answer for field1" >> ../conf/messages.en
+echo "companyDetails.error.field2.required = Please give an answer for field2" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def establisherNino: Option[EstablisherNino] = cacheMap.getEntry[EstablisherNino](EstablisherNinoId.toString)";\
+     print "  def companyDetails: Option[CompanyDetails] = cacheMap.getEntry[CompanyDetails](CompanyDetailsId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -44,34 +32,8 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def establisherNino: Option[AnswerRow] = userAnswers.establisherNino map {";\
-     print "    x => AnswerRow(\"establisherNino.checkYourAnswersLabel\", s\"establisherNino.$x\", true, controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode).url)";\
-     print "  }";\
-     next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
-echo "uniqueTaxReference.title = uniqueTaxReference" >> ../conf/messages.en
-echo "uniqueTaxReference.heading = uniqueTaxReference" >> ../conf/messages.en
-echo "uniqueTaxReference.checkYourAnswersLabel = uniqueTaxReference" >> ../conf/messages.en
-echo "uniqueTaxReference.error.required = Please give an answer for uniqueTaxReference" >> ../conf/messages.en
-echo "establisherKind.title = establisherKind" >> ../conf/messages.en
-echo "establisherKind.heading = establisherKind" >> ../conf/messages.en
-echo "establisherKind.option1 = establisherKind" Option 1 >> ../conf/messages.en
-echo "establisherKind.option2 = establisherKind" Option 2 >> ../conf/messages.en
-echo "establisherKind.checkYourAnswersLabel = establisherKind" >> ../conf/messages.en
-echo "establisherKind.error.required = Please give an answer for establisherKind" >> ../conf/messages.en
-
-echo "Adding helper line into UserAnswers"
-awk '/class/ {\
-     print;\
-     print "  def establisherKind: Option[EstablisherKind] = cacheMap.getEntry[EstablisherKind](EstablisherKindId.toString)";\
-     print "";\
-     next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
-
-echo "Adding helper method to CheckYourAnswersHelper"
-awk '/class/ {\
-     print;\
-     print "";\
-     print "  def establisherKind: Option[AnswerRow] = userAnswers.establisherKind map {";\
-     print "    x => AnswerRow(\"establisherKind.checkYourAnswersLabel\", s\"establisherKind.$x\", true, controllers.register.establishers.routes.EstablisherKindController.onPageLoad(CheckMode).url)";\
+     print "  def companyDetails: Option[AnswerRow] = userAnswers.companyDetails map {";\
+     print "    x => AnswerRow(\"companyDetails.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.CompanyDetailsController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -79,6 +41,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration UniqueTaxReference completed"
-echo "Migration EstablisherNino completed"
-echo "Migration EstablisherKind completed"
+echo "Migration CompanyDetails completed"
