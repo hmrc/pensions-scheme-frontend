@@ -373,7 +373,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
 
     val testForm = Form("vatNumber" -> vatMapping("error.invalid", "error.maxlength"))
 
-    Seq("GB123456789", "123435464", "gb1234567").foreach{ vatNo =>
+    Seq("GB123456789", "123435464", "gb123456789").foreach{ vatNo =>
       s"successfully bind valid vat number $vatNo" in {
         val coForm = testForm.bind(Map("vatNumber" -> vatNo))
 
@@ -381,7 +381,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
       }
     }
 
-    Seq("AB123456", "GB", "12345ff56").foreach { vatNo =>
+    Seq("AB123456", "GB", "12345ff56", "12345").foreach { vatNo =>
       s"fail to bind when vat number $vatNo is not valid" in {
         val coForm = testForm.bind(Map("vatNumber" -> vatNo))
 
