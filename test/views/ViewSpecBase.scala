@@ -51,7 +51,6 @@ trait ViewSpecBase extends SpecBase {
       val labels = document.getElementsByAttributeValue("for", forElement)
       val label = labels.first.text
       val value = document.getElementById(forElement).attr("value")
-
       MatchResult(
         label == expectedLabel &&  value == expectedValue,
         s"text box with label: $label and value : $value is not correct",

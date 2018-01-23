@@ -27,8 +27,8 @@ object CompanyRegistrationNumber {
   case class No(reason:String) extends CompanyRegistrationNumber
 
   def options: Seq[InputOption] = Seq(
-    InputOption("true", "site.yes", Some("establisherCrn_crn-form")),
-    InputOption("false", "site.no", Some("establisherCrn_reason-form"))
+    InputOption("true", "site.yes", Some("companyRegistrationNumber_crn-form")),
+    InputOption("false", "site.no", Some("companyRegistrationNumber_reason-form"))
   )
 
   implicit val reads: Reads[CompanyRegistrationNumber] = {

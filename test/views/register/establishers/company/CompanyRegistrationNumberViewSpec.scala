@@ -52,7 +52,7 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
       s"rendered with a value of '$option'" must {
         s"have the '$option' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("companyRegistrationNumber.hasCrn" -> s"$option"))))
-          assertContainsRadioButton(doc, s"companyRegistrationNumber_hasCrn-$option", "companyRegistrationNumber_hasCrn", option, isChecked=true)
+          assertContainsRadioButton(doc, s"companyRegistrationNumber_hasCrn-$option", "companyRegistrationNumber.hasCrn", option, isChecked=true)
 
           for(unselectedOption <- crnOptions.filterNot(o => o == option)) {
             assertContainsRadioButton(doc, s"companyRegistrationNumber_hasCrn-$unselectedOption", "companyRegistrationNumber.hasCrn", unselectedOption,isChecked=false)
@@ -64,7 +64,7 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
     "display an input text box with the value when yes is selected" in {
       val expectedValue = "1234567"
       val doc = asDocument(createViewUsingForm(form.bind(Map("companyRegistrationNumber.hasCrn" -> "true", "companyRegistrationNumber.crn" -> expectedValue))))
-      doc must haveLabelAndValue("establisherNino_nino", s"${messages("messages__common__crn")} ${messages("messages__common__crn_hint")}", expectedValue)
+      doc must haveLabelAndValue("companyRegistrationNumber_crn", s"${messages("messages__common__crn")}", expectedValue)
     }
 
     "display an input text box with the value when no is selected" in {
