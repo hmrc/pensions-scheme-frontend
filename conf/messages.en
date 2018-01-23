@@ -34,6 +34,10 @@ messages__common__utr_hint = A UTR is issued by HMRC when you register your busi
 messages__common__utr_hint_format = A UTR is 10 or 13 digits, if it is 13 digits only enter the last 10.
 messages__common__email = Email address
 messages__common__phone = Phone number
+messages__common__enter_postcode = Enter the postcode below, or
+messages__common__select_address_link = enter the address manually
+messages__common__address_postcode = Postal code
+messages__common__address_postcode_hint = For example NE12 8ER
 messages__error__first_name = Enter the first name
 messages__error__last_name = Enter the last name
 messages__error__date = Enter a valid date
@@ -60,6 +64,7 @@ site.hidden-edit = Change {0}
 site.no = No
 site.yes = Yes
 site.save_and_continue = Save and continue
+site.find_address = Find Address
 site.service_name = Pension Scheme Registrations
 site.textarea.char_limit = (Limit is {0} characters)
 
@@ -234,3 +239,12 @@ messages__error__vat_invalid = Enter a valid VAT Registration number
 messages__error__paye_length = The PAYE number cannot be more than 13 characters
 
 companyDetails.checkYourAnswersLabel = companyDetails
+
+messages__establisher_individual_address__title = Establisher’s address
+messages__establisher_individual_address_lede = This is usually the registered business address but you can enter any address you have for this company.
+messages__error__postcode = Enter the postal code
+messages__error__postcode_length = The postal code cannot be more than 8 characters
+messages__error__postcode_invalid = Enter a valid postal code
+messages__error__postcode_no_results = No results for that postcode
+
+address.checkYourAnswersLabel = address
