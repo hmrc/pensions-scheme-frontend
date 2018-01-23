@@ -196,4 +196,8 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
     Forms.of(formatter)
   }
+
+  protected def vatMapping(invalidKey: String, maxErrorKey: String): FieldMapping[String] = {
+    of(vatFormatter(invalidKey, maxErrorKey))
+  }
 }
