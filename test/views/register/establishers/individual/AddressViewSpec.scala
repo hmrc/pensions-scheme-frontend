@@ -19,8 +19,9 @@ package views.register.establishers.individual
 import play.api.data.Form
 import controllers.register.establishers.individual.routes
 import forms.register.establishers.individual.AddressFormProvider
-import models.NormalMode
+import models.{Index, NormalMode}
 import org.jsoup.Jsoup
+import play.twirl.api.HtmlFormat
 import views.behaviours.StringViewBehaviours
 import views.html.register.establishers.individual.address
 
@@ -29,21 +30,26 @@ class AddressViewSpec extends StringViewBehaviours {
   val messageKeyPrefix = "establisher_individual_address"
 
   val form = new AddressFormProvider()()
+  val firstIndex = Index(0)
+  val establisherName = "test establisher name"
 
-  def createView = () => address(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => address(frontendAppConfig, form, NormalMode, firstIndex,
+    establisherName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[String]) => address(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) => address(frontendAppConfig, form,
+    NormalMode, firstIndex, establisherName)(fakeRequest, messages)
 
   "Address view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "lede")
 
     behave like pageWithBackLink(createView)
 
-    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.AddressController.onSubmit(NormalMode).url,
+    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.AddressController.onSubmit(NormalMode, firstIndex).url,
       Some("messages__common__address_postcode"), expectedHint = Some("messages__common__address_postcode_hint"))
 
     "have link for enter address manually" in {
-      Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(routes.AddressController.onPageLoad(NormalMode).url)
+      Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
+        routes.AddressController.onPageLoad(NormalMode, firstIndex).url)
     }
   }
 }

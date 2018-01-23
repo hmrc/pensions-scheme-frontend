@@ -18,7 +18,7 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.{AddressLookupConnector, DataCacheConnector}
@@ -27,11 +27,14 @@ import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.establishers.individual.AddressId
 import models.addresslookup.AddressRecord
-import models.Mode
-import play.api.mvc.{Action, AnyContent}
+import models.{Index, Mode}
+import models.requests.DataRequest
+import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual.address
+
 import scala.concurrent.Future
+import scala.util.Success
 
 class AddressController @Inject()(
                                    appConfig: FrontendAppConfig,
@@ -48,33 +51,47 @@ class AddressController @Inject()(
   val form = formProvider()
 
   def formWithError(messageKey: String): Form[String] = {
-    form.withError("value", messageKey)
+    form.withError("value", s"messages__error__postcode_$messageKey")
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      Future.successful(Ok(address(appConfig, form, mode)))
+      retrieveEstablisherName(index) {
+        establisherName =>
+          Future.successful(Ok(address(appConfig, form, mode, index, establisherName)))
+      }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(address(appConfig, formWithErrors, mode))),
-        (value) =>
-          addressLookupConnector.addressLookupByPostCode(value).flatMap {
-            case None =>
-              Future.successful(BadRequest(address(appConfig, formWithError("messages__error__postcode_invalid"), mode)))
+      retrieveEstablisherName(index) {
+        establisherName =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(address(appConfig, formWithErrors, mode, index, establisherName))),
+            (value) =>
+              addressLookupConnector.addressLookupByPostCode(value).flatMap {
+                case None =>
+                  Future.successful(BadRequest(address(appConfig, formWithError("invalid"), mode, index, establisherName)))
 
-            case Some(Nil) =>
-              Future.successful(BadRequest(address(appConfig, formWithError("messages__error__postcode_no_results"), mode)))
+                case Some(Nil) =>
+                  Future.successful(BadRequest(address(appConfig, formWithError("no_results"), mode, index, establisherName)))
 
-            case Some(addressList) =>
-              dataCacheConnector.save[List[AddressRecord]](request.externalId, AddressId.toString, addressList).map {
-                cacheMap =>
-                  Redirect(navigator.nextPage(AddressId, mode)(new UserAnswers(cacheMap)))
+                case Some(addressSeq) =>
+                  dataCacheConnector.save[Seq[AddressRecord]](request.externalId, AddressId.toString, addressSeq).map {
+                    cacheMap =>
+                      Redirect(navigator.nextPage(AddressId, mode)(new UserAnswers(cacheMap)))
+                  }
               }
-          }
-      )
+          )
+      }
+  }
+
+  private def retrieveEstablisherName(index: Int)(block: String => Future[Result])
+                                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    request.userAnswers.establisherDetails(index) match {
+      case Success(Some(value)) => block(value.establisherName)
+      case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    }
   }
 }

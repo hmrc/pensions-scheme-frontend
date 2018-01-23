@@ -25,12 +25,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends AddressLookupConnector {
 
-  override def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[List[AddressRecord]]] = {
+  override def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Seq[AddressRecord]]] = {
     val schemeHc = hc.withExtraHeaders("X-Hmrc-Origin" -> "PODS")
 
     val addressLookupUrl = s"${config.addressLookUp}/v2/uk/addresses?postcode=$postcode"
 
-    http.GET[List[AddressRecord]](addressLookupUrl)(implicitly, schemeHc, implicitly).map(Some(_)) recoverWith {
+    http.GET[Seq[AddressRecord]](addressLookupUrl)(implicitly, schemeHc, implicitly).map(Some(_)) recoverWith {
       case _ => Future.successful(None)
     }
   }
@@ -38,5 +38,5 @@ class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
 
 @ImplementedBy(classOf[AddressLookupConnectorImpl])
 trait AddressLookupConnector {
-  def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[List[AddressRecord]]]
+  def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Seq[AddressRecord]]]
 }
