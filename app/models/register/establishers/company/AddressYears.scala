@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package models
+package models.register.establishers.company
 
 import utils.{Enumerable, InputOption, WithName}
 
-sealed trait EstablisherKind
+sealed trait CompanyAddressYears
 
-object EstablisherKind {
+object CompanyAddressYears {
 
-  case object Company extends WithName("company") with EstablisherKind
-  case object Indivdual extends WithName("individual") with EstablisherKind
-  case object Partnership extends WithName("partnership") with EstablisherKind
+  case object UnderAYear extends WithName("under_a_year") with CompanyAddressYears
+  case object OverAYear extends WithName("over_a_year") with CompanyAddressYears
 
-  val values: Seq[EstablisherKind] = Seq(
-    Company, Indivdual, Partnership
+  val values: Seq[CompanyAddressYears] = Seq(
+    UnderAYear, OverAYear
   )
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"messages__establishers__add__opt__${value.toString}")
+      InputOption(value.toString, s"messages__common__${value.toString}")
   }
 
-  implicit val enumerable: Enumerable[EstablisherKind] =
+  implicit val enumerable: Enumerable[CompanyAddressYears] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

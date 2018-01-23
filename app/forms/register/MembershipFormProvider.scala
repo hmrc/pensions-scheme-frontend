@@ -17,9 +17,10 @@
 package forms.register
 
 import javax.inject.Inject
+
 import forms.mappings.Mappings
+import models.register.Membership
 import play.api.data.Form
-import models.Membership
 
 class MembershipFormProvider @Inject() extends Mappings {
 

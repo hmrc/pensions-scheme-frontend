@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package models
+package identifiers.register.establishers.company
 
-import org.joda.time.LocalDate
-import play.api.libs.json._
+import identifiers.Identifier
 
-case class EstablisherDetails (firstName: String, lastName: String, date: LocalDate) {
-
-  def establisherName: String = s"$firstName $lastName"
-}
-
-object EstablisherDetails {
-  implicit val format = Json.format[EstablisherDetails]
+case object CompanyAddressYearsId extends Identifier {
+  override def toString: String = "companyAddressYears"
 }

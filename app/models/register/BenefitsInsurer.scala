@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.register
 
 import play.api.libs.json._
 
-case class SchemeDetails (schemeName: String, schemeType: SchemeType)
+case class BenefitsInsurer (companyName: String, policyNumber: String)
 
-object SchemeDetails {
-  implicit val format = Json.format[SchemeDetails]
+object BenefitsInsurer {
+  implicit val format = Json.format[BenefitsInsurer]
 }

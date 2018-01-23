@@ -33,7 +33,7 @@ class CompanyDetailsFormProviderSpec extends FormBehaviours {
   val form = new CompanyDetailsFormProvider()()
 
   "CompanyDetails form" must {
-    behave like questionForm(CompanyDetails("test company name", Some("GB123456789"), Some("123/A56789")))
+    behave like questionForm(CompanyDetails("test company name", Some("123456789"), Some("123/A56789")))
 
     behave like formWithMandatoryTextFields(
       Field("companyName", Required -> "messages__error__company_name")
@@ -46,7 +46,7 @@ class CompanyDetailsFormProviderSpec extends FormBehaviours {
           "payeNumber" -> "123/A56789"
         ))
 
-        coForm.get shouldBe CompanyDetails("test company name", Some(vatNo), Some("123/A56789"))
+        coForm.get shouldBe CompanyDetails("test company name", Some(vatNo.replace("GB", "")), Some("123/A56789"))
       }
     }
 

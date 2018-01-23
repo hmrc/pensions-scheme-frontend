@@ -1,4 +1,4 @@
-package models
+package models.$routeFile$
 
 import utils.{Enumerable, InputOption, WithName}
 

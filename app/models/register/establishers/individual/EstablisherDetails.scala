@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package models.register.establishers.individual
 
-import play.api.libs.json.{Format, JsPath, Json}
+import org.joda.time.LocalDate
+import play.api.libs.json._
 
-case class SortCode(first: String, second: String, third: String)
+case class EstablisherDetails (firstName: String, lastName: String, date: LocalDate) {
 
-object SortCode {
-  implicit val format = Json.format[SortCode]
+  def establisherName: String = s"$firstName $lastName"
+}
+
+object EstablisherDetails {
+  implicit val format = Json.format[EstablisherDetails]
 }

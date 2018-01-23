@@ -16,7 +16,9 @@
 
 package forms.mappings
 
-import models.{EstablisherNino, SchemeType, SortCode, UniqueTaxReference}
+import models.EstablisherNino
+import models.register.establishers.individual.UniqueTaxReference
+import models.register.{SchemeType, SortCode}
 import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -377,7 +379,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
       s"successfully bind valid vat number $vatNo" in {
         val coForm = testForm.bind(Map("vatNumber" -> vatNo))
 
-        coForm.get mustEqual vatNo.toUpperCase
+        coForm.get mustEqual vatNo.toUpperCase.replace("GB", "")
       }
     }
 

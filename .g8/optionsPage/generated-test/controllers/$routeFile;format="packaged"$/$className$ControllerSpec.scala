@@ -9,7 +9,8 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.$routeFile$.$className$FormProvider
 import identifiers.$routeFile$.$className$Id
-import models.{NormalMode, $className$}
+import models.NormalMode
+import models.$routeFile$.$className$
 import views.html.$routeFile$.$className;format="decap"$
 import controllers.ControllerSpecBase
 

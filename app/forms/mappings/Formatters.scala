@@ -107,7 +107,7 @@ trait Formatters {
         case str if !str.matches(regexVatNumber)  =>
           Left(Seq(FormError(key, invalidKey)))
         case str =>
-          Right(str)
+          Right(str.trim.replaceAll("GB", ""))
       }
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.register
 
 import play.api.libs.json._
 import utils.{InputOption, WithName}

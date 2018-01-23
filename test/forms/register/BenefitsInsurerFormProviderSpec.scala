@@ -17,8 +17,8 @@
 package forms.register
 
 import forms.behaviours.FormBehaviours
+import models.register.BenefitsInsurer
 import models.{Field, Required}
-import models.BenefitsInsurer
 import org.apache.commons.lang3.RandomStringUtils
 
 class BenefitsInsurerFormProviderSpec extends FormBehaviours {

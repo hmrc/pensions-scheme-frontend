@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.register
 
 import org.joda.time.LocalDate
 import play.api.libs.json._

@@ -26,8 +26,9 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.UniqueTaxReferenceFormProvider
 import identifiers.register.establishers.individual.UniqueTaxReferenceId
+import models.register.establishers.individual.UniqueTaxReference
 import models.requests.DataRequest
-import models.{Index, Mode, UniqueTaxReference}
+import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual._

@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package forms.register.establishers.company
 
-import play.api.libs.json._
+import javax.inject.Inject
 
-case class BenefitsInsurer (companyName: String, policyNumber: String)
+import forms.mappings.Mappings
+import models.register.establishers.company.CompanyAddressYears
+import play.api.data.Form
 
-object BenefitsInsurer {
-  implicit val format = Json.format[BenefitsInsurer]
+class AddressYearsFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[CompanyAddressYears] =
+    Form(
+      "value" -> enumerable[CompanyAddressYears]("messages__error__selection")
+    )
 }

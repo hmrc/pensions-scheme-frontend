@@ -18,6 +18,7 @@ package forms.register
 
 import forms.behaviours.FormBehaviours
 import models._
+import models.register.{SortCode, UKBankDetails}
 import org.apache.commons.lang3.{RandomStringUtils, RandomUtils}
 import org.joda.time.LocalDate
 

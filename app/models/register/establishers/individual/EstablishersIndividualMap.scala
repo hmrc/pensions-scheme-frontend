@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.register.establishers.individual
 
 import play.api.libs.json.{Reads, Writes}
 import scala.util.Try
