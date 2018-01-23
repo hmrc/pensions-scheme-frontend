@@ -11,7 +11,7 @@ import config.FrontendAppConfig
 import forms.$routeFile$.$className$FormProvider
 import identifiers.$routeFile$.$className$Id
 import models.Mode
-import models.$className$
+import models.$routeFile$.$className$
 import utils.{Navigator, UserAnswers}
 import views.html.$routeFile$.$className;format="decap"$
 

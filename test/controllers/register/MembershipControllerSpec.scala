@@ -25,9 +25,10 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.MembershipFormProvider
 import identifiers.register.MembershipId
-import models.{NormalMode, Membership}
+import models.NormalMode
 import views.html.register.membership
 import controllers.ControllerSpecBase
+import models.register.Membership
 
 class MembershipControllerSpec extends ControllerSpecBase {
 

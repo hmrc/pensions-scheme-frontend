@@ -10,7 +10,7 @@ import play.api.test.Helpers._
 import forms.$routeFile$.$className$FormProvider
 import identifiers.$routeFile$.$className$Id
 import models.NormalMode
-import models.$className$
+import models.$routeFile$.$className$
 import views.html.$routeFile$.$className;format="decap"$
 import controllers.ControllerSpecBase
 

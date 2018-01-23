@@ -17,18 +17,13 @@
 package controllers.register.establishers
 
 import play.api.data.Form
-import play.api.libs.json.{JsBoolean, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
+import models.NormalMode
 import play.api.test.Helpers._
-import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.AddEstablisherId
-import identifiers.register.establishers.individual.EstablisherDetailsId
-import models.{EstablisherDetails, NormalMode, SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import views.html.register.establishers.addEstablisher
 

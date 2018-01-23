@@ -26,8 +26,9 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.ContactDetailsFormProvider
 import identifiers.register.establishers.individual.ContactDetailsId
+import models.register.establishers.individual.ContactDetails
 import models.requests.DataRequest
-import models.{ContactDetails, Index, Mode}
+import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual._

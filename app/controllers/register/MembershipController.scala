@@ -26,7 +26,8 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.MembershipFormProvider
 import identifiers.register.MembershipId
-import models.{Membership, Mode}
+import models.Mode
+import models.register.Membership
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.membership

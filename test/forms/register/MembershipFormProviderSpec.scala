@@ -17,7 +17,8 @@
 package forms.register
 
 import forms.behaviours.FormBehaviours
-import models.{Field, Invalid, Required, Membership}
+import models.register.Membership
+import models.{Field, Invalid, Required}
 
 class MembershipFormProviderSpec extends FormBehaviours {
 

@@ -34,3 +34,8 @@ GET        /:index/individual/contactDetails              controllers.register.e
 POST       /:index/individual/contactDetails              controllers.register.establishers.individual.ContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/individual/changeContactDetails        controllers.register.establishers.individual.ContactDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeContactDetails        controllers.register.establishers.individual.ContactDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/company/companyAddressYears            controllers.register.establishers.company.CompanyAddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/company/companyAddressYears            controllers.register.establishers.company.CompanyAddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/company/companyAddressYears      controllers.register.establishers.company.CompanyAddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/company/companyAddressYears      controllers.register.establishers.company.CompanyAddressYearsController.onSubmit(mode: Mode = CheckMode, index: Index)
