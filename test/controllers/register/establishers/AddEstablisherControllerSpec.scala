@@ -43,7 +43,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
   val month = LocalDate.now().getMonthOfYear
   val year = LocalDate.now().getYear - 20
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameCacheMap): AddEstablisherController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddEstablisherController =
     new AddEstablisherController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
@@ -61,7 +61,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to session expired page on a GET when scheme name is not present" in {
-      val result = controller(getEmptyCacheMap).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(getEmptyData).onPageLoad(NormalMode)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

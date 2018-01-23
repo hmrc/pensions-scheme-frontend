@@ -34,6 +34,7 @@ import views.html.register.establishers.individual._
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+import play.api.libs.json._
 
 class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
@@ -45,16 +46,19 @@ class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   formProvider: ContactDetailsFormProvider) extends FrontendController
                                                   with I18nSupport with Enumerable.Implicits with MapFormats {
 
-  val form: Form[ContactDetails] = formProvider()
+  private def key(index: Int) = __ \ "establishers" \ index \ ContactDetailsId
+
+  private val form: Form[ContactDetails] = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
           val redirectResult = request.userAnswers.contactDetails(index) match {
-            case Success(None) => Ok(contactDetails(appConfig, form, mode, index, establisherName))
-            case Success(Some(value)) => Ok(contactDetails(appConfig, form.fill(value), mode, index, establisherName))
-            case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+            case None =>
+              Ok(contactDetails(appConfig, form, mode, index, establisherName))
+            case Some(value) =>
+              Ok(contactDetails(appConfig, form.fill(value), mode, index, establisherName))
           }
           Future.successful(redirectResult)
       }
@@ -68,7 +72,7 @@ class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(contactDetails(appConfig, formWithErrors, mode, index, establisherName))),
             (value) =>
-              dataCacheConnector.saveMap[ContactDetails](request.externalId, ContactDetailsId.toString, index, value).map(cacheMap =>
+              dataCacheConnector.save[ContactDetails](request.externalId, key(index), value).map(cacheMap =>
                 Redirect(navigator.nextPage(ContactDetailsId, mode)(new UserAnswers(cacheMap))))
           )
       }
@@ -77,11 +81,12 @@ class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
   private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
     request.userAnswers.establisherDetails(index) match {
-      case Success(Some(value)) => block(value.establisherName)
-      case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      case Some(value) =>
+        block(value.establisherName)
+      case _ =>
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
   }
-
 }
 
 

@@ -32,6 +32,7 @@ import utils.{Navigator, UserAnswers}
 import views.html.register.securedBenefits
 
 import scala.concurrent.Future
+import play.api.libs.json._
 
 class SecuredBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
@@ -42,7 +43,9 @@ class SecuredBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                          requireData: DataRequiredAction,
                                          formProvider: SecuredBenefitsFormProvider) extends FrontendController with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
+  private val key = __ \ SecuredBenefitsId
+
+  private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -59,7 +62,7 @@ class SecuredBenefitsController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(securedBenefits(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[Boolean](request.externalId, SecuredBenefitsId.toString, value).map(cacheMap =>
+          dataCacheConnector.save[Boolean](request.externalId, key, value).map(cacheMap =>
             Redirect(navigator.nextPage(SecuredBenefitsId, mode)(new UserAnswers(cacheMap))))
       )
   }

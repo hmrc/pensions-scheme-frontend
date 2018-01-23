@@ -22,69 +22,79 @@ import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
 import controllers.register.establishers.routes
+import play.api.libs.json.{JsPath, JsValue, Json, Reads}
+import play.api.libs.json._
 
 import scala.util.{Success, Try}
 
-class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
-  def contactDetails: Option[EstablishersIndividualMap[ContactDetails]] =
-    cacheMap.getEntry[EstablishersIndividualMap[ContactDetails]](ContactDetailsId.toString)
+class UserAnswers(json: JsValue) extends Enumerable.Implicits with MapFormats {
 
-  def contactDetails(index: Int): Try[Option[ContactDetails]] = contactDetails.map(_.get(index)).getOrElse(Success(None))
-
-  def establisherNino: Option[EstablishersIndividualMap[EstablisherNino]] =
-    cacheMap.getEntry[EstablishersIndividualMap[EstablisherNino]](EstablisherNinoId.toString)
-
-  def establisherNino(index:Int): Try[Option[EstablisherNino]] = establisherNino.map(_.get(index)).getOrElse(Success(None))
-
-  def uniqueTaxReference: Option[EstablishersIndividualMap[UniqueTaxReference]] =
-    cacheMap.getEntry[EstablishersIndividualMap[UniqueTaxReference]](UniqueTaxReferenceId.toString)
-
-  def uniqueTaxReference(index: Int): Try[Option[UniqueTaxReference]] = uniqueTaxReference.map(_.get(index)).getOrElse(
-    Success(None))
-
-  def addEstablisher(): Option[Boolean] = cacheMap.getEntry[Boolean](AddEstablisherId.toString)
-
-  def establisherKind(index: Int): Try[Option[EstablisherKind]] = establisherKind.map(_.get(index)).getOrElse(Success(None))
-
-  def establisherKind: Option[EstablishersIndividualMap[EstablisherKind]] = cacheMap.getEntry[EstablishersIndividualMap[EstablisherKind]](
-    EstablisherKindId.toString)
-
-  def establisherDetails: Option[EstablishersIndividualMap[EstablisherDetails]] =
-    cacheMap.getEntry[EstablishersIndividualMap[EstablisherDetails]](EstablisherDetailsId.toString)
-
-  def establisherDetails(index: Int): Try[Option[EstablisherDetails]] = establisherDetails.map(_.get(index)).getOrElse(
-    Success(None))
-
-  def allEstablishers: Option[Map[String, String]] = {
-    establisherDetails.map(_.getValues.map{ estDetails =>
-      (estDetails.establisherName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
-    }.toMap)
+  private def fromPath[A](path: JsPath)(implicit rds: Reads[A]): Option[A] = {
+    JsLens.fromPath(path).get(json)
+      .flatMap(Json.fromJson[A]).asOpt
   }
 
-  def schemeEstablishedCountry: Option[String] = cacheMap.getEntry[String](SchemeEstablishedCountryId.toString)
+  def contactDetails(index: Int): Option[ContactDetails] =
+    fromPath[ContactDetails](__ \ "establishers" \ index \ ContactDetailsId)
 
-  def addressYears: Option[EstablishersIndividualMap[AddressYears]] =
-    cacheMap.getEntry[EstablishersIndividualMap[AddressYears]](AddressYearsId.toString)
+  def establisherNino(index:Int): Option[EstablisherNino] =
+    fromPath[EstablisherNino](__ \ "establishers" \ index \ EstablisherNinoId)
 
-  def addressYears(index: Int): Try[Option[AddressYears]] = addressYears.map(_.get(index)).getOrElse(Success(None))
+  def uniqueTaxReference(index: Int): Option[UniqueTaxReference] =
+    fromPath[UniqueTaxReference](__ \ "establishers" \ index \ UniqueTaxReferenceId)
 
-  def uKBankAccount: Option[Boolean] = cacheMap.getEntry[Boolean](UKBankAccountId.toString)
+  def addEstablisher(): Option[Boolean] =
+    fromPath[Boolean](__ \ AddEstablisherId)
 
-  def uKBankDetails: Option[UKBankDetails] = cacheMap.getEntry[UKBankDetails](UKBankDetailsId.toString)
+  def establisherKind: Option[EstablishersIndividualMap[EstablisherKind]] =
+    fromPath[EstablishersIndividualMap[EstablisherKind]](__ \ EstablisherKindId)
 
-  def benefits: Option[Benefits] = cacheMap.getEntry[Benefits](BenefitsId.toString)
+  def establisherKind(index: Int): Try[Option[EstablisherKind]] =
+    establisherKind.map(_.get(index)).getOrElse(Success(None))
 
-  def benefitsInsurer: Option[BenefitsInsurer] = cacheMap.getEntry[BenefitsInsurer](BenefitsInsurerId.toString)
+  def establisherDetails(index: Int): Option[EstablisherDetails] =
+    fromPath[EstablisherDetails](__ \ "establishers" \ index \ EstablisherDetailsId)
 
-  def membership: Option[Membership] = cacheMap.getEntry[Membership](MembershipId.toString)
+  def allEstablishers: Option[Map[String, String]] = {
+//    establisherDetails.map(_.getValues.map{ estDetails =>
+//      (estDetails.establisherName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
+//    }.toMap)
+    ???
+  }
 
-  def membershipFuture: Option[MembershipFuture] = cacheMap.getEntry[MembershipFuture](MembershipFutureId.toString)
+  def addressYears(index: Int): Option[AddressYears] =
+    fromPath[AddressYears](__ \ "establishers" \ index \ AddressYearsId)
 
-  def investmentRegulated: Option[Boolean] = cacheMap.getEntry[Boolean](InvestmentRegulatedId.toString)
+  def schemeEstablishedCountry: Option[String] =
+    fromPath[String](__ \ SchemeEstablishedCountryId)
 
-  def securedBenefits: Option[Boolean] = cacheMap.getEntry[Boolean](SecuredBenefitsId.toString)
+  def uKBankAccount: Option[Boolean] =
+    fromPath[Boolean](__ \ UKBankAccountId)
 
-  def occupationalPensionScheme: Option[Boolean] = cacheMap.getEntry[Boolean](OccupationalPensionSchemeId.toString)
+  def uKBankDetails: Option[UKBankDetails] =
+    fromPath[UKBankDetails](__ \ UKBankDetailsId)
 
-  def schemeDetails: Option[SchemeDetails] = cacheMap.getEntry[SchemeDetails](SchemeDetailsId.toString)
+  def benefits: Option[Benefits] =
+    fromPath[Benefits](__ \ BenefitsId)
+
+  def benefitsInsurer: Option[BenefitsInsurer] =
+    fromPath[BenefitsInsurer](__ \ BenefitsInsurerId)
+
+  def membership: Option[Membership] =
+    fromPath[Membership](__ \ MembershipId)
+
+  def membershipFuture: Option[MembershipFuture] =
+    fromPath[MembershipFuture](__ \ MembershipFutureId)
+
+  def investmentRegulated: Option[Boolean] =
+    fromPath[Boolean](__ \ InvestmentRegulatedId)
+
+  def securedBenefits: Option[Boolean] =
+    fromPath[Boolean](__ \ SecuredBenefitsId)
+
+  def occupationalPensionScheme: Option[Boolean] =
+    fromPath[Boolean](__ \ OccupationalPensionSchemeId)
+
+  def schemeDetails: Option[SchemeDetails] =
+    fromPath[SchemeDetails](__ \ SchemeDetailsId)
 }

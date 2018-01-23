@@ -32,6 +32,7 @@ import utils.{Navigator, UserAnswers}
 import views.html.register.occupationalPensionScheme
 
 import scala.concurrent.Future
+import play.api.libs.json._
 
 class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
@@ -42,7 +43,9 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
                                          requireData: DataRequiredAction,
                                          formProvider: OccupationalPensionSchemeFormProvider) extends FrontendController with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
+  private val key = __ \ OccupationalPensionSchemeId
+
+  private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -59,7 +62,7 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(occupationalPensionScheme(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[Boolean](request.externalId, OccupationalPensionSchemeId.toString, value).map(cacheMap =>
+          dataCacheConnector.save[Boolean](request.externalId, key, value).map(cacheMap =>
             Redirect(navigator.nextPage(OccupationalPensionSchemeId, mode)(new UserAnswers(cacheMap))))
       )
   }

@@ -42,10 +42,13 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(1)
   val invalidIndex = Index(11)
 
-  def validData: Map[String, JsValue] = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
-    EstablisherKindId.toString->Json.obj("1"->EstablisherKind.options.head.value.toString))
+  def validData: JsValue = Json.obj(
+    SchemeDetailsId.toString   -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
+    EstablisherKindId.toString -> Json.obj(
+      "1" -> EstablisherKind.options.head.value.toString)
+  )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameCacheMap):EstablisherKindController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName):EstablisherKindController =
     new EstablisherKindController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -61,14 +64,14 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to session expired from a GET when the scheme name is not present" in {
-      val result = controller(getEmptyCacheMap).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode,firstIndex)(fakeRequest)
 
@@ -76,7 +79,7 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to session expired from a GET when the index is invalid" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
 

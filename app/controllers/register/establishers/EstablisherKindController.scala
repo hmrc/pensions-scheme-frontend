@@ -34,6 +34,7 @@ import views.html.register.establishers.establisherKind
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+import play.api.libs.json._
 
 class EstablisherKindController @Inject()(
                                         appConfig: FrontendAppConfig,
@@ -45,9 +46,11 @@ class EstablisherKindController @Inject()(
                                         requireData: DataRequiredAction,
                                         formProvider: EstablisherKindFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats {
 
-  val form = formProvider()
+  private def key(index: Int) = __ \ "establishers" \ index \ EstablisherKindId
 
-  def onPageLoad(mode: Mode,index:Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  private val form = formProvider()
+
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
@@ -60,7 +63,7 @@ class EstablisherKindController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode,index:Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName=>
@@ -68,8 +71,8 @@ class EstablisherKindController @Inject()(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index,schemeName))),
           (value) =>
-            dataCacheConnector.saveMap[EstablisherKind](request.externalId,
-              EstablisherKindId.toString, index, value).map(cacheMap =>
+            dataCacheConnector.save[EstablisherKind](request.externalId,
+              key(index), value).map(cacheMap =>
               Redirect(navigator.nextPage(EstablisherKindId, mode)(new UserAnswers(cacheMap))))
         )
       }

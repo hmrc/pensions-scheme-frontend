@@ -16,4 +16,12 @@
 
 package identifiers
 
+import scala.language.implicitConversions
+
 trait Identifier
+
+object Identifier {
+
+  implicit def toString(i: Identifier): String =
+    i.toString
+}

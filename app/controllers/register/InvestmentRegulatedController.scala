@@ -30,6 +30,7 @@ import models.Mode
 import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.investmentRegulated
+import play.api.libs.json._
 
 import scala.concurrent.Future
 
@@ -42,7 +43,9 @@ class InvestmentRegulatedController @Inject()(appConfig: FrontendAppConfig,
                                          requireData: DataRequiredAction,
                                          formProvider: InvestmentRegulatedFormProvider) extends FrontendController with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
+  private val key = __ \ InvestmentRegulatedId
+
+  private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -59,7 +62,7 @@ class InvestmentRegulatedController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(investmentRegulated(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[Boolean](request.externalId, InvestmentRegulatedId.toString, value).map(cacheMap =>
+          dataCacheConnector.save[Boolean](request.externalId, key, value).map(cacheMap =>
             Redirect(navigator.nextPage(InvestmentRegulatedId, mode)(new UserAnswers(cacheMap))))
       )
   }

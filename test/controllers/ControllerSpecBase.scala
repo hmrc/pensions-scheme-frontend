@@ -30,17 +30,20 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
 
   val cacheMapId = "id"
 
-  def emptyCacheMap: CacheMap = CacheMap(cacheMapId, Map())
+  def getEmptyData: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))
 
-  def getEmptyCacheMap: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(emptyCacheMap))
-
-  def getMandatorySchemeNameCacheMap: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(CacheMap("id", Map(
-    SchemeDetailsId.toString -> Json.toJson(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust))))))
+  def getMandatorySchemeName: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj(
+    SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust))))
 
   def dontGetAnyData: FakeDataRetrievalAction = new FakeDataRetrievalAction(None)
 
-  def getMandatoryEstablisherCacheMap: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(CacheMap("id", Map(SchemeDetailsId.toString -> Json.toJson(
-    SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)), EstablisherDetailsId.toString ->
-    Json.toJson(EstablishersIndividualMap[EstablisherDetails](Map(0 -> EstablisherDetails("test first name", "test last name", LocalDate.now())))
-  )))))
+  def getMandatoryEstablisher: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
+    Json.obj(
+      SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+      "establishers" -> Json.arr(
+        Json.obj(
+          EstablisherDetailsId.toString -> EstablisherDetails("test first name", "test last name", LocalDate.now())
+        )
+      )
+    )))
 }

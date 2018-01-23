@@ -34,6 +34,7 @@ import views.html.register.establishers.individual.establisherNino
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+import play.api.libs.json._
 
 class EstablisherNinoController @Inject()(
                                         appConfig: FrontendAppConfig,
@@ -46,16 +47,19 @@ class EstablisherNinoController @Inject()(
                                         formProvider: EstablisherNinoFormProvider) extends FrontendController
   with I18nSupport with Enumerable.Implicits with MapFormats{
 
-  val form: Form[EstablisherNino] = formProvider()
+  private def key(index: Int) = __ \ "establishers" \ index \ EstablisherNinoId
+
+  private val form: Form[EstablisherNino] = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
           val redirectResult = request.userAnswers.establisherNino(index) match {
-            case Success(None) => Ok(establisherNino(appConfig, form, mode, index, establisherName))
-            case Success(Some(value)) => Ok(establisherNino(appConfig, form.fill(value), mode, index, establisherName))
-            case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+            case None =>
+              Ok(establisherNino(appConfig, form, mode, index, establisherName))
+            case Some(value) =>
+              Ok(establisherNino(appConfig, form.fill(value), mode, index, establisherName))
           }
           Future.successful(redirectResult)
       }
@@ -69,8 +73,8 @@ class EstablisherNinoController @Inject()(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(establisherNino(appConfig, formWithErrors, mode, index, establisherName))),
             (value) =>
-              dataCacheConnector.saveMap[EstablisherNino](request.externalId,
-                EstablisherNinoId.toString, index, value).map(cacheMap =>
+              dataCacheConnector.save[EstablisherNino](request.externalId,
+                key(index), value).map(cacheMap =>
                 Redirect(navigator.nextPage(EstablisherNinoId, mode)(new UserAnswers(cacheMap))))
           )
       }
@@ -79,8 +83,10 @@ class EstablisherNinoController @Inject()(
   private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
     request.userAnswers.establisherDetails(index) match {
-      case Success(Some(value)) => block(value.establisherName)
-      case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      case Some(value) =>
+        block(value.establisherName)
+      case _ =>
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
   }
 }

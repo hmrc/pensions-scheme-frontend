@@ -40,13 +40,23 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(0)
   val establisherName = "test first name test last name"
 
-  val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)),
-    EstablisherDetailsId.toString -> Json.toJson(EstablishersIndividualMap[EstablisherDetails](Map(
-      0 -> EstablisherDetails("test first name", "test last name", LocalDate.now),
-      1 -> EstablisherDetails("test", "test", LocalDate.now)))),
-    EstablisherNinoId.toString -> Json.toJson(EstablishersIndividualMap[EstablisherNino](Map(0 -> EstablisherNino.Yes("CS700100A")))))
+  val validData = Json.obj(
+    SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    "establishers" -> Json.arr(
+      Json.obj(
+        EstablisherDetailsId.toString ->
+          EstablisherDetails("test first name", "test last name", LocalDate.now),
+        EstablisherNinoId.toString ->
+          EstablisherNino.Yes("CS700100A")
+      ),
+      Json.obj(
+        EstablisherDetailsId.toString ->
+          EstablisherDetails("test", "test", LocalDate.now)
+      )
+    )
+  )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCacheMap): EstablisherNinoController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): EstablisherNinoController =
     new EstablisherNinoController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -56,23 +66,19 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
   "EstablisherNino Controller" must {
 
     "return OK and the correct view for a GET when establisher name is present" in {
-
       val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
-
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-
       contentAsString(result) mustBe viewAsString(form.fill(EstablisherNino.Yes("CS700100A")))
     }
 
     "redirect to Session Expired page when establisher name is not present" in {
-      val result = controller(getEmptyCacheMap).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-
+      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
@@ -80,9 +86,7 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("establisherNino.hasNino", "true"), ("establisherNino.nino", "CS700100A"))
-
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -90,16 +94,13 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
-
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
-
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
@@ -107,15 +108,13 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", EstablisherNino.options.head.value))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired page when the index is not valid" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, Index(2))(fakeRequest)
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }

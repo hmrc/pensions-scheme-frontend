@@ -33,6 +33,7 @@ import utils.{Navigator, UserAnswers}
 import views.html.register.uKBankDetails
 
 import scala.concurrent.Future
+import play.api.libs.json._
 
 class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
@@ -43,7 +44,9 @@ class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   requireData: DataRequiredAction,
                                                   formProvider: UKBankDetailsFormProvider) extends FrontendController with I18nSupport {
 
-  val form = formProvider()
+  private val key = __ \ UKBankDetailsId
+
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -60,7 +63,7 @@ class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(uKBankDetails(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[UKBankDetails](request.externalId, UKBankDetailsId.toString, value).map(cacheMap =>
+          dataCacheConnector.save[UKBankDetails](request.externalId, key, value).map(cacheMap =>
             Redirect(navigator.nextPage(UKBankDetailsId, mode)(new UserAnswers(cacheMap))))
       )
   }

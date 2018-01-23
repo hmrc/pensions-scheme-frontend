@@ -17,7 +17,7 @@
 package controllers.register
 
 import play.api.data.Form
-import play.api.libs.json.JsString
+import play.api.libs.json.{JsString, Json}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.{FakeNavigator, InputOption}
 import connectors.FakeDataCacheConnector
@@ -40,7 +40,7 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
   val formProvider = new SchemeEstablishedCountryFormProvider(countryOptions)
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): SchemeEstablishedCountryController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeEstablishedCountryController =
     new SchemeEstablishedCountryController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl,
       formProvider, countryOptions){}
@@ -59,8 +59,8 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(SchemeEstablishedCountryId.toString -> JsString(testAnswer))
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val validData = Json.obj(SchemeEstablishedCountryId.toString -> testAnswer)
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 

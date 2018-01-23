@@ -35,6 +35,7 @@ import play.api.mvc.Result
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+import play.api.libs.json._
 
 class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
@@ -46,16 +47,19 @@ class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
                                              formProvider: EstablisherDetailsFormProvider) extends FrontendController
   with I18nSupport with Enumerable.Implicits with MapFormats {
 
-  val form = formProvider()
+  private def key(index: Int) = __ \ "establishers" \ index \ EstablisherDetailsId
+
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
           val redirectResult = request.userAnswers.establisherDetails(index) match {
-            case Success(None) => Ok(establisherDetails(appConfig, form, mode, index, schemeName))
-            case Success(Some(value)) => Ok(establisherDetails(appConfig, form.fill(value), mode, index, schemeName))
-            case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+            case None =>
+              Ok(establisherDetails(appConfig, form, mode, index, schemeName))
+            case Some(value) =>
+              Ok(establisherDetails(appConfig, form.fill(value), mode, index, schemeName))
           }
         Future.successful(redirectResult)
       }
@@ -70,8 +74,8 @@ class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
               Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index,
                 schemeName))),
             (value) =>
-              dataCacheConnector.saveMap[EstablisherDetails](request.externalId,
-                EstablisherDetailsId.toString, index, value).map(cacheMap =>
+              dataCacheConnector.save[EstablisherDetails](request.externalId,
+                key(index), value).map(cacheMap =>
                 Redirect(navigator.nextPage(EstablisherDetailsId, mode)(new UserAnswers(cacheMap))))
           )
       }

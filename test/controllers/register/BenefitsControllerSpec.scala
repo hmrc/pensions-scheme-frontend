@@ -17,7 +17,7 @@
 package controllers.register
 
 import play.api.data.Form
-import play.api.libs.json.JsString
+import play.api.libs.json.{JsString, Json}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
@@ -25,7 +25,7 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.BenefitsFormProvider
 import identifiers.register.BenefitsId
-import models.{NormalMode, Benefits}
+import models.{Benefits, NormalMode}
 import views.html.register.benefits
 import controllers.ControllerSpecBase
 
@@ -36,7 +36,7 @@ class BenefitsControllerSpec extends ControllerSpecBase {
   val formProvider = new BenefitsFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new BenefitsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -52,8 +52,8 @@ class BenefitsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(BenefitsId.toString -> JsString(Benefits.values.head.toString))
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val validData = Json.obj(BenefitsId.toString -> Benefits.values.head.toString)
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 

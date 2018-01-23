@@ -33,6 +33,7 @@ import utils.{Navigator, UserAnswers}
 import views.html.register.schemeDetails
 
 import scala.concurrent.Future
+import play.api.libs.json._
 
 class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
@@ -42,7 +43,9 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   getData: DataRetrievalAction,
                                                   formProvider: SchemeDetailsFormProvider) extends FrontendController with I18nSupport {
 
-  val form = formProvider()
+  private val key = __ \ SchemeDetailsId
+
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
@@ -59,7 +62,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[SchemeDetails](request.externalId, SchemeDetailsId.toString, value).map(cacheMap =>
+          dataCacheConnector.save[SchemeDetails](request.externalId, key, value).map(cacheMap =>
             Redirect(navigator.nextPage(SchemeDetailsId, mode)(new UserAnswers(cacheMap))))
       )
   }

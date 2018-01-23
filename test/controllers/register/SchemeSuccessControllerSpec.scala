@@ -23,16 +23,17 @@ import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
 import models.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.cache.client.CacheMap
 
 class SchemeSuccessControllerSpec extends ControllerSpecBase {
 
-  val validSchemeDataCacheMap = CacheMap(SchemeDetailsId.toString,
-    Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("test scheme name", SchemeType.SingleTrust))))
+  val validData: JsObject = Json.obj(
+    SchemeDetailsId.toString -> Json.toJson(SchemeDetails("test scheme name", SchemeType.SingleTrust))
+  )
 
   def controller(dataRetrievalAction: DataRetrievalAction =
-                 new FakeDataRetrievalAction(Some(validSchemeDataCacheMap))):SchemeSuccessController =
+                 new FakeDataRetrievalAction(Some(validData))):SchemeSuccessController =
     new SchemeSuccessController(frontendAppConfig, messagesApi, FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl)
 

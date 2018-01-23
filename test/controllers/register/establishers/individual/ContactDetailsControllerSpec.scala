@@ -42,57 +42,60 @@ class ContactDetailsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(10)
   val establisherName = "test first name test last name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCacheMap): ContactDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): ContactDetailsController =
     new ContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = contactDetails(frontendAppConfig, form, NormalMode,
     firstIndex, establisherName)(fakeRequest, messages).toString
 
-  val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)),
-    EstablisherDetailsId.toString -> Json.toJson(EstablishersIndividualMap[EstablisherDetails](Map(
-      0 -> EstablisherDetails("test first name", "test last name", LocalDate.now),
-      1 -> EstablisherDetails("test", "test", LocalDate.now)))),
-    ContactDetailsId.toString -> Json.toJson(EstablishersIndividualMap[ContactDetails](Map(0 -> ContactDetails("test@test.com", "123456789")))))
+  val validData = Json.obj(
+    SchemeDetailsId.toString ->
+      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    "establishers" -> Json.arr(
+      Json.obj(
+        EstablisherDetailsId.toString ->
+          EstablisherDetails("test first name", "test last name", LocalDate.now),
+        ContactDetailsId.toString ->
+          ContactDetails("test@test.com", "123456789")
+      ),
+      Json.obj(
+        EstablisherDetailsId.toString ->
+          EstablisherDetails("test", "test", LocalDate.now)
+      )
+    )
+  )
 
   "ContactDetails Controller" must {
 
     "return OK and the correct view for a GET when establisher name is present" in {
       val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
-
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
     "redirect to Session Expired page when establisher name is not present" in {
-      val result = controller(getEmptyCacheMap).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-
+      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to session expired from a GET when the index is invalid" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
-
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
-
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-
       contentAsString(result) mustBe viewAsString(form.fill(ContactDetails("test@test.com", "123456789")))
     }
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("emailAddress", "test@test.com"), ("phoneNumber", "123456789"))
-
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -100,16 +103,13 @@ class ContactDetailsControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
-
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
-
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
@@ -117,7 +117,6 @@ class ContactDetailsControllerSpec extends ControllerSpecBase {
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("emailAddress", "value 1"), ("phoneNumber", "value 2"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }

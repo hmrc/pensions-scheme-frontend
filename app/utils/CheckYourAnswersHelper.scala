@@ -25,25 +25,25 @@ import scala.util.Success
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def uniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.uniqueTaxReference(index) match {
-    case Success(Some(x)) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
+    case Some(x) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 
   def establisherNino(index: Int): Option[AnswerRow] = userAnswers.establisherNino(index) match {
-    case Success(Some(x)) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${EstablisherNino.Yes} ${EstablisherNino.No}", false,
+    case Some(x) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${EstablisherNino.Yes} ${EstablisherNino.No}", false,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 
   def contactDetails(index: Int): Option[AnswerRow] = userAnswers.contactDetails(index) match {
-    case Success(Some(x)) => Some(AnswerRow("contactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
+    case Some(x) => Some(AnswerRow("contactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
       controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 
   def establisherDetails(index: Int): Option[AnswerRow] = userAnswers.establisherDetails(index) match {
-    case Success(Some(x)) => Some(AnswerRow("establisherDetails.checkYourAnswersLabel", s"${x.firstName} ${x.lastName}", false,
+    case Some(x) => Some(AnswerRow("establisherDetails.checkYourAnswersLabel", s"${x.firstName} ${x.lastName}", false,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
@@ -76,7 +76,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def addressYears(index: Int): Option[AnswerRow] = {
     userAnswers.addressYears(index) match {
-      case Success(Some(x)) => Some(AnswerRow("addressYears.checkYourAnswersLabel", s"addressYears.$x", true,
+      case Some(x) => Some(AnswerRow("addressYears.checkYourAnswersLabel", s"addressYears.$x", true,
         controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, Index(index)).url))
       case _ => None
     }

@@ -32,6 +32,7 @@ import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.membershipFuture
 
 import scala.concurrent.Future
+import play.api.libs.json._
 
 class MembershipFutureController @Inject()(
                                         appConfig: FrontendAppConfig,
@@ -43,7 +44,9 @@ class MembershipFutureController @Inject()(
                                         requireData: DataRequiredAction,
                                         formProvider: MembershipFutureFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
-  val form = formProvider()
+  private val key = __ \ MembershipFutureId
+
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -60,7 +63,7 @@ class MembershipFutureController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(membershipFuture(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[MembershipFuture](request.externalId, MembershipFutureId.toString, value).map(cacheMap =>
+          dataCacheConnector.save[MembershipFuture](request.externalId, key, value).map(cacheMap =>
             Redirect(navigator.nextPage(MembershipFutureId, mode)(new UserAnswers(cacheMap))))
       )
   }
