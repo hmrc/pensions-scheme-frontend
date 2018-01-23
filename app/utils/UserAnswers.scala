@@ -22,12 +22,21 @@ import identifiers.register.establishers.individual._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
 import controllers.register.establishers.routes
+import models.register._
+import models.register.establishers.EstablisherKind
+import models.register.establishers.individual._
+import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.CompanyRegistrationNumberId
 
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
   def companyRegistrationNumber: Option[CompanyRegistrationNumber] = cacheMap.getEntry[CompanyRegistrationNumber](CompanyRegistrationNumberId.toString)
+
+  def companyDetails: Option[EstablishersIndividualMap[CompanyDetails]] = cacheMap.getEntry[EstablishersIndividualMap[CompanyDetails]](
+    CompanyDetailsId.toString)
+
+  def companyDetails(index: Int): Try[Option[CompanyDetails]] = companyDetails.map(_.get(index)).getOrElse(Success(None))
 
   def contactDetails: Option[EstablishersIndividualMap[ContactDetails]] =
     cacheMap.getEntry[EstablishersIndividualMap[ContactDetails]](ContactDetailsId.toString)
@@ -38,6 +47,12 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapF
     cacheMap.getEntry[EstablishersIndividualMap[EstablisherNino]](EstablisherNinoId.toString)
 
   def establisherNino(index:Int): Try[Option[EstablisherNino]] = establisherNino.map(_.get(index)).getOrElse(Success(None))
+
+  def companyAddressYears: Option[EstablishersIndividualMap[models.register.establishers.company.CompanyAddressYears]] =
+    cacheMap.getEntry[EstablishersIndividualMap[models.register.establishers.company.CompanyAddressYears]](CompanyAddressYearsId.toString)
+
+  def companyAddressYears(index: Int): Try[Option[models.register.establishers.company.CompanyAddressYears]] =
+    companyAddressYears.map(_.get(index)).getOrElse(Success(None))
 
   def uniqueTaxReference: Option[EstablishersIndividualMap[UniqueTaxReference]] =
     cacheMap.getEntry[EstablishersIndividualMap[UniqueTaxReference]](UniqueTaxReferenceId.toString)
@@ -59,9 +74,14 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapF
     Success(None))
 
   def allEstablishers: Option[Map[String, String]] = {
-    establisherDetails.map(_.getValues.map{ estDetails =>
-      (estDetails.establisherName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
-    }.toMap)
+    for {
+      individualEst <- establisherDetails.map(_.getValues.map(estDetails =>
+        (estDetails.establisherName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
+      ))
+      companyEst <- companyDetails.map(_.getValues.map(details =>
+        (details.companyName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
+      ))
+    } yield (individualEst ++ companyEst).toMap
   }
 
   def schemeEstablishedCountry: Option[String] = cacheMap.getEntry[String](SchemeEstablishedCountryId.toString)

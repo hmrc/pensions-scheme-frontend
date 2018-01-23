@@ -23,6 +23,8 @@ import forms.register.establishers.individual.EstablisherNinoFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNinoId}
 import models._
+import models.register.{SchemeDetails, SchemeType}
+import models.register.establishers.individual.{EstablisherDetails, EstablishersIndividualMap}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json

@@ -29,6 +29,8 @@ import models._
 import views.html.register.establishers.individual.establisherDetails
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
+import models.register.establishers.individual.EstablisherDetails
+import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 
@@ -43,10 +45,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(1)
   val invalidIndex = Index(3)
 
-  val minimalDataCacheMap = new FakeDataRetrievalAction(Some(CacheMap("id", Map(
-    SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust))))))
-
-  def controller(dataRetrievalAction: DataRetrievalAction = minimalDataCacheMap): EstablisherDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameCacheMap): EstablisherDetailsController =
     new EstablisherDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 

@@ -29,6 +29,8 @@ import models._
 import views.html.register.establishers.establisherKind
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
+import models.register.establishers.EstablisherKind
+import models.register.{SchemeDetails, SchemeType}
 import play.api.mvc.Call
 
 class EstablisherKindControllerSpec extends ControllerSpecBase {
@@ -43,7 +45,7 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(11)
 
   def validData: Map[String, JsValue] = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
-    EstablisherKindId.toString->Json.obj("1"->EstablisherKind.options.head.value.toString))
+    EstablisherKindId.toString->Json.obj("1"-> EstablisherKind.options.head.value.toString))
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameCacheMap):EstablisherKindController =
     new EstablisherKindController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),

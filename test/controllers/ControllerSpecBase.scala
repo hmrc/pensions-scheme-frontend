@@ -21,7 +21,8 @@ import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import models.{EstablisherDetails, EstablishersIndividualMap, SchemeDetails, SchemeType}
+import models.register.establishers.individual.{EstablisherDetails, EstablishersIndividualMap}
+import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
 import utils.{Enumerable, MapFormats}

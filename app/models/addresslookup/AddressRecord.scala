@@ -18,7 +18,7 @@ package models.addresslookup
 
 import play.api.libs.json._
 
-case class AddressRecord(id: String,  address: Address)
+case class AddressRecord(address: Address)
 
 object AddressRecord {
   implicit val addressRecordFormat: Format[AddressRecord] = Json.format[AddressRecord]

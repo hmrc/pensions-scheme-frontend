@@ -16,15 +16,17 @@
 
 package forms.mappings
 
-import models.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
-import models._
+import models.EstablisherNino
+import models.register.{SchemeType, SortCode}
+import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
+import models.register.establishers.individual.UniqueTaxReference
 import org.joda.time.LocalDate
 import play.api.data.Forms.{of, _}
 import play.api.data.format.Formatter
 import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import uk.gov.voa.play.form.ConditionalMappings._
 import utils.Enumerable
-
+import models._
 import scala.util.Try
 
 trait Mappings extends Formatters with Constraints {
@@ -193,6 +195,10 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
     }
 
     Forms.of(formatter)
+  }
+
+  protected def vatMapping(invalidKey: String, maxErrorKey: String): FieldMapping[String] = {
+    of(vatFormatter(invalidKey, maxErrorKey))
   }
 
   protected def companyRegistrationNumberMapping(requiredKey: String = "messages__error__has_crn_company",

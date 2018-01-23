@@ -19,7 +19,7 @@ package forms.register.establishers.individual
 import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
-import models.AddressYears
+import models.register.establishers.individual.AddressYears
 
 class AddressYearsFormProvider @Inject() extends Mappings {
 

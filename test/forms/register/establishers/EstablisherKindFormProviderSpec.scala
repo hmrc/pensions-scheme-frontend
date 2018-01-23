@@ -17,7 +17,8 @@
 package forms.register.establishers
 
 import forms.behaviours.FormBehaviours
-import models.{Field, Invalid, Required, EstablisherKind}
+import models.register.establishers.EstablisherKind
+import models.{Field, Invalid, Required}
 
 class EstablisherKindFormProviderSpec extends FormBehaviours {
 
