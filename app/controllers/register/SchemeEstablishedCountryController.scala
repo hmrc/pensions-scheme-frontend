@@ -26,7 +26,8 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.SchemeEstablishedCountryFormProvider
 import identifiers.register.SchemeEstablishedCountryId
-import models.{CountryOptions, Mode}
+import models.Mode
+import models.register.CountryOptions
 import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.schemeEstablishedCountry

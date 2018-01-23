@@ -17,7 +17,8 @@
 package forms.register
 
 import forms.behaviours.FormBehaviours
-import models.{Field, Invalid, Required, Benefits}
+import models.register.Benefits
+import models.{Field, Invalid, Required}
 
 class BenefitsFormProviderSpec extends FormBehaviours {
 

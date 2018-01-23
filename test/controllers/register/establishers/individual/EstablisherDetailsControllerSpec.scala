@@ -29,6 +29,8 @@ import models._
 import views.html.register.establishers.individual.establisherDetails
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
+import models.register.establishers.individual.EstablisherDetails
+import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 

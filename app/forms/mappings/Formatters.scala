@@ -94,14 +94,20 @@ trait Formatters {
 
   private[mappings] def vatFormatter(invalidKey: String, maxLengthKey: String): Formatter[String] = new Formatter[String] {
 
-    val regexVatNumber = "(GB)?[0-9]+"
+    val regexVatNumber = "(GB)?[0-9]{9}"
+
+    private val baseFormatter = stringFormatter(invalidKey)
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
 
-      data.get(key) match {
-        case Some(str) if(!str.matches(regexVatNumber)) => Left(Seq(FormError(key, invalidKey)))
-        case Some(str) if str.trim.replace("GB", "").length > 9 => Left(Seq(FormError(key, maxLengthKey)))
-        case Some(str) => Right(str)
+      baseFormatter.bind(key, data).right.map(_.trim.toUpperCase)
+        .right.flatMap {
+        case str if str.trim.replaceAll("GB", "").length > 9 =>
+          Left(Seq(FormError(key, maxLengthKey)))
+        case str if !str.matches(regexVatNumber)  =>
+          Left(Seq(FormError(key, invalidKey)))
+        case str =>
+          Right(str.trim.replaceAll("GB", ""))
       }
     }
 

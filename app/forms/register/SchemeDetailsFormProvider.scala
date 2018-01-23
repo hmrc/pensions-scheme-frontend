@@ -17,10 +17,11 @@
 package forms.register
 
 import javax.inject.Inject
+
 import forms.mappings.{Constraints, Mappings}
+import models.register.SchemeDetails
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{SchemeDetails, SchemeType}
 
 class SchemeDetailsFormProvider @Inject() extends Mappings with Constraints {
   val schemeNameMaxLength = 255
