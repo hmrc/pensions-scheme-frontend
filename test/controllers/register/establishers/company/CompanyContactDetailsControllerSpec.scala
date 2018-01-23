@@ -40,13 +40,14 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val firstIndex = Index(0)
   val invalidIndex = Index(10)
+  val companyName = "test first name test last name"
 
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
     new CompanyContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = companyContactDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = companyContactDetails(frontendAppConfig, form, NormalMode, firstIndex, companyName)(fakeRequest, messages).toString
 
   val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)),
     EstablisherDetailsId.toString -> Json.toJson(EstablishersIndividualMap[EstablisherDetails](Map(

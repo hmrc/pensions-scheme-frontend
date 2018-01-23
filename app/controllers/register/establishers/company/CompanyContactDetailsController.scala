@@ -26,6 +26,7 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.company.CompanyContactDetailsFormProvider
 import identifiers.register.establishers.company.CompanyContactDetailsId
+import models.requests.DataRequest
 import models.{CompanyContactDetails, Index, Mode}
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
@@ -48,22 +49,36 @@ class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val redirectResult = request.userAnswers.companyContactDetails(index) match {
-        case Success(None) => Ok(companyContactDetails(appConfig, form, mode, index))
-        case Success(Some(value)) => Ok(companyContactDetails(appConfig, form.fill(value), mode, index))
-        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+      retrieveCompanyName(index) {
+        companyName =>
+          val redirectResult = request.userAnswers.companyContactDetails(index) match {
+            case Success(None) => Ok(companyContactDetails(appConfig, form, mode, index, companyName))
+            case Success(Some(value)) => Ok(companyContactDetails(appConfig, form.fill(value), mode, index, companyName))
+            case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+          }
+          Future.successful(redirectResult)
       }
-      Future.successful(redirectResult)
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyContactDetails(appConfig, formWithErrors, mode, index))),
-        (value) =>
-          dataCacheConnector.saveMap[CompanyContactDetails](request.externalId, CompanyContactDetailsId.toString, index, value).map(cacheMap =>
-            Redirect(navigator.nextPage(CompanyContactDetailsId, mode)(new UserAnswers(cacheMap))))
-      )
+      retrieveCompanyName(index) {
+        companyName =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(companyContactDetails(appConfig, formWithErrors, mode, index, companyName))),
+            (value) =>
+              dataCacheConnector.saveMap[CompanyContactDetails](request.externalId, CompanyContactDetailsId.toString, index, value).map(cacheMap =>
+                Redirect(navigator.nextPage(CompanyContactDetailsId, mode)(new UserAnswers(cacheMap))))
+          )
+      }
+  }
+
+  private def retrieveCompanyName(index: Int)(block: String => Future[Result])
+                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    request.userAnswers.companyDetails(index) match {
+      case Success(Some(value)) => block(value.companyName)
+      case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    }
   }
 }
