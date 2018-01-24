@@ -34,8 +34,8 @@ trait StringViewBehaviours extends QuestionViewBehaviours[String] {
 
         "contain a label for the value" in {
           val doc = asDocument(createView(form))
-          val expectedHintText = messages(expectedHint.getOrElse(s"messages__${messageKeyPrefix}__hint"))
-          assertContainsLabel(doc, "value", messages(label.getOrElse(s"messages__${messageKeyPrefix}__title")), Some(expectedHintText))
+          val expectedHintText = expectedHint.map(messages(_))
+          assertContainsLabel(doc, "value", messages(label.getOrElse(s"messages__${messageKeyPrefix}__title")), expectedHintText)
         }
 
         "contain an input for the value" in {
