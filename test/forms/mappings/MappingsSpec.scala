@@ -402,17 +402,23 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
   }
 
   "companyRegistrationNumber" must {
-    val testForm:Form[CompanyRegistrationNumber]=Form("companyRegistrationNumber"-> companyRegistrationNumberMapping())
+    val testForm:Form[CompanyRegistrationNumber]=Form("companyRegistrationNumber" -> companyRegistrationNumberMapping())
 
     "fail to bind when yes is selected but Company Registration Number is not provided" in {
-      val result=testForm.bind(Map("companyRegistrationNumber.hasCrn"->"true"))
+      val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "true"))
       result.errors mustEqual Seq(FormError("companyRegistrationNumber.crn","messages__error__crn"))
     }
 
     "fail to bind when no is selected but reason is not provided" in {
-      val result=testForm.bind(Map("companyRegistrationNumber.hasCrn"->"false"))
+      val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "false"))
       result.errors mustEqual Seq(FormError("companyRegistrationNumber.reason", "messages__company__no_crn"))
+    }
 
+    Seq("12345678", "123456", "A1234567", "R1234567", "AB123456", "AC1234567").foreach { crn =>
+      s"fail to bind when CRN $crn is invalid" in {
+        val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "true", "companyRegistrationNumber.crn" -> crn))
+        result.errors mustEqual Seq(FormError("companyRegistrationNumber.crn", "messages__error__crn_invalid"))
+      }
     }
 
   }

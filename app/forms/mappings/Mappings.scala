@@ -225,7 +225,7 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
     }
 
     tuple("hasCrn" -> boolean(requiredKey),
-      "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey)),//.verifying(validNino(invalidCRNKey))),
+      "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey).verifying(validCrn(invalidCRNKey))),
       "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(requiredReasonKey).
         verifying(maxLength(150,reasonLengthKey)))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
   }
