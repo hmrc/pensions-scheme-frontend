@@ -28,6 +28,7 @@ import identifiers.register.establishers.individual.AddressYearsId
 import models.{Index, NormalMode}
 import views.html.register.establishers.individual.addressYears
 import controllers.ControllerSpecBase
+import identifiers.register.establishers.EstablishersId
 import models.register.establishers.individual.AddressYears
 import play.api.mvc.Call
 
@@ -48,12 +49,15 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
   def viewAsString(form: Form[_] = form): String = addressYears(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(
-    "establishers" -> Json.arr(
+    EstablishersId.toString -> Json.arr(
         Json.obj(
-          AddressYearsId.toString -> AddressYears.options.head.value.toString
+          AddressYearsId.toString ->
+            AddressYears.options.head.value.toString
         )
       )
     )
+
+  println(validData)
 
   "AddressYears Controller" must {
 
@@ -66,6 +70,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      status(result) mustEqual OK
       contentAsString(result) mustBe viewAsString(form.fill(AddressYears.values.head))
     }
 

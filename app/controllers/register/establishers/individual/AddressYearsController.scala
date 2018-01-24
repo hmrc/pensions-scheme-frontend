@@ -46,15 +46,13 @@ class AddressYearsController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: AddressYearsFormProvider
-                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats {
-
-  private def key(index: Int): JsPath = __ \ "establishers" \ index \ AddressYearsId
+                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      request.userAnswers.addressYears(index) match {
+      request.userAnswers.get(AddressYearsId(index)) match {
         case None =>
           Ok(addressYears(appConfig, form, mode, index))
         case Some(value) =>
@@ -68,8 +66,8 @@ class AddressYearsController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(addressYears(appConfig, formWithErrors, mode, index))),
         (value) =>
-          dataCacheConnector.save[AddressYears](request.externalId, key(index), value).map(cacheMap =>
-            Redirect(navigator.nextPage(AddressYearsId, mode)(new UserAnswers(cacheMap))))
+          dataCacheConnector.save(request.externalId, AddressYearsId(index), value).map(cacheMap =>
+            Redirect(navigator.nextPage(AddressYearsId(index), mode)(new UserAnswers(cacheMap))))
       )
   }
 }

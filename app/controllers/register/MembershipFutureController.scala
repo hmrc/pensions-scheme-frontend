@@ -18,40 +18,37 @@ package controllers.register
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.MembershipFutureFormProvider
 import identifiers.register.MembershipFutureId
 import models.Mode
-import models.register.MembershipFuture
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.membershipFuture
 
 import scala.concurrent.Future
-import play.api.libs.json._
 
 class MembershipFutureController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: MembershipFutureFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
-
-  private val key = __ \ MembershipFutureId
+                                            appConfig: FrontendAppConfig,
+                                            override val messagesApi: MessagesApi,
+                                            dataCacheConnector: DataCacheConnector,
+                                            navigator: Navigator,
+                                            authenticate: AuthAction,
+                                            getData: DataRetrievalAction,
+                                            requireData: DataRequiredAction,
+                                            formProvider: MembershipFutureFormProvider
+                                          ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.membershipFuture match {
+      val preparedForm = request.userAnswers.get(MembershipFutureId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,7 +61,7 @@ class MembershipFutureController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(membershipFuture(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[MembershipFuture](request.externalId, key, value).map(cacheMap =>
+          dataCacheConnector.save(request.externalId, MembershipFutureId, value).map(cacheMap =>
             Redirect(navigator.nextPage(MembershipFutureId, mode)(new UserAnswers(cacheMap))))
       )
   }

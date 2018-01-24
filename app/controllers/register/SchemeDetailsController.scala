@@ -43,13 +43,11 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   getData: DataRetrievalAction,
                                                   formProvider: SchemeDetailsFormProvider) extends FrontendController with I18nSupport {
 
-  private val key = __ \ SchemeDetailsId
-
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
-      val preparedForm = request.userAnswers.flatMap(_.schemeDetails) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(SchemeDetailsId)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -62,7 +60,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[SchemeDetails](request.externalId, key, value).map(cacheMap =>
+          dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
             Redirect(navigator.nextPage(SchemeDetailsId, mode)(new UserAnswers(cacheMap))))
       )
   }

@@ -43,13 +43,11 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
                                          requireData: DataRequiredAction,
                                          formProvider: UKBankAccountFormProvider) extends FrontendController with I18nSupport {
 
-  private val key = __ \ UKBankAccountId
-
   private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.uKBankAccount match {
+      val preparedForm = request.userAnswers.get(UKBankAccountId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -62,7 +60,7 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(uKBankAccount(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[Boolean](request.externalId, key, value).map(cacheMap =>
+          dataCacheConnector.save(request.externalId, UKBankAccountId, value).map(cacheMap =>
             Redirect(navigator.nextPage(UKBankAccountId, mode)(new UserAnswers(cacheMap))))
       )
   }

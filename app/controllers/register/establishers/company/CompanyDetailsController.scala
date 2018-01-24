@@ -18,35 +18,33 @@ package controllers.register.establishers.company
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.company.CompanyDetailsFormProvider
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import models.requests.DataRequest
 import models.{CompanyDetails, Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyDetails
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
-import play.api.libs.json._
 
-class CompanyDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         dataCacheConnector: DataCacheConnector,
-                                         navigator: Navigator,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: CompanyDetailsFormProvider) extends FrontendController with I18nSupport
-  with Enumerable.Implicits with MapFormats {
-
-  private def key(index: Int) = __ \ "establishers" \ index \ CompanyDetailsId
+class CompanyDetailsController @Inject()(
+                                          appConfig: FrontendAppConfig,
+                                          override val messagesApi: MessagesApi,
+                                          dataCacheConnector: DataCacheConnector,
+                                          navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          formProvider: CompanyDetailsFormProvider
+                                        ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -54,12 +52,13 @@ class CompanyDetailsController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          val redirectResult = request.userAnswers.companyDetails(index) match {
-            case None =>
-              Ok(companyDetails(appConfig, form, mode, index, schemeName))
-            case Some(value) =>
-              Ok(companyDetails(appConfig, form.fill(value), mode, index, schemeName))
-          }
+          val redirectResult = request.userAnswers
+            .get[CompanyDetails](CompanyDetailsId(index)) match {
+              case None =>
+                Ok(companyDetails(appConfig, form, mode, index, schemeName))
+              case Some(value) =>
+                Ok(companyDetails(appConfig, form.fill(value), mode, index, schemeName))
+            }
           Future.successful(redirectResult)
       }
   }
@@ -72,15 +71,21 @@ class CompanyDetailsController @Inject()(appConfig: FrontendAppConfig,
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, schemeName))),
             (value) =>
-              dataCacheConnector.save[CompanyDetails](request.externalId, key(index), value).map(cacheMap =>
-                Redirect(navigator.nextPage(CompanyDetailsId, mode)(new UserAnswers(cacheMap))))
+              dataCacheConnector.save[CompanyDetails](
+                request.externalId,
+                CompanyDetailsId(index),
+                value
+              ).map {
+                json =>
+                  Redirect(navigator.nextPage(CompanyDetailsId(index), mode)(new UserAnswers(json)))
+              }
           )
       }
   }
 
   private def retrieveSchemeName(block: String => Future[Result])
                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.schemeDetails.map { schemeDetails =>
+    request.userAnswers.get(SchemeDetailsId).map { schemeDetails =>
       block(schemeDetails.schemeName)
     }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
   }

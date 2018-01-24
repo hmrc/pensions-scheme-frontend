@@ -45,13 +45,11 @@ class MembershipController @Inject()(
                                         requireData: DataRequiredAction,
                                         formProvider: MembershipFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
-  private val key = __ \ MembershipId
-
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.membership match {
+      val preparedForm = request.userAnswers.get(MembershipId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,7 +62,7 @@ class MembershipController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(membership(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[Membership](request.externalId, key, value).map(cacheMap =>
+          dataCacheConnector.save(request.externalId, MembershipId, value).map(cacheMap =>
             Redirect(navigator.nextPage(MembershipId, mode)(new UserAnswers(cacheMap))))
       )
   }

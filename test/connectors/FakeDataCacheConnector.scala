@@ -16,6 +16,7 @@
 
 package connectors
 
+import identifiers.Identifier
 import play.api.libs.json._
 import uk.gov.hmrc.http.cache.client.CacheMap
 

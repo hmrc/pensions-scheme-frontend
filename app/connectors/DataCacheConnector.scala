@@ -17,6 +17,7 @@
 package connectors
 
 import com.google.inject.{ImplementedBy, Inject}
+import identifiers.{Identifier, TypedIdentifier}
 import play.api.libs.json._
 import repositories.SessionRepository
 import uk.gov.hmrc.http.cache.client.CacheMap
@@ -62,5 +63,10 @@ class DataCacheConnectorImpl @Inject()(
 trait DataCacheConnector {
 
   def save[A](cacheId: String, path: JsPath, value: A)(implicit fmt: Format[A]): Future[JsValue]
+
+  def save[A](cacheId: String, id: TypedIdentifier[A], value: A)(implicit fmt: Format[A]): Future[JsValue] = {
+    save[A](cacheId: String, id.path, value)
+  }
+
   def fetch(cacheId: String): Future[Option[JsValue]]
 }

@@ -43,13 +43,11 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
                                          requireData: DataRequiredAction,
                                          formProvider: OccupationalPensionSchemeFormProvider) extends FrontendController with I18nSupport {
 
-  private val key = __ \ OccupationalPensionSchemeId
-
   private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.occupationalPensionScheme match {
+      val preparedForm = request.userAnswers.get(OccupationalPensionSchemeId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -62,7 +60,7 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(occupationalPensionScheme(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[Boolean](request.externalId, key, value).map(cacheMap =>
+          dataCacheConnector.save(request.externalId, OccupationalPensionSchemeId, value).map(cacheMap =>
             Redirect(navigator.nextPage(OccupationalPensionSchemeId, mode)(new UserAnswers(cacheMap))))
       )
   }

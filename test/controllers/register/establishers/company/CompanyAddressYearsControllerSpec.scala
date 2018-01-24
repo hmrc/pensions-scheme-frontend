@@ -28,6 +28,7 @@ import identifiers.register.establishers.company.CompanyAddressYearsId
 import models.{Index, NormalMode}
 import views.html.register.establishers.company.companyAddressYears
 import controllers.ControllerSpecBase
+import identifiers.register.establishers.EstablishersId
 import models.register.establishers.company.CompanyAddressYears
 
 class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
@@ -46,7 +47,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   def viewAsString(form: Form[_] = form) = companyAddressYears(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
 
   val validData = Json.obj(
-    "establishers" -> Json.arr(
+    EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyAddressYearsId.toString ->
           CompanyAddressYears.options.head.value.toString

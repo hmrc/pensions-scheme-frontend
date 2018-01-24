@@ -45,13 +45,11 @@ class BenefitsController @Inject()(
                                         requireData: DataRequiredAction,
                                         formProvider: BenefitsFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
-  private val key = __ \ BenefitsId
-
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.benefits match {
+      val preparedForm = request.userAnswers.get(BenefitsId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,7 +62,7 @@ class BenefitsController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(benefits(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[Benefits](request.externalId, key, value).map(cacheMap =>
+          dataCacheConnector.save(request.externalId, BenefitsId, value).map(cacheMap =>
             Redirect(navigator.nextPage(BenefitsId, mode)(new UserAnswers(cacheMap))))
       )
   }

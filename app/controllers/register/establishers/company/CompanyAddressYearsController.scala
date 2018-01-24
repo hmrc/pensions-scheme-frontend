@@ -27,32 +27,30 @@ import models.register.establishers.company.CompanyAddressYears
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyAddressYears
 
 import scala.concurrent.Future
 
 class CompanyAddressYearsController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AddressYearsFormProvider) extends FrontendController with I18nSupport
-                                        with Enumerable.Implicits with MapFormats {
-
-  private def key(index: Int) = __ \ "establishers" \ index \ CompanyAddressYearsId
+                                               appConfig: FrontendAppConfig,
+                                               override val messagesApi: MessagesApi,
+                                               dataCacheConnector: DataCacheConnector,
+                                               navigator: Navigator,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               formProvider: AddressYearsFormProvider
+                                             ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      request.userAnswers.companyAddressYears(index) match {
+      request.userAnswers
+        .get[CompanyAddressYears](CompanyAddressYearsId(index)) match {
         case None =>
           Ok(companyAddressYears(appConfig, form, mode, index))
         case Some(value) =>
@@ -66,8 +64,14 @@ class CompanyAddressYearsController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(companyAddressYears(appConfig, formWithErrors, mode, index))),
         (value) =>
-          dataCacheConnector.save[CompanyAddressYears](request.externalId, key(index), value).map(cacheMap =>
-            Redirect(navigator.nextPage(CompanyAddressYearsId, mode)(new UserAnswers(cacheMap))))
+          dataCacheConnector.save[CompanyAddressYears](
+            request.externalId,
+            CompanyAddressYearsId(index),
+            value
+          ).map {
+            json =>
+              Redirect(navigator.nextPage(CompanyAddressYearsId(index), mode)(new UserAnswers(json)))
+          }
       )
   }
 }

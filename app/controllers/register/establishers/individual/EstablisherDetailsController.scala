@@ -18,25 +18,23 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.individual.EstablisherDetailsFormProvider
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models.register.establishers.individual.EstablisherDetails
-import models.{Index, Mode}
 import models.requests.DataRequest
-import play.api.mvc.{Action, AnyContent}
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Result}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual.establisherDetails
-import play.api.mvc.Result
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
-import play.api.libs.json._
 
 class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
@@ -45,10 +43,8 @@ class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
                                              authenticate: AuthAction,
                                              getData: DataRetrievalAction,
                                              requireData: DataRequiredAction,
-                                             formProvider: EstablisherDetailsFormProvider) extends FrontendController
-  with I18nSupport with Enumerable.Implicits with MapFormats {
-
-  private def key(index: Int) = __ \ "establishers" \ index \ EstablisherDetailsId
+                                             formProvider: EstablisherDetailsFormProvider
+                                            ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -56,7 +52,7 @@ class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          val redirectResult = request.userAnswers.establisherDetails(index) match {
+          val redirectResult = request.userAnswers.get[EstablisherDetails](EstablisherDetailsId(index)) match {
             case None =>
               Ok(establisherDetails(appConfig, form, mode, index, schemeName))
             case Some(value) =>
@@ -75,16 +71,21 @@ class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
               Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index,
                 schemeName))),
             (value) =>
-              dataCacheConnector.save[EstablisherDetails](request.externalId,
-                key(index), value).map(cacheMap =>
-                Redirect(navigator.nextPage(EstablisherDetailsId, mode)(new UserAnswers(cacheMap))))
+              dataCacheConnector.save[EstablisherDetails](
+                request.externalId,
+                EstablisherDetailsId(index),
+                value
+              ).map {
+                json =>
+                  Redirect(navigator.nextPage(EstablisherDetailsId(index), mode)(new UserAnswers(json)))
+              }
           )
       }
   }
 
   private def retrieveSchemeName(block: String => Future[Result])
                            (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.schemeDetails.map { schemeDetails =>
+    request.userAnswers.get(SchemeDetailsId).map { schemeDetails =>
       block(schemeDetails.schemeName)
     }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
   }

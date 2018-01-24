@@ -16,8 +16,9 @@
 
 package identifiers.register
 
-import identifiers.Identifier
+import identifiers.TypedIdentifier
+import models.register.UKBankDetails
 
-case object UKBankDetailsId extends Identifier {
+case object UKBankDetailsId extends TypedIdentifier[UKBankDetails] {
   override def toString: String = "uKBankDetails"
 }

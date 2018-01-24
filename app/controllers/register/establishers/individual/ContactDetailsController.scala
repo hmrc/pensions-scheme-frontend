@@ -18,36 +18,33 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.individual.ContactDetailsFormProvider
-import identifiers.register.establishers.individual.ContactDetailsId
-import models.register.establishers.individual.ContactDetails
+import identifiers.register.establishers.individual.{ContactDetailsId, EstablisherDetailsId}
+import models.register.establishers.individual.{ContactDetails, EstablisherDetails}
 import models.requests.DataRequest
 import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual._
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
-import play.api.libs.json._
 
-class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  dataCacheConnector: DataCacheConnector,
-                                                  navigator: Navigator,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: ContactDetailsFormProvider) extends FrontendController
-                                                  with I18nSupport with Enumerable.Implicits with MapFormats {
-
-  private def key(index: Int) = __ \ "establishers" \ index \ ContactDetailsId
+class ContactDetailsController @Inject()(
+                                          appConfig: FrontendAppConfig,
+                                          override val messagesApi: MessagesApi,
+                                          dataCacheConnector: DataCacheConnector,
+                                          navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          formProvider: ContactDetailsFormProvider
+                                        ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[ContactDetails] = formProvider()
 
@@ -55,7 +52,7 @@ class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val redirectResult = request.userAnswers.contactDetails(index) match {
+          val redirectResult = request.userAnswers.get[ContactDetails](ContactDetailsId(index)) match {
             case None =>
               Ok(contactDetails(appConfig, form, mode, index, establisherName))
             case Some(value) =>
@@ -73,15 +70,21 @@ class ContactDetailsController @Inject()(appConfig: FrontendAppConfig,
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(contactDetails(appConfig, formWithErrors, mode, index, establisherName))),
             (value) =>
-              dataCacheConnector.save[ContactDetails](request.externalId, key(index), value).map(cacheMap =>
-                Redirect(navigator.nextPage(ContactDetailsId, mode)(new UserAnswers(cacheMap))))
+              dataCacheConnector.save[ContactDetails](
+                request.externalId,
+                ContactDetailsId(index),
+                value
+              ).map {
+                json =>
+                  Redirect(navigator.nextPage(ContactDetailsId(index), mode)(new UserAnswers(json)))
+              }
           )
       }
   }
 
   private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.establisherDetails(index) match {
+    request.userAnswers.get[EstablisherDetails](EstablisherDetailsId(index)) match {
       case Some(value) =>
         block(value.establisherName)
       case _ =>

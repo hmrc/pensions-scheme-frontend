@@ -18,36 +18,33 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.individual.EstablisherNinoFormProvider
-import identifiers.register.establishers.individual.EstablisherNinoId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNinoId}
+import models.register.establishers.individual.EstablisherDetails
 import models.requests.DataRequest
 import models.{EstablisherNino, Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual.establisherNino
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
-import play.api.libs.json._
 
 class EstablisherNinoController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: EstablisherNinoFormProvider) extends FrontendController
-  with I18nSupport with Enumerable.Implicits with MapFormats{
-
-  private def key(index: Int) = __ \ "establishers" \ index \ EstablisherNinoId
+                                           appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           dataCacheConnector: DataCacheConnector,
+                                           navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           formProvider: EstablisherNinoFormProvider
+                                         ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[EstablisherNino] = formProvider()
 
@@ -55,7 +52,7 @@ class EstablisherNinoController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val redirectResult = request.userAnswers.establisherNino(index) match {
+          val redirectResult = request.userAnswers.get[EstablisherNino](EstablisherNinoId(index)) match {
             case None =>
               Ok(establisherNino(appConfig, form, mode, index, establisherName))
             case Some(value) =>
@@ -73,16 +70,21 @@ class EstablisherNinoController @Inject()(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(establisherNino(appConfig, formWithErrors, mode, index, establisherName))),
             (value) =>
-              dataCacheConnector.save[EstablisherNino](request.externalId,
-                key(index), value).map(cacheMap =>
-                Redirect(navigator.nextPage(EstablisherNinoId, mode)(new UserAnswers(cacheMap))))
+              dataCacheConnector.save[EstablisherNino](
+                request.externalId,
+                EstablisherNinoId(index),
+                value
+              ).map {
+                json =>
+                  Redirect(navigator.nextPage(EstablisherNinoId(index), mode)(new UserAnswers(json)))
+              }
           )
       }
   }
 
   private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.establisherDetails(index) match {
+    request.userAnswers.get[EstablisherDetails](EstablisherDetailsId(index)) match {
       case Some(value) =>
         block(value.establisherName)
       case _ =>

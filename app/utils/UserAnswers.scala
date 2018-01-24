@@ -16,55 +16,19 @@
 
 package utils
 
-import identifiers.register._
-import identifiers.register.establishers._
-import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyDetailsId}
-import identifiers.register.establishers.individual._
-import models._
-import models.register._
-import models.register.establishers._
-import models.register.establishers.company.CompanyAddressYears
-import models.register.establishers.individual._
-import play.api.libs.json.{JsPath, JsValue, Json, Reads, _}
-
-import scala.util.{Success, Try}
+import identifiers.TypedIdentifier
+import play.api.libs.json.{JsPath, JsValue, Json, Reads}
 
 class UserAnswers(json: JsValue) extends Enumerable.Implicits with MapFormats {
 
-  private def fromPath[A](path: JsPath)(implicit rds: Reads[A]): Option[A] = {
+  def get[A](id: TypedIdentifier[A])(implicit rds: Reads[A]): Option[A] = {
+    get[A](id.path)
+  }
+
+  def get[A](path: JsPath)(implicit rds: Reads[A]): Option[A] = {
     JsLens.fromPath(path).get(json)
       .flatMap(Json.fromJson[A]).asOpt
   }
-
-  def contactDetails(index: Int): Option[ContactDetails] =
-    fromPath[ContactDetails](__ \ "establishers" \ index \ ContactDetailsId)
-
-  def establisherNino(index:Int): Option[EstablisherNino] =
-    fromPath[EstablisherNino](__ \ "establishers" \ index \ EstablisherNinoId)
-
-  def uniqueTaxReference(index: Int): Option[UniqueTaxReference] =
-    fromPath[UniqueTaxReference](__ \ "establishers" \ index \ UniqueTaxReferenceId)
-
-  def establisherDetails(index: Int): Option[EstablisherDetails] =
-    fromPath[EstablisherDetails](__ \ "establishers" \ index \ EstablisherDetailsId)
-
-  def addressYears(index: Int): Option[AddressYears] =
-    fromPath[AddressYears](__ \ "establishers" \ index \ AddressYearsId)
-
-  def companyAddressYears(index: Int): Option[CompanyAddressYears] =
-    fromPath[CompanyAddressYears](__ \ "establishers" \ index \ CompanyAddressYearsId)
-
-  def companyDetails(index: Int): Option[CompanyDetails] =
-    fromPath[CompanyDetails](__ \ "establishers" \ index \ CompanyDetailsId)
-
-  def addEstablisher(): Option[Boolean] =
-    fromPath[Boolean](__ \ AddEstablisherId)
-
-  def establisherKind: Option[EstablishersIndividualMap[EstablisherKind]] =
-    fromPath[EstablishersIndividualMap[EstablisherKind]](__ \ EstablisherKindId)
-
-  def establisherKind(index: Int): Try[Option[EstablisherKind]] =
-    establisherKind.map(_.get(index)).getOrElse(Success(None))
 
   def allEstablishers: Option[Map[String, String]] = {
 //    establisherDetails.map(_.getValues.map{ estDetails =>
@@ -72,37 +36,4 @@ class UserAnswers(json: JsValue) extends Enumerable.Implicits with MapFormats {
 //    }.toMap)
     ???
   }
-
-  def schemeEstablishedCountry: Option[String] =
-    fromPath[String](__ \ SchemeEstablishedCountryId)
-
-  def uKBankAccount: Option[Boolean] =
-    fromPath[Boolean](__ \ UKBankAccountId)
-
-  def uKBankDetails: Option[UKBankDetails] =
-    fromPath[UKBankDetails](__ \ UKBankDetailsId)
-
-  def benefits: Option[Benefits] =
-    fromPath[Benefits](__ \ BenefitsId)
-
-  def benefitsInsurer: Option[BenefitsInsurer] =
-    fromPath[BenefitsInsurer](__ \ BenefitsInsurerId)
-
-  def membership: Option[Membership] =
-    fromPath[Membership](__ \ MembershipId)
-
-  def membershipFuture: Option[MembershipFuture] =
-    fromPath[MembershipFuture](__ \ MembershipFutureId)
-
-  def investmentRegulated: Option[Boolean] =
-    fromPath[Boolean](__ \ InvestmentRegulatedId)
-
-  def securedBenefits: Option[Boolean] =
-    fromPath[Boolean](__ \ SecuredBenefitsId)
-
-  def occupationalPensionScheme: Option[Boolean] =
-    fromPath[Boolean](__ \ OccupationalPensionSchemeId)
-
-  def schemeDetails: Option[SchemeDetails] =
-    fromPath[SchemeDetails](__ \ SchemeDetailsId)
 }

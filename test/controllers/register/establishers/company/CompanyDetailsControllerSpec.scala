@@ -16,21 +16,21 @@
 
 package controllers.register.establishers.company
 
-import play.api.data.Form
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
 import forms.register.establishers.company.CompanyDetailsFormProvider
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import models._
-import views.html.register.establishers.company.companyDetails
-import controllers.ControllerSpecBase
-import identifiers.register.SchemeDetailsId
 import models.register.{SchemeDetails, SchemeType}
+import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator
+import views.html.register.establishers.company.companyDetails
 
 class CompanyDetailsControllerSpec extends ControllerSpecBase {
 
@@ -51,7 +51,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
   val validData = Json.obj(
     SchemeDetailsId.toString ->
       SchemeDetails(schemeName, SchemeType.SingleTrust),
-    "establishers" -> Json.arr(
+    EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->
           CompanyDetails("test company name", Some("test vat number"), Some("test paye number"))

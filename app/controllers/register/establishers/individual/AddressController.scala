@@ -18,24 +18,23 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressFormProvider
-import identifiers.register.establishers.individual.AddressId
+import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
 import models.addresslookup.AddressRecord
-import models.{Index, Mode}
+import models.register.establishers.individual.EstablisherDetails
 import models.requests.DataRequest
+import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual.address
 
 import scala.concurrent.Future
-import scala.util.Success
-import play.api.libs.json._
 
 class AddressController @Inject()(
                                    appConfig: FrontendAppConfig,
@@ -46,10 +45,8 @@ class AddressController @Inject()(
                                    authenticate: AuthAction,
                                    getData: DataRetrievalAction,
                                    requireData: DataRequiredAction,
-                                   formProvider: AddressFormProvider) extends FrontendController with I18nSupport
-  with Enumerable.Implicits with MapFormats {
-
-  private val key = __ \ AddressId
+                                   formProvider: AddressFormProvider
+                                 ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -81,9 +78,13 @@ class AddressController @Inject()(
                   Future.successful(BadRequest(address(appConfig, formWithError("no_results"), mode, index, establisherName)))
 
                 case Some(addressSeq) =>
-                  dataCacheConnector.save[Seq[AddressRecord]](request.externalId, key, addressSeq).map {
-                    cacheMap =>
-                      Redirect(navigator.nextPage(AddressId, mode)(new UserAnswers(cacheMap)))
+                  dataCacheConnector.save[Seq[AddressRecord]](
+                    request.externalId,
+                    AddressId.path,
+                    addressSeq
+                  ).map {
+                    json =>
+                      Redirect(navigator.nextPage(AddressId, mode)(new UserAnswers(json)))
                   }
               }
           )
@@ -92,7 +93,7 @@ class AddressController @Inject()(
 
   private def retrieveEstablisherName(index: Int)(block: String => Future[Result])
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.establisherDetails(index) match {
+    request.userAnswers.get[EstablisherDetails](EstablisherDetailsId(index)) match {
       case Some(value) =>
         block(value.establisherName)
       case _ =>

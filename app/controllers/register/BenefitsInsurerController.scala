@@ -44,13 +44,11 @@ class BenefitsInsurerController @Inject()(appConfig: FrontendAppConfig,
                                                   requireData: DataRequiredAction,
                                                   formProvider: BenefitsInsurerFormProvider) extends FrontendController with I18nSupport {
 
-  private val key = __ \ BenefitsInsurerId
-
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.benefitsInsurer match {
+      val preparedForm = request.userAnswers.get(BenefitsInsurerId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -63,7 +61,7 @@ class BenefitsInsurerController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(benefitsInsurer(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[BenefitsInsurer](request.externalId, key, value).map(cacheMap =>
+          dataCacheConnector.save[BenefitsInsurer](request.externalId, BenefitsInsurerId, value).map(cacheMap =>
             Redirect(navigator.nextPage(BenefitsInsurerId, mode)(new UserAnswers(cacheMap))))
       )
   }

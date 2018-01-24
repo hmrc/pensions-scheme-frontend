@@ -43,13 +43,11 @@ class SecuredBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                          requireData: DataRequiredAction,
                                          formProvider: SecuredBenefitsFormProvider) extends FrontendController with I18nSupport {
 
-  private val key = __ \ SecuredBenefitsId
-
   private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.securedBenefits match {
+      val preparedForm = request.userAnswers.get(SecuredBenefitsId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -62,7 +60,7 @@ class SecuredBenefitsController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(securedBenefits(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[Boolean](request.externalId, key, value).map(cacheMap =>
+          dataCacheConnector.save(request.externalId, SecuredBenefitsId, value).map(cacheMap =>
             Redirect(navigator.nextPage(SecuredBenefitsId, mode)(new UserAnswers(cacheMap))))
       )
   }
