@@ -411,7 +411,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
 
     "fail to bind when no is selected but reason is not provided" in {
       val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "false"))
-      result.errors mustEqual Seq(FormError("companyRegistrationNumber.reason", "messages__company__no_crn"))
+      result.errors mustEqual Seq(FormError("companyRegistrationNumber.reason", "messages__error__no_crn_company"))
     }
 
     Seq("12345678", "123456", "A1234567", "R1234567", "AB123456", "AC1234567").foreach { crn =>

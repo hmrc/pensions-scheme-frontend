@@ -205,7 +205,8 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
                                        requiredCRNKey: String = "messages__error__crn",
                                        requiredReasonKey: String = "messages__company__no_crn",
                                        reasonLengthKey: String = "messages__error__no_crn_length",
-                                       invalidCRNKey: String = "messages__error__crn_invalid"):
+                                       invalidCRNKey: String = "messages__error__crn_invalid",
+                                       noReasonKey: String = "messages__error__no_crn_company"):
   Mapping[CompanyRegistrationNumber] = {
 
     def fromCompanyRegistrationNumber(crn: CompanyRegistrationNumber): (Boolean, Option[String], Option[String]) = {
@@ -226,7 +227,7 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
     tuple("hasCrn" -> boolean(requiredKey),
       "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey).verifying(validCrn(invalidCRNKey))),
-      "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(requiredReasonKey).
+      "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(noReasonKey).
         verifying(maxLength(150,reasonLengthKey)))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
   }
 }
