@@ -1,4 +1,4 @@
-package forms.$routeFile$
+package forms.$routeFile;format="packaged"$
 
 import javax.inject.Inject
 
@@ -11,8 +11,8 @@ class $className$FormProvider @Inject() extends Mappings {
 
    def apply(): Form[$className$] = Form(
      mapping(
-      "field1" -> text("$className;format="decap"$.error.field1.required"),
-      "field2" -> text("$className;format="decap"$.error.field2.required")
+      "field1" -> text("messages__$className;format="decap"$__error__field1_required"),
+      "field2" -> text("messages__$className;format="decap"$__error__field2_required")
     )($className$.apply)($className$.unapply)
    )
  }
