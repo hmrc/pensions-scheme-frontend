@@ -13,26 +13,19 @@ echo "POST       /change$className$                        controllers.$routeFil
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "$className;format="decap"$.title = $className;format="decap"$" >> ../conf/messages.en
-echo "$className;format="decap"$.heading = $className;format="decap"$" >> ../conf/messages.en
-echo "$className;format="decap"$.checkYourAnswersLabel = $className;format="decap"$" >> ../conf/messages.en
-echo "$className;format="decap"$.error.nonNumeric = Please give an answer for $className;format="decap"$ using numbers" >> ../conf/messages.en
-echo "$className;format="decap"$.error.required = Please give an answer for $className;format="decap"$" >> ../conf/messages.en
-echo "$className;format="decap"$.error.wholeNumber = Please give an answer for $className;format="decap"$ using whole numbers" >> ../conf/messages.en
-
-echo "Adding helper line into UserAnswers"
-awk '/class/ {\
-     print;\
-     print "  def $className;format="decap"$: Option[Int] = cacheMap.getEntry[Int]($className$Id.toString)";\
-     print "";\
-     next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
+echo "messages__$className;format="decap"$__title = $className;format="decap"$" >> ../conf/messages.en
+echo "messages__$className;format="decap"$__heading = $className;format="decap"$" >> ../conf/messages.en
+echo "messages__$className;format="decap"$__checkYourAnswersLabel = $className;format="decap"$" >> ../conf/messages.en
+echo "messages__$className;format="decap"$__error__nonNumeric = Please give an answer for $className;format="decap"$ using numbers" >> ../conf/messages.en
+echo "messages__$className;format="decap"$__error__required = Please give an answer for $className;format="decap"$" >> ../conf/messages.en
+echo "messages__$className;format="decap"$__error__wholeNumber = Please give an answer for $className;format="decap"$ using whole numbers" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def $className;format="decap"$: Option[AnswerRow] = userAnswers.$className;format="decap"$ map {";\
-     print "    x => AnswerRow(\"$className;format="decap"$.checkYourAnswersLabel\", s\"\$x\", false, routes.$className$Controller.onPageLoad(CheckMode).url)";\
+     print "  def $className;format="decap"$: Option[AnswerRow] = userAnswers.get($className$Id) map {";\
+     print "    x => AnswerRow(\"$className;format="decap"$.checkYourAnswersLabel\", s\"\$x\", false, controllers.$routeFile;format="packaged"$.routes.$className$Controller.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
