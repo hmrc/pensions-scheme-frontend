@@ -108,6 +108,13 @@ trait Constraints {
     }
   }
 
+  protected def validCrn(invalidKey: String) : Constraint[String] = {
+    Constraint {
+      case crn if (CrnRegex.isValid(crn.replaceAll(" ", "").toUpperCase)) => Valid
+      case _ => Invalid(invalidKey)
+    }
+  }
+
   def returnOnFirstFailure[T](constraints: Constraint[T]*): Constraint[T] =
     Constraint {
       field =>
