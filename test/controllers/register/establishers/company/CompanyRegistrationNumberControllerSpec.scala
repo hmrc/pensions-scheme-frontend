@@ -67,7 +67,6 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-     // val validData = Map(CompanyRegistrationNumberId.toString ->Json.toJson(CompanyRegistrationNumber.Yes("1234567")))
       val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode,firstIndex)(fakeRequest)
