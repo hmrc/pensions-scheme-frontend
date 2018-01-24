@@ -26,8 +26,9 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.EstablisherKindFormProvider
 import identifiers.register.establishers.EstablisherKindId
+import models.register.establishers.EstablisherKind
 import models.requests.DataRequest
-import models.{EstablisherKind, Index, Mode}
+import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.establisherKind
@@ -44,7 +45,8 @@ class EstablisherKindController @Inject()(
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: EstablisherKindFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats {
+                                        formProvider: EstablisherKindFormProvider) extends FrontendController
+                                        with I18nSupport with Enumerable.Implicits with MapFormats {
 
   private def key(index: Int) = __ \ "establishers" \ index \ EstablisherKindId
 

@@ -25,9 +25,10 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.BenefitsFormProvider
 import identifiers.register.BenefitsId
-import models.{Benefits, NormalMode}
+import models.NormalMode
 import views.html.register.benefits
 import controllers.ControllerSpecBase
+import models.register.Benefits
 
 class BenefitsControllerSpec extends ControllerSpecBase {
 

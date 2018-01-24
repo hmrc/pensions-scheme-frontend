@@ -17,7 +17,7 @@
 package forms.register.establishers.individual
 
 import forms.FormSpec
-import models.UniqueTaxReference
+import models.register.establishers.individual.UniqueTaxReference
 
 class UniqueTaxReferenceFormProviderSpec extends FormSpec {
 

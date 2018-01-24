@@ -25,9 +25,10 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.UKBankDetailsFormProvider
 import identifiers.register.UKBankDetailsId
-import models.{NormalMode, SortCode, UKBankDetails}
+import models.NormalMode
 import views.html.register.uKBankDetails
 import controllers.ControllerSpecBase
+import models.register.{SortCode, UKBankDetails}
 import org.apache.commons.lang3.RandomUtils
 import org.joda.time.LocalDate
 import play.api.mvc.Call

@@ -26,9 +26,9 @@ import play.api.test.Helpers._
 import forms.register.BenefitsInsurerFormProvider
 import identifiers.register.BenefitsInsurerId
 import models.NormalMode
-import models.BenefitsInsurer
 import views.html.register.benefitsInsurer
 import controllers.ControllerSpecBase
+import models.register.BenefitsInsurer
 
 class BenefitsInsurerControllerSpec extends ControllerSpecBase {
 

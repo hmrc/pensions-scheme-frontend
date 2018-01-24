@@ -25,9 +25,10 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.SchemeDetailsFormProvider
 import identifiers.register.SchemeDetailsId
-import models.{NormalMode, SchemeDetails, SchemeType}
+import models.NormalMode
 import views.html.register.schemeDetails
 import controllers.ControllerSpecBase
+import models.register.{SchemeDetails, SchemeType}
 
 class SchemeDetailsControllerSpec extends ControllerSpecBase {
 

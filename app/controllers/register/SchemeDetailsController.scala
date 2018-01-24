@@ -27,7 +27,7 @@ import config.FrontendAppConfig
 import forms.register.SchemeDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import models.Mode
-import models.SchemeDetails
+import models.register.SchemeDetails
 import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.schemeDetails

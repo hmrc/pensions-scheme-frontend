@@ -25,9 +25,10 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.individual.AddressYearsFormProvider
 import identifiers.register.establishers.individual.AddressYearsId
-import models.{AddressYears, Index, NormalMode}
+import models.{Index, NormalMode}
 import views.html.register.establishers.individual.addressYears
 import controllers.ControllerSpecBase
+import models.register.establishers.individual.AddressYears
 import play.api.mvc.Call
 
 class AddressYearsControllerSpec extends ControllerSpecBase {

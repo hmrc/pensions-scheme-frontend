@@ -18,7 +18,8 @@ package views.register
 
 import play.api.data.Form
 import forms.register.BenefitsFormProvider
-import models.{NormalMode, Benefits}
+import models.NormalMode
+import models.register.Benefits
 import views.behaviours.ViewBehaviours
 import views.html.register.benefits
 

@@ -27,7 +27,7 @@ import config.FrontendAppConfig
 import forms.register.UKBankDetailsFormProvider
 import identifiers.register.UKBankDetailsId
 import models.Mode
-import models.UKBankDetails
+import models.register.UKBankDetails
 import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.uKBankDetails

@@ -26,8 +26,10 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressYearsFormProvider
 import identifiers.register.establishers.individual.AddressYearsId
-import models.{AddressYears, Index, Mode, NormalMode}
+import models.{Index, Mode, NormalMode}
 import play.api.libs.json._
+import models.register.establishers.individual.AddressYears
+import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils._
 import views.html.register.establishers.individual.addressYears

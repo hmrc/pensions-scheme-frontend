@@ -26,7 +26,8 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.BenefitsFormProvider
 import identifiers.register.BenefitsId
-import models.{Benefits, Mode}
+import models.Mode
+import models.register.Benefits
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.benefits

@@ -19,7 +19,7 @@ package forms.register
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import models.CountryOptions
+import models.register.CountryOptions
 import play.api.data.Form
 
 class SchemeEstablishedCountryFormProvider @Inject()(countries: CountryOptions) extends Mappings {

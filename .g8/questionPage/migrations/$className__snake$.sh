@@ -13,13 +13,13 @@ echo "POST       /change$className$                       controllers.$routeFile
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "$className;format="decap"$.title = $className;format="decap"$" >> ../conf/messages.en
-echo "$className;format="decap"$.heading = $className;format="decap"$" >> ../conf/messages.en
-echo "$className;format="decap"$.field1 = Field 1" >> ../conf/messages.en
-echo "$className;format="decap"$.field2 = Field 2" >> ../conf/messages.en
-echo "$className;format="decap"$.checkYourAnswersLabel = $className;format="decap"$" >> ../conf/messages.en
-echo "$className;format="decap"$.error.field1.required = Please give an answer for field1" >> ../conf/messages.en
-echo "$className;format="decap"$.error.field2.required = Please give an answer for field2" >> ../conf/messages.en
+echo messages__"$className;format="decap"$__title = $className;format="decap"$" >> ../conf/messages.en
+echo messages__"$className;format="decap"$__heading = $className;format="decap"$" >> ../conf/messages.en
+echo messages__"$className;format="decap"$_field1 = Field 1" >> ../conf/messages.en
+echo messages__"$className;format="decap"$_field2 = Field 2" >> ../conf/messages.en
+echo messages__"$className;format="decap"$_checkYourAnswersLabel = $className;format="decap"$" >> ../conf/messages.en
+echo messages__error__"$className;format="decap"$_field1_required = Please give an answer for field1" >> ../conf/messages.en
+echo messages__error__"$className;format="decap"$_field2_required = Please give an answer for field2" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\

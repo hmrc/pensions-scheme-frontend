@@ -26,7 +26,8 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.MembershipFutureFormProvider
 import identifiers.register.MembershipFutureId
-import models.{MembershipFuture, Mode}
+import models.Mode
+import models.register.MembershipFuture
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.membershipFuture

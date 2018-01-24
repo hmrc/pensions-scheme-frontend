@@ -16,8 +16,10 @@
 
 package forms.mappings
 
-import models.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
-import models.{EstablisherNino, SchemeType, SortCode, UniqueTaxReference}
+import models.EstablisherNino
+import models.register.{SchemeType, SortCode}
+import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
+import models.register.establishers.individual.UniqueTaxReference
 import org.joda.time.LocalDate
 import play.api.data.Forms.{of, _}
 import play.api.data.format.Formatter
@@ -193,5 +195,9 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
     }
 
     Forms.of(formatter)
+  }
+
+  protected def vatMapping(invalidKey: String, maxErrorKey: String): FieldMapping[String] = {
+    of(vatFormatter(invalidKey, maxErrorKey))
   }
 }

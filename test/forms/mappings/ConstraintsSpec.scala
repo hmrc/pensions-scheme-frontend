@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.CountryOptions
+import models.register.CountryOptions
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.data.validation.{Invalid, Valid}
 import utils.InputOption

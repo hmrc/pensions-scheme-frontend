@@ -18,12 +18,14 @@ package utils
 
 import identifiers.register._
 import identifiers.register.establishers._
+import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyDetailsId}
 import identifiers.register.establishers.individual._
-import uk.gov.hmrc.http.cache.client.CacheMap
 import models._
-import controllers.register.establishers.routes
-import play.api.libs.json.{JsPath, JsValue, Json, Reads}
-import play.api.libs.json._
+import models.register._
+import models.register.establishers._
+import models.register.establishers.company.CompanyAddressYears
+import models.register.establishers.individual._
+import play.api.libs.json.{JsPath, JsValue, Json, Reads, _}
 
 import scala.util.{Success, Try}
 
@@ -43,6 +45,18 @@ class UserAnswers(json: JsValue) extends Enumerable.Implicits with MapFormats {
   def uniqueTaxReference(index: Int): Option[UniqueTaxReference] =
     fromPath[UniqueTaxReference](__ \ "establishers" \ index \ UniqueTaxReferenceId)
 
+  def establisherDetails(index: Int): Option[EstablisherDetails] =
+    fromPath[EstablisherDetails](__ \ "establishers" \ index \ EstablisherDetailsId)
+
+  def addressYears(index: Int): Option[AddressYears] =
+    fromPath[AddressYears](__ \ "establishers" \ index \ AddressYearsId)
+
+  def companyAddressYears(index: Int): Option[CompanyAddressYears] =
+    fromPath[CompanyAddressYears](__ \ "establishers" \ index \ CompanyAddressYearsId)
+
+  def companyDetails(index: Int): Option[CompanyDetails] =
+    fromPath[CompanyDetails](__ \ "establishers" \ index \ CompanyDetailsId)
+
   def addEstablisher(): Option[Boolean] =
     fromPath[Boolean](__ \ AddEstablisherId)
 
@@ -52,18 +66,12 @@ class UserAnswers(json: JsValue) extends Enumerable.Implicits with MapFormats {
   def establisherKind(index: Int): Try[Option[EstablisherKind]] =
     establisherKind.map(_.get(index)).getOrElse(Success(None))
 
-  def establisherDetails(index: Int): Option[EstablisherDetails] =
-    fromPath[EstablisherDetails](__ \ "establishers" \ index \ EstablisherDetailsId)
-
   def allEstablishers: Option[Map[String, String]] = {
 //    establisherDetails.map(_.getValues.map{ estDetails =>
 //      (estDetails.establisherName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
 //    }.toMap)
     ???
   }
-
-  def addressYears(index: Int): Option[AddressYears] =
-    fromPath[AddressYears](__ \ "establishers" \ index \ AddressYearsId)
 
   def schemeEstablishedCountry: Option[String] =
     fromPath[String](__ \ SchemeEstablishedCountryId)

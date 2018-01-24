@@ -29,6 +29,8 @@ import models._
 import views.html.register.establishers.establisherKind
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
+import models.register.establishers.EstablisherKind
+import models.register.{SchemeDetails, SchemeType}
 import play.api.mvc.Call
 
 class EstablisherKindControllerSpec extends ControllerSpecBase {

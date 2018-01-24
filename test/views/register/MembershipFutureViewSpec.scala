@@ -18,7 +18,8 @@ package views.register
 
 import play.api.data.Form
 import forms.register.MembershipFutureFormProvider
-import models.{NormalMode, MembershipFuture}
+import models.NormalMode
+import models.register.MembershipFuture
 import views.behaviours.ViewBehaviours
 import views.html.register.membershipFuture
 

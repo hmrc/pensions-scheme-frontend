@@ -1,4 +1,4 @@
-package models
+package models.$routeFile$
 
 import play.api.libs.json._
 

@@ -28,6 +28,8 @@ import forms.register.establishers.individual.UniqueTaxReferenceFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{EstablisherDetailsId, UniqueTaxReferenceId}
 import models._
+import models.register.{SchemeDetails, SchemeType}
+import models.register.establishers.individual.{EstablisherDetails, EstablishersIndividualMap, UniqueTaxReference}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 import views.html.register.establishers.individual.uniqueTaxReference
