@@ -18,19 +18,20 @@ package views.register.establishers.company
 
 import play.api.data.Form
 import forms.register.establishers.company.CompanyRegistrationNumberFormProvider
-import models.{NormalMode, CompanyRegistrationNumber}
+import models.{CompanyRegistrationNumber, Index, NormalMode}
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.companyRegistrationNumber
 
 class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "company__crn"
-
+  val index = Index(1)
+  val establisherName = "test name"
   val form = new CompanyRegistrationNumberFormProvider()()
 
-  def createView = () => companyRegistrationNumber(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView = () => companyRegistrationNumber(frontendAppConfig, form, NormalMode,index,establisherName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyRegistrationNumber(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => companyRegistrationNumber(frontendAppConfig, form, NormalMode,index,establisherName)(fakeRequest, messages)
 
   "CompanyRegistrationNumber view" must {
     behave like normalPage(createView, messageKeyPrefix,messages("messages__company__has_crn"))
