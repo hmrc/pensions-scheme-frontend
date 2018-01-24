@@ -24,13 +24,13 @@ import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.company.CompanyContactDetailsFormProvider
-import identifiers.register.establishers.company.CompanyContactDetailsId
+import identifiers.register.establishers.company.{CompanyContactDetailsId, CompanyDetailsId}
 import models._
 import views.html.register.establishers.company.companyContactDetails
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.individual.{ContactDetailsId, EstablisherDetailsId}
-import org.joda.time.LocalDate
+import models.register.establishers.individual.EstablishersIndividualMap
+import models.register.{SchemeDetails, SchemeType}
 
 class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
 
@@ -40,19 +40,19 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val firstIndex = Index(0)
   val invalidIndex = Index(10)
-  val companyName = "test first name test last name"
+  val companyName = "test company name"
 
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryCompanyCacheMap) : CompanyContactDetailsController =
     new CompanyContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form) = companyContactDetails(frontendAppConfig, form, NormalMode, firstIndex, companyName)(fakeRequest, messages).toString
 
   val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)),
-    EstablisherDetailsId.toString -> Json.toJson(EstablishersIndividualMap[EstablisherDetails](Map(
-      0 -> EstablisherDetails("test first name", "test last name", LocalDate.now),
-      1 -> EstablisherDetails("test", "test", LocalDate.now)))),
+    CompanyDetailsId.toString -> Json.toJson(EstablishersIndividualMap[CompanyDetails](Map(
+      0 -> CompanyDetails("test company name", Some("123456"), Some("abcd")),
+      1 -> CompanyDetails("test", Some("654321"), Some("bcda"))))),
     CompanyContactDetailsId.toString -> Json.toJson(EstablishersIndividualMap[CompanyContactDetails](Map(0 -> CompanyContactDetails("test@test.com", "123456789")))))
 
   "CompanyContactDetails Controller" must {
@@ -62,6 +62,13 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+    }
+
+    "redirect to Session Expired page when company name is not present" in {
+      val result = controller(getEmptyCacheMap).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to session expired from a GET when the index is invalid" in {

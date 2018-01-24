@@ -27,7 +27,7 @@ class CompanyContactDetailsViewSpec extends QuestionViewBehaviours[CompanyContac
 
   val messageKeyPrefix = "establisher_company_contact_details"
   val index = Index(1)
-  val companyName = "test name"
+  val companyName = "test company name"
   override val form = new CompanyContactDetailsFormProvider()()
 
   def createView = () => companyContactDetails(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
