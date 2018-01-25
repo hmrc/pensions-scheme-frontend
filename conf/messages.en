@@ -248,3 +248,8 @@ messages__error__postcode_invalid = Enter a valid postal code
 messages__error__postcode_no_results = No results for that postcode
 
 address.checkYourAnswersLabel = address
+
+messages__select_the_address__title = Select the address
+messages__common__select_address = Select the address from the list below, or
+messages__error__select_address = Select an address
+addressResults.checkYourAnswersLabel = addressResults

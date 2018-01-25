@@ -26,10 +26,13 @@ import models.register._
 import models.register.establishers.EstablisherKind
 import models.register.establishers.individual._
 import identifiers.register.establishers.company._
+import models.addresslookup.{Address, AddressRecord}
 
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
+
+  def address: Option[Seq[Address]] = cacheMap.getEntry[Seq[Address]](AddressId.toString)
 
   def companyDetails: Option[EstablishersIndividualMap[CompanyDetails]] = cacheMap.getEntry[EstablishersIndividualMap[CompanyDetails]](
     CompanyDetailsId.toString)

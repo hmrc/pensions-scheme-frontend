@@ -26,7 +26,7 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.establishers.individual.AddressId
-import models.addresslookup.AddressRecord
+import models.addresslookup.{Address, AddressRecord}
 import models.{Index, Mode}
 import models.requests.DataRequest
 import play.api.mvc.{Action, AnyContent, Result}
@@ -78,7 +78,8 @@ class AddressController @Inject()(
                   Future.successful(BadRequest(address(appConfig, formWithError("no_results"), mode, index, establisherName)))
 
                 case Some(addressSeq) =>
-                  dataCacheConnector.save[Seq[AddressRecord]](request.externalId, AddressId.toString, addressSeq).map {
+
+                  dataCacheConnector.save[Seq[Address]](request.externalId, AddressId.toString, addressSeq.map(_.address)).map {
                     cacheMap =>
                       Redirect(navigator.nextPage(AddressId, mode)(new UserAnswers(cacheMap)))
                   }

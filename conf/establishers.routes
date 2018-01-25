@@ -30,6 +30,11 @@ POST       /:index/individual/address                     controllers.register.e
 GET        /:index/individual/changeAddress               controllers.register.establishers.individual.AddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeAddress               controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode = CheckMode, index: Index)
 
+GET        /:index/individual/addressResults               controllers.register.establishers.individual.AddressResultsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/addressResults               controllers.register.establishers.individual.AddressResultsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeAddressResults         controllers.register.establishers.individual.AddressResultsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeAddressResults         controllers.register.establishers.individual.AddressResultsController.onSubmit(mode: Mode = CheckMode, index: Index)
+
 GET        /:index/establisherKind                        controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = NormalMode,index:Index)
 POST       /:index/establisherKind                        controllers.register.establishers.EstablisherKindController.onSubmit(mode: Mode = NormalMode,index:Index)
 GET        /:index/changeEstablisherKind                  controllers.register.establishers.EstablisherKindController.onPageLoad(mode: Mode = CheckMode,index:Index)

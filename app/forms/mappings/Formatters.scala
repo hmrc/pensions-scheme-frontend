@@ -16,9 +16,11 @@
 
 package forms.mappings
 
+import models.addresslookup.{Address, Country}
 import play.api.data.FormError
 import play.api.data.format.Formatter
 import utils.Enumerable
+import utils.Constants._
 
 import scala.util.control.Exception.nonFatalCatch
 
@@ -112,5 +114,35 @@ trait Formatters {
     }
 
     override def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
+  }
+
+  private[mappings] def addressFormatter(requiredKey: String): Formatter[Address] = new Formatter[Address] {
+
+    val baseFormatter: Formatter[String] = stringFormatter(requiredKey)
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Address] = {
+
+      baseFormatter.bind(key, data)
+        .right.flatMap {
+        addressStr =>
+          val address = addressStr.split(",").toSeq.map(_.trim)
+          val addressLines = List(address.head, address(1))
+
+          val addressRecord = if (address.length == 3) {
+            Address(lines = addressLines, postcode = address(2), country = Country(UnitedKingdom))
+          } else {
+            Address(lines = addressLines, town = Some(address(2)), county = Some(address(3)),
+              postcode = address(4), Country(UnitedKingdom))
+          }
+          Right(addressRecord)
+      }
+    }
+
+    override def unbind(key: String, addressRecord: Address): Map[String, String] = {
+      baseFormatter.unbind(key, s"${addressRecord.lines.head}, ${addressRecord.lines(1)}" +
+        s"${addressRecord.town.map(town => s", $town").getOrElse("")}" +
+        s"${addressRecord.county.map(county => s", $county").getOrElse("")}, " +
+        s"${addressRecord.postcode}, $UnitedKingdom")
+    }
   }
 }

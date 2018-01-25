@@ -31,10 +31,9 @@ object AddressRecord {
   * For non-UK addresses, 'town' may be absent and there may be an extra line instead.
   */
 case class Address(lines: List[String],
-                   town: Option[String],
-                   county: Option[String],
+                   town: Option[String] = None,
+                   county: Option[String] = None,
                    postcode: String,
-                   subdivision: Option[Country],
                    country: Country)
 
 object Address {
@@ -42,13 +41,7 @@ object Address {
 }
 
 /** Represents a country as per ISO3166. */
-case class Country(
-                    // ISO3166-1 or ISO3166-2 code, e.g. "GB" or "GB-ENG" (note that "GB" is the official
-                    // code for UK although "UK" is a reserved synonym and may be used instead)
-                    // See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-                    // and https://en.wikipedia.org/wiki/ISO_3166-2:GB
-                    code: String,
-                    // The printable name for the country, e.g. "United Kingdom"
+case class Country(// The printable name for the country, e.g. "United Kingdom"
                     name: String)
 
 object Country {

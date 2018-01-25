@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(
- field: Field,
- label: String,
- value: String,
- id: Option[String] = None,
- dataTarget: Option[String] = None
-)(implicit messages: Messages)
+package forms.register.establishers.individual
 
-<div class="multiple-choice" @dataTarget.map { dataTarget => data-target="@dataTarget" }>
-  <input id=@id.getOrElse(s"${field.id}-$value") type="radio" name="@field.name" value="@value" @if(field.value.contains(value)){ checked="checked" }>
-  <label class="block-label" for=@id.getOrElse(s"${field.id}-$value")>
-    @messages(label)
-  </label>
-</div>
+import javax.inject.Inject
+
+import forms.mappings.Mappings
+import models.addresslookup.{Address, AddressRecord}
+import play.api.data.{Form, Forms}
+
+class AddressResultsFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Address] =
+    Form(
+      "value" -> addressMapping()
+    )
+}
