@@ -16,9 +16,9 @@
 
 package views.register.establishers.company
 
-import play.api.data.Form
 import forms.register.establishers.company.CompanyRegistrationNumberFormProvider
-import models.{CompanyRegistrationNumber, Index, NormalMode}
+import models.{Index, NormalMode}
+import play.api.data.Form
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.companyRegistrationNumber
 
@@ -35,6 +35,11 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
 
   "CompanyRegistrationNumber view" must {
     behave like normalPage(createView, messageKeyPrefix,messages("messages__company__has_crn"))
+
+    "Generate correct hint text" in {
+      val doc = asDocument(createView())
+      assertContainsText(doc, messages("messages__common__crn_hint"))
+    }
   }
 
   "CompanyRegistrationNumber view" when {

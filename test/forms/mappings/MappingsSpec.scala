@@ -393,7 +393,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
 
     Seq("GB1234568908", "1234567898").foreach { vatNo =>
-      s"fail to bind when vat number $vatNo exceeds max lenght 9" in {
+      s"fail to bind when vat number $vatNo exceeds max length 9" in {
         val coForm = testForm.bind(Map("vatNumber" -> vatNo))
 
         coForm.errors mustEqual Seq(FormError("vatNumber", "error.maxlength"))
@@ -414,7 +414,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
       result.errors mustEqual Seq(FormError("companyRegistrationNumber.reason", "messages__error__no_crn_company"))
     }
 
-    Seq("12345678", "123456", "A123456", "R1234567", "AB123456", "AC1234567").foreach { crn =>
+    Seq("12345678", "123456", "R1234567", "ABC12345", "AC1234567").foreach { crn =>
       s"fail to bind when CRN $crn is invalid" in {
         val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "true", "companyRegistrationNumber.crn" -> crn))
         result.errors mustEqual Seq(FormError("companyRegistrationNumber.crn", "messages__error__crn_invalid"))

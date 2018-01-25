@@ -33,13 +33,18 @@ object CrnRegex extends (String => CrnRegex) {
   implicit val crnWrite: Writes[CrnRegex] = new SimpleObjectWrites[CrnRegex](_.value)
   implicit val crnRead: Reads[CrnRegex] = new SimpleObjectReads[CrnRegex]("crn", CrnRegex.apply)
 
-  val validCrnString = s"""^(\\d{7}|R\\d{6}|($prefixDelimited)\\d{6})$$"""
+  val validCrnString = "^(\\d{7}|[A-Z]\\d{6}|[A-Z][A-Z]\\d{6})$"
 
 
+
+  //Code below can be reinstated if the business come back and say there are strict validation rules:
+
+  /*
   private def validPrefixes = List("AC","BR","FC","GE","GN","GS","IC","IP","LP","NA","NF","NI","NL", "NO",
                                   "NP","NR","NZ","OC","RC","SA","SC","SF","SI","SL","SO","SP","SR","SZ","ZC")
 
   private def prefixDelimited = validPrefixes.reduce { _ + "|" + _ }
+*/
 
 
   def isValid(crn: String) = crn != null && crn.matches(validCrnString)
