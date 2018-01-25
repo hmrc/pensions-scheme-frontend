@@ -18,22 +18,22 @@ package controllers.register.establishers.company
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.company.CompanyRegistrationNumberFormProvider
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyRegistrationNumberId
 import models.requests.DataRequest
-import models.{CompanyRegistrationNumber, Index, Mode}
+import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{AnyContent, Result}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyRegistrationNumber
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 
 class CompanyRegistrationNumberController @Inject()(
@@ -53,10 +53,11 @@ class CompanyRegistrationNumberController @Inject()(
     implicit request =>
       retrieveSchemeName {
         schemeName=>
-            val redirectResult = request.userAnswers.companyRegistrationNumber(index) match {
-            case Success(None) => Ok(companyRegistrationNumber(appConfig, form, mode, index, schemeName))
-            case Success(Some(value)) => Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, schemeName))
-            case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+            val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
+            case None =>
+              Ok(companyRegistrationNumber(appConfig, form, mode, index, schemeName))
+            case Some(value) =>
+              Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, schemeName))
           }
 
           Future.successful(redirectResult)
@@ -72,14 +73,14 @@ class CompanyRegistrationNumberController @Inject()(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, schemeName))),
             (value) =>
-              dataCacheConnector.saveMap[CompanyRegistrationNumber](request.externalId, CompanyRegistrationNumberId.toString, index,value).map(cacheMap =>
-                Redirect(navigator.nextPage(CompanyRegistrationNumberId, mode)(new UserAnswers(cacheMap))))
+              dataCacheConnector.save(request.externalId, CompanyRegistrationNumberId(index), value).map(cacheMap =>
+                Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode)(new UserAnswers(cacheMap))))
           )
       }
   }
   private def retrieveSchemeName(block: String => Future[Result])
                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.schemeDetails.map { schemeDetails =>
+    request.userAnswers.get(SchemeDetailsId).map { schemeDetails =>
       block(schemeDetails.schemeName)
     }.getOrElse(
       Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))

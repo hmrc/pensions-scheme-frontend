@@ -17,12 +17,7 @@
 package utils
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.company.CompanyRegistrationNumberId
-import models.CompanyRegistrationNumber
-import models.register.establishers.individual.EstablishersIndividualMap
 import play.api.libs.json.{JsPath, JsValue, Json, Reads}
-
-import scala.util.{Success, Try}
 
 class UserAnswers(json: JsValue) extends Enumerable.Implicits with MapFormats {
 
@@ -41,9 +36,4 @@ class UserAnswers(json: JsValue) extends Enumerable.Implicits with MapFormats {
 //    }.toMap)
     ???
   }
-  def companyRegistrationNumber: Option[EstablishersIndividualMap[CompanyRegistrationNumber]]= cacheMap.getEntry[EstablishersIndividualMap[CompanyRegistrationNumber]](
-    CompanyRegistrationNumberId.toString)
-
-  def companyRegistrationNumber(index: Int): Try[Option[CompanyRegistrationNumber]] = companyRegistrationNumber.map(_.get(index)).getOrElse(Success(None))
-
 }

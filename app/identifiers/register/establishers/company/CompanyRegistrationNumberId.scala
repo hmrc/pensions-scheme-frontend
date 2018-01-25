@@ -16,8 +16,14 @@
 
 package identifiers.register.establishers.company
 
-import identifiers.Identifier
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.CompanyRegistrationNumber
 
-case object CompanyRegistrationNumberId extends Identifier {
+case class CompanyRegistrationNumberId(index: Int) extends TypedIdentifier[CompanyRegistrationNumber] {
+  override def path = EstablishersId.path \ index \ CompanyRegistrationNumberId.toString
+}
+
+object CompanyRegistrationNumberId {
   override def toString: String = "companyRegistrationNumber"
 }
