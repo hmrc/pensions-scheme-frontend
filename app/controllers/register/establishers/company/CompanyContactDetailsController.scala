@@ -66,7 +66,7 @@ class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(companyContactDetails(appConfig, formWithErrors, mode, index, companyName))),
             (value) =>
-              dataCacheConnector.save[CompanyContactDetails](request.externalId, CompanyContactDetailsId(index), value).map(cacheMap =>
+              dataCacheConnector.save(request.externalId, CompanyContactDetailsId(index), value).map(cacheMap =>
                 Redirect(navigator.nextPage(CompanyContactDetailsId(index), mode)(new UserAnswers(cacheMap))))
           )
       }

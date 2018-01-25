@@ -52,7 +52,7 @@ class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          val redirectResult = request.userAnswers.get[EstablisherDetails](EstablisherDetailsId(index)) match {
+          val redirectResult = request.userAnswers.get(EstablisherDetailsId(index)) match {
             case None =>
               Ok(establisherDetails(appConfig, form, mode, index, schemeName))
             case Some(value) =>
@@ -71,7 +71,7 @@ class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
               Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index,
                 schemeName))),
             (value) =>
-              dataCacheConnector.save[EstablisherDetails](
+              dataCacheConnector.save(
                 request.externalId,
                 EstablisherDetailsId(index),
                 value

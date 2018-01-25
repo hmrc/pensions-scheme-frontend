@@ -93,7 +93,7 @@ class AddressController @Inject()(
 
   private def retrieveEstablisherName(index: Int)(block: String => Future[Result])
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get[EstablisherDetails](EstablisherDetailsId(index)) match {
+    request.userAnswers.get(EstablisherDetailsId(index)) match {
       case Some(value) =>
         block(value.establisherName)
       case _ =>

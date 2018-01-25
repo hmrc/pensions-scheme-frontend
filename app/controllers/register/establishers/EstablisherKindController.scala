@@ -71,7 +71,7 @@ class EstablisherKindController @Inject()(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index,schemeName))),
           (value) =>
-            dataCacheConnector.save[EstablisherKind](
+            dataCacheConnector.save(
               request.externalId,
               EstablisherKindId(index),
               value

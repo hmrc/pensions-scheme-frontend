@@ -65,12 +65,6 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
     )
   )
 
-//  val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)),
-//    CompanyDetailsId.toString -> Json.toJson(EstablishersIndividualMap[CompanyDetails](Map(
-//      0 -> CompanyDetails("test company name", Some("123456"), Some("abcd")),
-//      1 -> CompanyDetails("test", Some("654321"), Some("bcda"))))),
-//    CompanyContactDetailsId.toString -> Json.toJson(EstablishersIndividualMap[CompanyContactDetails](Map(0 -> CompanyContactDetails("test@test.com", "123456789")))))
-
   "CompanyContactDetails Controller" must {
 
     "return OK and the correct view for a GET" in {

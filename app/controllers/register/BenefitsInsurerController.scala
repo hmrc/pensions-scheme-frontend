@@ -61,7 +61,7 @@ class BenefitsInsurerController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(benefitsInsurer(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[BenefitsInsurer](request.externalId, BenefitsInsurerId, value).map(cacheMap =>
+          dataCacheConnector.save(request.externalId, BenefitsInsurerId, value).map(cacheMap =>
             Redirect(navigator.nextPage(BenefitsInsurerId, mode)(new UserAnswers(cacheMap))))
       )
   }

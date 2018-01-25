@@ -64,7 +64,7 @@ class CompanyAddressYearsController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(companyAddressYears(appConfig, formWithErrors, mode, index))),
         (value) =>
-          dataCacheConnector.save[CompanyAddressYears](
+          dataCacheConnector.save(
             request.externalId,
             CompanyAddressYearsId(index),
             value

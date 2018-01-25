@@ -57,8 +57,6 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
       )
     )
 
-  println(validData)
-
   "AddressYears Controller" must {
 
     "return OK and the correct view for a GET" in {

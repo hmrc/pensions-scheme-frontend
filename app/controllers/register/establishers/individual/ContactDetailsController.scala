@@ -52,7 +52,7 @@ class ContactDetailsController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val redirectResult = request.userAnswers.get[ContactDetails](ContactDetailsId(index)) match {
+          val redirectResult = request.userAnswers.get(ContactDetailsId(index)) match {
             case None =>
               Ok(contactDetails(appConfig, form, mode, index, establisherName))
             case Some(value) =>
@@ -70,7 +70,7 @@ class ContactDetailsController @Inject()(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(contactDetails(appConfig, formWithErrors, mode, index, establisherName))),
             (value) =>
-              dataCacheConnector.save[ContactDetails](
+              dataCacheConnector.save(
                 request.externalId,
                 ContactDetailsId(index),
                 value
@@ -84,7 +84,7 @@ class ContactDetailsController @Inject()(
 
   private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get[EstablisherDetails](EstablisherDetailsId(index)) match {
+    request.userAnswers.get(EstablisherDetailsId(index)) match {
       case Some(value) =>
         block(value.establisherName)
       case _ =>

@@ -52,7 +52,7 @@ class EstablisherNinoController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val redirectResult = request.userAnswers.get[EstablisherNino](EstablisherNinoId(index)) match {
+          val redirectResult = request.userAnswers.get(EstablisherNinoId(index)) match {
             case None =>
               Ok(establisherNino(appConfig, form, mode, index, establisherName))
             case Some(value) =>
@@ -70,7 +70,7 @@ class EstablisherNinoController @Inject()(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(establisherNino(appConfig, formWithErrors, mode, index, establisherName))),
             (value) =>
-              dataCacheConnector.save[EstablisherNino](
+              dataCacheConnector.save(
                 request.externalId,
                 EstablisherNinoId(index),
                 value
@@ -84,7 +84,7 @@ class EstablisherNinoController @Inject()(
 
   private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get[EstablisherDetails](EstablisherDetailsId(index)) match {
+    request.userAnswers.get(EstablisherDetailsId(index)) match {
       case Some(value) =>
         block(value.establisherName)
       case _ =>

@@ -52,7 +52,7 @@ class UniqueTaxReferenceController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val redirectResult = request.userAnswers.get[UniqueTaxReference](UniqueTaxReferenceId(index)) match {
+          val redirectResult = request.userAnswers.get(UniqueTaxReferenceId(index)) match {
             case None =>
               Ok(uniqueTaxReference(appConfig, form, mode, index, establisherName))
             case Some(value) =>
@@ -70,7 +70,7 @@ class UniqueTaxReferenceController @Inject()(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index, establisherName))),
             (value) =>
-              dataCacheConnector.save[UniqueTaxReference](
+              dataCacheConnector.save(
                 request.externalId,
                 UniqueTaxReferenceId(index),
                 value
