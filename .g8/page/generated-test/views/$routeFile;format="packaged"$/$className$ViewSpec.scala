@@ -13,6 +13,6 @@ class $className$ViewSpec extends ViewBehaviours {
   def createView = () => $className;format="decap"$(frontendAppConfig)(fakeRequest, messages)
 
   "$className$ view" must {
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__\${messageKeyPrefix}__heading"))
   }
 }

@@ -37,7 +37,7 @@ class BenefitsInsurerControllerSpec extends ControllerSpecBase {
   val formProvider = new BenefitsInsurerFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new BenefitsInsurerController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -53,8 +53,8 @@ class BenefitsInsurerControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(BenefitsInsurerId.toString -> Json.toJson(BenefitsInsurer("value 1", "value 2")))
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val validData = Json.obj(BenefitsInsurerId.toString -> Json.toJson(BenefitsInsurer("value 1", "value 2")))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 

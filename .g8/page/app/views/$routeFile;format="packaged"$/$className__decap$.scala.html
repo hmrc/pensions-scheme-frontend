@@ -6,9 +6,9 @@
 @(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("$className;format="decap"$.title"),
+    title = messages("messages__$className;format="decap"$__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @components.heading("$className;format="decap"$.heading")
+    @components.heading("messages__$className;format="decap"$__heading")
 }

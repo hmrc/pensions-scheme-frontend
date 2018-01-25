@@ -18,44 +18,45 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.individual.UniqueTaxReferenceFormProvider
-import identifiers.register.establishers.individual.UniqueTaxReferenceId
-import models.register.establishers.individual.UniqueTaxReference
+import identifiers.register.establishers.individual.{EstablisherDetailsId, UniqueTaxReferenceId}
+import models.register.establishers.individual.{EstablisherDetails, UniqueTaxReference}
 import models.requests.DataRequest
 import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual._
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
-class UniqueTaxReferenceController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         dataCacheConnector: DataCacheConnector,
-                                         navigator: Navigator,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: UniqueTaxReferenceFormProvider) extends FrontendController with I18nSupport
-  with Enumerable.Implicits with MapFormats {
+class UniqueTaxReferenceController @Inject()(
+                                              appConfig: FrontendAppConfig,
+                                              override val messagesApi: MessagesApi,
+                                              dataCacheConnector: DataCacheConnector,
+                                              navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction,
+                                              formProvider: UniqueTaxReferenceFormProvider
+                                            ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
-  val form: Form[UniqueTaxReference] = formProvider()
+  private val form: Form[UniqueTaxReference] = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val redirectResult = request.userAnswers.uniqueTaxReference(index) match {
-            case Success(None) => Ok(uniqueTaxReference(appConfig, form, mode, index, establisherName))
-            case Success(Some(value)) => Ok(uniqueTaxReference(appConfig, form.fill(value), mode, index, establisherName))
-            case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+          val redirectResult = request.userAnswers.get(UniqueTaxReferenceId(index)) match {
+            case None =>
+              Ok(uniqueTaxReference(appConfig, form, mode, index, establisherName))
+            case Some(value) =>
+              Ok(uniqueTaxReference(appConfig, form.fill(value), mode, index, establisherName))
           }
           Future.successful(redirectResult)
       }
@@ -69,18 +70,25 @@ class UniqueTaxReferenceController @Inject()(appConfig: FrontendAppConfig,
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index, establisherName))),
             (value) =>
-              dataCacheConnector.saveMap[UniqueTaxReference](request.externalId,
-                UniqueTaxReferenceId.toString, index, value).map(cacheMap =>
-                Redirect(navigator.nextPage(UniqueTaxReferenceId, mode)(new UserAnswers(cacheMap))))
+              dataCacheConnector.save(
+                request.externalId,
+                UniqueTaxReferenceId(index),
+                value
+              ).map {
+                json =>
+                  Redirect(navigator.nextPage(UniqueTaxReferenceId(index), mode)(new UserAnswers(json)))
+              }
           )
       }
   }
 
-  private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
+  private def retrieveEstablisherName(index: Int)(block: String => Future[Result])
                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.establisherDetails(index) match {
-      case Success(Some(value)) => block(value.establisherName)
-      case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    request.userAnswers.get[EstablisherDetails](EstablisherDetailsId(index)) match {
+      case Some(value) =>
+        block(value.establisherName)
+      case _ =>
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
   }
 }

@@ -16,8 +16,16 @@
 
 package identifiers.register.establishers.individual
 
-import identifiers.Identifier
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.register.establishers.individual.AddressYears
+import play.api.libs.json._
 
-case object AddressYearsId extends Identifier {
-  override def toString: String = "addressYears"
+case class AddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
+  override def path: JsPath = EstablishersId.path \ index \ AddressYearsId.toString
+}
+
+object AddressYearsId {
+  override lazy val toString: String =
+    "addressYears"
 }

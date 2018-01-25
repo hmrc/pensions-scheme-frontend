@@ -23,7 +23,7 @@ import controllers.ControllerSpecBase
 
 class WhatYouWillNeedControllerSpec extends ControllerSpecBase {
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new WhatYouWillNeedController(frontendAppConfig, messagesApi, FakeAuthAction,
       dataRetrievalAction)
 

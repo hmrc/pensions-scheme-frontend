@@ -31,6 +31,7 @@ import models.register.BenefitsInsurer
 import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.benefitsInsurer
+import play.api.libs.json._
 
 import scala.concurrent.Future
 
@@ -43,11 +44,11 @@ class BenefitsInsurerController @Inject()(appConfig: FrontendAppConfig,
                                                   requireData: DataRequiredAction,
                                                   formProvider: BenefitsInsurerFormProvider) extends FrontendController with I18nSupport {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.benefitsInsurer match {
+      val preparedForm = request.userAnswers.get(BenefitsInsurerId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -60,7 +61,7 @@ class BenefitsInsurerController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(benefitsInsurer(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[BenefitsInsurer](request.externalId, BenefitsInsurerId.toString, value).map(cacheMap =>
+          dataCacheConnector.save(request.externalId, BenefitsInsurerId, value).map(cacheMap =>
             Redirect(navigator.nextPage(BenefitsInsurerId, mode)(new UserAnswers(cacheMap))))
       )
   }
