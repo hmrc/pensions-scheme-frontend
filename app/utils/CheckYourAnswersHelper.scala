@@ -25,6 +25,12 @@ import scala.util.Success
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def manualAddress: Option[AnswerRow] = userAnswers.manualAddress map {
+    x => AnswerRow("manualAddress.checkYourAnswersLabel", s"${x.addressLine1} ${x.addressLine1} ${x.addressLine2} ${x.addressLine1} " +
+      s"${x.addressLine4} ${x.postalCode} ${x.country}", false,
+      controllers.register.establishers.individual.routes.ManualAddressController.onPageLoad(CheckMode).url)
+  }
+
   def companyAddressYears(index: Int): Option[AnswerRow] = {
     userAnswers.companyAddressYears(index) match {
       case Success(Some(x)) => Some(AnswerRow("companyAddressYears.checkYourAnswersLabel", s"companyAddressYears.$x", true,

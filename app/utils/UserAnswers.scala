@@ -30,6 +30,8 @@ import identifiers.register.establishers.company._
 import scala.util.{Success, Try}
 
 class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapFormats {
+  def manualAddress: Option[ManualAddress] = cacheMap.getEntry[ManualAddress](ManualAddressId.toString)
+
 
   def companyDetails: Option[EstablishersIndividualMap[CompanyDetails]] = cacheMap.getEntry[EstablishersIndividualMap[CompanyDetails]](
     CompanyDetailsId.toString)

@@ -38,6 +38,12 @@ messages__common__enter_postcode = Enter the postcode below, or
 messages__common__select_address_link = enter the address manually
 messages__common__address_postcode = Postal code
 messages__common__address_postcode_hint = For example NE12 8ER
+messages__common__address1 = Address line 1
+messages__common__address2 = Address line 2
+messages__common__address3 = Address line 3 (optional)
+messages__common__address4 = Address line 4 (optional)
+messages__common__address_postcode_hint = For example NE12 8ER
+messages__common__country = Country
 messages__error__first_name = Enter the first name
 messages__error__last_name = Enter the last name
 messages__error__date = Enter a valid date
@@ -49,6 +55,9 @@ messages__error__no_sautr_establisher = You need to tell us why the establisher 
 messages__error__no_sautr_length = The reason cannot be more than 150 characters
 messages__error__email = Enter an email address
 messages__error__phone = Enter a phone number
+messages__error__addr1 = Enter the first line of the address
+messages__error__addr2 = Enter the second line of the address
+messages__error__country = Enter a country
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -248,3 +257,7 @@ messages__error__postcode_invalid = Enter a valid postal code
 messages__error__postcode_no_results = No results for that postcode
 
 address.checkYourAnswersLabel = address
+
+messages__establisher_individual_address__title = Establisher’s address
+messages__manualAddress_checkYourAnswersLabel = manualAddress
+
