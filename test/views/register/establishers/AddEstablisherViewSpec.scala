@@ -49,8 +49,8 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like yesNoPage(createViewUsingForm, messageKeyPrefix, "legend_more",
-      routes.AddEstablisherController.onSubmit(NormalMode).url)
+    behave like yesNoPage(createViewUsingForm, messageKeyPrefix,
+      routes.AddEstablisherController.onSubmit(NormalMode).url, "legend_more")
 
     "display the initial message without yes/no buttons if no establishers are added yet" in {
       val doc = Jsoup.parse(createView(None).toString())

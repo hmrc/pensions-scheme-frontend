@@ -1,4 +1,4 @@
-package forms.$routeFile$
+package forms.$routeFile;format="packaged"$
 
 import javax.inject.Inject
 import forms.mappings.Mappings
@@ -8,6 +8,6 @@ class $className$FormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("$className;format="decap"$.error.required")
+      "value" -> boolean("messages__$className;format="decap"$__error__required")
     )
 }
