@@ -17,6 +17,6 @@
 package identifiers.register
 import identifiers._
 
-case object InvestmentRegulatedId extends Identifier {
+case object InvestmentRegulatedId extends TypedIdentifier[Boolean] {
   override def toString: String = "investmentRegulated"
 }

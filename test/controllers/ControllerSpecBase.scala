@@ -16,12 +16,14 @@
 
 package controllers
 
-import uk.gov.hmrc.http.cache.client.CacheMap
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import models.register.establishers.individual.{EstablisherDetails, EstablishersIndividualMap}
+import models.CompanyDetails
+import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
@@ -31,17 +33,34 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
 
   val cacheMapId = "id"
 
-  def emptyCacheMap: CacheMap = CacheMap(cacheMapId, Map())
+  def getEmptyData: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))
 
-  def getEmptyCacheMap: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(emptyCacheMap))
-
-  def getMandatorySchemeNameCacheMap: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(CacheMap("id", Map(
-    SchemeDetailsId.toString -> Json.toJson(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust))))))
+  def getMandatorySchemeName: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj(
+    SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust))))
 
   def dontGetAnyData: FakeDataRetrievalAction = new FakeDataRetrievalAction(None)
 
-  def getMandatoryEstablisherCacheMap: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(CacheMap("id", Map(SchemeDetailsId.toString -> Json.toJson(
-    SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)), EstablisherDetailsId.toString ->
-    Json.toJson(EstablishersIndividualMap[EstablisherDetails](Map(0 -> EstablisherDetails("test first name", "test last name", LocalDate.now())))
-  )))))
+  def getMandatoryEstablisher: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
+    Json.obj(
+      SchemeDetailsId.toString ->
+        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+      "establishers" -> Json.arr(
+        Json.obj(
+          EstablisherDetailsId.toString -> EstablisherDetails("test first name", "test last name", LocalDate.now())
+        )
+      )
+    )))
+
+  def getMandatoryEstablisherCompany: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      SchemeDetailsId.toString ->
+        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString ->
+            CompanyDetails("test company name", Some("123456"), Some("abcd"))
+        )
+      )
+    ))
+  )
 }

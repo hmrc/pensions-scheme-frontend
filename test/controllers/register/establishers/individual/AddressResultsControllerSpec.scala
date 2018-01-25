@@ -24,9 +24,9 @@ import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.individual.AddressResultsFormProvider
-import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
+import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId, UniqueTaxReferenceId}
 import models.{Index, NormalMode}
-import models.register.establishers.individual.{EstablisherDetails, EstablishersIndividualMap}
+import models.register.establishers.individual.{EstablisherDetails, EstablishersIndividualMap, UniqueTaxReference}
 import views.html.register.establishers.individual.addressResults
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
@@ -44,7 +44,7 @@ class AddressResultsControllerSpec extends ControllerSpecBase with Enumerable.Im
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCacheMap): AddressResultsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): AddressResultsController =
     new AddressResultsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -54,23 +54,29 @@ class AddressResultsControllerSpec extends ControllerSpecBase with Enumerable.Im
   def address(postCode: String): Address = Address(lines = List("address line 1", "address line 2"), town = Some("test town"),
     county = Some("test county"), postcode = postCode, country = Country("United Kingdom"))
 
-  val validData = Some(CacheMap("id", Map(
-    SchemeDetailsId.toString -> Json.toJson(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)),
-    EstablisherDetailsId.toString -> Json.toJson(EstablishersIndividualMap[EstablisherDetails](
-      Map(0 -> EstablisherDetails("test first name", "test last name", LocalDate.now())))),
-    AddressId.toString -> Json.toJson[Seq[Address]](Seq(address("test post code 1"), address("test post code 2"))))))
+  val validData = Json.obj(SchemeDetailsId.toString -> Json.toJson(
+    SchemeDetails("value 1", SchemeType.SingleTrust)),
+    "establishers" -> Json.arr(
+      Json.obj(
+        EstablisherDetailsId.toString ->
+          EstablisherDetails("test first name", "test last name", LocalDate.now),
+        UniqueTaxReferenceId.toString ->
+          UniqueTaxReference.Yes("1234567891")
+      )),
+    AddressId.toString -> Json.toJson[Seq[Address]](
+      Seq(address("test post code 1"), address("test post code 2"))))
 
   "AddressResults Controller" must {
 
     "return OK and the correct view for a GET when establisher name is present" in {
-      val result = controller(new FakeDataRetrievalAction(validData)).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller(new FakeDataRetrievalAction(Some(validData))).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(address = Seq(address("test post code 1"), address("test post code 2")))
     }
 
     "redirect to Session Expired page when establisher name is not present" in {
-      val result = controller(getEmptyCacheMap).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

@@ -25,7 +25,7 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressResultsFormProvider
-import identifiers.register.establishers.individual.AddressResultsId
+import identifiers.register.establishers.individual.{AddressId, AddressResultsId, EstablisherDetailsId}
 import models.addresslookup.{Address, AddressRecord}
 import models.requests.DataRequest
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
@@ -34,7 +34,6 @@ import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent, Result}
 
 import scala.concurrent.Future
-import scala.util.Success
 
 class AddressResultsController @Inject()(
                                         appConfig: FrontendAppConfig,
@@ -53,7 +52,8 @@ class AddressResultsController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val result = request.userAnswers.address match {
+
+          val result = request.userAnswers.get[Seq[Address]](AddressId) match {
             case None => Redirect(controllers.register.establishers.individual.routes.AddressController.onPageLoad(mode, index))
             case Some(value) => Ok(addressResults(appConfig, form, mode, index, value, establisherName))
           }
@@ -68,19 +68,27 @@ class AddressResultsController @Inject()(
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(addressResults(appConfig, formWithErrors, mode, index,
-                request.userAnswers.address.getOrElse(Seq.empty), establisherName))),
+                request.userAnswers.get[Seq[Address]](AddressId.path).getOrElse(Seq.empty), establisherName))),
             (value) =>
-              dataCacheConnector.save[Address](request.externalId, AddressResultsId.toString, value).map(cacheMap =>
-                Redirect(navigator.nextPage(AddressResultsId, mode)(new UserAnswers(cacheMap))))
+              dataCacheConnector.save(
+                request.externalId,
+                AddressResultsId(index),
+                value
+              ).map {
+                json =>
+                  Redirect(navigator.nextPage(AddressResultsId(index), mode)(new UserAnswers(json)))
+              }
           )
       }
   }
 
-  private def retrieveEstablisherName(index: Int)(block: String => Future[Result])
+  private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.establisherDetails(index) match {
-      case Success(Some(value)) => block(value.establisherName)
-      case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    request.userAnswers.get(EstablisherDetailsId(index)) match {
+      case Some(value) =>
+        block(value.establisherName)
+      case _ =>
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
   }
 }

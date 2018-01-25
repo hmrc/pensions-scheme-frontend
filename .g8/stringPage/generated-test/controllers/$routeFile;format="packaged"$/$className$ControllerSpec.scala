@@ -1,4 +1,4 @@
-package controllers.$routeFile$
+package controllers.$routeFile;format="packaged"$
 
 import play.api.data.Form
 import play.api.libs.json.JsString
@@ -11,6 +11,7 @@ import forms.$routeFile$.$className$FormProvider
 import identifiers.$routeFile$.$className$Id
 import models.NormalMode
 import views.html.$routeFile$.$className;format="decap"$
+import play.api.libs.json._
 import controllers.ControllerSpecBase
 
 class $className$ControllerSpec extends ControllerSpecBase {
@@ -20,7 +21,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
   val formProvider = new $className$FormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new $className$Controller(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -38,8 +39,8 @@ class $className$ControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map($className$Id.toString -> JsString(testAnswer))
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val validData = Json.obj($className$Id.toString -> JsString(testAnswer))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 

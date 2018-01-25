@@ -45,7 +45,7 @@ class AddressControllerSpec extends ControllerSpecBase with MockitoSugar {
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCacheMap): AddressController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): AddressController =
     new AddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)

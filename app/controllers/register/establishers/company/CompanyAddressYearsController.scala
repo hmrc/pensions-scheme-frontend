@@ -18,42 +18,43 @@ package controllers.register.establishers.company
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.company.AddressYearsFormProvider
 import identifiers.register.establishers.company.CompanyAddressYearsId
 import models.register.establishers.company.CompanyAddressYears
 import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyAddressYears
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 class CompanyAddressYearsController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AddressYearsFormProvider) extends FrontendController with I18nSupport
-                                        with Enumerable.Implicits with MapFormats {
+                                               appConfig: FrontendAppConfig,
+                                               override val messagesApi: MessagesApi,
+                                               dataCacheConnector: DataCacheConnector,
+                                               navigator: Navigator,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               formProvider: AddressYearsFormProvider
+                                             ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      request.userAnswers.companyAddressYears(index) match {
-        case Success(None) => Ok(companyAddressYears(appConfig, form, mode, index))
-        case Success(Some(value)) => Ok(companyAddressYears(appConfig, form.fill(value), mode, index))
-        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+      request.userAnswers
+        .get[CompanyAddressYears](CompanyAddressYearsId(index)) match {
+        case None =>
+          Ok(companyAddressYears(appConfig, form, mode, index))
+        case Some(value) =>
+          Ok(companyAddressYears(appConfig, form.fill(value), mode, index))
       }
   }
 
@@ -63,8 +64,14 @@ class CompanyAddressYearsController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(companyAddressYears(appConfig, formWithErrors, mode, index))),
         (value) =>
-          dataCacheConnector.saveMap[CompanyAddressYears](request.externalId, CompanyAddressYearsId.toString, index, value).map(cacheMap =>
-            Redirect(navigator.nextPage(CompanyAddressYearsId, mode)(new UserAnswers(cacheMap))))
+          dataCacheConnector.save(
+            request.externalId,
+            CompanyAddressYearsId(index),
+            value
+          ).map {
+            json =>
+              Redirect(navigator.nextPage(CompanyAddressYearsId(index), mode)(new UserAnswers(json)))
+          }
       )
   }
 }

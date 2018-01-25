@@ -1,10 +1,10 @@
-package forms.$routeFile$
+package forms.$routeFile;format="packaged"$
 
 import forms.FormSpec
 
 class $className$FormProviderSpec extends FormSpec {
 
-  val requiredKey = "$className;format="decap"$.error.required"
+  val requiredKey = "messages__$className;format="decap"$__error__required"
 
   "$className$ Form" must {
 

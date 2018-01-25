@@ -18,17 +18,17 @@ package controllers.register
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.UKBankDetailsFormProvider
 import identifiers.register.UKBankDetailsId
 import models.Mode
 import models.register.UKBankDetails
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
 import views.html.register.uKBankDetails
 
@@ -43,11 +43,11 @@ class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   requireData: DataRequiredAction,
                                                   formProvider: UKBankDetailsFormProvider) extends FrontendController with I18nSupport {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.uKBankDetails match {
+      val preparedForm = request.userAnswers.get(UKBankDetailsId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -60,7 +60,7 @@ class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(uKBankDetails(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[UKBankDetails](request.externalId, UKBankDetailsId.toString, value).map(cacheMap =>
+          dataCacheConnector.save(request.externalId, UKBankDetailsId, value).map(cacheMap =>
             Redirect(navigator.nextPage(UKBankDetailsId, mode)(new UserAnswers(cacheMap))))
       )
   }

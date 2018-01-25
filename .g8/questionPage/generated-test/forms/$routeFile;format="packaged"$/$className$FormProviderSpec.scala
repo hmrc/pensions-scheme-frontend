@@ -1,4 +1,4 @@
-package forms.$routeFile$
+package forms.$routeFile;format="packaged"$
 
 import forms.behaviours.FormBehaviours
 import models.{Field, Required}
@@ -17,8 +17,8 @@ class $className$FormProviderSpec extends FormBehaviours {
     behave like questionForm($className$("value 1", "value 2"))
 
     behave like formWithMandatoryTextFields(
-      Field("field1", Required -> "$className;format="decap"$.error.field1.required"),
-      Field("field2", Required -> "$className;format="decap"$.error.field2.required")
+      Field("field1", Required -> "messages__$className;format="decap"$__error__field1_required"),
+      Field("field2", Required -> "messages__$className;format="decap"$__error__field2_required")
     )
   }
 }
