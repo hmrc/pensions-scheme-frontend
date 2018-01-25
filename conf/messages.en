@@ -239,6 +239,8 @@ messages__error__vat_invalid = Enter a valid VAT Registration number
 messages__error__paye_length = The PAYE number cannot be more than 13 characters
 
 companyDetails.checkYourAnswersLabel = companyDetails
+messages__establisher_company_contact_details__title = Company contact details
+companyContactDetails.checkYourAnswersLabel = companyContactDetails
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the registered business address but you can enter any address you have for this company.

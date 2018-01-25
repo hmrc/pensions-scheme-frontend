@@ -41,6 +41,12 @@ class UserAnswers(val cacheMap: CacheMap) extends Enumerable.Implicits with MapF
 
   def companyDetails(index: Int): Try[Option[CompanyDetails]] = companyDetails.map(_.get(index)).getOrElse(Success(None))
 
+  def companyContactDetails: Option[EstablishersIndividualMap[CompanyContactDetails]] =
+    cacheMap.getEntry[EstablishersIndividualMap[CompanyContactDetails]](CompanyContactDetailsId.toString)
+
+  def companyContactDetails(index: Int): Try[Option[CompanyContactDetails]] =
+    companyContactDetails.map(_.get(index)).getOrElse(Success(None))
+
   def contactDetails: Option[EstablishersIndividualMap[ContactDetails]] =
     cacheMap.getEntry[EstablishersIndividualMap[ContactDetails]](ContactDetailsId.toString)
 
