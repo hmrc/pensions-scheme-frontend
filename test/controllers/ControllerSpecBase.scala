@@ -20,7 +20,9 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import models.CompanyDetails
 import models.register.establishers.individual.{EstablisherDetails, EstablishersIndividualMap}
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
@@ -44,4 +46,9 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
     SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)), EstablisherDetailsId.toString ->
     Json.toJson(EstablishersIndividualMap[EstablisherDetails](Map(0 -> EstablisherDetails("test first name", "test last name", LocalDate.now())))
   )))))
+
+  def getMandatoryCompanyCacheMap: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(CacheMap("id", Map(SchemeDetailsId.toString -> Json.toJson(
+    SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)), CompanyDetailsId.toString ->
+    Json.toJson(EstablishersIndividualMap[CompanyDetails](Map(0 -> CompanyDetails("test company name", Some("123456"), Some("abcd"))))
+    )))))
 }
