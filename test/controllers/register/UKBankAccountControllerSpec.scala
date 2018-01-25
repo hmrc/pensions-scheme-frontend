@@ -17,7 +17,7 @@
 package controllers.register
 
 import play.api.data.Form
-import play.api.libs.json.JsBoolean
+import play.api.libs.json.{JsBoolean, Json}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
@@ -36,7 +36,7 @@ class UKBankAccountControllerSpec extends ControllerSpecBase {
   val formProvider = new UKBankAccountFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new UKBankAccountController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -52,8 +52,8 @@ class UKBankAccountControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(UKBankAccountId.toString -> JsBoolean(true))
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val validData = Json.obj(UKBankAccountId.toString -> true)
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 

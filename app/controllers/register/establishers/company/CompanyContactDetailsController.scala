@@ -18,22 +18,21 @@ package controllers.register.establishers.company
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.company.CompanyContactDetailsFormProvider
-import identifiers.register.establishers.company.CompanyContactDetailsId
+import identifiers.register.establishers.company.{CompanyContactDetailsId, CompanyDetailsId}
 import models.requests.DataRequest
 import models.{CompanyContactDetails, Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyContactDetails
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
@@ -51,10 +50,9 @@ class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
-          val redirectResult = request.userAnswers.companyContactDetails(index) match {
-            case Success(None) => Ok(companyContactDetails(appConfig, form, mode, index, companyName))
-            case Success(Some(value)) => Ok(companyContactDetails(appConfig, form.fill(value), mode, index, companyName))
-            case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+          val redirectResult = request.userAnswers.get(CompanyContactDetailsId(index)) match {
+            case None => Ok(companyContactDetails(appConfig, form, mode, index, companyName))
+            case Some(value) => Ok(companyContactDetails(appConfig, form.fill(value), mode, index, companyName))
           }
           Future.successful(redirectResult)
       }
@@ -68,17 +66,19 @@ class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(companyContactDetails(appConfig, formWithErrors, mode, index, companyName))),
             (value) =>
-              dataCacheConnector.saveMap[CompanyContactDetails](request.externalId, CompanyContactDetailsId.toString, index, value).map(cacheMap =>
-                Redirect(navigator.nextPage(CompanyContactDetailsId, mode)(new UserAnswers(cacheMap))))
+              dataCacheConnector.save(request.externalId, CompanyContactDetailsId(index), value).map(cacheMap =>
+                Redirect(navigator.nextPage(CompanyContactDetailsId(index), mode)(new UserAnswers(cacheMap))))
           )
       }
   }
 
   private def retrieveCompanyName(index: Int)(block: String => Future[Result])
                                  (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.companyDetails(index) match {
-      case Success(Some(value)) => block(value.companyName)
-      case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    request.userAnswers.get(CompanyDetailsId(index)) match {
+      case Some(value) =>
+        block(value.companyName)
+      case _ =>
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
   }
 }

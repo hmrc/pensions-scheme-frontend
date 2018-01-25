@@ -24,13 +24,14 @@ class $className$Controller @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: $className$FormProvider) extends FrontendController with I18nSupport {
+                                       formProvider: $className$FormProvider
+                                     ) extends FrontendController with I18nSupport {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.$className;format="decap"$ match {
+      val preparedForm = request.userAnswers.get($className$Id) match {
       case None => form
       case Some(value) => form.fill(value)
     }
@@ -43,7 +44,7 @@ class $className$Controller @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest($className;format="decap"$(appConfig, formWithErrors, mode))),
     (value) =>
-      dataCacheConnector.save[Int](request.externalId, $className$Id.toString, value).map(cacheMap =>
+      dataCacheConnector.save[Int](request.externalId, $className$Id, value).map(cacheMap =>
         Redirect(navigator.nextPage($className$Id, mode)(new UserAnswers(cacheMap))))
     )
   }

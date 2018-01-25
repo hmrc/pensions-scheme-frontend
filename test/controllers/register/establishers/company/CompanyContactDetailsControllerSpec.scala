@@ -16,21 +16,20 @@
 
 package controllers.register.establishers.company
 
-import play.api.data.Form
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
 import forms.register.establishers.company.CompanyContactDetailsFormProvider
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyContactDetailsId, CompanyDetailsId}
 import models._
-import views.html.register.establishers.company.companyContactDetails
-import controllers.ControllerSpecBase
-import identifiers.register.SchemeDetailsId
-import models.register.establishers.individual.EstablishersIndividualMap
 import models.register.{SchemeDetails, SchemeType}
+import play.api.data.Form
+import play.api.libs.json.Json
+import play.api.test.Helpers._
+import utils.FakeNavigator
+import views.html.register.establishers.company.companyContactDetails
 
 class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
 
@@ -43,17 +42,28 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
   val companyName = "test company name"
 
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryCompanyCacheMap) : CompanyContactDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) : CompanyContactDetailsController =
     new CompanyContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form) = companyContactDetails(frontendAppConfig, form, NormalMode, firstIndex, companyName)(fakeRequest, messages).toString
 
-  val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)),
-    CompanyDetailsId.toString -> Json.toJson(EstablishersIndividualMap[CompanyDetails](Map(
-      0 -> CompanyDetails("test company name", Some("123456"), Some("abcd")),
-      1 -> CompanyDetails("test", Some("654321"), Some("bcda"))))),
-    CompanyContactDetailsId.toString -> Json.toJson(EstablishersIndividualMap[CompanyContactDetails](Map(0 -> CompanyContactDetails("test@test.com", "123456789")))))
+  val validData = Json.obj(
+    SchemeDetailsId.toString ->
+      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    EstablishersId.toString -> Json.arr(
+      Json.obj(
+        CompanyDetailsId.toString ->
+          CompanyDetails("test company name", Some("123456"), Some("abcd")),
+        CompanyContactDetailsId.toString ->
+          CompanyContactDetails("test@test.com", "123456789")
+      ),
+      Json.obj(
+        CompanyDetailsId.toString ->
+          CompanyDetails("test", Some("654321"), Some("bcda"))
+      )
+    )
+  )
 
   "CompanyContactDetails Controller" must {
 
@@ -65,14 +75,14 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired page when company name is not present" in {
-      val result = controller(getEmptyCacheMap).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to session expired from a GET when the index is invalid" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
 
@@ -81,7 +91,7 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 

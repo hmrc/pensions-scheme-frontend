@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package identifiers.register
+package identifiers.register.establishers
 
-import identifiers.TypedIdentifier
-import models.register.BenefitsInsurer
+import identifiers.Identifier
+import play.api.libs.json._
 
-case object BenefitsInsurerId extends TypedIdentifier[BenefitsInsurer] {
-  override def toString: String = "benefitsInsurer"
+case object EstablishersId extends Identifier {
+  override def toString: String = "establishers"
+  override def path: JsPath = __ \ toString
 }

@@ -1,4 +1,4 @@
-package views.$routeFile$
+package views.$routeFile;format="packaged"$
 
 import play.api.data.Form
 import controllers.$routeFile$.routes
@@ -19,7 +19,7 @@ class $className$ViewSpec extends YesNoViewBehaviours {
 
   "$className$ view" must {
 
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages("messages__$className;format="decap"$__heading"))
 
     behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.$className$Controller.onSubmit(NormalMode).url)
   }

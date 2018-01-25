@@ -17,7 +17,7 @@
 package controllers.register
 
 import play.api.data.Form
-import play.api.libs.json.JsString
+import play.api.libs.json.{JsString, Json}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
@@ -37,7 +37,7 @@ class MembershipFutureControllerSpec extends ControllerSpecBase {
   val formProvider = new MembershipFutureFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new MembershipFutureController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -53,8 +53,8 @@ class MembershipFutureControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(MembershipFutureId.toString -> JsString(MembershipFuture.values.head.toString))
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val validData = Json.obj(MembershipFutureId.toString -> MembershipFuture.values.head.toString)
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
