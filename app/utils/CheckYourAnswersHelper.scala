@@ -19,7 +19,7 @@ package utils
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.EstablisherKindId
-import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyDetailsId}
+import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyContactDetailsId, CompanyDetailsId}
 import identifiers.register.establishers.individual._
 import models.register.establishers.individual.{AddressYears, UniqueTaxReference}
 import models.{CheckMode, EstablisherNino, Index}
@@ -40,6 +40,12 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends Enumerable.Implic
         controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url))
       case _ => None
     }
+
+  def companyContactDetails(index: Int): Option[AnswerRow] = userAnswers.get(CompanyContactDetailsId(index)) match {
+    case Some(x) => Some(AnswerRow("companyContactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
+      controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(CheckMode, Index(index)).url))
+    case _ => None
+  }
 
   def uniqueTaxReference(index: Int): Option[AnswerRow] =
     userAnswers.get(UniqueTaxReferenceId(index)) match {
