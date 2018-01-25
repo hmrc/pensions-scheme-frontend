@@ -408,8 +408,22 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     "successfully bind the address with town and county" in {
       val coForm = testForm.bind(Map("address" -> "address line 1, address line 2, test town, test county, test post code"))
 
-      coForm.get mustEqual Address(lines = List("address line 1", "address line 2"), town = Some("test town"),
-        county = Some("test county"), postcode = "test post code", country = Country("United Kingdom"))
+      coForm.get mustEqual Address(lines = List("address line 1", "address line 2", "test town", "test county"),
+        postcode = "test post code", country = Country("United Kingdom"))
+    }
+
+    "successfully bind the address with town but no county" in {
+      val coForm = testForm.bind(Map("address" -> "address line 1, address line 2, test town, test post code"))
+
+      coForm.get mustEqual Address(lines = List("address line 1", "address line 2", "test town"),
+        postcode = "test post code", country = Country("United Kingdom"))
+    }
+
+    "successfully bind the address with county but no town" in {
+      val coForm = testForm.bind(Map("address" -> "address line 1, address line 2, test county, test post code"))
+
+      coForm.get mustEqual Address(lines = List("address line 1", "address line 2", "test county"),
+        postcode = "test post code", country = Country("United Kingdom"))
     }
 
     "successfully bind the address without town and county" in {
@@ -426,31 +440,30 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
 
     "unbind a valid address with town and county" in {
-      val result = testForm.fill(Address(lines = List("address line 1", "address line 2"), town = Some("test town"),
-        county = Some("test county"), postcode = "test post code", country = Country("United Kingdom")))
+      val result = testForm.fill(Address(lines = List("address line 1", "address line 2", "test town", "test county"),
+        postcode = "test post code", country = Country("United Kingdom")))
 
-      result.apply("address").value.value mustEqual "address line 1, address line 2, test town, test county, test post code, United Kingdom"
+      result.apply("address").value.value mustEqual "address line 1, address line 2, test town, test county, test post code"
     }
 
     "unbind a valid address without town and county" in {
-      val result = testForm.fill(Address(lines = List("address line 1", "address line 2"), None,
-        None, postcode = "test post code", country = Country("United Kingdom")))
+      val result = testForm.fill(Address(lines = List("address line 1", "address line 2"), postcode = "test post code", country = Country("United Kingdom")))
 
-      result.apply("address").value.value mustEqual "address line 1, address line 2, test post code, United Kingdom"
+      result.apply("address").value.value mustEqual "address line 1, address line 2, test post code"
     }
 
     "unbind a valid address with town but without county" in {
-      val result = testForm.fill(Address(lines = List("address line 1", "address line 2"), Some("test town"),
-        None, postcode = "test post code", country = Country("United Kingdom")))
+      val result = testForm.fill(Address(lines = List("address line 1", "address line 2", "test town"),
+        postcode = "test post code", country = Country("United Kingdom")))
 
-      result.apply("address").value.value mustEqual "address line 1, address line 2, test town, test post code, United Kingdom"
+      result.apply("address").value.value mustEqual "address line 1, address line 2, test town, test post code"
     }
 
     "unbind a valid address with county but without town" in {
-      val result = testForm.fill(Address(lines = List("address line 1", "address line 2"), None,
-        Some("test county"), postcode = "test post code", country = Country("United Kingdom")))
+      val result = testForm.fill(Address(lines = List("address line 1", "address line 2", "test county"),
+        postcode = "test post code", country = Country("United Kingdom")))
 
-      result.apply("address").value.value mustEqual "address line 1, address line 2, test county, test post code, United Kingdom"
+      result.apply("address").value.value mustEqual "address line 1, address line 2, test county, test post code"
     }
   }
 }

@@ -125,24 +125,15 @@ trait Formatters {
       baseFormatter.bind(key, data)
         .right.flatMap {
         addressStr =>
-          val address = addressStr.split(",").toSeq.map(_.trim)
-          val addressLines = List(address.head, address(1))
+          val addressSeq = addressStr.split(",").toSeq.map(_.trim)
 
-          val addressRecord = if (address.length == 3) {
-            Address(lines = addressLines, postcode = address(2), country = Country(UnitedKingdom))
-          } else {
-            Address(lines = addressLines, town = Some(address(2)), county = Some(address(3)),
-              postcode = address(4), Country(UnitedKingdom))
-          }
-          Right(addressRecord)
+          Right(Address(addressSeq.take(addressSeq.length - 1).toList,
+            postcode = addressSeq.last, country = Country(UnitedKingdom)))
       }
     }
 
     override def unbind(key: String, addressRecord: Address): Map[String, String] = {
-      baseFormatter.unbind(key, s"${addressRecord.lines.head}, ${addressRecord.lines(1)}" +
-        s"${addressRecord.town.map(town => s", $town").getOrElse("")}" +
-        s"${addressRecord.county.map(county => s", $county").getOrElse("")}, " +
-        s"${addressRecord.postcode}, $UnitedKingdom")
+      baseFormatter.unbind(key, s"${addressRecord.lines.mkString(", ")}, ${addressRecord.postcode}")
     }
   }
 }

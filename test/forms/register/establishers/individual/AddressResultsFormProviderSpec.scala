@@ -22,10 +22,10 @@ import models.addresslookup.{Address, Country}
 class AddressResultsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
-    "value" -> "address line 1, address line 2, test town, test county, test post code, United Kingdom"
+    "value" -> "address line 1, address line 2, test town, test county, test post code"
   )
-  val address = Address(List("address line 1", "address line 2"), Some("test town"),
-    Some("test county"), "test post code", Country("United Kingdom"))
+  val address = Address(lines = List("address line 1", "address line 2", "test town", "test county"),
+    postcode = "test post code", country = Country("United Kingdom"))
 
   val form = new AddressResultsFormProvider()()
 
