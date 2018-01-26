@@ -18,9 +18,9 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.individual.routes._
 @import models.{Mode, Index}
-@import models.register.establishers.individual.ManualAddress
+@import utils.InputOption
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, options: Seq[InputOption], establisherName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__establisher_individual_address__title"),
@@ -31,7 +31,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__establisher_individual_address__title")
+        @components.heading(headingKey = "messages__establisher_individual_address__title", secondaryHeaderKey = Some(establisherName))
 
         @components.input_text(
             field = form("manualAddress.line1"),
@@ -58,9 +58,11 @@
             label = messages("messages__common__address_postcode")
         )
 
-        @components.input_text(
-            field = form("manualAddress.country"),
-            label = messages("messages__common__country")
+        @components.select(field = form("manualAddress.country"),
+            label = messages("messages__common__country"),
+            options = options,
+            placeholder = Some("messages__common__pick_country"),
+            formGroupClasses = Set("autocomplete-wrapper")
         )
 
         @components.submit_button()

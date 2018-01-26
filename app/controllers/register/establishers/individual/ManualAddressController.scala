@@ -25,11 +25,12 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.ManualAddressFormProvider
-import identifiers.register.establishers.individual.{AddressResultsId, ManualAddressId}
+import identifiers.register.establishers.individual.{AddressResultsId, EstablisherDetailsId}
 import models.addresslookup.Address
+import models.register.CountryOptions
+import models.requests.DataRequest
 import models.{Index, Mode}
-import models.register.establishers.individual.ManualAddress
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.individual.manualAddress
 
@@ -42,33 +43,50 @@ class ManualAddressController @Inject()(appConfig: FrontendAppConfig,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
-                                                  formProvider: ManualAddressFormProvider) extends FrontendController with I18nSupport {
+                                                  formProvider: ManualAddressFormProvider,
+                                                  countryOptions: CountryOptions) extends FrontendController with I18nSupport {
 
   val form: Form[Address] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(AddressResultsId(index)) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      retrieveEstablisherName(index) {
+        establisherName =>
+          val result = request.userAnswers.get(AddressResultsId(index)) match {
+            case None => Ok(manualAddress(appConfig, form, mode, index, countryOptions.options, establisherName))
+            case Some(value) => Ok(manualAddress(appConfig, form.fill(value), mode, index, countryOptions.options, establisherName))
+          }
+          Future.successful(result)
       }
-      Ok(manualAddress(appConfig, preparedForm, mode, index))
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(manualAddress(appConfig, formWithErrors, mode, index))),
-        (value) =>
-          dataCacheConnector.save(
-            request.externalId,
-            AddressResultsId(index),
-            value
-          ).map {
-            json =>
-              Redirect(navigator.nextPage(AddressResultsId(index), mode)(new UserAnswers(json)))
-          }
-      )
+      retrieveEstablisherName(index) {
+        establisherName =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(manualAddress(appConfig, formWithErrors, mode, index, countryOptions.options, establisherName))),
+            (value) =>
+              dataCacheConnector.save(
+                request.externalId,
+                AddressResultsId(index),
+                value
+              ).map {
+                json =>
+                  Redirect(navigator.nextPage(AddressResultsId(index), mode)(new UserAnswers(json)))
+              }
+          )
+      }
+  }
+
+  private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
+                                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    request.userAnswers.get(EstablisherDetailsId(index)) match {
+      case Some(value) =>
+        block(value.establisherName)
+      case _ =>
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    }
   }
 }

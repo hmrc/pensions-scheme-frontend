@@ -17,10 +17,10 @@
 package forms.mappings
 
 import models.EstablisherNino
-import models.addresslookup.{Address, AddressRecord, Country}
+import models.addresslookup.{Address, Country}
 import models.register.{SchemeType, SortCode}
 import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
-import models.register.establishers.individual.{ManualAddress, UniqueTaxReference}
+import models.register.establishers.individual.UniqueTaxReference
 import org.joda.time.LocalDate
 import play.api.data.Forms.{of, _}
 import play.api.data.format.Formatter
@@ -176,15 +176,17 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
                                     ): Mapping[Address] = {
 
     val maxlengthLine = 35
-
+    val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
     def toManualAddress(manualAddress: (String, String, Option[String], Option[String], Option[String], String)): Address =
     {
       manualAddress match {
         case (line1, line2, line3, line4, addressPostCode, country) =>
-          val addressLines = List(line1, line2)
-          val allAddressLines = line3.map(_ :: addressLines).getOrElse(addressLines) :::  line4.map(_ :: addressLines).getOrElse(addressLines)
+          val addressLines = Seq(line1, line2)
 
-          Address(lines = allAddressLines, postcode = addressPostCode.getOrElse(""), country = Country(country))
+          val lines = if(line3.nonEmpty) addressLines :+ line3.getOrElse("") else addressLines
+          val allAddressLines = if(line4.nonEmpty) lines :+ line4.getOrElse("") else lines
+
+          Address(lines = allAddressLines.toList, postcode = addressPostCode.getOrElse(""), country = Country(country))
       }
     }
 
@@ -196,13 +198,13 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
         if(address.postcode.nonEmpty) Some(address.postcode) else None, address.country.name)
     }
 
-
     tuple(
       "line1" -> text(requiredLine1).verifying(maxLength(maxlengthLine, "messages__error__addr1_length")),
       "line2" -> text(requiredLine2).verifying(maxLength(maxlengthLine, "messages__error__addr2_length")),
       "line3" -> optional(Forms.text.verifying(maxLength(maxlengthLine, "messages__error__addr3_length"))),
       "line4" -> optional(Forms.text.verifying(maxLength(maxlengthLine, "messages__error__addr4_length"))),
-      "postCode" -> mandatoryIfEqual[String]("manualAddress.country", "United Kingdom", text(requiredPostCode)),
+      "postCode" -> mandatoryIfEqual[String]("manualAddress.country", "GB", text(requiredPostCode).verifying(
+        regexp(postCodeRegex, "messages__error__postcode_invalid"))),
       "country" -> text(requiredCountry)
     ).transform(toManualAddress, fromManualAddress)
   }

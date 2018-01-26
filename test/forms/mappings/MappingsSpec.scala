@@ -16,8 +16,8 @@
 
 package forms.mappings
 
-import models.EstablisherNino
-import models.addresslookup.{Address, Country}
+import models.{EstablisherNino, addresslookup}
+import models.addresslookup._
 import models.register.establishers.individual.UniqueTaxReference
 import models.register.{SchemeType, SortCode}
 import org.apache.commons.lang3.RandomStringUtils
@@ -465,5 +465,117 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
 
       result.apply("address").value.value mustEqual "address line 1, address line 2, test county, test post code"
     }
+  }
+
+  "manual address" must {
+    val testForm = Form("manualAddress" -> manualAddressMapping())
+    val invalidLength = 36
+    val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
+
+    "successfully bind the address with all the fields" in {
+      val form = testForm.bind(Map("manualAddress.line1" -> "line 1", "manualAddress.line2" -> "line 2",
+        "manualAddress.line3" -> "line 3", "manualAddress.line4" -> "line 4", "manualAddress.postCode" -> "AB1 1AB",
+        "manualAddress.country" -> "GB"))
+
+      form.get mustEqual Address(lines = List("line 1", "line 2", "line 3", "line 4"), postcode = "AB1 1AB", country = Country("GB"))
+    }
+
+    "successfully bind the address without postcode for non-Uk country" in {
+      val form = testForm.bind(Map("manualAddress.line1" -> "line 1", "manualAddress.line2" -> "line 2",
+        "manualAddress.line3" -> "line 3", "manualAddress.line4" -> "line 4", "manualAddress.country" -> "IN"))
+
+      form.get mustEqual Address(lines = List("line 1", "line 2", "line 3", "line 4"), postcode = "", country = Country("IN"))
+    }
+
+    "successfully bind the address without line 3" in {
+      val form = testForm.bind(Map("manualAddress.line1" -> "line 1", "manualAddress.line2" -> "line 2",
+        "manualAddress.line4" -> "line 4", "manualAddress.postCode" -> "AB1 1AB", "manualAddress.country" -> "GB"))
+
+      form.get mustEqual Address(lines = List("line 1", "line 2", "line 4"), postcode = "AB1 1AB", country = Country("GB"))
+    }
+
+    "successfully bind the address without line 4" in {
+      val form = testForm.bind(Map("manualAddress.line1" -> "line 1", "manualAddress.line2" -> "line 2",
+        "manualAddress.line3" -> "line 3", "manualAddress.postCode" -> "AB1 1AB", "manualAddress.country" -> "GB"))
+
+      form.get mustEqual Address(lines = List("line 1", "line 2", "line 3"), postcode = "AB1 1AB", country = Country("GB"))
+    }
+
+    "successfully bind the address without line 3 and line 4" in {
+      val form = testForm.bind(Map("manualAddress.line1" -> "line 1", "manualAddress.line2" -> "line 2",
+        "manualAddress.postCode" -> "AB1 1AB", "manualAddress.country" -> "GB"))
+
+      form.get mustEqual Address(lines = List("line 1", "line 2"), postcode = "AB1 1AB", country = Country("GB"))
+    }
+
+    "fail to bind when line1 is not provided" in {
+      val form = testForm.bind(Map("manualAddress.line2" -> "line 2",
+        "manualAddress.postCode" -> "AB1 1AB", "manualAddress.country" -> "GB"))
+
+      form.errors mustEqual Seq(FormError("manualAddress.line1", "messages__error__addr1"))
+    }
+
+    "fail to bind when line2 is not provided" in {
+      val form = testForm.bind(Map("manualAddress.line1" -> "line 1",
+        "manualAddress.postCode" -> "AB1 1AB", "manualAddress.country" -> "GB"))
+
+      form.errors mustEqual Seq(FormError("manualAddress.line2", "messages__error__addr2"))
+    }
+
+    "fail to bind when country is not provided" in {
+      val form = testForm.bind(Map("manualAddress.line1" -> "line 1", "manualAddress.line2" -> "line 2",
+        "manualAddress.postCode" -> "AB1 1AB"))
+
+      form.errors mustEqual Seq(FormError("manualAddress.country", "messages__error__scheme_country"))
+    }
+
+    "fail to bind when postcode is not provided and the country is United Kingdom" in {
+      val form = testForm.bind(Map("manualAddress.line1" -> "line 1", "manualAddress.line2" -> "line 2",
+        "manualAddress.country" -> "GB"))
+
+      form.errors mustEqual Seq(FormError("manualAddress.postCode", "messages__error__postcode"))
+    }
+
+    "fail to bind when line1 is more than 35 characters" in {
+      val form = testForm.bind(Map("manualAddress.line1" -> RandomStringUtils.randomAlphabetic(invalidLength),
+        "manualAddress.line2" -> "line 2", "manualAddress.postCode" -> "AB1 1AB", "manualAddress.country" -> "GB"))
+
+      form.errors mustEqual Seq(FormError("manualAddress.line1", "messages__error__addr1_length", Seq(35)))
+    }
+
+    "fail to bind when line2 is more than 35 characters" in {
+      val form = testForm.bind(Map("manualAddress.line1" -> "line 1",
+        "manualAddress.line2" -> RandomStringUtils.randomAlphabetic(invalidLength),
+        "manualAddress.postCode" -> "AB1 1AB", "manualAddress.country" -> "GB"))
+
+      form.errors mustEqual Seq(FormError("manualAddress.line2", "messages__error__addr2_length", Seq(35)))
+    }
+
+    "fail to bind when line3 is more than 35 characters" in {
+      val form = testForm.bind(Map("manualAddress.line1" -> "line 1",
+        "manualAddress.line2" -> "line 2", "manualAddress.line3" -> RandomStringUtils.randomAlphabetic(invalidLength),
+        "manualAddress.postCode" -> "AB1 1AB", "manualAddress.country" -> "GB"))
+
+      form.errors mustEqual Seq(FormError("manualAddress.line3", "messages__error__addr3_length", Seq(35)))
+    }
+
+    "fail to bind when line4 is more than 35 characters" in {
+      val form = testForm.bind(Map("manualAddress.line1" -> "line 1",
+        "manualAddress.line2" -> "line 2", "manualAddress.line4" -> RandomStringUtils.randomAlphabetic(invalidLength),
+        "manualAddress.postCode" -> "AB1 1AB", "manualAddress.country" -> "GB"))
+
+      form.errors mustEqual Seq(FormError("manualAddress.line4", "messages__error__addr4_length", Seq(35)))
+    }
+
+    Seq("ABCD 6AA", "A9A AAA", "999 9AA").foreach{ postCode =>
+      s"fail to bind when postCode $postCode is not valid" in {
+        val form = testForm.bind(Map("manualAddress.line1" -> "line 1",
+          "manualAddress.line2" -> "line 2",
+          "manualAddress.postCode" -> postCode, "manualAddress.country" -> "GB"))
+
+        form.errors mustEqual Seq(FormError("manualAddress.postCode", "messages__error__postcode_invalid", Seq(postCodeRegex)))
+      }
+    }
+
   }
 }
