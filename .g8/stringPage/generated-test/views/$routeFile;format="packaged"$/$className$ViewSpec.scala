@@ -1,4 +1,4 @@
-package views.$routeFile$
+package views.$routeFile;format="packaged"$
 
 import play.api.data.Form
 import controllers.$routeFile$.routes
@@ -18,10 +18,10 @@ class $className$ViewSpec extends StringViewBehaviours {
   def createViewUsingForm = (form: Form[String]) => $className;format="decap"$(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   "$className$ view" must {
-    behave like normalPage(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__\${messageKeyPrefix}__heading"))
 
     behave like pageWithBackLink(createView)
 
-    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.$className$Controller.onSubmit(NormalMode).url)
+    behave like stringPage(createViewUsingForm, messageKeyPrefix, controllers.$routeFile;format="packaged"$.routes.$className$Controller.onSubmit(NormalMode).url)
   }
 }

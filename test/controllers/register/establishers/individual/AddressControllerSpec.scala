@@ -45,7 +45,7 @@ class AddressControllerSpec extends ControllerSpecBase with MockitoSugar {
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCacheMap): AddressController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): AddressController =
     new AddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
@@ -93,7 +93,7 @@ class AddressControllerSpec extends ControllerSpecBase with MockitoSugar {
       val validPostCode = "valid"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", validPostCode))
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostCode))(Matchers.any(), Matchers.any())).thenReturn(
-        Future.successful(Some(Seq(AddressRecord(Address(List("address line 1", "address line 2"), None, None, validPostCode, None, Country("GB", "UK")))))))
+        Future.successful(Some(Seq(AddressRecord(Address(List("address line 1", "address line 2"), None, None, validPostCode, Country("UK")))))))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 

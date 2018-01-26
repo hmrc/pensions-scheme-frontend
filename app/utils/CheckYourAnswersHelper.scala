@@ -16,129 +16,127 @@
 
 package utils
 
-import viewmodels.AnswerRow
 import controllers.register.routes
-import models.register.establishers.individual.UniqueTaxReference
+import identifiers.register._
+import identifiers.register.establishers.EstablisherKindId
+import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyContactDetailsId, CompanyDetailsId}
+import identifiers.register.establishers.individual._
+import models.register.establishers.individual.{AddressYears, UniqueTaxReference}
 import models.{CheckMode, EstablisherNino, Index}
+import viewmodels.AnswerRow
 
-import scala.util.Success
+class CheckYourAnswersHelper(userAnswers: UserAnswers) extends Enumerable.Implicits {
 
-class CheckYourAnswersHelper(userAnswers: UserAnswers) {
-
-  def manualAddress: Option[AnswerRow] = userAnswers.manualAddress map {
-    x => AnswerRow("manualAddress.checkYourAnswersLabel", s"${x.addressLine1} ${x.addressLine1} ${x.addressLine2} ${x.addressLine1} " +
-      s"${x.addressLine4} ${x.postalCode} ${x.country}", false,
-      controllers.register.establishers.individual.routes.ManualAddressController.onPageLoad(CheckMode).url)
-  }
-
-  def companyAddressYears(index: Int): Option[AnswerRow] = {
-    userAnswers.companyAddressYears(index) match {
-      case Success(Some(x)) => Some(AnswerRow("companyAddressYears.checkYourAnswersLabel", s"companyAddressYears.$x", true,
+  def companyAddressYears(index: Int): Option[AnswerRow] =
+    userAnswers.get(CompanyAddressYearsId(index)) match {
+      case Some(x) => Some(AnswerRow("companyAddressYears.checkYourAnswersLabel", s"companyAddressYears.$x", true,
         controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(CheckMode, Index(index)).url))
       case _ => None
     }
-  }
 
-  def companyDetails(index: Int): Option[AnswerRow] = userAnswers.companyDetails(index) match {
-    case Success(Some(x)) => Some(AnswerRow("companyDetails.checkYourAnswersLabel", s"${x.companyName} ${x.vatNumber} ${x.payeNumber}", false,
-      controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url))
+  def companyDetails(index: Int): Option[AnswerRow] =
+    userAnswers.get(CompanyDetailsId(index)) match {
+      case Some(x) => Some(AnswerRow("companyDetails.checkYourAnswersLabel", s"${x.companyName} ${x.vatNumber} ${x.payeNumber}", false,
+        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url))
+      case _ => None
+    }
+
+  def companyContactDetails(index: Int): Option[AnswerRow] = userAnswers.get(CompanyContactDetailsId(index)) match {
+    case Some(x) => Some(AnswerRow("companyContactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
+      controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 
-  def uniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.uniqueTaxReference(index) match {
-    case Success(Some(x)) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
+  def uniqueTaxReference(index: Int): Option[AnswerRow] =
+    userAnswers.get(UniqueTaxReferenceId(index)) match {
+    case Some(x) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 
-  def establisherNino(index: Int): Option[AnswerRow] = userAnswers.establisherNino(index) match {
-    case Success(Some(x)) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${EstablisherNino.Yes} ${EstablisherNino.No}", false,
+  def establisherNino(index: Int): Option[AnswerRow] = userAnswers.get(EstablisherNinoId(index)) match {
+    case Some(x) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${EstablisherNino.Yes} ${EstablisherNino.No}", false,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 
-  def contactDetails(index: Int): Option[AnswerRow] = userAnswers.contactDetails(index) match {
-    case Success(Some(x)) => Some(AnswerRow("contactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
+  def contactDetails(index: Int): Option[AnswerRow] = userAnswers.get(ContactDetailsId(index)) match {
+    case Some(x) => Some(AnswerRow("contactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
       controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 
-  def establisherDetails(index: Int): Option[AnswerRow] = userAnswers.establisherDetails(index) match {
-    case Success(Some(x)) => Some(AnswerRow("establisherDetails.checkYourAnswersLabel", s"${x.firstName} ${x.lastName}", false,
+  def establisherDetails(index: Int): Option[AnswerRow] = userAnswers.get(EstablisherDetailsId(index)) match {
+    case Some(x) => Some(AnswerRow("establisherDetails.checkYourAnswersLabel", s"${x.firstName} ${x.lastName}", false,
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 
-  def addEstablisher: Option[AnswerRow] = userAnswers.addEstablisher map {
-    x => AnswerRow("addEstablisher.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
-      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(CheckMode).url)
-  }
-
-  def establisherKind(index:Int): Option[AnswerRow] = userAnswers.establisherKind(index) match {
-    case Success(Some(x))=>Some(AnswerRow("establisherKind.checkYourAnswersLabel",s"${x.toString}",false,
+  def establisherKind(index:Int): Option[AnswerRow] = userAnswers.get(EstablisherKindId(index)) match {
+    case Some(x) => Some(AnswerRow("establisherKind.checkYourAnswersLabel",s"${x.toString}",false,
       controllers.register.establishers.routes.EstablisherKindController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 
-  def schemeEstablishedCountry: Option[AnswerRow] = userAnswers.schemeEstablishedCountry map {
+  def schemeEstablishedCountry: Option[AnswerRow] = userAnswers.get(SchemeEstablishedCountryId) map {
     x => AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", s"$x", false,
       routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url)
   }
 
-  def uKBankAccount: Option[AnswerRow] = userAnswers.uKBankAccount map {
+  def uKBankAccount: Option[AnswerRow] = userAnswers.get(UKBankAccountId) map {
     x => AnswerRow("uKBankAccount.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
       routes.UKBankAccountController.onPageLoad(CheckMode).url)
   }
 
-  def uKBankDetails: Option[AnswerRow] = userAnswers.uKBankDetails map {
+  def uKBankDetails: Option[AnswerRow] = userAnswers.get(UKBankDetailsId) map {
     x => AnswerRow("uKBankDetails.checkYourAnswersLabel", s"${x.accountName} ${x.bankName}", false,
       routes.UKBankDetailsController.onPageLoad(CheckMode).url)
   }
 
   def addressYears(index: Int): Option[AnswerRow] = {
-    userAnswers.addressYears(index) match {
-      case Success(Some(x)) => Some(AnswerRow("addressYears.checkYourAnswersLabel", s"addressYears.$x", true,
+    userAnswers.get[AddressYears](AddressYearsId(index)) match {
+      case Some(x) => Some(AnswerRow("addressYears.checkYourAnswersLabel", s"addressYears.$x", true,
         controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, Index(index)).url))
       case _ => None
     }
   }
 
-  def benefits: Option[AnswerRow] = userAnswers.benefits map {
+  def benefits: Option[AnswerRow] = userAnswers.get(BenefitsId) map {
     x => AnswerRow("benefits.checkYourAnswersLabel", s"benefits.$x", true,
       routes.BenefitsController.onPageLoad(CheckMode).url)
   }
 
-  def benefitsInsurer: Option[AnswerRow] = userAnswers.benefitsInsurer map {
+  def benefitsInsurer: Option[AnswerRow] = userAnswers.get(BenefitsInsurerId) map {
     x => AnswerRow("benefitsInsurer.checkYourAnswersLabel", s"${x.companyName} ${x.policyNumber}", false,
       routes.BenefitsInsurerController.onPageLoad(CheckMode).url)
   }
 
-  def membership: Option[AnswerRow] = userAnswers.membership map {
+  def membership: Option[AnswerRow] = userAnswers.get(MembershipId) map {
     x => AnswerRow("membership.checkYourAnswersLabel", s"membership.$x", true,
       routes.MembershipController.onPageLoad(CheckMode).url)
   }
 
-  def membershipFuture: Option[AnswerRow] = userAnswers.membershipFuture map {
+  def membershipFuture: Option[AnswerRow] = userAnswers.get(MembershipFutureId) map {
     x => AnswerRow("membershipFuture.checkYourAnswersLabel", s"membershipFuture.$x", true,
       routes.MembershipFutureController.onPageLoad(CheckMode).url)
   }
 
-  def investmentRegulated: Option[AnswerRow] = userAnswers.investmentRegulated map {
+  def investmentRegulated: Option[AnswerRow] = userAnswers.get(InvestmentRegulatedId) map {
     x => AnswerRow("investmentRegulated.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
       routes.InvestmentRegulatedController.onPageLoad(CheckMode).url)
   }
 
-  def securedBenefits: Option[AnswerRow] = userAnswers.securedBenefits map {
+  def securedBenefits: Option[AnswerRow] = userAnswers.get(SecuredBenefitsId) map {
     x => AnswerRow("securedBenefits.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
       routes.SecuredBenefitsController.onPageLoad(CheckMode).url)
   }
 
-  def occupationalPensionScheme: Option[AnswerRow] = userAnswers.occupationalPensionScheme map {
+  def occupationalPensionScheme: Option[AnswerRow] = userAnswers.get(OccupationalPensionSchemeId) map {
     x => AnswerRow("occupationalPensionScheme.checkYourAnswersLabel", if(x) "site.yes" else "site.no", true,
       routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url)
   }
 
-  def schemeDetails: Option[AnswerRow] = userAnswers.schemeDetails map {
+  def schemeDetails: Option[AnswerRow] = userAnswers.get(SchemeDetailsId) map {
     x => AnswerRow("schemeDetails.checkYourAnswersLabel", s"${x.schemeName} ${x.schemeType}", false,
       routes.SchemeDetailsController.onPageLoad(CheckMode).url)
   }

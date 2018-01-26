@@ -22,6 +22,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import controllers.actions._
 import config.FrontendAppConfig
+import identifiers.register.SchemeDetailsId
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
 import play.api.mvc.{Action, AnyContent}
@@ -39,7 +40,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
       //TODO: Replace the harcoded application number to the actual application number
       Ok(schemeSuccess(
         appConfig,
-        request.userAnswers.schemeDetails.map(_.schemeName),
+        request.userAnswers.get(SchemeDetailsId).map(_.schemeName),
         LocalDate.now(),
         "XX123456789132"))
   }

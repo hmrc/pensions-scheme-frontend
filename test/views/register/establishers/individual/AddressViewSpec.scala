@@ -47,6 +47,10 @@ class AddressViewSpec extends StringViewBehaviours {
     behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.AddressController.onSubmit(NormalMode, firstIndex).url,
       Some("messages__common__address_postcode"), expectedHint = Some("messages__common__address_postcode_hint"))
 
+    "have establisher name rendered on the page" in {
+      Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)
+    }
+
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
         routes.AddressController.onPageLoad(NormalMode, firstIndex).url)

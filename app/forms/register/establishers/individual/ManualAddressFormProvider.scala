@@ -19,25 +19,15 @@ package forms.register.establishers.individual
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import play.api.data.{Form, Forms}
-import play.api.data.Forms._
-import models.register.establishers.individual.ManualAddress
+import models.addresslookup.Address
+import play.api.data.{Form}
 
 class ManualAddressFormProvider @Inject() extends Mappings {
 
-  val addressLineMaxLength = 160
+  val addressLineMaxLength = 35
 
-   def apply(): Form[ManualAddress] = Form(
-     mapping(
-      "addressLine1" -> text("messages__error__addr1"),
-      "addressLine2" -> text("messages__error__addr2"),
-      "addressLine3" -> optional(Forms.text.verifying(
-        maxLength(addressLineMaxLength, ""))),
-      "addressLine4" -> optional(Forms.text.verifying(
-        maxLength(addressLineMaxLength, ""))),
-      "postalCode" -> optional(Forms.text.verifying(
-        maxLength(addressLineMaxLength, ""))),
-      "country" -> text("messages__error__country")
-    )(ManualAddress.apply)(ManualAddress.unapply)
-   )
+  def apply(): Form[Address] =
+    Form(
+      "manualAddress" -> manualAddressMapping()
+    )
  }

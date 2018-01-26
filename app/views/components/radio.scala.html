@@ -18,12 +18,13 @@
  field: Field,
  label: String,
  value: String,
+ id: Option[String] = None,
  dataTarget: Option[String] = None
 )(implicit messages: Messages)
 
 <div class="multiple-choice" @dataTarget.map { dataTarget => data-target="@dataTarget" }>
-  <input id="@field.id-@value" type="radio" name="@field.name" value="@value" @if(field.value.contains(value)){ checked="checked" }>
-  <label class="block-label" for="@field.id-@value">
+  <input id=@id.getOrElse(s"${field.id}-$value") type="radio" name="@field.name" value="@value" @if(field.value.contains(value)){ checked="checked" }>
+  <label class="block-label" for=@id.getOrElse(s"${field.id}-$value")>
     @messages(label)
   </label>
 </div>

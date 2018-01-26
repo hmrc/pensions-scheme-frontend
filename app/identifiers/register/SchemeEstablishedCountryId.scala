@@ -16,8 +16,8 @@
 
 package identifiers.register
 
-import identifiers.Identifier
+import identifiers.TypedIdentifier
 
-case object SchemeEstablishedCountryId extends Identifier {
+case object SchemeEstablishedCountryId extends TypedIdentifier[String] {
   override def toString: String = "schemeEstablishedCountry"
 }

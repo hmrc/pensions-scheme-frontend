@@ -16,8 +16,9 @@
 
 package identifiers.register.establishers.individual
 
-import identifiers.Identifier
+import identifiers.TypedIdentifier
+import models.addresslookup.Address
 
-case object AddressId extends Identifier {
+case object AddressId extends TypedIdentifier[Seq[Address]] {
   override def toString: String = "address"
 }

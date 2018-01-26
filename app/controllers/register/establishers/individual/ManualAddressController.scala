@@ -25,9 +25,11 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.ManualAddressFormProvider
-import identifiers.register.establishers.individual.ManualAddressId
-import models.Mode
+import identifiers.register.establishers.individual.{AddressResultsId, ManualAddressId}
+import models.addresslookup.Address
+import models.{Index, Mode}
 import models.register.establishers.individual.ManualAddress
+import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.individual.manualAddress
 
@@ -42,25 +44,31 @@ class ManualAddressController @Inject()(appConfig: FrontendAppConfig,
                                                   requireData: DataRequiredAction,
                                                   formProvider: ManualAddressFormProvider) extends FrontendController with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Address] = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.manualAddress match {
+      val preparedForm = request.userAnswers.get(AddressResultsId(index)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(manualAddress(appConfig, preparedForm, mode))
+      Ok(manualAddress(appConfig, preparedForm, mode, index))
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(manualAddress(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(manualAddress(appConfig, formWithErrors, mode, index))),
         (value) =>
-          dataCacheConnector.save[ManualAddress](request.externalId, ManualAddressId.toString, value).map(cacheMap =>
-            Redirect(navigator.nextPage(ManualAddressId, mode)(new UserAnswers(cacheMap))))
+          dataCacheConnector.save(
+            request.externalId,
+            AddressResultsId(index),
+            value
+          ).map {
+            json =>
+              Redirect(navigator.nextPage(AddressResultsId(index), mode)(new UserAnswers(json)))
+          }
       )
   }
 }

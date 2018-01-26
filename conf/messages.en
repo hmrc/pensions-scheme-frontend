@@ -55,8 +55,12 @@ messages__error__no_sautr_establisher = You need to tell us why the establisher 
 messages__error__no_sautr_length = The reason cannot be more than 150 characters
 messages__error__email = Enter an email address
 messages__error__phone = Enter a phone number
-messages__error__addr1 = Enter the first line of the address
-messages__error__addr2 = Enter the second line of the address
+messages__error__addr1 = Enter the first line of address
+messages__error__addr2 = Enter the second line of address
+messages__error__addr1_length = The first line of address cannot be more than 35 characters
+messages__error__addr2_length = The second line of address cannot be more than 35 characters
+messages__error__addr3_length = The third line of address cannot be more than 35 characters
+messages__error__addr4_length = The fourth line of address cannot be more than 35 characters
 messages__error__country = Enter a country
 
 messages__index__title = pensions-scheme-frontend
@@ -248,6 +252,8 @@ messages__error__vat_invalid = Enter a valid VAT Registration number
 messages__error__paye_length = The PAYE number cannot be more than 13 characters
 
 companyDetails.checkYourAnswersLabel = companyDetails
+messages__establisher_company_contact_details__title = Company contact details
+companyContactDetails.checkYourAnswersLabel = companyContactDetails
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the registered business address but you can enter any address you have for this company.
@@ -257,6 +263,11 @@ messages__error__postcode_invalid = Enter a valid postal code
 messages__error__postcode_no_results = No results for that postcode
 
 address.checkYourAnswersLabel = address
+
+messages__select_the_address__title = Select the address
+messages__common__select_address = Select the address from the list below, or
+messages__error__select_address = Select an address
+addressResults.checkYourAnswersLabel = addressResults
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__manualAddress_checkYourAnswersLabel = manualAddress

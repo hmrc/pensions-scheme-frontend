@@ -17,6 +17,6 @@
 package identifiers.register
 import identifiers._
 
-case object UKBankAccountId extends Identifier {
+case object UKBankAccountId extends TypedIdentifier[Boolean] {
   override def toString: String = "uKBankAccount"
 }

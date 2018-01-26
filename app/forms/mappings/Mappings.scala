@@ -17,15 +17,17 @@
 package forms.mappings
 
 import models.EstablisherNino
+import models.addresslookup.{Address, AddressRecord, Country}
 import models.register.{SchemeType, SortCode}
 import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
-import models.register.establishers.individual.UniqueTaxReference
+import models.register.establishers.individual.{ManualAddress, UniqueTaxReference}
 import org.joda.time.LocalDate
 import play.api.data.Forms.{of, _}
 import play.api.data.format.Formatter
 import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import uk.gov.voa.play.form.ConditionalMappings._
 import utils.Enumerable
+import utils.Constants._
 
 import scala.util.Try
 
@@ -70,10 +72,9 @@ trait Mappings extends Formatters with Constraints {
       ).map(v => (v.toString, v)).toMap
 
       schemeTypeTuple match {
-        case (key, Some(value)) if(key == other) => Other(value)
-        case (key, _) if mappings.keySet.contains(key) => {
+        case (key, Some(value)) if key == other => Other(value)
+        case (key, _) if mappings.keySet.contains(key) =>
           mappings.apply(key)
-        }
       }
     }
 
@@ -95,7 +96,7 @@ trait Mappings extends Formatters with Constraints {
     val reasonMaxLength = 150
     def fromUniqueTaxReference(utr: UniqueTaxReference): (Boolean, Option[String], Option[String]) = {
       utr match {
-        case UniqueTaxReference.Yes(utr) => (true, Some(utr), None)
+        case UniqueTaxReference.Yes(utrNo) => (true, Some(utrNo), None)
         case UniqueTaxReference.No(reason) =>  (false, None, Some(reason))
       }
     }
@@ -125,7 +126,7 @@ trait Mappings extends Formatters with Constraints {
 
     def fromEstablisherNino(nino: EstablisherNino): (Boolean, Option[String], Option[String]) = {
       nino match {
-        case EstablisherNino.Yes(nino) => (true, Some(nino), None)
+        case EstablisherNino.Yes(ninoNo) => (true, Some(ninoNo), None)
         case EstablisherNino.No(reason) =>  (false, None, Some(reason))
       }
     }
@@ -168,12 +169,50 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
     "year" -> text(invalidKey)).verifying(invalidKey, validateDate(_)).transform(toLocalDate, fromLocalDate)
   }
 
+  protected def manualAddressMapping(requiredLine1: String = "messages__error__addr1",
+                                     requiredLine2: String = "messages__error__addr2",
+                                     requiredPostCode: String = "messages__error__postcode",
+                                     requiredCountry: String = "messages__error__scheme_country"
+                                    ): Mapping[Address] = {
+
+    val maxlengthLine = 35
+
+    def toManualAddress(manualAddress: (String, String, Option[String], Option[String], Option[String], String)): Address =
+    {
+      manualAddress match {
+        case (line1, line2, line3, line4, addressPostCode, country) =>
+          val addressLines = List(line1, line2)
+          val allAddressLines = line3.map(_ :: addressLines).getOrElse(addressLines) :::  line4.map(_ :: addressLines).getOrElse(addressLines)
+
+          Address(lines = allAddressLines, postcode = addressPostCode.getOrElse(""), country = Country(country))
+      }
+    }
+
+    def fromManualAddress(address: Address): (String, String, Option[String], Option[String], Option[String], String) = {
+
+      val addressLines = address.lines
+      (addressLines(0), addressLines(1), (if(addressLines(2).nonEmpty) Some(addressLines(2)) else None),
+        (if(addressLines(3).nonEmpty) Some(addressLines(3)) else None),
+        if(address.postcode.nonEmpty) Some(address.postcode) else None, address.country.name)
+    }
+
+
+    tuple(
+      "line1" -> text(requiredLine1).verifying(maxLength(maxlengthLine, "messages__error__addr1_length")),
+      "line2" -> text(requiredLine2).verifying(maxLength(maxlengthLine, "messages__error__addr2_length")),
+      "line3" -> optional(Forms.text.verifying(maxLength(maxlengthLine, "messages__error__addr3_length"))),
+      "line4" -> optional(Forms.text.verifying(maxLength(maxlengthLine, "messages__error__addr4_length"))),
+      "postCode" -> mandatoryIfEqual[String]("manualAddress.country", "United Kingdom", text(requiredPostCode)),
+      "country" -> text(requiredCountry)
+    ).transform(toManualAddress, fromManualAddress)
+  }
+
   protected def sortCodeMapping(requiredKey: String = "error.required", invalidKey: String, maxErrorKey: String): Mapping[SortCode] = {
 
     val formatter: Formatter[SortCode] = new Formatter[SortCode] {
 
-      val baseFormatter = stringFormatter(requiredKey)
-      val regexSortCode = """\d*""".r.toString()
+      val baseFormatter: Formatter[String] = stringFormatter(requiredKey)
+      val regexSortCode: String = """\d*""".r.toString()
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SortCode] = {
 
@@ -199,5 +238,9 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
   protected def vatMapping(invalidKey: String, maxErrorKey: String): FieldMapping[String] = {
     of(vatFormatter(invalidKey, maxErrorKey))
+  }
+
+  protected def addressMapping(requiredKey: String = "messages__error__select_address"): Mapping[Address] = {
+    Forms.of(addressFormatter(requiredKey))
   }
 }
