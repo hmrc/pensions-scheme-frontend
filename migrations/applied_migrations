@@ -1,38 +1,29 @@
 #!/bin/bash
 
-echo "Applying migration AddressResults"
+echo "Applying migration PreviousAddress"
 
-echo "Adding routes to conf/register.establishers.individual.routes"
+echo "Adding routes to register.establishers.individual.routes"
 
-echo "" >> ../conf/app.routes
-echo "GET        /addressResults               controllers.register.establishers.individual.AddressResultsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /addressResults               controllers.register.establishers.individual.AddressResultsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
+echo "" >> ../conf/register.establishers.individual.routes
+echo "GET        /previousAddress               controllers.register.establishers.individual.PreviousAddressController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
+echo "POST       /previousAddress               controllers.register.establishers.individual.PreviousAddressController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
 
-echo "GET        /changeAddressResults               controllers.register.establishers.individual.AddressResultsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /changeAddressResults               controllers.register.establishers.individual.AddressResultsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
+echo "GET        /changePreviousAddress                        controllers.register.establishers.individual.PreviousAddressController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
+echo "POST       /changePreviousAddress                        controllers.register.establishers.individual.PreviousAddressController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "addressResults.title = addressResults" >> ../conf/messages.en
-echo "addressResults.heading = addressResults" >> ../conf/messages.en
-echo "addressResults.option1 = addressResults" Option 1 >> ../conf/messages.en
-echo "addressResults.option2 = addressResults" Option 2 >> ../conf/messages.en
-echo "addressResults.checkYourAnswersLabel = addressResults" >> ../conf/messages.en
-echo "addressResults.error.required = Please give an answer for addressResults" >> ../conf/messages.en
-
-echo "Adding helper line into UserAnswers"
-awk '/class/ {\
-     print;\
-     print "  def addressResults: Option[AddressResults] = cacheMap.getEntry[AddressResults](AddressResultsId.toString)";\
-     print "";\
-     next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
+echo "messages__previousAddress__title = previousAddress" >> ../conf/messages.en
+echo "messages__previousAddress__heading = previousAddress" >> ../conf/messages.en
+echo "messages__previousAddress__checkYourAnswersLabel = previousAddress" >> ../conf/messages.en
+echo "messages__previousAddress__error__required = Please give an answer for previousAddress" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def addressResults: Option[AnswerRow] = userAnswers.addressResults map {";\
-     print "    x => AnswerRow(\"addressResults.checkYourAnswersLabel\", s\"addressResults.$x\", true, controllers.register.establishers.individual.routes.AddressResultsController.onPageLoad(CheckMode).url)";\
+     print "  def previousAddress: Option[AnswerRow] = userAnswers.get(PreviousAddressId) map {";\
+     print "    x => AnswerRow(\"previousAddress.checkYourAnswersLabel\", s\"$x\", false, controllers.register/establishers/individual.routes.PreviousAddressController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -40,4 +31,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration AddressResults completed"
+echo "Migration PreviousAddress completed"

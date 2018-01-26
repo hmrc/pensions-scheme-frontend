@@ -255,3 +255,18 @@ messages__select_the_address__title = Select the address
 messages__common__select_address = Select the address from the list below, or
 messages__error__select_address = Select an address
 addressResults.checkYourAnswersLabel = addressResults
+
+messages__previousAddress__title = previousAddress
+messages__previousAddress__heading = previousAddress
+messages__previousAddress__checkYourAnswersLabel = previousAddress
+messages__previousAddress__error__required = Please give an answer for previousAddress
+
+messages__previousAddress__title = previousAddress
+messages__previousAddress__heading = previousAddress
+messages__previousAddress__checkYourAnswersLabel = previousAddress
+messages__previousAddress__error__required = Please give an answer for previousAddress
+
+messages__previousAddress__title = previousAddress
+messages__previousAddress__heading = previousAddress
+messages__previousAddress__checkYourAnswersLabel = previousAddress
+messages__previousAddress__error__required = Please give an answer for previousAddress
