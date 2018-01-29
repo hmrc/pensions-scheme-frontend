@@ -26,12 +26,14 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.SchemeEstablishedCountryFormProvider
 import identifiers.register.SchemeEstablishedCountryId
-import models.{CountryOptions, Mode}
+import models.Mode
+import models.register.CountryOptions
 import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.schemeEstablishedCountry
 
 import scala.concurrent.Future
+import play.api.libs.json._
 
 class SchemeEstablishedCountryController @Inject()(
                                         appConfig: FrontendAppConfig,
@@ -44,11 +46,11 @@ class SchemeEstablishedCountryController @Inject()(
                                         formProvider: SchemeEstablishedCountryFormProvider,
                                         countryOptions: CountryOptions) extends FrontendController with I18nSupport {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.schemeEstablishedCountry match {
+      val preparedForm = request.userAnswers.get(SchemeEstablishedCountryId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -61,7 +63,7 @@ class SchemeEstablishedCountryController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(schemeEstablishedCountry(appConfig, formWithErrors, mode, countryOptions.options))),
         (value) =>
-          dataCacheConnector.save[String](request.externalId, SchemeEstablishedCountryId.toString, value).map(cacheMap =>
+          dataCacheConnector.save(request.externalId, SchemeEstablishedCountryId, value).map(cacheMap =>
             Redirect(navigator.nextPage(SchemeEstablishedCountryId, mode)(new UserAnswers(cacheMap))))
       )
   }

@@ -17,7 +17,8 @@
 package forms.register
 
 import forms.behaviours.FormBehaviours
-import models.{Field, Required, SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeType}
+import models.{Field, Required}
 import org.apache.commons.lang3.RandomStringUtils
 
 class SchemeDetailsFormProviderSpec extends FormBehaviours {

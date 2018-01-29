@@ -2,29 +2,29 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.$routeFile$.routes._
 @import models.Mode
-@import models.$className$
+@import models.$routeFile;format="packaged"$.$className$
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("$className;format="decap"$.title"),
+    title = messages("messages__$className;format="decap"$__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = $className;format="cap"$Controller.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = controllers.$routeFile;format="packaged"$.routes.$className;format="cap"$Controller.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
-        @components.heading("$className;format="decap"$.heading")
+        @components.heading("messages__$className;format="decap"$__heading")
 
         @components.input_text(
             field = form("field1"),
-            label = messages("$className;format="decap"$.field1")
+            label = messages("messages__$className;format="decap"$__field1")
         )
 
         @components.input_text(
             field = form("field2"),
-            label = messages("$className;format="decap"$.field2")
+            label = messages("messages__$className;format="decap"$__field2")
         )
 
         @components.submit_button()

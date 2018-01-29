@@ -26,9 +26,12 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressYearsFormProvider
 import identifiers.register.establishers.individual.AddressYearsId
-import models.{AddressYears, Index, Mode}
+import models.{Index, Mode, NormalMode}
+import play.api.libs.json._
+import models.register.establishers.individual.AddressYears
+import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import utils._
 import views.html.register.establishers.individual.addressYears
 
 import scala.concurrent.Future
@@ -43,16 +46,17 @@ class AddressYearsController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: AddressYearsFormProvider
-                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats {
+                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      request.userAnswers.addressYears(index) match {
-        case Success(None) => Ok(addressYears(appConfig, form, mode, index))
-        case Success(Some(value)) => Ok(addressYears(appConfig, form.fill(value), mode, index))
-        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+      request.userAnswers.get(AddressYearsId(index)) match {
+        case None =>
+          Ok(addressYears(appConfig, form, mode, index))
+        case Some(value) =>
+          Ok(addressYears(appConfig, form.fill(value), mode, index))
       }
   }
 
@@ -62,9 +66,8 @@ class AddressYearsController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(addressYears(appConfig, formWithErrors, mode, index))),
         (value) =>
-
-          dataCacheConnector.saveMap[AddressYears](request.externalId, AddressYearsId.toString, index, value).map(cacheMap =>
-            Redirect(navigator.nextPage(AddressYearsId, mode)(new UserAnswers(cacheMap))))
+          dataCacheConnector.save(request.externalId, AddressYearsId(index), value).map(cacheMap =>
+            Redirect(navigator.nextPage(AddressYearsId(index), mode)(new UserAnswers(cacheMap))))
       )
   }
 }

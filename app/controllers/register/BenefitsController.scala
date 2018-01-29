@@ -26,10 +26,12 @@ import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.BenefitsFormProvider
 import identifiers.register.BenefitsId
-import models.{Benefits, Mode}
+import models.Mode
+import models.register.Benefits
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.benefits
+import play.api.libs.json._
 
 import scala.concurrent.Future
 
@@ -43,11 +45,11 @@ class BenefitsController @Inject()(
                                         requireData: DataRequiredAction,
                                         formProvider: BenefitsFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.benefits match {
+      val preparedForm = request.userAnswers.get(BenefitsId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -60,7 +62,7 @@ class BenefitsController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(benefits(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save[Benefits](request.externalId, BenefitsId.toString, value).map(cacheMap =>
+          dataCacheConnector.save(request.externalId, BenefitsId, value).map(cacheMap =>
             Redirect(navigator.nextPage(BenefitsId, mode)(new UserAnswers(cacheMap))))
       )
   }

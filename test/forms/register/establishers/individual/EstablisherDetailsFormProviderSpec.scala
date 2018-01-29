@@ -17,8 +17,8 @@
 package forms.register.establishers.individual
 
 import forms.behaviours.FormBehaviours
+import models.register.establishers.individual.EstablisherDetails
 import models.{Field, Required}
-import models.EstablisherDetails
 import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.LocalDate
 

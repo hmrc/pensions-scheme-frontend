@@ -19,9 +19,9 @@ package forms.register
 import javax.inject.Inject
 
 import forms.mappings.Mappings
+import models.register.BenefitsInsurer
 import play.api.data.Form
 import play.api.data.Forms._
-import models.BenefitsInsurer
 
 class BenefitsInsurerFormProvider @Inject() extends Mappings {
   val maxLength = 255

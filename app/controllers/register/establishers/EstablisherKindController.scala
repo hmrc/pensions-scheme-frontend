@@ -25,42 +25,45 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.EstablisherKindFormProvider
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablisherKindId
+import models.register.establishers.EstablisherKind
 import models.requests.DataRequest
-import models.{EstablisherKind, Index, Mode}
+import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.establisherKind
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+import play.api.libs.json._
 
 class EstablisherKindController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: EstablisherKindFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats {
+                                           appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           dataCacheConnector: DataCacheConnector,
+                                           navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           formProvider: EstablisherKindFormProvider
+                                         ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
-  val form = formProvider()
+  private val form = formProvider()
 
-  def onPageLoad(mode: Mode,index:Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          val redirectResult=request.userAnswers.establisherKind(index) match {
-            case Success(None) => Ok(establisherKind(appConfig, form, mode, index,schemeName))
-            case Success(Some(value)) => Ok(establisherKind(appConfig, form.fill(value), mode, index,schemeName))
-            case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+          val redirectResult = request.userAnswers.get[EstablisherKind](EstablisherKindId(index)) match {
+            case None => Ok(establisherKind(appConfig, form, mode, index,schemeName))
+            case Some(value) => Ok(establisherKind(appConfig, form.fill(value), mode, index,schemeName))
           }
           Future.successful(redirectResult)
       }
   }
 
-  def onSubmit(mode: Mode,index:Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName=>
@@ -68,16 +71,21 @@ class EstablisherKindController @Inject()(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index,schemeName))),
           (value) =>
-            dataCacheConnector.saveMap[EstablisherKind](request.externalId,
-              EstablisherKindId.toString, index, value).map(cacheMap =>
-              Redirect(navigator.nextPage(EstablisherKindId, mode)(new UserAnswers(cacheMap))))
+            dataCacheConnector.save(
+              request.externalId,
+              EstablisherKindId(index),
+              value
+            ).map {
+              json =>
+                Redirect(navigator.nextPage(EstablisherKindId(index), mode)(new UserAnswers(json)))
+            }
         )
       }
   }
 
   private def retrieveSchemeName(block: String => Future[Result])
                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.schemeDetails.map { schemeDetails =>
+    request.userAnswers.get(SchemeDetailsId).map { schemeDetails =>
       block(schemeDetails.schemeName)
     }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
   }

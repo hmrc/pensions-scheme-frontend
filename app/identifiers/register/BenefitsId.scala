@@ -16,8 +16,9 @@
 
 package identifiers.register
 
-import identifiers.Identifier
+import identifiers.TypedIdentifier
+import models.register.Benefits
 
-case object BenefitsId extends Identifier {
+case object BenefitsId extends TypedIdentifier[Benefits] {
   override def toString: String = "benefits"
 }

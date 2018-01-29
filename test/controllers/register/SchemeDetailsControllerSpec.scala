@@ -25,9 +25,10 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.SchemeDetailsFormProvider
 import identifiers.register.SchemeDetailsId
-import models.{NormalMode, SchemeDetails, SchemeType}
+import models.NormalMode
 import views.html.register.schemeDetails
 import controllers.ControllerSpecBase
+import models.register.{SchemeDetails, SchemeType}
 
 class SchemeDetailsControllerSpec extends ControllerSpecBase {
 
@@ -36,7 +37,7 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
   val formProvider = new SchemeDetailsFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new SchemeDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, formProvider)
 
@@ -52,8 +53,8 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Map(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("value 1", SchemeType.SingleTrust)))
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val validData = Json.obj(SchemeDetailsId.toString -> Json.toJson(SchemeDetails("value 1", SchemeType.SingleTrust)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 

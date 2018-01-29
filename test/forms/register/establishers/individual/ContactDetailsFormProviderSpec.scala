@@ -18,7 +18,7 @@ package forms.register.establishers.individual
 
 import forms.behaviours.FormBehaviours
 import models.{Field, Required}
-import models.ContactDetails
+import models.register.establishers.individual.ContactDetails
 import org.apache.commons.lang3.RandomStringUtils
 
 class ContactDetailsFormProviderSpec extends FormBehaviours {

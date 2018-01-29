@@ -1,0 +1,14 @@
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.play.views.html._
+@import controllers.routes._
+@import models.Mode
+
+@(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
+
+@main_template(
+    title = messages("messages__$className;format="decap"$__title"),
+    appConfig = appConfig,
+    bodyClasses = None) {
+
+    @components.heading("messages__$className;format="decap"$__heading")
+}

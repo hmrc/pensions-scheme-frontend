@@ -16,8 +16,15 @@
 
 package identifiers.register.establishers.individual
 
-import identifiers.Identifier
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.register.establishers.individual.ContactDetails
+import play.api.libs.json.JsPath
 
-case object ContactDetailsId extends Identifier {
-  override def toString: String = "contactDetails"
+case class ContactDetailsId(index: Int) extends TypedIdentifier[ContactDetails] {
+  override def path: JsPath = EstablishersId.path \ index \ ContactDetailsId.toString
+}
+
+object ContactDetailsId {
+  override lazy val toString: String = "contactDetails"
 }

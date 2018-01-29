@@ -25,9 +25,10 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.UKBankDetailsFormProvider
 import identifiers.register.UKBankDetailsId
-import models.{NormalMode, SortCode, UKBankDetails}
+import models.NormalMode
 import views.html.register.uKBankDetails
 import controllers.ControllerSpecBase
+import models.register.{SortCode, UKBankDetails}
 import org.apache.commons.lang3.RandomUtils
 import org.joda.time.LocalDate
 import play.api.mvc.Call
@@ -39,7 +40,7 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
   val formProvider = new UKBankDetailsFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyCacheMap): UKBankDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): UKBankDetailsController =
     new UKBankDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -62,9 +63,9 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
         SortCode("34", "45", "67"), "test account number", new LocalDate(LocalDate.now().getYear,
           LocalDate.now().getMonthOfYear, LocalDate.now().getDayOfYear))
 
-      val validData = Map(UKBankDetailsId.toString -> Json.toJson(bankDetails))
+      val validData = Json.obj(UKBankDetailsId.toString -> Json.toJson(bankDetails))
 
-      val getRelevantData = new FakeDataRetrievalAction(Some(CacheMap(cacheMapId, validData)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
