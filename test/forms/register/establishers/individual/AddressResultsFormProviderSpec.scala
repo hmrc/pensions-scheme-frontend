@@ -17,15 +17,16 @@
 package forms.register.establishers.individual
 
 import forms.behaviours.FormBehaviours
-import models.addresslookup.{Address, Country}
+import models.addresslookup.Address
 
 class AddressResultsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
     "value" -> "address line 1, address line 2, test town, test county, test post code"
   )
-  val address = Address(lines = List("address line 1", "address line 2", "test town", "test county"),
-    postcode = "test post code", country = Country("United Kingdom"))
+  val address = Address(addressLine1 = "address line 1", addressLine2 = "address line 2",
+    addressLine3 = Some("test town"), addressLine4 = Some("test county"),
+    postcode = Some("test post code"), country = "GB")
 
   val form = new AddressResultsFormProvider()()
 

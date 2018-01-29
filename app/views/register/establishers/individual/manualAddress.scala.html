@@ -33,32 +33,33 @@
 
         @components.heading(headingKey = "messages__establisher_individual_address__title", secondaryHeaderKey = Some(establisherName))
 
+        <p>@messages("messages__establisher_individual_address_lede")</p>
         @components.input_text(
-            field = form("manualAddress.line1"),
+            field = form("addressLine1"),
             label = messages("messages__common__address1")
         )
 
         @components.input_text(
-            field = form("manualAddress.line2"),
+            field = form("addressLine2"),
             label = messages("messages__common__address2")
         )
 
         @components.input_text(
-            field = form("manualAddress.line3"),
+            field = form("addressLine3"),
             label = messages("messages__common__address3")
         )
 
         @components.input_text(
-            field = form("manualAddress.line4"),
+            field = form("addressLine4"),
             label = messages("messages__common__address4")
         )
 
         @components.input_text(
-            field = form("manualAddress.postCode"),
+            field = form("postCode"),
             label = messages("messages__common__address_postcode")
         )
 
-        @components.select(field = form("manualAddress.country"),
+        @components.select(field = form("country"),
             label = messages("messages__common__country"),
             options = options,
             placeholder = Some("messages__common__pick_country"),

@@ -20,14 +20,24 @@ import javax.inject.Inject
 
 import forms.mappings.Mappings
 import models.addresslookup.Address
-import play.api.data.{Form}
+import play.api.data.Forms.{mapping, optional, tuple}
+import play.api.data.{Form, Forms}
+import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
 
 class ManualAddressFormProvider @Inject() extends Mappings {
 
   val addressLineMaxLength = 35
+  val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
 
-  def apply(): Form[Address] =
-    Form(
-      "manualAddress" -> manualAddressMapping()
-    )
+  def apply(): Form[Address] = Form(
+    mapping(
+      "addressLine1" -> text("messages__error__addr1").verifying(maxLength(addressLineMaxLength, "messages__error__addr1_length")),
+      "addressLine2" -> text("messages__error__addr2").verifying(maxLength(addressLineMaxLength, "messages__error__addr2_length")),
+      "addressLine3" -> optional(Forms.text.verifying(maxLength(addressLineMaxLength, "messages__error__addr3_length"))),
+      "addressLine4" -> optional(Forms.text.verifying(maxLength(addressLineMaxLength, "messages__error__addr4_length"))),
+      "postCode" -> mandatoryIfEqual[String]("country", "GB", text("messages__error__postcode").verifying(
+        regexp(postCodeRegex, "messages__error__postcode_invalid"))),
+      "country" -> text("messages__error__scheme_country")
+    )(Address.apply)(Address.unapply)
+  )
  }

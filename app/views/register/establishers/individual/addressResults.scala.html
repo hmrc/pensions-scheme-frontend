@@ -48,8 +48,8 @@
 
                     @components.radio(
                         field = form("value"),
-                        label = s"${addressRecord.lines(0)}, ${addressRecord.lines(1)}, ${addressRecord.town.getOrElse("")}, ${addressRecord.county.getOrElse("")}, ${addressRecord.postcode}",
-                        value = s"${addressRecord.lines(0)}, ${addressRecord.lines(1)}, ${addressRecord.town.getOrElse("")}, ${addressRecord.county.getOrElse("")}, ${addressRecord.postcode}",
+                        label = s"${addressRecord.addressLine1}, ${addressRecord.addressLine2}, ${addressRecord.addressLine3.getOrElse("")}, ${addressRecord.addressLine4.getOrElse("")}, ${addressRecord.postcode.getOrElse("")}",
+                        value = s"${addressRecord.addressLine1}, ${addressRecord.addressLine2}, ${addressRecord.addressLine3.getOrElse("")}, ${addressRecord.addressLine4.getOrElse("")}, ${addressRecord.postcode.getOrElse("")}",
                         id = Some(s"addr-opts-$i")
                     )
                 }

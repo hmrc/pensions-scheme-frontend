@@ -17,23 +17,94 @@
 package forms.register.establishers.individual
 
 import forms.behaviours.FormBehaviours
+import models.addresslookup.Address
 import models.{Field, Required}
+import org.apache.commons.lang3.RandomStringUtils
+import play.api.data.FormError
 
-/*class ManualAddressFormProviderSpec extends FormBehaviours {
+class ManualAddressFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
-    "field1" -> "value 1",
-    "field2" -> "value 2"
+    "addressLine1" -> "address line 1",
+    "addressLine2" -> "address line 2",
+    "addressLine3" -> "address line 3",
+    "addressLine4" -> "address line 4",
+    "postCode" -> "AB1 1AP",
+    "country" -> "GB"
   )
 
+  val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
   val form = new ManualAddressFormProvider()()
 
   "ManualAddress form" must {
-    behave like questionForm(ManualAddress("value 1", "value 2"))
+    behave like questionForm(Address("address line 1", "address line 2",
+      Some("address line 3"), Some("address line 4"), Some("AB1 1AP"), "GB"))
 
-    /*behave like formWithMandatoryTextFields(
-      Field("field1", Required -> "manualAddress.error.field1.required"),
-      Field("field2", Required -> "manualAddress.error.field2.required")
+    behave like formWithMandatoryTextFields(
+      Field("addressLine1", Required -> "messages__error__addr1"),
+      Field("addressLine2", Required -> "messages__error__addr2"),
+      Field("country", Required -> "messages__error__scheme_country"
+      )
     )
-  }*/
-}*/
+
+    "successfully bind when country is not GB and postcode is any postcode" ignore {
+      val data = validData + ("postCode" -> "zxadsafd", "country" -> "AF")
+      val result = form.bind(data)
+      result.get shouldEqual Address("address line 1", "address line 2",
+        Some("address line 3"), Some("address line 4"), Some("zxadsafd"), "AF")
+    }
+
+    "fail to bind when address line 1 exceeds max length 35" in {
+      val addressLine1 = RandomStringUtils.randomAlphabetic(36)
+      val data = validData + ("addressLine1" -> addressLine1)
+
+      val expectedError: Seq[FormError] = error("addressLine1", "messages__error__addr1_length", 35)
+      checkForError(form, data, expectedError)
+    }
+
+    "fail to bind when address line 2 exceeds max length 35" in {
+      val addressLine2 = RandomStringUtils.randomAlphabetic(36)
+      val data = validData + ("addressLine2" -> addressLine2)
+
+      val expectedError: Seq[FormError] = error("addressLine2", "messages__error__addr2_length", 35)
+      checkForError(form, data, expectedError)
+    }
+
+    "fail to bind when address line 3 exceeds max length 35" in {
+      val addressLine3 = RandomStringUtils.randomAlphabetic(36)
+      val data = validData + ("addressLine3" -> addressLine3)
+
+      val expectedError: Seq[FormError] = error("addressLine3", "messages__error__addr3_length", 35)
+      checkForError(form, data, expectedError)
+    }
+
+    "fail to bind when address line 4 exceeds max length 35" in {
+      val addressLine4 = RandomStringUtils.randomAlphabetic(36)
+      val data = validData + ("addressLine4" -> addressLine4)
+
+      val expectedError: Seq[FormError] = error("addressLine4", "messages__error__addr4_length", 35)
+      checkForError(form, data, expectedError)
+    }
+
+    "fail to bind when postcode is missing for country UK" in {
+      val validData: Map[String, String] = Map(
+        "addressLine1" -> "address line 1",
+        "addressLine2" -> "address line 2",
+        "addressLine3" -> "address line 3",
+        "addressLine4" -> "address line 4",
+        "country" -> "GB"
+      )
+      val expectedError: Seq[FormError] = error("postCode", "messages__error__postcode")
+      checkForError(form, validData, expectedError)
+    }
+
+    Seq("A 1223", "1234 A23", "AA1 BBB", "AA 8989").foreach { postcode =>
+      s"fail to bind when postcode $postcode is invalid" in {
+        val data = validData + ("postCode" -> postcode)
+        val expectedError: Seq[FormError] = error("postCode", "messages__error__postcode_invalid", postCodeRegex)
+        checkForError(form, data, expectedError)
+      }
+    }
+
+  }
+}

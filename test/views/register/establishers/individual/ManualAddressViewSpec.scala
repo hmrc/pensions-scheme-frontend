@@ -22,15 +22,16 @@ import forms.register.establishers.individual.ManualAddressFormProvider
 import models.addresslookup.Address
 import models.register.CountryOptions
 import models.{Index, NormalMode}
+import org.jsoup.Jsoup
 import utils.InputOption
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.individual.manualAddress
 
 class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
 
-  val messageKeyPrefix = "manualAddress"
+  val messageKeyPrefix = "establisher_individual_address"
   val firstIndex = Index(0)
-  val validData: Seq[InputOption] = Seq(InputOption("country:AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
+  val validData: Seq[InputOption] = Seq(InputOption("AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
   val countryOptions: CountryOptions = new CountryOptions(validData)
   val establisherName: String = "test first name test last name"
 
@@ -45,9 +46,15 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
 
   "ManualAddress view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "lede")
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.ManualAddressController.onSubmit(NormalMode, firstIndex).url, "field1", "field2")
+      routes.ManualAddressController.onSubmit(NormalMode, firstIndex).url, "addressLine1", "addressLine2", "addressLine3", "addressLine4",
+    "postCode")
+
+    "have establisher name rendered on the page" in {
+      Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)
+    }
+
   }
 }

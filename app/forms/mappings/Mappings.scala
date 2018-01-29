@@ -17,7 +17,7 @@
 package forms.mappings
 
 import models.EstablisherNino
-import models.addresslookup.{Address, Country}
+import models.addresslookup.Address
 import models.register.{SchemeType, SortCode}
 import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
 import models.register.establishers.individual.UniqueTaxReference
@@ -167,46 +167,6 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
     tuple("day" -> text(invalidKey),
     "month" -> text(invalidKey),
     "year" -> text(invalidKey)).verifying(invalidKey, validateDate(_)).transform(toLocalDate, fromLocalDate)
-  }
-
-  protected def manualAddressMapping(requiredLine1: String = "messages__error__addr1",
-                                     requiredLine2: String = "messages__error__addr2",
-                                     requiredPostCode: String = "messages__error__postcode",
-                                     requiredCountry: String = "messages__error__scheme_country"
-                                    ): Mapping[Address] = {
-
-    val maxlengthLine = 35
-    val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
-    def toManualAddress(manualAddress: (String, String, Option[String], Option[String], Option[String], String)): Address =
-    {
-      manualAddress match {
-        case (line1, line2, line3, line4, addressPostCode, country) =>
-          val addressLines = Seq(line1, line2)
-
-          val lines = if(line3.nonEmpty) addressLines :+ line3.getOrElse("") else addressLines
-          val allAddressLines = if(line4.nonEmpty) lines :+ line4.getOrElse("") else lines
-
-          Address(lines = allAddressLines.toList, postcode = addressPostCode.getOrElse(""), country = Country(country))
-      }
-    }
-
-    def fromManualAddress(address: Address): (String, String, Option[String], Option[String], Option[String], String) = {
-
-      val addressLines = address.lines
-      (addressLines(0), addressLines(1), (if(addressLines(2).nonEmpty) Some(addressLines(2)) else None),
-        (if(addressLines(3).nonEmpty) Some(addressLines(3)) else None),
-        if(address.postcode.nonEmpty) Some(address.postcode) else None, address.country.name)
-    }
-
-    tuple(
-      "line1" -> text(requiredLine1).verifying(maxLength(maxlengthLine, "messages__error__addr1_length")),
-      "line2" -> text(requiredLine2).verifying(maxLength(maxlengthLine, "messages__error__addr2_length")),
-      "line3" -> optional(Forms.text.verifying(maxLength(maxlengthLine, "messages__error__addr3_length"))),
-      "line4" -> optional(Forms.text.verifying(maxLength(maxlengthLine, "messages__error__addr4_length"))),
-      "postCode" -> mandatoryIfEqual[String]("manualAddress.country", "GB", text(requiredPostCode).verifying(
-        regexp(postCodeRegex, "messages__error__postcode_invalid"))),
-      "country" -> text(requiredCountry)
-    ).transform(toManualAddress, fromManualAddress)
   }
 
   protected def sortCodeMapping(requiredKey: String = "error.required", invalidKey: String, maxErrorKey: String): Mapping[SortCode] = {

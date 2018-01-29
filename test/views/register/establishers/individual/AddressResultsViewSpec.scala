@@ -19,7 +19,7 @@ package views.register.establishers.individual
 import controllers.register.establishers.individual.routes
 import play.api.data.Form
 import forms.register.establishers.individual.AddressResultsFormProvider
-import models.addresslookup.{Address, Country}
+import models.addresslookup.Address
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
@@ -34,8 +34,8 @@ class AddressResultsViewSpec extends ViewBehaviours {
   val firstIndex = Index(1)
   val establisherName: String = "test first name test last name"
 
-  def address(postCode: String): Address = Address(lines = List("address line 1", "address line 2"), town = Some("test town"),
-    county = Some("test county"), postcode = postCode, country = Country("United Kingdom"))
+  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
+    Some("test county"), Some(postCode), "GB")
 
   val addressSeq = Seq(address("postcode 1"), address("postcode 2"))
   val addressSeqWithIndex: Seq[(Address, Int)] = addressSeq.zipWithIndex
@@ -46,10 +46,10 @@ class AddressResultsViewSpec extends ViewBehaviours {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressResults(frontendAppConfig, form, NormalMode,
     firstIndex, addressSeq, establisherName)(fakeRequest, messages)
 
-  def getAddressValue(address: Address): String = s"${address.lines.head}, ${address.lines(1)}" +
-    s"${address.town.map(town => s", $town").getOrElse("")}" +
-    s"${address.county.map(county => s", $county").getOrElse("")}, " +
-    s"${address.postcode}"
+  def getAddressValue(address: Address): String = s"${address.addressLine1}, ${address.addressLine2}" +
+    s"${address.addressLine3.map(town => s", $town").getOrElse("")}" +
+    s"${address.addressLine4.map(county => s", $county").getOrElse("")}, " +
+    s"${address.postcode.map(postcode => s"$postcode").getOrElse("")}"
 
 
   "AddressResults view" must {

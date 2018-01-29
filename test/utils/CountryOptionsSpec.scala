@@ -39,7 +39,7 @@ class CountryOptionsSpec extends SpecBase {
 
         val countryOption: CountryOptions = app.injector.instanceOf[CountryOptions]
         countryOption.options mustEqual Seq(InputOption("territory:AE-AZ", "Abu Dhabi"),
-          InputOption("country:AF", "Afghanistan"))
+          InputOption("AF", "Afghanistan"))
       }
     }
 

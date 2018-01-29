@@ -19,8 +19,8 @@ package forms.register.establishers.individual
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import models.addresslookup.{Address, AddressRecord}
-import play.api.data.{Form, Forms}
+import models.addresslookup.Address
+import play.api.data.Form
 
 class AddressResultsFormProvider @Inject() extends Mappings {
 

@@ -23,13 +23,13 @@ import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.individual.ManualAddressFormProvider
-import identifiers.register.establishers.individual.{AddressId, AddressResultsId, EstablisherDetailsId}
+import identifiers.register.establishers.individual.{AddressResultsId, EstablisherDetailsId}
 import models.{Index, NormalMode}
 import models.register.establishers.individual.EstablisherDetails
 import views.html.register.establishers.individual.manualAddress
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
-import models.addresslookup.{Address, Country}
+import models.addresslookup.Address
 import models.register.{CountryOptions, SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
@@ -47,13 +47,12 @@ class ManualAddressControllerSpec extends ControllerSpecBase {
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): ManualAddressController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): ManualAddressController =
     new ManualAddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider, countryOptions)
 
   def viewAsString(form: Form[_] = form): String = manualAddress(frontendAppConfig, form, NormalMode, firstIndex, options, establisherName)(fakeRequest, messages).toString
-  val address = Address(lines = List("address line 1", "address line 2"), town = Some("test town"),
-    county = Some("test county"), postcode = "test post code", country = Country("United Kingdom"))
+  val address = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
 
   val validData: JsObject = Json.obj(SchemeDetailsId.toString -> Json.toJson(
     SchemeDetails("value 1", SchemeType.SingleTrust)),
@@ -62,20 +61,24 @@ class ManualAddressControllerSpec extends ControllerSpecBase {
         EstablisherDetailsId.toString ->
           EstablisherDetails("test first name", "test last name", LocalDate.now),
         AddressResultsId.toString ->
-          Json.toJson(Address(lines = List("address line 1", "address line 2"), town = Some("test town"),
-            county = Some("test county"), postcode = "test post code", country = Country("United Kingdom"))
-      ),
-        AddressId.toString -> Json.toJson[Seq[Address]](
-          Seq(Address(lines = List("address line 1", "address line 2"), town = Some("test town"),
-            county = Some("test county"), postcode = "test post code", country = Country("United Kingdom")))))))
+          Json.toJson(Address("address line 1", "address line 2", Some("test town"),
+            Some("test county"), Some("test post code"), "GB")
+      ))))
 
   "ManualAddress Controller" must {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller(new FakeDataRetrievalAction(Some(validData))).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+    "return OK and the correct view for a GET when establisher name is present" in {
+      val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+    }
+
+    "redirect to Session Expired page for a GET when establisher name isot  npresent" in {
+      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
@@ -87,7 +90,8 @@ class ManualAddressControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("field1", "value 1"), ("field2", "value 2"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("addressLine1", "value 1"),
+        ("addressLine2", "value 2"), ("postCode", "AB1 1AB"), ("country" -> "GB"))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
