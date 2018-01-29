@@ -17,7 +17,7 @@
 package forms.register.establishers.company
 
 import forms.FormSpec
-import models.UniqueTaxReference
+import models.register.establishers.individual.UniqueTaxReference
 
 
 class CompanyUniqueTaxReferenceFormProviderSpec extends FormSpec {
@@ -32,28 +32,28 @@ class CompanyUniqueTaxReferenceFormProviderSpec extends FormSpec {
 
   "CompanyUniqueTaxReference form" must {
     "successfully bind when the utr is provided and yes is selected" in {
-      val form = formProvider().bind(Map("companyUniqueTaxReference.hasUtr" -> "true", "companyUniqueTaxReference.utr" -> "1234556676"))
+      val form = formProvider().bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" -> "1234556676"))
       form.get shouldBe UniqueTaxReference.Yes("1234556676")
     }
 
     "successfully bind when the reason is provided and no is selected" in {
-      val form = formProvider().bind(Map("companyUniqueTaxReference.hasUtr" -> "false", "companyUniqueTaxReference.reason" -> "haven't got ctutr"))
+      val form = formProvider().bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" -> "haven't got ctutr"))
       form.get shouldBe UniqueTaxReference.No("haven't got ctutr")
     }
 
     "fail to bind when value is omitted" in {
-      val expectedError = error("companyUniqueTaxReference.hasUtr", requiredKey)
+      val expectedError = error("uniqueTaxReference.hasUtr", requiredKey)
       checkForError(formProvider(), emptyForm, expectedError)
     }
 
     "fail to bind when yes is selected but utr is not provided" in {
-      val expectedError = error("companyUniqueTaxReference.utr", requiredUtrKey)
-      checkForError(formProvider(), Map("companyUniqueTaxReference.hasUtr" -> "true"), expectedError)
+      val expectedError = error("uniqueTaxReference.utr", requiredUtrKey)
+      checkForError(formProvider(), Map("uniqueTaxReference.hasUtr" -> "true"), expectedError)
     }
 
     "fail to bind when no is selected and reason is not provided" in {
-      val expectedError = error("companyUniqueTaxReference.reason", requiredReasonKey)
-      checkForError(formProvider(), Map("companyUniqueTaxReference.hasUtr" -> "false"), expectedError)
+      val expectedError = error("uniqueTaxReference.reason", requiredReasonKey)
+      checkForError(formProvider(), Map("uniqueTaxReference.hasUtr" -> "false"), expectedError)
     }
 
   }

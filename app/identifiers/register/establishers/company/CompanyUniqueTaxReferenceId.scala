@@ -16,8 +16,15 @@
 
 package identifiers.register.establishers.company
 
-import identifiers.Identifier
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.register.establishers.individual.UniqueTaxReference
+import play.api.libs.json.JsPath
 
-case object CompanyUniqueTaxReferenceId extends Identifier {
+case class CompanyUniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
+  override def path: JsPath = EstablishersId.path \ index \ CompanyUniqueTaxReferenceId.toString
+}
+
+object CompanyUniqueTaxReferenceId {
   override def toString: String = "companyUniqueTaxReference"
 }

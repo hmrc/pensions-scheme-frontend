@@ -20,14 +20,14 @@ import javax.inject.Inject
 
 import forms.mappings.Mappings
 import play.api.data.Form
-import models.UniqueTaxReference
+import models.register.establishers.individual.UniqueTaxReference
 
 
 class CompanyUniqueTaxReferenceFormProvider @Inject() () extends Mappings {
 
   def apply(): Form[UniqueTaxReference] = Form(
-    "companyUniqueTaxReference" -> uniqueTaxReferenceMapping(
-      key = "companyUniqueTaxReference",
+    "uniqueTaxReference" -> uniqueTaxReferenceMapping(
+      key = "uniqueTaxReference",
       requiredKey = "messages__error__has_ct_utr_establisher",
       requiredUtrKey = "messages__error__ct_utr",
       requiredReasonKey = "messages__error__no_ct_utr_establisher",

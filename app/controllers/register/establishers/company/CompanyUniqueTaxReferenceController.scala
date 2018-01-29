@@ -25,46 +25,70 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
-import identifiers.register.establishers.company.CompanyUniqueTaxReferenceId
-import models.{Index, Mode, UniqueTaxReference}
-import play.api.mvc.{Action, AnyContent}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyUniqueTaxReferenceId}
+import models.register.establishers.individual.UniqueTaxReference
+import models.requests.DataRequest
+import models.{Index, Mode}
+import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyUniqueTaxReference
+
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 class CompanyUniqueTaxReferenceController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: CompanyUniqueTaxReferenceFormProvider) extends FrontendController with I18nSupport
-  with Enumerable.Implicits with MapFormats {
+                                                    appConfig: FrontendAppConfig,
+                                                    override val messagesApi: MessagesApi,
+                                                    dataCacheConnector: DataCacheConnector,
+                                                    navigator: Navigator,
+                                                    authenticate: AuthAction,
+                                                    getData: DataRetrievalAction,
+                                                    requireData: DataRequiredAction,
+                                                    formProvider: CompanyUniqueTaxReferenceFormProvider
+                                                  ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
-  val form: Form[UniqueTaxReference] = formProvider()
+  private val form: Form[UniqueTaxReference] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async{
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val redirectResult = request.userAnswers.companyUniqueTaxReference(index) match {
-        case Success(None) => Ok(companyUniqueTaxReference(appConfig, form, mode, index))
-        case Success(Some(value)) => Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index))
-        case Failure(_) => Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+      retrieveCompanyName(index) {
+        companyName =>
+        val redirectResult = request.userAnswers.get(CompanyUniqueTaxReferenceId(index)) match {
+          case None =>
+            Ok(companyUniqueTaxReference(appConfig, form, mode, index, companyName))
+          case Some(value) =>
+            Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, companyName))
+        }
+        Future.successful(redirectResult)
       }
-      Future.successful(redirectResult)
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index))),
-        (value) =>
-          dataCacheConnector.save[UniqueTaxReference](request.externalId,
-            CompanyUniqueTaxReferenceId.toString, value).map(cacheMap =>
-            Redirect(navigator.nextPage(CompanyUniqueTaxReferenceId, mode)(new UserAnswers(cacheMap))))
-      )
+      retrieveCompanyName(index) {
+        companyName =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, companyName))),
+            (value) =>
+              dataCacheConnector.save(
+                request.externalId,
+                CompanyUniqueTaxReferenceId(index),
+                value
+              ).map {
+                json =>
+                  Redirect(navigator.nextPage(CompanyUniqueTaxReferenceId(index), mode)(new UserAnswers(json)))
+              }
+          )
+      }
+  }
+
+  private def retrieveCompanyName(index: Int)(block: String => Future[Result])
+                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    request.userAnswers.get(CompanyDetailsId(index)) match {
+      case Some(value) =>
+        block(value.companyName)
+      case _ =>
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    }
   }
 }

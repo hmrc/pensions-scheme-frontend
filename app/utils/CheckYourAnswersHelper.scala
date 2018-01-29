@@ -19,7 +19,7 @@ package utils
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.EstablisherKindId
-import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyContactDetailsId, CompanyDetailsId}
+import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyContactDetailsId, CompanyDetailsId, CompanyUniqueTaxReferenceId}
 import identifiers.register.establishers.individual._
 import models.register.establishers.individual.{AddressYears, UniqueTaxReference}
 import models.{CheckMode, EstablisherNino, Index}
@@ -34,15 +34,13 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends Enumerable.Implic
       case _ => None
     }
 
-  def companyUniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.companyUniqueTaxReference(index) match {
-    case Success(Some(x)) => Some(AnswerRow("companyUniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
+  def companyUniqueTaxReference(index: Int): Option[AnswerRow] =
+    userAnswers.get(CompanyUniqueTaxReferenceId(index)) match {
+    case Some(x) => Some(AnswerRow("companyUniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
       controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
 
-  def uniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.uniqueTaxReference(index) match {
-    case Success(Some(x)) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
-      controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url))
   def companyDetails(index: Int): Option[AnswerRow] =
     userAnswers.get(CompanyDetailsId(index)) match {
       case Some(x) => Some(AnswerRow("companyDetails.checkYourAnswersLabel", s"${x.companyName} ${x.vatNumber} ${x.payeNumber}", false,

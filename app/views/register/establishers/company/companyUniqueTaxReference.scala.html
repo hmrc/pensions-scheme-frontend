@@ -18,9 +18,9 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.company.routes._
 @import models.Mode
-@import models.UniqueTaxReference._
+@import models.register.establishers.individual.UniqueTaxReference
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, companyName: String)(implicit request: Request[_], messages: Messages)
 
 @options = @{
     UniqueTaxReference.options
@@ -35,7 +35,7 @@
 
     @components.error_summary(form.errors)
 
-    @components.heading(headingKey = "messages__establisher__has_ct_utr__title")
+    @components.heading(headingKey = "messages__establisher__has_ct_utr__title", secondaryHeaderKey = Some(companyName))
 
     @components.fieldSet(
         field = form("companyUniqueTaxReference.hasUtr"),
@@ -44,33 +44,34 @@
         hiddenLegend = true
     ){
         @components.radio(
-        field = form("companyUniqueTaxReference.hasUtr"),
+        field = form("uniqueTaxReference.hasUtr"),
         label = options(0).label,
         value = options(0).value,
         dataTarget = options(0).dataTarget
         )
 
         @components.input_text(
-        field = form("companyUniqueTaxReference.utr"),
+        field = form("uniqueTaxReference.utr"),
         label = messages("messages__establisher__ct_utr"),
         groupClass = Some("js-hidden panel panel-border-narrow"),
         hint = Some(messages("messages__establisher__ct_utr_hint_format"))
         )
 
         @components.radio(
-        field = form("companyUniqueTaxReference.hasUtr"),
+        field = form("uniqueTaxReference.hasUtr"),
         label = options(1).label,
         value = options(1).value,
         dataTarget = options(1).dataTarget
         )
 
         @components.input_text(
-        field = form("companyUniqueTaxReference.reason"),
-        label = messages(" = Tell us why the establisher does not have a CTUTR"),
+        field = form("uniqueTaxReference.reason"),
+        label = messages("messages__establisher__no_ct_utr"),
         groupClass = Some("js-hidden panel panel-border-narrow")
         )
     }
 
-        @components.submit_button()
+    @components.submit_button()
+
     }
 }

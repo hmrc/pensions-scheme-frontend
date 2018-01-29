@@ -31,10 +31,13 @@ class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   val index = Index(1)
 
-  def createView: () => HtmlFormat.Appendable = () => companyUniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+  val companyName = "test company name"
+
+
+  def createView: () => HtmlFormat.Appendable = () => companyUniqueTaxReference(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyUniqueTaxReference(frontendAppConfig, form,
-    NormalMode, index)(fakeRequest, messages)
+    NormalMode, index, companyName)(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" must {
 
@@ -48,21 +51,39 @@ class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
         for (option <- utrOptions) {
-          assertContainsRadioButton(doc, s"companyUniqueTaxReference_hasUtr-$option", "companyUniqueTaxReference.hasUtr", option, isChecked = false)
+          assertContainsRadioButton(doc, s"uniqueTaxReference_hasUtr-$option", "uniqueTaxReference.hasUtr", option, isChecked = false)
         }
       }
 
       for (option <- utrOptions) {
         s"rendered with a value of '$option'" must {
           s"have the '$option' radio button selected" in {
-            val doc = asDocument(createViewUsingForm(form.bind(Map("companyUniqueTaxReference.hasUtr" -> s"$option"))))
-            assertContainsRadioButton(doc, s"companyUniqueTaxReference_hasUtr-$option", "companyUniqueTaxReference.hasUtr", option, isChecked = true)
+            val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> s"$option"))))
+            assertContainsRadioButton(doc, s"uniqueTaxReference_hasUtr-$option", "uniqueTaxReference.hasUtr", option, isChecked = true)
 
             for (unselectedOption <- utrOptions.filterNot(o => o == option)) {
-              assertContainsRadioButton(doc, s"companyUniqueTaxReference_hasUtr-$unselectedOption", "companyUniqueTaxReference.hasUtr", unselectedOption, isChecked = false)
+              assertContainsRadioButton(doc, s"uniqueTaxReference_hasUtr-$unselectedOption", "uniqueTaxReference.hasUtr",
+                unselectedOption, isChecked = false)
             }
           }
         }
+      }
+
+      "display an input text box with the value when yes is selected" in {
+        val expectedValue = "1234567891"
+        val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" ->
+          expectedValue))))
+        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__establisher__ct_utr")} ${messages(
+          "messages__establisher__ct_utr_hint_format")}",
+          expectedValue)
+      }
+
+      "display an input text box with the value when no is selected" in {
+        val expectedValue = "don't have ctutr"
+        val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" ->
+          expectedValue))))
+        doc must haveLabelAndValue("uniqueTaxReference_reason", messages(
+          "messages__establisher__no_ct_utr"), expectedValue)
       }
     }
   }
