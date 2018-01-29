@@ -21,13 +21,16 @@ import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
+import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.establishers.individual.PreviousAddressFormProvider
-import identifiers.register.establishers.individual.PreviousAddressId
-import models.Mode
-import utils.{Navigator, UserAnswers}
+import forms.register.establishers.individual.{AddressFormProvider, PreviousAddressFormProvider}
+import identifiers.register.establishers.individual.{EstablisherDetailsId, PreviousAddressId}
+import models.addresslookup.Address
+import models.requests.DataRequest
+import models.{Index, Mode}
+import play.api.mvc.{Action, AnyContent, Result}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual.previousAddress
 
 import scala.concurrent.Future
@@ -36,32 +39,66 @@ class PreviousAddressController @Inject() (
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
+                                        addressLookupConnector: AddressLookupConnector,
                                         navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: PreviousAddressFormProvider
-                                      ) extends FrontendController with I18nSupport {
+                                        formProvider: AddressFormProvider
+                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits{
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(PreviousAddressId) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-      Ok(previousAddress(appConfig, preparedForm, mode))
+  def formWithError(messageKey: String): Form[String] = {
+    form.withError("value", s"messages__error__postcode_$messageKey")
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(previousAddress(appConfig, formWithErrors, mode))),
-        (value) =>
-          dataCacheConnector.save[String](request.externalId, PreviousAddressId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(PreviousAddressId, mode)(new UserAnswers(cacheMap))))
-      )
+      retrieveEstablisherName(index) {
+        establisherName =>
+          Future.successful(Ok(previousAddress(appConfig, form, mode, index, establisherName)))
+      }
+  }
+
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+    implicit request =>
+      retrieveEstablisherName(index) {
+        establisherName =>
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(previousAddress(appConfig, formWithErrors, mode, index, establisherName))),
+            value =>
+              addressLookupConnector.addressLookupByPostCode(value).flatMap {
+                case None =>
+                  Future.successful(BadRequest(previousAddress(appConfig, formWithError("invalid"), mode, index, establisherName)))
+
+                case Some(Nil) =>
+                  Future.successful(BadRequest(previousAddress(appConfig, formWithError("no_results"), mode, index, establisherName)))
+
+                case Some(addressSeq) =>
+                  dataCacheConnector.save[Seq[Address]](
+                    request.externalId,
+                    PreviousAddressId.path,
+                    addressSeq.map(_.address)
+                  ).map {
+                    json =>
+                      Redirect(navigator.nextPage(PreviousAddressId, mode)(new UserAnswers(json)))
+                  }
+
+              }
+          )
+
+      }
+  }
+
+  private def retrieveEstablisherName(index: Int)(block: String => Future[Result])
+                                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    request.userAnswers.get(EstablisherDetailsId(index)) match {
+      case Some(value) =>
+        block(value.establisherName)
+      case _ =>
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    }
   }
 }

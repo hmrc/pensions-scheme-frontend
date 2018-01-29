@@ -67,9 +67,9 @@ class AddressController @Inject()(
       retrieveEstablisherName(index) {
         establisherName =>
           form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
+            formWithErrors =>
               Future.successful(BadRequest(address(appConfig, formWithErrors, mode, index, establisherName))),
-            (value) =>
+            value =>
               addressLookupConnector.addressLookupByPostCode(value).flatMap {
                 case None =>
                   Future.successful(BadRequest(address(appConfig, formWithError("invalid"), mode, index, establisherName)))

@@ -18,26 +18,41 @@ package views.register.establishers.individual
 
 import play.api.data.Form
 import controllers.register.establishers.individual.routes
-import forms.register.establishers.individual.PreviousAddressFormProvider
-import models.NormalMode
+import forms.register.establishers.individual.{AddressFormProvider, PreviousAddressFormProvider}
+import models.{Index, NormalMode}
+import org.jsoup.Jsoup
+import play.twirl.api.HtmlFormat
 import views.behaviours.StringViewBehaviours
 import views.html.register.establishers.individual.previousAddress
 
 class PreviousAddressViewSpec extends StringViewBehaviours {
 
-  val messageKeyPrefix = "previousAddress"
+  val messageKeyPrefix = "establisher_previous_individual_address"
 
-  val form = new PreviousAddressFormProvider()()
+  val form = new AddressFormProvider()()
+  val firstIndex = Index(0)
+  val establisherName = "test establisher name"
 
-  def createView = () => previousAddress(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = ()=> previousAddress(frontendAppConfig, form, NormalMode,firstIndex,
+    establisherName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[String]) => previousAddress(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[String]) => previousAddress(frontendAppConfig, form, NormalMode,, firstIndex, establisherName)
+  (fakeRequest, messages)
 
   "PreviousAddress view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"),"lede")
 
     behave like pageWithBackLink(createView)
 
-    behave like stringPage(createViewUsingForm, messageKeyPrefix, controllers.register.establishers.individual.routes.PreviousAddressController.onSubmit(NormalMode).url)
+    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.PreviousAddressController.onSubmit(NormalMode).url,
+      Some("messages__common__address_postcode"), expectedHint = Some("messages__common__address_postcode_hint"))
+  }
+  "have establisher name rendered on the page" in {
+    Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)
+  }
+
+  "have link for enter address manually" in {
+    Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
+      routes.AddressController.onPageLoad(NormalMode, firstIndex).url)
   }
 }

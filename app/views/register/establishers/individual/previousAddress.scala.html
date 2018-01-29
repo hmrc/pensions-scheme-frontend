@@ -19,27 +19,36 @@
 @import controllers.register.establishers.individual.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, establisherName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__previousAddress__title"),
+    title = messages("messages__common__previous_address"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = controllers.register.establishers.individual.routes.PreviousAddressController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = PreviousAddressController.onSubmit(mode, index), 'autoComplete -> "off") {
 
         @components.back_link()
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__previousAddress__heading")
+        @components.heading("messages__common__previous_address", secondaryHeaderKey = Some(establisherName))
 
-        @components.input_text(
+        <p>@messages("messages__common__company_address_hint")</p>
+
+        <p>@messages("messages__common__enter_postcode")
+            <a id="manual-address-link" href="@PreviousAddressController.onPageLoad(mode, index)">
+                @messages(s"messages__common__select_address_link")
+            </a>
+        </p>
+
+
+@components.input_text(
           field = form("value"),
-          label = messages("messages__previousAddress__heading"),
-          labelClass=Some("visually-hidden")
+          label = messages("messages__common__address_postcode"),
+          hint  = Some(messages("messages__common__address_postcode_hint"))
         )
 
-        @components.submit_button()
+        @components.submit_button("site.find_address")
     }
 }

@@ -16,57 +16,89 @@
 
 package controllers.register.establishers.individual
 
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.libs.json.JsString
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
-import connectors.FakeDataCacheConnector
+import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.individual.PreviousAddressFormProvider
+import forms.register.establishers.individual.{AddressFormProvider, PreviousAddressFormProvider}
 import identifiers.register.establishers.individual.PreviousAddressId
-import models.NormalMode
+import models.{Index, NormalMode}
 import views.html.register.establishers.individual.previousAddress
 import play.api.libs.json._
 import controllers.ControllerSpecBase
+import models.addresslookup.{Address, AddressRecord, Country}
+import org.scalatest.mockito.MockitoSugar
+import org.mockito.Mockito._
+import org.mockito._
+import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.concurrent.Future
 class PreviousAddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new PreviousAddressFormProvider()
+  val formProvider = new AddressFormProvider()
   val form = formProvider()
+  val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
+  implicit val hc: HeaderCarrier = mock[HeaderCarrier]
+  val firstIndex = Index(0)
+  val establisherName: String = "test first name test last name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
-    new PreviousAddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher) =
+    new PreviousAddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector,fakeAddressLookupConnector,
+      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = previousAddress(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = previousAddress(frontendAppConfig, form, NormalMode,firstIndex, establisherName)(fakeRequest, messages).toString
 
   val testAnswer = "answer"
 
   "PreviousAddress Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode,firstIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
-    "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(PreviousAddressId.toString -> JsString(testAnswer))
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+    "redirect a Bad Request when post code is not valid" in {
+      val invalidPostCode = "invalid"
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", invalidPostCode))
+      val boundForm = form.withError(FormError("value", "messages__error__postcode_invalid"))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(invalidPostCode))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
 
-      contentAsString(result) mustBe viewAsString(form.fill(testAnswer))
+      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
+    "redirect a Bad Request when no results found for the input post code" in {
+      val notFoundPostCode = "noResult"
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", notFoundPostCode))
+      val boundForm = form.withError(FormError("value", "messages__error__postcode_no_results"))
+
+      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(notFoundPostCode))
+      (Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(Nil)))
+
+      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
+      val validPostCode = "valid"
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", validPostCode))
+      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostCode))(Matchers.any(), Matchers.any())).thenReturn(
+        Future.successful(Some(Seq(AddressRecord(Address(List("address line 1", "address line 2"), None, None, validPostCode, Country("UK")))))))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -75,26 +107,24 @@ class PreviousAddressControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
-
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
-
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
-
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "valid"))
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
+
   }
 }
