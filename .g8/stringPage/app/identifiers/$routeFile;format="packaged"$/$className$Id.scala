@@ -1,4 +1,4 @@
-package identifiers.$routeFile;format="packaged"$
+package identifiers.$routeFile$
 
 import identifiers._
 

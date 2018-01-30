@@ -108,6 +108,15 @@ trait Constraints {
     }
   }
 
+  protected def validCrn(invalidKey: String) : Constraint[String] = {
+    val validCrnString = "^(\\d{7}|[A-Z]\\d{6}|[A-Z][A-Z]\\d{6})$"
+
+    Constraint {
+      case crn if (crn.replaceAll(" ", "").toUpperCase).matches(validCrnString) => Valid
+      case _ => Invalid(invalidKey)
+    }
+  }
+
   def returnOnFirstFailure[T](constraints: Constraint[T]*): Constraint[T] =
     Constraint {
       field =>

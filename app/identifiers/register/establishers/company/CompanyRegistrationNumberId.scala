@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package identifiers.register.establishers.company
 
-import javax.inject.Inject
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.CompanyRegistrationNumber
 
-import forms.mappings.Mappings
-import play.api.data.Form
+case class CompanyRegistrationNumberId(index: Int) extends TypedIdentifier[CompanyRegistrationNumber] {
+  override def path = EstablishersId.path \ index \ CompanyRegistrationNumberId.toString
+}
 
-class AddressFormProvider @Inject() extends Mappings {
-  val maxLength = 8
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("messages__error__postcode").verifying(maxLength(maxLength, "messages__error__postcode_length"))
-    )
+object CompanyRegistrationNumberId {
+  override def toString: String = "companyRegistrationNumber"
 }

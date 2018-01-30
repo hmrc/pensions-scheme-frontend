@@ -19,7 +19,7 @@ package utils
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.EstablisherKindId
-import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyContactDetailsId, CompanyDetailsId, CompanyUniqueTaxReferenceId}
+import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyContactDetailsId, CompanyDetailsId, CompanyUniqueTaxReferenceId,CompanyRegistrationNumberId}
 import identifiers.register.establishers.individual._
 import models.register.establishers.individual.{AddressYears, UniqueTaxReference}
 import models.{CheckMode, EstablisherNino, Index}
@@ -44,6 +44,13 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends Enumerable.Implic
     case Some(x) => Some(AnswerRow("companyUniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
       controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
+  }
+
+  def companyRegistrationNumber(index:Int): Option[AnswerRow] =
+    userAnswers.get(CompanyRegistrationNumberId(index)) match {
+      case Some(x) => Some(AnswerRow("companyRegistrationNumber.checkYourAnswersLabel", s"companyRegistrationNumber.$x", true,
+        controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(CheckMode, Index(index)).url))
+      case _=> None
   }
 
   def companyDetails(index: Int): Option[AnswerRow] =

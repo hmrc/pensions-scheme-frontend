@@ -1,4 +1,4 @@
-package views.$routeFile;format="packaged"$
+package views.$routeFile$
 
 import play.api.data.Form
 import controllers.$routeFile$.routes

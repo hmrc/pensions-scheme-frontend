@@ -135,4 +135,21 @@ class ConstraintsSpec extends WordSpec with MustMatchers with Constraints {
       result mustEqual Invalid("error.invalid")
     }
   }
+
+  "validCrn" must {
+
+    Seq("R123456", "ac123456", "1234567").foreach { crn =>
+     s"return Valid for a string ($crn) which meets the CRN validity requirements" in {
+       val result = validCrn("error.invalid")(crn)
+       result mustEqual Valid
+      }
+    }
+
+    Seq("12354678", "123456", "abc23456", "AC1234567").foreach { crn =>
+      s"return Invalid for a string ($crn) which doesn't meet the CRN validity requirements" in {
+        val result = validCrn("error.invalid")(crn)
+        result mustEqual Invalid("error.invalid")
+      }
+    }
+  }
 }

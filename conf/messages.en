@@ -261,5 +261,21 @@ messages__error__postcode_no_results = No results for that postcode
 
 address.checkYourAnswersLabel = address
 
+messages__company__crn__title=Does the company have a Company Registration number (CRN)?
+messages__company__has_crn = Does the company have a Company Registration number (CRN)?
+messages__company__no_crn = Tell us why the company does not have a CRN
+messages__common__crn = Company Registration number
+messages__common__crn_hint = This is issued by Companies House. It is 7 or 8 characters, typically 7 numbers or a combination of 1 or 2 letters followed by 6 digits, for example AB123456.
+messages__error__has_crn_company = Select yes if the company has a CRN
+messages__error__no_crn_company = You need to tell us why the company does not have a CRN
+messages__error__crn_invalid = Enter a valid 7 or 8 character Company Registration number
+messages__error__no_crn_length = The reason cannot be more than 150 characters
+messages__error__crn = Enter the Company Registration number
+
+messages__select_the_address__title = Select the address
+messages__common__select_address = Select the address from the list below, or
+messages__error__select_address = Select an address
+addressResults.checkYourAnswersLabel = addressResults
+
 messages__select_the_previous_address__title = Select the previous address
 messages__previousAddressList__checkYourAnswersLabel = previousAddressList

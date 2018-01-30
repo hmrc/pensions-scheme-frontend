@@ -17,6 +17,7 @@
 package forms.mappings
 
 import models.EstablisherNino
+import models.addresslookup.Address
 import models.register.{SchemeType, SortCode}
 import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
 import models.register.establishers.individual.UniqueTaxReference
@@ -26,7 +27,7 @@ import play.api.data.format.Formatter
 import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import uk.gov.voa.play.form.ConditionalMappings._
 import utils.Enumerable
-
+import models._
 import scala.util.Try
 
 trait Mappings extends Formatters with Constraints {
@@ -97,7 +98,7 @@ trait Mappings extends Formatters with Constraints {
     val reasonMaxLength = 150
     def fromUniqueTaxReference(utr: UniqueTaxReference): (Boolean, Option[String], Option[String]) = {
       utr match {
-        case UniqueTaxReference.Yes(utr) => (true, Some(utr), None)
+        case UniqueTaxReference.Yes(utrNo) => (true, Some(utrNo), None)
         case UniqueTaxReference.No(reason) =>  (false, None, Some(reason))
       }
     }
@@ -127,7 +128,7 @@ trait Mappings extends Formatters with Constraints {
 
     def fromEstablisherNino(nino: EstablisherNino): (Boolean, Option[String], Option[String]) = {
       nino match {
-        case EstablisherNino.Yes(nino) => (true, Some(nino), None)
+        case EstablisherNino.Yes(ninoNo) => (true, Some(ninoNo), None)
         case EstablisherNino.No(reason) =>  (false, None, Some(reason))
       }
     }
@@ -174,8 +175,8 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
     val formatter: Formatter[SortCode] = new Formatter[SortCode] {
 
-      val baseFormatter = stringFormatter(requiredKey)
-      val regexSortCode = """\d*""".r.toString()
+      val baseFormatter: Formatter[String] = stringFormatter(requiredKey)
+      val regexSortCode: String = """\d*""".r.toString()
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SortCode] = {
 
@@ -201,5 +202,35 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
   protected def vatMapping(invalidKey: String, maxErrorKey: String): FieldMapping[String] = {
     of(vatFormatter(invalidKey, maxErrorKey))
+  }
+
+  protected def companyRegistrationNumberMapping(requiredKey: String = "messages__error__has_crn_company",
+                                       requiredCRNKey: String = "messages__error__crn",
+                                       requiredReasonKey: String = "messages__company__no_crn",
+                                       reasonLengthKey: String = "messages__error__no_crn_length",
+                                       invalidCRNKey: String = "messages__error__crn_invalid",
+                                       noReasonKey: String = "messages__error__no_crn_company"):
+  Mapping[CompanyRegistrationNumber] = {
+
+    def fromCompanyRegistrationNumber(crn: CompanyRegistrationNumber): (Boolean, Option[String], Option[String]) = {
+      crn match {
+        case CompanyRegistrationNumber.Yes(crn) => (true, Some(crn), None)
+        case CompanyRegistrationNumber.No(reason) =>  (false, None, Some(reason))
+      }
+    }
+
+    def toCompanyRegistrationNumber(crnTuple: (Boolean, Option[String], Option[String])) = {
+
+      crnTuple match {
+        case (true, Some(crn), None)  => CompanyRegistrationNumber.Yes(crn)
+        case (false, None, Some(reason))  => CompanyRegistrationNumber.No(reason)
+        case _ => throw new RuntimeException("Invalid selection")
+      }
+    }
+
+    tuple("hasCrn" -> boolean(requiredKey),
+      "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey).verifying(validCrn(invalidCRNKey))),
+      "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(noReasonKey).
+        verifying(maxLength(150,reasonLengthKey)))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
   }
 }

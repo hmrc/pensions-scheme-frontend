@@ -14,9 +14,25 @@
  * limitations under the License.
  */
 
-package utils
+package forms.register.establishers.individual
 
-object Constants {
-  val establishersLimit = 10
-  val UnitedKingdom = "United Kingdom"
+import forms.behaviours.FormBehaviours
+
+class AddressListFormProviderSpec extends FormBehaviours {
+
+  val validData: Map[String, String] = Map(
+    "value" -> "1"
+  )
+
+  val form = new AddressListFormProvider()()
+
+  "AddressResults form" must {
+
+    behave like questionForm[Int](1)
+
+    "fail to bind when value is omitted" in {
+      val expectedError = error("value", "messages__error__select_address")
+      checkForError(form, emptyForm, expectedError)
+    }
+  }
 }

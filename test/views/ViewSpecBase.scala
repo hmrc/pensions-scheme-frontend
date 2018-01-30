@@ -40,7 +40,7 @@ trait ViewSpecBase extends SpecBase {
     document =>
       val text = messages(messageKey, args:_*)
       MatchResult(
-        document.toString.contains(messages(messageKey, args:_*)),
+        document.toString.contains(text),
         s"text $text is not rendered on the page",
         s"text $text is rendered on the page"
       )
@@ -51,7 +51,6 @@ trait ViewSpecBase extends SpecBase {
       val labels = document.getElementsByAttributeValue("for", forElement)
       val label = labels.first.text
       val value = document.getElementById(forElement).attr("value")
-
       MatchResult(
         label == expectedLabel &&  value == expectedValue,
         s"text box with label: $label and value : $value is not correct",

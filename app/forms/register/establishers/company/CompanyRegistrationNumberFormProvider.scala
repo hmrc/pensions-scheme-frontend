@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.individual
+package forms.register.establishers.company
 
-import identifiers.TypedIdentifier
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.CompanyRegistrationNumber
 
-case object AddressId extends TypedIdentifier[String] {
-  override def toString: String = "address"
+class CompanyRegistrationNumberFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[CompanyRegistrationNumber] =
+    Form(
+      "companyRegistrationNumber" -> companyRegistrationNumberMapping()
+    )
 }

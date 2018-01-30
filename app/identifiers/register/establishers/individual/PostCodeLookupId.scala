@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package utils
+package identifiers.register.establishers.individual
 
-object Constants {
-  val establishersLimit = 10
-  val UnitedKingdom = "United Kingdom"
+import identifiers.TypedIdentifier
+import models.addresslookup.Address
+
+case object PostCodeLookupId extends TypedIdentifier[Seq[Address]] {
+  override def toString: String = "address"
 }

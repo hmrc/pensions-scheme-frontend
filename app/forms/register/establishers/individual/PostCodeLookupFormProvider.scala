@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package utils
+package forms.register.establishers.individual
 
-object Constants {
-  val establishersLimit = 10
-  val UnitedKingdom = "United Kingdom"
+import javax.inject.Inject
+
+import forms.mappings.Mappings
+import play.api.data.Form
+
+class PostCodeLookupFormProvider @Inject() extends Mappings {
+  val maxLength = 8
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("messages__error__postcode").verifying(maxLength(maxLength, "messages__error__postcode_length"))
+    )
 }
