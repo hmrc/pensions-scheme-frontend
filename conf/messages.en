@@ -271,3 +271,8 @@ messages__error__no_crn_company = You need to tell us why the company does not h
 messages__error__crn_invalid = Enter a valid 7 or 8 character Company Registration number
 messages__error__no_crn_length = The reason cannot be more than 150 characters
 messages__error__crn = Enter the Company Registration number
+
+messages__companyPostCodeLookup__title = companyPostCodeLookup
+messages__companyPostCodeLookup__heading = companyPostCodeLookup
+messages__companyPostCodeLookup__checkYourAnswersLabel = companyPostCodeLookup
+messages__companyPostCodeLookup__error__required = Please give an answer for companyPostCodeLookup

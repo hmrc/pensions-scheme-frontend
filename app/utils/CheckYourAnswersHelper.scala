@@ -19,13 +19,18 @@ package utils
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.EstablisherKindId
-import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyContactDetailsId, CompanyDetailsId, CompanyUniqueTaxReferenceId,CompanyRegistrationNumberId}
+import identifiers.register.establishers.company._
 import identifiers.register.establishers.individual._
 import models.register.establishers.individual.{AddressYears, UniqueTaxReference}
 import models.{CheckMode, EstablisherNino, Index}
 import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends Enumerable.Implicits {
+
+  def companyPostCodeLookup: Option[AnswerRow] = userAnswers.get(CompanyPostCodeLookupId) map {
+    x => AnswerRow("companyPostCodeLookup.checkYourAnswersLabel", s"$x", false,
+      controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(CheckMode).url)
+  }
 
   def companyAddressYears(index: Int): Option[AnswerRow] =
     userAnswers.get(CompanyAddressYearsId(index)) match {
