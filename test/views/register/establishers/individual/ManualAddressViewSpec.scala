@@ -49,8 +49,7 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "lede")
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.ManualAddressController.onSubmit(NormalMode, firstIndex).url, "addressLine1", "addressLine2", "addressLine3", "addressLine4",
-    "postCode")
+      routes.ManualAddressController.onSubmit(NormalMode, firstIndex).url, "addressLine1", "addressLine2", "addressLine3", "addressLine4")
 
     "have establisher name rendered on the page" in {
       Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)

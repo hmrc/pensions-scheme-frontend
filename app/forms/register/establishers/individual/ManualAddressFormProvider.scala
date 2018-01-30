@@ -35,8 +35,7 @@ class ManualAddressFormProvider @Inject() extends Mappings {
       "addressLine2" -> text("messages__error__addr2").verifying(maxLength(addressLineMaxLength, "messages__error__addr2_length")),
       "addressLine3" -> optional(Forms.text.verifying(maxLength(addressLineMaxLength, "messages__error__addr3_length"))),
       "addressLine4" -> optional(Forms.text.verifying(maxLength(addressLineMaxLength, "messages__error__addr4_length"))),
-      "postCode" -> mandatoryIfEqual[String]("country", "GB", text("messages__error__postcode").verifying(
-        regexp(postCodeRegex, "messages__error__postcode_invalid"))),
+      "postCode" -> postCodeMapping("messages__error__postcode", "messages__error__postcode_invalid"),
       "country" -> text("messages__error__scheme_country")
     )(Address.apply)(Address.unapply)
   )

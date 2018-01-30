@@ -29,7 +29,7 @@ class ManualAddressFormProviderSpec extends FormBehaviours {
     "addressLine2" -> "address line 2",
     "addressLine3" -> "address line 3",
     "addressLine4" -> "address line 4",
-    "postCode" -> "AB1 1AP",
+    "postCode.postCode" -> "AB1 1AP",
     "country" -> "GB"
   )
 
@@ -47,11 +47,18 @@ class ManualAddressFormProviderSpec extends FormBehaviours {
       )
     )
 
-    "successfully bind when country is not GB and postcode is any postcode" ignore {
-      val data = validData + ("postCode" -> "zxadsafd", "country" -> "AF")
+    "successfully bind when country is not UK and postcode is any postcode" in {
+      val data = validData + ("postCode.postCode" -> "zxadsafd", "country" -> "AF")
       val result = form.bind(data)
       result.get shouldEqual Address("address line 1", "address line 2",
         Some("address line 3"), Some("address line 4"), Some("zxadsafd"), "AF")
+    }
+
+    "successfully bind when country is UK and postcode is a valid postcode" in {
+      val data = validData + ("postCode.postCode" -> "AB1 1AB", "country" -> "GB")
+      val result = form.bind(data)
+      result.get shouldEqual Address("address line 1", "address line 2",
+        Some("address line 3"), Some("address line 4"), Some("AB1 1AB"), "GB")
     }
 
     "fail to bind when address line 1 exceeds max length 35" in {
@@ -94,17 +101,8 @@ class ManualAddressFormProviderSpec extends FormBehaviours {
         "addressLine4" -> "address line 4",
         "country" -> "GB"
       )
-      val expectedError: Seq[FormError] = error("postCode", "messages__error__postcode")
+      val expectedError: Seq[FormError] = error("postCode.postCode", "messages__error__postcode")
       checkForError(form, validData, expectedError)
     }
-
-    Seq("A 1223", "1234 A23", "AA1 BBB", "AA 8989").foreach { postcode =>
-      s"fail to bind when postcode $postcode is invalid" in {
-        val data = validData + ("postCode" -> postcode)
-        val expectedError: Seq[FormError] = error("postCode", "messages__error__postcode_invalid", postCodeRegex)
-        checkForError(form, data, expectedError)
-      }
-    }
-
   }
 }
