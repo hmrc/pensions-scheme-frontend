@@ -30,7 +30,7 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
   val form = new UniqueTaxReferenceFormProvider()()
 
   val index = Index(1)
-  val establisherName = "test name"
+    val establisherName = "test name"
 
   def createView: () => HtmlFormat.Appendable = () => uniqueTaxReference(frontendAppConfig, form, NormalMode, index, establisherName)(fakeRequest, messages)
 
@@ -69,7 +69,8 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
       "display an input text box with the value when yes is selected" in {
         val expectedValue = "1234567891"
         val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" -> expectedValue))))
-        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__common__utr")} ${messages("messages__common__utr_hint_format")}", expectedValue)
+        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__common__utr")} ${messages("messages__common__utr_hint_format")}",
+          expectedValue)
       }
 
       "display an input text box with the value when no is selected" in {
