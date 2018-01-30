@@ -25,7 +25,7 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.PreviousAddressListFormProvider
-import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId, PreviousAddressListId}
+import identifiers.register.establishers.individual.{PostCodeLookupId, EstablisherDetailsId, PreviousAddressListId}
 import models.addresslookup.{Address, AddressRecord}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual.previousAddressList
@@ -52,8 +52,8 @@ class PreviousAddressListController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val result = request.userAnswers.get[Seq[Address]](AddressId) match {
-            case None => Redirect(controllers.register.establishers.individual.routes.AddressController.onPageLoad(mode, index))
+          val result = request.userAnswers.get[Seq[Address]](PostCodeLookupId) match {
+            case None => Redirect(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index))
             case Some(value) => Ok(previousAddressList(appConfig, form, mode, index, value, establisherName))
           }
           Future.successful(result)
@@ -64,11 +64,11 @@ class PreviousAddressListController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val address = request.userAnswers.get[Seq[Address]](AddressId.path).getOrElse(Seq.empty)
+          val address = request.userAnswers.get[Seq[Address]](PostCodeLookupId.path).getOrElse(Seq.empty)
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(previousAddressList(appConfig, formWithErrors, mode, index,
-                request.userAnswers.get[Seq[Address]](AddressId.path).getOrElse(Seq.empty), establisherName))),
+                request.userAnswers.get[Seq[Address]](PostCodeLookupId.path).getOrElse(Seq.empty), establisherName))),
             (value) =>
 
               if (value < address.length) {
