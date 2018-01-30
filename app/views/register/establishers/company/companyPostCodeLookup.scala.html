@@ -22,7 +22,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__CompanyPostCodeLookup__title"),
+    title = messages("messages__benefits_insurance_addr__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -32,12 +32,17 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__companyPostCodeLookup__heading")
+        @components.heading("messages__benefits_insurance_addr__title")
+
+        <p>@messages("messages__common__company_address_hint")</p>
+
+        <p>@messages("messages__common__enter_postcode" + "")</p>
 
         @components.input_text(
-          field = form("value"),
-          label = messages("messages__companyPostCodeLookup__heading"),
-          labelClass=Some("visually-hidden")
+          field = form("postCode"),
+          label = messages("messages__common__address_postcode"),
+          labelClass = Some("visually-hidden")
+          hint = Some(messages("messages__common__address_postcode_hint"))
         )
 
         @components.submit_button()
