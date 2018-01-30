@@ -25,7 +25,7 @@ import forms.register.establishers.individual.AddressFormProvider
 import models.{Index, NormalMode}
 import views.html.register.establishers.individual.address
 import controllers.ControllerSpecBase
-import models.addresslookup.{Address, AddressRecord, Country}
+import models.addresslookup.{Address, AddressRecord}
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._
@@ -93,7 +93,7 @@ class AddressControllerSpec extends ControllerSpecBase with MockitoSugar {
       val validPostCode = "valid"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", validPostCode))
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostCode))(Matchers.any(), Matchers.any())).thenReturn(
-        Future.successful(Some(Seq(AddressRecord(Address(List("address line 1", "address line 2"), None, None, validPostCode, Country("UK")))))))
+        Future.successful(Some(Seq(AddressRecord(Address("address line 1", "address line 2", None, None, Some(validPostCode), "GB"))))))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 

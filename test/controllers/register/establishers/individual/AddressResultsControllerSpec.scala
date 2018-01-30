@@ -17,8 +17,7 @@
 package controllers.register.establishers.individual
 
 import play.api.data.Form
-import play.api.libs.json.{JsString, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
+import play.api.libs.json.Json
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
@@ -26,11 +25,11 @@ import play.api.test.Helpers._
 import forms.register.establishers.individual.AddressResultsFormProvider
 import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId, UniqueTaxReferenceId}
 import models.{Index, NormalMode}
-import models.register.establishers.individual.{EstablisherDetails, EstablishersIndividualMap, UniqueTaxReference}
+import models.register.establishers.individual.{EstablisherDetails, UniqueTaxReference}
 import views.html.register.establishers.individual.addressResults
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
-import models.addresslookup.{Address, Country}
+import models.addresslookup.Address
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
@@ -51,8 +50,8 @@ class AddressResultsControllerSpec extends ControllerSpecBase with Enumerable.Im
   def viewAsString(form: Form[_] = form, address: Seq[Address] = Seq.empty): String =
     addressResults(frontendAppConfig, form, NormalMode, firstIndex, address, establisherName)(fakeRequest, messages).toString
 
-  def address(postCode: String): Address = Address(lines = List("address line 1", "address line 2"), town = Some("test town"),
-    county = Some("test county"), postcode = postCode, country = Country("United Kingdom"))
+  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
+    Some("test county"), postcode = Some(postCode), country = "GB")
 
   val validData = Json.obj(SchemeDetailsId.toString -> Json.toJson(
     SchemeDetails("value 1", SchemeType.SingleTrust)),
@@ -90,9 +89,9 @@ class AddressResultsControllerSpec extends ControllerSpecBase with Enumerable.Im
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "address line 1, address line 2, test post code"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)

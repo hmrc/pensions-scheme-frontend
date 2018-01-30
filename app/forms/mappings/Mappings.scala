@@ -17,7 +17,7 @@
 package forms.mappings
 
 import models.EstablisherNino
-import models.addresslookup.{Address, AddressRecord, Country}
+import models.addresslookup.Address
 import models.register.{SchemeType, SortCode}
 import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
 import models.register.establishers.individual.UniqueTaxReference
@@ -199,9 +199,5 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
   protected def vatMapping(invalidKey: String, maxErrorKey: String): FieldMapping[String] = {
     of(vatFormatter(invalidKey, maxErrorKey))
-  }
-
-  protected def addressMapping(requiredKey: String = "messages__error__select_address"): Mapping[Address] = {
-    Forms.of(addressFormatter(requiredKey))
   }
 }

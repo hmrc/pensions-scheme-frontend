@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.addresslookup.{Address, Country}
+import models.addresslookup.Address
 import play.api.data.FormError
 import play.api.data.format.Formatter
 import utils.Enumerable
@@ -127,13 +127,26 @@ trait Formatters {
         addressStr =>
           val addressSeq = addressStr.split(",").toSeq.map(_.trim)
 
-          Right(Address(addressSeq.take(addressSeq.length - 1).toList,
-            postcode = addressSeq.last, country = Country(UnitedKingdom)))
+          Right(Address(addressLine1 = addressSeq(0),
+            addressLine2 = addressSeq(1),
+            addressLine3 = if(addressSeq.length > 3) Some(addressSeq(2)) else None,
+            addressLine4 = if(addressSeq.length > 4) Some(addressSeq(3)) else None,
+            postcode = Some(addressSeq.last),
+            country = UnitedKingdom
+          ))
       }
     }
 
     override def unbind(key: String, addressRecord: Address): Map[String, String] = {
-      baseFormatter.unbind(key, s"${addressRecord.lines.mkString(", ")}, ${addressRecord.postcode}")
+      val addressLine3 = addressRecord.addressLine3.getOrElse("")
+      val addressLine4 = addressRecord.addressLine4.getOrElse("")
+      baseFormatter.unbind(key, s"${addressRecord.addressLine1}, ${addressRecord.addressLine2}, " +
+        s"${if(addressLine3.nonEmpty) addressLine3 + ", " else ""}" +
+        s"${if(addressLine4.nonEmpty) addressLine4 + ", " else ""}" +
+        s"${if(addressRecord.postcode.nonEmpty){
+          addressRecord.postcode.getOrElse("")
+        }}")
     }
   }
+
 }

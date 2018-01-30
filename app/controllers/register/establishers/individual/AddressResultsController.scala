@@ -36,15 +36,15 @@ import play.api.mvc.{Action, AnyContent, Result}
 import scala.concurrent.Future
 
 class AddressResultsController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AddressResultsFormProvider) extends FrontendController with I18nSupport
-  with Enumerable.Implicits with MapFormats{
+                                          appConfig: FrontendAppConfig,
+                                          override val messagesApi: MessagesApi,
+                                          dataCacheConnector: DataCacheConnector,
+                                          navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          formProvider: AddressResultsFormProvider) extends FrontendController with I18nSupport
+  with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
 
@@ -65,24 +65,30 @@ class AddressResultsController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
+          val address = request.userAnswers.get[Seq[Address]](AddressId.path).getOrElse(Seq.empty)
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(addressResults(appConfig, formWithErrors, mode, index,
                 request.userAnswers.get[Seq[Address]](AddressId.path).getOrElse(Seq.empty), establisherName))),
             (value) =>
-              dataCacheConnector.save(
-                request.externalId,
-                AddressResultsId(index),
-                value
-              ).map {
-                json =>
-                  Redirect(navigator.nextPage(AddressResultsId(index), mode)(new UserAnswers(json)))
+
+              if (value < address.length) {
+                dataCacheConnector.save(
+                  request.externalId,
+                  AddressResultsId(index),
+                  address(value)
+                ).map {
+                  json =>
+                    Redirect(navigator.nextPage(AddressResultsId(index), mode)(new UserAnswers(json)))
+                }
+              } else {
+                Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
               }
           )
       }
   }
 
-  private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
+  private def retrieveEstablisherName(index: Int)(block: String => Future[Result])
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
     request.userAnswers.get(EstablisherDetailsId(index)) match {
       case Some(value) =>

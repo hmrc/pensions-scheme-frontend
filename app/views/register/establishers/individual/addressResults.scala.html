@@ -44,17 +44,16 @@
             legend = "messages__select_the_address__title",
             hiddenLegend = true
         ) {
-                @for((addressRecord, i) <- addressSeq.zipWithIndex) {
+            @for((addressRecord, i) <- addressSeq.zipWithIndex) {
 
-                    @components.radio(
-                        field = form("value"),
-                        label = s"${addressRecord.lines(0)}, ${addressRecord.lines(1)}, ${addressRecord.town.getOrElse("")}, ${addressRecord.county.getOrElse("")}, ${addressRecord.postcode}",
-                        value = s"${addressRecord.lines(0)}, ${addressRecord.lines(1)}, ${addressRecord.town.getOrElse("")}, ${addressRecord.county.getOrElse("")}, ${addressRecord.postcode}",
-                        id = Some(s"addr-opts-$i")
-                    )
-                }
+                @components.radio(
+                    field = form("value"),
+                    label = s"${addressRecord.addressLine1}, ${addressRecord.addressLine2}, ${addressRecord.addressLine3.getOrElse("")}, ${addressRecord.addressLine4.getOrElse("")}, ${addressRecord.postcode.getOrElse("")}",
+                    value = i.toString
+                )
+            }
         }
 
         @components.submit_button()
-    }
+}
 }

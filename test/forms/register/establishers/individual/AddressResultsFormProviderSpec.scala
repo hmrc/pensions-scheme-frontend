@@ -17,21 +17,18 @@
 package forms.register.establishers.individual
 
 import forms.behaviours.FormBehaviours
-import models.addresslookup.{Address, Country}
 
 class AddressResultsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
-    "value" -> "address line 1, address line 2, test town, test county, test post code"
+    "value" -> "1"
   )
-  val address = Address(lines = List("address line 1", "address line 2", "test town", "test county"),
-    postcode = "test post code", country = Country("United Kingdom"))
 
   val form = new AddressResultsFormProvider()()
 
   "AddressResults form" must {
 
-    behave like questionForm[Address](address)
+    behave like questionForm[Int](1)
 
     "fail to bind when value is omitted" in {
       val expectedError = error("value", "messages__error__select_address")

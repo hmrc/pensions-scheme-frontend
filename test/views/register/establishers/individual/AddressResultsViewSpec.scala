@@ -19,7 +19,7 @@ package views.register.establishers.individual
 import controllers.register.establishers.individual.routes
 import play.api.data.Form
 import forms.register.establishers.individual.AddressResultsFormProvider
-import models.addresslookup.{Address, Country}
+import models.addresslookup.Address
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
@@ -34,11 +34,11 @@ class AddressResultsViewSpec extends ViewBehaviours {
   val firstIndex = Index(1)
   val establisherName: String = "test first name test last name"
 
-  def address(postCode: String): Address = Address(lines = List("address line 1", "address line 2"), town = Some("test town"),
-    county = Some("test county"), postcode = postCode, country = Country("United Kingdom"))
+  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
+    Some("test county"), Some(postCode), "GB")
 
   val addressSeq = Seq(address("postcode 1"), address("postcode 2"))
-  val addressSeqWithIndex: Seq[(Address, Int)] = addressSeq.zipWithIndex
+  val addressIndexes = Seq.range(0, 2)
 
   def createView: () => HtmlFormat.Appendable = () => addressResults(frontendAppConfig, form, NormalMode, firstIndex, addressSeq,
     establisherName)(fakeRequest, messages)
@@ -46,10 +46,10 @@ class AddressResultsViewSpec extends ViewBehaviours {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressResults(frontendAppConfig, form, NormalMode,
     firstIndex, addressSeq, establisherName)(fakeRequest, messages)
 
-  def getAddressValue(address: Address): String = s"${address.lines.head}, ${address.lines(1)}" +
-    s"${address.town.map(town => s", $town").getOrElse("")}" +
-    s"${address.county.map(county => s", $county").getOrElse("")}, " +
-    s"${address.postcode}"
+  def getAddressValue(address: Address): String = s"${address.addressLine1}, ${address.addressLine2}" +
+    s"${address.addressLine3.map(town => s", $town").getOrElse("")}" +
+    s"${address.addressLine4.map(county => s", $county").getOrElse("")}, " +
+    s"${address.postcode.map(postcode => s"$postcode").getOrElse("")}"
 
 
   "AddressResults view" must {
@@ -69,24 +69,21 @@ class AddressResultsViewSpec extends ViewBehaviours {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for ((address, i) <- addressSeqWithIndex) {
-          assertContainsRadioButton(doc, s"addr-opts-$i", "value", getAddressValue(address), isChecked = false)
+        for (i <- addressIndexes) {
+          assertContainsRadioButton(doc, s"value-$i", "value", s"$i", isChecked = false)
         }
       }
     }
 
-    for ((address, i) <- addressSeqWithIndex) {
 
-      s"rendered with a value of '${address.postcode}'" must {
-        s"have the '${address.postcode}' radio button selected" in {
-          val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${getAddressValue(address)}"))))
-          assertContainsRadioButton(doc, s"addr-opts-$i", "value", getAddressValue(address), isChecked = true)
+    for (index <- addressIndexes) {
+      s"rendered with a value of '$index'" must {
+        s"have the '$index' radio button selected" in {
+          val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"$index"))))
+          assertContainsRadioButton(doc, s"value-$index", "value", s"$index", isChecked = true)
 
-          for ((unselectedOptionAddress, j) <- addressSeqWithIndex.filterNot { o =>
-            val (oaddress, _) = o
-            oaddress == address
-          }) {
-            assertContainsRadioButton(doc, s"addr-opts-$j", "value", getAddressValue(unselectedOptionAddress), isChecked = false)
+          for (unselectedIndex <- addressIndexes.filterNot(o => o == index)) {
+            assertContainsRadioButton(doc, s"value-$unselectedIndex", "value", unselectedIndex.toString, isChecked = false)
           }
         }
       }
