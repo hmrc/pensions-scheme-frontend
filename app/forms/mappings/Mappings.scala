@@ -26,7 +26,7 @@ import play.api.data.format.Formatter
 import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import uk.gov.voa.play.form.ConditionalMappings._
 import utils.Enumerable
-
+import models._
 import scala.util.Try
 
 trait Mappings extends Formatters with Constraints {
@@ -201,5 +201,35 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
   protected def vatMapping(invalidKey: String, maxErrorKey: String): FieldMapping[String] = {
     of(vatFormatter(invalidKey, maxErrorKey))
+  }
+
+  protected def companyRegistrationNumberMapping(requiredKey: String = "messages__error__has_crn_company",
+                                       requiredCRNKey: String = "messages__error__crn",
+                                       requiredReasonKey: String = "messages__company__no_crn",
+                                       reasonLengthKey: String = "messages__error__no_crn_length",
+                                       invalidCRNKey: String = "messages__error__crn_invalid",
+                                       noReasonKey: String = "messages__error__no_crn_company"):
+  Mapping[CompanyRegistrationNumber] = {
+
+    def fromCompanyRegistrationNumber(crn: CompanyRegistrationNumber): (Boolean, Option[String], Option[String]) = {
+      crn match {
+        case CompanyRegistrationNumber.Yes(crn) => (true, Some(crn), None)
+        case CompanyRegistrationNumber.No(reason) =>  (false, None, Some(reason))
+      }
+    }
+
+    def toCompanyRegistrationNumber(crnTuple: (Boolean, Option[String], Option[String])) = {
+
+      crnTuple match {
+        case (true, Some(crn), None)  => CompanyRegistrationNumber.Yes(crn)
+        case (false, None, Some(reason))  => CompanyRegistrationNumber.No(reason)
+        case _ => throw new RuntimeException("Invalid selection")
+      }
+    }
+
+    tuple("hasCrn" -> boolean(requiredKey),
+      "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey).verifying(validCrn(invalidCRNKey))),
+      "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(noReasonKey).
+        verifying(maxLength(150,reasonLengthKey)))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
   }
 }
