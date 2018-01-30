@@ -1,4 +1,4 @@
-package controllers.$routeFile;format="packaged"$
+package controllers.$routeFile$
 
 import javax.inject.Inject
 

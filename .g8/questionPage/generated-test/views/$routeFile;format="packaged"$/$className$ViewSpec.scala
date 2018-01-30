@@ -1,4 +1,4 @@
-package views.$routeFile;format="packaged"$
+package views.$routeFile$
 
 import play.api.data.Form
 import controllers.$routeFile$.routes
@@ -23,6 +23,6 @@ class $className$ViewSpec extends QuestionViewBehaviours[$className$] {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__\${messageKeyPrefix}__title"))
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.$routeFile;format="packaged"$.routes.$className$Controller.onSubmit(NormalMode).url, "field1", "field2")
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.$routeFile$.routes.$className$Controller.onSubmit(NormalMode).url, "field1", "field2")
   }
 }

@@ -36,7 +36,7 @@ class EstablisherKindViewSpec extends ViewBehaviours {
   def createViewUsingForm = (form: Form[_]) => establisherKind(frontendAppConfig, form, NormalMode,Index(1),schemeName)(fakeRequest, messages)
 
   "EstablisherKind view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__establishers__add__title"), "legend", "hint")
+    behave like normalPage(createView, messageKeyPrefix, messages("messages__establishers__add__title"))
   }
 
   "EstablisherKind view" when {
