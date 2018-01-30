@@ -25,7 +25,7 @@ import play.twirl.api.HtmlFormat
 import views.behaviours.StringViewBehaviours
 import views.html.register.establishers.individual.postCodeLookup
 
-class AddressViewSpec extends StringViewBehaviours {
+class PostCodeLookupViewSpec extends StringViewBehaviours {
 
   val messageKeyPrefix = "establisher_individual_address"
 

@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.establishers.individual.ManualAddressFormProvider
+import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.establishers.individual.{AddressListId, EstablisherDetailsId}
 import models.addresslookup.Address
 import models.register.CountryOptions
@@ -32,18 +32,18 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Navigator, UserAnswers}
-import views.html.register.establishers.individual.manualAddress
+import views.html.register.establishers.individual.address
 
 import scala.concurrent.Future
 
-class ManualAddressController @Inject()(appConfig: FrontendAppConfig,
+class AddressController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
                                                   dataCacheConnector: DataCacheConnector,
                                                   navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
-                                                  formProvider: ManualAddressFormProvider,
+                                                  formProvider: AddressFormProvider,
                                                   countryOptions: CountryOptions) extends FrontendController with I18nSupport {
 
   val form: Form[Address] = formProvider()
@@ -53,8 +53,8 @@ class ManualAddressController @Inject()(appConfig: FrontendAppConfig,
       retrieveEstablisherName(index) {
         establisherName =>
           val result = request.userAnswers.get(AddressListId(index)) match {
-            case None => Ok(manualAddress(appConfig, form, mode, index, countryOptions.options, establisherName))
-            case Some(value) => Ok(manualAddress(appConfig, form.fill(value), mode, index, countryOptions.options, establisherName))
+            case None => Ok(address(appConfig, form, mode, index, countryOptions.options, establisherName))
+            case Some(value) => Ok(address(appConfig, form.fill(value), mode, index, countryOptions.options, establisherName))
           }
           Future.successful(result)
       }
@@ -66,7 +66,7 @@ class ManualAddressController @Inject()(appConfig: FrontendAppConfig,
         establisherName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(manualAddress(appConfig, formWithErrors, mode, index, countryOptions.options, establisherName))),
+              Future.successful(BadRequest(address(appConfig, formWithErrors, mode, index, countryOptions.options, establisherName))),
             (value) =>
               dataCacheConnector.save(
                 request.externalId,

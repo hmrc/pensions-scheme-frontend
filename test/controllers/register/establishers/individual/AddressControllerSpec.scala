@@ -22,11 +22,11 @@ import utils.{FakeNavigator, InputOption}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.individual.ManualAddressFormProvider
+import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.establishers.individual.{AddressListId, EstablisherDetailsId}
 import models.{Index, NormalMode}
 import models.register.establishers.individual.EstablisherDetails
-import views.html.register.establishers.individual.manualAddress
+import views.html.register.establishers.individual.address
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
 import models.addresslookup.Address
@@ -34,11 +34,11 @@ import models.register.{CountryOptions, SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 
-class ManualAddressControllerSpec extends ControllerSpecBase {
+class AddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new ManualAddressFormProvider()
+  val formProvider = new AddressFormProvider()
   val form: Form[Address] = formProvider()
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
@@ -47,12 +47,12 @@ class ManualAddressControllerSpec extends ControllerSpecBase {
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): ManualAddressController =
-    new ManualAddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): AddressController =
+    new AddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider, countryOptions)
 
-  def viewAsString(form: Form[_] = form): String = manualAddress(frontendAppConfig, form, NormalMode, firstIndex, options, establisherName)(fakeRequest, messages).toString
-  val address = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
+  def viewAsString(form: Form[_] = form): String = address(frontendAppConfig, form, NormalMode, firstIndex, options, establisherName)(fakeRequest, messages).toString
+  val addressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
 
   val validData: JsObject = Json.obj(SchemeDetailsId.toString -> Json.toJson(
     SchemeDetails("value 1", SchemeType.SingleTrust)),
@@ -86,7 +86,7 @@ class ManualAddressControllerSpec extends ControllerSpecBase {
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(address))
+      contentAsString(result) mustBe viewAsString(form.fill(addressData))
     }
 
     "redirect to the next page when valid data is submitted" in {

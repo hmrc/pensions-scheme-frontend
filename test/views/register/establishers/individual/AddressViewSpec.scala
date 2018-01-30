@@ -18,16 +18,16 @@ package views.register.establishers.individual
 
 import play.api.data.Form
 import controllers.register.establishers.individual.routes
-import forms.register.establishers.individual.ManualAddressFormProvider
+import forms.register.establishers.individual.AddressFormProvider
 import models.addresslookup.Address
 import models.register.CountryOptions
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
 import utils.InputOption
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.establishers.individual.manualAddress
+import views.html.register.establishers.individual.address
 
-class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
+class AddressViewSpec extends QuestionViewBehaviours[Address] {
 
   val messageKeyPrefix = "establisher_individual_address"
   val firstIndex = Index(0)
@@ -35,12 +35,12 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
   val countryOptions: CountryOptions = new CountryOptions(validData)
   val establisherName: String = "test first name test last name"
 
-  override val form = new ManualAddressFormProvider()()
+  override val form = new AddressFormProvider()()
 
-  def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable = () => manualAddress(frontendAppConfig, new ManualAddressFormProvider().apply(),
+  def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable = () => address(frontendAppConfig, new AddressFormProvider().apply(),
     NormalMode, firstIndex, validData, establisherName)(fakeRequest, messages)
 
-  def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[_]) => manualAddress(frontendAppConfig, form, NormalMode,
+  def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[_]) => address(frontendAppConfig, form, NormalMode,
     firstIndex, validData, establisherName)(fakeRequest, messages)
 
 
@@ -49,7 +49,7 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "lede")
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.ManualAddressController.onSubmit(NormalMode, firstIndex).url, "addressLine1", "addressLine2", "addressLine3", "addressLine4")
+      routes.AddressController.onSubmit(NormalMode, firstIndex).url, "addressLine1", "addressLine2", "addressLine3", "addressLine4")
 
     "have establisher name rendered on the page" in {
       Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)

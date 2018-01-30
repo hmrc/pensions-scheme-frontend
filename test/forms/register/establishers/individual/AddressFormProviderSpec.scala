@@ -22,7 +22,7 @@ import models.{Field, Required}
 import org.apache.commons.lang3.RandomStringUtils
 import play.api.data.FormError
 
-class ManualAddressFormProviderSpec extends FormBehaviours {
+class AddressFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
     "addressLine1" -> "address line 1",
@@ -34,7 +34,7 @@ class ManualAddressFormProviderSpec extends FormBehaviours {
   )
 
   val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
-  val form = new ManualAddressFormProvider()()
+  val form = new AddressFormProvider()()
 
   "ManualAddress form" must {
     behave like questionForm(Address("address line 1", "address line 2",

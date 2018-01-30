@@ -27,7 +27,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = ManualAddressController.onSubmit(mode, index), 'autoComplete -> "off") {
+    @helpers.form(action = AddressController.onSubmit(mode, index), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 

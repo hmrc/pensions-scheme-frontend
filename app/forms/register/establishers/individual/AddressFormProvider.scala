@@ -20,11 +20,10 @@ import javax.inject.Inject
 
 import forms.mappings.Mappings
 import models.addresslookup.Address
-import play.api.data.Forms.{mapping, optional, tuple}
+import play.api.data.Forms.{mapping, optional}
 import play.api.data.{Form, Forms}
-import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
 
-class ManualAddressFormProvider @Inject() extends Mappings {
+class AddressFormProvider @Inject() extends Mappings {
 
   val addressLineMaxLength = 35
   val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
