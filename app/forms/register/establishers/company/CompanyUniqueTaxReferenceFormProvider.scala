@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package forms.register.establishers.company
 
 import javax.inject.Inject
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import models.register.establishers.individual.UniqueTaxReference
 
-class AddressFormProvider @Inject() extends Mappings {
-  val maxLength = 8
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("messages__error__postcode").verifying(maxLength(maxLength, "messages__error__postcode_length"))
+
+class CompanyUniqueTaxReferenceFormProvider @Inject() () extends Mappings {
+
+  def apply(): Form[UniqueTaxReference] = Form(
+    "uniqueTaxReference" -> uniqueTaxReferenceMapping(
+      key = "uniqueTaxReference",
+      requiredKey = "messages__error__has_ct_utr_establisher",
+      requiredUtrKey = "messages__error__ct_utr",
+      requiredReasonKey = "messages__error__no_ct_utr_establisher",
+      invalidUtrKey = "messages__error__ct_utr_invalid",
+      maxLengthReasonKey = "messages__error__no_sautr_length")
     )
 }

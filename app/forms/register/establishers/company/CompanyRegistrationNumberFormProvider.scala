@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package forms.register.establishers.company
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
-import models.addresslookup.{Address, AddressRecord}
-import play.api.data.{Form, Forms}
+import play.api.data.Form
+import models.CompanyRegistrationNumber
 
-class AddressResultsFormProvider @Inject() extends Mappings {
+class CompanyRegistrationNumberFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Address] =
+  def apply(): Form[CompanyRegistrationNumber] =
     Form(
-      "value" -> addressMapping()
+      "companyRegistrationNumber" -> companyRegistrationNumberMapping()
     )
 }

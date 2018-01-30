@@ -17,7 +17,7 @@
 package forms.mappings
 
 import models.EstablisherNino
-import models.addresslookup.{Address, AddressRecord, Country}
+import models.addresslookup.Address
 import models.register.{SchemeType, SortCode}
 import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
 import models.register.establishers.individual.UniqueTaxReference
@@ -27,7 +27,7 @@ import play.api.data.format.Formatter
 import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import uk.gov.voa.play.form.ConditionalMappings._
 import utils.Enumerable
-
+import models._
 import scala.util.Try
 
 trait Mappings extends Formatters with Constraints {
@@ -72,8 +72,9 @@ trait Mappings extends Formatters with Constraints {
 
       schemeTypeTuple match {
         case (key, Some(value)) if key == other => Other(value)
-        case (key, _) if mappings.keySet.contains(key) =>
+        case (key, _) if mappings.keySet.contains(key) => {
           mappings.apply(key)
+        }
       }
     }
 
@@ -84,11 +85,13 @@ trait Mappings extends Formatters with Constraints {
     ).transform(toSchemeType, fromSchemeType)
   }
 
-  protected def uniqueTaxReferenceMapping(requiredKey: String = "messages__error__has_sautr_establisher",
-                                          requiredUtrKey: String = "messages__error__sautr",
-                                          requiredReasonKey: String = "messages__error__no_sautr_establisher",
-                                          invalidUtrKey: String = "messages__error__sautr_invalid",
-                                          maxLengthReasonKey: String = "messages__error__no_sautr_length"):
+  protected def uniqueTaxReferenceMapping(
+                                           key: String = "uniqueTaxReference",
+                                           requiredKey: String = "messages__error__has_sautr_establisher",
+                                           requiredUtrKey: String = "messages__error__sautr",
+                                           requiredReasonKey: String = "messages__error__no_sautr_establisher",
+                                           invalidUtrKey: String = "messages__error__sautr_invalid",
+                                           maxLengthReasonKey: String = "messages__error__no_sautr_length"):
     Mapping[UniqueTaxReference] = {
 
     val regexUtr = "\\d{10}"
@@ -110,8 +113,8 @@ trait Mappings extends Formatters with Constraints {
     }
 
     tuple("hasUtr" -> boolean(requiredKey),
-    "utr" -> mandatoryIfTrue("uniqueTaxReference.hasUtr", text(requiredUtrKey).verifying(regexp(regexUtr, invalidUtrKey))),
-    "reason" -> mandatoryIfFalse("uniqueTaxReference.hasUtr",
+    "utr" -> mandatoryIfTrue(s"$key.hasUtr", text(requiredUtrKey).verifying(regexp(regexUtr, invalidUtrKey))),
+    "reason" -> mandatoryIfFalse(s"$key.hasUtr",
       text(requiredReasonKey).verifying(maxLength(reasonMaxLength, maxLengthReasonKey)))).
       transform(toUniqueTaxReference, fromUniqueTaxReference)
   }
@@ -201,7 +204,33 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
     of(vatFormatter(invalidKey, maxErrorKey))
   }
 
-  protected def addressMapping(requiredKey: String = "messages__error__select_address"): Mapping[Address] = {
-    Forms.of(addressFormatter(requiredKey))
+  protected def companyRegistrationNumberMapping(requiredKey: String = "messages__error__has_crn_company",
+                                       requiredCRNKey: String = "messages__error__crn",
+                                       requiredReasonKey: String = "messages__company__no_crn",
+                                       reasonLengthKey: String = "messages__error__no_crn_length",
+                                       invalidCRNKey: String = "messages__error__crn_invalid",
+                                       noReasonKey: String = "messages__error__no_crn_company"):
+  Mapping[CompanyRegistrationNumber] = {
+
+    def fromCompanyRegistrationNumber(crn: CompanyRegistrationNumber): (Boolean, Option[String], Option[String]) = {
+      crn match {
+        case CompanyRegistrationNumber.Yes(crn) => (true, Some(crn), None)
+        case CompanyRegistrationNumber.No(reason) =>  (false, None, Some(reason))
+      }
+    }
+
+    def toCompanyRegistrationNumber(crnTuple: (Boolean, Option[String], Option[String])) = {
+
+      crnTuple match {
+        case (true, Some(crn), None)  => CompanyRegistrationNumber.Yes(crn)
+        case (false, None, Some(reason))  => CompanyRegistrationNumber.No(reason)
+        case _ => throw new RuntimeException("Invalid selection")
+      }
+    }
+
+    tuple("hasCrn" -> boolean(requiredKey),
+      "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey).verifying(validCrn(invalidCRNKey))),
+      "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(noReasonKey).
+        verifying(maxLength(150,reasonLengthKey)))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
   }
 }

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(
- field: Field,
- label: String,
- value: String,
- dataTarget: Option[String] = None
-)(implicit messages: Messages)
+package identifiers.register.establishers.individual
 
-<div class="multiple-choice" @dataTarget.map { dataTarget => data-target="@dataTarget" }>
-  <input id="@field.id-@value" type="radio" name="@field.name" value="@value" @if(field.value.contains(value)){ checked="checked" }>
-  <label class="block-label" for="@field.id-@value">
-    @messages(label)
-  </label>
-</div>
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.addresslookup.Address
+import play.api.libs.json.JsPath
+
+case class AddressListId(index: Int) extends TypedIdentifier[Address] {
+  override def path: JsPath = EstablishersId.path \ index \ AddressListId.toString
+}
+
+object AddressListId {
+  override def toString: String = "addressResults"
+}

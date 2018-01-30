@@ -25,25 +25,48 @@ object AddressRecord {
 }
 
 
-/**
-  * Address typically represents a postal address.
-  * For UK addresses, 'town' will always be present.
-  * For non-UK addresses, 'town' may be absent and there may be an extra line instead.
-  */
-case class Address(lines: List[String],
-                   town: Option[String] = None,
-                   county: Option[String] = None,
-                   postcode: String,
-                   country: Country)
+case class Address(addressLine1: String,
+                   addressLine2: String,
+                   addressLine3: Option[String],
+                   addressLine4: Option[String],
+                   postcode: Option[String],
+                   country: String)
 
 object Address {
-  implicit val addressFormats: Format[Address] = Json.format[Address]
-}
 
-/** Represents a country as per ISO3166. */
-case class Country(// The printable name for the country, e.g. "United Kingdom"
-                    name: String)
+  implicit val readAddress: Reads[Address] = {
+    import play.api.libs.json._
+    import play.api.libs.functional.syntax._
 
-object Country {
-  implicit val addressFormats: Format[Country] = Json.format[Country]
+    (
+      (__ \ "lines").read[Seq[String]] and
+        (__ \ "town").readNullable[String] and
+        (__ \ "county").readNullable[String] and
+        (__ \ "postcode").readNullable[String] and
+        (__ \ "country" \ "name").read[String]
+      ) { (lines, town, county, postcode, country) =>
+      val line1 = lines.head
+      val line2 = lines.tail.head
+      Address(line1, line2, town, county, postcode, country)
+    }
+  }
+
+  implicit val writeAddress: Writes[Address] = {
+    import play.api.libs.json._
+    import play.api.libs.functional.syntax._
+    (
+      (__ \ "lines").write[Seq[String]] and
+        (__ \ "town").writeNullable[String] and
+        (__ \ "county").writeNullable[String] and
+        (__ \ "postcode").writeNullable[String] and
+        (__ \ "country" \ "name").write[String]
+      ) { model =>
+      (
+        Seq(model.addressLine1, model.addressLine2),
+        model.addressLine3,
+        model.addressLine4,
+        model.postcode,
+        model.country)
+    }
+  }
 }

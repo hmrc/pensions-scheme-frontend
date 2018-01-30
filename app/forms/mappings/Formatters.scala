@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.addresslookup.{Address, Country}
+import models.addresslookup.Address
 import play.api.data.FormError
 import play.api.data.format.Formatter
 import utils.Enumerable
@@ -114,26 +114,5 @@ trait Formatters {
     }
 
     override def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
-  }
-
-  private[mappings] def addressFormatter(requiredKey: String): Formatter[Address] = new Formatter[Address] {
-
-    val baseFormatter: Formatter[String] = stringFormatter(requiredKey)
-
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Address] = {
-
-      baseFormatter.bind(key, data)
-        .right.flatMap {
-        addressStr =>
-          val addressSeq = addressStr.split(",").toSeq.map(_.trim)
-
-          Right(Address(addressSeq.take(addressSeq.length - 1).toList,
-            postcode = addressSeq.last, country = Country(UnitedKingdom)))
-      }
-    }
-
-    override def unbind(key: String, addressRecord: Address): Map[String, String] = {
-      baseFormatter.unbind(key, s"${addressRecord.lines.mkString(", ")}, ${addressRecord.postcode}")
-    }
   }
 }
