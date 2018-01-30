@@ -26,7 +26,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = PreviousAddressController.onSubmit(mode, index), 'autoComplete -> "off") {
+    @helpers.form(action = PreviousAddressPostCodeLookupController.onSubmit(mode, index), 'autoComplete -> "off") {
 
         @components.back_link()
 
@@ -37,7 +37,7 @@
         <p>@messages("messages__establisher_individual_previous_address_lede")</p>
 
         <p>@messages("messages__common__enter_postcode")
-            <a id="manual-address-link" href="@PreviousAddressController.onPageLoad(mode, index)">
+            <a id="manual-address-link" href="@PreviousAddressPostCodeLookupController.onPageLoad(mode, index)">
                 @messages(s"messages__common__select_address_link")
             </a>
         </p>

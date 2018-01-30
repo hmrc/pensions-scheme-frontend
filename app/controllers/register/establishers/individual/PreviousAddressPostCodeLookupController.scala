@@ -24,18 +24,18 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.establishers.individual.{AddressFormProvider}
-import identifiers.register.establishers.individual.{EstablisherDetailsId, PreviousAddressId}
+import forms.register.establishers.individual.PostCodeLookupFormProvider
+import identifiers.register.establishers.individual.{EstablisherDetailsId, PreviousPostCodeLookupId}
 import models.addresslookup.Address
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.establishers.individual.previousAddress
+import views.html.register.establishers.individual.previousPostCodeLookup
 
 import scala.concurrent.Future
 
-class PreviousAddressController @Inject() (
+class PreviousAddressPostCodeLookupController @Inject()(
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
@@ -44,7 +44,7 @@ class PreviousAddressController @Inject() (
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: AddressFormProvider
+                                        formProvider: PostCodeLookupFormProvider
                                       ) extends FrontendController with I18nSupport with Enumerable.Implicits{
 
   private val form = formProvider()
@@ -57,7 +57,7 @@ class PreviousAddressController @Inject() (
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          Future.successful(Ok(previousAddress(appConfig, form, mode, index, establisherName)))
+          Future.successful(Ok(previousPostCodeLookup(appConfig, form, mode, index, establisherName)))
       }
   }
 
@@ -67,23 +67,23 @@ class PreviousAddressController @Inject() (
         establisherName =>
           form.bindFromRequest().fold(
             formWithErrors =>
-              Future.successful(BadRequest(previousAddress(appConfig, formWithErrors, mode, index, establisherName))),
+              Future.successful(BadRequest(previousPostCodeLookup(appConfig, formWithErrors, mode, index, establisherName))),
             value =>
               addressLookupConnector.addressLookupByPostCode(value).flatMap {
                 case None =>
-                  Future.successful(BadRequest(previousAddress(appConfig, formWithError("invalid"), mode, index, establisherName)))
+                  Future.successful(BadRequest(previousPostCodeLookup(appConfig, formWithError("invalid"), mode, index, establisherName)))
 
                 case Some(Nil) =>
-                  Future.successful(BadRequest(previousAddress(appConfig, formWithError("no_results"), mode, index, establisherName)))
+                  Future.successful(BadRequest(previousPostCodeLookup(appConfig, formWithError("no_results"), mode, index, establisherName)))
 
                 case Some(addressSeq) =>
                   dataCacheConnector.save[Seq[Address]](
                     request.externalId,
-                    PreviousAddressId.path,
+                    PreviousPostCodeLookupId.path,
                     addressSeq.map(_.address)
                   ).map {
                     json =>
-                      Redirect(navigator.nextPage(PreviousAddressId, mode)(new UserAnswers(json)))
+                      Redirect(navigator.nextPage(PreviousPostCodeLookupId, mode)(new UserAnswers(json)))
                   }
 
               }

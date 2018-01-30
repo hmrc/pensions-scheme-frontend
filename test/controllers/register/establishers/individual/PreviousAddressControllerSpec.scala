@@ -23,24 +23,24 @@ import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.individual.{AddressFormProvider}
-import identifiers.register.establishers.individual.PreviousAddressId
+import forms.register.establishers.individual.PostCodeLookupFormProvider
+import identifiers.register.establishers.individual.PreviousPostCodeLookupId
 import models.{Index, NormalMode}
-import views.html.register.establishers.individual.previousAddress
+import views.html.register.establishers.individual.previousPostCodeLookup
 import play.api.libs.json._
 import controllers.ControllerSpecBase
-import models.addresslookup.{Address, AddressRecord, Country}
+import models.addresslookup.{Address, AddressRecord}
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
-class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar {
+class PreviousAddressPostCodeLookup extends ControllerSpecBase with MockitoSugar {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new AddressFormProvider()
+  val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
@@ -48,13 +48,11 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   val establisherName: String = "test first name test last name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher) =
-    new PreviousAddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector,fakeAddressLookupConnector,
+    new PreviousAddressPostCodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector,fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = previousAddress(frontendAppConfig, form, NormalMode,firstIndex, establisherName)(fakeRequest, messages).toString
-
-  val testAnswer = "answer"
+  def viewAsString(form: Form[_] = form) = previousPostCodeLookup(frontendAppConfig, form, NormalMode,firstIndex, establisherName)(fakeRequest, messages).toString
 
   "PreviousAddress Controller" must {
 
@@ -96,7 +94,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
       val validPostCode = "valid"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", validPostCode))
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostCode))(Matchers.any(), Matchers.any())).thenReturn(
-        Future.successful(Some(Seq(AddressRecord(Address(List("address line 1", "address line 2"), None, None, validPostCode, Country("UK")))))))
+        Future.successful(Some(Seq(AddressRecord(Address("address line 1", "address line 2", None, None, Some(validPostCode), "GB"))))))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 

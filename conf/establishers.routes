@@ -70,7 +70,7 @@ POST       /:index/company/companyUniqueTaxReference              controllers.re
 GET        /:index/company/changeCompanyUniqueTaxReference       controllers.register.establishers.company.CompanyUniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/company/changeCompanyUniqueTaxReference       controllers.register.establishers.company.CompanyUniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode, index: Index)
 
-GET         /:index/individual/previousAddress                              controllers.register.establishers.individual.PreviousAddressController.onPageLoad(mode: Mode = NormalMode,index:Index)
-POST        /:index/individual/previousAddress                              controllers.register.establishers.individual.PreviousAddressController.onSubmit(mode: Mode = NormalMode,index:Index)
-GET         /:index/individual/changePreviousAddress                        controllers.register.establishers.individual.PreviousAddressController.onPageLoad(mode: Mode = CheckMode,index:Index)
-POST        /:index/individual/changePreviousAddress                        controllers.register.establishers.individual.PreviousAddressController.onSubmit(mode: Mode = CheckMode,index:Index)
+GET         /:index/individual/previousPostCodeLookup                            controllers.register.establishers.individual.PreviousAddressPostCodeLookupController.onPageLoad(mode: Mode = NormalMode,index:Index)
+POST        /:index/individual/previousPostCodeLookup                              controllers.register.establishers.individual.PreviousAddressPostCodeLookupController.onSubmit(mode: Mode = NormalMode,index:Index)
+GET         /:index/individual/changePreviousPostCodeLookup                          controllers.register.establishers.individual.PreviousAddressPostCodeLookupController.onPageLoad(mode: Mode = CheckMode,index:Index)
+POST        /:index/individual/changePreviousPostCodeLookup                           controllers.register.establishers.individual.PreviousAddressPostCodeLookupController.onSubmit(mode: Mode = CheckMode,index:Index)

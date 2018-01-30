@@ -17,7 +17,8 @@
 package identifiers.register.establishers.individual
 
 import identifiers._
+import models.addresslookup.Address
 
-case object PreviousAddressId extends TypedIdentifier[String] {
+case object PreviousPostCodeLookupId extends TypedIdentifier[Seq[Address]] {
   override def toString: String = "previousAddress"
 }
