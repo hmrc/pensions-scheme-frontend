@@ -71,7 +71,6 @@ class AddressListController @Inject()(
               Future.successful(BadRequest(addressList(appConfig, formWithErrors, mode, index,
                 request.userAnswers.get[Seq[Address]](PostCodeLookupId.path).getOrElse(Seq.empty), establisherName))),
             (value) =>
-
               if (value < address.length) {
                 dataCacheConnector.save(
                   request.externalId,

@@ -115,38 +115,4 @@ trait Formatters {
 
     override def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
   }
-
-  private[mappings] def addressFormatter(requiredKey: String): Formatter[Address] = new Formatter[Address] {
-
-    val baseFormatter: Formatter[String] = stringFormatter(requiredKey)
-
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Address] = {
-
-      baseFormatter.bind(key, data)
-        .right.flatMap {
-        addressStr =>
-          val addressSeq = addressStr.split(",").toSeq.map(_.trim)
-
-          Right(Address(addressLine1 = addressSeq(0),
-            addressLine2 = addressSeq(1),
-            addressLine3 = if(addressSeq.length > 3) Some(addressSeq(2)) else None,
-            addressLine4 = if(addressSeq.length > 4) Some(addressSeq(3)) else None,
-            postcode = Some(addressSeq.last),
-            country = UnitedKingdom
-          ))
-      }
-    }
-
-    override def unbind(key: String, addressRecord: Address): Map[String, String] = {
-      val addressLine3 = addressRecord.addressLine3.getOrElse("")
-      val addressLine4 = addressRecord.addressLine4.getOrElse("")
-      baseFormatter.unbind(key, s"${addressRecord.addressLine1}, ${addressRecord.addressLine2}, " +
-        s"${if(addressLine3.nonEmpty) addressLine3 + ", " else ""}" +
-        s"${if(addressLine4.nonEmpty) addressLine4 + ", " else ""}" +
-        s"${if(addressRecord.postcode.nonEmpty){
-          addressRecord.postcode.getOrElse("")
-        }}")
-    }
-  }
-
 }
