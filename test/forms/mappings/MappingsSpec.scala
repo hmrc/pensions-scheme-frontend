@@ -301,7 +301,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
 
     val regexUtr = "\\d{10}"
 
-    val testForm: Form[UniqueTaxReference] = Form("uniqueTaxReference" -> uniqueTaxReferenceMapping("error.required",
+    val testForm: Form[UniqueTaxReference] = Form("uniqueTaxReference" -> uniqueTaxReferenceMapping("uniqueTaxReference", "error.required",
       "error.utr.required", "error.reason.required", "error.utr.invalid", "error.reason.length"))
 
     "bind a valid uniqueTaxReference with utr when yes is selected" in {

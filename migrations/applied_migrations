@@ -3,8 +3,9 @@
 echo "Applying migration Address"
 echo "Applying migration CompanyDetails"
 echo "Applying migration CompanyContactDetails"
+echo "Applying migration CompanyUniqueTaxReference"
 
-echo "Adding routes to register.establishers.individual.routes"
+echo "Adding routes to conf/register.establishers.company.routes"
 
 echo "" >> ../conf/register.establishers.individual.routes
 echo "GET        /address               controllers.register.establishers.individual.AddressController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
@@ -15,6 +16,9 @@ echo "POST       /companyDetails                       controllers.register.esta
 echo "" >> ../conf/register.establishers.company.routes
 echo "GET        /companyContactDetails                       controllers.register.establishers.company.CompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 echo "POST       /companyContactDetails                       controllers.register.establishers.company.CompanyContactDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "" >> ../conf/app.routes
+echo "GET        /companyUniqueTaxReference               controllers.register.establishers.company.CompanyUniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /companyUniqueTaxReference               controllers.register.establishers.company.CompanyUniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 
 echo "GET        /changeAddress                        controllers.register.establishers.individual.AddressController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
 echo "POST       /changeAddress                        controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
@@ -22,6 +26,8 @@ echo "GET        /changeCompanyDetails                       controllers.registe
 echo "POST       /changeCompanyDetails                       controllers.register.establishers.company.CompanyDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 echo "GET        /changeCompanyContactDetails                       controllers.register.establishers.company.CompanyContactDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 echo "POST       /changeCompanyContactDetails                       controllers.register.establishers.company.CompanyContactDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "GET        /changeCompanyUniqueTaxReference               controllers.register.establishers.company.CompanyUniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /changeCompanyUniqueTaxReference               controllers.register.establishers.company.CompanyUniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
@@ -43,10 +49,17 @@ echo "companyContactDetails.field2 = Field 2" >> ../conf/messages.en
 echo "companyContactDetails.checkYourAnswersLabel = companyContactDetails" >> ../conf/messages.en
 echo "companyContactDetails.error.field1.required = Please give an answer for field1" >> ../conf/messages.en
 echo "companyContactDetails.error.field2.required = Please give an answer for field2" >> ../conf/messages.en
+echo "companyUniqueTaxReference.title = companyUniqueTaxReference" >> ../conf/messages.en
+echo "companyUniqueTaxReference.heading = companyUniqueTaxReference" >> ../conf/messages.en
+echo "companyUniqueTaxReference.option1 = companyUniqueTaxReference" Option 1 >> ../conf/messages.en
+echo "companyUniqueTaxReference.option2 = companyUniqueTaxReference" Option 2 >> ../conf/messages.en
+echo "companyUniqueTaxReference.checkYourAnswersLabel = companyUniqueTaxReference" >> ../conf/messages.en
+echo "companyUniqueTaxReference.error.required = Please give an answer for companyUniqueTaxReference" >> ../conf/messages.en
 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
+     print "  def companyUniqueTaxReference: Option[CompanyUniqueTaxReference] = cacheMap.getEntry[CompanyUniqueTaxReference](CompanyUniqueTaxReferenceId.toString)";\
      print "  def address: Option[String] = cacheMap.getEntry[String](AddressId.toString)";\
      print "  def companyDetails: Option[CompanyDetails] = cacheMap.getEntry[CompanyDetails](CompanyDetailsId.toString)";\
      print "  def companyContactDetails: Option[CompanyContactDetails] = cacheMap.getEntry[CompanyContactDetails](CompanyContactDetailsId.toString)";\
@@ -63,6 +76,8 @@ awk '/class/ {\
      print "    x => AnswerRow(\"companyDetails.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.CompanyDetailsController.onPageLoad(CheckMode).url)";\
      print "  def companyContactDetails: Option[AnswerRow] = userAnswers.companyContactDetails map {";\
      print "    x => AnswerRow(\"companyContactDetails.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.CompanyContactDetailsController.onPageLoad(CheckMode).url)";\
+     print "  def companyUniqueTaxReference: Option[AnswerRow] = userAnswers.companyUniqueTaxReference map {";\
+     print "    x => AnswerRow(\"companyUniqueTaxReference.checkYourAnswersLabel\", s\"companyUniqueTaxReference.$x\", true, controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -70,6 +85,7 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
+echo "Migration CompanyUniqueTaxReference completed"
 echo "Migration Address completed"
 echo "Migration CompanyDetails completed"
 echo "Migration CompanyContactDetails completed"
