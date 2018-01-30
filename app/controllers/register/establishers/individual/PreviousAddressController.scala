@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.establishers.individual.{AddressFormProvider, PreviousAddressFormProvider}
+import forms.register.establishers.individual.{AddressFormProvider}
 import identifiers.register.establishers.individual.{EstablisherDetailsId, PreviousAddressId}
 import models.addresslookup.Address
 import models.requests.DataRequest

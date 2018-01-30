@@ -23,7 +23,7 @@ import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.individual.{AddressFormProvider, PreviousAddressFormProvider}
+import forms.register.establishers.individual.{AddressFormProvider}
 import identifiers.register.establishers.individual.PreviousAddressId
 import models.{Index, NormalMode}
 import views.html.register.establishers.individual.previousAddress
@@ -36,7 +36,7 @@ import org.mockito._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
-class PreviousAddressControllerSpec extends ControllerSpecBase {
+class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
