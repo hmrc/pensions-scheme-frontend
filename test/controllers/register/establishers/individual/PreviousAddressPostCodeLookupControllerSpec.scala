@@ -36,7 +36,7 @@ import org.mockito._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
-class PreviousAddressPostCodeLookup extends ControllerSpecBase with MockitoSugar {
+class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
