@@ -269,5 +269,5 @@ messages__common__crn_hint = This is issued by Companies House. It is 7 or 8 cha
 messages__error__has_crn_company = Select yes if the company has a CRN
 messages__error__no_crn_company = You need to tell us why the company does not have a CRN
 messages__error__crn_invalid = Enter a valid 7 or 8 character Company Registration number
-messages__error__no_crn_length = The Company Registration number cannot be more than 8 characters
+messages__error__no_crn_length = The reason cannot be more than 150 characters
 messages__error__crn = Enter the Company Registration number
