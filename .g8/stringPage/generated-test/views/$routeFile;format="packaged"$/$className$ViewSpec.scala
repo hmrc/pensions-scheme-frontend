@@ -1,4 +1,4 @@
-package views.$routeFile;format="packaged"$
+package views.$routeFile$
 
 import play.api.data.Form
 import controllers.$routeFile$.routes
@@ -22,6 +22,6 @@ class $className$ViewSpec extends StringViewBehaviours {
 
     behave like pageWithBackLink(createView)
 
-    behave like stringPage(createViewUsingForm, messageKeyPrefix, controllers.$routeFile;format="packaged"$.routes.$className$Controller.onSubmit(NormalMode).url)
+    behave like stringPage(createViewUsingForm, messageKeyPrefix, controllers.$routeFile$.routes.$className$Controller.onSubmit(NormalMode).url)
   }
 }

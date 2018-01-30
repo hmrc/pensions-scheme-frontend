@@ -24,6 +24,7 @@ import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.data.{Form, FormError}
 import utils.Enumerable
+import models._
 
 object MappingsSpec {
 
@@ -301,7 +302,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
 
     val regexUtr = "\\d{10}"
 
-    val testForm: Form[UniqueTaxReference] = Form("uniqueTaxReference" -> uniqueTaxReferenceMapping("error.required",
+    val testForm: Form[UniqueTaxReference] = Form("uniqueTaxReference" -> uniqueTaxReferenceMapping("uniqueTaxReference", "error.required",
       "error.utr.required", "error.reason.required", "error.utr.invalid", "error.reason.length"))
 
     "bind a valid uniqueTaxReference with utr when yes is selected" in {
@@ -392,11 +393,33 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
 
     Seq("GB1234568908", "1234567898").foreach { vatNo =>
-      s"fail to bind when vat number $vatNo exceeds max lenght 9" in {
+      s"fail to bind when vat number $vatNo exceeds max length 9" in {
         val coForm = testForm.bind(Map("vatNumber" -> vatNo))
 
         coForm.errors mustEqual Seq(FormError("vatNumber", "error.maxlength"))
       }
     }
+  }
+
+  "companyRegistrationNumber" must {
+    val testForm:Form[CompanyRegistrationNumber]=Form("companyRegistrationNumber" -> companyRegistrationNumberMapping())
+
+    "fail to bind when yes is selected but Company Registration Number is not provided" in {
+      val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "true"))
+      result.errors mustEqual Seq(FormError("companyRegistrationNumber.crn","messages__error__crn"))
+    }
+
+    "fail to bind when no is selected but reason is not provided" in {
+      val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "false"))
+      result.errors mustEqual Seq(FormError("companyRegistrationNumber.reason", "messages__error__no_crn_company"))
+    }
+
+    Seq("12345678", "123456", "R1234567", "ABC12345", "AC1234567").foreach { crn =>
+      s"fail to bind when CRN $crn is invalid" in {
+        val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "true", "companyRegistrationNumber.crn" -> crn))
+        result.errors mustEqual Seq(FormError("companyRegistrationNumber.crn", "messages__error__crn_invalid"))
+      }
+    }
+
   }
 }

@@ -1,4 +1,4 @@
-package controllers.$routeFile;format="packaged"$
+package controllers.$routeFile$
 
 import play.api.data.Form
 import play.api.libs.json.JsString
