@@ -33,7 +33,7 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
   val form = new AddEstablisherFormProvider()()
   val schemeName = "Test Scheme Name"
   //TODO: Add the data for other establisher types when added
-  val allEstablishers = Map("Jo Wilson" -> routes.AddEstablisherController.onPageLoad(NormalMode).url,
+  val allEstablishers = Seq("Jo Wilson" -> routes.AddEstablisherController.onPageLoad(NormalMode).url,
     "Paul Douglas" -> routes.AddEstablisherController.onPageLoad(NormalMode).url)
 
   def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, None,
@@ -42,7 +42,7 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addEstablisher(frontendAppConfig,
     form, NormalMode, Some(allEstablishers), schemeName)(fakeRequest, messages)
 
-  def createView(establishers: Option[Map[String, String]] = None): Html = addEstablisher(frontendAppConfig, form, NormalMode,
+  def createView(establishers: Option[Seq[(String, String)]] = None): Html = addEstablisher(frontendAppConfig, form, NormalMode,
     establishers, schemeName)(fakeRequest, messages)
 
   "AddEstablisher view" must {
@@ -74,8 +74,8 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
 
     "display all the added establisher names with the maximum limit message without yes/no buttons if all maximum 10" +
       " establishers are already added" in {
-      val establishers: Map[String, String] = Seq.fill[String](10)(s"${RandomStringUtils.randomAlphabetic(3)} " +
-        s"${RandomStringUtils.randomAlphabetic(5)}").map((_, routes.AddEstablisherController.onPageLoad(NormalMode).url)).toMap
+      val establishers: Seq[(String, String)] = Seq.fill[String](10)(s"${RandomStringUtils.randomAlphabetic(3)} " +
+        s"${RandomStringUtils.randomAlphabetic(5)}").map((_, routes.AddEstablisherController.onPageLoad(NormalMode).url))
 
       val doc = Jsoup.parse(createView(Some(establishers)).toString())
       establishers.foreach { establisherDetails =>
