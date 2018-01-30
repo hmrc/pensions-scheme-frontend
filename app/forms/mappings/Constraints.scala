@@ -109,8 +109,10 @@ trait Constraints {
   }
 
   protected def validCrn(invalidKey: String) : Constraint[String] = {
+    val validCrnString = "^(\\d{7}|[A-Z]\\d{6}|[A-Z][A-Z]\\d{6})$"
+
     Constraint {
-      case crn if (CrnRegex.isValid(crn.replaceAll(" ", "").toUpperCase)) => Valid
+      case crn if (crn.replaceAll(" ", "").toUpperCase).matches(validCrnString) => Valid
       case _ => Invalid(invalidKey)
     }
   }
