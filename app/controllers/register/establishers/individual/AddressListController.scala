@@ -24,18 +24,18 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.establishers.individual.AddressResultsFormProvider
-import identifiers.register.establishers.individual.{AddressId, AddressResultsId, EstablisherDetailsId}
-import models.addresslookup.{Address, AddressRecord}
+import forms.register.establishers.individual.AddressListFormProvider
+import identifiers.register.establishers.individual.{PostCodeLookupId, AddressListId, EstablisherDetailsId}
+import models.addresslookup.Address
 import models.requests.DataRequest
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
-import views.html.register.establishers.individual.addressResults
+import views.html.register.establishers.individual.addressList
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent, Result}
 
 import scala.concurrent.Future
 
-class AddressResultsController @Inject()(
+class AddressListController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           dataCacheConnector: DataCacheConnector,
@@ -43,7 +43,7 @@ class AddressResultsController @Inject()(
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
-                                          formProvider: AddressResultsFormProvider) extends FrontendController with I18nSupport
+                                          formProvider: AddressListFormProvider) extends FrontendController with I18nSupport
   with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
@@ -53,9 +53,9 @@ class AddressResultsController @Inject()(
       retrieveEstablisherName(index) {
         establisherName =>
 
-          val result = request.userAnswers.get[Seq[Address]](AddressId) match {
-            case None => Redirect(controllers.register.establishers.individual.routes.AddressController.onPageLoad(mode, index))
-            case Some(value) => Ok(addressResults(appConfig, form, mode, index, value, establisherName))
+          val result = request.userAnswers.get[Seq[Address]](PostCodeLookupId) match {
+            case None => Redirect(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index))
+            case Some(value) => Ok(addressList(appConfig, form, mode, index, value, establisherName))
           }
           Future.successful(result)
       }
@@ -65,21 +65,21 @@ class AddressResultsController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val address = request.userAnswers.get[Seq[Address]](AddressId.path).getOrElse(Seq.empty)
+          val address = request.userAnswers.get[Seq[Address]](PostCodeLookupId.path).getOrElse(Seq.empty)
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(addressResults(appConfig, formWithErrors, mode, index,
-                request.userAnswers.get[Seq[Address]](AddressId.path).getOrElse(Seq.empty), establisherName))),
+              Future.successful(BadRequest(addressList(appConfig, formWithErrors, mode, index,
+                request.userAnswers.get[Seq[Address]](PostCodeLookupId.path).getOrElse(Seq.empty), establisherName))),
             (value) =>
 
               if (value < address.length) {
                 dataCacheConnector.save(
                   request.externalId,
-                  AddressResultsId(index),
+                  AddressListId(index),
                   address(value)
                 ).map {
                   json =>
-                    Redirect(navigator.nextPage(AddressResultsId(index), mode)(new UserAnswers(json)))
+                    Redirect(navigator.nextPage(AddressListId(index), mode)(new UserAnswers(json)))
                 }
               } else {
                 Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))

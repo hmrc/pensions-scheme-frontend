@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.individual
+package forms.register.establishers.individual
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import models.addresslookup.Address
-import play.api.libs.json.JsPath
+import forms.behaviours.FormBehaviours
 
-case class AddressResultsId(index: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId.path \ index \ AddressResultsId.toString
-}
+class AddressListFormProviderSpec extends FormBehaviours {
 
-object AddressResultsId {
-  override def toString: String = "addressResults"
+  val validData: Map[String, String] = Map(
+    "value" -> "1"
+  )
+
+  val form = new AddressListFormProvider()()
+
+  "AddressResults form" must {
+
+    behave like questionForm[Int](1)
+
+    "fail to bind when value is omitted" in {
+      val expectedError = error("value", "messages__error__select_address")
+      checkForError(form, emptyForm, expectedError)
+    }
+  }
 }

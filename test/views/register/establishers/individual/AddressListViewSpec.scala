@@ -18,19 +18,19 @@ package views.register.establishers.individual
 
 import controllers.register.establishers.individual.routes
 import play.api.data.Form
-import forms.register.establishers.individual.AddressResultsFormProvider
+import forms.register.establishers.individual.AddressListFormProvider
 import models.addresslookup.Address
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.individual.addressResults
+import views.html.register.establishers.individual.addressList
 
-class AddressResultsViewSpec extends ViewBehaviours {
+class AddressListViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "select_the_address"
 
-  val form = new AddressResultsFormProvider()()
+  val form = new AddressListFormProvider()()
   val firstIndex = Index(1)
   val establisherName: String = "test first name test last name"
 
@@ -40,10 +40,10 @@ class AddressResultsViewSpec extends ViewBehaviours {
   val addressSeq = Seq(address("postcode 1"), address("postcode 2"))
   val addressIndexes = Seq.range(0, 2)
 
-  def createView: () => HtmlFormat.Appendable = () => addressResults(frontendAppConfig, form, NormalMode, firstIndex, addressSeq,
+  def createView: () => HtmlFormat.Appendable = () => addressList(frontendAppConfig, form, NormalMode, firstIndex, addressSeq,
     establisherName)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressResults(frontendAppConfig, form, NormalMode,
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressList(frontendAppConfig, form, NormalMode,
     firstIndex, addressSeq, establisherName)(fakeRequest, messages)
 
   def getAddressValue(address: Address): String = s"${address.addressLine1}, ${address.addressLine2}" +
@@ -57,7 +57,7 @@ class AddressResultsViewSpec extends ViewBehaviours {
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
-        routes.AddressResultsController.onPageLoad(NormalMode, firstIndex).url)
+        routes.AddressListController.onPageLoad(NormalMode, firstIndex).url)
     }
 
     "have establisher name rendered on the page" in {

@@ -22,7 +22,7 @@ import forms.mappings.Mappings
 import models.addresslookup.Address
 import play.api.data.Form
 
-class AddressResultsFormProvider @Inject() extends Mappings {
+class AddressListFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Int] =
     Form(
