@@ -27,14 +27,14 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = AddressResultsController.onSubmit(mode, index), 'autoComplete -> "off") {
+    @helpers.form(action = AddressListController.onSubmit(mode, index), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
         @components.heading(headingKey = "messages__select_the_address__title", secondaryHeaderKey = Some(establisherName))
 
         <p>@messages("messages__common__select_address")
-            <a id="manual-address-link" href="@AddressResultsController.onPageLoad(mode, index)">
+            <a id="manual-address-link" href="@AddressListController.onPageLoad(mode, index)">
                 @messages(s"messages__common__select_address_link")
             </a>
         </p>
@@ -44,15 +44,14 @@
             legend = "messages__select_the_address__title",
             hiddenLegend = true
         ) {
-                @for((addressRecord, i) <- addressSeq.zipWithIndex) {
+            @for((addressRecord, i) <- addressSeq.zipWithIndex) {
 
-                    @components.radio(
-                        field = form("value"),
-                        label = s"${addressRecord.addressLine1}, ${addressRecord.addressLine2}, ${addressRecord.addressLine3.getOrElse("")}, ${addressRecord.addressLine4.getOrElse("")}, ${addressRecord.postcode.getOrElse("")}",
-                        value = s"${addressRecord.addressLine1}, ${addressRecord.addressLine2}, ${addressRecord.addressLine3.getOrElse("")}, ${addressRecord.addressLine4.getOrElse("")}, ${addressRecord.postcode.getOrElse("")}",
-                        id = Some(s"addr-opts-$i")
-                    )
-                }
+                @components.radio(
+                    field = form("value"),
+                    label = s"${addressRecord.addressLine1}, ${addressRecord.addressLine2}, ${addressRecord.addressLine3.getOrElse("")}, ${addressRecord.addressLine4.getOrElse("")}, ${addressRecord.postcode.getOrElse("")}",
+                    value = i.toString
+                )
+            }
         }
 
         @components.submit_button()

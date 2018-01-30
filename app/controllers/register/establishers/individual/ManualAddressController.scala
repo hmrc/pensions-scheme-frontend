@@ -25,7 +25,7 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.ManualAddressFormProvider
-import identifiers.register.establishers.individual.{AddressResultsId, EstablisherDetailsId}
+import identifiers.register.establishers.individual.{AddressListId, EstablisherDetailsId}
 import models.addresslookup.Address
 import models.register.CountryOptions
 import models.requests.DataRequest
@@ -52,7 +52,7 @@ class ManualAddressController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val result = request.userAnswers.get(AddressResultsId(index)) match {
+          val result = request.userAnswers.get(AddressListId(index)) match {
             case None => Ok(manualAddress(appConfig, form, mode, index, countryOptions.options, establisherName))
             case Some(value) => Ok(manualAddress(appConfig, form.fill(value), mode, index, countryOptions.options, establisherName))
           }
@@ -70,11 +70,11 @@ class ManualAddressController @Inject()(appConfig: FrontendAppConfig,
             (value) =>
               dataCacheConnector.save(
                 request.externalId,
-                AddressResultsId(index),
+                AddressListId(index),
                 value
               ).map {
                 json =>
-                  Redirect(navigator.nextPage(AddressResultsId(index), mode)(new UserAnswers(json)))
+                  Redirect(navigator.nextPage(AddressListId(index), mode)(new UserAnswers(json)))
               }
           )
       }

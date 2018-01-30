@@ -21,9 +21,9 @@ import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.individual.AddressFormProvider
+import forms.register.establishers.individual.PostCodeLookupFormProvider
 import models.{Index, NormalMode}
-import views.html.register.establishers.individual.address
+import views.html.register.establishers.individual.postCodeLookup
 import controllers.ControllerSpecBase
 import models.addresslookup.{Address, AddressRecord}
 import org.scalatest.mockito.MockitoSugar
@@ -38,19 +38,19 @@ class AddressControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new AddressFormProvider()
+  val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): AddressController =
-    new AddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, fakeAddressLookupConnector,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PostCodeLookupController =
+    new PostCodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector, fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = address(frontendAppConfig, form, NormalMode, firstIndex,
+  def viewAsString(form: Form[_] = form): String = postCodeLookup(frontendAppConfig, form, NormalMode, firstIndex,
     establisherName)(fakeRequest, messages).toString
 
   "Address Controller" must {

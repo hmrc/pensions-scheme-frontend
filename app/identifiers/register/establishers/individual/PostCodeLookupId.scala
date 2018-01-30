@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package identifiers.register.establishers.individual
 
-import javax.inject.Inject
-
-import forms.mappings.Mappings
+import identifiers.TypedIdentifier
 import models.addresslookup.Address
-import play.api.data.Form
 
-class AddressResultsFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[Address] =
-    Form(
-      "value" -> addressMapping()
-    )
+case object PostCodeLookupId extends TypedIdentifier[Seq[Address]] {
+  override def toString: String = "address"
 }

@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.individual
+package forms.register.establishers.individual
 
-import identifiers.TypedIdentifier
+import javax.inject.Inject
+
+import forms.mappings.Mappings
 import models.addresslookup.Address
+import play.api.data.Form
 
-case object AddressId extends TypedIdentifier[Seq[Address]] {
-  override def toString: String = "address"
+class AddressListFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Int] =
+    Form(
+      "value" -> int("messages__error__select_address")
+    )
 }

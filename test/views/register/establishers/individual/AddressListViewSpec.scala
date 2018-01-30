@@ -18,19 +18,19 @@ package views.register.establishers.individual
 
 import controllers.register.establishers.individual.routes
 import play.api.data.Form
-import forms.register.establishers.individual.AddressResultsFormProvider
+import forms.register.establishers.individual.AddressListFormProvider
 import models.addresslookup.Address
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.individual.addressResults
+import views.html.register.establishers.individual.addressList
 
-class AddressResultsViewSpec extends ViewBehaviours {
+class AddressListViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "select_the_address"
 
-  val form = new AddressResultsFormProvider()()
+  val form = new AddressListFormProvider()()
   val firstIndex = Index(1)
   val establisherName: String = "test first name test last name"
 
@@ -38,12 +38,12 @@ class AddressResultsViewSpec extends ViewBehaviours {
     Some("test county"), Some(postCode), "GB")
 
   val addressSeq = Seq(address("postcode 1"), address("postcode 2"))
-  val addressSeqWithIndex: Seq[(Address, Int)] = addressSeq.zipWithIndex
+  val addressIndexes = Seq.range(0, 2)
 
-  def createView: () => HtmlFormat.Appendable = () => addressResults(frontendAppConfig, form, NormalMode, firstIndex, addressSeq,
+  def createView: () => HtmlFormat.Appendable = () => addressList(frontendAppConfig, form, NormalMode, firstIndex, addressSeq,
     establisherName)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressResults(frontendAppConfig, form, NormalMode,
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressList(frontendAppConfig, form, NormalMode,
     firstIndex, addressSeq, establisherName)(fakeRequest, messages)
 
   def getAddressValue(address: Address): String = s"${address.addressLine1}, ${address.addressLine2}" +
@@ -57,7 +57,7 @@ class AddressResultsViewSpec extends ViewBehaviours {
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
-        routes.AddressResultsController.onPageLoad(NormalMode, firstIndex).url)
+        routes.AddressListController.onPageLoad(NormalMode, firstIndex).url)
     }
 
     "have establisher name rendered on the page" in {
@@ -69,24 +69,21 @@ class AddressResultsViewSpec extends ViewBehaviours {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for ((address, i) <- addressSeqWithIndex) {
-          assertContainsRadioButton(doc, s"addr-opts-$i", "value", getAddressValue(address), isChecked = false)
+        for (i <- addressIndexes) {
+          assertContainsRadioButton(doc, s"value-$i", "value", s"$i", isChecked = false)
         }
       }
     }
 
-    for ((address, i) <- addressSeqWithIndex) {
 
-      s"rendered with a value of '${address.postcode}'" must {
-        s"have the '${address.postcode}' radio button selected" in {
-          val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${getAddressValue(address)}"))))
-          assertContainsRadioButton(doc, s"addr-opts-$i", "value", getAddressValue(address), isChecked = true)
+    for (index <- addressIndexes) {
+      s"rendered with a value of '$index'" must {
+        s"have the '$index' radio button selected" in {
+          val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"$index"))))
+          assertContainsRadioButton(doc, s"value-$index", "value", s"$index", isChecked = true)
 
-          for ((unselectedOptionAddress, j) <- addressSeqWithIndex.filterNot { o =>
-            val (oaddress, _) = o
-            oaddress == address
-          }) {
-            assertContainsRadioButton(doc, s"addr-opts-$j", "value", getAddressValue(unselectedOptionAddress), isChecked = false)
+          for (unselectedIndex <- addressIndexes.filterNot(o => o == index)) {
+            assertContainsRadioButton(doc, s"value-$unselectedIndex", "value", unselectedIndex.toString, isChecked = false)
           }
         }
       }

@@ -16,15 +16,23 @@
 
 package forms.register.establishers.individual
 
-import javax.inject.Inject
+import forms.behaviours.FormBehaviours
 
-import forms.mappings.Mappings
-import play.api.data.Form
+class AddressListFormProviderSpec extends FormBehaviours {
 
-class AddressFormProvider @Inject() extends Mappings {
-  val maxLength = 8
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("messages__error__postcode").verifying(maxLength(maxLength, "messages__error__postcode_length"))
-    )
+  val validData: Map[String, String] = Map(
+    "value" -> "1"
+  )
+
+  val form = new AddressListFormProvider()()
+
+  "AddressResults form" must {
+
+    behave like questionForm[Int](1)
+
+    "fail to bind when value is omitted" in {
+      val expectedError = error("value", "messages__error__select_address")
+      checkForError(form, emptyForm, expectedError)
+    }
+  }
 }

@@ -17,7 +17,6 @@
 package forms.mappings
 
 import models.EstablisherNino
-import models.addresslookup._
 import models.register.establishers.individual.UniqueTaxReference
 import models.register.{SchemeType, SortCode}
 import org.apache.commons.lang3.RandomStringUtils
@@ -25,7 +24,6 @@ import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.data.{Form, FormError}
 import utils.Enumerable
-import utils.Constants._
 import models._
 
 object MappingsSpec {
@@ -422,82 +420,6 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
         result.errors mustEqual Seq(FormError("companyRegistrationNumber.crn", "messages__error__crn_invalid"))
       }
     }
-
-  }
-
-  "address" must {
-
-    val testForm = Form("address" -> addressMapping("error.required"))
-
-    "successfully bind the address with town and county" in {
-      val coForm = testForm.bind(Map("address" -> "address line 1, address line 2, test town, test county, test post code"))
-
-      coForm.get mustEqual Address(addressLine1 = "address line 1", addressLine2 = "address line 2",
-        addressLine3 = Some("test town"), addressLine4 = Some("test county"),
-        postcode = Some("test post code"), country = UnitedKingdom)
-    }
-
-    "successfully bind the address with town but no county" in {
-      val coForm = testForm.bind(Map("address" -> "address line 1, address line 2, test town, test post code"))
-
-      coForm.get mustEqual Address(addressLine1 = "address line 1", addressLine2 = "address line 2",
-        addressLine3 = Some("test town"), addressLine4 = None,
-        postcode = Some("test post code"), country = UnitedKingdom)
-    }
-
-    "successfully bind the address with county but no town" in {
-      val coForm = testForm.bind(Map("address" -> "address line 1, address line 2, test county, test post code"))
-
-      coForm.get mustEqual Address(addressLine1 = "address line 1", addressLine2 = "address line 2",
-        addressLine3 = Some("test county"), addressLine4 = None,
-        postcode = Some("test post code"), country = UnitedKingdom)
-    }
-
-    "successfully bind the address without town and county" in {
-      val coForm = testForm.bind(Map("address" -> "address line 1, address line 2, test post code"))
-
-      coForm.get mustEqual Address(addressLine1 = "address line 1", addressLine2 = "address line 2",
-        addressLine3 = None, addressLine4 = None,
-        postcode = Some("test post code"), country = UnitedKingdom)
-    }
-
-    "not bind an empty map" in {
-      val coForm = testForm.bind(Map.empty[String, String])
-
-      coForm.errors mustEqual Seq(FormError("address", "error.required"))
-    }
-
-    "unbind a valid address with town and county" in {
-      val result = testForm.fill(Address(addressLine1 = "address line 1", addressLine2 = "address line 2",
-        addressLine3 = Some("test town"), addressLine4 = Some("test county"),
-        postcode = Some("test post code"), country = UnitedKingdom))
-
-      result.apply("address").value.value mustEqual "address line 1, address line 2, test town, test county, test post code"
-    }
-
-    "unbind a valid address without town and county" in {
-      val result = testForm.fill(Address(addressLine1 = "address line 1", addressLine2 = "address line 2",
-        addressLine3 = None, addressLine4 = None,
-        postcode = Some("test post code"), country = UnitedKingdom))
-
-      result.apply("address").value.value mustEqual "address line 1, address line 2, test post code"
-    }
-
-    "unbind a valid address with town but without county" in {
-      val result = testForm.fill(Address(addressLine1 = "address line 1", addressLine2 = "address line 2",
-        addressLine3 = Some("test town"), addressLine4 = None,
-        postcode = Some("test post code"), country = UnitedKingdom))
-
-      result.apply("address").value.value mustEqual "address line 1, address line 2, test town, test post code"
-    }
-
-    "unbind a valid address with county but without town" in {
-      val result = testForm.fill(Address(addressLine1 = "address line 1", addressLine2 = "address line 2",
-        addressLine3 = Some("test county"), addressLine4 = None,
-        postcode = Some("test post code"), country = UnitedKingdom))
-
-      result.apply("address").value.value mustEqual "address line 1, address line 2, test county, test post code"
-    }
   }
 
   "postCodeMapping" must {
@@ -527,6 +449,5 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
         result.errors mustEqual Seq(FormError("postCode.postCode", "error.invalid", Seq(postCodeRegex)))
       }
     }
-
   }
 }

@@ -27,8 +27,6 @@ import play.api.data.format.Formatter
 import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import uk.gov.voa.play.form.ConditionalMappings._
 import utils.Enumerable
-import utils.Constants._
-
 import models._
 import scala.util.Try
 
@@ -80,11 +78,11 @@ trait Mappings extends Formatters with Constraints {
       }
     }
 
-      tuple(
-        "type" -> text(requiredTypeKey).verifying(schemeTypeConstraint(invalidTypeKey)),
-        "schemeTypeDetails" -> mandatoryIfEqual("schemeType.type", other, text(requiredOtherKey).
-          verifying(maxLength(schemeTypeDetailsMaxLength, invalidOtherKey)))
-      ).transform(toSchemeType, fromSchemeType)
+    tuple(
+      "type" -> text(requiredTypeKey).verifying(schemeTypeConstraint(invalidTypeKey)),
+      "schemeTypeDetails" -> mandatoryIfEqual("schemeType.type", other, text(requiredOtherKey).
+        verifying(maxLength(schemeTypeDetailsMaxLength, invalidOtherKey)))
+    ).transform(toSchemeType, fromSchemeType)
   }
 
   protected def uniqueTaxReferenceMapping(
@@ -234,10 +232,6 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
       "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey).verifying(validCrn(invalidCRNKey))),
       "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(noReasonKey).
         verifying(maxLength(150,reasonLengthKey)))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
-  }
-
-  protected def addressMapping(requiredKey: String = "messages__error__select_address"): Mapping[Address] = {
-    Forms.of(addressFormatter(requiredKey))
   }
 
   protected def postCodeMapping(requiredKey: String, invalidKey: String): Mapping[Option[String]] = {

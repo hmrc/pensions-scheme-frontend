@@ -26,11 +26,11 @@ object AddressRecord {
 
 
 case class Address(addressLine1: String,
-                             addressLine2: String,
-                             addressLine3: Option[String],
-                             addressLine4: Option[String],
-                             postcode: Option[String],
-                             country: String)
+                   addressLine2: String,
+                   addressLine3: Option[String],
+                   addressLine4: Option[String],
+                   postcode: Option[String],
+                   country: String)
 
 object Address {
 

@@ -23,7 +23,7 @@ import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.individual.ManualAddressFormProvider
-import identifiers.register.establishers.individual.{AddressResultsId, EstablisherDetailsId}
+import identifiers.register.establishers.individual.{AddressListId, EstablisherDetailsId}
 import models.{Index, NormalMode}
 import models.register.establishers.individual.EstablisherDetails
 import views.html.register.establishers.individual.manualAddress
@@ -60,7 +60,7 @@ class ManualAddressControllerSpec extends ControllerSpecBase {
       Json.obj(
         EstablisherDetailsId.toString ->
           EstablisherDetails("test first name", "test last name", LocalDate.now),
-        AddressResultsId.toString ->
+        AddressListId.toString ->
           Json.toJson(Address("address line 1", "address line 2", Some("test town"),
             Some("test county"), Some("test post code"), "GB")
       ))))
