@@ -79,11 +79,11 @@ class PostCodeLookupController @Inject()(
                 case Some(addressSeq) =>
                   dataCacheConnector.save[Seq[Address]](
                     request.externalId,
-                    PostCodeLookupId.path,
+                    PostCodeLookupId(index).path,
                     addressSeq.map(_.address)
                   ).map {
                     json =>
-                      Redirect(navigator.nextPage(PostCodeLookupId, mode)(new UserAnswers(json)))
+                      Redirect(navigator.nextPage(PostCodeLookupId(index), mode)(new UserAnswers(json)))
                   }
               }
           )

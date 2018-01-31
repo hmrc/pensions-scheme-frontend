@@ -51,9 +51,10 @@ class AddressListController @Inject()(
       retrieveEstablisherName(index) {
         establisherName =>
 
-          val result = request.userAnswers.get[Seq[Address]](PostCodeLookupId) match {
-            case None =>
+          val result = request.userAnswers.get(PostCodeLookupId(index)) match {
+            case None => {
               Redirect(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index))
+            }
             case Some(addresses) =>
               Ok(addressList(appConfig, formProvider(addresses), mode, index, addresses, establisherName))
           }
@@ -66,8 +67,8 @@ class AddressListController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val address = request.userAnswers.get[Seq[Address]](PostCodeLookupId.path).getOrElse(Seq.empty)
-          request.userAnswers.get(PostCodeLookupId) match {
+          val address = request.userAnswers.get[Seq[Address]](PostCodeLookupId(index).path).getOrElse(Seq.empty)
+          request.userAnswers.get(PostCodeLookupId(index)) match {
             case None =>
               Future.successful(Redirect(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index)))
             case Some(addresses) =>
