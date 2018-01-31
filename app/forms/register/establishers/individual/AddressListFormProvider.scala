@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
-package utils
+package forms.register.establishers.individual
 
-object Constants {
-  val establishersLimit = 10
-  val UnitedKingdom = "United Kingdom"
+import javax.inject.Inject
+
+import forms.mappings.{Constraints, Mappings}
+import models.addresslookup.Address
+import play.api.data.Form
+
+class AddressListFormProvider @Inject() () extends Mappings with Constraints {
+
+  def apply(addresses: Seq[_]): Form[Int] =
+    Form(
+      "value" -> int("messages__error__select_address")
+        .verifying(minimumValue(0, "error.invalid"))
+        .verifying(maximumValue(addresses.length - 1, "error.invalid"))
+    )
 }
