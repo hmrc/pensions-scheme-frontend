@@ -22,10 +22,8 @@ import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import forms.register.establishers.company.CompanyPostCodeLookupFormProvider
-import forms.register.establishers.individual.PostCodeLookupFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyPostCodeLookupId
-import models.addresslookup.Address
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.data.Form
