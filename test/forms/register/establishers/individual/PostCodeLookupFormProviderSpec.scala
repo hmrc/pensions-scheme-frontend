@@ -18,7 +18,7 @@ package forms.register.establishers.individual
 
 import forms.FormSpec
 
-class AddressFormProviderSpec extends FormSpec {
+class PostCodeLookupFormProviderSpec extends FormSpec {
 
   val requiredKey = "messages__error__postcode"
 

@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object FakeDataCacheConnector extends DataCacheConnector {
+class FakeDataCacheConnector extends DataCacheConnector {
 
   override def save[A](cacheId: String, path: JsPath, value: A)(implicit fmt: Format[A]): Future[JsValue] =
     Future.successful(Json.obj())
@@ -33,3 +33,5 @@ object FakeDataCacheConnector extends DataCacheConnector {
   override def fetch(cacheId: String): Future[Option[JsValue]] =
     Future.successful(Some(Json.obj()))
 }
+
+object FakeDataCacheConnector extends FakeDataCacheConnector

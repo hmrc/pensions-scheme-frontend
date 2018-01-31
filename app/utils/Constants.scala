@@ -18,5 +18,5 @@ package utils
 
 object Constants {
   val establishersLimit = 10
-  val UnitedKingdom = "United Kingdom"
+  val UnitedKingdom = "GB"
 }
