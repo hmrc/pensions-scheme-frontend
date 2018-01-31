@@ -35,7 +35,7 @@ class CountryOptions(val options: Seq[InputOption]) {
           val locationJsValue = Json.parse(in)
           Json.fromJson[Seq[Seq[String]]](locationJsValue).asOpt.map {
             _.map { countryList =>
-              InputOption(countryList(1), countryList(0))
+              InputOption(countryList(1).replaceAll("country:", ""), countryList(0))
             }
           }
       }.getOrElse{

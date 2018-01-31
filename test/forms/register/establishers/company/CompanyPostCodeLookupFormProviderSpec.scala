@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package forms.register.establishers.company
 
 import forms.FormSpec
 
-class PostCodeLookupFormProviderSpec extends FormSpec {
+class CompanyPostCodeLookupFormProviderSpec extends FormSpec {
 
   val requiredKey = "messages__error__postcode"
 
   "Address Form" must {
 
-    val formProvider = new PostCodeLookupFormProvider()
+    val formProvider = new CompanyPostCodeLookupFormProvider()
 
     "bind a string" in {
       val form = formProvider().bind(Map("value" -> "answer"))

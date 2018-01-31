@@ -233,4 +233,16 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
       "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(noReasonKey).
         verifying(maxLength(150,reasonLengthKey)))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
   }
+
+  protected def postCodeMapping(requiredKey: String, invalidKey: String): Mapping[Option[String]] = {
+    val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
+
+    def toPostCode(data: (Option[String], Option[String])): Option[String] = data._2
+
+    def fromPostCode(data: Option[String]): (Option[String], Option[String]) = (data, data)
+
+    tuple("postCode" -> mandatoryIfEqual[String]("country", "GB", text(requiredKey).verifying(
+      regexp(postCodeRegex, invalidKey))),
+      "postCode" -> optional(text(requiredKey))).transform(toPostCode, fromPostCode)
+  }
 }

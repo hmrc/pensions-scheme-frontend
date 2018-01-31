@@ -420,6 +420,34 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
         result.errors mustEqual Seq(FormError("companyRegistrationNumber.crn", "messages__error__crn_invalid"))
       }
     }
+  }
 
+  "postCodeMapping" must {
+    val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
+    val testForm = Form("postCode" -> postCodeMapping("error.required", "error.invalid"))
+
+    "bind successfully when country is non UK and postcode is not of UK postal format" in {
+      val result = testForm.bind(Map("country" -> "IN", "postCode.postCode" -> "", "postCode.postCode" -> "sdsad"))
+      result.get mustEqual Some("sdsad")
+    }
+
+    "bind successfully when country is UK and postcode is of correct format" in {
+      val result = testForm.bind(Map("country" -> "GB", "postCode.postCode" -> "", "postCode.postCode" -> "AB1 1AB"))
+      result.get mustEqual Some("AB1 1AB")
+    }
+
+    "fail to bind when postCode is not provided" in {
+      val result = testForm.bind(Map("country" -> "GB", "postCode.postCode" -> "", "postCode.postCode" -> ""))
+
+      result.errors mustEqual Seq(FormError("postCode.postCode", "error.required"))
+    }
+
+    Seq("A 1223", "1234 A23", "AA1 BBB", "AA 8989").foreach{ postCode =>
+      s"fail to bind when postCode $postCode is not valid" in {
+        val result = testForm.bind(Map("country" -> "GB", "postCode.postCode" -> "", "postCode.postCode" -> "sfdaf"))
+
+        result.errors mustEqual Seq(FormError("postCode.postCode", "error.invalid", Seq(postCodeRegex)))
+      }
+    }
   }
 }

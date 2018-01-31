@@ -16,25 +16,30 @@
 
 package controllers.register.establishers.individual
 
+import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
+import controllers.actions._
+import forms.register.establishers.individual.AddressListFormProvider
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, PostCodeLookupId, UniqueTaxReferenceId}
+import models.addresslookup.Address
+import models.register.establishers.individual.{EstablisherDetails, UniqueTaxReference}
+import models.register.{SchemeDetails, SchemeType}
+import models.{Index, NormalMode}
+import org.joda.time.LocalDate
+import org.mockito.Matchers.any
+import org.mockito.{Matchers, Mockito}
+import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
-import utils.{Enumerable, FakeNavigator, MapFormats}
-import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import forms.register.establishers.individual.AddressListFormProvider
-import identifiers.register.establishers.individual.{PostCodeLookupId, EstablisherDetailsId, UniqueTaxReferenceId}
-import models.{Index, NormalMode}
-import models.register.establishers.individual.{EstablisherDetails, UniqueTaxReference}
-import views.html.register.establishers.individual.addressList
-import controllers.ControllerSpecBase
-import identifiers.register.SchemeDetailsId
-import models.addresslookup.Address
-import models.register.{SchemeDetails, SchemeType}
-import org.joda.time.LocalDate
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.{Enumerable, FakeNavigator, MapFormats}
+import views.html.register.establishers.individual.addressList
 
-class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats {
+class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -48,15 +53,22 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     address("test post code 2")
   )
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    Mockito.reset(dataCacheConnector)
+  }
+
+  val dataCacheConnector = Mockito.spy(new FakeDataCacheConnector())
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): AddressListController =
-    new AddressListController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new AddressListController(frontendAppConfig, messagesApi, dataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form, address: Seq[Address] = addresses): String =
     addressList(frontendAppConfig, form, NormalMode, firstIndex, address, establisherName)(fakeRequest, messages).toString
 
   def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), postcode = Some(postCode), country = "GB")
+    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
 
   val validData = Json.obj(SchemeDetailsId.toString -> Json.toJson(
     SchemeDetails("value 1", SchemeType.SingleTrust)),
@@ -67,7 +79,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         UniqueTaxReferenceId.toString ->
           UniqueTaxReference.Yes("1234567891"),
         PostCodeLookupId.toString -> addresses)
-    ))
+      ))
 
   "AddressResults Controller" must {
 
@@ -108,6 +120,13 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "update the country of the chosen address to `GB`" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
+      controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(NormalMode, firstIndex)(postRequest)
+
+      verify(dataCacheConnector, times(1)).save(any(), any(), Matchers.eq(addresses.head.copy(country = "GB")))(any())
     }
 
     "return a Bad Request and errors when no data is submitted" in {

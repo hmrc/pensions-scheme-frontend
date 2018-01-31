@@ -25,6 +25,6 @@ case class PostCodeLookupId(index: Int) extends TypedIdentifier[Seq[Address]] {
   override def path: JsPath = EstablishersId.path \ index \ PostCodeLookupId.toString
 }
 
-object PostCodeLookupId  {
+object PostCodeLookupId {
   override def toString: String = "addresses"
 }
