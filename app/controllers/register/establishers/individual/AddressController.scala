@@ -18,19 +18,19 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressFormProvider
-import identifiers.register.establishers.individual.{AddressListId, EstablisherDetailsId}
+import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
 import models.addresslookup.Address
 import models.register.CountryOptions
 import models.requests.DataRequest
 import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.individual.address
 
@@ -52,7 +52,7 @@ class AddressController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val result = request.userAnswers.get(AddressListId(index)) match {
+          val result = request.userAnswers.get(AddressId(index)) match {
             case None => Ok(address(appConfig, form, mode, index, countryOptions.options, establisherName))
             case Some(value) => Ok(address(appConfig, form.fill(value), mode, index, countryOptions.options, establisherName))
           }
@@ -70,11 +70,11 @@ class AddressController @Inject()(appConfig: FrontendAppConfig,
             (value) =>
               dataCacheConnector.save(
                 request.externalId,
-                AddressListId(index),
+                AddressId(index),
                 value
               ).map {
                 json =>
-                  Redirect(navigator.nextPage(AddressListId(index), mode)(new UserAnswers(json)))
+                  Redirect(navigator.nextPage(AddressId(index), mode)(new UserAnswers(json)))
               }
           )
       }

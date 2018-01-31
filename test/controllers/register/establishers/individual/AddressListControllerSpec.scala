@@ -65,9 +65,9 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         EstablisherDetailsId.toString ->
           EstablisherDetails("test first name", "test last name", LocalDate.now),
         UniqueTaxReferenceId.toString ->
-          UniqueTaxReference.Yes("1234567891")
-      )),
-    PostCodeLookupId.toString -> addresses)
+          UniqueTaxReference.Yes("1234567891"),
+        PostCodeLookupId.toString -> addresses)
+      ))
 
   "AddressResults Controller" must {
 

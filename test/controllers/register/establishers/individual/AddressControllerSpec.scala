@@ -16,23 +16,23 @@
 
 package controllers.register.establishers.individual
 
+import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
+import controllers.actions._
+import forms.register.establishers.individual.AddressFormProvider
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
+import models.addresslookup.Address
+import models.register.establishers.individual.EstablisherDetails
+import models.register.{CountryOptions, SchemeDetails, SchemeType}
+import models.{Index, NormalMode}
+import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
-import utils.{FakeNavigator, InputOption}
-import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import forms.register.establishers.individual.AddressFormProvider
-import identifiers.register.establishers.individual.{AddressListId, EstablisherDetailsId}
-import models.{Index, NormalMode}
-import models.register.establishers.individual.EstablisherDetails
-import views.html.register.establishers.individual.address
-import controllers.ControllerSpecBase
-import identifiers.register.SchemeDetailsId
-import models.addresslookup.Address
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
-import org.joda.time.LocalDate
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.{FakeNavigator, InputOption}
+import views.html.register.establishers.individual.address
 
 class AddressControllerSpec extends ControllerSpecBase {
 
@@ -60,7 +60,7 @@ class AddressControllerSpec extends ControllerSpecBase {
       Json.obj(
         EstablisherDetailsId.toString ->
           EstablisherDetails("test first name", "test last name", LocalDate.now),
-        AddressListId.toString ->
+        AddressId.toString ->
           Json.toJson(Address("address line 1", "address line 2", Some("test town"),
             Some("test county"), Some("test post code"), "GB")
       ))))
