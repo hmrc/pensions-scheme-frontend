@@ -74,3 +74,8 @@ GET        /:index/company/companyPostCodeLookup               controllers.regis
 POST       /:index/company/companyPostCodeLookup               controllers.register.establishers.company.CompanyPostCodeLookupController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/company/changeCompanyPostCodeLookup                        controllers.register.establishers.company.CompanyPostCodeLookupController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/company/changeCompanyPostCodeLookup                        controllers.register.establishers.company.CompanyPostCodeLookupController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/individual/address                               controllers.register.establishers.individual.AddressController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/address                               controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeAddress                     controllers.register.establishers.individual.AddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeAddress                       controllers.register.establishers.individual.AddressController.onSubmit(mode: Mode = CheckMode, index: Index)

@@ -18,20 +18,18 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressListFormProvider
-import identifiers.register.establishers.individual.{PostCodeLookupId, AddressListId, EstablisherDetailsId}
-import models.addresslookup.Address
+import identifiers.register.establishers.individual.{AddressId, AddressListId, EstablisherDetailsId, PostCodeLookupId}
 import models.requests.DataRequest
+import models.{Index, Mode}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Result}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual.addressList
-import models.{Index, Mode}
-import play.api.mvc.{Action, AnyContent, Result}
 
 import scala.concurrent.Future
 
@@ -51,7 +49,7 @@ class AddressListController @Inject()(
       retrieveEstablisherName(index) {
         establisherName =>
 
-          val result = request.userAnswers.get[Seq[Address]](PostCodeLookupId) match {
+          val result = request.userAnswers.get(PostCodeLookupId(index)) match {
             case None =>
               Redirect(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index))
             case Some(addresses) =>
@@ -66,8 +64,7 @@ class AddressListController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val address = request.userAnswers.get[Seq[Address]](PostCodeLookupId.path).getOrElse(Seq.empty)
-          request.userAnswers.get(PostCodeLookupId) match {
+          request.userAnswers.get(PostCodeLookupId(index)) match {
             case None =>
               Future.successful(Redirect(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index)))
             case Some(addresses) =>
@@ -77,8 +74,8 @@ class AddressListController @Inject()(
                 id =>
                   dataCacheConnector.save(
                     request.externalId,
-                    AddressListId(index),
-                    address(id)
+                    AddressId(index),
+                    addresses(id).copy(country = "GB")
                   ).map {
                     json =>
                       Redirect(navigator.nextPage(AddressListId(index), mode)(new UserAnswers(json)))

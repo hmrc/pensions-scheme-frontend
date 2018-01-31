@@ -1,11 +1,16 @@
 #!/bin/bash
 
+echo "Applying migration ManualAddress"
 echo "Applying migration CompanyPostCodeLookup"
 echo "Applying migration AddressResults"
 
+echo "Adding routes to register.establishers.individual.routes"
 echo "Adding routes to register.establishers.company.routes"
 echo "Adding routes to conf/register.establishers.individual.routes"
 
+echo "" >> ../conf/register.establishers.individual.routes
+echo "GET        /manualAddress                       controllers.register.establishers.individual.ManualAddressController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
+echo "POST       /manualAddress                       controllers.register.establishers.individual.ManualAddressController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
 echo "" >> ../conf/register.establishers.company.routes
 echo "GET        /companyPostCodeLookup               controllers.register.establishers.company.CompanyPostCodeLookupController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 echo "POST       /companyPostCodeLookup               controllers.register.establishers.company.CompanyPostCodeLookupController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
@@ -13,6 +18,8 @@ echo "" >> ../conf/app.routes
 echo "GET        /addressResults               controllers.register.establishers.individual.AddressResultsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
 echo "POST       /addressResults               controllers.register.establishers.individual.AddressResultsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
 
+echo "GET        /changeManualAddress                       controllers.register.establishers.individual.ManualAddressController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
+echo "POST       /changeManualAddress                       controllers.register.establishers.individual.ManualAddressController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
 echo "GET        /changeCompanyPostCodeLookup                        controllers.register.establishers.company.CompanyPostCodeLookupController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 echo "POST       /changeCompanyPostCodeLookup                        controllers.register.establishers.company.CompanyPostCodeLookupController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 echo "GET        /changeAddressResults               controllers.register.establishers.individual.AddressResultsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
@@ -20,6 +27,13 @@ echo "POST       /changeAddressResults               controllers.register.establ
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
+echo messages__"manualAddress__title = manualAddress" >> ../conf/messages.en
+echo messages__"manualAddress__heading = manualAddress" >> ../conf/messages.en
+echo messages__"manualAddress_field1 = Field 1" >> ../conf/messages.en
+echo messages__"manualAddress_field2 = Field 2" >> ../conf/messages.en
+echo messages__"manualAddress_checkYourAnswersLabel = manualAddress" >> ../conf/messages.en
+echo messages__error__"manualAddress_field1_required = Please give an answer for field1" >> ../conf/messages.en
+echo messages__error__"manualAddress_field2_required = Please give an answer for field2" >> ../conf/messages.en
 echo "messages__companyPostCodeLookup__title = companyPostCodeLookup" >> ../conf/messages.en
 echo "messages__companyPostCodeLookup__heading = companyPostCodeLookup" >> ../conf/messages.en
 echo "messages__companyPostCodeLookup__checkYourAnswersLabel = companyPostCodeLookup" >> ../conf/messages.en
@@ -34,7 +48,7 @@ echo "addressResults.error.required = Please give an answer for addressResults" 
 echo "Adding helper line into UserAnswers"
 awk '/class/ {\
      print;\
-     print "  def addressResults: Option[AddressResults] = cacheMap.getEntry[AddressResults](AddressResultsId.toString)";\
+     print "  def manualAddress: Option[ManualAddress] = cacheMap.getEntry[ManualAddress](ManualAddressId.toString)";\
      print "";\
      next }1' ../app/utils/UserAnswers.scala > tmp && mv tmp ../app/utils/UserAnswers.scala
 
@@ -42,6 +56,8 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
+     print "  def manualAddress: Option[AnswerRow] = userAnswers.manualAddress map {";\
+     print "    x => AnswerRow(\"manualAddress.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, routes.ManualAddressController.onPageLoad(CheckMode).url)";\
      print "  def companyPostCodeLookup: Option[AnswerRow] = userAnswers.get(CompanyPostCodeLookupId) map {";\
      print "    x => AnswerRow(\"companyPostCodeLookup.checkYourAnswersLabel\", s\"$x\", false, controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(CheckMode).url)";\
      print "  def addressResults: Option[AnswerRow] = userAnswers.addressResults map {";\
@@ -53,5 +69,6 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
+echo "Migration ManualAddress completed"
 echo "Migration CompanyPostCodeLookup completed"
 echo "Migration AddressResults completed"
