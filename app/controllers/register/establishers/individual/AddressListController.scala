@@ -46,17 +46,18 @@ class AddressListController @Inject()(
                                           formProvider: AddressListFormProvider) extends FrontendController with I18nSupport
   with Enumerable.Implicits with MapFormats {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
 
           val result = request.userAnswers.get[Seq[Address]](PostCodeLookupId) match {
-            case None => Redirect(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index))
-            case Some(value) => Ok(addressList(appConfig, form, mode, index, value, establisherName))
+            case None =>
+              Redirect(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index))
+            case Some(addresses) =>
+              Ok(addressList(appConfig, formProvider(addresses), mode, index, addresses, establisherName))
           }
+
           Future.successful(result)
       }
   }
@@ -66,24 +67,24 @@ class AddressListController @Inject()(
       retrieveEstablisherName(index) {
         establisherName =>
           val address = request.userAnswers.get[Seq[Address]](PostCodeLookupId.path).getOrElse(Seq.empty)
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(addressList(appConfig, formWithErrors, mode, index,
-                request.userAnswers.get[Seq[Address]](PostCodeLookupId.path).getOrElse(Seq.empty), establisherName))),
-            (value) =>
-              if (value < address.length) {
-                dataCacheConnector.save(
-                  request.externalId,
-                  AddressListId(index),
-                  address(value)
-                ).map {
-                  json =>
-                    Redirect(navigator.nextPage(AddressListId(index), mode)(new UserAnswers(json)))
-                }
-              } else {
-                Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-              }
-          )
+          request.userAnswers.get(PostCodeLookupId) match {
+            case None =>
+              Future.successful(Redirect(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index)))
+            case Some(addresses) =>
+              formProvider(addresses).bindFromRequest().fold(
+                formWithErrors =>
+                  Future.successful(BadRequest(addressList(appConfig, formWithErrors, mode, index, addresses, establisherName))),
+                id =>
+                  dataCacheConnector.save(
+                    request.externalId,
+                    AddressListId(index),
+                    address(id)
+                  ).map {
+                    json =>
+                      Redirect(navigator.nextPage(AddressListId(index), mode)(new UserAnswers(json)))
+                  }
+              )
+          }
       }
   }
 

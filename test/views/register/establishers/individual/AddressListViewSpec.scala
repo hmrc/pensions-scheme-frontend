@@ -30,8 +30,8 @@ class AddressListViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "select_the_address"
 
-  val form = new AddressListFormProvider()()
-  val firstIndex = Index(1)
+  val form = new AddressListFormProvider()(Seq(0))
+  val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
 
   def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),

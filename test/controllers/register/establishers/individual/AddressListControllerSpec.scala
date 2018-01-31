@@ -39,15 +39,20 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new AddressListFormProvider()
-  val form = formProvider()
+  val form = formProvider(Seq(0))
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
+
+  val addresses = Seq(
+    address("test post code 1"),
+    address("test post code 2")
+  )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): AddressListController =
     new AddressListController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form, address: Seq[Address] = Seq.empty): String =
+  def viewAsString(form: Form[_] = form, address: Seq[Address] = addresses): String =
     addressList(frontendAppConfig, form, NormalMode, firstIndex, address, establisherName)(fakeRequest, messages).toString
 
   def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
@@ -62,8 +67,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         UniqueTaxReferenceId.toString ->
           UniqueTaxReference.Yes("1234567891")
       )),
-    PostCodeLookupId.toString -> Json.toJson[Seq[Address]](
-      Seq(address("test post code 1"), address("test post code 2"))))
+    PostCodeLookupId.toString -> addresses)
 
   "AddressResults Controller" must {
 
@@ -89,6 +93,14 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
     }
 
+    "redirect to Address look up page when no addresses are present after lookup (post)" in {
+      val result = controller().onSubmit(NormalMode, firstIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(
+        controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
+    }
+
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
 
@@ -102,7 +114,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
