@@ -18,28 +18,42 @@ package views.register.establishers.company
 
 import play.api.data.Form
 import controllers.register.establishers.company.routes
-import forms.register.establishers.company.CompanyPostCodeLookupFormProvider
-import models.NormalMode
-import views.behaviours.StringViewBehaviours
 import views.html.register.establishers.company.companyPostCodeLookup
+import forms.register.establishers.company.CompanyPostCodeLookupFormProvider
+import models.{Index, NormalMode}
+import org.jsoup.Jsoup
+import play.twirl.api.HtmlFormat
+import views.behaviours.StringViewBehaviours
 
 class CompanyPostCodeLookupViewSpec extends StringViewBehaviours {
 
-  val messageKeyPrefix = "companyPostCodeLookup"
+  val messageKeyPrefix = "benefits_insurance_addr"
 
   val form = new CompanyPostCodeLookupFormProvider()()
+  val firstIndex = Index(0)
+  val schemeName = "test scheme name"
 
-  def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable = () => companyPostCodeLookup(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyPostCodeLookup(frontendAppConfig, form, NormalMode, firstIndex,
+    schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm: (Form[String]) => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[String]) =>
-    companyPostCodeLookup(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) => companyPostCodeLookup(frontendAppConfig, form,
+    NormalMode, firstIndex, schemeName)(fakeRequest, messages)
 
-  "CompanyPostCodeLookup view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
+  "Address view" must {
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
 
-    behave like stringPage(
-      createViewUsingForm, messageKeyPrefix, controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onSubmit(NormalMode).url)
+    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex).url,
+      Some("messages__common__address_postcode"), expectedHint = Some("messages__common__address_postcode_hint"))
+
+    "have establisher name rendered on the page" in {
+      Jsoup.parse(createView().toString()) must haveDynamicText(schemeName)
+    }
+
+    "have link for enter address manually" in {
+      Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
+        routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
+    }
   }
 }

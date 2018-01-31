@@ -27,11 +27,6 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends Enumerable.Implicits {
 
-  def companyPostCodeLookup: Option[AnswerRow] = userAnswers.get(CompanyPostCodeLookupId) map {
-    x => AnswerRow("companyPostCodeLookup.checkYourAnswersLabel", s"$x", false,
-      controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(CheckMode).url)
-  }
-
   def companyAddressYears(index: Int): Option[AnswerRow] =
     userAnswers.get(CompanyAddressYearsId(index)) match {
       case Some(x) => Some(AnswerRow("companyAddressYears.checkYourAnswersLabel", s"companyAddressYears.$x", true,

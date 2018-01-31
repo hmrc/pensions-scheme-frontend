@@ -22,9 +22,9 @@ import forms.mappings.Mappings
 import play.api.data.Form
 
 class CompanyPostCodeLookupFormProvider @Inject() extends Mappings {
-
+  val maxLength = 8
   def apply(): Form[String] =
     Form(
-      "value" -> text("messages__companyPostCodeLookup__error__required")
+      "value" -> text("messages__error__postcode").verifying(maxLength(maxLength, "messages__error__postcode_length"))
     )
 }

@@ -20,9 +20,9 @@ import forms.FormSpec
 
 class CompanyPostCodeLookupFormProviderSpec extends FormSpec {
 
-  val requiredKey = "messages__companyPostCodeLookup__error__required"
+  val requiredKey = "messages__error__postcode"
 
-  "CompanyPostCodeLookup Form" must {
+  "Address Form" must {
 
     val formProvider = new CompanyPostCodeLookupFormProvider()
 
@@ -39,6 +39,11 @@ class CompanyPostCodeLookupFormProviderSpec extends FormSpec {
     "fail to bind when value is omitted" in {
       val expectedError = error("value", requiredKey)
       checkForError(formProvider(), emptyForm, expectedError)
+    }
+
+    "fail to bind when value more then 8 characters" in {
+      val expectedError = error("value", "messages__error__postcode_length", 8)
+      checkForError(formProvider(), Map("value" -> "123456789"),expectedError)
     }
   }
 }

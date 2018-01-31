@@ -17,7 +17,15 @@
 package identifiers.register.establishers.company
 
 import identifiers._
+import identifiers.register.establishers.EstablishersId
+import models.addresslookup.Address
+import play.api.libs.json.JsPath
 
-case object CompanyPostCodeLookupId extends TypedIdentifier[String] {
-  override def toString: String = "companyPostCodeLookup"
+case class CompanyPostCodeLookupId(index: Int) extends TypedIdentifier[Seq[Address]] {
+  override def path: JsPath = EstablishersId.path \ index \ CompanyDetailsId.toString
 }
+
+object CompanyPostCodeLookupId {
+  override def toString: String = "address"
+}
+
