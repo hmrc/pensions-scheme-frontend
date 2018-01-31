@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package utils
+package identifiers.register.establishers.individual
 
-object Constants {
-  val establishersLimit = 10
-  val UnitedKingdom = "United Kingdom"
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.addresslookup.Address
+import play.api.libs.json.JsPath
+
+case class AddressListId(index: Int) extends TypedIdentifier[Address] {
+  override def path: JsPath = EstablishersId.path \ index \ AddressListId.toString
+}
+
+object AddressListId {
+  override def toString: String = "addressResults"
 }

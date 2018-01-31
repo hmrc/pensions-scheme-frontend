@@ -17,6 +17,7 @@
 package forms.mappings
 
 import models.EstablisherNino
+import models.addresslookup.Address
 import models.register.{SchemeType, SortCode}
 import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
 import models.register.establishers.individual.UniqueTaxReference
@@ -97,7 +98,7 @@ trait Mappings extends Formatters with Constraints {
     val reasonMaxLength = 150
     def fromUniqueTaxReference(utr: UniqueTaxReference): (Boolean, Option[String], Option[String]) = {
       utr match {
-        case UniqueTaxReference.Yes(utr) => (true, Some(utr), None)
+        case UniqueTaxReference.Yes(utrNo) => (true, Some(utrNo), None)
         case UniqueTaxReference.No(reason) =>  (false, None, Some(reason))
       }
     }
@@ -127,7 +128,7 @@ trait Mappings extends Formatters with Constraints {
 
     def fromEstablisherNino(nino: EstablisherNino): (Boolean, Option[String], Option[String]) = {
       nino match {
-        case EstablisherNino.Yes(nino) => (true, Some(nino), None)
+        case EstablisherNino.Yes(ninoNo) => (true, Some(ninoNo), None)
         case EstablisherNino.No(reason) =>  (false, None, Some(reason))
       }
     }
@@ -174,8 +175,8 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
     val formatter: Formatter[SortCode] = new Formatter[SortCode] {
 
-      val baseFormatter = stringFormatter(requiredKey)
-      val regexSortCode = """\d*""".r.toString()
+      val baseFormatter: Formatter[String] = stringFormatter(requiredKey)
+      val regexSortCode: String = """\d*""".r.toString()
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SortCode] = {
 

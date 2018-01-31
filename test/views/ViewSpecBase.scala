@@ -40,7 +40,7 @@ trait ViewSpecBase extends SpecBase {
     document =>
       val text = messages(messageKey, args:_*)
       MatchResult(
-        document.toString.contains(messages(messageKey, args:_*)),
+        document.toString.contains(text),
         s"text $text is not rendered on the page",
         s"text $text is rendered on the page"
       )

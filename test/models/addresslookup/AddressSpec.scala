@@ -14,9 +14,26 @@
  * limitations under the License.
  */
 
-package utils
+package models.addresslookup
 
-object Constants {
-  val establishersLimit = 10
-  val UnitedKingdom = "United Kingdom"
+import org.scalatest.{MustMatchers, WordSpec}
+
+class AddressSpec extends WordSpec with MustMatchers {
+
+  ".print" must {
+
+    "print all of the fields of the address when they exist (minus country)" in {
+
+      val model = Address("a", "b", Some("c"), Some("d"), Some("e"), "UK")
+
+      model.print mustEqual "a, b, c, d, e"
+    }
+
+    "omit all the fields which are missing" in {
+
+      val model = Address("a", "b", None, None, None, "UK")
+
+      model.print mustEqual "a, b"
+    }
+  }
 }

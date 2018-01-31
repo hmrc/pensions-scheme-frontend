@@ -24,7 +24,7 @@ class AddressFormProviderSpec extends FormSpec {
 
   "Address Form" must {
 
-    val formProvider = new AddressFormProvider()
+    val formProvider = new PostCodeLookupFormProvider()
 
     "bind a string" in {
       val form = formProvider().bind(Map("value" -> "answer"))
