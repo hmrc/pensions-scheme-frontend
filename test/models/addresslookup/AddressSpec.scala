@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package models.addresslookup
 
-import javax.inject.Inject
+import org.scalatest.{MustMatchers, WordSpec}
 
-import forms.mappings.{Constraints, Mappings}
-import models.addresslookup.Address
-import play.api.data.Form
+class AddressSpec extends WordSpec with MustMatchers {
 
-class AddressListFormProvider @Inject() () extends Mappings with Constraints {
+  ".print" must {
 
-  def apply(addresses: Seq[_]): Form[Int] =
-    Form(
-      "value" -> int("messages__error__select_address")
-        .verifying(minimumValue(0, "error.invalid"))
-        .verifying(maximumValue(addresses.length - 1, "error.invalid"))
-    )
+    "print all of the fields of the address when they exist (minus country)" in {
+
+      val model = Address("a", "b", Some("c"), Some("d"), Some("e"), "UK")
+
+      model.print mustEqual "a, b, c, d, e"
+    }
+
+    "omit all the fields which are missing" in {
+
+      val model = Address("a", "b", None, None, None, "UK")
+
+      model.print mustEqual "a, b"
+    }
+  }
 }
