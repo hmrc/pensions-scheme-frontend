@@ -27,6 +27,13 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) extends Enumerable.Implicits {
 
+  def previousAddress(index: Int): Option[AnswerRow] = userAnswers.get(PreviousAddressId(index)) match {
+    case Some(x) => Some(AnswerRow("previousAddress.checkYourAnswersLabel", s"${x.addressLine1} ${x.addressLine2} " +
+      s"${x.addressLine3} ${x.addressLine4} ${x.postcode} ${x.country}", false,
+      controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, Index(index)).url))
+    case _ => None
+  }
+
   def companyAddressYears(index: Int): Option[AnswerRow] =
     userAnswers.get(CompanyAddressYearsId(index)) match {
       case Some(x) => Some(AnswerRow("companyAddressYears.checkYourAnswersLabel", s"companyAddressYears.$x", true,

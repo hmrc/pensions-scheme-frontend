@@ -16,42 +16,42 @@
 
 package controllers.register.establishers.individual
 
-import connectors.FakeDataCacheConnector
-import controllers.ControllerSpecBase
-import controllers.actions._
-import forms.register.establishers.individual.AddressFormProvider
-import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
-import models.addresslookup.Address
-import models.register.establishers.individual.EstablisherDetails
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
-import models.{Index, NormalMode}
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
-import play.api.test.Helpers._
 import utils.{FakeNavigator, InputOption}
-import views.html.register.establishers.individual.address
+import connectors.FakeDataCacheConnector
+import controllers.actions._
+import play.api.test.Helpers._
+import forms.register.establishers.individual.AddressFormProvider
+import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId, PreviousAddressId}
+import models.{Index, NormalMode}
+import models.register.establishers.individual.EstablisherDetails
+import views.html.register.establishers.individual.previousAddress
+import controllers.ControllerSpecBase
+import identifiers.register.SchemeDetailsId
+import models.addresslookup.Address
+import models.register.{CountryOptions, SchemeDetails, SchemeType}
+import org.joda.time.LocalDate
+import play.api.mvc.Call
 
-class AddressControllerSpec extends ControllerSpecBase {
+class PreviousAddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new AddressFormProvider()
-  val form: Form[Address] = formProvider()
+  val form = formProvider()
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
-
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
-
   def countryOptions: CountryOptions = new CountryOptions(options)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): AddressController =
-    new AddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider, countryOptions)
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PreviousAddressController =
+    new PreviousAddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider, countryOptions)
 
-  def viewAsString(form: Form[_] = form): String = address(frontendAppConfig, form, NormalMode, firstIndex, options, establisherName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = previousAddress(frontendAppConfig, form, NormalMode,
+    firstIndex, options, establisherName)(fakeRequest, messages).toString
+
   val addressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
 
   val validData: JsObject = Json.obj(SchemeDetailsId.toString -> Json.toJson(
@@ -60,12 +60,12 @@ class AddressControllerSpec extends ControllerSpecBase {
       Json.obj(
         EstablisherDetailsId.toString ->
           EstablisherDetails("test first name", "test last name", LocalDate.now),
-        AddressId.toString ->
+        PreviousAddressId.toString ->
           Json.toJson(Address("address line 1", "address line 2", Some("test town"),
             Some("test county"), Some("test post code"), "GB")
-      ))))
+          ))))
 
-  "ManualAddress Controller" must {
+  "PreviousAddress Controller" must {
 
     "return OK and the correct view for a GET when establisher name is present" in {
       val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
@@ -74,7 +74,7 @@ class AddressControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect to Session Expired page for a GET when establisher name is not  npresent" in {
+    "redirect to Session Expired page for a GET when establisher name is not present" in {
       val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
@@ -91,7 +91,7 @@ class AddressControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("addressLine1", "value 1"),
-        ("addressLine2", "value 2"), ("postCode.postCode", "AB1 1AB"), ("country" -> "GB"))
+        ("addressLine2", "value 2"), ("postCode.postCode", "AB1 1AB"), "country" -> "GB")
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 

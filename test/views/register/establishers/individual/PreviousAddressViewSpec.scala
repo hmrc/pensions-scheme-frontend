@@ -19,51 +19,52 @@ package views.register.establishers.individual
 import play.api.data.Form
 import controllers.register.establishers.individual.routes
 import forms.register.establishers.individual.AddressFormProvider
+import models.{Index, NormalMode}
 import models.addresslookup.Address
 import models.register.CountryOptions
-import models.{Index, NormalMode}
 import org.jsoup.Jsoup
+import play.twirl.api.HtmlFormat
 import utils.InputOption
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.establishers.individual.address
+import views.html.register.establishers.individual.previousAddress
 
-class AddressViewSpec extends QuestionViewBehaviours[Address] {
+class PreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
 
-  val messageKeyPrefix = "establisher_individual_address"
+  val messageKeyPrefix = "establisher_individual_previous_address"
   val firstIndex = Index(0)
-  val validData: Seq[InputOption] = Seq(InputOption("AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
-  val countryOptions: CountryOptions = new CountryOptions(validData)
+  val validCountryData: Seq[InputOption] = Seq(InputOption("AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
+  val countryOptions: CountryOptions = new CountryOptions(validCountryData)
   val establisherName: String = "test first name test last name"
 
   override val form = new AddressFormProvider()()
 
-  def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable = () => address(frontendAppConfig, new AddressFormProvider().apply(),
-    NormalMode, firstIndex, validData, establisherName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => previousAddress(frontendAppConfig, form, NormalMode, firstIndex,
+    countryOptions.options, establisherName)(fakeRequest, messages)
 
-  def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[_]) => address(frontendAppConfig, form, NormalMode,
-    firstIndex, validData, establisherName)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => previousAddress(frontendAppConfig, form, NormalMode,
+    firstIndex, countryOptions.options, establisherName)(fakeRequest, messages)
 
 
-  "ManualAddress view" must {
+  "PreviousAddress view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "lede")
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       routes.AddressController.onSubmit(NormalMode, firstIndex).url, "addressLine1", "addressLine2", "addressLine3", "addressLine4")
 
     "contain select input options for the value" in {
       val doc = asDocument(createViewUsingForm(form))
-      for (option <- validData) {
+      for (option <- validCountryData) {
         assertContainsSelectOption(doc, s"value-${option.value}", option.label, option.value, false)
       }
     }
 
-    for (option <- validData) {
+    for (option <- validCountryData) {
       s"have the '${option.value}' select option selected" in {
         val doc = asDocument(createViewUsingForm(form.bind(Map("country" -> s"${option.value}"))))
         assertContainsSelectOption(doc, s"value-${option.value}", option.label, option.value, true)
 
-        for (unselectedOption <- validData.filterNot(o => o == option)) {
+        for (unselectedOption <- validCountryData.filterNot(o => o == option)) {
           assertContainsSelectOption(doc, s"value-${unselectedOption.value}", unselectedOption.label, unselectedOption.value, false)
         }
       }
@@ -72,6 +73,5 @@ class AddressViewSpec extends QuestionViewBehaviours[Address] {
     "have establisher name rendered on the page" in {
       Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)
     }
-
   }
 }
