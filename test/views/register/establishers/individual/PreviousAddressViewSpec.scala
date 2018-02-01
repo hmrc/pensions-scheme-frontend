@@ -45,14 +45,14 @@ class PreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
     firstIndex, countryOptions.options, establisherName)(fakeRequest, messages)
 
 
-  "PreviousAddress view" must {
+  "Previous Address view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       routes.AddressController.onSubmit(NormalMode, firstIndex).url, "addressLine1", "addressLine2", "addressLine3", "addressLine4")
 
-    "contain select input options for the value" in {
+    "contain select input options for country" in {
       val doc = asDocument(createViewUsingForm(form))
       for (option <- validCountryData) {
         assertContainsSelectOption(doc, s"value-${option.value}", option.label, option.value, false)

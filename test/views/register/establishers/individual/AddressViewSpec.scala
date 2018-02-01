@@ -44,14 +44,14 @@ class AddressViewSpec extends QuestionViewBehaviours[Address] {
     firstIndex, validData, establisherName)(fakeRequest, messages)
 
 
-  "ManualAddress view" must {
+  "Address view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "lede")
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       routes.AddressController.onSubmit(NormalMode, firstIndex).url, "addressLine1", "addressLine2", "addressLine3", "addressLine4")
 
-    "contain select input options for the value" in {
+    "contain select input options for country" in {
       val doc = asDocument(createViewUsingForm(form))
       for (option <- validData) {
         assertContainsSelectOption(doc, s"value-${option.value}", option.label, option.value, false)
@@ -72,6 +72,5 @@ class AddressViewSpec extends QuestionViewBehaviours[Address] {
     "have establisher name rendered on the page" in {
       Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)
     }
-
   }
 }

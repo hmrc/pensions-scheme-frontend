@@ -35,17 +35,17 @@ import views.html.register.establishers.individual.previousAddress
 
 import scala.concurrent.Future
 
-class PreviousAddressController @Inject() (
-                                            appConfig: FrontendAppConfig,
-                                            override val messagesApi: MessagesApi,
-                                            dataCacheConnector: DataCacheConnector,
-                                            navigator: Navigator,
-                                            authenticate: AuthAction,
-                                            getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction,
-                                            formProvider: AddressFormProvider,
-                                            countryOptions: CountryOptions
-                                      ) extends FrontendController with I18nSupport {
+class PreviousAddressController @Inject()(
+                                           appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           dataCacheConnector: DataCacheConnector,
+                                           navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           formProvider: AddressFormProvider,
+                                           countryOptions: CountryOptions
+                                         ) extends FrontendController with I18nSupport {
 
   private val form = formProvider()
 
@@ -81,7 +81,7 @@ class PreviousAddressController @Inject() (
       }
   }
 
-  private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
+  private def retrieveEstablisherName(index: Int)(block: String => Future[Result])
                                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
     request.userAnswers.get(EstablisherDetailsId(index)) match {
       case Some(value) =>

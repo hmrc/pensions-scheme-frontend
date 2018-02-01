@@ -301,15 +301,7 @@ addressResults.checkYourAnswersLabel = addressResults
 messages__establisher_individual_address__title = Establisher’s address
 messages__manualAddress_checkYourAnswersLabel = manualAddress
 
-
 messages__establisher_individual_previous_address__title = Previous address
 messages__establisher_individual_previous_address_lede = This is usually the registered business address but you can enter any address you have for this company.
 
-
-messages__previousAddress__title = previousAddress
-messages__previousAddress__heading = previousAddress
-messages__previousAddress__field1 = Field 1
-messages__previousAddress__field2 = Field 2
 messages__previousAddress__checkYourAnswersLabel = previousAddress
-messages__previousAddress__error__field1_required = Please give an answer for field1
-messages__previousAddress__error__field2_required = Please give an answer for field2
