@@ -17,14 +17,15 @@
 package forms.register.establishers.individual
 
 import javax.inject.Inject
-import forms.mappings.Mappings
+import forms.mappings.{Constraints, Mappings}
 import play.api.data.Form
-import models.register.establishers.individual.PreviousAddressList
 
-class PreviousAddressListFormProvider @Inject() extends Mappings {
+class PreviousAddressListFormProvider @Inject() () extends Mappings with Constraints {
 
-  def apply(): Form[Int] =
+  def apply(previousAddresses: Seq[_]): Form[Int] =
     Form(
       "value" -> int("messages__error__select_address")
+        .verifying(minimumValue(0, "error.invalid"))
+        .verifying(maximumValue(previousAddresses.length - 1, "error.invalid"))
     )
 }

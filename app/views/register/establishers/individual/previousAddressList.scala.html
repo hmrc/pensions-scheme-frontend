@@ -18,9 +18,10 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.individual.routes._
 @import models.Mode
-@import models.addressLookup._
+@import models.addresslookup._
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, addressSeq: Seq[Address], establisherName: String)(implicit request: Request[_], messages: Messages)
+
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, previousAddresses: Seq[Address], establisherName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__select_the_previous_address__title"),
@@ -33,28 +34,29 @@
 
         @components.heading(headingKey = "messages__select_the_previous_address__title", secondaryHeaderKey = Some(establisherName))
 
-        <p>@messages("messages__common__select_address")
+        <p>
+            @messages("messages__common__select_address")
             <a id="manual-address-link" href="@PreviousAddressListController.onPageLoad(mode, index)">
                 @messages(s"messages__common__select_address_link")
             </a>
         </p>
 
         @components.fieldSet(
-            field = form("value")
+            field = form("value"),
             legend = "messages__select_the_previous_address__title",
             hiddenLegend = true
         ) {
-            @for((addressRecord, i) <- addressSeq.zipWithIndex) {
+            @for((address, i) <- previousAddresses.zipWithIndex) {
 
 
                 @components.radio(
                     field = form("value"),
-                    label = s"${addressRecord.addressLine1}, ${addressRecord.addressLine2}, ${addressRecord.addressLine3.getOrElse("")}, ${addressRecord.addressLine4.getOrElse("")}, ${addressRecord.postcode.getOrElse("")}",
+                    label = address.print,
                     value = i.toString
                 )
             }
         }
 
         @components.submit_button()
-}
+    }
 }

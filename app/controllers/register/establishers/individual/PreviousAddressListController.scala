@@ -25,7 +25,7 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.establishers.individual.PreviousAddressListFormProvider
-import identifiers.register.establishers.individual.{PostCodeLookupId, EstablisherDetailsId, PreviousAddressListId}
+import identifiers.register.establishers.individual._
 import models.addresslookup.{Address, AddressRecord}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual.previousAddressList
@@ -46,15 +46,16 @@ class PreviousAddressListController @Inject()(
                                        formProvider: PreviousAddressListFormProvider
                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats{
 
-  val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val result = request.userAnswers.get[Seq[Address]](PostCodeLookupId) match {
-            case None => Redirect(controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, index))
-            case Some(value) => Ok(previousAddressList(appConfig, form, mode, index, value, establisherName))
+          val result = request.userAnswers.get(PreviousPostCodeLookupId(index)) match {
+            case None =>
+              Redirect(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index))
+            case Some(previousAddresses) =>
+              Ok(previousAddressList(appConfig, formProvider(previousAddresses), mode, index, previousAddresses, establisherName))
           }
           Future.successful(result)
       }
@@ -64,26 +65,25 @@ class PreviousAddressListController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val address = request.userAnswers.get[Seq[Address]](PostCodeLookupId.path).getOrElse(Seq.empty)
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(previousAddressList(appConfig, formWithErrors, mode, index,
-                request.userAnswers.get[Seq[Address]](PostCodeLookupId.path).getOrElse(Seq.empty), establisherName))),
-            (value) =>
+          request.userAnswers.get(PreviousPostCodeLookupId(index)) match {
+            case None =>
+              Future.successful(Redirect(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index)))
 
-              if (value < address.length) {
-              dataCacheConnector.save(
-                request.externalId,
-                PreviousAddressListId(index),
-                address(value)
-              ).map {
-                json => Redirect(navigator.nextPage(PreviousAddressListId(index), mode)(new UserAnswers(json)))
-              }
-      } else {
-                Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-              }
-
-          )
+            case Some(previousAddresses) =>
+              formProvider(previousAddresses).bindFromRequest().fold(
+                formWithErrors =>
+                  Future.successful(BadRequest(previousAddressList(appConfig, formWithErrors, mode, index, previousAddresses, establisherName))),
+                id =>
+                  dataCacheConnector.save(
+                    request.externalId,
+                    PreviousAddressId(index),
+                    previousAddresses(id).copy(country = "GB")
+                  ).map {
+                    json =>
+                      Redirect(navigator.nextPage(PreviousAddressListId(index), mode)(new UserAnswers(json)))
+                  }
+              )
+          }
       }
   }
 
