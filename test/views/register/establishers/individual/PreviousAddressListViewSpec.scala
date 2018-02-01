@@ -16,45 +16,74 @@
 
 package views.register.establishers.individual
 
+import controllers.register.establishers.individual.routes
 import play.api.data.Form
 import forms.register.establishers.individual.PreviousAddressListFormProvider
-import models.NormalMode
-import models.register.establishers.individual.PreviousAddressList
+import models.addresslookup.Address
+import models.{Index, NormalMode}
+import org.jsoup.Jsoup
+import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.individual.previousAddressList
+import views.html.register.establishers.individual.{addressList, previousAddressList}
 
 class PreviousAddressListViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "previousAddressList"
+  val messageKeyPrefix = "select_the_previous_address"
 
-  val form = new PreviousAddressListFormProvider()()
+  val form = new PreviousAddressListFormProvider()(Seq(0))
+  val firstIndex = Index(0)
+  val establisherName: String = "test first name test last name"
 
-  def createView = () => previousAddressList(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
+    Some("test county"), Some(postCode), "GB")
 
-  def createViewUsingForm = (form: Form[_]) => previousAddressList(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  val addressSeq = Seq(address("postcode 1"), address("postcode 2"))
+  val previousAddressIndexes = Seq.range(0, 2)
 
-  "PreviousAddressList view" must {
+  def createView: () => HtmlFormat.Appendable = () => previousAddressList(frontendAppConfig, form, NormalMode, firstIndex, addressSeq,
+    establisherName)(fakeRequest, messages)
+
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressList(frontendAppConfig, form, NormalMode,
+    firstIndex, addressSeq, establisherName)(fakeRequest, messages)
+
+  def getAddressValue(address: Address): String = s"${address.addressLine1}, ${address.addressLine2}" +
+    s"${address.addressLine3.map(town => s", $town").getOrElse("")}" +
+    s"${address.addressLine4.map(county => s", $county").getOrElse("")}, " +
+    s"${address.postcode.map(postcode => s"$postcode").getOrElse("")}"
+
+
+  "AddressResults view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+    "have link for enter address manually" in {
+      Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
+        routes.PreviousAddressListController.onPageLoad(NormalMode, firstIndex).url)
+    }
+
+    "have establisher name rendered on the page" in {
+      Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)
+    }
   }
 
-  "PreviousAddressList view" when {
+  "AddressResults view" when {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- PreviousAddressList.options) {
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, false)
+        for (i <- previousAddressIndexes) {
+          assertContainsRadioButton(doc, s"value-$i", "value", s"$i", isChecked = false)
         }
       }
     }
 
-    for(option <- PreviousAddressList.options) {
-      s"rendered with a value of '${option.value}'" must {
-        s"have the '${option.value}' radio button selected" in {
-          val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
 
-          for(unselectedOption <- PreviousAddressList.options.filterNot(o => o == option)) {
-            assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
+    for (index <- previousAddressIndexes) {
+      s"rendered with a value of '$index'" must {
+        s"have the '$index' radio button selected" in {
+          val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"$index"))))
+          assertContainsRadioButton(doc, s"value-$index", "value", s"$index", isChecked = true)
+
+          for (unselectedIndex <- previousAddressIndexes.filterNot(o => o == index)) {
+            assertContainsRadioButton(doc, s"value-$unselectedIndex", "value", unselectedIndex.toString, isChecked = false)
           }
         }
       }

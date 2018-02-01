@@ -17,26 +17,33 @@
 package forms.register.establishers.individual
 
 import forms.behaviours.FormBehaviours
-import models.{Field, Invalid, Required}
-import models.register.establishers.individual.PreviousAddressList
 
 class PreviousAddressListFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
-    "value" -> PreviousAddressList.options.head.value
+    "value" -> "0"
   )
 
-  val form = new PreviousAddressListFormProvider()()
+  val form = new PreviousAddressListFormProvider()(Seq(0, 1))
 
-  "PreviousAddressList form" must {
+  "AddressResults form" must {
 
-    behave like questionForm[PreviousAddressList](PreviousAddressList.values.head)
+    behave like questionForm[Int](0)
 
-    behave like formWithOptionField(
-      Field(
-        "value",
-        Required -> "previousAddressList.error.required",
-        Invalid -> "error.invalid"),
-      PreviousAddressList.options.map(_.value): _*)
+    "fail to bind when value is omitted" in {
+      val expectedError = error("value", "messages__error__select_address")
+      checkForError(form, emptyForm, expectedError)
+    }
+
+    "fail to bind when value is negative" in {
+      val expectedError = error("value", "error.invalid", 0)
+      checkForError(form, Map("value" -> "-1"), expectedError)
+    }
+
+    "fail to bind when the value is out of bounds" in {
+      val expectedError = error("value", "error.invalid", 1)
+      checkForError(form, Map("value" -> "2"), expectedError)
+    }
   }
 }
+

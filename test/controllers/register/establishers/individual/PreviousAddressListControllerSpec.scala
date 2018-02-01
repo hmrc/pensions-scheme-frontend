@@ -16,81 +16,141 @@
 
 package controllers.register.establishers.individual
 
-import play.api.data.Form
-import play.api.libs.json.JsString
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import play.api.libs.json._
-import forms.register.establishers.individual.PreviousAddressListFormProvider
-import identifiers.register.establishers.individual.PreviousAddressListId
-import models.NormalMode
-import models.register.establishers.individual.PreviousAddressList
-import views.html.register.establishers.individual.previousAddressList
 import controllers.ControllerSpecBase
+import controllers.actions._
+import forms.register.establishers.individual.PreviousAddressListFormProvider
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, PostCodeLookupId, PreviousPostCodeLookupId, UniqueTaxReferenceId}
+import models.addresslookup.Address
+import models.register.establishers.individual.{EstablisherDetails, UniqueTaxReference}
+import models.register.{SchemeDetails, SchemeType}
+import models.{Index, NormalMode}
+import org.joda.time.LocalDate
+import org.mockito.Matchers.any
+import org.mockito.{Matchers, Mockito}
+import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.mockito.MockitoSugar
+import play.api.data.Form
+import play.api.libs.json.Json
+import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.{Enumerable, FakeNavigator, MapFormats}
+import views.html.register.establishers.individual.previousAddressList
 
-class PreviousAddressListControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
+
+
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new PreviousAddressListFormProvider()
-  val form = formProvider()
+  val form = formProvider(Seq(0))
+  val firstIndex = Index(0)
+  val establisherName: String = "test first name test last name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
-    new PreviousAddressListController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+  val previousAddresses = Seq(
+    address("test post code 1"),
+    address("test post code 2")
+  )
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    Mockito.reset(dataCacheConnector)
+  }
+
+  val dataCacheConnector = Mockito.spy(new FakeDataCacheConnector())
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PreviousAddressListController =
+    new PreviousAddressListController(frontendAppConfig, messagesApi, dataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = previousAddressList(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form, address: Seq[Address] = previousAddresses): String =
+    previousAddressList(frontendAppConfig, form, NormalMode, firstIndex, address, establisherName)(fakeRequest, messages).toString
+
+  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
+    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
+
+  val validData = Json.obj(SchemeDetailsId.toString -> Json.toJson(
+    SchemeDetails("value 1", SchemeType.SingleTrust)),
+    "establishers" -> Json.arr(
+      Json.obj(
+        EstablisherDetailsId.toString ->
+          EstablisherDetails("test first name", "test last name", LocalDate.now),
+        UniqueTaxReferenceId.toString ->
+          UniqueTaxReference.Yes("1234567891"),
+        PreviousPostCodeLookupId.toString -> previousAddresses)
+    ))
+
 
   "PreviousAddressList Controller" must {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode)(fakeRequest)
+     "return OK and the correct view for a GET when establisher name is present" in {
+      val result = controller(new FakeDataRetrievalAction(Some(validData))).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result) mustBe viewAsString(address = Seq(address("test post code 1"), address("test post code 2")))
     }
 
-    "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(PreviousAddressListId.toString -> JsString(PreviousAddressList.values.head.toString))
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+    "redirect to Session Expired page when establisher name is not present" in {
+      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
 
-      contentAsString(result) mustBe viewAsString(form.fill(PreviousAddressList.values.head))
+    "redirect to previous address lookup when no  previous addresses are present after lookup" in {
+      val result = controller().onSubmit(NormalMode, firstIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(
+        controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
+    }
+    "redirect to Address look up page when no addresses are present after lookup (post)" in {
+      val result = controller().onSubmit(NormalMode, firstIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(
+        controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", PreviousAddressList.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+    "update the country of the chosen address to `GB`" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
+      controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(NormalMode, firstIndex)(postRequest)
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      verify(dataCacheConnector, times(1)).save(any(), any(), Matchers.eq(previousAddresses.head.copy(country = "GB")))(any())
+    }
+
+    "return a Bad Request and errors when no data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
+
+      val result = controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", PreviousAddressList.options.head.value))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
