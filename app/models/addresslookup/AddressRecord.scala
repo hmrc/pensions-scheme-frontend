@@ -24,13 +24,23 @@ object AddressRecord {
   implicit val addressRecordFormat: Format[AddressRecord] = Json.format[AddressRecord]
 }
 
-
 case class Address(addressLine1: String,
                    addressLine2: String,
                    addressLine3: Option[String],
                    addressLine4: Option[String],
                    postcode: Option[String],
-                   country: String)
+                   country: String) {
+
+  def print: String = {
+    Seq(
+      Some(addressLine1),
+      Some(addressLine2),
+      addressLine3,
+      addressLine4,
+      postcode
+    ).flatten.mkString(", ")
+  }
+}
 
 object Address {
 

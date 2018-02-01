@@ -18,34 +18,34 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import config.FrontendAppConfig
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
+import config.FrontendAppConfig
 import forms.register.establishers.individual.PostCodeLookupFormProvider
-import identifiers.register.establishers.individual.{PostCodeLookupId, EstablisherDetailsId}
+import identifiers.register.establishers.individual.{EstablisherDetailsId, PreviousPostCodeLookupId}
 import models.addresslookup.Address
 import models.requests.DataRequest
 import models.{Index, Mode}
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.establishers.individual.postCodeLookup
+import views.html.register.establishers.individual.previousPostCodeLookup
 
 import scala.concurrent.Future
 
-class PostCodeLookupController @Inject()(
-                                   appConfig: FrontendAppConfig,
-                                   override val messagesApi: MessagesApi,
-                                   dataCacheConnector: DataCacheConnector,
-                                   addressLookupConnector: AddressLookupConnector,
-                                   navigator: Navigator,
-                                   authenticate: AuthAction,
-                                   getData: DataRetrievalAction,
-                                   requireData: DataRequiredAction,
-                                   formProvider: PostCodeLookupFormProvider
-                                 ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+class PreviousAddressPostCodeLookupController @Inject()(
+                                        appConfig: FrontendAppConfig,
+                                        override val messagesApi: MessagesApi,
+                                        dataCacheConnector: DataCacheConnector,
+                                        addressLookupConnector: AddressLookupConnector,
+                                        navigator: Navigator,
+                                        authenticate: AuthAction,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
+                                        formProvider: PostCodeLookupFormProvider
+                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits{
 
   private val form = formProvider()
 
@@ -57,7 +57,7 @@ class PostCodeLookupController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          Future.successful(Ok(postCodeLookup(appConfig, form, mode, index, establisherName)))
+          Future.successful(Ok(previousPostCodeLookup(appConfig, form, mode, index, establisherName)))
       }
   }
 
@@ -66,27 +66,29 @@ class PostCodeLookupController @Inject()(
       retrieveEstablisherName(index) {
         establisherName =>
           form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(postCodeLookup(appConfig, formWithErrors, mode, index, establisherName))),
-            (value) =>
+            formWithErrors =>
+              Future.successful(BadRequest(previousPostCodeLookup(appConfig, formWithErrors, mode, index, establisherName))),
+            value =>
               addressLookupConnector.addressLookupByPostCode(value).flatMap {
                 case None =>
-                  Future.successful(BadRequest(postCodeLookup(appConfig, formWithError("invalid"), mode, index, establisherName)))
+                  Future.successful(BadRequest(previousPostCodeLookup(appConfig, formWithError("invalid"), mode, index, establisherName)))
 
                 case Some(Nil) =>
-                  Future.successful(BadRequest(postCodeLookup(appConfig, formWithError("no_results"), mode, index, establisherName)))
+                  Future.successful(BadRequest(previousPostCodeLookup(appConfig, formWithError("no_results"), mode, index, establisherName)))
 
                 case Some(addressSeq) =>
-                  dataCacheConnector.save(
+                  dataCacheConnector.save[Seq[Address]](
                     request.externalId,
-                    PostCodeLookupId(index),
+                    PreviousPostCodeLookupId(index).path,
                     addressSeq.map(_.address)
                   ).map {
                     json =>
-                      Redirect(navigator.nextPage(PostCodeLookupId(index), mode)(new UserAnswers(json)))
+                      Redirect(navigator.nextPage(PreviousPostCodeLookupId(index), mode)(new UserAnswers(json)))
                   }
+
               }
           )
+
       }
   }
 

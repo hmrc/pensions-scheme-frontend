@@ -115,7 +115,9 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
     }
 
     "fail to bind when the date is in future" in {
-      val data = validData + ("date.day" -> s"${day+1}", "date.month" -> s"$month", "date.year" -> s"$year")
+      val tomorrow = LocalDate.now.plusDays(1)
+      val data = validData +
+        ("date.day" -> s"${tomorrow.getDayOfMonth}", "date.month" -> s"${tomorrow.getMonthOfYear}", "date.year" -> s"${tomorrow.getYear}")
 
       val expectedError = error("date", "messages__error__date_future")
       checkForError(form, data, expectedError)

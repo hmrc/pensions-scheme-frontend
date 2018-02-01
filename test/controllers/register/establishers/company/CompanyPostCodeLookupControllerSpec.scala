@@ -14,44 +14,44 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.individual
+package controllers.register.establishers.company
 
 import play.api.data.{Form, FormError}
 import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.individual.PostCodeLookupFormProvider
 import models.{Index, NormalMode}
-import views.html.register.establishers.individual.postCodeLookup
 import controllers.ControllerSpecBase
+import forms.register.establishers.company.CompanyPostCodeLookupFormProvider
 import models.addresslookup.{Address, AddressRecord}
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.register.establishers.company.companyPostCodeLookup
 
 import scala.concurrent.Future
 
-class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
+class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new PostCodeLookupFormProvider()
+  val formProvider = new CompanyPostCodeLookupFormProvider()
   val form = formProvider()
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
   val firstIndex = Index(0)
-  val establisherName: String = "test first name test last name"
+  val schemeName: String = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PostCodeLookupController =
-    new PostCodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector, fakeAddressLookupConnector,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CompanyPostCodeLookupController =
+    new CompanyPostCodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector, fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = postCodeLookup(frontendAppConfig, form, NormalMode, firstIndex,
-    establisherName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = companyPostCodeLookup(frontendAppConfig, form, NormalMode, firstIndex,
+    schemeName)(fakeRequest, messages).toString
 
   "Address Controller" must {
 

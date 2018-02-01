@@ -38,6 +38,12 @@ messages__common__enter_postcode = Enter the postcode below, or
 messages__common__select_address_link = enter the address manually
 messages__common__address_postcode = Postal code
 messages__common__address_postcode_hint = For example NE12 8ER
+messages__common__address1 = Address line 1
+messages__common__address2 = Address line 2
+messages__common__address3 = Address line 3 (optional)
+messages__common__address4 = Address line 4 (optional)
+messages__common__address_postcode_hint = For example NE12 8ER
+messages__common__country = Country
 messages__error__first_name = Enter the first name
 messages__error__last_name = Enter the last name
 messages__error__date = Enter a valid date
@@ -49,6 +55,13 @@ messages__error__no_sautr_establisher = You need to tell us why the establisher 
 messages__error__no_sautr_length = The reason cannot be more than 150 characters
 messages__error__email = Enter an email address
 messages__error__phone = Enter a phone number
+messages__error__addr1 = Enter the first line of address
+messages__error__addr2 = Enter the second line of address
+messages__error__addr1_length = The first line of address cannot be more than 35 characters
+messages__error__addr2_length = The second line of address cannot be more than 35 characters
+messages__error__addr3_length = The third line of address cannot be more than 35 characters
+messages__error__addr4_length = The fourth line of address cannot be more than 35 characters
+messages__error__country = Enter a country
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -272,6 +285,14 @@ messages__error__crn_invalid = Enter a valid 7 or 8 character Company Registrati
 messages__error__no_crn_length = The reason cannot be more than 150 characters
 messages__error__crn = Enter the Company Registration number
 
+messages__benefits_insurance_addr__title = Insurance company address
+messages__common__company_address_hint = This is usually the registered business address but you can enter any address you have for this company.
+messages__common__enter_postcode = Enter the postcode below, or
+messages__common__select_address_link = enter the address manually
+messages__common__address_postcode = Postal code
+messages__common__address_postcode_hint = For example NE12 8ER
+messages__error__postcode = Enter the postal code
+
 messages__select_the_address__title = Select the address
 messages__common__select_address = Select the address from the list below, or
 messages__error__select_address = Select an address
@@ -279,3 +300,10 @@ addressResults.checkYourAnswersLabel = addressResults
 
 messages__select_the_previous_address__title = Select the previous address
 messages__previousAddressList__checkYourAnswersLabel = previousAddressList
+
+messages__establisher_individual_address__title = Establisher’s address
+messages__manualAddress_checkYourAnswersLabel = manualAddress
+
+messages__establisher_individual_previous_address__title = Previous address
+messages__establisher_individual_previous_address_lede = This is usually the registered business address but you can enter any address you have for this company.
+

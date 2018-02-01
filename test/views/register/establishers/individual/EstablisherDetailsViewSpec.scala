@@ -103,13 +103,14 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[EstablisherDetai
     }
 
     "display future date error when date is in future" in {
+      val tomorrow = LocalDate.now.plusDays(1)
       val expectedError = messages("messages__error__date_future")
       val invalidData: Map[String, String] = Map(
         "firstName" -> "testFirstName",
         "lastName" -> "testLastName",
-        "date.day" -> s"${day+1}",
-        "date.month" -> s"$month",
-        "date.year" -> s"$year"
+        "date.day" -> s"${tomorrow.getDayOfMonth}",
+        "date.month" -> s"${tomorrow.getMonthOfYear}",
+        "date.year" -> s"${tomorrow.getYear}"
       )
       val doc = asDocument(createViewUsingForm(form.bind(invalidData)))
       doc.select("span.error-notification").text() mustEqual expectedError

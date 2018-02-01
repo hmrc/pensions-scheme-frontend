@@ -14,12 +14,26 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.individual
+package models.addresslookup
 
-import identifiers.Identifier
+import org.scalatest.{MustMatchers, WordSpec}
 
-case class AddressListId(index: Int) extends Identifier
+class AddressSpec extends WordSpec with MustMatchers {
 
-object AddressListId {
-  override def toString: String = "addressResults"
+  ".print" must {
+
+    "print all of the fields of the address when they exist (minus country)" in {
+
+      val model = Address("a", "b", Some("c"), Some("d"), Some("e"), "UK")
+
+      model.print mustEqual "a, b, c, d, e"
+    }
+
+    "omit all the fields which are missing" in {
+
+      val model = Address("a", "b", None, None, None, "UK")
+
+      model.print mustEqual "a, b"
+    }
+  }
 }
