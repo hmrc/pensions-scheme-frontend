@@ -16,8 +16,8 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.routes._
-@import models.{Mode, Index}
+@import controllers.register.routes
+@import models.Mode
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
@@ -26,7 +26,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = controllers.register.routes.CompanyPostCodeLookupController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = controllers.register.routes.SchemePostCodeLookupController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 
@@ -37,7 +37,7 @@
         <p>@messages("messages__common__company_address_hint")</p>
 
         <p>@messages("messages__common__enter_postcode")
-            <a id="manual-address-link" href="@CompanyPostCodeLookupController.onPageLoad(mode)">
+            <a id="manual-address-link" href="@routes.SchemePostCodeLookupController.onPageLoad(mode)">
                 @messages(s"messages__common__select_address_link")
             </a>
         </p>

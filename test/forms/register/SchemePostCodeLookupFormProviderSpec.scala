@@ -18,13 +18,13 @@ package forms.register
 
 import forms.FormSpec
 
-class CompanyPostCodeLookupFormProviderSpec extends FormSpec {
+class SchemePostCodeLookupFormProviderSpec extends FormSpec {
 
   val requiredKey = "messages__error__postcode"
 
   "Address Form" must {
 
-    val formProvider = new CompanyPostCodeLookupFormProvider()
+    val formProvider = new SchemePostCodeLookupFormProvider()
 
     "bind a string" in {
       val form = formProvider().bind(Map("value" -> "answer"))

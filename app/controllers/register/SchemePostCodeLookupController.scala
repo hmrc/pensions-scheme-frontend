@@ -21,20 +21,20 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
-import forms.register.CompanyPostCodeLookupFormProvider
-import identifiers.register.{CompanyPostCodeLookupId, SchemeDetailsId}
+import forms.register.SchemePostCodeLookupFormProvider
+import identifiers.register.{SchemePostCodeLookupId, SchemeDetailsId}
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.companyPostCodeLookup
+import views.html.register.schemePostCodeLookup
 
 import scala.concurrent.Future
 
-class CompanyPostCodeLookupController @Inject()(
+class SchemePostCodeLookupController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           dataCacheConnector: DataCacheConnector,
@@ -43,7 +43,7 @@ class CompanyPostCodeLookupController @Inject()(
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
-                                          formProvider: CompanyPostCodeLookupFormProvider
+                                          formProvider: SchemePostCodeLookupFormProvider
                                         ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -56,7 +56,7 @@ class CompanyPostCodeLookupController @Inject()(
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          Future.successful(Ok(companyPostCodeLookup(appConfig, form, mode, schemeName)))
+          Future.successful(Ok(schemePostCodeLookup(appConfig, form, mode, schemeName)))
       }
   }
 
@@ -66,23 +66,23 @@ class CompanyPostCodeLookupController @Inject()(
         schemeName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithErrors, mode, schemeName))),
+              Future.successful(BadRequest(schemePostCodeLookup(appConfig, formWithErrors, mode, schemeName))),
             (value) =>
               addressLookupConnector.addressLookupByPostCode(value).flatMap {
                 case None =>
-                  Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithError("invalid"), mode, schemeName)))
+                  Future.successful(BadRequest(schemePostCodeLookup(appConfig, formWithError("invalid"), mode, schemeName)))
 
                 case Some(Nil) =>
-                  Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithError("no_results"), mode, schemeName)))
+                  Future.successful(BadRequest(schemePostCodeLookup(appConfig, formWithError("no_results"), mode, schemeName)))
 
                 case Some(addressSeq) =>
                   dataCacheConnector.save(
                     request.externalId,
-                    CompanyPostCodeLookupId,
+                    SchemePostCodeLookupId,
                     addressSeq.map(_.address)
                   ).map {
                     json =>
-                      Redirect(navigator.nextPage(CompanyPostCodeLookupId, mode)(new UserAnswers(json)))
+                      Redirect(navigator.nextPage(SchemePostCodeLookupId, mode)(new UserAnswers(json)))
                   }
               }
           )
