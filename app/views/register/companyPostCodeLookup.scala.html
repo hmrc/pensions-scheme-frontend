@@ -16,17 +16,17 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.establishers.company.routes._
+@import controllers.register.routes._
 @import models.{Mode, Index}
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__benefits_insurance_addr__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onSubmit(mode, index), 'autoComplete -> "off") {
+    @helpers.form(action = controllers.register.routes.CompanyPostCodeLookupController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 
@@ -37,7 +37,7 @@
         <p>@messages("messages__common__company_address_hint")</p>
 
         <p>@messages("messages__common__enter_postcode")
-            <a id="manual-address-link" href="@CompanyPostCodeLookupController.onPageLoad(mode, index)">
+            <a id="manual-address-link" href="@CompanyPostCodeLookupController.onPageLoad(mode)">
                 @messages(s"messages__common__select_address_link")
             </a>
         </p>

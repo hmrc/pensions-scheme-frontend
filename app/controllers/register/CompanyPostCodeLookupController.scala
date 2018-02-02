@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register
 
 import javax.inject.Inject
 
@@ -52,28 +52,28 @@ class CompanyPostCodeLookupController @Inject()(
     form.withError("value", s"messages__error__postcode_$messageKey")
   }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          Future.successful(Ok(companyPostCodeLookup(appConfig, form, mode, index, schemeName)))
+          Future.successful(Ok(companyPostCodeLookup(appConfig, form, mode, schemeName)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithErrors, mode, index, schemeName))),
+              Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithErrors, mode, schemeName))),
             (value) =>
               addressLookupConnector.addressLookupByPostCode(value).flatMap {
                 case None =>
-                  Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithError("invalid"), mode, index, schemeName)))
+                  Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithError("invalid"), mode, schemeName)))
 
                 case Some(Nil) =>
-                  Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithError("no_results"), mode, index, schemeName)))
+                  Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithError("no_results"), mode, schemeName)))
 
                 case Some(addressSeq) =>
                   dataCacheConnector.save(

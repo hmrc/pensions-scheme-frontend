@@ -12,16 +12,16 @@ echo "" >> ../conf/register.establishers.individual.routes
 echo "GET        /manualAddress                       controllers.register.establishers.individual.ManualAddressController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
 echo "POST       /manualAddress                       controllers.register.establishers.individual.ManualAddressController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
 echo "" >> ../conf/register.establishers.company.routes
-echo "GET        /companyPostCodeLookup               controllers.register.establishers.company.CompanyPostCodeLookupController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /companyPostCodeLookup               controllers.register.establishers.company.CompanyPostCodeLookupController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "GET        /companyPostCodeLookup               controllers.register.CompanyPostCodeLookupController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /companyPostCodeLookup               controllers.register.CompanyPostCodeLookupController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 echo "" >> ../conf/app.routes
 echo "GET        /addressResults               controllers.register.establishers.individual.AddressResultsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
 echo "POST       /addressResults               controllers.register.establishers.individual.AddressResultsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
 
 echo "GET        /changeManualAddress                       controllers.register.establishers.individual.ManualAddressController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
 echo "POST       /changeManualAddress                       controllers.register.establishers.individual.ManualAddressController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "GET        /changeCompanyPostCodeLookup                        controllers.register.establishers.company.CompanyPostCodeLookupController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /changeCompanyPostCodeLookup                        controllers.register.establishers.company.CompanyPostCodeLookupController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "GET        /changeCompanyPostCodeLookup                        controllers.register.CompanyPostCodeLookupController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /changeCompanyPostCodeLookup                        controllers.register.CompanyPostCodeLookupController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 echo "GET        /changeAddressResults               controllers.register.establishers.individual.AddressResultsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
 echo "POST       /changeAddressResults               controllers.register.establishers.individual.AddressResultsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
 
