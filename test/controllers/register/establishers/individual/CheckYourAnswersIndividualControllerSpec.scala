@@ -24,7 +24,6 @@ import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import utils.{DateHelper, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
-import views.html.check_your_answers
 import play.api.test.Helpers._
 import views.html.register.establishers.individual.check_your_answers_individual
 
@@ -35,6 +34,13 @@ class CheckYourAnswersIndividualControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(0)
   val testSchemeName = "Test Scheme Name"
 
+  val seqAnswers: Seq[AnswerRow] = Seq(AnswerRow("establisherDetails.name.checkYourAnswersLabel",
+    Seq("test first name test last name"), false,
+    controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
+    AnswerRow("establisherDetails.dateOfBirth.checkYourAnswersLabel",
+      Seq(DateHelper.formatDate(LocalDate.now)), false,
+      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url))
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersIndividualController =
     new CheckYourAnswersIndividualController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction,
       new DataRequiredActionImpl, countryOptions)
@@ -44,13 +50,7 @@ class CheckYourAnswersIndividualControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad(firstIndex)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe check_your_answers_individual(frontendAppConfig,
-        Seq(AnswerSection(None, Seq(AnswerRow("establisherDetails.name.checkYourAnswersLabel",
-          Seq("test first name test last name"), false,
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
-          AnswerRow("establisherDetails.dateOfBirth.checkYourAnswersLabel",
-            Seq(DateHelper.formatDate(LocalDate.now)), false,
-            controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)))),
-        testSchemeName)(fakeRequest, messages).toString
+        Seq(AnswerSection(None, seqAnswers)), testSchemeName)(fakeRequest, messages).toString
     }
 
     "redirect to Session Expired page for a GET when establisher name is not present" in {

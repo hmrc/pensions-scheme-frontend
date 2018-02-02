@@ -66,7 +66,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
 
   def address(index: Int): Seq[AnswerRow] = userAnswers.get(AddressId(index)) match {
     case Some(x) =>
-      val country = countryOptions.options.find(_.value == x.country).map(_.label).getOrElse(x.country)
       Seq(
         AnswerRow("address.checkYourAnswersLabel", addressAnswer(x), false,
           controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, Index(index)).url)
