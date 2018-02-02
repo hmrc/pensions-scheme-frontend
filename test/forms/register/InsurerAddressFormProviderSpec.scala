@@ -17,32 +17,92 @@
 package forms.register
 
 import forms.behaviours.FormBehaviours
+import models.addresslookup.Address
+import models.{Field, Required}
+import org.apache.commons.lang3.RandomStringUtils
+import play.api.data.FormError
 
 class InsurerAddressFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
-    "value" -> "0"
+    "addressLine1" -> "address line 1",
+    "addressLine2" -> "address line 2",
+    "addressLine3" -> "address line 3",
+    "addressLine4" -> "address line 4",
+    "postCode.postCode" -> "AB1 1AP",
+    "country" -> "GB"
   )
 
+  val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
   val form = new InsurerAddressFormProvider()()
 
-  "InsurerAddressResults form" must {
+  "InsurerAddress form" must {
+    behave like questionForm(Address("address line 1", "address line 2",
+      Some("address line 3"), Some("address line 4"), Some("AB1 1AP"), "GB"))
 
-    behave like questionForm[Int](0)
+    behave like formWithMandatoryTextFields(
+      Field("addressLine1", Required -> "messages__error__addr1"),
+      Field("addressLine2", Required -> "messages__error__addr2"),
+      Field("country", Required -> "messages__error__scheme_country"
+      )
+    )
 
-    "fail to bind when value is omitted" in {
-      val expectedError = error("value", "messages__error__select_address")
-      checkForError(form, emptyForm, expectedError)
+    "successfully bind when country is not UK and postcode is any postcode" in {
+      val data = validData + ("postCode.postCode" -> "zxadsafd", "country" -> "AF")
+      val result = form.bind(data)
+      result.get shouldEqual Address("address line 1", "address line 2",
+        Some("address line 3"), Some("address line 4"), Some("zxadsafd"), "AF")
     }
 
-    "fail to bind when value is negative" in {
-      val expectedError = error("value", "error.invalid", 0)
-      checkForError(form, Map("value" -> "-1"), expectedError)
+    "successfully bind when country is UK and postcode is a valid postcode" in {
+      val data = validData + ("postCode.postCode" -> "AB1 1AB", "country" -> "GB")
+      val result = form.bind(data)
+      result.get shouldEqual Address("address line 1", "address line 2",
+        Some("address line 3"), Some("address line 4"), Some("AB1 1AB"), "GB")
     }
 
-    "fail to bind when the value is out of bounds" in {
-      val expectedError = error("value", "error.invalid", 1)
-      checkForError(form, Map("value" -> "2"), expectedError)
+    "fail to bind when address line 1 exceeds max length 35" in {
+      val addressLine1 = RandomStringUtils.randomAlphabetic(36)
+      val data = validData + ("addressLine1" -> addressLine1)
+
+      val expectedError: Seq[FormError] = error("addressLine1", "messages__error__addr1_length", 35)
+      checkForError(form, data, expectedError)
+    }
+
+    "fail to bind when address line 2 exceeds max length 35" in {
+      val addressLine2 = RandomStringUtils.randomAlphabetic(36)
+      val data = validData + ("addressLine2" -> addressLine2)
+
+      val expectedError: Seq[FormError] = error("addressLine2", "messages__error__addr2_length", 35)
+      checkForError(form, data, expectedError)
+    }
+
+    "fail to bind when address line 3 exceeds max length 35" in {
+      val addressLine3 = RandomStringUtils.randomAlphabetic(36)
+      val data = validData + ("addressLine3" -> addressLine3)
+
+      val expectedError: Seq[FormError] = error("addressLine3", "messages__error__addr3_length", 35)
+      checkForError(form, data, expectedError)
+    }
+
+    "fail to bind when address line 4 exceeds max length 35" in {
+      val addressLine4 = RandomStringUtils.randomAlphabetic(36)
+      val data = validData + ("addressLine4" -> addressLine4)
+
+      val expectedError: Seq[FormError] = error("addressLine4", "messages__error__addr4_length", 35)
+      checkForError(form, data, expectedError)
+    }
+
+    "fail to bind when postcode is missing for country UK" in {
+      val validData: Map[String, String] = Map(
+        "addressLine1" -> "address line 1",
+        "addressLine2" -> "address line 2",
+        "addressLine3" -> "address line 3",
+        "addressLine4" -> "address line 4",
+        "country" -> "GB"
+      )
+      val expectedError: Seq[FormError] = error("postCode.postCode", "messages__error__postcode")
+      checkForError(form, validData, expectedError)
     }
   }
 }

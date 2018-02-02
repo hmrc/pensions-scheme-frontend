@@ -25,7 +25,7 @@ import identifiers.register.establishers.individual.{AddressId, EstablisherDetai
 import models.addresslookup.Address
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{CountryOptions, SchemeDetails, SchemeType}
-import models.{Index, NormalMode}
+import models.NormalMode
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -64,7 +64,7 @@ class InsurerAddressControllerSpec extends ControllerSpecBase {
             Some("test county"), Some("test post code"), "GB")
           ))))
 
-  "ManualAddress Controller" must {
+  "InsurerAddress Controller" must {
 
     "return OK and the correct view for a GET when scheme name is present" in {
       val result = controller().onPageLoad(NormalMode)(fakeRequest)
