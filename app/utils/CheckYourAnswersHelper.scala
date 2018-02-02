@@ -82,10 +82,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     case _ => Nil
   }
 
-  def addressAnswer(x: Address): Seq[String] = {
-    val country = countryOptions.options.find(_.value == x.country).map(_.label).getOrElse(x.country)
-    Seq(Some(s"${x.addressLine1},"), Some(s"${x.addressLine2},"), x.addressLine3.map(y => s"$y,"),
-      x.addressLine4.map(y => s"$y,"), x.postcode.map(y => s"$y,"), Some(country)).flatten
+  def addressAnswer(address: Address): Seq[String] = {
+    val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
+    Seq(Some(s"${address.addressLine1},"), Some(s"${address.addressLine2},"), address.addressLine3.map(y => s"$y,"),
+      address.addressLine4.map(y => s"$y,"), address.postcode.map(y => s"$y,"), Some(country)).flatten
   }
 
   def uniqueTaxReference(index: Int): Seq[AnswerRow] = userAnswers.get(UniqueTaxReferenceId(index)) match {
