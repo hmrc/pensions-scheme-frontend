@@ -17,10 +17,7 @@
 package identifiers.register
 
 import identifiers._
-import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.CompanyDetailsId
 import models.addresslookup.Address
-import play.api.libs.json.JsPath
 
 
 object SchemePostCodeLookupId extends TypedIdentifier[Seq[Address]]  {
