@@ -285,14 +285,6 @@ messages__error__crn_invalid = Enter a valid 7 or 8 character Company Registrati
 messages__error__no_crn_length = The reason cannot be more than 150 characters
 messages__error__crn = Enter the Company Registration number
 
-messages__benefits_insurance_addr__title = Insurance company address
-messages__common__company_address_hint = This is usually the registered business address but you can enter any address you have for this company.
-messages__common__enter_postcode = Enter the postcode below, or
-messages__common__select_address_link = enter the address manually
-messages__common__address_postcode = Postal code
-messages__common__address_postcode_hint = For example NE12 8ER
-messages__error__postcode = Enter the postal code
-
 messages__select_the_address__title = Select the address
 messages__common__select_address = Select the address from the list below, or
 messages__error__select_address = Select an address
