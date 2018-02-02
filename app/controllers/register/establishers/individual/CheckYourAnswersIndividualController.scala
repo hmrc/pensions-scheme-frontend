@@ -51,6 +51,7 @@ class CheckYourAnswersIndividualController @Inject() (appConfig: FrontendAppConf
           checkYourAnswerHelper.address(index) ++ checkYourAnswerHelper.addressYears(index) ++
           checkYourAnswerHelper.previousAddress(index) ++
           checkYourAnswerHelper.contactDetails(index)))
+
         Future.successful(Ok(check_your_answers_individual(appConfig, sections, schemeName)))
       }
   }

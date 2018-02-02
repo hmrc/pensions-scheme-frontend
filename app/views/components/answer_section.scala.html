@@ -23,7 +23,7 @@
     <h2 class="bold">@messages(answerSection.headingKey.get)</h2>
 }
 
-<ul role="list" class="govuk-check-your-answers form-group cya-questions-short">
+<ul class="govuk-check-your-answers form-group cya-questions-short">
     @for(row <- answerSection.rows){
         @components.answer_row(row)
     }

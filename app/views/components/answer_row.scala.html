@@ -23,11 +23,13 @@
         <h2 class="bold std-text">@messages(row.label)</h2>
     </div>
     <div class="cya-answer">
-        <p class="address-partial">
+        <p>
             @if(row.answerIsMessageKey){
-                @messages(row.answer)
+                @messages(row.answer.head)
             } else{
-                @Html(row.answer)
+                @for(r <- row.answer){
+                    <span class="cya-multi-line">@r</span>
+                }
             }
         </p>
     </div>
