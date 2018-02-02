@@ -20,7 +20,7 @@ import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.InsurerAddressFormProvider
-import identifiers.register.SchemeDetailsId
+import identifiers.register.{InsurerAddressId, SchemeDetailsId}
 import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
 import models.addresslookup.Address
 import models.register.establishers.individual.EstablisherDetails
@@ -46,23 +46,26 @@ class InsurerAddressControllerSpec extends ControllerSpecBase {
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): InsurerAddressController =
-    new InsurerAddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider, countryOptions)
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): InsurerAddressController = new InsurerAddressController(
+    frontendAppConfig,
+    messagesApi,
+    FakeDataCacheConnector,
+    new FakeNavigator(desiredRoute = onwardRoute),
+    FakeAuthAction,
+    dataRetrievalAction,
+    new DataRequiredActionImpl,
+    formProvider,
+    countryOptions
+  )
 
   def viewAsString(form: Form[_] = form): String = insurerAddress(frontendAppConfig, form, NormalMode, options, schemeName)(fakeRequest, messages).toString
+
   val insurerAddressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
 
-  val validData: JsObject = Json.obj(SchemeDetailsId.toString -> Json.toJson(
-    SchemeDetails("value 1", SchemeType.SingleTrust)),
-    "establishers" -> Json.arr(
-      Json.obj(
-        EstablisherDetailsId.toString ->
-          EstablisherDetails("test first name", "test last name", LocalDate.now),
-        AddressId.toString ->
-          Json.toJson(Address("address line 1", "address line 2", Some("test town"),
-            Some("test county"), Some("test post code"), "GB")
-          ))))
+  val validData: JsObject = Json.obj(
+    SchemeDetailsId.toString -> Json.toJson(SchemeDetails("value 1", SchemeType.SingleTrust)),
+    InsurerAddressId.toString -> Json.toJson(insurerAddressData)
+  )
 
   "InsurerAddress Controller" must {
 
