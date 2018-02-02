@@ -23,13 +23,13 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import forms.register.establishers.individual.EstablisherNinoFormProvider
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNinoId}
-import models.register.establishers.individual.EstablisherDetails
 import models.requests.DataRequest
 import models.{EstablisherNino, Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual.establisherNino
 
@@ -39,7 +39,7 @@ class EstablisherNinoController @Inject()(
                                            appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            dataCacheConnector: DataCacheConnector,
-                                           navigator: Navigator,
+                                           @EstablishersIndividual navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,

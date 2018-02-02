@@ -18,32 +18,31 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register.establishers.individual._
-import models.addresslookup.{Address, AddressRecord}
+import models.requests.DataRequest
+import models.{Index, Mode}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Result}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual.previousAddressList
-import models.{Index, Mode}
-import models.requests.DataRequest
-import play.api.mvc.{Action, AnyContent, Result}
 
 import scala.concurrent.Future
 
 class PreviousAddressListController @Inject()(
-                                       appConfig: FrontendAppConfig,
-                                       override val messagesApi: MessagesApi,
-                                       dataCacheConnector: DataCacheConnector,
-                                       navigator: Navigator,
-                                       authenticate: AuthAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: AddressListFormProvider
+                                               appConfig: FrontendAppConfig,
+                                               override val messagesApi: MessagesApi,
+                                               dataCacheConnector: DataCacheConnector,
+                                               @EstablishersIndividual navigator: Navigator,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               formProvider: AddressListFormProvider
                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats{
 
 

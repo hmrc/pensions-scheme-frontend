@@ -22,29 +22,29 @@ import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
-import identifiers.register.establishers.individual.{PostCodeLookupId, EstablisherDetailsId}
-import models.addresslookup.Address
+import identifiers.register.establishers.individual.{EstablisherDetailsId, PostCodeLookupId}
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual.postCodeLookup
 
 import scala.concurrent.Future
 
 class PostCodeLookupController @Inject()(
-                                   appConfig: FrontendAppConfig,
-                                   override val messagesApi: MessagesApi,
-                                   dataCacheConnector: DataCacheConnector,
-                                   addressLookupConnector: AddressLookupConnector,
-                                   navigator: Navigator,
-                                   authenticate: AuthAction,
-                                   getData: DataRetrievalAction,
-                                   requireData: DataRequiredAction,
-                                   formProvider: PostCodeLookupFormProvider
+                                          appConfig: FrontendAppConfig,
+                                          override val messagesApi: MessagesApi,
+                                          dataCacheConnector: DataCacheConnector,
+                                          addressLookupConnector: AddressLookupConnector,
+                                          @EstablishersIndividual navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          formProvider: PostCodeLookupFormProvider
                                  ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()

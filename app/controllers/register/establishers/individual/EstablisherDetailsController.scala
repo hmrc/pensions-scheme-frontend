@@ -24,26 +24,27 @@ import controllers.actions._
 import forms.register.establishers.individual.EstablisherDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import models.register.establishers.individual.EstablisherDetails
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual.establisherDetails
 
 import scala.concurrent.Future
 
-class EstablisherDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                             override val messagesApi: MessagesApi,
-                                             dataCacheConnector: DataCacheConnector,
-                                             navigator: Navigator,
-                                             authenticate: AuthAction,
-                                             getData: DataRetrievalAction,
-                                             requireData: DataRequiredAction,
-                                             formProvider: EstablisherDetailsFormProvider
+class EstablisherDetailsController @Inject() (
+                                               appConfig: FrontendAppConfig,
+                                               override val messagesApi: MessagesApi,
+                                               dataCacheConnector: DataCacheConnector,
+                                               @EstablishersIndividual navigator: Navigator,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               formProvider: EstablisherDetailsFormProvider
                                             ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
