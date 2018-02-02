@@ -19,7 +19,7 @@ package utils
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.EstablisherKindId
-import identifiers.register.establishers.company._
+import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyContactDetailsId, CompanyDetailsId, CompanyUniqueTaxReferenceId,CompanyRegistrationNumberId}
 import identifiers.register.establishers.individual._
 import models.register.establishers.individual.{AddressYears, UniqueTaxReference}
 import models.{CheckMode, EstablisherNino, Index}
