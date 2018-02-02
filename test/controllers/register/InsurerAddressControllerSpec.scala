@@ -63,7 +63,7 @@ class InsurerAddressControllerSpec extends ControllerSpecBase {
   val insurerAddressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
 
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString -> Json.toJson(SchemeDetails("value 1", SchemeType.SingleTrust)),
+    SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
     InsurerAddressId.toString -> Json.toJson(insurerAddressData)
   )
 
