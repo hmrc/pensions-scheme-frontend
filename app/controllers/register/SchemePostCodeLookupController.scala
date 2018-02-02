@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register
 
 import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
-import forms.register.establishers.company.CompanyPostCodeLookupFormProvider
-import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.company.CompanyPostCodeLookupId
+import forms.register.SchemePostCodeLookupFormProvider
+import identifiers.register.{SchemePostCodeLookupId, SchemeDetailsId}
 import models.requests.DataRequest
-import models.{Index, Mode}
+import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.establishers.company.companyPostCodeLookup
+import views.html.register.schemePostCodeLookup
 
 import scala.concurrent.Future
 
-class CompanyPostCodeLookupController @Inject()(
+class SchemePostCodeLookupController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           dataCacheConnector: DataCacheConnector,
@@ -44,7 +43,7 @@ class CompanyPostCodeLookupController @Inject()(
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
-                                          formProvider: CompanyPostCodeLookupFormProvider
+                                          formProvider: SchemePostCodeLookupFormProvider
                                         ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -53,37 +52,37 @@ class CompanyPostCodeLookupController @Inject()(
     form.withError("value", s"messages__error__postcode_$messageKey")
   }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          Future.successful(Ok(companyPostCodeLookup(appConfig, form, mode, index, schemeName)))
+          Future.successful(Ok(schemePostCodeLookup(appConfig, form, mode, schemeName)))
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithErrors, mode, index, schemeName))),
+              Future.successful(BadRequest(schemePostCodeLookup(appConfig, formWithErrors, mode, schemeName))),
             (value) =>
               addressLookupConnector.addressLookupByPostCode(value).flatMap {
                 case None =>
-                  Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithError("invalid"), mode, index, schemeName)))
+                  Future.successful(BadRequest(schemePostCodeLookup(appConfig, formWithError("invalid"), mode, schemeName)))
 
                 case Some(Nil) =>
-                  Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithError("no_results"), mode, index, schemeName)))
+                  Future.successful(BadRequest(schemePostCodeLookup(appConfig, formWithError("no_results"), mode, schemeName)))
 
                 case Some(addressSeq) =>
                   dataCacheConnector.save(
                     request.externalId,
-                    CompanyPostCodeLookupId(index),
+                    SchemePostCodeLookupId,
                     addressSeq.map(_.address)
                   ).map {
                     json =>
-                      Redirect(navigator.nextPage(CompanyPostCodeLookupId(index), mode)(new UserAnswers(json)))
+                      Redirect(navigator.nextPage(SchemePostCodeLookupId, mode)(new UserAnswers(json)))
                   }
               }
           )
