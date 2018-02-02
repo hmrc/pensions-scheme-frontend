@@ -17,7 +17,12 @@
 package utils
 
 import identifiers.TypedIdentifier
-import play.api.libs.json.{JsPath, JsValue, Json, Reads}
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import models.register.establishers.individual.EstablisherDetails
+import models.{CompanyDetails, NormalMode}
+import play.api.libs.json._
 
 class UserAnswers(json: JsValue) extends Enumerable.Implicits with MapFormats {
 
@@ -30,10 +35,35 @@ class UserAnswers(json: JsValue) extends Enumerable.Implicits with MapFormats {
       .flatMap(Json.fromJson[A]).asOpt
   }
 
-  def allEstablishers: Option[Map[String, String]] = {
-//    establisherDetails.map(_.getValues.map{ estDetails =>
-//      (estDetails.establisherName, routes.AddEstablisherController.onPageLoad(NormalMode).url)
-//    }.toMap)
-    ???
+  def getAll[A](path: JsPath)(implicit rds: Reads[A]): Option[Seq[A]] = {
+    (JsLens.fromPath(path) andThen JsLens.atAllIndices).get(json)
+      .flatMap(Json.fromJson[Seq[A]]).asOpt
+  }
+
+  def allEstablishers: Option[Seq[(String, String)]] = {
+
+    val nameReads: Reads[String] =  {
+
+      val individualName: Reads[String] =
+        (__ \ EstablisherDetailsId.toString).read[EstablisherDetails]
+          .map {
+            details =>
+              s"${details.firstName} ${details.lastName}"
+          }
+
+      val companyName: Reads[String] =
+        (__ \ CompanyDetailsId.toString).read[CompanyDetails]
+          .map(_.companyName)
+
+      individualName orElse companyName
+    }
+
+    getAll[String](EstablishersId.path)(nameReads).map(
+      _.map {
+        name =>
+          name ->
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url
+      }
+    )
   }
 }
