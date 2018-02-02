@@ -1,6 +1,5 @@
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
-checkYourAnswers.guidance = Guidance for check your answers
 
 date.day = Day
 date.month = Month
@@ -300,6 +299,7 @@ contactDetails.email.checkYourAnswersLabel = Email address
 contactDetails.phoneNumber.checkYourAnswersLabel = Phone number
 
 address.checkYourAnswersLabel = Address
+previousAddress.checkYourAnswersLabel = Previous address
 
 addressYears.checkYourAnswersLabel = How long has the establisher been at this address?
 

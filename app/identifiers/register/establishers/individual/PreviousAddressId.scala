@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import viewmodels.AnswerSection
-@import views.html._
+package identifiers.register.establishers.individual
 
-@(answerSection: AnswerSection)(implicit messages: Messages)
+import models.addresslookup.Address
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import play.api.libs.json.JsPath
 
-@if(answerSection.headingKey.isDefined){
-    <h2 class="bold">@messages(answerSection.headingKey.get)</h2>
+case class PreviousAddressId(index: Int) extends TypedIdentifier[Address] {
+  override def path: JsPath = EstablishersId.path \ index \ PreviousAddressId.toString
 }
 
-<ul role="list" class="govuk-check-your-answers form-group cya-questions-short">
-    @for(row <- answerSection.rows){
-        @components.answer_row(row)
-    }
-</ul>
+object PreviousAddressId {
+  override def toString: String = "previousAddress"
+}

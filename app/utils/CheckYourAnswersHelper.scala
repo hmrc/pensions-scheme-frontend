@@ -22,11 +22,12 @@ import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.individual._
 import models.EstablisherNino.{No, Yes}
+import models.register.CountryOptions
 import models.register.establishers.individual.{AddressYears, UniqueTaxReference}
 import models.{CheckMode, EstablisherNino, Index}
 import viewmodels.AnswerRow
 
-class CheckYourAnswersHelper(userAnswers: UserAnswers) extends Enumerable.Implicits {
+class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
   def companyAddressYears(index: Int): Option[AnswerRow] =
     userAnswers.get(CompanyAddressYearsId(index)) match {
@@ -64,9 +65,20 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends Enumerable.Implic
 
   def address(index: Int): Seq[AnswerRow] = userAnswers.get(AddressId(index)) match {
     case Some(x) =>
+      val country = countryOptions.options.find(_.value == x.country).map(_.label).getOrElse(x.country)
       Seq(
-        AnswerRow("address.checkYourAnswersLabel", s"${x.print}, ${x.country}", true,
+        AnswerRow("address.checkYourAnswersLabel", s"${x.print}, ${country}", true,
           controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, Index(index)).url)
+      )
+    case _ => Nil
+  }
+
+  def previousAddress(index: Int): Seq[AnswerRow] = userAnswers.get(PreviousAddressId(index)) match {
+    case Some(x) =>
+      val country = countryOptions.options.find(_.value == x.country).map(_.label).getOrElse(x.country)
+      Seq(
+        AnswerRow("previousAddress.checkYourAnswersLabel", s"${x.print}, $country", true,
+          controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, Index(index)).url)
       )
     case _ => Nil
   }

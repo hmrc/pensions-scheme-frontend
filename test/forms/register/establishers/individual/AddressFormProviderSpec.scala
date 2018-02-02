@@ -36,7 +36,7 @@ class AddressFormProviderSpec extends FormBehaviours {
   val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
   val form = new AddressFormProvider()()
 
-  "ManualAddress form" must {
+  "Address form" must {
     behave like questionForm(Address("address line 1", "address line 2",
       Some("address line 3"), Some("address line 4"), Some("AB1 1AP"), "GB"))
 

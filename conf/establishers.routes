@@ -85,4 +85,10 @@ POST        /:index/individual/previousPostCodeLookup                           
 GET         /:index/individual/changePreviousPostCodeLookup                          controllers.register.establishers.individual.PreviousAddressPostCodeLookupController.onPageLoad(mode: Mode = CheckMode,index:Index)
 POST        /:index/individual/changePreviousPostCodeLookup                           controllers.register.establishers.individual.PreviousAddressPostCodeLookupController.onSubmit(mode: Mode = CheckMode,index:Index)
 
+
+GET        /:index/individual/previousAddress                       controllers.register.establishers.individual.PreviousAddressController.onPageLoad(mode: Mode = NormalMode,index:Index)
+POST       /:index/individual/previousAddress                       controllers.register.establishers.individual.PreviousAddressController.onSubmit(mode: Mode = NormalMode,index:Index)
+GET        /:index/individual/changePreviousAddress                       controllers.register.establishers.individual.PreviousAddressController.onPageLoad(mode: Mode = CheckMode,index:Index)
+POST       /:index/individual/changePreviousAddress                       controllers.register.establishers.individual.PreviousAddressController.onSubmit(mode: Mode = CheckMode,index:Index)
+
 GET        /:index/individual/check-your-answers-individual                          controllers.register.establishers.individual.CheckYourAnswersIndividualController.onPageLoad(index: Index)

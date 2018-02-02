@@ -17,14 +17,14 @@
 @import config.FrontendAppConfig
 @import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
 
-@(appConfig: FrontendAppConfig, answerSections: Seq[Section])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, answerSections: Seq[Section], schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("checkYourAnswers.title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    <h1 class="heading-xlarge">@messages("checkYourAnswers.heading")</h1>
+    @components.heading(headingKey = "checkYourAnswers.heading", secondaryHeaderKey = Some(schemeName))
 
     @for(section <- answerSections){
         @{

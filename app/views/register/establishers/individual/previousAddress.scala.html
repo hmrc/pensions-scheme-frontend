@@ -17,23 +17,22 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.individual.routes._
-@import models.{Mode, Index}
+@import models.Mode
 @import utils.InputOption
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, options: Seq[InputOption], establisherName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__establisher_individual_address__title"),
+    title = messages("messages__establisher_individual_previous_address__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = AddressController.onSubmit(mode, index), 'autoComplete -> "off") {
+    @helpers.form(action = PreviousAddressController.onSubmit(mode, index), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
-        @components.heading(headingKey = "messages__establisher_individual_address__title", secondaryHeaderKey = Some(establisherName))
+        @components.heading(headingKey = "messages__establisher_individual_previous_address__title", secondaryHeaderKey = Some(establisherName))
 
-        <p>@messages("messages__establisher_individual_address_lede")</p>
         @components.input_text(
             field = form("addressLine1"),
             label = messages("messages__common__address1"),

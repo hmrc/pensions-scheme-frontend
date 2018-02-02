@@ -61,7 +61,7 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val bankDetails = UKBankDetails("test bank name", "test account name",
         SortCode("34", "45", "67"), "test account number", new LocalDate(LocalDate.now().getYear,
-          LocalDate.now().getMonthOfYear, LocalDate.now().getDayOfYear))
+          LocalDate.now().getMonthOfYear, LocalDate.now().getDayOfMonth))
 
       val validData = Json.obj(UKBankDetailsId.toString -> Json.toJson(bankDetails))
 
