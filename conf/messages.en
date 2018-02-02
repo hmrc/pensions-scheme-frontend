@@ -290,27 +290,22 @@ messages__establisher_individual_previous_address_lede = This is usually the reg
 
 establisherDetails.name.checkYourAnswersLabel = Name
 establisherDetails.dateOfBirth.checkYourAnswersLabel = Date of birth
-
 establisherNino.checkYourAnswersLabel = Does the establisher have a National Insurance number?
 establisherNino.nino.checkYourAnswersLabel = National Insurance number
 establisherNino.reason.checkYourAnswersLabel = Reason
-
+uniqueTaxReference.checkYourAnswersLabel = Does the establisher have a Unique Taxpayer Reference number (UTR)?
+uniqueTaxReference.utr.checkYourAnswersLabel = Unique Taxpayer Reference number
+uniqueTaxReference.reason.checkYourAnswersLabel = Reason
 contactDetails.email.checkYourAnswersLabel = Email address
 contactDetails.phoneNumber.checkYourAnswersLabel = Phone number
-
 address.checkYourAnswersLabel = Address
 previousAddress.checkYourAnswersLabel = Previous address
-
 addressYears.checkYourAnswersLabel = How long has the establisher been at this address?
 
 addressResults.checkYourAnswersLabel = addressResults
 addEstablisher.checkYourAnswersLabel = addEstablisher
 messages__manualAddress_checkYourAnswersLabel = manualAddress
 establisherKind.checkYourAnswersLabel = establisherKind
-
-uniqueTaxReference.checkYourAnswersLabel = Does the establisher have a Unique Taxpayer Reference number (UTR)?
-uniqueTaxReference.utr.checkYourAnswersLabel = Unique Taxpayer Reference number
-uniqueTaxReference.reason.checkYourAnswersLabel = Reason
 
 companyAddressYears.checkYourAnswersLabel = companyAddressYears
 companyDetails.checkYourAnswersLabel = companyDetails
