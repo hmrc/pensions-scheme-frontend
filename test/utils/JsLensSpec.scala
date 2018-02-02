@@ -88,7 +88,7 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
             )
 
             val lens = JsLens.atKey(key)
-            lens.put(json, newValue).asOpt.value mustEqual Json.obj(key -> newValue)
+            lens.set(newValue, json).asOpt.value mustEqual Json.obj(key -> newValue)
         }
       }
 
@@ -98,7 +98,7 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
           (key, value) =>
             val json = Json.obj()
             val lens = JsLens.atKey(key)
-            lens.put(json, value).asOpt.value mustEqual Json.obj(key -> value)
+            lens.set(value, json).asOpt.value mustEqual Json.obj(key -> value)
         }
       }
 
@@ -108,7 +108,7 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
           (key, value) =>
             val json = JsNull
             val lens = JsLens.atKey(key)
-            lens.put(json, value).asOpt.value mustEqual Json.obj(key -> value)
+            lens.set(value, json).asOpt.value mustEqual Json.obj(key -> value)
         }
       }
 
@@ -117,7 +117,7 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
         forAll(Gen.alphaNumStr, jsLeafGen, jsLeafGen) {
           (key, json, newValue) =>
             val lens = JsLens.atKey(key)
-            lens.put(json, newValue).isError mustBe true
+            lens.set(newValue, json).isError mustBe true
         }
       }
     }
@@ -173,7 +173,7 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
         forAll(gen, jsLeafGen) {
           case ((idx, arr), newValue) =>
             val lens = JsLens.atIndex(idx)
-            lens.put(arr, newValue).asOpt.value(idx).get mustEqual newValue
+            lens.set(newValue, arr).asOpt.value(idx).get mustEqual newValue
         }
       }
 
@@ -183,7 +183,7 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
           value =>
             val arr = Json.arr()
             val lens = JsLens.atIndex(0)
-            lens.put(arr, value).asOpt.value mustEqual JsArray(Seq(value))
+            lens.set(value, arr).asOpt.value mustEqual JsArray(Seq(value))
         }
       }
 
@@ -197,7 +197,7 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
         forAll(gen, jsLeafGen) {
           case ((idx, arr), newValue) =>
             val lens = JsLens.atIndex(idx + 1)
-            lens.put(arr, newValue).asOpt.value mustEqual JsArray(arr.value :+ newValue)
+            lens.set(newValue, arr).asOpt.value mustEqual JsArray(arr.value :+ newValue)
         }
       }
 
@@ -206,7 +206,7 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
         forAll(jsLeafGen) {
           value =>
             val lens = JsLens.atIndex(0)
-            lens.put(Json.arr(), value).asOpt.value mustEqual JsArray(Seq(value))
+            lens.set(value, Json.arr()).asOpt.value mustEqual JsArray(Seq(value))
         }
       }
 
@@ -215,7 +215,7 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
         forAll(Gen.chooseNum(0, 50), jsLeafGen, jsLeafGen) {
           (idx, oldValue, newValue) =>
             val lens = JsLens.atIndex(idx)
-            lens.put(oldValue, newValue).isError mustEqual true
+            lens.set(newValue, oldValue).isError mustEqual true
         }
       }
 
@@ -229,7 +229,7 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
         forAll(gen, jsLeafGen) {
           case ((idx, arr), newValue) =>
             val lens = JsLens.atIndex(idx + 2)
-            lens.put(arr, newValue).isError mustEqual true
+            lens.set(newValue, arr).isError mustEqual true
         }
       }
 
@@ -242,6 +242,15 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
             }
         }
       }
+
+      "fail to add an index greater than 0 to an empty array" in {
+
+        forAll(Gen.chooseNum(1, 50), jsLeafGen) {
+          (idx, value) =>
+            val lens = JsLens.atIndex(idx)
+            lens.set(value, JsNull).isError mustEqual true
+        }
+      }
     }
 
     ".andThen" must {
@@ -249,35 +258,93 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
       "apply lenses in order (get)" in {
 
         val json = Json.obj(
-          "abc" -> Json.arr("d", "e", "f")
+          "establishers" -> Json.arr(
+            Json.obj(
+              "name" -> "foo",
+              "directors" -> Json.arr(
+                Json.obj(
+                  "name" -> "dir quack"
+                ),
+                Json.obj(
+                  "name" -> "dir zap"
+                )
+              )
+            ),
+            Json.obj(
+              "name" -> "bar",
+              "directors" -> Json.arr(
+                Json.obj(
+                  "name" -> "dir foo"
+                ),
+                Json.obj(
+                  "name" -> "dir bar"
+                )
+              )
+            )
+          )
         )
-        val lens = JsLens.atKey("abc") andThen JsLens.atIndex(1)
+        val lens = JsLens.fromPath(__ \ "establishers" \ 0 \ "directors" \ 0 \ "name")
 
-        lens.get(json).asOpt.value mustEqual JsString("e")
+        lens.get(json).asOpt.value mustEqual JsString("dir quack")
       }
 
       "apply lenses in order (put)" in {
 
         val json = Json.obj(
-          "abc" -> Json.arr("d", "e", "f")
-        )
-        val lens = JsLens.atKey("abc") andThen JsLens.atIndex(1)
-
-        lens.put(json, JsString("foo")).asOpt.value mustEqual Json.obj(
-          "abc" -> Json.arr("d", "foo", "f")
-        )
-      }
-
-      "insert when paths don't exist" in {
-
-        val json = Json.obj()
-        val lens = JsLens.atKey("abc") andThen JsLens.atKey("def") andThen JsLens.atIndex(0) andThen JsLens.atIndex(0)
-
-        lens.put(json, JsString("foo")).asOpt.value mustEqual Json.obj(
-          "abc" -> Json.obj(
-            "def" -> Json.arr(Json.arr("foo"))
+          "establishers" -> Json.arr(
+            Json.obj(
+              "name" -> "foo",
+              "directors" -> Json.arr(
+                Json.obj(
+                  "name" -> "dir quack"
+                ),
+                Json.obj(
+                  "name" -> "dir zap"
+                )
+              )
+            ),
+            Json.obj(
+              "name" -> "bar",
+              "directors" -> Json.arr(
+                Json.obj(
+                  "name" -> "dir foo"
+                ),
+                Json.obj(
+                  "name" -> "dir bar"
+                )
+              )
+            )
           )
         )
+        val expected = Json.obj(
+          "establishers" -> Json.arr(
+            Json.obj(
+              "name" -> "foo",
+              "directors" -> Json.arr(
+                Json.obj(
+                  "name" -> "foo"
+                ),
+                Json.obj(
+                  "name" -> "dir zap"
+                )
+              )
+            ),
+            Json.obj(
+              "name" -> "bar",
+              "directors" -> Json.arr(
+                Json.obj(
+                  "name" -> "dir foo"
+                ),
+                Json.obj(
+                  "name" -> "dir bar"
+                )
+              )
+            )
+          )
+        )
+        val lens = JsLens.fromPath(__ \ "establishers" \ 0 \ "directors" \ 0 \ "name")
+
+        lens.set(JsString("foo"), json).asOpt.value mustEqual expected
       }
 
       "fail to insert into a new array when the index is greater than 0" in {
@@ -285,7 +352,43 @@ class JsLensSpec extends WordSpec with MustMatchers with PropertyChecks with Opt
         val json = Json.obj()
         val lens = JsLens.atKey("abc") andThen JsLens.atIndex(1)
 
-        lens.put(json, JsString("foo")).isError mustEqual true
+        lens.set(JsString("foo"), json).isError mustEqual true
+      }
+
+      "retrieve multiple" in {
+
+        val json = Json.obj(
+          "establishers" -> Json.arr(
+            Json.obj(
+              "name" -> "foo"
+            ),
+            Json.obj(
+              "name" -> "bar"
+            )
+          )
+        )
+
+        val lens = JsLens.fromPath(__ \ "establishers" \\ "name")
+
+        lens.getAll(json).asOpt.value mustEqual Seq(JsString("foo"), JsString("bar"))
+      }
+
+      "fail to set multiple" in {
+
+        val json = Json.obj(
+          "establishers" -> Json.arr(
+            Json.obj(
+              "name" -> "foo"
+            ),
+            Json.obj(
+              "name" -> "bar"
+            )
+          )
+        )
+
+        val lens = JsLens.fromPath(__ \ "establishers" \\ "name")
+
+        lens.set(JsString("foobar"), json).isError mustEqual true
       }
     }
   }

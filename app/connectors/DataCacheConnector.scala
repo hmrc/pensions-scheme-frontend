@@ -36,7 +36,7 @@ class DataCacheConnectorImpl @Inject()(
     sessionRepository().get(cacheId).flatMap {
       json =>
         val lens = JsLens.fromPath(path)
-        lens.put(json.getOrElse(Json.obj()), Json.toJson(value)) match {
+        lens.set(Json.toJson(value), json.getOrElse(Json.obj())) match {
           case JsSuccess(updatedJson, _) =>
             sessionRepository().upsert(cacheId, updatedJson)
               .map(_ => updatedJson)

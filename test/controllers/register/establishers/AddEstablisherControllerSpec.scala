@@ -43,12 +43,12 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form, allEstablishers: Option[Map[String, String]] = None): String = addEstablisher(frontendAppConfig,
+  def viewAsString(form: Form[_] = form, allEstablishers: Option[Seq[(String, String)]] = None): String = addEstablisher(frontendAppConfig,
     form, NormalMode, allEstablishers, schemeName)(fakeRequest, messages).toString
 
   "AddEstablisher Controller" must {
 
-    "return OK and the correct view for a GET when scheme name is present" ignore {
+    "return OK and the correct view for a GET when scheme name is present" in {
       val result = controller().onPageLoad(NormalMode)(fakeRequest)
 
       status(result) mustBe OK
@@ -71,7 +71,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "return a Bad Request and errors when invalid data is submitted" ignore {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
