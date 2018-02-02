@@ -21,6 +21,7 @@ import identifiers.register._
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.individual._
+import models.EstablisherNino.{No, Yes}
 import models.register.establishers.individual.{AddressYears, UniqueTaxReference}
 import models.{CheckMode, EstablisherNino, Index}
 import viewmodels.AnswerRow
@@ -36,7 +37,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends Enumerable.Implic
 
   def companyUniqueTaxReference(index: Int): Option[AnswerRow] =
     userAnswers.get(CompanyUniqueTaxReferenceId(index)) match {
-    case Some(x) => Some(AnswerRow("companyUniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
+    case Some(_) => Some(AnswerRow("companyUniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
       controllers.register.establishers.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url))
     case _ => None
   }
@@ -61,29 +62,82 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends Enumerable.Implic
     case _ => None
   }
 
-  def uniqueTaxReference(index: Int): Option[AnswerRow] =
-    userAnswers.get(UniqueTaxReferenceId(index)) match {
-    case Some(x) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}", false,
-      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
-    case _ => None
+  def address(index: Int): Seq[AnswerRow] = userAnswers.get(AddressId(index)) match {
+    case Some(x) =>
+      Seq(
+        AnswerRow("address.checkYourAnswersLabel", s"${x.print}, ${x.country}", true,
+          controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, Index(index)).url)
+      )
+    case _ => Nil
   }
 
-  def establisherNino(index: Int): Option[AnswerRow] = userAnswers.get(EstablisherNinoId(index)) match {
-    case Some(x) => Some(AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${EstablisherNino.Yes} ${EstablisherNino.No}", false,
-      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
-    case _ => None
+  def uniqueTaxReference(index: Int): Seq[AnswerRow] = userAnswers.get(UniqueTaxReferenceId(index)) match {
+    case Some(UniqueTaxReference.Yes(utr)) =>
+      Seq(
+        AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.Yes}", false,
+          controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url),
+        AnswerRow("uniqueTaxReference.utr.checkYourAnswersLabel", utr, false,
+          controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url)
+      )
+    case Some(UniqueTaxReference.No(reason)) =>
+      Seq(
+        AnswerRow("uniqueTaxReference.checkYourAnswersLabel", s"${UniqueTaxReference.No}", false,
+          controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url),
+        AnswerRow("uniqueTaxReference.reason.checkYourAnswersLabel", reason, false,
+          controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url)
+      )
+    case _ => Nil
   }
 
-  def contactDetails(index: Int): Option[AnswerRow] = userAnswers.get(ContactDetailsId(index)) match {
-    case Some(x) => Some(AnswerRow("contactDetails.checkYourAnswersLabel", s"${x.emailAddress} ${x.phoneNumber}", false,
-      controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, Index(index)).url))
-    case _ => None
+  def establisherNino(index: Int): Seq[AnswerRow] = userAnswers.get(EstablisherNinoId(index)) match {
+    case Some(Yes(nino)) =>
+      Seq(
+        AnswerRow("establisherNino.checkYourAnswersLabel", s"${EstablisherNino.Yes}", false,
+          controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index)).url),
+        AnswerRow("establisherNino.nino.checkYourAnswersLabel", nino, false,
+          controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index)).url)
+      )
+    case Some(No(reason)) =>
+      Seq(
+        AnswerRow("establisherNino.checkYourAnswersLabel", s"${EstablisherNino.No}", false,
+          controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index)).url),
+        AnswerRow("establisherNino.reason.checkYourAnswersLabel", reason, false,
+          controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index)).url)
+      )
+    case _ => Nil
   }
 
-  def establisherDetails(index: Int): Option[AnswerRow] = userAnswers.get(EstablisherDetailsId(index)) match {
-    case Some(x) => Some(AnswerRow("establisherDetails.checkYourAnswersLabel", s"${x.firstName} ${x.lastName}", false,
-      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url))
-    case _ => None
+  def contactDetails(index: Int): Seq[AnswerRow] = userAnswers.get(ContactDetailsId(index)) match {
+    case Some(x) =>
+      Seq(
+        AnswerRow("contactDetails.email.checkYourAnswersLabel", s"${x.emailAddress}", false,
+          controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, Index(index)).url),
+        AnswerRow("contactDetails.phoneNumber.checkYourAnswersLabel", s"${x.phoneNumber}", false,
+          controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(CheckMode, Index(index)).url)
+      )
+    case _ => Nil
+  }
+
+  def establisherDetails(index: Int): Seq[AnswerRow] = userAnswers.get(EstablisherDetailsId(index)) match {
+    case Some(details) =>
+      Seq(
+        AnswerRow("establisherDetails.name.checkYourAnswersLabel", s"${details.firstName} ${details.lastName}", false,
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url),
+        AnswerRow("establisherDetails.dateOfBirth.checkYourAnswersLabel", s"${DateHelper.formatDate(details.date)}", false,
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url)
+      )
+    case _ => Nil
+  }
+
+  def addressYears(index: Int): Seq[AnswerRow] = {
+    userAnswers.get[AddressYears](AddressYearsId(index)) match {
+      case Some(x) =>
+        Seq(
+          AnswerRow("addressYears.checkYourAnswersLabel", s"messages__common__$x", true,
+            controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, Index(index)).url)
+        )
+      case _ => Nil
+    }
   }
 
   def establisherKind(index:Int): Option[AnswerRow] = userAnswers.get(EstablisherKindId(index)) match {
@@ -105,14 +159,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) extends Enumerable.Implic
   def uKBankDetails: Option[AnswerRow] = userAnswers.get(UKBankDetailsId) map {
     x => AnswerRow("uKBankDetails.checkYourAnswersLabel", s"${x.accountName} ${x.bankName}", false,
       routes.UKBankDetailsController.onPageLoad(CheckMode).url)
-  }
-
-  def addressYears(index: Int): Option[AnswerRow] = {
-    userAnswers.get[AddressYears](AddressYearsId(index)) match {
-      case Some(x) => Some(AnswerRow("addressYears.checkYourAnswersLabel", s"addressYears.$x", true,
-        controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(CheckMode, Index(index)).url))
-      case _ => None
-    }
   }
 
   def benefits: Option[AnswerRow] = userAnswers.get(BenefitsId) map {

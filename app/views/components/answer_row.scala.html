@@ -19,7 +19,7 @@
 @(row: AnswerRow)(implicit messages: Messages)
 
 <li class="tabular-data__entry tabular-data__entry--grouped divider--bottom">
-    <div class="tabular-data__data tabular-data__data--6-12">@messages(row.label)</div>
+    <div class="tabular-data__data tabular-data__data--6-12 bold">@messages(row.label)</div>
     <div class="tabular-data__data tabular-data__data--3-12">
     @if(row.answerIsMessageKey){
         @messages(row.answer)
