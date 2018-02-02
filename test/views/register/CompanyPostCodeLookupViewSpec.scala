@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company
+package views.register
 
-import play.api.data.Form
 import controllers.register.establishers.company.routes
-import views.html.register.establishers.company.companyPostCodeLookup
-import forms.register.establishers.company.CompanyPostCodeLookupFormProvider
+import forms.register.CompanyPostCodeLookupFormProvider
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.StringViewBehaviours
 

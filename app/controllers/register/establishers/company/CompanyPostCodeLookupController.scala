@@ -21,9 +21,8 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
-import forms.register.establishers.company.CompanyPostCodeLookupFormProvider
-import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.company.CompanyPostCodeLookupId
+import forms.register.CompanyPostCodeLookupFormProvider
+import identifiers.register.{CompanyPostCodeLookupId, SchemeDetailsId}
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.data.Form
@@ -31,7 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.establishers.company.companyPostCodeLookup
+import views.html.register.companyPostCodeLookup
 
 import scala.concurrent.Future
 
@@ -79,11 +78,11 @@ class CompanyPostCodeLookupController @Inject()(
                 case Some(addressSeq) =>
                   dataCacheConnector.save(
                     request.externalId,
-                    CompanyPostCodeLookupId(index),
+                    CompanyPostCodeLookupId,
                     addressSeq.map(_.address)
                   ).map {
                     json =>
-                      Redirect(navigator.nextPage(CompanyPostCodeLookupId(index), mode)(new UserAnswers(json)))
+                      Redirect(navigator.nextPage(CompanyPostCodeLookupId, mode)(new UserAnswers(json)))
                   }
               }
           )

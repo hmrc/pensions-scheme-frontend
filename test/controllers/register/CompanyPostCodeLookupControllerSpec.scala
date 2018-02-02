@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register
 
-import play.api.data.{Form, FormError}
-import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
-import controllers.actions._
-import play.api.test.Helpers._
-import models.{Index, NormalMode}
 import controllers.ControllerSpecBase
-import forms.register.establishers.company.CompanyPostCodeLookupFormProvider
+import controllers.actions._
+import controllers.register.establishers.company.CompanyPostCodeLookupController
+import forms.register.CompanyPostCodeLookupFormProvider
 import models.addresslookup.{Address, AddressRecord}
-import org.scalatest.mockito.MockitoSugar
+import models.{Index, NormalMode}
 import org.mockito.Mockito._
 import org.mockito._
+import org.scalatest.mockito.MockitoSugar
+import play.api.data.{Form, FormError}
 import play.api.mvc.Call
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.register.establishers.company.companyPostCodeLookup
+import utils.FakeNavigator
 
 import scala.concurrent.Future
 
