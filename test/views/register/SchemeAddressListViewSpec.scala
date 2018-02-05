@@ -25,7 +25,7 @@ import views.html.register.schemeAddressList
 
 class SchemeAddressListViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "schemeAddressList"
+  val messageKeyPrefix = "select_the_address"
 
   val form = new SchemeAddressListFormProvider()()
 
