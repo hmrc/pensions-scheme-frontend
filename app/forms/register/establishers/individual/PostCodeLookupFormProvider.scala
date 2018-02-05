@@ -25,6 +25,7 @@ class PostCodeLookupFormProvider @Inject() extends Mappings {
   val maxLength = 8
   def apply(): Form[String] =
     Form(
-      "value" -> text("messages__error__postcode").verifying(maxLength(maxLength, "messages__error__postcode_length"))
+      "value" -> text("messages__error__postcode").
+        verifying(maxLength(maxLength, "messages__error__postcode_length"))
     )
 }

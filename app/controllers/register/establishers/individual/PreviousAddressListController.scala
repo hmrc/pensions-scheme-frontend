@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.establishers.individual.PreviousAddressListFormProvider
+import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register.establishers.individual._
 import models.addresslookup.{Address, AddressRecord}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
@@ -43,7 +43,7 @@ class PreviousAddressListController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: PreviousAddressListFormProvider
+                                       formProvider: AddressListFormProvider
                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits with MapFormats{
 
 

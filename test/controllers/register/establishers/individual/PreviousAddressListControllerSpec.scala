@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.PreviousAddressListFormProvider
+import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
 import models.addresslookup.Address
@@ -47,7 +47,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new PreviousAddressListFormProvider()
+  val formProvider = new AddressListFormProvider()
   val form = formProvider(Seq(0))
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
