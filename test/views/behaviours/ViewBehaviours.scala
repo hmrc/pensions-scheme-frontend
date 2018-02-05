@@ -16,6 +16,7 @@
 
 package views.behaviours
 
+import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import views.ViewSpecBase
 
@@ -66,5 +67,24 @@ trait ViewBehaviours extends ViewSpecBase {
         assertRenderedById(doc, "back-link")
       }
     }
+  }
+
+  def pageWithSecondaryHeader(view: () => HtmlFormat.Appendable,
+                              heading: String) = {
+
+    "behave like a page with a secondary header" in {
+      Jsoup.parse(view().toString()).getElementsByClass("heading-secondary").text() must include(heading)
+    }
+
+  }
+
+  def addressListWithManualOption(
+                                   view: () => HtmlFormat.Appendable,
+                                   url: String) = {
+
+    "behave like an address list with link to enter manually" in {
+      Jsoup.parse(view().toString()).select("a[id=manual-address-link]") must haveLink(url)
+    }
+
   }
 }

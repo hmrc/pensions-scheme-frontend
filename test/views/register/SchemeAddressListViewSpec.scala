@@ -16,25 +16,31 @@
 
 package views.register
 
-import play.api.data.Form
 import forms.register.SchemeAddressListFormProvider
 import models.NormalMode
 import models.register.SchemeAddressList
+import play.api.data.Form
 import views.behaviours.ViewBehaviours
 import views.html.register.schemeAddressList
 
 class SchemeAddressListViewSpec extends ViewBehaviours {
 
+  val schemeName = "ThisSchemeName"
   val messageKeyPrefix = "select_the_address"
 
   val form = new SchemeAddressListFormProvider()()
 
-  def createView = () => schemeAddressList(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView = () => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => schemeAddressList(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   "SchemeAddressList view" must {
+
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+    behave like addressListWithManualOption(createView, controllers.register.routes.SchemeAddressListController.onPageLoad(NormalMode).url)
+
+    behave like pageWithSecondaryHeader(createView, schemeName)
   }
 
   "SchemeAddressList view" when {

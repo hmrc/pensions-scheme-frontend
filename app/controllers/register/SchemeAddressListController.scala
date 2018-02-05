@@ -25,11 +25,14 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.SchemeAddressListFormProvider
-import identifiers.register.SchemeAddressListId
+import identifiers.register.{SchemeAddressListId, SchemeDetailsId}
 import models.register.SchemeAddressList
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.schemeAddressList
 import models.Mode
+import models.requests.DataRequest
+import play.api.mvc.{Action, AnyContent, Result}
+
 import scala.concurrent.Future
 
 class SchemeAddressListController @Inject()(
@@ -45,23 +48,37 @@ class SchemeAddressListController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(SchemeAddressListId) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      retrieveSchemeName { schemeName =>
+        val preparedForm = request.userAnswers.get(SchemeAddressListId) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(schemeAddressList(appConfig, preparedForm, mode, schemeName)))
       }
-      Ok(schemeAddressList(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(schemeAddressList(appConfig, formWithErrors, mode))),
-        (value) =>
-          dataCacheConnector.save[SchemeAddressList](request.externalId, SchemeAddressListId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(SchemeAddressListId, mode)(new UserAnswers(cacheMap))))
-      )
+      retrieveSchemeName { schemeName =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(schemeAddressList(appConfig, formWithErrors, mode, schemeName))),
+          (value) =>
+            dataCacheConnector.save[SchemeAddressList](request.externalId, SchemeAddressListId, value).map(cacheMap =>
+              Redirect(navigator.nextPage(SchemeAddressListId, mode)(new UserAnswers(cacheMap))))
+        )
+      }
+  }
+
+  private def retrieveSchemeName(block: String => Future[Result])
+                                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    request.userAnswers.get(SchemeDetailsId) match {
+      case Some(value) =>
+        block(value.schemeName)
+      case _ =>
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    }
   }
 }

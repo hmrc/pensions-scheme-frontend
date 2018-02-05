@@ -27,9 +27,10 @@ import play.api.libs.json._
 import forms.register.SchemeAddressListFormProvider
 import identifiers.register.SchemeAddressListId
 import models.NormalMode
-import models.register.SchemeAddressList
+import models.register.{SchemeAddressList, SchemeDetails}
 import views.html.register.schemeAddressList
 import controllers.ControllerSpecBase
+import models.register.SchemeType.SingleTrust
 
 class SchemeAddressListControllerSpec extends ControllerSpecBase {
 
@@ -37,17 +38,22 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase {
 
   val formProvider = new SchemeAddressListFormProvider()
   val form = formProvider()
+  val schemeName = "ThisSchemeName"
+  val schemeDetails = Json.obj("schemeDetails" -> SchemeDetails(schemeName, SingleTrust))
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new SchemeAddressListController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = schemeAddressList(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = schemeAddressList(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   "SchemeAddressList Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode)(fakeRequest)
+
+      val dataRetrieval = new FakeDataRetrievalAction(Some(schemeDetails))
+
+      val result = controller(dataRetrieval).onPageLoad(NormalMode)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -55,7 +61,7 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val validData = Json.obj(SchemeAddressListId.toString -> JsString(SchemeAddressList.values.head.toString))
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData ++ schemeDetails))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
@@ -63,19 +69,25 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
+
+      val dataRetrieval = new FakeDataRetrievalAction(Some(schemeDetails))
+
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", SchemeAddressList.options.head.value))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller(dataRetrieval).onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
+
+      val dataRetrieval = new FakeDataRetrievalAction(Some(schemeDetails))
+
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller(dataRetrieval).onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)

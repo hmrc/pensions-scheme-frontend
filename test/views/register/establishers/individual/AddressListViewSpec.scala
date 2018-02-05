@@ -55,10 +55,7 @@ class AddressListViewSpec extends ViewBehaviours {
   "AddressResults view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    "have link for enter address manually" in {
-      Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
-        routes.AddressListController.onPageLoad(NormalMode, firstIndex).url)
-    }
+    behave like addressListWithManualOption(createView, routes.AddressListController.onPageLoad(NormalMode, firstIndex).url)
 
     "have establisher name rendered on the page" in {
       Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)
