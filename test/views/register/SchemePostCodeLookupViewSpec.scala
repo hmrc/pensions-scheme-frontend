@@ -14,37 +14,36 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company
+package views.register
 
-import play.api.data.Form
-import controllers.register.establishers.company.routes
-import views.html.register.establishers.company.companyPostCodeLookup
-import forms.register.establishers.company.CompanyPostCodeLookupFormProvider
-import models.{Index, NormalMode}
+import controllers.register.routes
+import forms.register.SchemePostCodeLookupFormProvider
+import models.NormalMode
 import org.jsoup.Jsoup
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.StringViewBehaviours
+import views.html.register.schemePostCodeLookup
 
-class CompanyPostCodeLookupViewSpec extends StringViewBehaviours {
+class SchemePostCodeLookupViewSpec extends StringViewBehaviours {
 
   val messageKeyPrefix = "benefits_insurance_addr"
 
-  val form = new CompanyPostCodeLookupFormProvider()()
-  val firstIndex = Index(0)
+  val form = new SchemePostCodeLookupFormProvider()()
   val schemeName = "test scheme name"
 
-  def createView: () => HtmlFormat.Appendable = () => companyPostCodeLookup(frontendAppConfig, form, NormalMode, firstIndex,
+  def createView: () => HtmlFormat.Appendable = () => schemePostCodeLookup(frontendAppConfig, form, NormalMode,
     schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) => companyPostCodeLookup(frontendAppConfig, form,
-    NormalMode, firstIndex, schemeName)(fakeRequest, messages)
+  def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) => schemePostCodeLookup(frontendAppConfig, form,
+    NormalMode, schemeName)(fakeRequest, messages)
 
   "Address view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
 
-    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex).url,
+    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.SchemePostCodeLookupController.onSubmit(NormalMode).url,
       Some("messages__common__address_postcode"), expectedHint = Some("messages__common__address_postcode_hint"))
 
     "have establisher name rendered on the page" in {
@@ -53,7 +52,7 @@ class CompanyPostCodeLookupViewSpec extends StringViewBehaviours {
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
-        routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
+        routes.SchemePostCodeLookupController.onPageLoad(NormalMode).url)
     }
   }
 }
