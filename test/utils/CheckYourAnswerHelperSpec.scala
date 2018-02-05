@@ -52,7 +52,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           ))
       )
       val expectedOutput = Seq(
-        AnswerRow("address.checkYourAnswersLabel", Seq("address line 1,", "address line 2,",
+        AnswerRow("messages__establisher_individual_address_cya_label", Seq("address line 1,", "address line 2,",
           "address line 3,", "AB1 1AB,", "United Kingdom"), answerIsMessageKey = false, AddressController.onPageLoad(CheckMode, firstIndex).url)
       )
       checkYourAnswerHelper(userAnswers).address(firstIndex) mustEqual expectedOutput
@@ -71,7 +71,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           ))
       )
       val expectedOutput = Seq(
-        AnswerRow("previousAddress.checkYourAnswersLabel", Seq("address line 1,", "address line 2,",
+        AnswerRow("messages__establisher_individual_previous_address_cya_label", Seq("address line 1,", "address line 2,",
           "address line 4,", "AB1 1AB,", "United Kingdom"), answerIsMessageKey = false, PreviousAddressController.onPageLoad(CheckMode, firstIndex).url)
       )
       checkYourAnswerHelper(userAnswers).previousAddress(firstIndex) mustEqual expectedOutput
@@ -91,8 +91,10 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           ))
       )
       val expectedOutput = Seq(
-        AnswerRow("uniqueTaxReference.checkYourAnswersLabel", Seq("Yes"), false, UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url),
-        AnswerRow("uniqueTaxReference.utr.checkYourAnswersLabel", Seq("1115676787"), false, UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url)
+        AnswerRow("messages__establisher_individual_utr_question_cya_label", Seq("Yes"), false,
+          UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url),
+        AnswerRow("messages__establisher_individual_utr_cya_label", Seq("1115676787"), false,
+          UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url)
       )
       checkYourAnswerHelper(userAnswers).uniqueTaxReference(firstIndex) mustEqual expectedOutput
     }
@@ -110,8 +112,10 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           ))
       )
       val expectedOutput = Seq(
-        AnswerRow("uniqueTaxReference.checkYourAnswersLabel", Seq("No"), false, UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url),
-        AnswerRow("uniqueTaxReference.reason.checkYourAnswersLabel", Seq("No utr"), false, UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url)
+        AnswerRow("messages__establisher_individual_utr_question_cya_label", Seq("No"), false,
+          UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url),
+        AnswerRow("messages__establisher_individual_utr_reason_cya_label", Seq("No utr"), false,
+          UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url)
       )
       checkYourAnswerHelper(userAnswers).uniqueTaxReference(firstIndex) mustEqual expectedOutput
     }
@@ -129,9 +133,9 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           ))
       )
       val expectedOutput = Seq(
-        AnswerRow("establisherNino.checkYourAnswersLabel", Seq("Yes"), answerIsMessageKey = false,
+        AnswerRow("messages__establisher_individual_nino_question_cya_label", Seq("Yes"), answerIsMessageKey = false,
           controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url),
-        AnswerRow("establisherNino.nino.checkYourAnswersLabel", Seq("test Nino"), answerIsMessageKey = false,
+        AnswerRow("messages__establisher_individual_nino_cya_label", Seq("test Nino"), answerIsMessageKey = false,
           controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url)
       )
       checkYourAnswerHelper(userAnswers).establisherNino(firstIndex) mustEqual expectedOutput
@@ -150,8 +154,10 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           ))
       )
       val expectedOutput = Seq(
-        AnswerRow("establisherNino.checkYourAnswersLabel", Seq("No"), false, EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url),
-        AnswerRow("establisherNino.reason.checkYourAnswersLabel", Seq("No nino"), false, EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url)
+        AnswerRow("messages__establisher_individual_nino_question_cya_label", Seq("No"), false,
+          EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url),
+        AnswerRow("messages__establisher_individual_nino_reason_cya_label", Seq("No nino"), false,
+          EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url)
       )
       checkYourAnswerHelper(userAnswers).establisherNino(firstIndex) mustEqual expectedOutput
     }
@@ -167,8 +173,10 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           ))
       )
       val expectedOutput = Seq(
-        AnswerRow("contactDetails.email.checkYourAnswersLabel", Seq("test@test.com"), false, ContactDetailsController.onPageLoad(CheckMode, firstIndex).url),
-        AnswerRow("contactDetails.phoneNumber.checkYourAnswersLabel", Seq("0111111111"), false, ContactDetailsController.onPageLoad(CheckMode, firstIndex).url)
+        AnswerRow("messages__establisher_individual_email_cya_label", Seq("test@test.com"), false,
+          ContactDetailsController.onPageLoad(CheckMode, firstIndex).url),
+        AnswerRow("messages__establisher_individual_phone_cya_label", Seq("0111111111"), false,
+          ContactDetailsController.onPageLoad(CheckMode, firstIndex).url)
       )
       checkYourAnswerHelper(userAnswers).contactDetails(firstIndex) mustEqual expectedOutput
     }
@@ -184,9 +192,9 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           ))
       )
       val expectedOutput = Seq(
-        AnswerRow("establisherDetails.name.checkYourAnswersLabel", Seq("test first name test last name"), answerIsMessageKey = false,
+        AnswerRow("messages__establisher_individual_name_cya_label", Seq("test first name test last name"), false,
           EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
-        AnswerRow("establisherDetails.dateOfBirth.checkYourAnswersLabel", Seq(s"${DateHelper.formatDate(LocalDate.now)}"), answerIsMessageKey = false,
+        AnswerRow("messages__establisher_individual_dob_cya_label", Seq(s"${DateHelper.formatDate(LocalDate.now)}"), false,
           EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
       )
       checkYourAnswerHelper(userAnswers).establisherDetails(firstIndex) mustEqual expectedOutput
@@ -201,7 +209,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
               AddressYearsId.toString -> AddressYears.UnderAYear.toString)))
       )
       val expectedOutput = Seq(
-        AnswerRow("addressYears.checkYourAnswersLabel", Seq(s"messages__common__${AddressYears.UnderAYear.toString}"), true,
+        AnswerRow("messages__establisher_individual_address_years_cya_label", Seq(s"messages__common__${AddressYears.UnderAYear.toString}"), true,
           AddressYearsController.onPageLoad(CheckMode, firstIndex).url)
       )
       checkYourAnswerHelper(userAnswers).addressYears(firstIndex) mustEqual expectedOutput

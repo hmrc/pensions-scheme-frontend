@@ -26,21 +26,20 @@ import utils.{DateHelper, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import play.api.test.Helpers._
 import views.html.register.establishers.individual.check_your_answers_individual
+import controllers.register.establishers.individual.routes._
 
 class CheckYourAnswersIndividualControllerSpec extends ControllerSpecBase {
 
-  val inputOptions = Seq(InputOption("GB", "United Kingdom"))
-  val countryOptions: CountryOptions = new CountryOptions(inputOptions)
+  val countryOptions: CountryOptions = new CountryOptions(Seq(InputOption("GB", "United Kingdom")))
   val firstIndex = Index(0)
   val testSchemeName = "Test Scheme Name"
 
-  val seqAnswers: Seq[AnswerRow] = Seq(AnswerRow("establisherDetails.name.checkYourAnswersLabel",
-    Seq("test first name test last name"), false,
-    controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
-    AnswerRow("establisherDetails.dateOfBirth.checkYourAnswersLabel",
-      Seq(DateHelper.formatDate(LocalDate.now)), false,
-      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url))
-
+  val answers: Seq[AnswerRow] = Seq(
+    AnswerRow("messages__establisher_individual_name_cya_label", Seq("test first name test last name"), false,
+      EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
+    AnswerRow("messages__establisher_individual_dob_cya_label", Seq(DateHelper.formatDate(LocalDate.now)), false,
+      EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
+  )
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersIndividualController =
     new CheckYourAnswersIndividualController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction,
       new DataRequiredActionImpl, countryOptions)
@@ -50,7 +49,7 @@ class CheckYourAnswersIndividualControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad(firstIndex)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe check_your_answers_individual(frontendAppConfig,
-        Seq(AnswerSection(None, seqAnswers)), testSchemeName)(fakeRequest, messages).toString
+        Seq(AnswerSection(None, answers)), testSchemeName)(fakeRequest, messages).toString
     }
 
     "redirect to Session Expired page for a GET when establisher name is not present" in {
@@ -59,7 +58,7 @@ class CheckYourAnswersIndividualControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "redirect to Session Expired for a GET if not existing data is found" in {
+    "redirect to Session Expired for a GET if no existing data is found" in {
       val result = controller(dontGetAnyData).onPageLoad(firstIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER

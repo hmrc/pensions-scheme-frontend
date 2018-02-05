@@ -238,7 +238,6 @@ messages__error__has_ct_utr_establisher = Select yes if the establisher has a CT
 messages__error__ct_utr_invalid = Enter a valid 10 digit Corporation Tax Unique Taxpayer Reference number
 
 messages__company_address_years__title = How long has the company been at this address?
-companyAddressYears.error.required = Please give an answer for companyAddressYears
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
 messages__common__vat = VAT Registration number (optional)
@@ -288,19 +287,20 @@ messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_previous_address__title = Previous address
 messages__establisher_individual_previous_address_lede = This is usually the registered business address but you can enter any address you have for this company.
 
-establisherDetails.name.checkYourAnswersLabel = Name
-establisherDetails.dateOfBirth.checkYourAnswersLabel = Date of birth
-establisherNino.checkYourAnswersLabel = Does the establisher have a National Insurance number?
-establisherNino.nino.checkYourAnswersLabel = National Insurance number
-establisherNino.reason.checkYourAnswersLabel = Reason
-uniqueTaxReference.checkYourAnswersLabel = Does the establisher have a Unique Taxpayer Reference number (UTR)?
-uniqueTaxReference.utr.checkYourAnswersLabel = Unique Taxpayer Reference number
-uniqueTaxReference.reason.checkYourAnswersLabel = Reason
-contactDetails.email.checkYourAnswersLabel = Email address
-contactDetails.phoneNumber.checkYourAnswersLabel = Phone number
-address.checkYourAnswersLabel = Address
-previousAddress.checkYourAnswersLabel = Previous address
-addressYears.checkYourAnswersLabel = How long has the establisher been at this address?
+
+messages__establisher_individual_name_cya_label = Name
+messages__establisher_individual_dob_cya_label = Date of birth
+messages__establisher_individual_nino_question_cya_label = Does the establisher have a National Insurance number?
+messages__establisher_individual_nino_cya_label = National Insurance number
+messages__establisher_individual_nino_reason_cya_label = Reason
+messages__establisher_individual_utr_question_cya_label = Does the establisher have a Unique Taxpayer Reference number (UTR)?
+messages__establisher_individual_utr_cya_label = Unique Taxpayer Reference number
+messages__establisher_individual_utr_reason_cya_label = Reason
+messages__establisher_individual_email_cya_label = Email address
+messages__establisher_individual_phone_cya_label = Phone number
+messages__establisher_individual_address_cya_label = Address
+messages__establisher_individual_previous_address_cya_label = Previous address
+messages__establisher_individual_address_years_cya_label = How long has the establisher been at this address?
 
 addressResults.checkYourAnswersLabel = addressResults
 addEstablisher.checkYourAnswersLabel = addEstablisher

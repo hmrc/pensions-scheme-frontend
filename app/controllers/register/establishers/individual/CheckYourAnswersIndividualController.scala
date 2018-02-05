@@ -30,7 +30,6 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswersHelper
 import viewmodels.AnswerSection
 import views.html.register.establishers.individual.check_your_answers_individual
-
 import scala.concurrent.Future
 
 class CheckYourAnswersIndividualController @Inject() (appConfig: FrontendAppConfig,
@@ -45,13 +44,13 @@ class CheckYourAnswersIndividualController @Inject() (appConfig: FrontendAppConf
       retrieveSchemeName {
         schemeName =>
         val checkYourAnswerHelper = new CheckYourAnswersHelper(request.userAnswers, countryOptions)
-
-        val sections = Seq(AnswerSection(None, checkYourAnswerHelper.establisherDetails(index.id) ++
+        val sections = Seq(
+          AnswerSection(None, checkYourAnswerHelper.establisherDetails(index.id) ++
           checkYourAnswerHelper.establisherNino(index.id) ++ checkYourAnswerHelper.uniqueTaxReference(index.id) ++
           checkYourAnswerHelper.address(index) ++ checkYourAnswerHelper.addressYears(index) ++
           checkYourAnswerHelper.previousAddress(index) ++
-          checkYourAnswerHelper.contactDetails(index)))
-
+          checkYourAnswerHelper.contactDetails(index))
+        )
         Future.successful(Ok(check_your_answers_individual(appConfig, sections, schemeName)))
       }
   }

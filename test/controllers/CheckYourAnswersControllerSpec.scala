@@ -25,10 +25,9 @@ import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
-  val inputOptions = Seq(InputOption("GB", "United Kingdom"))
-  val countryOptions: CountryOptions = new CountryOptions(inputOptions)
+  val countryOptions: CountryOptions = new CountryOptions(Seq(InputOption("GB", "United Kingdom")))
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
     new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction,
       new DataRequiredActionImpl, countryOptions)
 
