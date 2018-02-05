@@ -21,99 +21,149 @@ import play.api.libs.json._
 trait JsLens {
   self =>
 
-  def get(outer: JsValue): JsResult[JsValue]
-  def put(outer: JsValue, inner: JsValue): JsResult[JsValue]
+  def get(s: JsValue): JsResult[JsValue] = {
+    getAll(s).map {
+      case Seq(value) =>
+        value
+      case Seq(values @ _*) =>
+        JsArray(values)
+    }
+  }
 
-  def andThen(other: JsLens): JsLens = {
+  def getAll(s: JsValue): JsResult[Seq[JsValue]]
+  def set(a: JsValue, s: JsValue): JsResult[JsValue]
 
-    def get(outer: JsValue): JsResult[JsValue] =
-      self.get(outer).flatMap(other.get)
+  def andThen(other: JsLens): JsLens =
+    new JsLens {
 
-    def put(outer0: JsValue, inner0: JsValue): JsResult[JsValue] = {
-      for {
-        outer <- self.get(outer0).recover {
+      override def getAll(s: JsValue): JsResult[Seq[JsValue]] = {
+        self.getAll(s).flatMap {
+          as =>
+            traverse(as.flatMap {
+              a =>
+                traverse(other.getAll(a))
+            })
+        }
+      }
+
+      override def set(b: JsValue, s: JsValue): JsResult[JsValue] = {
+        self.getAll(s).recover {
           case e if e.errors.exists {
             _._2.exists {
               error =>
                 error.message.contains("undefined") ||
                   error.message.contains("out of bounds")
             }
-          } => JsNull
+          } => Seq(JsNull)
+        }.flatMap {
+          case Seq(a) =>
+            other.set(b, a).flatMap(self.set(_, s))
+          case as =>
+            traverse(as.map(other.set(b, _))).flatMap {
+              case Seq(jsValue) =>
+                self.set(jsValue, s)
+              case _ =>
+//                self.set(JsArray(as), s)
+                JsError("cannot set with traversal")
+            }
         }
-        inner <- other.put(outer, inner0)
-        newOuter <- self.put(outer0, inner)
-      } yield newOuter
+      }
     }
 
-    JsLens(get)(put)
+  private def traverse(seq: Seq[JsResult[JsValue]]): JsResult[Seq[JsValue]] = {
+    seq match {
+      case Seq(e @ JsError(_)) =>
+        e
+      case _ =>
+        // should we favour successes or failures?
+        JsSuccess(seq.foldLeft(Seq.empty[JsValue]) {
+          case (m, JsSuccess(n, _)) =>
+            m :+ n
+          case (m, _) =>
+            m
+        })
+    }
+  }
+
+  private def traverse(opt: JsResult[Seq[JsValue]]): Seq[JsResult[JsValue]] = {
+    opt match {
+      case JsSuccess(value, _) =>
+        value.map(JsSuccess(_))
+      case e: JsError =>
+        Seq(e)
+    }
   }
 }
 
 object JsLens {
 
-  val id: JsLens = {
-
-    def get(outer: JsValue): JsResult[JsValue] =
-      JsSuccess(outer)
-
-    def put(outer: JsValue, inner: JsValue): JsResult[JsValue] =
-      JsSuccess(inner)
-
-    JsLens(get)(put)
-  }
-
-  def apply(get0: JsValue => JsResult[JsValue])(put0: (JsValue, JsValue) => JsResult[JsValue]): JsLens =
+  def atKey(key: String): JsLens =
     new JsLens {
-      override def get(outer: JsValue): JsResult[JsValue] =
-        get0(outer)
-      override def put(outer: JsValue, inner: JsValue): JsResult[JsValue] =
-        put0(outer, inner)
-    }
 
-  def atKey(key: String): JsLens = {
+      override def getAll(outer: JsValue): JsResult[Seq[JsValue]] = {
+        (outer \ key).validate[JsValue].map(Seq(_))
+      }
 
-    def get(outer: JsValue): JsResult[JsValue] = {
-      (outer \ key).validate[JsValue]
-    }
-
-    def put(outer: JsValue, inner: JsValue): JsResult[JsValue] = {
-      outer match {
-        case obj: JsObject =>
-          JsSuccess(obj ++ Json.obj(key -> inner))
-        case JsNull =>
-          JsSuccess(Json.obj(key -> inner))
-        case _ =>
-          JsError("Not an object")
+      override def set(inner: JsValue, outer: JsValue): JsResult[JsValue] = {
+        outer match {
+          case obj: JsObject =>
+            JsSuccess(obj ++ Json.obj(key -> inner))
+          case JsNull =>
+            JsSuccess(Json.obj(key -> inner))
+          case _ =>
+            JsError("Not an object")
+        }
       }
     }
 
-    JsLens(get)(put)
-  }
+  def atIndex(index: Int): JsLens =
+    new JsLens {
 
-  def atIndex(index: Int): JsLens = {
-    require(index >= 0)
+      require(index >= 0)
 
-    def get(outer: JsValue): JsResult[JsValue] = {
-      (outer \ index).validate[JsValue]
-    }
+      override def getAll(outer: JsValue): JsResult[Seq[JsValue]] = {
+        (outer \ index).validate[JsValue].map(Seq(_))
+      }
 
-    def put(outer: JsValue, inner: JsValue): JsResult[JsValue] = {
-      outer match {
-        case JsArray(values) if index < values.size  =>
-          JsSuccess(JsArray(values.patch(index, Seq(inner), 1)))
-        case JsArray(values) if index == values.size =>
-          JsSuccess(JsArray(values :+ inner))
-        case JsNull if index == 0 =>
-          JsSuccess(JsArray(Seq(inner)))
-        case JsArray(_) =>
-          JsError("Index out of bounds")
-        case _ =>
-          JsError("Not an array")
+      override def set(inner: JsValue, outer: JsValue): JsResult[JsValue] = {
+        outer match {
+          case JsArray(values) if index < values.size  =>
+            JsSuccess(JsArray(values.patch(index, Seq(inner), 1)))
+          case JsArray(values) if index == values.size =>
+            JsSuccess(JsArray(values :+ inner))
+          case JsNull if index == 0 =>
+            JsSuccess(JsArray(Seq(inner)))
+          case JsArray(_) =>
+            JsError("Index out of bounds")
+          case _ =>
+            JsError("Not an array")
+        }
       }
     }
 
-    JsLens(get)(put)
-  }
+  def atAllIndices: JsLens =
+    new JsLens {
+
+      override def getAll(s: JsValue): JsResult[Seq[JsValue]] =
+        s match {
+          case JsArray(values) =>
+            JsSuccess(values)
+          case JsNull =>
+            JsSuccess(Seq(JsNull))
+          case _ =>
+            JsError("Not an array")
+        }
+
+      override def set(a: JsValue, s: JsValue): JsResult[JsValue] =
+        s match {
+          case JsArray(values) =>
+            JsSuccess(JsArray(values.map(_ => a)))
+          case JsNull =>
+            JsSuccess(JsArray(Seq(a)))
+          case _ =>
+            JsError("Not an array")
+        }
+    }
 
   def fromPath(path: JsPath): JsLens = {
 
@@ -123,15 +173,12 @@ object JsLens {
           JsLens.atKey(key)
         case IdxPathNode(idx) =>
           JsLens.atIndex(idx)
-        case _ =>
-          throw new RuntimeException("Path wildcards aren't allowed")
+        case RecursiveSearch(key) =>
+          JsLens.atAllIndices andThen JsLens.atKey(key)
       }
     }
 
-    path.path.foldLeft(id) {
-      case (lens, node) =>
-        lens andThen toLens(node)
-    }
+    path.path.map(toLens).reduceLeft(_ andThen _)
   }
 }
 
