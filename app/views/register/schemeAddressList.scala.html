@@ -23,7 +23,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__schemeAddressList__title"),
+    title = messages("messages__select_the_address__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -31,11 +31,11 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__schemeAddressList__heading")
+        @components.heading("messages__select_the_address__heading")
 
         @components.input_radio(
             field = form("value"),
-            legend = messages("messages__schemeAddressList__heading"),
+            legend = messages("messages__select_the_address__heading"),
             legendClass = Some("visually-hidden"),
             inputs = SchemeAddressList.options
         )

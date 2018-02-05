@@ -294,6 +294,7 @@ messages__common__address_postcode_hint = For example NE12 8ER
 messages__error__postcode = Enter the postal code
 
 messages__select_the_address__title = Select the address
+messages__select_the_address__heading = Select the address
 messages__common__select_address = Select the address from the list below, or
 messages__error__select_address = Select an address
 addressResults.checkYourAnswersLabel = addressResults
