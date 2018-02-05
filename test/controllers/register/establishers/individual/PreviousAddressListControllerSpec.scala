@@ -16,12 +16,12 @@
 
 package controllers.register.establishers.individual
 
-import connectors.FakeDataCacheConnector
+import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.PreviousAddressListFormProvider
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, PostCodeLookupId, PreviousPostCodeLookupId, UniqueTaxReferenceId}
+import identifiers.register.establishers.individual._
 import models.addresslookup.Address
 import models.register.establishers.individual.{EstablisherDetails, UniqueTaxReference}
 import models.register.{SchemeDetails, SchemeType}
@@ -39,6 +39,8 @@ import play.api.test.Helpers._
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import views.html.register.establishers.individual.previousAddressList
 
+import scala.concurrent.Future
+
 
 class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
 
@@ -55,16 +57,18 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     address("test post code 2")
   )
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    Mockito.reset(dataCacheConnector)
-  }
 
-  val dataCacheConnector = Mockito.spy(new FakeDataCacheConnector())
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PreviousAddressListController =
-    new PreviousAddressListController(frontendAppConfig, messagesApi, dataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+   def controller(
+                   dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
+                   dataCacheConnector: DataCacheConnector = new FakeDataCacheConnector()
+                 ): PreviousAddressListController =
+        new PreviousAddressListController(
+          frontendAppConfig, messagesApi,
+          dataCacheConnector,
+          new FakeNavigator(desiredRoute = onwardRoute),
+          FakeAuthAction,
+          dataRetrievalAction,
+          new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form, address: Seq[Address] = previousAddresses): String =
     previousAddressList(frontendAppConfig, form, NormalMode, firstIndex, address, establisherName)(fakeRequest, messages).toString
@@ -125,10 +129,16 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     }
 
     "update the country of the chosen address to `GB`" in {
+      val dataCacheConnector = mock[DataCacheConnector]
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
-      controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(NormalMode, firstIndex)(postRequest)
+      when(dataCacheConnector.save(any(), Matchers.eq(PreviousAddressId(0)), any())(any()))
+        .thenReturn(Future.successful(Json.obj()))
 
-      verify(dataCacheConnector, times(1)).save(any(), any(), Matchers.eq(previousAddresses.head.copy(country = "GB")))(any())
+      val result = controller(new FakeDataRetrievalAction(Some(validData)), dataCacheConnector)
+        .onSubmit(NormalMode, firstIndex)(postRequest)
+
+      status(result) mustEqual SEE_OTHER
+      verify(dataCacheConnector, times(1)).save(any(), Matchers.eq(PreviousAddressId(0)), Matchers.eq(previousAddresses.head.copy(country = "GB")))(any())
     }
 
     "return a Bad Request and errors when no data is submitted" in {

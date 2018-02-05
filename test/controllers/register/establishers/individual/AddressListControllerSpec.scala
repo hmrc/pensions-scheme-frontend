@@ -16,12 +16,12 @@
 
 package controllers.register.establishers.individual
 
-import connectors.FakeDataCacheConnector
+import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.individual.{EstablisherDetailsId, PostCodeLookupId, UniqueTaxReferenceId}
+import identifiers.register.establishers.individual._
 import models.addresslookup.Address
 import models.register.establishers.individual.{EstablisherDetails, UniqueTaxReference}
 import models.register.{SchemeDetails, SchemeType}
@@ -39,6 +39,8 @@ import play.api.test.Helpers._
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import views.html.register.establishers.individual.addressList
 
+import scala.concurrent.Future
+
 class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
@@ -47,22 +49,24 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
   val form = formProvider(Seq(0))
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
-
   val addresses = Seq(
     address("test post code 1"),
     address("test post code 2")
   )
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    Mockito.reset(dataCacheConnector)
-  }
-
-  val dataCacheConnector = Mockito.spy(new FakeDataCacheConnector())
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): AddressListController =
-    new AddressListController(frontendAppConfig, messagesApi, dataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  def controller(
+                  dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
+                  dataCacheConnector: DataCacheConnector = new FakeDataCacheConnector()
+                ): AddressListController =
+    new AddressListController(
+      frontendAppConfig, messagesApi,
+      dataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
 
   def viewAsString(form: Form[_] = form, address: Seq[Address] = addresses): String =
     addressList(frontendAppConfig, form, NormalMode, firstIndex, address, establisherName)(fakeRequest, messages).toString
@@ -123,10 +127,17 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     }
 
     "update the country of the chosen address to `GB`" in {
+      val dataCacheConnector = mock[DataCacheConnector]
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
-      controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(NormalMode, firstIndex)(postRequest)
 
-      verify(dataCacheConnector, times(1)).save(any(), any(), Matchers.eq(addresses.head.copy(country = "GB")))(any())
+      when(dataCacheConnector.save(any(), Matchers.eq(AddressId(0)), any())(any()))
+        .thenReturn(Future.successful(Json.obj()))
+
+      val result = controller(new FakeDataRetrievalAction(Some(validData)), dataCacheConnector)
+        .onSubmit(NormalMode, firstIndex)(postRequest)
+
+      status(result) mustEqual SEE_OTHER
+      verify(dataCacheConnector, times(1)).save(any(), Matchers.eq(AddressId(0)), Matchers.eq(addresses.head.copy(country = "GB")))(any())
     }
 
     "return a Bad Request and errors when no data is submitted" in {
