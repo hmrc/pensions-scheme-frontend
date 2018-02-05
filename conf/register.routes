@@ -64,3 +64,8 @@ GET        /insurerAddress                              controllers.register.Ins
 POST       /insurerAddress                              controllers.register.InsurerAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /changeInsurerAddress                        controllers.register.InsurerAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeInsurerAddress                        controllers.register.InsurerAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /schemePostCodeLookup                       controllers.register.SchemePostCodeLookupController.onPageLoad(mode: Mode = NormalMode)
+POST       /schemePostCodeLookup                       controllers.register.SchemePostCodeLookupController.onSubmit(mode: Mode = NormalMode)
+GET        /changeSchemePostCodeLookup                 controllers.register.SchemePostCodeLookupController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeSchemePostCodeLookup                 controllers.register.SchemePostCodeLookupController.onSubmit(mode: Mode = CheckMode)
