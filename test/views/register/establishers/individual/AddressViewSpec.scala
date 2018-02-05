@@ -54,6 +54,5 @@ class AddressViewSpec extends QuestionViewBehaviours[Address] {
     "have establisher name rendered on the page" in {
       Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)
     }
-
   }
 }
