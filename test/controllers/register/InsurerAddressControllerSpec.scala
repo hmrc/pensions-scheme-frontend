@@ -19,26 +19,23 @@ package controllers.register
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.InsurerAddressFormProvider
-import identifiers.register.{InsurerAddressId, SchemeDetailsId}
-import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
+import forms.register.establishers.individual.AddressFormProvider
+import identifiers.register._
 import models.addresslookup.Address
-import models.register.establishers.individual.EstablisherDetails
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
+import models.register._
 import models.NormalMode
-import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, InputOption}
+import utils._
 import views.html.register.insurerAddress
 
 class InsurerAddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new InsurerAddressFormProvider()
+  val formProvider = new AddressFormProvider()
   val form: Form[Address] = formProvider()
   val schemeName: String = "Test Scheme Name"
 

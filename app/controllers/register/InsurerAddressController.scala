@@ -21,15 +21,15 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import forms.register.InsurerAddressFormProvider
-import identifiers.register.{InsurerAddressId, SchemeDetailsId}
+import forms.register.establishers.individual.AddressFormProvider
+import identifiers.register._
 import models.register.CountryOptions
 import models.requests.DataRequest
 import models.Mode
 import models.addresslookup.Address
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.i18n._
+import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
 import views.html.register.insurerAddress
@@ -43,7 +43,7 @@ class InsurerAddressController @Inject()(appConfig: FrontendAppConfig,
                                   authenticate: AuthAction,
                                   getData: DataRetrievalAction,
                                   requireData: DataRequiredAction,
-                                  formProvider: InsurerAddressFormProvider,
+                                  formProvider: AddressFormProvider,
                                   countryOptions: CountryOptions) extends FrontendController with I18nSupport {
 
   val form: Form[Address] = formProvider()
