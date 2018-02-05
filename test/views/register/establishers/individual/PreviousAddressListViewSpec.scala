@@ -18,7 +18,7 @@ package views.register.establishers.individual
 
 import controllers.register.establishers.individual.routes
 import play.api.data.Form
-import forms.register.establishers.individual.PreviousAddressListFormProvider
+import forms.register.establishers.individual.AddressListFormProvider
 import models.addresslookup.Address
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
@@ -30,7 +30,7 @@ class PreviousAddressListViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "select_the_previous_address"
 
-  val form = new PreviousAddressListFormProvider()(Seq(0))
+  val form = new AddressListFormProvider()(Seq(0))
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
 
