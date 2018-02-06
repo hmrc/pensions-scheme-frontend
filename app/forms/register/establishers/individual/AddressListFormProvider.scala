@@ -19,7 +19,6 @@ package forms.register.establishers.individual
 import javax.inject.Inject
 
 import forms.mappings.{Constraints, Mappings}
-import models.addresslookup.Address
 import play.api.data.Form
 
 class AddressListFormProvider @Inject() () extends Mappings with Constraints {

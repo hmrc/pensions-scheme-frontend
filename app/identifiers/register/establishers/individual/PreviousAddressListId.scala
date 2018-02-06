@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package identifiers.register.establishers.individual
 
-import javax.inject.Inject
+import identifiers._
+import identifiers.register.establishers.EstablishersId
+import models.addresslookup.Address
+import play.api.libs.json.JsPath
 
-import forms.mappings.Mappings
-import play.api.data.Form
-
-class PostCodeLookupFormProvider @Inject() extends Mappings {
-  val maxLength = 8
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("messages__error__postcode").
-        verifying(maxLength(maxLength, "messages__error__postcode_length"))
-    )
+case class PreviousAddressListId(index: Int) extends TypedIdentifier[Address] {
+  override def path: JsPath = EstablishersId.path \ index \ PreviousAddressListId.toString
 }
+
+object PreviousAddressListId {
+  override def toString: String = "previousAddressList"
+}
+

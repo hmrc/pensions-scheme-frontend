@@ -33,7 +33,7 @@ class AddressListFormProviderSpec extends FormBehaviours {
     "fail to bind when value is omitted" in {
       val expectedError = error("value", "messages__error__select_address")
       checkForError(form, emptyForm, expectedError)
-    }
+    } 
 
     "fail to bind when value is negative" in {
       val expectedError = error("value", "error.invalid", 0)
