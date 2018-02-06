@@ -28,7 +28,7 @@ class SchemeAddressListViewSpec extends ViewBehaviours {
   val schemeName = "ThisSchemeName"
   val messageKeyPrefix = "select_the_address"
 
-  val form = new SchemeAddressListFormProvider()()
+  val form = new SchemeAddressListFormProvider()(Seq.empty)
 
   def createView = () => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 

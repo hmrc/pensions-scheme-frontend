@@ -23,14 +23,14 @@ import models.register.SchemeAddressList
 class SchemeAddressListFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
-    "value" -> SchemeAddressList.options.head.value
+    "value" -> "0"
   )
 
-  val form = new SchemeAddressListFormProvider()()
+  val form = new SchemeAddressListFormProvider()(Seq.empty)
 
   "SchemeAddressList form" must {
 
-    behave like questionForm[SchemeAddressList](SchemeAddressList.values.head)
+    behave like questionForm[Int](0)
 
     behave like formWithOptionField(
       Field(
@@ -38,5 +38,20 @@ class SchemeAddressListFormProviderSpec extends FormBehaviours {
         Required -> "schemeAddressList.error.required",
         Invalid -> "error.invalid"),
       SchemeAddressList.options.map(_.value): _*)
+
+    "fail to bind when value is omitted" in {
+      val expectedError = error("value", "messages__error__select_address")
+      checkForError(form, emptyForm, expectedError)
+    }
+
+    "fail to bind when value is negative" in {
+      val expectedError = error("value", "error.invalid", 0)
+      checkForError(form, Map("value" -> "-1"), expectedError)
+    }
+
+    "fail to bind when the value is out of bounds" in {
+      val expectedError = error("value", "error.invalid", 1)
+      checkForError(form, Map("value" -> "2"), expectedError)
+    }
   }
 }

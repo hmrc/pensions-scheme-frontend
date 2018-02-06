@@ -26,14 +26,14 @@ object SchemeAddressList {
   case object Option2 extends WithName("option2") with SchemeAddressList
 
   val values: Seq[SchemeAddressList] = Seq(
-    Option1, Option2
+  Option1, Option2
   )
 
   val options: Seq[InputOption] = values.map {
-    value =>
-      InputOption(value.toString, s"myOptionsPage.${value.toString}")
-  }
+  value =>
+  InputOption(value.toString, s"myOptionsPage.${value.toString}")
+}
 
   implicit val enumerable: Enumerable[SchemeAddressList] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+  Enumerable(values.map(v => v.toString -> v): _*)
 }

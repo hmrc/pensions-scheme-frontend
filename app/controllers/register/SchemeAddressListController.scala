@@ -25,7 +25,8 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import forms.register.SchemeAddressListFormProvider
-import identifiers.register.{SchemeAddressListId, SchemeDetailsId}
+import identifiers.register.establishers.individual.PostCodeLookupId
+import identifiers.register.{SchemeAddressListId, SchemeDetailsId, SchemePostCodeLookupId}
 import models.register.SchemeAddressList
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.schemeAddressList
@@ -46,29 +47,36 @@ class SchemeAddressListController @Inject()(
                                        formProvider: SchemeAddressListFormProvider
                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
-  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName { schemeName =>
-        val preparedForm = request.userAnswers.get(SchemeAddressListId) match {
-          case None => form
-          case Some(value) => form.fill(value)
+
+        request.userAnswers.get(SchemePostCodeLookupId) match {
+          case None =>
+            Future.successful(Redirect(controllers.register.routes.SchemePostCodeLookupController.onPageLoad(mode)))
+          case Some(addresses) =>
+            Future.successful(Ok(schemeAddressList(appConfig, formProvider(addresses), mode, schemeName)))
         }
-        Future.successful(Ok(schemeAddressList(appConfig, preparedForm, mode, schemeName)))
+
       }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName { schemeName =>
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(schemeAddressList(appConfig, formWithErrors, mode, schemeName))),
-          (value) =>
-            dataCacheConnector.save[SchemeAddressList](request.externalId, SchemeAddressListId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(SchemeAddressListId, mode)(new UserAnswers(cacheMap))))
-        )
+        request.userAnswers.get(SchemePostCodeLookupId) match {
+          case None =>
+            Future.successful(Redirect(controllers.register.routes.SchemePostCodeLookupController.onPageLoad(mode)))
+          case Some(addresses) =>
+            formProvider(addresses).bindFromRequest().fold(
+              (formWithErrors: Form[_]) =>
+                Future.successful(BadRequest(schemeAddressList(appConfig, formWithErrors, mode, schemeName))),
+              (value) =>
+                dataCacheConnector.save[SchemeAddressList](request.externalId, SchemeAddressListId, value).map(cacheMap =>
+                  Redirect(navigator.nextPage(SchemeAddressListId, mode)(new UserAnswers(cacheMap))))
+            )
+        }
       }
   }
 

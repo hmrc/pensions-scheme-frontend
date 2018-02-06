@@ -23,7 +23,7 @@ import models.register.SchemeAddressList
 
 class SchemeAddressListFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[SchemeAddressList] =
+  def apply(addresses: Seq[_]): Form[SchemeAddressList] =
     Form(
       "value" -> enumerable[SchemeAddressList]("schemeAddressList.error.required")
     )
