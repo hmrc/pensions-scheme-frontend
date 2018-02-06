@@ -105,7 +105,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     }
 
     "redirect to previous address lookup when no  previous addresses are present after lookup" in {
-      val result = controller().onSubmit(NormalMode, firstIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(
