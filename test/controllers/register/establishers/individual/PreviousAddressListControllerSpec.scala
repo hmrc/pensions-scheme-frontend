@@ -37,11 +37,13 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.{Enumerable, FakeNavigator, MapFormats}
-import views.html.register.establishers.individual.addressList
+import views.html.register.establishers.individual.previousAddressList
 
 import scala.concurrent.Future
 
-class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
+
+class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
+
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -49,33 +51,32 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
   val form = formProvider(Seq(0))
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
-  val addresses = Seq(
+
+  val previousAddresses = Seq(
     address("test post code 1"),
     address("test post code 2")
   )
 
-  def controller(
-                  dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
-                  dataCacheConnector: DataCacheConnector = new FakeDataCacheConnector()
-                ): AddressListController =
-    new AddressListController(
-      frontendAppConfig, messagesApi,
-      dataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction,
-      dataRetrievalAction,
-      new DataRequiredActionImpl,
-      formProvider
-    )
 
-  def viewAsString(form: Form[_] = form, address: Seq[Address] = addresses): String =
-    addressList(frontendAppConfig, form, NormalMode, firstIndex, address, establisherName)(fakeRequest, messages).toString
+   def controller(
+                   dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
+                   dataCacheConnector: DataCacheConnector = new FakeDataCacheConnector()
+                 ): PreviousAddressListController =
+        new PreviousAddressListController(
+          frontendAppConfig, messagesApi,
+          dataCacheConnector,
+          new FakeNavigator(desiredRoute = onwardRoute),
+          FakeAuthAction,
+          dataRetrievalAction,
+          new DataRequiredActionImpl, formProvider)
+
+  def viewAsString(form: Form[_] = form, address: Seq[Address] = previousAddresses): String =
+    previousAddressList(frontendAppConfig, form, NormalMode, firstIndex, address, establisherName)(fakeRequest, messages).toString
 
   def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
     Some("test county"), postcode = Some(postCode), country = "United Kingdom")
 
-  val validData = Json.obj(
-    SchemeDetailsId.toString -> Json.toJson(
+  val validData = Json.obj(SchemeDetailsId.toString -> Json.toJson(
     SchemeDetails("value 1", SchemeType.SingleTrust)),
     "establishers" -> Json.arr(
       Json.obj(
@@ -83,12 +84,13 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
           EstablisherDetails("test first name", "test last name", LocalDate.now),
         UniqueTaxReferenceId.toString ->
           UniqueTaxReference.Yes("1234567891"),
-        PostCodeLookupId.toString -> addresses)
-      ))
+        PreviousPostCodeLookupId.toString -> previousAddresses)
+    ))
 
-  "AddressResults Controller" must {
 
-    "return OK and the correct view for a GET when establisher name is present" in {
+  "PreviousAddressList Controller" must {
+
+     "return OK and the correct view for a GET when establisher name is present" in {
       val result = controller(new FakeDataRetrievalAction(Some(validData))).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
@@ -102,20 +104,19 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "redirect to Address look up page when no addresses are present after lookup" in {
+    "redirect to previous address lookup when no  previous addresses are present after lookup" in {
       val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(
-        controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
+        controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
     }
-
     "redirect to Address look up page when no addresses are present after lookup (post)" in {
       val result = controller().onSubmit(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(
-        controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
+        controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -130,15 +131,14 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     "update the country of the chosen address to `GB`" in {
       val dataCacheConnector = mock[DataCacheConnector]
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
-
-      when(dataCacheConnector.save(any(), Matchers.eq(AddressId(0)), any())(any()))
+      when(dataCacheConnector.save(any(), Matchers.eq(PreviousAddressId(0)), any())(any()))
         .thenReturn(Future.successful(Json.obj()))
 
       val result = controller(new FakeDataRetrievalAction(Some(validData)), dataCacheConnector)
         .onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      verify(dataCacheConnector, times(1)).save(any(), Matchers.eq(AddressId(0)), Matchers.eq(addresses.head.copy(country = "GB")))(any())
+      verify(dataCacheConnector, times(1)).save(any(), Matchers.eq(PreviousAddressId(0)), Matchers.eq(previousAddresses.head.copy(country = "GB")))(any())
     }
 
     "return a Bad Request and errors when no data is submitted" in {
