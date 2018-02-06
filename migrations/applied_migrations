@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "Applying migration InsurerAddress"
 echo "Applying migration SchemeAddressList"
 
 echo "Adding routes to conf/register.routes"
@@ -13,19 +14,25 @@ echo "POST       /companyPostCodeLookup               controllers.register.Compa
 echo "" >> ../conf/app.routes
 echo "GET        /schemeAddressList               controllers.register.SchemeAddressListController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
 echo "POST       /schemeAddressList               controllers.register.SchemeAddressListController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "" >> ../conf/register.routes
+echo "GET        /insurerAddress                       controllers.register.InsurerAddressController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "POST       /insurerAddress                       controllers.register.InsurerAddressController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
 
-echo "GET        /changeManualAddress                       controllers.register.establishers.individual.ManualAddressController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /changeManualAddress                       controllers.register.establishers.individual.ManualAddressController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "GET        /changeCompanyPostCodeLookup                        controllers.register.CompanyPostCodeLookupController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /changeCompanyPostCodeLookup                        controllers.register.CompanyPostCodeLookupController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
-echo "GET        /changeAddressResults               controllers.register.establishers.individual.AddressResultsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /changeAddressResults               controllers.register.establishers.individual.AddressResultsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
+echo "GET        /changeInsurerAddress                       controllers.register.InsurerAddressController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "POST       /changeInsurerAddress                       controllers.register.InsurerAddressController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
 
 echo "GET        /changeSchemeAddressList               controllers.register.SchemeAddressListController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
 echo "POST       /changeSchemeAddressList               controllers.register.SchemeAddressListController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
+echo messages__"insurerAddress__title = insurerAddress" >> ../conf/messages.en
+echo messages__"insurerAddress__heading = insurerAddress" >> ../conf/messages.en
+echo messages__"insurerAddress__field1 = Field 1" >> ../conf/messages.en
+echo messages__"insurerAddress__field2 = Field 2" >> ../conf/messages.en
+echo messages__"insurerAddress__checkYourAnswersLabel = insurerAddress" >> ../conf/messages.en
+echo messages__"insurerAddress__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
+echo messages__"insurerAddress__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
 echo "messages__schemeAddressList__title = schemeAddressList" >> ../conf/messages.en
 echo "messages__schemeAddressList__heading = schemeAddressList" >> ../conf/messages.en
 echo "messages__schemeAddressList__option1 = schemeAddressList" Option 1 >> ../conf/messages.en
@@ -37,6 +44,8 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
+     print "  def insurerAddress: Option[AnswerRow] = userAnswers.get(InsurerAddressId) map {";\
+     print "    x => AnswerRow(\"insurerAddress.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, controllers.register.routes.InsurerAddressController.onPageLoad(CheckMode).url)";\
      print "  def schemeAddressList: Option[AnswerRow] = userAnswers.get(SchemeAddressListId) map {";\
      print "    x => AnswerRow(\"messages__schemeAddressList__checkYourAnswersLabel\", s\"schemeAddressList.$x\", true, controllers.register.routes.SchemeAddressListController.onPageLoad(CheckMode).url)";\
      print "  }";\
@@ -46,4 +55,5 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
+echo "Migration InsurerAddress completed"
 echo "Migration SchemeAddressList completed"
