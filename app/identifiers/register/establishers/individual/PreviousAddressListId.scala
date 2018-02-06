@@ -28,3 +28,4 @@ case class PreviousAddressListId(index: Int) extends TypedIdentifier[Address] {
 object PreviousAddressListId {
   override def toString: String = "previousAddressList"
 }
+

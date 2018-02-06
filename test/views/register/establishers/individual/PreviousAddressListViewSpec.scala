@@ -90,3 +90,4 @@ class PreviousAddressListViewSpec extends ViewBehaviours {
     }
   }
 }
+
