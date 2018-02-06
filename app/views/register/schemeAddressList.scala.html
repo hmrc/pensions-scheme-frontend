@@ -18,9 +18,9 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.routes._
 @import models.Mode
-@import models.register.SchemeAddressList
+@import models.addresslookup._
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, addresses: Seq[Address])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__select_the_address__title"),
@@ -40,12 +40,21 @@
             </a>
         </p>
 
-        @components.input_radio(
+        @components.fieldSet(
             field = form("value"),
-            legend = messages("messages__select_the_address__heading"),
-            legendClass = Some("visually-hidden"),
-            inputs = SchemeAddressList.options
-        )
+            legend = "messages__select_the_address__title",
+            hiddenLegend = true
+        ) {
+            @for((address, i) <- addresses.zipWithIndex) {
+
+                @components.radio(
+                    field = form("value"),
+                    label = address.print,
+                    value = i.toString
+                )
+            }
+
+        }
 
         @components.submit_button()
     }

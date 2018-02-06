@@ -18,21 +18,19 @@ package controllers.register
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.SchemeAddressListFormProvider
-import identifiers.register.establishers.individual.PostCodeLookupId
-import identifiers.register.{SchemeAddressListId, SchemeDetailsId, SchemePostCodeLookupId}
-import models.register.SchemeAddressList
-import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.schemeAddressList
+import identifiers.register.{SchemeAddressId, SchemeAddressListId, SchemeDetailsId, SchemePostCodeLookupId}
 import models.Mode
 import models.requests.DataRequest
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.{Enumerable, Navigator, UserAnswers}
+import views.html.register.schemeAddressList
 
 import scala.concurrent.Future
 
@@ -54,9 +52,9 @@ class SchemeAddressListController @Inject()(
 
         request.userAnswers.get(SchemePostCodeLookupId) match {
           case None =>
-            Future.successful(Redirect(controllers.register.routes.SchemePostCodeLookupController.onPageLoad(mode)))
+           Future.successful(Redirect(controllers.register.routes.SchemePostCodeLookupController.onPageLoad(mode)))
           case Some(addresses) =>
-            Future.successful(Ok(schemeAddressList(appConfig, formProvider(addresses), mode, schemeName)))
+            Future.successful(Ok(schemeAddressList(appConfig, formProvider(addresses), mode, schemeName, addresses)))
         }
 
       }
@@ -71,9 +69,13 @@ class SchemeAddressListController @Inject()(
           case Some(addresses) =>
             formProvider(addresses).bindFromRequest().fold(
               (formWithErrors: Form[_]) =>
-                Future.successful(BadRequest(schemeAddressList(appConfig, formWithErrors, mode, schemeName))),
+                Future.successful(BadRequest(schemeAddressList(appConfig, formWithErrors, mode, schemeName, addresses))),
               (value) =>
-                dataCacheConnector.save[SchemeAddressList](request.externalId, SchemeAddressListId, value).map(cacheMap =>
+                dataCacheConnector.save(
+                  request.externalId,
+                  SchemeAddressId,
+                  addresses(value).copy(country = "GB")
+                ).map(cacheMap =>
                   Redirect(navigator.nextPage(SchemeAddressListId, mode)(new UserAnswers(cacheMap))))
             )
         }

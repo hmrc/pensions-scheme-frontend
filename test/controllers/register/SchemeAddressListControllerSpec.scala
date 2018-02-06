@@ -20,13 +20,16 @@ import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.SchemeAddressListFormProvider
-import identifiers.register.{SchemeAddressListId, SchemePostCodeLookupId}
+import identifiers.register.SchemePostCodeLookupId
 import models.NormalMode
 import models.addresslookup.Address
+import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
-import models.register.{SchemeAddressList, SchemeDetails}
+import org.mockito.Matchers.any
+import org.mockito.Mockito.{times, verify}
+import org.mockito.{Matchers, Mockito}
 import play.api.data.Form
-import play.api.libs.json.{JsString, _}
+import play.api.libs.json._
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.register.schemeAddressList
@@ -44,13 +47,24 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase {
   )
   val addressObject = Json.obj(SchemePostCodeLookupId.toString -> addresses)
 
-  val form = formProvider(addresses)
+  val dataCacheConnector = Mockito.spy(new FakeDataCacheConnector())
+
+  val form = formProvider(Seq(0))
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
-    new SchemeAddressListController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+    new SchemeAddressListController(
+      frontendAppConfig,
+      messagesApi,
+      dataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
 
-  def viewAsString(form: Form[_] = form) = schemeAddressList(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form, address: Seq[Address] = addresses): String =
+    schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages).toString
 
   def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
     Some("test county"), postcode = Some(postCode), country = "United Kingdom")
@@ -65,15 +79,6 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
-    }
-
-    "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(SchemeAddressListId.toString -> JsString(SchemeAddressList.values.head.toString))
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData ++ schemeDetails ++ addressObject))
-
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
-
-      contentAsString(result) mustBe viewAsString(form.fill(SchemeAddressList.values.head))
     }
 
     "redirect to Address look up page" when {
@@ -103,12 +108,21 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase {
 
       val dataRetrieval = new FakeDataRetrievalAction(Some(schemeDetails ++ addressObject))
 
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", SchemeAddressList.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "1"))
 
       val result = controller(dataRetrieval).onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "update the country of the chosen address to `GB`" in {
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
+
+      controller(new FakeDataRetrievalAction(Some(schemeDetails ++ addressObject))).onSubmit(NormalMode)(postRequest)
+
+      verify(dataCacheConnector, times(1)).save(any(), any(), Matchers.eq(addresses.head.copy(country = "GB")))(any())
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
@@ -134,7 +148,7 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase {
         }
 
         "POST" in {
-          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", SchemeAddressList.options.head.value))
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "1"))
           val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
 
           status(result) mustBe SEE_OTHER

@@ -17,14 +17,16 @@
 package forms.register
 
 import javax.inject.Inject
+
 import forms.mappings.Mappings
 import play.api.data.Form
-import models.register.SchemeAddressList
 
 class SchemeAddressListFormProvider @Inject() extends Mappings {
 
-  def apply(addresses: Seq[_]): Form[SchemeAddressList] =
+  def apply(addresses: Seq[_]): Form[Int] =
     Form(
-      "value" -> enumerable[SchemeAddressList]("schemeAddressList.error.required")
+      "value" -> int("messages__error__select_address")
+        .verifying(minimumValue(0, "error.invalid"))
+        .verifying(maximumValue(addresses.length - 1, "error.invalid"))
     )
 }

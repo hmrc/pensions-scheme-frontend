@@ -17,8 +17,6 @@
 package forms.register
 
 import forms.behaviours.FormBehaviours
-import models.{Field, Invalid, Required}
-import models.register.SchemeAddressList
 
 class SchemeAddressListFormProviderSpec extends FormBehaviours {
 
@@ -26,18 +24,11 @@ class SchemeAddressListFormProviderSpec extends FormBehaviours {
     "value" -> "0"
   )
 
-  val form = new SchemeAddressListFormProvider()(Seq.empty)
+  val form = new SchemeAddressListFormProvider()(Seq(0,1))
 
   "SchemeAddressList form" must {
 
     behave like questionForm[Int](0)
-
-    behave like formWithOptionField(
-      Field(
-        "value",
-        Required -> "schemeAddressList.error.required",
-        Invalid -> "error.invalid"),
-      SchemeAddressList.options.map(_.value): _*)
 
     "fail to bind when value is omitted" in {
       val expectedError = error("value", "messages__error__select_address")

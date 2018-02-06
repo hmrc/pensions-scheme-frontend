@@ -14,26 +14,11 @@
  * limitations under the License.
  */
 
-package models.register
+package identifiers.register
 
-import utils.{Enumerable, InputOption, WithName}
+import identifiers.TypedIdentifier
+import models.addresslookup.Address
 
-sealed trait SchemeAddressList
-
-object SchemeAddressList {
-
-  case object Option1 extends WithName("option1") with SchemeAddressList
-  case object Option2 extends WithName("option2") with SchemeAddressList
-
-  val values: Seq[SchemeAddressList] = Seq(
-  Option1, Option2
-  )
-
-  val options: Seq[InputOption] = values.map {
-  value =>
-  InputOption(value.toString, s"myOptionsPage.${value.toString}")
-}
-
-  implicit val enumerable: Enumerable[SchemeAddressList] =
-  Enumerable(values.map(v => v.toString -> v): _*)
+case object SchemeAddressId extends TypedIdentifier[Address] {
+  override def toString: String = "schemeAddress"
 }

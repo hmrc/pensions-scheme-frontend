@@ -18,13 +18,13 @@ package forms.register.establishers.individual
 
 import forms.behaviours.FormBehaviours
 
-class AddressListFormProviderSpec extends FormBehaviours {
+  class AddressListFormProviderSpec extends FormBehaviours {
 
-  val validData: Map[String, String] = Map(
-    "value" -> "0"
-  )
+    val validData: Map[String, String] = Map(
+      "value" -> "0"
+    )
 
-  val form = new AddressListFormProvider()(Seq(0, 1))
+    val form = new AddressListFormProvider()(Seq(0, 1))
 
   "AddressResults form" must {
 

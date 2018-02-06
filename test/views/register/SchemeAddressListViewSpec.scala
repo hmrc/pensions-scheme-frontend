@@ -18,7 +18,7 @@ package views.register
 
 import forms.register.SchemeAddressListFormProvider
 import models.NormalMode
-import models.register.SchemeAddressList
+import models.addresslookup.Address
 import play.api.data.Form
 import views.behaviours.ViewBehaviours
 import views.html.register.schemeAddressList
@@ -27,12 +27,21 @@ class SchemeAddressListViewSpec extends ViewBehaviours {
 
   val schemeName = "ThisSchemeName"
   val messageKeyPrefix = "select_the_address"
+  val addressIndexes = Seq.range(0, 2)
+  val addresses = Seq(
+    address("test post code 1"),
+    address("test post code 2")
+  )
 
+  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
+    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
+  
   val form = new SchemeAddressListFormProvider()(Seq.empty)
 
-  def createView = () => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+  def createView = () => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses
+  )(fakeRequest, messages)
 
   "SchemeAddressList view" must {
 
@@ -47,20 +56,20 @@ class SchemeAddressListViewSpec extends ViewBehaviours {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- SchemeAddressList.options) {
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, false)
+        for (option <- addressIndexes) {
+          assertContainsRadioButton(doc, s"value-$option", "value", option.toString, false)
         }
       }
     }
 
-    for(option <- SchemeAddressList.options) {
-      s"rendered with a value of '${option.value}'" must {
-        s"have the '${option.value}' radio button selected" in {
-          val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
+    for(option <- addressIndexes) {
+      s"rendered with a value of '$option'" must {
+        s"have the '$option' radio button selected" in {
+          val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"$option"))))
+          assertContainsRadioButton(doc, s"value-$option", "value", option.toString, true)
 
-          for(unselectedOption <- SchemeAddressList.options.filterNot(o => o == option)) {
-            assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
+          for(unselectedOption <- addressIndexes.filterNot(o => o == option)) {
+            assertContainsRadioButton(doc, s"value-${unselectedOption}", "value", unselectedOption.toString, false)
           }
         }
       }

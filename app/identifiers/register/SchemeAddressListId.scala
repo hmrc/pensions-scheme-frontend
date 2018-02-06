@@ -17,8 +17,7 @@
 package identifiers.register
 
 import identifiers._
-import models.register.SchemeAddressList
 
-case object SchemeAddressListId extends TypedIdentifier[SchemeAddressList] {
+case object SchemeAddressListId  extends Identifier {
   override def toString: String = "schemeAddressList"
 }
