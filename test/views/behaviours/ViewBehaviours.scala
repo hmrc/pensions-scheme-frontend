@@ -78,13 +78,4 @@ trait ViewBehaviours extends ViewSpecBase {
 
   }
 
-  def addressListWithManualOption(
-                                   view: () => HtmlFormat.Appendable,
-                                   url: String) = {
-
-    "behave like an address list with link to enter manually" in {
-      Jsoup.parse(view().toString()).select("a[id=manual-address-link]") must haveLink(url)
-    }
-
-  }
 }

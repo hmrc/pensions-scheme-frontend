@@ -66,8 +66,14 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase {
   def viewAsString(form: Form[_] = form, address: Seq[Address] = addresses): String =
     schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages).toString
 
-  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
+  def address(postCode: String): Address = Address(
+    "address line 1",
+    "address line 2",
+    Some("test town"),
+    Some("test county"),
+    postcode = Some(postCode),
+    country = "United Kingdom"
+  )
 
   "SchemeAddressList Controller" must {
 
@@ -120,7 +126,7 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase {
 
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
-      controller(new FakeDataRetrievalAction(Some(schemeDetails ++ addressObject))).onSubmit(NormalMode)(postRequest)
+      await(controller(new FakeDataRetrievalAction(Some(schemeDetails ++ addressObject))).onSubmit(NormalMode)(postRequest))
 
       verify(dataCacheConnector, times(1)).save(any(), any(), Matchers.eq(addresses.head.copy(country = "GB")))(any())
     }

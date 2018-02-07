@@ -19,6 +19,7 @@ package views.register
 import forms.register.SchemeAddressListFormProvider
 import models.NormalMode
 import models.addresslookup.Address
+import org.jsoup.Jsoup
 import play.api.data.Form
 import views.behaviours.ViewBehaviours
 import views.html.register.schemeAddressList
@@ -38,19 +39,24 @@ class SchemeAddressListViewSpec extends ViewBehaviours {
   
   val form = new SchemeAddressListFormProvider()(Seq.empty)
 
-  def createView = () => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages)
+  def createView =
+    () => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses
-  )(fakeRequest, messages)
+  def createViewUsingForm =
+    (form: Form[_]) => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages)
 
   "SchemeAddressList view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like addressListWithManualOption(createView, controllers.register.routes.SchemeAddressListController.onPageLoad(NormalMode).url)
-
     behave like pageWithSecondaryHeader(createView, schemeName)
-  }
+
+    "have link for enter address manually" in {
+      Jsoup.parse(createView().toString).select("a[id=manual-address-link]") must haveLink(
+        controllers.register.routes.SchemeAddressListController.onPageLoad(NormalMode).url)
+    }
+
+    }
 
   "SchemeAddressList view" when {
     "rendered" must {
@@ -69,7 +75,7 @@ class SchemeAddressListViewSpec extends ViewBehaviours {
           assertContainsRadioButton(doc, s"value-$option", "value", option.toString, true)
 
           for(unselectedOption <- addressIndexes.filterNot(o => o == option)) {
-            assertContainsRadioButton(doc, s"value-${unselectedOption}", "value", unselectedOption.toString, false)
+            assertContainsRadioButton(doc, s"value-$unselectedOption", "value", unselectedOption.toString, false)
           }
         }
       }
