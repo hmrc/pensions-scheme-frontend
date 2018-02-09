@@ -282,6 +282,9 @@ messages__select_the_address__title = Select the address
 messages__common__select_address = Select the address from the list below, or
 messages__error__select_address = Select an address
 
+messages__select_the_previous_address__title = Select the previous address
+messages__previousAddressList__checkYourAnswersLabel = previousAddressList
+
 messages__establisher_individual_address__title = Establisher’s address
 
 messages__establisher_individual_previous_address__title = Previous address
