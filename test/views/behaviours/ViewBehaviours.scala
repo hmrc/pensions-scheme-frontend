@@ -16,6 +16,7 @@
 
 package views.behaviours
 
+import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import views.ViewSpecBase
 
@@ -24,7 +25,7 @@ trait ViewBehaviours extends ViewSpecBase {
   def normalPage(view: () => HtmlFormat.Appendable,
                  messageKeyPrefix: String,
                  pageHeader: String,
-                 expectedGuidanceKeys: String*) = {
+                 expectedGuidanceKeys: String*): Unit = {
 
     "behave like a normal page" when {
       "rendered" must {
@@ -37,7 +38,8 @@ trait ViewBehaviours extends ViewSpecBase {
 
         "display the correct browser title" in {
           val doc = asDocument(view())
-          assertEqualsMessage(doc, "title", messagesApi(s"messages__${messageKeyPrefix}__title")+" - "+messagesApi("messages__pension_scheme_registration__title"))
+          assertEqualsMessage(doc, "title", messagesApi(s"messages__${messageKeyPrefix}__title") + " - " + messagesApi(
+            "messages__pension_scheme_registration__title"))
         }
 
         "display the correct page title" in {
@@ -58,7 +60,7 @@ trait ViewBehaviours extends ViewSpecBase {
     }
   }
 
-  def pageWithBackLink(view: () => HtmlFormat.Appendable) = {
+  def pageWithBackLink(view: () => HtmlFormat.Appendable): Unit = {
 
     "behave like a page with a back link" must {
       "have a back link" in {
@@ -67,4 +69,14 @@ trait ViewBehaviours extends ViewSpecBase {
       }
     }
   }
+
+  def pageWithSecondaryHeader(view: () => HtmlFormat.Appendable,
+                              heading: String): Unit = {
+
+    "behave like a page with a secondary header" in {
+      Jsoup.parse(view().toString()).getElementsByClass("heading-secondary").text() must include(heading)
+    }
+
+  }
+
 }

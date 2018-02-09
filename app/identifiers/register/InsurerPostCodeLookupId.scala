@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package forms.register
+package identifiers.register
 
-import javax.inject.Inject
+import identifiers._
+import models.addresslookup.Address
 
-import forms.mappings.Mappings
-import play.api.data.Form
 
-class SchemePostCodeLookupFormProvider @Inject() extends Mappings {
-  val maxLength = 8
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("messages__error__postcode").verifying(maxLength(maxLength, "messages__error__postcode_length"))
-    )
+object InsurerPostCodeLookupId extends TypedIdentifier[Seq[Address]]  {
+  override def toString: String = "insurerAddresses"
 }
+

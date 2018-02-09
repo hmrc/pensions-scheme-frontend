@@ -57,7 +57,7 @@ class PreviousAddressListViewSpec extends ViewBehaviours {
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
-        routes.PreviousAddressListController.onPageLoad(NormalMode, firstIndex).url)
+        routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex).url)
     }
 
     "have establisher name rendered on the page" in {

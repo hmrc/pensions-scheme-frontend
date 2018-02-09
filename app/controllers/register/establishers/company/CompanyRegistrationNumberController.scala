@@ -28,7 +28,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyRegistrationNumber
@@ -49,7 +49,7 @@ class CompanyRegistrationNumberController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode,index:Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName=>
@@ -65,7 +65,7 @@ class CompanyRegistrationNumberController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>

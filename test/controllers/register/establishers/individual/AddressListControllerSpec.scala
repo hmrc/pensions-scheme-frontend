@@ -28,9 +28,8 @@ import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import org.mockito.Matchers.any
-import org.mockito.{Matchers, Mockito}
+import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -41,7 +40,7 @@ import views.html.register.establishers.individual.addressList
 
 import scala.concurrent.Future
 
-class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
+class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -74,7 +73,8 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
   def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
     Some("test county"), postcode = Some(postCode), country = "United Kingdom")
 
-  val validData = Json.obj(SchemeDetailsId.toString -> Json.toJson(
+  val validData = Json.obj(
+    SchemeDetailsId.toString -> Json.toJson(
     SchemeDetails("value 1", SchemeType.SingleTrust)),
     "establishers" -> Json.arr(
       Json.obj(

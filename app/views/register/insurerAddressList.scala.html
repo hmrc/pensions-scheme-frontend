@@ -16,26 +16,26 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.establishers.individual.routes._
+@import controllers.register.routes._
 @import models.Mode
 @import models.addresslookup._
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, addresses: Seq[Address], establisherName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, addresses: Seq[Address])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__select_the_address__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = AddressListController.onSubmit(mode, index), 'autoComplete -> "off") {
+    @helpers.form(action = InsurerAddressListController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
-        @components.heading(headingKey = "messages__select_the_address__title", secondaryHeaderKey = Some(establisherName))
+        @components.heading("messages__select_the_address__title", secondaryHeaderKey = Some(schemeName))
 
         <p>
             @messages("messages__common__select_address")
-            <a id="manual-address-link" href="@AddressController.onPageLoad(mode, index)">
+            <a id="manual-address-link" href="@InsurerAddressController.onPageLoad(mode)">
                 @messages(s"messages__common__select_address_link")
             </a>
         </p>
@@ -53,6 +53,7 @@
                     value = i.toString
                 )
             }
+
         }
 
         @components.submit_button()
