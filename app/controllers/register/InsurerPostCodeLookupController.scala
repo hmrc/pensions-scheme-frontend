@@ -21,7 +21,7 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
-import forms.register.InsurerPostCodeLookupFormProvider
+import forms.register.establishers.individual.PostCodeLookupFormProvider
 import identifiers.register.{InsurerPostCodeLookupId, SchemeDetailsId}
 import models.requests.DataRequest
 import models.Mode
@@ -43,7 +43,7 @@ class InsurerPostCodeLookupController @Inject()(
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
-                                          formProvider: InsurerPostCodeLookupFormProvider
+                                          formProvider: PostCodeLookupFormProvider
                                         ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()

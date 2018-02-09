@@ -21,6 +21,6 @@ import models.addresslookup.Address
 
 
 object InsurerPostCodeLookupId extends TypedIdentifier[Seq[Address]]  {
-  override def toString: String = "insurerAddress"
+  override def toString: String = "insurerAddresses"
 }
 

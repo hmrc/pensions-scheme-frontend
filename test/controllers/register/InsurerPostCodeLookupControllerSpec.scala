@@ -19,7 +19,7 @@ package controllers.register
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.InsurerPostCodeLookupFormProvider
+import forms.register.establishers.individual.PostCodeLookupFormProvider
 import models.addresslookup.{Address, AddressRecord}
 import models.NormalMode
 import org.mockito.Mockito._
@@ -38,7 +38,7 @@ class InsurerPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new InsurerPostCodeLookupFormProvider()
+  val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]

@@ -17,7 +17,7 @@
 package views.register
 
 import controllers.register.routes
-import forms.register.InsurerPostCodeLookupFormProvider
+import forms.register.establishers.individual.PostCodeLookupFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import play.api.data.Form
@@ -29,7 +29,7 @@ class InsurerPostCodeLookupViewSpec extends StringViewBehaviours {
 
   val messageKeyPrefix = "benefits_insurance_addr"
 
-  val form = new InsurerPostCodeLookupFormProvider()()
+  val form = new PostCodeLookupFormProvider()()
   val schemeName = "test scheme name"
 
   def createView: () => HtmlFormat.Appendable = () => insurerPostCodeLookup(frontendAppConfig, form, NormalMode,
