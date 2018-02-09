@@ -59,7 +59,7 @@ class AddressListViewSpec extends ViewBehaviours {
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
-        routes.AddressListController.onPageLoad(NormalMode, firstIndex).url)
+        routes.AddressController.onPageLoad(NormalMode, firstIndex).url)
     }
 
   }

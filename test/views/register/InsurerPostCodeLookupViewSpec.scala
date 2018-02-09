@@ -52,7 +52,7 @@ class InsurerPostCodeLookupViewSpec extends StringViewBehaviours {
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
-        routes.InsurerPostCodeLookupController.onPageLoad(NormalMode).url)
+        routes.InsurerAddressController.onPageLoad(NormalMode).url)
     }
   }
 }

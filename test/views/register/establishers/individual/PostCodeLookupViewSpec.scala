@@ -53,7 +53,7 @@ class PostCodeLookupViewSpec extends StringViewBehaviours {
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
-        routes.PostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
+        routes.AddressController.onPageLoad(NormalMode, firstIndex).url)
     }
   }
 }

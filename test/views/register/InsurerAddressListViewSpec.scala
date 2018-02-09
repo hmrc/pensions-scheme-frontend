@@ -53,7 +53,7 @@ class InsurerAddressListViewSpec extends ViewBehaviours {
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString).select("a[id=manual-address-link]") must haveLink(
-        controllers.register.routes.InsurerAddressListController.onPageLoad(NormalMode).url)
+        controllers.register.routes.InsurerAddressController.onPageLoad(NormalMode).url)
     }
 
     }
