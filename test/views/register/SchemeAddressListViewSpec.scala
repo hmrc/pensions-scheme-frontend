@@ -16,7 +16,7 @@
 
 package views.register
 
-import forms.register.SchemeAddressListFormProvider
+import forms.register.establishers.individual.AddressListFormProvider
 import models.NormalMode
 import models.addresslookup.Address
 import org.jsoup.Jsoup
@@ -37,12 +37,12 @@ class SchemeAddressListViewSpec extends ViewBehaviours {
   def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
     Some("test county"), postcode = Some(postCode), country = "United Kingdom")
   
-  val form = new SchemeAddressListFormProvider()(Seq.empty)
+  val form = new AddressListFormProvider()(Seq.empty)
 
-  def createView =
+  def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable =
     () => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages)
 
-  def createViewUsingForm =
+  def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable =
     (form: Form[_]) => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages)
 
   "SchemeAddressList view" must {

@@ -16,29 +16,33 @@
 
 package controllers.register
 
-import connectors.FakeDataCacheConnector
+import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.SchemeAddressListFormProvider
-import identifiers.register.SchemePostCodeLookupId
+import forms.register.establishers.individual.AddressListFormProvider
+import identifiers.register.{SchemeAddressId, SchemePostCodeLookupId}
 import models.NormalMode
 import models.addresslookup.Address
 import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify}
-import org.mockito.{Matchers, Mockito}
+import org.mockito.Mockito._
+import org.mockito.Matchers
+import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.{Enumerable, FakeNavigator, MapFormats}
 import views.html.register.schemeAddressList
 
-class SchemeAddressListControllerSpec extends ControllerSpecBase {
+import scala.concurrent.Future
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+class SchemeAddressListControllerSpec extends ControllerSpecBase with MockitoSugar with MapFormats with Enumerable.Implicits {
 
-  val formProvider = new SchemeAddressListFormProvider()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  val formProvider = new AddressListFormProvider()
   val schemeName = "ThisSchemeName"
   val schemeDetails = Json.obj("schemeDetails" -> SchemeDetails(schemeName, SingleTrust))
   val addresses = Seq(
@@ -47,14 +51,14 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase {
   )
   val addressObject = Json.obj(SchemePostCodeLookupId.toString -> addresses)
 
-  val dataCacheConnector = Mockito.spy(new FakeDataCacheConnector())
-
   val form = formProvider(Seq(0))
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
+  def controller(
+                  dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
+                  dataCacheConnector: DataCacheConnector = new FakeDataCacheConnector()
+                ): SchemeAddressListController =
     new SchemeAddressListController(
-      frontendAppConfig,
-      messagesApi,
+      frontendAppConfig, messagesApi,
       dataCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
@@ -62,7 +66,6 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider
     )
-
   def viewAsString(form: Form[_] = form, address: Seq[Address] = addresses): String =
     schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages).toString
 
@@ -123,12 +126,19 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase {
     }
 
     "update the country of the chosen address to `GB`" in {
-
+      val dataCacheConnector = mock[DataCacheConnector]
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
-      await(controller(new FakeDataRetrievalAction(Some(schemeDetails ++ addressObject))).onSubmit(NormalMode)(postRequest))
+      when(dataCacheConnector.save(any(), Matchers.eq(SchemeAddressId), any())(any()))
+        .thenReturn(Future.successful(Json.obj()))
 
-      verify(dataCacheConnector, times(1)).save(any(), any(), Matchers.eq(addresses.head.copy(country = "GB")))(any())
+      val result = controller(new FakeDataRetrievalAction(Some(schemeDetails ++ addressObject)), dataCacheConnector)
+        .onSubmit(NormalMode)(postRequest)
+
+      status(result) mustEqual SEE_OTHER
+
+      verify(dataCacheConnector, times(1)).save(any(), Matchers.eq(SchemeAddressId), Matchers.eq(addresses.head.copy(country = "GB")))(any())
+
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

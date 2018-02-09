@@ -21,7 +21,7 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import forms.register.SchemeAddressListFormProvider
+import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register.{SchemeAddressId, SchemeAddressListId, SchemeDetailsId, SchemePostCodeLookupId}
 import models.Mode
 import models.requests.DataRequest
@@ -42,7 +42,7 @@ class SchemeAddressListController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: SchemeAddressListFormProvider
+                                       formProvider: AddressListFormProvider
                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
 

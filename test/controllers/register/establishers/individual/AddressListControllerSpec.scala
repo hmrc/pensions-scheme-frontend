@@ -28,9 +28,8 @@ import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import org.mockito.Matchers.any
-import org.mockito.{Matchers, Mockito}
+import org.mockito.Matchers
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -41,7 +40,7 @@ import views.html.register.establishers.individual.addressList
 
 import scala.concurrent.Future
 
-class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
+class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
