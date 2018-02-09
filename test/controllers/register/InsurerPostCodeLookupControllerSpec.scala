@@ -19,7 +19,7 @@ package controllers.register
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.SchemePostCodeLookupFormProvider
+import forms.register.InsurerPostCodeLookupFormProvider
 import models.addresslookup.{Address, AddressRecord}
 import models.NormalMode
 import org.mockito.Mockito._
@@ -30,26 +30,26 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FakeNavigator
-import views.html.register.schemePostCodeLookup
+import views.html.register.insurerPostCodeLookup
 
 import scala.concurrent.Future
 
-class SchemePostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
+class InsurerPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new SchemePostCodeLookupFormProvider()
+  val formProvider = new InsurerPostCodeLookupFormProvider()
   val form = formProvider()
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
   val schemeName: String = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): SchemePostCodeLookupController =
-    new SchemePostCodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector, fakeAddressLookupConnector,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): InsurerPostCodeLookupController =
+    new InsurerPostCodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector, fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = schemePostCodeLookup(frontendAppConfig, form, NormalMode,
+  def viewAsString(form: Form[_] = form): String = insurerPostCodeLookup(frontendAppConfig, form, NormalMode,
     schemeName)(fakeRequest, messages).toString
 
   "Scheme Address Controller" must {

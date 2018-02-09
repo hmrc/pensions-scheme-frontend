@@ -21,8 +21,8 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
-import forms.register.SchemePostCodeLookupFormProvider
-import identifiers.register.{SchemePostCodeLookupId, SchemeDetailsId}
+import forms.register.InsurerPostCodeLookupFormProvider
+import identifiers.register.{InsurerPostCodeLookupId, SchemeDetailsId}
 import models.requests.DataRequest
 import models.Mode
 import play.api.data.Form
@@ -30,11 +30,11 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.schemePostCodeLookup
+import views.html.register.insurerPostCodeLookup
 
 import scala.concurrent.Future
 
-class SchemePostCodeLookupController @Inject()(
+class InsurerPostCodeLookupController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           dataCacheConnector: DataCacheConnector,
@@ -43,7 +43,7 @@ class SchemePostCodeLookupController @Inject()(
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
-                                          formProvider: SchemePostCodeLookupFormProvider
+                                          formProvider: InsurerPostCodeLookupFormProvider
                                         ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -56,7 +56,7 @@ class SchemePostCodeLookupController @Inject()(
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          Future.successful(Ok(schemePostCodeLookup(appConfig, form, mode, schemeName)))
+          Future.successful(Ok(insurerPostCodeLookup(appConfig, form, mode, schemeName)))
       }
   }
 
@@ -66,23 +66,23 @@ class SchemePostCodeLookupController @Inject()(
         schemeName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(schemePostCodeLookup(appConfig, formWithErrors, mode, schemeName))),
+              Future.successful(BadRequest(insurerPostCodeLookup(appConfig, formWithErrors, mode, schemeName))),
             (value) =>
               addressLookupConnector.addressLookupByPostCode(value).flatMap {
                 case None =>
-                  Future.successful(BadRequest(schemePostCodeLookup(appConfig, formWithError("invalid"), mode, schemeName)))
+                  Future.successful(BadRequest(insurerPostCodeLookup(appConfig, formWithError("invalid"), mode, schemeName)))
 
                 case Some(Nil) =>
-                  Future.successful(BadRequest(schemePostCodeLookup(appConfig, formWithError("no_results"), mode, schemeName)))
+                  Future.successful(BadRequest(insurerPostCodeLookup(appConfig, formWithError("no_results"), mode, schemeName)))
 
                 case Some(addressSeq) =>
                   dataCacheConnector.save(
                     request.externalId,
-                    SchemePostCodeLookupId,
+                    InsurerPostCodeLookupId,
                     addressSeq.map(_.address)
                   ).map {
                     json =>
-                      Redirect(navigator.nextPage(SchemePostCodeLookupId, mode)(new UserAnswers(json)))
+                      Redirect(navigator.nextPage(InsurerPostCodeLookupId, mode)(new UserAnswers(json)))
                   }
               }
           )

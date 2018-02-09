@@ -21,7 +21,7 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 
-class SchemePostCodeLookupFormProvider @Inject() extends Mappings {
+class InsurerPostCodeLookupFormProvider @Inject() extends Mappings {
   val maxLength = 8
   def apply(): Form[String] =
     Form(

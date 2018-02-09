@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
-import identifiers.register.{SchemeAddressId, SchemeAddressListId, SchemeDetailsId, SchemePostCodeLookupId}
+import identifiers.register._
 import models.Mode
 import models.requests.DataRequest
 import play.api.data.Form
@@ -30,11 +30,11 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.schemeAddressList
+import views.html.register.insurerAddressList
 
 import scala.concurrent.Future
 
-class SchemeAddressListController @Inject()(
+class InsurerAddressListController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        dataCacheConnector: DataCacheConnector,
@@ -50,11 +50,11 @@ class SchemeAddressListController @Inject()(
     implicit request =>
       retrieveSchemeName { schemeName =>
 
-        request.userAnswers.get(SchemePostCodeLookupId) match {
+        request.userAnswers.get(InsurerPostCodeLookupId) match {
           case None =>
-           Future.successful(Redirect(controllers.register.routes.SchemePostCodeLookupController.onPageLoad(mode)))
+           Future.successful(Redirect(controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(mode)))
           case Some(addresses) =>
-            Future.successful(Ok(schemeAddressList(appConfig, formProvider(addresses), mode, schemeName, addresses)))
+            Future.successful(Ok(insurerAddressList(appConfig, formProvider(addresses), mode, schemeName, addresses)))
         }
 
       }
@@ -63,20 +63,20 @@ class SchemeAddressListController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName { schemeName =>
-        request.userAnswers.get(SchemePostCodeLookupId) match {
+        request.userAnswers.get(InsurerPostCodeLookupId) match {
           case None =>
-            Future.successful(Redirect(controllers.register.routes.SchemePostCodeLookupController.onPageLoad(mode)))
+            Future.successful(Redirect(controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(mode)))
           case Some(addresses) =>
             formProvider(addresses).bindFromRequest().fold(
               (formWithErrors: Form[_]) =>
-                Future.successful(BadRequest(schemeAddressList(appConfig, formWithErrors, mode, schemeName, addresses))),
+                Future.successful(BadRequest(insurerAddressList(appConfig, formWithErrors, mode, schemeName, addresses))),
               (value) =>
                 dataCacheConnector.save(
                   request.externalId,
-                  SchemeAddressId,
+                  InsurerAddressId,
                   addresses(value).copy(country = "GB")
                 ).map(cacheMap =>
-                  Redirect(navigator.nextPage(SchemeAddressListId, mode)(new UserAnswers(cacheMap))))
+                  Redirect(navigator.nextPage(InsurerAddressListId, mode)(new UserAnswers(cacheMap))))
             )
         }
       }

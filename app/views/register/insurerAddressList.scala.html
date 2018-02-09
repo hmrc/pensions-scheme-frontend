@@ -27,7 +27,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = SchemeAddressListController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = InsurerAddressListController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
@@ -35,7 +35,7 @@
 
         <p>
             @messages("messages__common__select_address")
-            <a id="manual-address-link" href="@SchemeAddressListController.onPageLoad(mode)">
+            <a id="manual-address-link" href="@InsurerAddressListController.onPageLoad(mode)">
                 @messages(s"messages__common__select_address_link")
             </a>
         </p>

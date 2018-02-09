@@ -20,7 +20,7 @@ import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
-import identifiers.register.{SchemeAddressId, SchemePostCodeLookupId}
+import identifiers.register.{InsurerAddressId, InsurerPostCodeLookupId}
 import models.NormalMode
 import models.addresslookup.Address
 import models.register.SchemeDetails
@@ -34,11 +34,11 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.{Enumerable, FakeNavigator, MapFormats}
-import views.html.register.schemeAddressList
+import views.html.register.insurerAddressList
 
 import scala.concurrent.Future
 
-class SchemeAddressListControllerSpec extends ControllerSpecBase with MockitoSugar with MapFormats with Enumerable.Implicits {
+class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSugar with MapFormats with Enumerable.Implicits {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -49,15 +49,15 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase with MockitoSug
     address("test post code 1"),
     address("test post code 2")
   )
-  val addressObject = Json.obj(SchemePostCodeLookupId.toString -> addresses)
+  val addressObject = Json.obj(InsurerPostCodeLookupId.toString -> addresses)
 
   val form = formProvider(Seq(0))
 
   def controller(
                   dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
                   dataCacheConnector: DataCacheConnector = new FakeDataCacheConnector()
-                ): SchemeAddressListController =
-    new SchemeAddressListController(
+                ): InsurerAddressListController =
+    new InsurerAddressListController(
       frontendAppConfig, messagesApi,
       dataCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
@@ -67,7 +67,7 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase with MockitoSug
       formProvider
     )
   def viewAsString(form: Form[_] = form, address: Seq[Address] = addresses): String =
-    schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages).toString
+    insurerAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages).toString
 
   def address(postCode: String): Address = Address(
     "address line 1",
@@ -78,7 +78,7 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase with MockitoSug
     country = "United Kingdom"
   )
 
-  "SchemeAddressList Controller" must {
+  "InsurerAddressList Controller" must {
 
     "return OK and the correct view for a GET" in {
 
@@ -98,7 +98,7 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase with MockitoSug
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          controllers.register.routes.SchemePostCodeLookupController.onPageLoad(NormalMode).url)
+          controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(NormalMode).url)
       }
 
       "no addresses are present after lookup (post)" in {
@@ -109,7 +109,7 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase with MockitoSug
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(
-          controllers.register.routes.SchemePostCodeLookupController.onPageLoad(NormalMode).url)
+          controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(NormalMode).url)
       }
     }
 
@@ -129,7 +129,7 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase with MockitoSug
       val dataCacheConnector = mock[DataCacheConnector]
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
-      when(dataCacheConnector.save(any(), Matchers.eq(SchemeAddressId), any())(any()))
+      when(dataCacheConnector.save(any(), Matchers.eq(InsurerAddressId), any())(any()))
         .thenReturn(Future.successful(Json.obj()))
 
       val result = controller(new FakeDataRetrievalAction(Some(schemeDetails ++ addressObject)), dataCacheConnector)
@@ -137,7 +137,7 @@ class SchemeAddressListControllerSpec extends ControllerSpecBase with MockitoSug
 
       status(result) mustEqual SEE_OTHER
 
-      verify(dataCacheConnector, times(1)).save(any(), Matchers.eq(SchemeAddressId), Matchers.eq(addresses.head.copy(country = "GB")))(any())
+      verify(dataCacheConnector, times(1)).save(any(), Matchers.eq(InsurerAddressId), Matchers.eq(addresses.head.copy(country = "GB")))(any())
 
     }
 

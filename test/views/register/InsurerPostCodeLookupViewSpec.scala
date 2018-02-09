@@ -17,25 +17,25 @@
 package views.register
 
 import controllers.register.routes
-import forms.register.SchemePostCodeLookupFormProvider
+import forms.register.InsurerPostCodeLookupFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.StringViewBehaviours
-import views.html.register.schemePostCodeLookup
+import views.html.register.insurerPostCodeLookup
 
-class SchemePostCodeLookupViewSpec extends StringViewBehaviours {
+class InsurerPostCodeLookupViewSpec extends StringViewBehaviours {
 
   val messageKeyPrefix = "benefits_insurance_addr"
 
-  val form = new SchemePostCodeLookupFormProvider()()
+  val form = new InsurerPostCodeLookupFormProvider()()
   val schemeName = "test scheme name"
 
-  def createView: () => HtmlFormat.Appendable = () => schemePostCodeLookup(frontendAppConfig, form, NormalMode,
+  def createView: () => HtmlFormat.Appendable = () => insurerPostCodeLookup(frontendAppConfig, form, NormalMode,
     schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) => schemePostCodeLookup(frontendAppConfig, form,
+  def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) => insurerPostCodeLookup(frontendAppConfig, form,
     NormalMode, schemeName)(fakeRequest, messages)
 
   "Address view" must {
@@ -43,7 +43,7 @@ class SchemePostCodeLookupViewSpec extends StringViewBehaviours {
 
     behave like pageWithBackLink(createView)
 
-    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.SchemePostCodeLookupController.onSubmit(NormalMode).url,
+    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.InsurerPostCodeLookupController.onSubmit(NormalMode).url,
       Some("messages__common__address_postcode"), expectedHint = Some("messages__common__address_postcode_hint"))
 
     "have establisher name rendered on the page" in {
@@ -52,7 +52,7 @@ class SchemePostCodeLookupViewSpec extends StringViewBehaviours {
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
-        routes.SchemePostCodeLookupController.onPageLoad(NormalMode).url)
+        routes.InsurerPostCodeLookupController.onPageLoad(NormalMode).url)
     }
   }
 }

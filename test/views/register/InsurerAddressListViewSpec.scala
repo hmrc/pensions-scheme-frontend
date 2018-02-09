@@ -22,9 +22,9 @@ import models.addresslookup.Address
 import org.jsoup.Jsoup
 import play.api.data.Form
 import views.behaviours.ViewBehaviours
-import views.html.register.schemeAddressList
+import views.html.register.insurerAddressList
 
-class SchemeAddressListViewSpec extends ViewBehaviours {
+class InsurerAddressListViewSpec extends ViewBehaviours {
 
   val schemeName = "ThisSchemeName"
   val messageKeyPrefix = "select_the_address"
@@ -40,12 +40,12 @@ class SchemeAddressListViewSpec extends ViewBehaviours {
   val form = new AddressListFormProvider()(Seq.empty)
 
   def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable =
-    () => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages)
+    () => insurerAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages)
 
   def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable =
-    (form: Form[_]) => schemeAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages)
+    (form: Form[_]) => insurerAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages)
 
-  "SchemeAddressList view" must {
+  "InsurerAddressList view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
@@ -53,12 +53,12 @@ class SchemeAddressListViewSpec extends ViewBehaviours {
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString).select("a[id=manual-address-link]") must haveLink(
-        controllers.register.routes.SchemeAddressListController.onPageLoad(NormalMode).url)
+        controllers.register.routes.InsurerAddressListController.onPageLoad(NormalMode).url)
     }
 
     }
 
-  "SchemeAddressList view" when {
+  "InsurerAddressList view" when {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))

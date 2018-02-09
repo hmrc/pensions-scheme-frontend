@@ -17,17 +17,11 @@ echo "" >> ../conf/register.establishers.company.routes
 echo "GET        /companyPostCodeLookup               controllers.register.CompanyPostCodeLookupController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 echo "POST       /companyPostCodeLookup               controllers.register.CompanyPostCodeLookupController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 echo "" >> ../conf/app.routes
-echo "GET        /schemeAddressList               controllers.register.SchemeAddressListController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
-echo "POST       /schemeAddressList               controllers.register.SchemeAddressListController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
-echo "" >> ../conf/register.routes
 echo "GET        /insurerAddress                       controllers.register.InsurerAddressController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
 echo "POST       /insurerAddress                       controllers.register.InsurerAddressController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
 
 echo "GET        /changePreviousAddress                       controllers.register.establishers.individual.PreviousAddressController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
 echo "POST       /changePreviousAddress                       controllers.register.establishers.individual.PreviousAddressController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-
-echo "GET        /changeSchemeAddressList               controllers.register.SchemeAddressListController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
-echo "POST       /changeSchemeAddressList               controllers.register.SchemeAddressListController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
@@ -61,7 +55,6 @@ awk '/class/ {\
      print "  def insurerAddress: Option[AnswerRow] = userAnswers.get(InsurerAddressId) map {";\
      print "    x => AnswerRow(\"insurerAddress.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, controllers.register.routes.InsurerAddressController.onPageLoad(CheckMode).url)";\
      print "  def schemeAddressList: Option[AnswerRow] = userAnswers.get(SchemeAddressListId) map {";\
-     print "    x => AnswerRow(\"messages__schemeAddressList__checkYourAnswersLabel\", s\"schemeAddressList.$x\", true, controllers.register.routes.SchemeAddressListController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
