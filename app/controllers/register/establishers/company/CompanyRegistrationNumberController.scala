@@ -78,6 +78,7 @@ class CompanyRegistrationNumberController @Inject()(
           )
       }
   }
+
   private def retrieveSchemeName(block: String => Future[Result])
                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
     request.userAnswers.get(SchemeDetailsId).map { schemeDetails =>

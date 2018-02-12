@@ -21,3 +21,8 @@
     line-height: inherit;
     margin: inherit;
 }
+
+// Styling addresses without using <br> tags
+.address-multi-line {
+  display: block;
+}

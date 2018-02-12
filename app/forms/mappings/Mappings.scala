@@ -125,6 +125,7 @@ trait Mappings extends Formatters with Constraints {
                                        reasonLengthKey: String = "messages__error__no_nino_length",
                                        invalidNinoKey: String = "messages__error__nino_invalid"):
   Mapping[EstablisherNino] = {
+    val reasonMaxLength = 150
 
     def fromEstablisherNino(nino: EstablisherNino): (Boolean, Option[String], Option[String]) = {
       nino match {
@@ -145,7 +146,7 @@ trait Mappings extends Formatters with Constraints {
     tuple("hasNino" -> boolean(requiredKey),
       "nino" -> mandatoryIfTrue("establisherNino.hasNino", text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
       "reason" -> mandatoryIfFalse("establisherNino.hasNino", text(requiredReasonKey).
-        verifying(maxLength(150,reasonLengthKey)))).transform(toEstablisherNino, fromEstablisherNino)
+        verifying(maxLength(reasonMaxLength,reasonLengthKey)))).transform(toEstablisherNino, fromEstablisherNino)
   }
 
 
@@ -211,6 +212,7 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
                                        invalidCRNKey: String = "messages__error__crn_invalid",
                                        noReasonKey: String = "messages__error__no_crn_company"):
   Mapping[CompanyRegistrationNumber] = {
+    val reasonMaxLength =150
 
     def fromCompanyRegistrationNumber(crn: CompanyRegistrationNumber): (Boolean, Option[String], Option[String]) = {
       crn match {
@@ -231,7 +233,7 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
     tuple("hasCrn" -> boolean(requiredKey),
       "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey).verifying(validCrn(invalidCRNKey))),
       "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(noReasonKey).
-        verifying(maxLength(150,reasonLengthKey)))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
+        verifying(maxLength(reasonMaxLength,reasonLengthKey)))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
   }
 
   protected def postCodeMapping(requiredKey: String, invalidKey: String): Mapping[Option[String]] = {

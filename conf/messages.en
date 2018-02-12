@@ -1,6 +1,5 @@
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
-checkYourAnswers.guidance = Guidance for check your answers
 
 date.day = Day
 date.month = Month
@@ -71,7 +70,7 @@ messages__session_expired__guidance = The details you have given have been delet
 
 site.back = Back
 site.delete = Remove
-site.edit = Change
+site.edit = Edit
 site.hidden-delete = Delete {0}
 site.hidden-edit = Change {0}
 site.no = No
@@ -161,7 +160,6 @@ messages__complete__register_vat = You can also
 messages__complete__register_vat_link = register the scheme for VAT
 messages__complete__finish = Finish and sign out
 
-
 messages__uk_bank_account_details__title = Bank account details
 messages__uk_bank_account_details__bank_name = Bank name
 messages__uk_bank_account_details__account_name = Account name
@@ -197,15 +195,12 @@ messages__establishers__add__title = Establishers
 messages__establishers__add_legend_more = Do you want to add another establisher?
 messages__establishers__add_hint = You must add at least one establisher. You can add up to 10.
 messages__establishers__add_limit = You have added the maximum number of establishers
-addEstablisher.checkYourAnswersLabel = addEstablisher
 
 messages__establisher_individual__title = Establisher details
 messages__error__first_name_length = The first name cannot be more than 35 characters
 messages__error__first_name_invalid = Enter the valid first name
 messages__error__last_name_length = The last name cannot be more than 35 characters
 messages__error__last_name_invalid = Enter the valid last name
-
-establisherDetails.checkYourAnswersLabel = establisherDetails
 
 messages__establisherNino__title = Does the establisher have a National Insurance number?
 messages__establisher__no_nino = Tell us why the establisher does not have a National Insurance number
@@ -222,19 +217,15 @@ messages__establishers__add__opt__individual=Individual
 messages__establishers__add__opt__partnership=Partnership
 messages__establishers__add_legend = What kind of establisher are you adding?
 
-establisherKind.checkYourAnswersLabel = establisherKind
-
 messages__establisher__has_sautr__title = Does the establisher have a Self Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__establisher__no_sautr = Tell us why the establisher does not have a SAUTR
 messages__error__has_sautr_establisher = Select yes if the establisher has a SAUTR
-uniqueTaxReference.checkYourAnswersLabel = uniqueTaxReference
 
 messages__establisher_individual_contact_details__title = Establisher's contact details
 messages__error__email_length = The email address cannot be more than 132 characters
 messages__error__email_invalid = Enter a valid email address
 messages__error__phone_length = The telephone number cannot be more than 24 characters
 messages__error__phone_invalid = The telephone number can only contain numbers
-contactDetails.checkYourAnswersLabel = contactDetails
 
 messages__establisher__has_ct_utr__title = Does the establisher have a Corporation Tax Unique Taxpayer Reference number (CTUTR)?
 messages__establisher__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
@@ -247,8 +238,6 @@ messages__error__has_ct_utr_establisher = Select yes if the establisher has a CT
 messages__error__ct_utr_invalid = Enter a valid 10 digit Corporation Tax Unique Taxpayer Reference number
 
 messages__company_address_years__title = How long has the company been at this address?
-companyAddressYears.checkYourAnswersLabel = companyAddressYears
-companyAddressYears.error.required = Please give an answer for companyAddressYears
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
 messages__common__vat = VAT Registration number (optional)
@@ -261,9 +250,7 @@ messages__error__vat_length = The VAT Registration number cannot be more than 9 
 messages__error__vat_invalid = Enter a valid VAT Registration number
 messages__error__paye_length = The PAYE number cannot be more than 13 characters
 
-companyDetails.checkYourAnswersLabel = companyDetails
 messages__establisher_company_contact_details__title = Company contact details
-companyContactDetails.checkYourAnswersLabel = companyContactDetails
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the registered business address but you can enter any address you have for this company.
@@ -271,8 +258,6 @@ messages__error__postcode = Enter the postal code
 messages__error__postcode_length = The postal code cannot be more than 8 characters
 messages__error__postcode_invalid = Enter a valid postal code
 messages__error__postcode_no_results = No results for that postcode
-
-address.checkYourAnswersLabel = address
 
 messages__company__crn__title=Does the company have a Company Registration number (CRN)?
 messages__company__has_crn = Does the company have a Company Registration number (CRN)?
@@ -296,15 +281,35 @@ messages__error__postcode = Enter the postal code
 messages__select_the_address__title = Select the address
 messages__common__select_address = Select the address from the list below, or
 messages__error__select_address = Select an address
-addressResults.checkYourAnswersLabel = addressResults
 
 messages__select_the_previous_address__title = Select the previous address
 messages__previousAddressList__checkYourAnswersLabel = previousAddressList
 
 messages__establisher_individual_address__title = Establisher’s address
-messages__manualAddress_checkYourAnswersLabel = manualAddress
 
 messages__establisher_individual_previous_address__title = Previous address
 messages__establisher_individual_previous_address_lede = This is usually the registered business address but you can enter any address you have for this company.
 
-messages__previousAddress__checkYourAnswersLabel = previousAddress
+
+messages__establisher_individual_name_cya_label = Name
+messages__establisher_individual_dob_cya_label = Date of birth
+messages__establisher_individual_nino_question_cya_label = Does the establisher have a National Insurance number?
+messages__establisher_individual_nino_cya_label = National Insurance number
+messages__establisher_individual_nino_reason_cya_label = Reason
+messages__establisher_individual_utr_question_cya_label = Does the establisher have a Unique Taxpayer Reference number (UTR)?
+messages__establisher_individual_utr_cya_label = Unique Taxpayer Reference number
+messages__establisher_individual_utr_reason_cya_label = Reason
+messages__establisher_individual_email_cya_label = Email address
+messages__establisher_individual_phone_cya_label = Phone number
+messages__establisher_individual_address_cya_label = Address
+messages__establisher_individual_previous_address_cya_label = Previous address
+messages__establisher_individual_address_years_cya_label = How long has the establisher been at this address?
+
+addressResults.checkYourAnswersLabel = addressResults
+addEstablisher.checkYourAnswersLabel = addEstablisher
+messages__manualAddress_checkYourAnswersLabel = manualAddress
+establisherKind.checkYourAnswersLabel = establisherKind
+
+companyAddressYears.checkYourAnswersLabel = companyAddressYears
+companyDetails.checkYourAnswersLabel = companyDetails
+companyContactDetails.checkYourAnswersLabel = companyContactDetails

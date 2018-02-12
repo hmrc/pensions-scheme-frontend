@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
-package viewmodels
+package utils
 
-case class AnswerRow(label: String, answer: Seq[String], answerIsMessageKey: Boolean, changeUrl: String)
+import com.google.inject.Inject
+import models.register.CountryOptions
+
+class CheckYourAnswersFactory @Inject()(countryOptions: CountryOptions) {
+
+  def checkYourAnswersHelper(userAnswers: UserAnswers): CheckYourAnswersHelper = {
+    new CheckYourAnswersHelper(userAnswers, countryOptions)
+  }
+}
+

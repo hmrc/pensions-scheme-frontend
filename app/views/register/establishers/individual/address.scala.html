@@ -36,12 +36,14 @@
         <p>@messages("messages__establisher_individual_address_lede")</p>
         @components.input_text(
             field = form("addressLine1"),
-            label = messages("messages__common__address1")
+            label = messages("messages__common__address1"),
+            inputClass = Some("form-control-3-4")
         )
 
         @components.input_text(
             field = form("addressLine2"),
-            label = messages("messages__common__address2")
+            label = messages("messages__common__address2"),
+            inputClass = Some("form-control-3-4")
         )
 
         @components.input_text(
@@ -56,7 +58,8 @@
 
         @components.input_text(
             field = form("postCode.postCode"),
-            label = messages("messages__common__address_postcode")
+            label = messages("messages__common__address_postcode"),
+            inputClass = Some("form-control-1-4")
         )
 
         @components.select(field = form("country"),
