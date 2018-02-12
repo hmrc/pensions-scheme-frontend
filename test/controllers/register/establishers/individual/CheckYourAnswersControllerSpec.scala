@@ -19,20 +19,16 @@ package controllers.register.establishers.individual
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.ControllerSpecBase
 import models.{CheckMode, Index}
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
+import models.register.CountryOptions
 import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
-import utils.{CheckYourAnswersFactory, DateHelper, InputOption, UserAnswers}
+import utils.{CheckYourAnswersFactory, DateHelper, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import play.api.test.Helpers._
-import views.html.register.establishers.individual.check_your_answers_individual
+import views.html.register.establishers.individual.check_your_answers
 import controllers.register.establishers.individual.routes._
-import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.individual.EstablisherDetailsId
-import models.register.establishers.individual.EstablisherDetails
-import play.api.libs.json.{JsNull, Json}
 
-class CheckYourAnswersIndividualControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   val countryOptions: CountryOptions = new CountryOptions(Seq(InputOption("GB", "United Kingdom")))
   val firstIndex = Index(0)
@@ -46,15 +42,15 @@ class CheckYourAnswersIndividualControllerSpec extends ControllerSpecBase {
     AnswerRow("messages__establisher_individual_dob_cya_label", Seq(DateHelper.formatDate(LocalDate.now)), false,
       EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
   )
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersIndividualController =
-    new CheckYourAnswersIndividualController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersController =
+    new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction,
       new DataRequiredActionImpl, checkYourAnswersFactory)
 
   "Check Your Answers Controller" must {
     "return 200 and the correct view for a GET" in {
       val result = controller().onPageLoad(firstIndex)(fakeRequest)
       status(result) mustBe OK
-      contentAsString(result) mustBe check_your_answers_individual(frontendAppConfig,
+      contentAsString(result) mustBe check_your_answers(frontendAppConfig,
         Seq(AnswerSection(None, answers)), testSchemeName)(fakeRequest, messages).toString
     }
 

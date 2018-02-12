@@ -22,18 +22,17 @@ import config.FrontendAppConfig
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.SchemeDetailsId
 import models.Index
-import models.register.CountryOptions
 import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{CheckYourAnswersFactory, CheckYourAnswersHelper}
+import utils.CheckYourAnswersFactory
 import viewmodels.AnswerSection
-import views.html.register.establishers.individual.check_your_answers_individual
+import views.html.register.establishers.individual.check_your_answers
 
 import scala.concurrent.Future
 
-class CheckYourAnswersIndividualController @Inject() (appConfig: FrontendAppConfig,
+class CheckYourAnswersController @Inject() (appConfig: FrontendAppConfig,
                                             override val messagesApi: MessagesApi,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
@@ -52,7 +51,7 @@ class CheckYourAnswersIndividualController @Inject() (appConfig: FrontendAppConf
           checkYourAnswerHelper.previousAddress(index) ++
           checkYourAnswerHelper.contactDetails(index))
         )
-        Future.successful(Ok(check_your_answers_individual(appConfig, sections, schemeName)))
+        Future.successful(Ok(check_your_answers(appConfig, sections, schemeName)))
       }
   }
 

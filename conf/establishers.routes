@@ -86,4 +86,4 @@ POST       /:index/individual/previousAddress                       controllers.
 GET        /:index/individual/changePreviousAddress                       controllers.register.establishers.individual.PreviousAddressController.onPageLoad(mode: Mode = CheckMode,index:Index)
 POST       /:index/individual/changePreviousAddress                       controllers.register.establishers.individual.PreviousAddressController.onSubmit(mode: Mode = CheckMode,index:Index)
 
-GET        /:index/individual/check-your-answers-individual                          controllers.register.establishers.individual.CheckYourAnswersIndividualController.onPageLoad(index: Index)
+GET        /:index/individual/check-your-answers                          controllers.register.establishers.individual.CheckYourAnswersController.onPageLoad(index: Index)

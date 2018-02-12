@@ -19,10 +19,10 @@ package utils
 import com.google.inject.Inject
 import models.register.CountryOptions
 
-class CheckYourAnswersFactory @Inject() (countryOptions: CountryOptions){
+class CheckYourAnswersFactory @Inject()(countryOptions: CountryOptions) {
 
   def checkYourAnswersHelper(userAnswers: UserAnswers): CheckYourAnswersHelper = {
     new CheckYourAnswersHelper(userAnswers, countryOptions)
   }
-
 }
+
