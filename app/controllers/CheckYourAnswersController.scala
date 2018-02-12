@@ -19,11 +19,10 @@ package controllers
 import com.google.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import utils.CheckYourAnswersHelper
+import utils.CheckYourAnswersFactory
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 import config.FrontendAppConfig
-import models.register.CountryOptions
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
@@ -32,11 +31,10 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
-                                           countryOptions: CountryOptions) extends FrontendController with I18nSupport {
+                                           checkYourAnswersFactory: CheckYourAnswersFactory) extends FrontendController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val checkYourAnswersHelper = new CheckYourAnswersHelper(request.userAnswers, countryOptions)
       val sections = Seq(AnswerSection(None, Seq()))
       Ok(check_your_answers(appConfig, sections))
   }

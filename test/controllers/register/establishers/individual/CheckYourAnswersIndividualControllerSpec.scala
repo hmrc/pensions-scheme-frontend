@@ -19,20 +19,26 @@ package controllers.register.establishers.individual
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.ControllerSpecBase
 import models.{CheckMode, Index}
-import models.register.CountryOptions
+import models.register.{CountryOptions, SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
-import utils.{DateHelper, InputOption}
+import utils.{CheckYourAnswersFactory, DateHelper, InputOption, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection}
 import play.api.test.Helpers._
 import views.html.register.establishers.individual.check_your_answers_individual
 import controllers.register.establishers.individual.routes._
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import models.register.establishers.individual.EstablisherDetails
+import play.api.libs.json.{JsNull, Json}
 
 class CheckYourAnswersIndividualControllerSpec extends ControllerSpecBase {
 
   val countryOptions: CountryOptions = new CountryOptions(Seq(InputOption("GB", "United Kingdom")))
   val firstIndex = Index(0)
   val testSchemeName = "Test Scheme Name"
+
+  val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
 
   val answers: Seq[AnswerRow] = Seq(
     AnswerRow("messages__establisher_individual_name_cya_label", Seq("test first name test last name"), false,
@@ -42,7 +48,7 @@ class CheckYourAnswersIndividualControllerSpec extends ControllerSpecBase {
   )
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersIndividualController =
     new CheckYourAnswersIndividualController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction,
-      new DataRequiredActionImpl, countryOptions)
+      new DataRequiredActionImpl, checkYourAnswersFactory)
 
   "Check Your Answers Controller" must {
     "return 200 and the correct view for a GET" in {

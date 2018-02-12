@@ -27,9 +27,10 @@ import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.CheckYourAnswersHelper
+import utils.{CheckYourAnswersFactory, CheckYourAnswersHelper}
 import viewmodels.AnswerSection
 import views.html.register.establishers.individual.check_your_answers_individual
+
 import scala.concurrent.Future
 
 class CheckYourAnswersIndividualController @Inject() (appConfig: FrontendAppConfig,
@@ -37,13 +38,13 @@ class CheckYourAnswersIndividualController @Inject() (appConfig: FrontendAppConf
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             requiredData: DataRequiredAction,
-                                            countryOptions: CountryOptions) extends FrontendController with I18nSupport {
+                                            checkYourAnswersFactory: CheckYourAnswersFactory) extends FrontendController with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-        val checkYourAnswerHelper = new CheckYourAnswersHelper(request.userAnswers, countryOptions)
+        val checkYourAnswerHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
         val sections = Seq(
           AnswerSection(None, checkYourAnswerHelper.establisherDetails(index.id) ++
           checkYourAnswerHelper.establisherNino(index.id) ++ checkYourAnswerHelper.uniqueTaxReference(index.id) ++
