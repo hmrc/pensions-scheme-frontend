@@ -27,7 +27,7 @@ import views.html.register.establishers.company.companyPostCodeLookup
 
 class CompanyPostCodeLookupViewSpec extends StringViewBehaviours {
 
-  val messageKeyPrefix = "company_address"
+  val messageKeyPrefix = "establisher_company_postcode"
 
   val form = new PostCodeLookupFormProvider()()
   val firstIndex = Index(0)
@@ -40,7 +40,7 @@ class CompanyPostCodeLookupViewSpec extends StringViewBehaviours {
     NormalMode, firstIndex, companyName)(fakeRequest, messages)
 
   "Address view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "hint")
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
 

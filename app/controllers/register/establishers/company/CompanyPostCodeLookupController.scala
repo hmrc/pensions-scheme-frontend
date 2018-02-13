@@ -19,16 +19,17 @@ package controllers.register.establishers.company
 import javax.inject.Inject
 
 import config.FrontendAppConfig
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
+import models.addresslookup.Address
 import models.requests.DataRequest
 import models.{Index, Mode}
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyPostCodeLookup
 
@@ -76,9 +77,9 @@ class CompanyPostCodeLookupController @Inject()(
                   Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithError("no_results"), mode, index, companyName)))
 
                 case Some(addressSeq) =>
-                  dataCacheConnector.save(
+                  dataCacheConnector.save[Seq[Address]](
                     request.externalId,
-                    CompanyPostCodeLookupId(index),
+                    CompanyPostCodeLookupId(index).path,
                     addressSeq.map(_.address)
                   ).map {
                     json =>

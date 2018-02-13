@@ -22,7 +22,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, companyName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__common__company_address"),
+    title = messages("messages__establisher_company_postcode__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -32,9 +32,9 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(headingKey = "messages__common__company_address", secondaryHeaderKey = Some(companyName))
+        @components.heading(headingKey = "messages__establisher_company_postcode__title", secondaryHeaderKey = Some(companyName))
 
-        <p>@messages("messages__common__company_address_hint")</p>
+        <p>@messages("messages__establisher_company_postcode_hint")</p>
 
         <p>@messages("messages__common__enter_postcode")
             <a id="manual-address-link">
