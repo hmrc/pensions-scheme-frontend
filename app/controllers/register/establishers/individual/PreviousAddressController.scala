@@ -18,18 +18,19 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.establishers.individual.{EstablisherDetailsId, PreviousAddressId}
 import models.register.CountryOptions
 import models.requests.DataRequest
 import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersIndividual
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.individual.previousAddress
 
@@ -39,7 +40,7 @@ class PreviousAddressController @Inject()(
                                            appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            dataCacheConnector: DataCacheConnector,
-                                           navigator: Navigator,
+                                           @EstablishersIndividual navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,

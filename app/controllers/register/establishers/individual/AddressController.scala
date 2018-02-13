@@ -31,20 +31,23 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersIndividual
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.individual.address
 
 import scala.concurrent.Future
 
-class AddressController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  dataCacheConnector: DataCacheConnector,
-                                                  navigator: Navigator,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: AddressFormProvider,
-                                                  countryOptions: CountryOptions) extends FrontendController with I18nSupport {
+class AddressController @Inject() (
+                                    appConfig: FrontendAppConfig,
+                                    override val messagesApi: MessagesApi,
+                                    dataCacheConnector: DataCacheConnector,
+                                    @EstablishersIndividual navigator: Navigator,
+                                    authenticate: AuthAction,
+                                    getData: DataRetrievalAction,
+                                    requireData: DataRequiredAction,
+                                    formProvider: AddressFormProvider,
+                                    countryOptions: CountryOptions
+                                  ) extends FrontendController with I18nSupport {
 
   val form: Form[Address] = formProvider()
 

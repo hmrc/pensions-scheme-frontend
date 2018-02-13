@@ -18,30 +18,27 @@ package controllers.register.establishers.individual
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
 import forms.register.establishers.individual.AddressYearsFormProvider
 import identifiers.register.establishers.individual.AddressYearsId
-import models.{Index, Mode, NormalMode}
-import play.api.libs.json._
-import models.register.establishers.individual.AddressYears
 import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
+import utils.annotations.EstablishersIndividual
 import views.html.register.establishers.individual.addressYears
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 class AddressYearsController @Inject()(
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
+                                        @EstablishersIndividual navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
@@ -66,8 +63,8 @@ class AddressYearsController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(addressYears(appConfig, formWithErrors, mode, index))),
         (value) =>
-          dataCacheConnector.save(request.externalId, AddressYearsId(index), value).map(cacheMap =>
-            Redirect(navigator.nextPage(AddressYearsId(index), mode)(new UserAnswers(cacheMap))))
+          dataCacheConnector.save(request.externalId, AddressYearsId(index), value).map(json =>
+            Redirect(navigator.nextPage(AddressYearsId(index), mode)(new UserAnswers(json))))
       )
   }
 }

@@ -20,7 +20,7 @@ import utils.{Enumerable, InputOption, WithName}
 
 sealed trait AddressYears
 
-object AddressYears {
+object AddressYears extends Enumerable.Implicits {
 
   case object UnderAYear extends WithName("under_a_year") with AddressYears
   case object OverAYear extends WithName("over_a_year") with AddressYears

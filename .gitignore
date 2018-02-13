@@ -36,3 +36,5 @@ test-result
 tmp
 .idea_modules
 bin
+
+!app/modules
