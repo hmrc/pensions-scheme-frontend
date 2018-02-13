@@ -35,4 +35,18 @@ class IndexSpec extends WordSpecLike with MustMatchers with OptionValues {
       binder.unbind("index", Index(0)) mustEqual "1"
     }
   }
+
+  "implicit conversion from Int" must {
+    "return the correct index" in {
+      val x: Index = 0
+      x mustEqual Index(0)
+    }
+  }
+
+  "implicit conversion to index" must {
+    "return the correct index" in {
+      val x: Int = Index(0)
+      x mustEqual 0
+    }
+  }
 }

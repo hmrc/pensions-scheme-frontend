@@ -30,21 +30,22 @@ import models.addresslookup.Address
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent, Result}
+import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual.previousPostCodeLookup
 
 import scala.concurrent.Future
 
 class PreviousAddressPostCodeLookupController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        addressLookupConnector: AddressLookupConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: PostCodeLookupFormProvider
+                                                         appConfig: FrontendAppConfig,
+                                                         override val messagesApi: MessagesApi,
+                                                         dataCacheConnector: DataCacheConnector,
+                                                         addressLookupConnector: AddressLookupConnector,
+                                                         @EstablishersIndividual navigator: Navigator,
+                                                         authenticate: AuthAction,
+                                                         getData: DataRetrievalAction,
+                                                         requireData: DataRequiredAction,
+                                                         formProvider: PostCodeLookupFormProvider
                                       ) extends FrontendController with I18nSupport with Enumerable.Implicits{
 
   private val form = formProvider()
