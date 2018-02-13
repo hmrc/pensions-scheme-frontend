@@ -86,10 +86,8 @@ class PreviousAddressPostCodeLookupController @Inject()(
                     json =>
                       Redirect(navigator.nextPage(PreviousPostCodeLookupId(index), mode)(new UserAnswers(json)))
                   }
-
               }
           )
-
       }
   }
 

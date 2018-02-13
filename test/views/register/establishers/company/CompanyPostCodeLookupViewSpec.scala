@@ -51,10 +51,9 @@ class CompanyPostCodeLookupViewSpec extends StringViewBehaviours {
       Jsoup.parse(createView().toString()) must haveDynamicText(companyName)
     }
 
-        // ADD LINK ONCE COMPANY ADDRESS PAGE IS MERGED
-//    "have link for enter address manually" in {
-//      Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
-//        routes.AddressController.onPageLoad(NormalMode, firstIndex).url)
-//    }
+    "have link for enter address manually" in {
+      Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
+        routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
+    }
   }
 }

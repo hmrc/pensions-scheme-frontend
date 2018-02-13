@@ -47,12 +47,13 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PreviousAddressPostCodeLookupController =
     new PreviousAddressPostCodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector,fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = previousPostCodeLookup(frontendAppConfig, form, NormalMode,firstIndex, establisherName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = previousPostCodeLookup(frontendAppConfig, form, NormalMode,firstIndex,
+    establisherName)(fakeRequest, messages).toString
 
   "PreviousAddress Controller" must {
 
@@ -123,6 +124,5 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
-
   }
 }
