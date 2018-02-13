@@ -14,51 +14,49 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.individual
+package controllers.register.establishers.company
 
 import play.api.data.{Form, FormError}
-import play.api.libs.json.JsString
-import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
-import identifiers.register.establishers.individual.PreviousPostCodeLookupId
 import models.{Index, NormalMode}
-import views.html.register.establishers.individual.previousPostCodeLookup
-import play.api.libs.json._
 import controllers.ControllerSpecBase
 import models.addresslookup.{Address, AddressRecord}
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._
+import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.register.establishers.company.companyPostCodeLookup
 
 import scala.concurrent.Future
-class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
+
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
   val firstIndex = Index(0)
-  val establisherName: String = "test first name test last name"
+  val companyName: String = "test company name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PreviousAddressPostCodeLookupController =
-    new PreviousAddressPostCodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector,fakeAddressLookupConnector,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyPostCodeLookupController =
+    new CompanyPostCodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector,fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = previousPostCodeLookup(frontendAppConfig, form, NormalMode,firstIndex,
-    establisherName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = companyPostCodeLookup(frontendAppConfig, form, NormalMode,firstIndex, companyName)(
+    fakeRequest, messages).toString
 
-  "PreviousAddress Controller" must {
+  "Company Postcode Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode,firstIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -115,12 +113,14 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
     "redirect to Session Expired for a GET if no existing data is found" in {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
+
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "valid"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
+
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }

@@ -1,60 +1,29 @@
 #!/bin/bash
 
-echo "Applying migration PreviousAddress"
-echo "Applying migration InsurerAddress"
-echo "Applying migration SchemeAddressList"
+echo "Applying migration CompanyPostCodeLookup"
 
-echo "Adding routes to register.establishers.individual.routes"
-echo "Adding routes to conf/register.routes"
+echo "Adding routes to register.establishers.company.routes"
 
-echo "" >> ../conf/register.establishers.individual.routes
-echo "GET        /previousAddress                       controllers.register.establishers.individual.PreviousAddressController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /previousAddress                       controllers.register.establishers.individual.PreviousAddressController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-echo "" >> ../conf/register.establishers.individual.routes
-echo "GET        /manualAddress                       controllers.register.establishers.individual.ManualAddressController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /manualAddress                       controllers.register.establishers.individual.ManualAddressController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.individual.routes
 echo "" >> ../conf/register.establishers.company.routes
-echo "GET        /companyPostCodeLookup               controllers.register.CompanyPostCodeLookupController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /companyPostCodeLookup               controllers.register.CompanyPostCodeLookupController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
-echo "" >> ../conf/app.routes
-echo "GET        /insurerAddress                       controllers.register.InsurerAddressController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
-echo "POST       /insurerAddress                       controllers.register.InsurerAddressController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "GET        /companyPostCodeLookup               controllers.register.establishers.company.CompanyPostCodeLookupController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /companyPostCodeLookup               controllers.register.establishers.company.CompanyPostCodeLookupController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 
-echo "GET        /changePreviousAddress                       controllers.register.establishers.individual.PreviousAddressController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
-echo "POST       /changePreviousAddress                       controllers.register.establishers.individual.PreviousAddressController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.individual.routes
+echo "GET        /changeCompanyPostCodeLookup                        controllers.register.establishers.company.CompanyPostCodeLookupController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /changeCompanyPostCodeLookup                        controllers.register.establishers.company.CompanyPostCodeLookupController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo messages__"previousAddress__title = previousAddress" >> ../conf/messages.en
-echo messages__"previousAddress__heading = previousAddress" >> ../conf/messages.en
-echo messages__"previousAddress__field1 = Field 1" >> ../conf/messages.en
-echo messages__"previousAddress__field2 = Field 2" >> ../conf/messages.en
-echo messages__"previousAddress__checkYourAnswersLabel = previousAddress" >> ../conf/messages.en
-echo messages__"previousAddress__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
-echo messages__"previousAddress__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
-echo messages__"insurerAddress__title = insurerAddress" >> ../conf/messages.en
-echo messages__"insurerAddress__heading = insurerAddress" >> ../conf/messages.en
-echo messages__"insurerAddress__field1 = Field 1" >> ../conf/messages.en
-echo messages__"insurerAddress__field2 = Field 2" >> ../conf/messages.en
-echo messages__"insurerAddress__checkYourAnswersLabel = insurerAddress" >> ../conf/messages.en
-echo messages__"insurerAddress__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
-echo messages__"insurerAddress__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
-echo "messages__schemeAddressList__title = schemeAddressList" >> ../conf/messages.en
-echo "messages__schemeAddressList__heading = schemeAddressList" >> ../conf/messages.en
-echo "messages__schemeAddressList__option1 = schemeAddressList" Option 1 >> ../conf/messages.en
-echo "messages__schemeAddressList__option2 = schemeAddressList" Option 2 >> ../conf/messages.en
-echo "messages__schemeAddressList__checkYourAnswersLabel = schemeAddressList" >> ../conf/messages.en
-echo "messages__schemeAddressList__error__required = Please give an answer for schemeAddressList" >> ../conf/messages.en
+echo "messages__companyPostCodeLookup__title = companyPostCodeLookup" >> ../conf/messages.en
+echo "messages__companyPostCodeLookup__heading = companyPostCodeLookup" >> ../conf/messages.en
+echo "messages__companyPostCodeLookup__checkYourAnswersLabel = companyPostCodeLookup" >> ../conf/messages.en
+echo "messages__companyPostCodeLookup__error__required = Please give an answer for companyPostCodeLookup" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def previousAddress: Option[AnswerRow] = userAnswers.get(PreviousAddressId) map {";\
-     print "    x => AnswerRow(\"previousAddress.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode).url)";\
-     print "  def insurerAddress: Option[AnswerRow] = userAnswers.get(InsurerAddressId) map {";\
-     print "    x => AnswerRow(\"insurerAddress.checkYourAnswersLabel\", s\"${x.field1} ${x.field2}\", false, controllers.register.routes.InsurerAddressController.onPageLoad(CheckMode).url)";\
-     print "  def schemeAddressList: Option[AnswerRow] = userAnswers.get(SchemeAddressListId) map {";\
+     print "  def companyPostCodeLookup: Option[AnswerRow] = userAnswers.get(CompanyPostCodeLookupId) map {";\
+     print "    x => AnswerRow(\"companyPostCodeLookup.checkYourAnswersLabel\", s\"$x\", false, controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -62,6 +31,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration PreviousAddress completed"
-echo "Migration InsurerAddress completed"
-echo "Migration SchemeAddressList completed"
+echo "Migration CompanyPostCodeLookup completed"

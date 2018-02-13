@@ -313,3 +313,7 @@ establisherKind.checkYourAnswersLabel = establisherKind
 companyAddressYears.checkYourAnswersLabel = companyAddressYears
 companyDetails.checkYourAnswersLabel = companyDetails
 companyContactDetails.checkYourAnswersLabel = companyContactDetails
+
+messages__establisher_company_postcode__title = Company address
+messages__establisher_company_postcode_hint = This is usually the registered business address but you can enter any address you have for this company.
+
