@@ -77,9 +77,9 @@ class CompanyPostCodeLookupController @Inject()(
                   Future.successful(BadRequest(companyPostCodeLookup(appConfig, formWithError("no_results"), mode, index, companyName)))
 
                 case Some(addressSeq) =>
-                  dataCacheConnector.save[Seq[Address]](
+                  dataCacheConnector.save(
                     request.externalId,
-                    CompanyPostCodeLookupId(index).path,
+                    CompanyPostCodeLookupId(index),
                     addressSeq.map(_.address)
                   ).map {
                     json =>

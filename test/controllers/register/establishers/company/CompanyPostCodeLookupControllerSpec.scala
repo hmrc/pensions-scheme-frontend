@@ -45,7 +45,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   val firstIndex = Index(0)
   val companyName: String = "test company name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CompanyPostCodeLookupController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyPostCodeLookupController =
     new CompanyPostCodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector,fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
@@ -56,7 +56,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   "Company Postcode Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode,firstIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -113,12 +113,14 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
     "redirect to Session Expired for a GET if no existing data is found" in {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
+
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "valid"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
+
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
