@@ -20,8 +20,10 @@ import play.api.libs.json.JsPath
 
 import scala.language.implicitConversions
 import play.api.libs.json._
+import utils.{Cleanup, JsLens}
 
 trait Identifier {
+
   def path: JsPath = __ \ toString
 }
 
@@ -31,4 +33,13 @@ object Identifier {
     i.toString
 }
 
-trait TypedIdentifier[A] extends Identifier
+trait TypedIdentifier[A] extends TypedIdentifier.PathDependent {
+  type Data = A
+}
+
+object TypedIdentifier {
+
+  trait PathDependent extends Identifier {
+    type Data
+  }
+}

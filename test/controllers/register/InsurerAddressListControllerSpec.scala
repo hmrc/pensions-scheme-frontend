@@ -129,7 +129,7 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
       val dataCacheConnector = mock[DataCacheConnector]
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
-      when(dataCacheConnector.save(any(), Matchers.eq(InsurerAddressId), any())(any()))
+      when(dataCacheConnector.save[Address, InsurerAddressId.type](any(), Matchers.eq(InsurerAddressId), any())(any(), any()))
         .thenReturn(Future.successful(Json.obj()))
 
       val result = controller(new FakeDataRetrievalAction(Some(schemeDetails ++ addressObject)), dataCacheConnector)
@@ -137,7 +137,8 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
 
       status(result) mustEqual SEE_OTHER
 
-      verify(dataCacheConnector, times(1)).save(any(), Matchers.eq(InsurerAddressId), Matchers.eq(addresses.head.copy(country = "GB")))(any())
+      verify(dataCacheConnector, times(1))
+        .save[Address, InsurerAddressId.type](any(), Matchers.eq(InsurerAddressId), Matchers.eq(addresses.head.copy(country = "GB")))(any(), any())
 
     }
 

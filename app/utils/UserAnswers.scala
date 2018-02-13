@@ -24,7 +24,9 @@ import models.register.establishers.individual.EstablisherDetails
 import models.{CompanyDetails, NormalMode}
 import play.api.libs.json._
 
-class UserAnswers(json: JsValue) extends Enumerable.Implicits with MapFormats {
+import scala.language.implicitConversions
+
+case class UserAnswers(private[UserAnswers] val json: JsValue) {
 
   def get[A](id: TypedIdentifier[A])(implicit rds: Reads[A]): Option[A] = {
     get[A](id.path)
@@ -38,6 +40,22 @@ class UserAnswers(json: JsValue) extends Enumerable.Implicits with MapFormats {
   def getAll[A](path: JsPath)(implicit rds: Reads[A]): Option[Seq[A]] = {
     (JsLens.fromPath(path) andThen JsLens.atAllIndices).get(json)
       .flatMap(Json.fromJson[Seq[A]]).asOpt
+  }
+
+  def set[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data], cleanup: Cleanup[I]): JsResult[UserAnswers] = {
+
+    val jsValue = Json.toJson(value)
+
+    JsLens.fromPath(id.path)
+      .set(jsValue, json)
+      .flatMap(json => cleanup(id)(Some(value), UserAnswers(json)))
+  }
+
+  def remove[I <: TypedIdentifier.PathDependent](id: I)(implicit cleanup: Cleanup[I]): JsResult[UserAnswers] = {
+
+    JsLens.fromPath(id.path)
+      .remove(json)
+      .flatMap(json => cleanup(id)(None, UserAnswers(json)))
   }
 
   def allEstablishers: Option[Seq[(String, String)]] = {

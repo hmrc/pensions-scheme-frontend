@@ -131,14 +131,15 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     "update the country of the chosen address to `GB`" in {
       val dataCacheConnector = mock[DataCacheConnector]
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
-      when(dataCacheConnector.save(any(), Matchers.eq(PreviousAddressId(0)), any())(any()))
+      when(dataCacheConnector.save[Address, PreviousAddressId](any(), Matchers.eq(PreviousAddressId(0)), any())(any(), any()))
         .thenReturn(Future.successful(Json.obj()))
 
       val result = controller(new FakeDataRetrievalAction(Some(validData)), dataCacheConnector)
         .onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      verify(dataCacheConnector, times(1)).save(any(), Matchers.eq(PreviousAddressId(0)), Matchers.eq(previousAddresses.head.copy(country = "GB")))(any())
+      verify(dataCacheConnector, times(1))
+        .save[Address, PreviousAddressId](any(), Matchers.eq(PreviousAddressId(0)), Matchers.eq(previousAddresses.head.copy(country = "GB")))(any(), any())
     }
 
     "return a Bad Request and errors when no data is submitted" in {

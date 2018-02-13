@@ -20,12 +20,22 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.register.establishers.individual.AddressYears
 import play.api.libs.json._
+import utils.Cleanup
 
 case class AddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
   override def path: JsPath = EstablishersId.path \ index \ AddressYearsId.toString
 }
 
 object AddressYearsId {
+
   override lazy val toString: String =
     "addressYears"
+
+  implicit lazy val addressYears: Cleanup[AddressYearsId] =
+    Cleanup[AddressYears, AddressYearsId] {
+      case (AddressYearsId(id), Some(AddressYears.OverAYear), answers) =>
+        answers
+          .remove(PreviousPostCodeLookupId(id))
+          .flatMap(_.remove(PreviousAddressId(id)))
+    }
 }
