@@ -50,6 +50,8 @@ class UKBankDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
+    behave like pageWithBackLink(createView)
+
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       routes.UKBankDetailsController.onSubmit(NormalMode).url, "bankName", "accountName", "sortCode",
       "accountNumber")

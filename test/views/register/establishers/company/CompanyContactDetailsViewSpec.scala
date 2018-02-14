@@ -39,6 +39,8 @@ class CompanyContactDetailsViewSpec extends QuestionViewBehaviours[CompanyContac
 
     behave like normalPage(createView, messageKeyPrefix, messages("messages__establisher_company_contact_details__title"))
 
+    behave like pageWithBackLink(createView)
+
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       routes.CompanyContactDetailsController.onSubmit(NormalMode, index).url, "emailAddress", "phoneNumber")
   }

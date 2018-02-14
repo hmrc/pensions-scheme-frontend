@@ -36,6 +36,8 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
   "CompanyRegistrationNumber view" must {
     behave like normalPage(createView, messageKeyPrefix,messages("messages__company__has_crn"))
 
+    behave like pageWithBackLink(createView)
+
     "Generate correct hint text" in {
       val doc = asDocument(createView())
       assertContainsText(doc, messages("messages__common__crn_hint"))

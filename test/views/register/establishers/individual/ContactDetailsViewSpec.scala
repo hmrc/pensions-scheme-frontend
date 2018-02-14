@@ -43,6 +43,8 @@ class ContactDetailsViewSpec extends QuestionViewBehaviours[ContactDetails] {
 
     behave like normalPage(createView, messageKeyPrefix, messages("messages__establisher_individual_contact_details__title"))
 
+    behave like pageWithBackLink(createView)
+
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.ContactDetailsController.onSubmit(NormalMode, index).url,
       "emailAddress", "phoneNumber")
   }

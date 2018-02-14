@@ -29,6 +29,8 @@
 
     @helpers.form(action = routes.AddEstablisherController.onSubmit(mode), 'autoComplete -> "off") {
 
+        @components.back_link()
+
         @allEstablishers.map { establishers =>
 
             @if(establishers.size < establishersLimit) {

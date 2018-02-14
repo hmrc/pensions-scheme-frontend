@@ -14,5 +14,7 @@ class $className$ViewSpec extends ViewBehaviours {
 
   "$className$ view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__\${messageKeyPrefix}__heading"))
+
+    behave like pageWithBackLink(createView)
   }
 }

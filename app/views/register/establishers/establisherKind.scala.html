@@ -29,6 +29,8 @@
 
     @helpers.form(action = EstablisherKindController.onSubmit(mode,index), 'autoComplete -> "off") {
 
+        @components.back_link()
+
         @components.error_summary(form.errors)
 
         @components.heading("messages__establishers__add__title",secondaryHeaderKey = Some(schemeName))

@@ -56,6 +56,8 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[EstablisherDetai
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
+    behave like pageWithBackLink(createView)
+
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       routes.EstablisherDetailsController.onSubmit(NormalMode, Index(0)).url, "firstName", "lastName")
 

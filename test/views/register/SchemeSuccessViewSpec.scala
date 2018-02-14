@@ -33,6 +33,7 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
     LocalDate.now(), "1234")(fakeRequest, messages)
 
   "SchemeSuccess view" must {
+
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", testScheme),
       "_email", "_copy_1", "_copy_2", "_copy_3", "_register_pensions_regulator", "_register_vat")
 

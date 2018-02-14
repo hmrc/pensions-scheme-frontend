@@ -24,7 +24,7 @@ echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def $className;format="decap"$: Option[AnswerRow] = userAnswers.get($className$Id) map {";\
+     print "  def $className;format="decap"$: Option[AnswerRow] = userAnswers.get(identifiers.$routeFile$.$className$Id) map {";\
      print "    x => AnswerRow(\"messages__$className;format="decap"$__checkYourAnswersLabel\", Seq(s\"\$x\"), false, controllers.$routeFile$.routes.$className$Controller.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala

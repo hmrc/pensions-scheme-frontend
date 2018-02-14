@@ -40,6 +40,8 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
   "UniqueTaxReference view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages("messages__establisher__has_sautr__title"))
+
+    behave like pageWithBackLink(createView)
   }
 
   "UniqueTaxReference view" when {
