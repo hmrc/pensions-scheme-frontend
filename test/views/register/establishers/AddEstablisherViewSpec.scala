@@ -49,6 +49,8 @@ class AddEstablisherViewSpec extends YesNoViewBehaviours {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
+    behave like pageWithBackLink(createView)
+
     behave like yesNoPage(createViewUsingForm, messageKeyPrefix,
       routes.AddEstablisherController.onSubmit(NormalMode).url, "legend_more")
 

@@ -55,6 +55,8 @@ class PreviousAddressListViewSpec extends ViewBehaviours {
   "AddressResults view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
+    behave like pageWithBackLink(createView)
+
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
         routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex).url)

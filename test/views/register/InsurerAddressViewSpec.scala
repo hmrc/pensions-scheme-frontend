@@ -48,6 +48,8 @@ class InsurerAddressViewSpec extends QuestionViewBehaviours[Address] {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
+    behave like pageWithBackLink(createView)
+
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       routes.InsurerAddressController.onSubmit(NormalMode).url, "addressLine1", "addressLine2", "addressLine3", "addressLine4")
 

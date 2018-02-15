@@ -39,6 +39,8 @@ class UKBankAccountViewSpec extends YesNoViewBehaviours {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
+    behave like pageWithBackLink(createView)
+
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.UKBankAccountController.onSubmit(NormalMode).url)
   }

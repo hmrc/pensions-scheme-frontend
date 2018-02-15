@@ -55,6 +55,8 @@ class AddressListViewSpec extends ViewBehaviours {
   "AddressResults view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
+    behave like pageWithBackLink(createView)
+
     behave like pageWithSecondaryHeader(createView, establisherName)
 
     "have link for enter address manually" in {

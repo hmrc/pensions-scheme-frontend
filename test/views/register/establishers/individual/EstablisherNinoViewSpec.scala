@@ -38,6 +38,8 @@ class EstablisherNinoViewSpec extends ViewBehaviours {
 
   "EstablisherNino view" must {
     behave like normalPage(createView, messageKeyPrefix, messages("messages__establisherNino__title"))
+
+    behave like pageWithBackLink(createView)
   }
 
   "EstablisherNino view" when {

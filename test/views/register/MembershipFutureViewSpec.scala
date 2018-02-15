@@ -35,6 +35,8 @@ class MembershipFutureViewSpec extends ViewBehaviours {
 
   "MembershipFuture view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+    behave like pageWithBackLink(createView)
   }
 
   "MembershipFuture view" when {
