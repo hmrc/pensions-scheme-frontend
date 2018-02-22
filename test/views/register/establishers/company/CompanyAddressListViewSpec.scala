@@ -54,8 +54,7 @@ class CompanyAddressListViewSpec extends ViewBehaviours {
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
-        // TODO: replace this with the correct link
-        routes.CompanyAddressListController.onPageLoad(NormalMode, 0).url)
+        routes.CompanyAddressController.onPageLoad(NormalMode, 0).url)
     }
   }
 

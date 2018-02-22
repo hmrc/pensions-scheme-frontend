@@ -1,31 +1,32 @@
 #!/bin/bash
 
-echo "Applying migration CompanyAddressList"
+echo "Applying migration CompanyAddress"
 
-echo "Adding routes to conf/register.establishers.company.routes"
+echo "Adding routes to establishers.routes"
 
-echo "" >> ../conf/app.routes
-echo "GET        /companyAddressList               controllers.register.establishers.company.CompanyAddressListController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /companyAddressList               controllers.register.establishers.company.CompanyAddressListController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "" >> ../conf/establishers.routes
+echo "GET        /companyAddress                       controllers.register.establishers.company.CompanyAddressController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/establishers.routes
+echo "POST       /companyAddress                       controllers.register.establishers.company.CompanyAddressController.onSubmit(mode: Mode = NormalMode)" >> ../conf/establishers.routes
 
-echo "GET        /changeCompanyAddressList               controllers.register.establishers.company.CompanyAddressListController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /changeCompanyAddressList               controllers.register.establishers.company.CompanyAddressListController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "GET        /changeCompanyAddress                       controllers.register.establishers.company.CompanyAddressController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/establishers.routes
+echo "POST       /changeCompanyAddress                       controllers.register.establishers.company.CompanyAddressController.onSubmit(mode: Mode = CheckMode)" >> ../conf/establishers.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "messages__companyAddressList__title = companyAddressList" >> ../conf/messages.en
-echo "messages__companyAddressList__heading = companyAddressList" >> ../conf/messages.en
-echo "messages__companyAddressList__option1 = companyAddressList" Option 1 >> ../conf/messages.en
-echo "messages__companyAddressList__option2 = companyAddressList" Option 2 >> ../conf/messages.en
-echo "messages__companyAddressList__checkYourAnswersLabel = companyAddressList" >> ../conf/messages.en
-echo "messages__companyAddressList__error__required = Please give an answer for companyAddressList" >> ../conf/messages.en
+echo messages__"companyAddress__title = companyAddress" >> ../conf/messages.en
+echo messages__"companyAddress__heading = companyAddress" >> ../conf/messages.en
+echo messages__"companyAddress__field1 = Field 1" >> ../conf/messages.en
+echo messages__"companyAddress__field2 = Field 2" >> ../conf/messages.en
+echo messages__"companyAddress__checkYourAnswersLabel = companyAddress" >> ../conf/messages.en
+echo messages__"companyAddress__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
+echo messages__"companyAddress__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def companyAddressList: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.CompanyAddressListId) map {";\
-     print "    x => AnswerRow(\"messages__companyAddressList__checkYourAnswersLabel\", Seq(s\"companyAddressList.$x\"), true, controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(CheckMode).url)";\
+     print "  def companyAddress: Option[AnswerRow] = userAnswers.get(identifiers.establishers.CompanyAddressId) map {";\
+     print "    x => AnswerRow(\"companyAddress.checkYourAnswersLabel\", Seq(s\"${x.field1} ${x.field2}\"), false, controllers.establishers.routes.CompanyAddressController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -33,4 +34,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration CompanyAddressList completed"
+echo "Migration CompanyAddress completed"

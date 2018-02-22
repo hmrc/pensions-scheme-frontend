@@ -22,8 +22,7 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
-import identifiers.register.establishers.company.{CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
-import identifiers.register.establishers.individual.AddressId
+import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
 import models.addresslookup.Address
 import models.requests.DataRequest
 import models.{Index, Mode}
@@ -66,8 +65,7 @@ class CompanyAddressListController @Inject() (
                 companyAddressList(appConfig, form, mode, index, addresses, name)
               )),
             id =>
-              // TODO point this at the correct identifier
-              dataCacheConnector.save(request.externalId, AddressId(index), addresses(id).copy(country = "GB")).map {
+              dataCacheConnector.save(request.externalId, CompanyAddressId(index), addresses(id).copy(country = "GB")).map {
                 json =>
                   Redirect(navigator.nextPage(CompanyAddressListId(index), mode)(UserAnswers(json)))
               }

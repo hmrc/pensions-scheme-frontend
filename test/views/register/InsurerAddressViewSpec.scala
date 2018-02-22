@@ -16,15 +16,14 @@
 
 package views.register
 
-import play.api.data.Form
-import models.addresslookup.Address
-import models.register.CountryOptions
-import models.NormalMode
-import org.jsoup.Jsoup
-import utils.InputOption
-import views.behaviours.QuestionViewBehaviours
 import controllers.register.routes
 import forms.register.establishers.individual.AddressFormProvider
+import models.NormalMode
+import models.addresslookup.Address
+import org.jsoup.Jsoup
+import play.api.data.Form
+import utils.InputOption
+import views.behaviours.QuestionViewBehaviours
 import views.html.register.insurerAddress
 
 
@@ -32,7 +31,6 @@ class InsurerAddressViewSpec extends QuestionViewBehaviours[Address] {
 
   val messageKeyPrefix = "benefits_insurance_addr"
   val validData: Seq[InputOption] = Seq(InputOption("AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
-  val countryOptions: CountryOptions = new CountryOptions(validData)
   val schemeName: String = "Test Scheme Name"
 
   override val form = new AddressFormProvider()()
