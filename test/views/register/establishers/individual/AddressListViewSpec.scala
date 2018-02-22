@@ -46,13 +46,7 @@ class AddressListViewSpec extends ViewBehaviours {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressList(frontendAppConfig, form, NormalMode,
     firstIndex, addressSeq, establisherName)(fakeRequest, messages)
 
-  def getAddressValue(address: Address): String = s"${address.addressLine1}, ${address.addressLine2}" +
-    s"${address.addressLine3.map(town => s", $town").getOrElse("")}" +
-    s"${address.addressLine4.map(county => s", $county").getOrElse("")}, " +
-    s"${address.postcode.map(postcode => s"$postcode").getOrElse("")}"
-
-
-  "AddressResults view" must {
+  "AddressListView view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
@@ -63,10 +57,9 @@ class AddressListViewSpec extends ViewBehaviours {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
         routes.AddressController.onPageLoad(NormalMode, firstIndex).url)
     }
-
   }
 
-  "AddressResults view" when {
+  "AddressListView view" when {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
@@ -75,7 +68,6 @@ class AddressListViewSpec extends ViewBehaviours {
         }
       }
     }
-
 
     for (index <- addressIndexes) {
       s"rendered with a value of '$index'" must {
