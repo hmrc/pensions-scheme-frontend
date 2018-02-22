@@ -18,18 +18,16 @@ package controllers.register.establishers.company
 
 import javax.inject.Inject
 
+import config.FrontendAppConfig
+import connectors.{AddressLookupConnector, DataCacheConnector}
+import controllers.FrontendBaseController
+import controllers.actions._
+import forms.register.establishers.individual.PostCodeLookupFormProvider
+import identifiers.register.establishers.company.CompanyPostCodeLookupId
+import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.{AddressLookupConnector, DataCacheConnector}
-import controllers.actions._
-import config.FrontendAppConfig
-import forms.register.establishers.individual.PostCodeLookupFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
-import models.addresslookup.Address
-import models.requests.DataRequest
-import models.{Index, Mode}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyPostCodeLookup
 
@@ -45,7 +43,7 @@ class CompanyPostCodeLookupController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: PostCodeLookupFormProvider
-                                        ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                        ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -90,13 +88,4 @@ class CompanyPostCodeLookupController @Inject()(
       }
   }
 
-  private def retrieveCompanyName(index: Int)(block: String => Future[Result])
-                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(value) =>
-        block(value.companyName)
-      case _ =>
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    }
-  }
 }

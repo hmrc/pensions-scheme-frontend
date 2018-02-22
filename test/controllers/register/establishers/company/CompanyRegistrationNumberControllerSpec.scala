@@ -87,7 +87,6 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber.hasCrn","true"),("companyRegistrationNumber.crn","1234567"))
       val result = controller().onSubmit(NormalMode,firstIndex)(postRequest)

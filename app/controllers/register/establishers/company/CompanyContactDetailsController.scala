@@ -20,15 +20,14 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.FrontendBaseController
 import controllers.actions._
 import forms.register.establishers.company.CompanyContactDetailsFormProvider
-import identifiers.register.establishers.company.{CompanyContactDetailsId, CompanyDetailsId}
-import models.requests.DataRequest
+import identifiers.register.establishers.company.CompanyContactDetailsId
 import models.{CompanyContactDetails, Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyContactDetails
 
@@ -41,7 +40,7 @@ class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
-                                                  formProvider: CompanyContactDetailsFormProvider) extends FrontendController
+                                                  formProvider: CompanyContactDetailsFormProvider) extends FrontendBaseController
                                                   with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form: Form[CompanyContactDetails] = formProvider()
@@ -72,13 +71,4 @@ class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  private def retrieveCompanyName(index: Int)(block: String => Future[Result])
-                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(value) =>
-        block(value.companyName)
-      case _ =>
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    }
-  }
 }
