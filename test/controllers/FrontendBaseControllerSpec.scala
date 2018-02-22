@@ -16,18 +16,16 @@
 
 package controllers
 
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.{CompanyAddressId, CompanyDetailsId}
+import identifiers.register.establishers.company.CompanyDetailsId
 import models.CompanyDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.requests.DataRequest
 import play.api.libs.json.Json
+import play.api.mvc.Results._
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.UserAnswers
-import play.api.mvc.Results._
 
 import scala.concurrent.Future
 
