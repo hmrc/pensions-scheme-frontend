@@ -16,9 +16,9 @@
 
 package views.register.establishers.company
 
-import forms.register.establishers.company.CompanyAddressFormProvider
+import forms.register.establishers.individual.AddressFormProvider
+import models.addresslookup.Address
 import models.{Index, NormalMode}
-import models.register.establishers.company.CompanyAddress
 import play.api.data.Form
 import utils.InputOption
 import views.behaviours.QuestionViewBehaviours
@@ -26,7 +26,7 @@ import views.html.register.establishers.company.companyAddress
 
 import scala.util.Random
 
-class CompanyAddressViewSpec extends QuestionViewBehaviours[CompanyAddress] {
+class CompanyAddressViewSpec extends QuestionViewBehaviours[Address] {
 
   val messageKeyPrefix = "companyAddress"
 
@@ -34,7 +34,7 @@ class CompanyAddressViewSpec extends QuestionViewBehaviours[CompanyAddress] {
 
   val options = Seq.empty[InputOption]
 
-  override val form = new CompanyAddressFormProvider()()
+  override val form: Form[Address] = new AddressFormProvider()()
 
   def createView = () => companyAddress(frontendAppConfig, form, NormalMode, Index(0), companyName, options)(fakeRequest, messages)
 
