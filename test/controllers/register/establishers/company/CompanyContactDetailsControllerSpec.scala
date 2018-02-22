@@ -74,13 +74,6 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect to Session Expired page when company name is not present" in {
-      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
     "redirect to session expired from a GET when the index is invalid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
