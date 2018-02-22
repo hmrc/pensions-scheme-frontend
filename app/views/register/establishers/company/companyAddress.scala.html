@@ -36,6 +36,8 @@
 
         @components.heading("messages__companyAddress__heading", secondaryHeaderKey = Some(companyName))
 
+        <p>@messages("messages__companyAddress__lede")</p>
+
         @components.address(form, countryOptions)
 
         @components.submit_button()

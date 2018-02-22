@@ -320,3 +320,4 @@ messages__establisher_company_postcode_hint = This is usually the registered bus
 messages__companyAddress__title = Company address
 messages__companyAddress__heading = Company address
 messages__companyAddress__checkYourAnswersLabel = Company address
+messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.
