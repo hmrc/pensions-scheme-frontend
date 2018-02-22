@@ -18,7 +18,7 @@ package controllers.register.establishers.individual
 
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.ControllerSpecBase
-import models.{CheckMode, Index}
+import models.Index
 import models.register.CountryOptions
 import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
@@ -26,7 +26,6 @@ import utils.{CheckYourAnswersFactory, DateHelper, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import play.api.test.Helpers._
 import views.html.register.establishers.individual.check_your_answers
-import controllers.register.establishers.individual.routes._
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
@@ -38,9 +37,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   val answers: Seq[AnswerRow] = Seq(
     AnswerRow("messages__establisher_individual_name_cya_label", Seq("test first name test last name"), false,
-      EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
+      "/pensions-scheme/register/establishers/1/individual/changeEstablisherDetails"),
     AnswerRow("messages__establisher_individual_dob_cya_label", Seq(DateHelper.formatDate(LocalDate.now)), false,
-      EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
+      "/pensions-scheme/register/establishers/1/individual/changeEstablisherDetails")
   )
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersController =
     new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction,

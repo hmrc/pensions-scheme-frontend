@@ -39,6 +39,9 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
   "SchemeDetails view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+    behave like pageWithBackLink(createView)
+
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.SchemeDetailsController.onSubmit(NormalMode).url,
       "schemeName")
   }

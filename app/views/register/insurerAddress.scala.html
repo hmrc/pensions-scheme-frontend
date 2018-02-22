@@ -30,46 +30,15 @@
 
 @helpers.form(action = InsurerAddressController.onSubmit(mode), 'autoComplete -> "off") {
 
+        @components.back_link()
+
         @components.error_summary(form.errors)
 
         @components.heading(headingKey = "messages__benefits_insurance_addr__title", secondaryHeaderKey = Some(schemeName))
 
         <p>@messages("messages__common__company_address_hint")</p>
-        @components.input_text(
-            field = form("addressLine1"),
-            label = messages("messages__common__address1"),
-            inputClass = Some("form-control-3-4")
-        )
 
-        @components.input_text(
-            field = form("addressLine2"),
-            label = messages("messages__common__address2"),
-            inputClass = Some("form-control-3-4")
-
-        )
-
-        @components.input_text(
-            field = form("addressLine3"),
-            label = messages("messages__common__address3")
-        )
-
-        @components.input_text(
-            field = form("addressLine4"),
-            label = messages("messages__common__address4")
-        )
-
-        @components.input_text(
-            field = form("postCode.postCode"),
-            label = messages("messages__common__address_postcode"),
-            inputClass = Some("form-control-1-4")
-        )
-
-        @components.select(field = form("country"),
-            label = messages("messages__common__country"),
-            options = options,
-            placeholder = Some("messages__common__pick_country"),
-            formGroupClasses = Set("autocomplete-wrapper")
-        )
+        @components.address(form, options)
 
         @components.submit_button()
     }

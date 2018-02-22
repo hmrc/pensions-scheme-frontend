@@ -35,6 +35,8 @@ class MembershipViewSpec extends ViewBehaviours {
 
   "Membership view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+    behave like pageWithBackLink(createView)
   }
 
   "Membership view" when {

@@ -32,7 +32,6 @@ class InsurerAddressViewSpec extends QuestionViewBehaviours[Address] {
 
   val messageKeyPrefix = "benefits_insurance_addr"
   val validData: Seq[InputOption] = Seq(InputOption("AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
-  val countryOptions: CountryOptions = new CountryOptions(validData)
   val schemeName: String = "Test Scheme Name"
 
   override val form = new AddressFormProvider()()
@@ -47,6 +46,8 @@ class InsurerAddressViewSpec extends QuestionViewBehaviours[Address] {
   "ManualAddress view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+    behave like pageWithBackLink(createView)
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       routes.InsurerAddressController.onSubmit(NormalMode).url, "addressLine1", "addressLine2", "addressLine3", "addressLine4")

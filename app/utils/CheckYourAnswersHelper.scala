@@ -18,9 +18,9 @@ package utils
 
 import controllers.register.routes
 import identifiers.register._
-import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.individual._
+import identifiers.register.establishers.{EstablisherKindId, company}
 import models.EstablisherNino.{No, Yes}
 import models.addresslookup.Address
 import models.register.CountryOptions
@@ -30,6 +30,14 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
+  def companyAddress(index: Int): Option[AnswerRow] = userAnswers.get(company.CompanyAddressId(index)) map { x =>
+    AnswerRow(
+      "messages__companyAddress__checkYourAnswersLabel",
+      addressAnswer(x),
+      false,
+      controllers.register.establishers.company.routes.CompanyAddressController.onPageLoad(CheckMode, Index(index)).url
+    )
+  }
 
   def companyAddressYears(index: Int): Seq[AnswerRow] =
     userAnswers.get(CompanyAddressYearsId(index)) match {

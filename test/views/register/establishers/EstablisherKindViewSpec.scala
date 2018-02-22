@@ -37,6 +37,8 @@ class EstablisherKindViewSpec extends ViewBehaviours {
 
   "EstablisherKind view" must {
     behave like normalPage(createView, messageKeyPrefix, messages("messages__establishers__add__title"))
+
+    behave like pageWithBackLink(createView)
   }
 
   "EstablisherKind view" when {

@@ -49,6 +49,8 @@ class InsurerAddressListViewSpec extends ViewBehaviours {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
+    behave like pageWithBackLink(createView)
+
     behave like pageWithSecondaryHeader(createView, schemeName)
 
     "have link for enter address manually" in {

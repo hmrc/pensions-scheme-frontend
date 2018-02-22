@@ -29,6 +29,8 @@
 
     @helpers.form(action = ContactDetailsController.onSubmit(mode, index), 'autoComplete -> "off") {
 
+        @components.back_link()
+
         @components.error_summary(form.errors)
 
         @components.heading("messages__establisher_individual_contact_details__title", secondaryHeaderKey = Some(establisherName))
