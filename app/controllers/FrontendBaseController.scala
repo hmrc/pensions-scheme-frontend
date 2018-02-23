@@ -17,8 +17,10 @@
 package controllers
 
 import identifiers.TypedIdentifier
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import models.CompanyDetails
+import models.register.SchemeDetails
 import models.requests.DataRequest
 import play.api.libs.json.Reads
 import play.api.mvc.{AnyContent, Result}
@@ -29,16 +31,24 @@ import scala.concurrent.Future
 trait FrontendBaseController extends FrontendController {
 
   private[controllers] def retrieveCompanyName(index: Int)
-                                   (f: (String) => Future[Result])
-                                   (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    retrieve[CompanyDetails](CompanyDetailsId(index), index){ companyDetails =>
+                                              (f: (String) => Future[Result])
+                                              (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    retrieve[CompanyDetails](CompanyDetailsId(index)){ companyDetails =>
       f(companyDetails.companyName)
     }
   }
 
-  private[controllers] def retrieve[A](id: TypedIdentifier[A], index: Int)
-                                              (f: (A) => Future[Result])
-                                              (implicit request: DataRequest[AnyContent], r: Reads[A]): Future[Result] = {
+
+  private[controllers] def retrieveSchemeName(f: String => Future[Result])
+                                             (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    retrieve[SchemeDetails](SchemeDetailsId){ schemeDetails =>
+      f(schemeDetails.schemeName)
+    }
+  }
+
+  private[controllers] def retrieve[A](id: TypedIdentifier[A])
+                                      (f: (A) => Future[Result])
+                                      (implicit request: DataRequest[AnyContent], r: Reads[A]): Future[Result] = {
     request.userAnswers.get(id).map(f).getOrElse {
       Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }

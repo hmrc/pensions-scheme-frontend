@@ -16,9 +16,12 @@
 
 package controllers
 
+import identifiers.TypedIdentifier
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import models.CompanyDetails
+import models.register.{SchemeDetails, SchemeType}
 import models.requests.DataRequest
 import play.api.libs.json.Json
 import play.api.mvc.Results._
@@ -38,7 +41,6 @@ class FrontendBaseControllerSpec extends ControllerSpecBase {
   }
 
   "retrieveCompanyName" must {
-
     "reach the intended result when companyName is found" in {
 
       val validData = Json.obj(
@@ -54,12 +56,48 @@ class FrontendBaseControllerSpec extends ControllerSpecBase {
 
       status(result) must be(OK)
     }
+  }
+
+  "retrieveSchemeName" must {
+    "reach the intended result when schemeName is found" in {
+
+      val validData = Json.obj(
+        SchemeDetailsId.toString -> Json.toJson(SchemeDetails("schemeName", SchemeType.SingleTrust))
+      )
+
+      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(validData))
+
+      val result = controller.retrieveSchemeName(success)
+
+      status(result) must be(OK)
+    }
+  }
+
+  "retrieve" must {
+
+    "reach the intended result when identifier gets value from answers" in {
+
+      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(Json.obj("test" -> "result")))
+
+      val testIdentifier = new TypedIdentifier[String]{
+        override def toString: String = "test"
+      }
+
+      val result = controller.retrieve(testIdentifier)(success)
+
+      status(result) must be(OK)
+
+    }
 
     "redirect to Session Expired page when company name is not present" in {
 
       implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(Json.obj()))
 
-      val result = controller.retrieveCompanyName(0)(success)
+      val testIdentifier = new TypedIdentifier[String]{
+        override def toString: String = "test"
+      }
+
+      val result = controller.retrieve(testIdentifier)(success)
 
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
 
