@@ -20,16 +20,14 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.FrontendBaseController
 import controllers.actions._
 import forms.register.establishers.individual.EstablisherDetailsFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual.establisherDetails
@@ -45,7 +43,7 @@ class EstablisherDetailsController @Inject() (
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: EstablisherDetailsFormProvider
-                                            ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                            ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -84,10 +82,4 @@ class EstablisherDetailsController @Inject() (
       }
   }
 
-  private def retrieveSchemeName(block: String => Future[Result])
-                           (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(SchemeDetailsId).map { schemeDetails =>
-      block(schemeDetails.schemeName)
-    }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
-  }
 }

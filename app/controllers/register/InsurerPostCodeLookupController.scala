@@ -20,15 +20,14 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
+import controllers.FrontendBaseController
 import controllers.actions._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
-import identifiers.register.{InsurerPostCodeLookupId, SchemeDetailsId}
-import models.requests.DataRequest
+import identifiers.register.InsurerPostCodeLookupId
 import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.insurerPostCodeLookup
 
@@ -44,7 +43,7 @@ class InsurerPostCodeLookupController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: PostCodeLookupFormProvider
-                                        ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                        ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -89,10 +88,4 @@ class InsurerPostCodeLookupController @Inject()(
       }
   }
 
-  private def retrieveSchemeName(block: String => Future[Result])
-                                (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(SchemeDetailsId).map { schemeDetails =>
-      block(schemeDetails.schemeName)
-    }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
-  }
 }

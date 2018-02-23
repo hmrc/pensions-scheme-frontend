@@ -20,6 +20,7 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.FrontendBaseController
 import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register._
@@ -43,7 +44,7 @@ class InsurerAddressListController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: AddressListFormProvider
-                                     ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                     ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits {
 
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -82,13 +83,4 @@ class InsurerAddressListController @Inject()(
       }
   }
 
-  private def retrieveSchemeName(block: String => Future[Result])
-                                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(SchemeDetailsId) match {
-      case Some(value) =>
-        block(value.schemeName)
-      case _ =>
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    }
-  }
 }
