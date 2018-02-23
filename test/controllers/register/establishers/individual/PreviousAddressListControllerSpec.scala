@@ -90,18 +90,11 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
 
   "PreviousAddressList Controller" must {
 
-     "return OK and the correct view for a GET when establisher name is present" in {
+    "return OK and the correct view for a GET when establisher name is present" in {
       val result = controller(new FakeDataRetrievalAction(Some(validData))).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(address = Seq(address("test post code 1"), address("test post code 2")))
-    }
-
-    "redirect to Session Expired page when establisher name is not present" in {
-      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to previous address lookup when no  previous addresses are present after lookup" in {
@@ -111,6 +104,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
       redirectLocation(result) mustBe Some(
         controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, firstIndex).url)
     }
+
     "redirect to Address look up page when no addresses are present after lookup (post)" in {
       val result = controller().onSubmit(NormalMode, firstIndex)(fakeRequest)
 

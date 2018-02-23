@@ -42,6 +42,10 @@ class FrontendBaseControllerSpec extends ControllerSpecBase {
     Future.successful(Ok("Success"))
   }
 
+  val testIdentifier = new TypedIdentifier[String]{
+    override def toString: String = "test"
+  }
+
   "retrieveCompanyName" must {
     "reach the intended result when companyName is found" in {
 
@@ -81,10 +85,6 @@ class FrontendBaseControllerSpec extends ControllerSpecBase {
 
       implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result"))
 
-      val testIdentifier = new TypedIdentifier[String]{
-        override def toString: String = "test"
-      }
-
       val result = controller.retrieve(testIdentifier)(success)
 
       status(result) must be(OK)
@@ -94,10 +94,6 @@ class FrontendBaseControllerSpec extends ControllerSpecBase {
     "redirect to Session Expired page when company name is not present" in {
 
       implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj())
-
-      val testIdentifier = new TypedIdentifier[String]{
-        override def toString: String = "test"
-      }
 
       val result = controller.retrieve(testIdentifier)(success)
 
