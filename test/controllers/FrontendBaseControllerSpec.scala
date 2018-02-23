@@ -23,7 +23,7 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import models.CompanyDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.requests.DataRequest
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Results._
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.FakeRequest
@@ -33,6 +33,8 @@ import utils.UserAnswers
 import scala.concurrent.Future
 
 class FrontendBaseControllerSpec extends ControllerSpecBase {
+
+  def dataRequest(data: JsValue): DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(data))
 
   val controller = new FrontendBaseController{}
 
@@ -50,7 +52,7 @@ class FrontendBaseControllerSpec extends ControllerSpecBase {
           ))
       )
 
-      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(validData))
+      implicit val request: DataRequest[AnyContent] = dataRequest(validData)
 
       val result = controller.retrieveCompanyName(0)(success)
 
@@ -65,7 +67,7 @@ class FrontendBaseControllerSpec extends ControllerSpecBase {
         SchemeDetailsId.toString -> Json.toJson(SchemeDetails("schemeName", SchemeType.SingleTrust))
       )
 
-      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(validData))
+      implicit val request: DataRequest[AnyContent] = dataRequest(validData)
 
       val result = controller.retrieveSchemeName(success)
 
@@ -77,7 +79,7 @@ class FrontendBaseControllerSpec extends ControllerSpecBase {
 
     "reach the intended result when identifier gets value from answers" in {
 
-      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(Json.obj("test" -> "result")))
+      implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result"))
 
       val testIdentifier = new TypedIdentifier[String]{
         override def toString: String = "test"
@@ -91,7 +93,7 @@ class FrontendBaseControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired page when company name is not present" in {
 
-      implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(Json.obj()))
+      implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj())
 
       val testIdentifier = new TypedIdentifier[String]{
         override def toString: String = "test"

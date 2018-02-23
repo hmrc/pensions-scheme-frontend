@@ -19,13 +19,11 @@ package controllers.register.establishers.individual
 import javax.inject.Inject
 
 import config.FrontendAppConfig
+import controllers.FrontendBaseController
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.SchemeDetailsId
 import models.Index
-import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent}
 import utils.CheckYourAnswersFactory
 import viewmodels.AnswerSection
 import views.html.register.establishers.individual.check_your_answers
@@ -37,7 +35,7 @@ class CheckYourAnswersController @Inject() (appConfig: FrontendAppConfig,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             requiredData: DataRequiredAction,
-                                            checkYourAnswersFactory: CheckYourAnswersFactory) extends FrontendController with I18nSupport {
+                                            checkYourAnswersFactory: CheckYourAnswersFactory) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
@@ -55,10 +53,4 @@ class CheckYourAnswersController @Inject() (appConfig: FrontendAppConfig,
       }
   }
 
-  private def retrieveSchemeName(block: String => Future[Result])
-                                (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(SchemeDetailsId).map { schemeDetails =>
-      block(schemeDetails.schemeName)
-    }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
-  }
 }
