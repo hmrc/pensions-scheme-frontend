@@ -74,13 +74,6 @@ class AddressControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect to Session Expired page for a GET when establisher name is not  npresent" in {
-      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 

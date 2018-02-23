@@ -20,6 +20,7 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
+import controllers.FrontendBaseController
 import controllers.actions._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
 import identifiers.register.establishers.individual.{EstablisherDetailsId, PostCodeLookupId}
@@ -45,7 +46,7 @@ class PostCodeLookupController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: PostCodeLookupFormProvider
-                                 ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                 ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -90,13 +91,4 @@ class PostCodeLookupController @Inject()(
       }
   }
 
-  private def retrieveEstablisherName(index: Int)(block: String => Future[Result])
-                                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(EstablisherDetailsId(index)) match {
-      case Some(value) =>
-        block(value.establisherName)
-      case _ =>
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    }
-  }
 }
