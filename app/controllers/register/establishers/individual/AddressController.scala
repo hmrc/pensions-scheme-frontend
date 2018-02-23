@@ -20,6 +20,7 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.FrontendBaseController
 import controllers.actions._
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
@@ -47,7 +48,7 @@ class AddressController @Inject() (
                                     requireData: DataRequiredAction,
                                     formProvider: AddressFormProvider,
                                     countryOptions: CountryOptions
-                                  ) extends FrontendController with I18nSupport {
+                                  ) extends FrontendBaseController with I18nSupport {
 
   val form: Form[Address] = formProvider()
 
@@ -83,13 +84,4 @@ class AddressController @Inject() (
       }
   }
 
-  private def retrieveEstablisherName(index:Int)(block: String => Future[Result])
-                                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(EstablisherDetailsId(index)) match {
-      case Some(value) =>
-        block(value.establisherName)
-      case _ =>
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    }
-  }
 }
