@@ -30,7 +30,9 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
 
-trait FrontendBaseController extends FrontendController {
+trait Retrievals {
+
+  this: FrontendController =>
 
   private[controllers] def retrieveCompanyName(index: Int)
                                               (f: String => Future[Result])

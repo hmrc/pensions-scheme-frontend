@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.FrontendBaseController
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.CompanyRegistrationNumberFormProvider
 import identifiers.register.establishers.company.CompanyRegistrationNumberId
@@ -28,6 +28,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyRegistrationNumber
 
@@ -35,15 +36,15 @@ import scala.concurrent.Future
 
 
 class CompanyRegistrationNumberController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: CompanyRegistrationNumberFormProvider) extends FrontendBaseController with I18nSupport
-                                        with Enumerable.Implicits with MapFormats {
+                                                     appConfig: FrontendAppConfig,
+                                                    override val messagesApi: MessagesApi,
+                                                    dataCacheConnector: DataCacheConnector,
+                                                    navigator: Navigator,
+                                                    authenticate: AuthAction,
+                                                    getData: DataRetrievalAction,
+                                                    requireData: DataRequiredAction,
+                                                    formProvider: CompanyRegistrationNumberFormProvider
+                                                   ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
 

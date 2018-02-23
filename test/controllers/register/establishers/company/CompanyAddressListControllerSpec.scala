@@ -97,7 +97,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
     }
-    
+
     "redirect to postcode lookup when no address results exist (get)" in {
       val result = controller(getDataWithNoAddresses).onPageLoad(NormalMode, 0)(fakeRequest)
       status(result) mustEqual SEE_OTHER
