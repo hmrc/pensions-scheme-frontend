@@ -20,13 +20,14 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.FrontendBaseController
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register.establishers.individual._
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.individual.previousAddressList
@@ -42,7 +43,7 @@ class PreviousAddressListController @Inject()(
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: AddressListFormProvider
-                                     ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits with MapFormats{
+                                     ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats{
 
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {

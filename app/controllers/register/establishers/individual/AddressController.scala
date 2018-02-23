@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.FrontendBaseController
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.establishers.individual.AddressId
@@ -30,6 +30,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.individual.address
@@ -46,7 +47,7 @@ class AddressController @Inject() (
                                     requireData: DataRequiredAction,
                                     formProvider: AddressFormProvider,
                                     countryOptions: CountryOptions
-                                  ) extends FrontendBaseController with I18nSupport {
+                                  ) extends FrontendController with Retrievals with I18nSupport {
 
   val form: Form[Address] = formProvider()
 

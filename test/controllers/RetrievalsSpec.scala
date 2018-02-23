@@ -28,15 +28,18 @@ import play.api.mvc.Results._
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
 
 import scala.concurrent.Future
 
-class FrontendBaseControllerSpec extends ControllerSpecBase {
+class RetrievalsSpec extends ControllerSpecBase {
 
   def dataRequest(data: JsValue): DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(data))
 
-  val controller = new FrontendBaseController{}
+  class TestController extends FrontendController with Retrievals
+
+  val controller = new TestController()
 
   val success: (String) => Future[Result] = { _: String =>
     Future.successful(Ok("Success"))

@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.FrontendBaseController
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
@@ -28,6 +28,7 @@ import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
 import views.html.register.establishers.addEstablisher
 
@@ -40,7 +41,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: AddEstablisherFormProvider) extends FrontendBaseController with I18nSupport {
+                                         formProvider: AddEstablisherFormProvider) extends FrontendController with Retrievals with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 

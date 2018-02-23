@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.FrontendBaseController
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyPostCodeLookupId}
@@ -29,6 +29,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyAddressList
 
@@ -43,7 +44,7 @@ class CompanyAddressListController @Inject() (
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: AddressListFormProvider
-                                     ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits {
+                                     ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

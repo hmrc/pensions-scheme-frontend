@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.FrontendBaseController
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.EstablisherDetailsFormProvider
 import identifiers.register.establishers.individual.EstablisherDetailsId
@@ -28,6 +28,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual.establisherDetails
@@ -43,7 +44,7 @@ class EstablisherDetailsController @Inject() (
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: EstablisherDetailsFormProvider
-                                            ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits {
+                                            ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 

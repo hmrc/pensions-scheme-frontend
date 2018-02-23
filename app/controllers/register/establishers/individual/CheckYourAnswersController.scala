@@ -19,11 +19,12 @@ package controllers.register.establishers.individual
 import javax.inject.Inject
 
 import config.FrontendAppConfig
-import controllers.FrontendBaseController
+import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import models.Index
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswersFactory
 import viewmodels.AnswerSection
 import views.html.register.establishers.individual.check_your_answers
@@ -35,7 +36,7 @@ class CheckYourAnswersController @Inject() (appConfig: FrontendAppConfig,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             requiredData: DataRequiredAction,
-                                            checkYourAnswersFactory: CheckYourAnswersFactory) extends FrontendBaseController with I18nSupport {
+                                            checkYourAnswersFactory: CheckYourAnswersFactory) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>

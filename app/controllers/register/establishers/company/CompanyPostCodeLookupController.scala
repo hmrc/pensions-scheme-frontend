@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
-import controllers.FrontendBaseController
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
 import identifiers.register.establishers.company.CompanyPostCodeLookupId
@@ -28,6 +28,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyPostCodeLookup
 
@@ -43,7 +44,7 @@ class CompanyPostCodeLookupController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: PostCodeLookupFormProvider
-                                        ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits {
+                                        ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 

@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.FrontendBaseController
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register._
@@ -44,7 +44,7 @@ class InsurerAddressListController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: AddressListFormProvider
-                                     ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits {
+                                     ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
