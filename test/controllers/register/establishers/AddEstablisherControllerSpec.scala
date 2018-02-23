@@ -55,13 +55,6 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect to session expired page on a GET when scheme name is not present" in {
-      val result = controller(getEmptyData).onPageLoad(NormalMode)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 

@@ -20,9 +20,10 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
-import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
+import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyPostCodeLookupId}
 import models.addresslookup.Address
 import models.requests.DataRequest
 import models.{Index, Mode}
@@ -43,7 +44,7 @@ class CompanyAddressListController @Inject() (
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: AddressListFormProvider
-                                     ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                     ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
@@ -75,17 +76,13 @@ class CompanyAddressListController @Inject() (
 
   private def retrieve(mode: Mode, index: Int)(f: (String, Seq[Address]) => Future[Result])
                       (implicit request: DataRequest[AnyContent]): Future[Result] = {
-
-    request.userAnswers.get(CompanyDetailsId(index)).map {
-      name =>
-        request.userAnswers.get(CompanyPostCodeLookupId(index)).map {
-          addresses =>
-            f(name.companyName, addresses)
-        }.getOrElse {
-          Future.successful(Redirect(controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, index)))
-        }
-    }.getOrElse {
-      Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    retrieveCompanyName(index){ companyName =>
+      request.userAnswers.get(CompanyPostCodeLookupId(index)).map { addresses =>
+        f(companyName, addresses)
+      } getOrElse {
+        Future.successful(Redirect(controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, index)))
+      }
     }
+
   }
 }

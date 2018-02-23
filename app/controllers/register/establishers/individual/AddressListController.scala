@@ -20,13 +20,13 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
-import identifiers.register.establishers.individual.{AddressId, AddressListId, EstablisherDetailsId, PostCodeLookupId}
-import models.requests.DataRequest
+import identifiers.register.establishers.individual.{AddressId, AddressListId, PostCodeLookupId}
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
@@ -42,7 +42,7 @@ class AddressListController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: AddressListFormProvider) extends FrontendController with I18nSupport
+                                       formProvider: AddressListFormProvider) extends FrontendController with Retrievals with I18nSupport
   with Enumerable.Implicits with MapFormats {
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -86,13 +86,4 @@ class AddressListController @Inject()(
       }
   }
 
-  private def retrieveEstablisherName(index: Int)(block: String => Future[Result])
-                                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(EstablisherDetailsId(index)) match {
-      case Some(value) =>
-        block(value.establisherName)
-      case _ =>
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    }
-  }
 }

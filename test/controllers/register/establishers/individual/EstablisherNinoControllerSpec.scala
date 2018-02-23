@@ -79,13 +79,6 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form.fill(EstablisherNino.Yes("CS700100A")))
     }
 
-    "redirect to Session Expired page when establisher name is not present" in {
-      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("establisherNino.hasNino", "true"), ("establisherNino.nino", "CS700100A"))
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)

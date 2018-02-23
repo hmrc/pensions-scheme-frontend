@@ -16,23 +16,21 @@
 
 package controllers.register.establishers.company
 
-import play.api.data.Form
-import play.api.libs.json.{JsString, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
+import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyUniqueTaxReferenceId}
 import models._
-import views.html.register.establishers.company.companyUniqueTaxReference
-import controllers.ControllerSpecBase
-import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.individual.UniqueTaxReferenceId
-import models.register.{SchemeDetails, SchemeType}
 import models.register.establishers.individual.UniqueTaxReference
+import models.register.{SchemeDetails, SchemeType}
+import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator
+import views.html.register.establishers.company.companyUniqueTaxReference
 
 class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
@@ -42,8 +40,6 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   val formProvider = new CompanyUniqueTaxReferenceFormProvider()
   val form: Form[UniqueTaxReference] = formProvider()
   val companyName = "test company name"
-
-
 
   val validData = Json.obj(
     SchemeDetails.toString ->
@@ -61,7 +57,6 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       )
     )
   )
-
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyUniqueTaxReferenceController =
     new CompanyUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
@@ -84,12 +79,6 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(UniqueTaxReference.Yes("1234567891")))
-    }
-
-    "redirect to Session Expired page when company name is not present" in {
-      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired page when the index is not valid" in {

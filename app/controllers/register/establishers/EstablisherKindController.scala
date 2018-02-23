@@ -18,25 +18,22 @@ package controllers.register.establishers
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
 import config.FrontendAppConfig
+import connectors.DataCacheConnector
+import controllers.Retrievals
+import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablisherKindId
 import models.register.establishers.EstablisherKind
-import models.requests.DataRequest
 import models.{Index, Mode}
-import play.api.mvc.{Action, AnyContent, Result}
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.establisherKind
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
-import play.api.libs.json._
 
 class EstablisherKindController @Inject()(
                                            appConfig: FrontendAppConfig,
@@ -47,7 +44,7 @@ class EstablisherKindController @Inject()(
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
                                            formProvider: EstablisherKindFormProvider
-                                         ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                         ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -83,10 +80,4 @@ class EstablisherKindController @Inject()(
       }
   }
 
-  private def retrieveSchemeName(block: String => Future[Result])
-                                (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(SchemeDetailsId).map { schemeDetails =>
-      block(schemeDetails.schemeName)
-    }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
-  }
 }

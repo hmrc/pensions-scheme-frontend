@@ -94,13 +94,6 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       contentAsString(result) mustBe viewAsString(address = Seq(address("test post code 1"), address("test post code 2")))
     }
 
-    "redirect to Session Expired page when establisher name is not present" in {
-      val result = controller(getEmptyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
     "redirect to Address look up page when no addresses are present after lookup" in {
       val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
 

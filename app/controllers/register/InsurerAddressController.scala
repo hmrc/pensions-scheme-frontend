@@ -20,13 +20,13 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register._
-import models.register.CountryOptions
-import models.requests.DataRequest
 import models.Mode
 import models.addresslookup.Address
+import models.register.CountryOptions
 import play.api.data.Form
 import play.api.i18n._
 import play.api.mvc._
@@ -44,7 +44,7 @@ class InsurerAddressController @Inject()(appConfig: FrontendAppConfig,
                                   getData: DataRetrievalAction,
                                   requireData: DataRequiredAction,
                                   formProvider: AddressFormProvider,
-                                  countryOptions: CountryOptions) extends FrontendController with I18nSupport {
+                                  countryOptions: CountryOptions) extends FrontendController with Retrievals with I18nSupport {
 
   val form: Form[Address] = formProvider()
 
@@ -80,10 +80,4 @@ class InsurerAddressController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  private def retrieveSchemeName(block: String => Future[Result])
-                                (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(SchemeDetailsId).map { schemeDetails =>
-      block(schemeDetails.schemeName)
-    }.getOrElse(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
-  }
 }

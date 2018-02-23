@@ -18,19 +18,19 @@ package controllers.register.establishers.company
 
 import javax.inject.Inject
 
+import config.FrontendAppConfig
+import connectors.DataCacheConnector
+import controllers.Retrievals
+import controllers.actions._
+import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
+import identifiers.register.establishers.company.CompanyUniqueTaxReferenceId
+import models.register.establishers.individual.UniqueTaxReference
+import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
-import config.FrontendAppConfig
-import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyUniqueTaxReferenceId}
-import models.register.establishers.individual.UniqueTaxReference
-import models.requests.DataRequest
-import models.{Index, Mode}
-import play.api.mvc.{Action, AnyContent, Result}
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyUniqueTaxReference
 
 import scala.concurrent.Future
@@ -44,7 +44,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
                                                     formProvider: CompanyUniqueTaxReferenceFormProvider
-                                                  ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                                  ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
@@ -82,13 +82,4 @@ class CompanyUniqueTaxReferenceController @Inject()(
       }
   }
 
-  private def retrieveCompanyName(index: Int)(block: String => Future[Result])
-                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get(CompanyDetailsId(index)) match {
-      case Some(value) =>
-        block(value.companyName)
-      case _ =>
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    }
-  }
 }

@@ -98,19 +98,6 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
       redirectLocation(result).value mustEqual onwardRoute.url
     }
 
-    "redirect to session expired when no establisher details exist (get)" in {
-      val result = controller(getDataWithoutName).onPageLoad(NormalMode, 0)(fakeRequest)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-    }
-
-    "redirect to session expired when no establisher details exist (post)" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
-      val result = controller(getDataWithoutName).onSubmit(NormalMode, 0)(postRequest)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-    }
-
     "redirect to postcode lookup when no address results exist (get)" in {
       val result = controller(getDataWithNoAddresses).onPageLoad(NormalMode, 0)(fakeRequest)
       status(result) mustEqual SEE_OTHER
