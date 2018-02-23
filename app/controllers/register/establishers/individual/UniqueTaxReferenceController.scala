@@ -20,16 +20,15 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.FrontendBaseController
 import controllers.actions._
 import forms.register.establishers.individual.UniqueTaxReferenceFormProvider
-import identifiers.register.establishers.individual.{EstablisherDetailsId, UniqueTaxReferenceId}
-import models.register.establishers.individual.{EstablisherDetails, UniqueTaxReference}
-import models.requests.DataRequest
+import identifiers.register.establishers.individual.UniqueTaxReferenceId
+import models.register.establishers.individual.UniqueTaxReference
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.individual._
@@ -45,7 +44,7 @@ class UniqueTaxReferenceController @Inject()(
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
                                               formProvider: UniqueTaxReferenceFormProvider
-                                            ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                            ) extends FrontendBaseController with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
@@ -83,13 +82,4 @@ class UniqueTaxReferenceController @Inject()(
       }
   }
 
-  private def retrieveEstablisherName(index: Int)(block: String => Future[Result])
-                                (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    request.userAnswers.get[EstablisherDetails](EstablisherDetailsId(index)) match {
-      case Some(value) =>
-        block(value.establisherName)
-      case _ =>
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-    }
-  }
 }

@@ -23,15 +23,13 @@ import connectors.DataCacheConnector
 import controllers.FrontendBaseController
 import controllers.actions._
 import forms.register.establishers.individual.AddressFormProvider
-import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
+import identifiers.register.establishers.individual.AddressId
 import models.addresslookup.Address
 import models.register.CountryOptions
-import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersIndividual
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.individual.address
