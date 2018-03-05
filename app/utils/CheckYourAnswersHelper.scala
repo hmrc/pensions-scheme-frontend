@@ -19,6 +19,7 @@ package utils
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.company._
+import identifiers.register.establishers.company.director.CompanyDirectorContactDetailsId
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherKindId, company}
 import models.EstablisherNino.{No, Yes}
@@ -30,8 +31,11 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
-  def companyDirectorContractDetails: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.director.CompanyDirectorContractDetailsId) map {
-    x => AnswerRow("companyDirectorContractDetails.checkYourAnswersLabel", Seq(s"${x.field1} ${x.field2}"), false, controllers.register.establishers.company.director.routes.CompanyDirectorContractDetailsController.onPageLoad(CheckMode).url)
+  def companyDirectorContactDetails(establisherIndex:Int, directorIndex: Int): Seq[AnswerRow] =
+    userAnswers.get(CompanyDirectorContactDetailsId(establisherIndex, directorIndex)) match {
+    case Some(x) => Seq(AnswerRow("companyDirectorContactDetails.checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false,
+      controllers.register.establishers.company.director.routes.CompanyDirectorContactDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url))
+    case _ => Seq.empty
   }
 
   def companyAddress(index: Int): Option[AnswerRow] = userAnswers.get(company.CompanyAddressId(index)) map { x =>

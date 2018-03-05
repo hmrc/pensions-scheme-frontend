@@ -18,8 +18,8 @@ package models.register.establishers.company.director
 
 import play.api.libs.json._
 
-case class CompanyDirectorContractDetails (field1: String, field2: String)
+case class CompanyDirectorContactDetails (emailAddress: String, phoneNumber: String)
 
-object CompanyDirectorContractDetails {
-  implicit val format = Json.format[CompanyDirectorContractDetails]
+object CompanyDirectorContactDetails {
+  implicit val format = Json.format[CompanyDirectorContactDetails]
 }

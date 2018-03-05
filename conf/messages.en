@@ -317,14 +317,5 @@ companyContactDetails.checkYourAnswersLabel = companyContactDetails
 messages__establisher_company_postcode__title = Company address
 messages__establisher_company_postcode_hint = This is usually the registered business address but you can enter any address you have for this company.
 
-messages__companyAddress__title = Company address
-messages__companyAddress__heading = Company address
-messages__companyAddress__checkYourAnswersLabel = Company address
-messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.
-messages__companyDirectorContractDetails__title = companyDirectorContractDetails
-messages__companyDirectorContractDetails__heading = companyDirectorContractDetails
-messages__companyDirectorContractDetails__field1 = Field 1
-messages__companyDirectorContractDetails__field2 = Field 2
-messages__companyDirectorContractDetails__checkYourAnswersLabel = companyDirectorContractDetails
-messages__companyDirectorContractDetails__error__field1_required = Please give an answer for field1
-messages__companyDirectorContractDetails__error__field2_required = Please give an answer for field2
+messages__company_director_contact__title = Contact details for director
+messages__company_director_contact__heading = Contact details for director

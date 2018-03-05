@@ -16,9 +16,16 @@
 
 package identifiers.register.establishers.company.director
 
-import identifiers._
-import models.register.establishers.company.director.CompanyDirectorContractDetails
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.register.establishers.company.director.CompanyDirectorContactDetails
+import play.api.libs.json.JsPath
 
-case object CompanyDirectorContractDetailsId extends TypedIdentifier[CompanyDirectorContractDetails] {
-  override def toString: String = "companyDirectorContractDetails"
+
+case class CompanyDirectorContactDetailsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[CompanyDirectorContactDetails] {
+  override def path: JsPath = EstablishersId.path \ establisherIndex \ CompanyDirectorContactDetailsId.toString
+}
+
+object CompanyDirectorContactDetailsId {
+  override def toString: String = "companyDirectorContactDetails"
 }

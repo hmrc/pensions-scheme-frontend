@@ -18,31 +18,31 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.company.director.routes._
 @import models.Mode
-@import models.register.establishers.company.director.CompanyDirectorContractDetails
+@import models.register.establishers.company.director.CompanyDirectorContactDetails
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, directorIndex: Index)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__companyDirectorContractDetails__title"),
+    title = messages("messages__company_director_contact__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = controllers.register.establishers.company.director.routes.CompanyDirectorContractDetailsController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = controllers.register.establishers.company.director.routes.CompanyDirectorContactDetailsController.onSubmit(mode, establisherIndex, directorIndex), 'autoComplete -> "off") {
 
         @components.back_link()
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__companyDirectorContractDetails__heading")
+        @components.heading("messages__company_director_contact__heading")
 
         @components.input_text(
-            field = form("field1"),
-            label = messages("messages__companyDirectorContractDetails__field1")
+            field = form("emailAddress"),
+            label = messages("messages__common__email")
         )
 
         @components.input_text(
-            field = form("field2"),
-            label = messages("messages__companyDirectorContractDetails__field2")
+            field = form("phoneNumber"),
+            label = messages("messages__common__phone")
         )
 
         @components.submit_button()
