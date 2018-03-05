@@ -317,7 +317,5 @@ companyContactDetails.checkYourAnswersLabel = companyContactDetails
 messages__establisher_company_postcode__title = Company address
 messages__establisher_company_postcode_hint = This is usually the registered business address but you can enter any address you have for this company.
 
-messages__companyAddress__title = Company address
-messages__companyAddress__heading = Company address
-messages__companyAddress__checkYourAnswersLabel = Company address
-messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.
+messages__company_director_address_years__title = How long has the director lived at this address?
+messages__company_director_address_years__heading = How long has the director lived at this address?
