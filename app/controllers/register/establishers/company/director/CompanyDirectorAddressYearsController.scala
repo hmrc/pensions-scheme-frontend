@@ -35,43 +35,47 @@ import views.html.register.establishers.company.director.companyDirectorAddressY
 import scala.concurrent.Future
 
 class CompanyDirectorAddressYearsController @Inject()(
-                                               appConfig: FrontendAppConfig,
-                                               override val messagesApi: MessagesApi,
-                                               dataCacheConnector: DataCacheConnector,
-                                               navigator: Navigator,
-                                               authenticate: AuthAction,
-                                               getData: DataRetrievalAction,
-                                               requireData: DataRequiredAction,
-                                               formProvider: CompanyDirectorAddressYearsFormProvider
-                                             ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                                       appConfig: FrontendAppConfig,
+                                                       override val messagesApi: MessagesApi,
+                                                       dataCacheConnector: DataCacheConnector,
+                                                       navigator: Navigator,
+                                                       authenticate: AuthAction,
+                                                       getData: DataRetrievalAction,
+                                                       requireData: DataRequiredAction,
+                                                       formProvider: CompanyDirectorAddressYearsFormProvider
+                                                     ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      request.userAnswers
-        .get[CompanyDirectorAddressYears](CompanyDirectorAddressYearsId(establisherIndex, directorIndex)) match {
-        case None =>
-          Ok(companyDirectorAddressYears(appConfig, form, mode, establisherIndex, directorIndex))
-        case Some(value) =>
-          Ok(companyDirectorAddressYears(appConfig, form.fill(value), mode, establisherIndex, directorIndex))
+      retrieveDirectorName(establisherIndex, directorIndex) { directorName =>
+        request.userAnswers
+          .get(CompanyDirectorAddressYearsId(establisherIndex, directorIndex)) match {
+          case None =>
+            Ok(companyDirectorAddressYears(appConfig, form, mode, establisherIndex, directorIndex, directorName))
+          case Some(value) =>
+            Ok(companyDirectorAddressYears(appConfig, form.fill(value), mode, establisherIndex, directorIndex, directorName))
+        }
       }
   }
 
-  def onSubmit(mode: Mode, establisherIndex:Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyDirectorAddressYears(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
-        (value) =>
-          dataCacheConnector.save(
-            request.externalId,
-            CompanyDirectorAddressYearsId(establisherIndex, directorIndex),
-            value
-          ).map {
-            json =>
-              Redirect(navigator.nextPage(CompanyDirectorAddressYearsId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
-          }
-      )
+      retrieveDirectorName(establisherIndex, directorIndex) { directorName =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(companyDirectorAddressYears(appConfig, formWithErrors, mode, establisherIndex, directorIndex, directorName))),
+          (value) =>
+            dataCacheConnector.save(
+              request.externalId,
+              CompanyDirectorAddressYearsId(establisherIndex, directorIndex),
+              value
+            ).map {
+              json =>
+                Redirect(navigator.nextPage(CompanyDirectorAddressYearsId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
+            }
+        )
+      }
   }
 }

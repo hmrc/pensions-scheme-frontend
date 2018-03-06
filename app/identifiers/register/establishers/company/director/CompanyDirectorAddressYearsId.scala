@@ -22,7 +22,7 @@ import models.register.establishers.company.director.CompanyDirectorAddressYears
 import play.api.libs.json.JsPath
 
 case class CompanyDirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[CompanyDirectorAddressYears] {
-  override def path: JsPath = EstablishersId.path \ establisherIndex \ CompanyDirectorAddressYearsId.toString
+  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \ CompanyDirectorAddressYearsId.toString
 }
 
 object CompanyDirectorAddressYearsId {
