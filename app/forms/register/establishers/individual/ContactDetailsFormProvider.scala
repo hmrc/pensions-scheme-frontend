@@ -33,11 +33,18 @@ class ContactDetailsFormProvider @Inject() extends Mappings {
    def apply(): Form[ContactDetails] = Form(
      mapping(
       "emailAddress" -> text("messages__error__email").verifying(
-        returnOnFirstFailure(regexp(emailRegex, "messages__error__email_invalid"),
-        maxLength(maxEmailLength, "messages__error__email_length"))),
-      "phoneNumber" -> text("messages__error__phone").verifying(returnOnFirstFailure(
-        regexp(regexPhoneNumber, "messages__error__phone_invalid"),
-        maxLength(maxLengthPhone, "messages__error__phone_length")))
+        returnOnFirstFailure(
+          maxLength(maxEmailLength, "messages__error__email_length"),
+          regexp(emailRegex, "messages__error__email_invalid")
+        )
+      ),
+      "phoneNumber" -> text("messages__error__phone").verifying(
+        returnOnFirstFailure(
+          maxLength(maxLengthPhone, "messages__error__phone_length"),
+          regexp(regexPhoneNumber, "messages__error__phone_invalid")
+        )
+      )
     )(ContactDetails.apply)(ContactDetails.unapply)
    )
- }
+
+}
