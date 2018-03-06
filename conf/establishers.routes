@@ -111,3 +111,8 @@ GET        /:index/company/companyAddress                                   cont
 POST       /:index/company/companyAddress                                   controllers.register.establishers.company.CompanyAddressController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/company/changeCompanyAddress                             controllers.register.establishers.company.CompanyAddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/company/changeCompanyAddress                             controllers.register.establishers.company.CompanyAddressController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/company/director/directorDetails                       controllers.register.establishers.company.director.DirectorDetailsController.onPageLoad(mode: Mode = NormalMode,index:Index)
+POST       /:index/company/director/directorDetails                       controllers.register.establishers.company.director.DirectorDetailsController.onSubmit(mode: Mode = NormalMode,index:Index)
+GET        /:index/company/director/changeDirectorDetails                       controllers.register.establishers.company.director.DirectorDetailsController.onPageLoad(mode: Mode = CheckMode,index:Index)
+POST       /:index/company/director/changeDirectorDetails                       controllers.register.establishers.company.director.DirectorDetailsController.onSubmit(mode: Mode = CheckMode,index:Index)
