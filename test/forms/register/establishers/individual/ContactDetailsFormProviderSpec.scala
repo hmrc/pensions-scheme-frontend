@@ -50,7 +50,7 @@ class ContactDetailsFormProviderSpec extends FormBehaviours {
 
     "fail to bind when email exceeds max length 132" in {
       val maxlengthEmail = 132
-      val testString = s"${RandomStringUtils.random(50)}@${RandomStringUtils.random(83)}"
+      val testString = s"${RandomStringUtils.random(50)}@${RandomStringUtils.random(82)}"
       val data = validData + ("emailAddress" -> testString)
 
       val expectedError = error("emailAddress", "messages__error__email_length", maxlengthEmail)
@@ -67,7 +67,7 @@ class ContactDetailsFormProviderSpec extends FormBehaviours {
     }
 
     "fail to bind when phoneNumber exceeds max length 24" in {
-      val invalidPhoneNumber = "1234457657655576576575647467"
+      val invalidPhoneNumber = "1234567890123456789012345"
       val maxlengthPhone = 24
       val data = validData + ("phoneNumber" -> invalidPhoneNumber)
 
@@ -75,4 +75,5 @@ class ContactDetailsFormProviderSpec extends FormBehaviours {
       checkForError(form, data, expectedError)
     }
   }
+
 }
