@@ -20,6 +20,7 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.CompanyDirectorAddressYearsFormProvider
 import identifiers.register.establishers.company.director.CompanyDirectorAddressYearsId
@@ -43,7 +44,7 @@ class CompanyDirectorAddressYearsController @Inject()(
                                                        getData: DataRetrievalAction,
                                                        requireData: DataRequiredAction,
                                                        formProvider: CompanyDirectorAddressYearsFormProvider
-                                                     ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                                     ) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals{
 
   private val form = formProvider()
 
