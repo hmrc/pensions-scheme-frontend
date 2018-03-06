@@ -50,7 +50,7 @@ class RetrievalsSpec extends ControllerSpecBase {
     override def toString: String = "test"
   }
 
-  "retrieveDirectorName" must {
+ /* "retrieveDirectorName" must {
     "reach the intended result when companyName is found" in {
 
       val validData = Json.obj(
@@ -71,7 +71,7 @@ class RetrievalsSpec extends ControllerSpecBase {
 
       status(result) must be(OK)
     }
-  }
+  }*/
 
   "retrieveCompanyName" must {
     "reach the intended result when companyName is found" in {
