@@ -21,7 +21,6 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.director.CompanyDirectorUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.CompanyUniqueTaxReferenceId._
 import identifiers.register.establishers.company.director.CompanyDirectorUniqueTaxReferenceId
 import models._
 import models.register.establishers.individual.UniqueTaxReference
