@@ -20,7 +20,7 @@
 @import models.Mode
 @import models.register.establishers.company.director.CompanyDirectorAddressYears
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, directorIndex: Index)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__company_director_address_years__title"),
@@ -33,7 +33,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__company_director_address_years__heading")
+        @components.heading("messages__company_director_address_years__heading", secondaryHeaderKey = Some(directorName))
 
         @components.input_radio(
             field = form("value"),

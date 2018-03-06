@@ -27,14 +27,18 @@ import views.html.register.establishers.company.director.companyDirectorAddressY
 class CompanyDirectorAddressYearsViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "company_director_address_years"
+  val establisherIndex = Index(1)
+  val directorIndex = Index(1)
+  val directorName = "test director name"
+
 
   val form = new CompanyDirectorAddressYearsFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => companyDirectorAddressYears(frontendAppConfig, form, NormalMode, Index(0), Index(0))(
-    fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyDirectorAddressYears(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex,
+    directorName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyDirectorAddressYears(frontendAppConfig,
-    form, NormalMode, Index(0), Index(0))(fakeRequest, messages)
+    form, NormalMode, establisherIndex, directorIndex, directorName)(fakeRequest, messages)
 
   "CompanyDirectorAddressYears view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
