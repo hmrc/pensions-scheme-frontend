@@ -50,23 +50,21 @@ class CompanyDirectorAddressYearsController @Inject()(
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      retrieveDirectorName(establisherIndex, directorIndex) { directorName =>
         request.userAnswers
           .get(CompanyDirectorAddressYearsId(establisherIndex, directorIndex)) match {
           case None =>
-            Ok(companyDirectorAddressYears(appConfig, form, mode, establisherIndex, directorIndex, directorName))
+            Ok(companyDirectorAddressYears(appConfig, form, mode, establisherIndex, directorIndex))
           case Some(value) =>
-            Ok(companyDirectorAddressYears(appConfig, form.fill(value), mode, establisherIndex, directorIndex, directorName))
+            Ok(companyDirectorAddressYears(appConfig, form.fill(value), mode, establisherIndex, directorIndex))
         }
       }
-  }
+
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveDirectorName(establisherIndex, directorIndex) { directorName =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(companyDirectorAddressYears(appConfig, formWithErrors, mode, establisherIndex, directorIndex, directorName))),
+            Future.successful(BadRequest(companyDirectorAddressYears(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,
@@ -79,4 +77,3 @@ class CompanyDirectorAddressYearsController @Inject()(
         )
       }
   }
-}

@@ -34,13 +34,13 @@ trait Retrievals {
 
   this: FrontendController =>
 
-    private[controllers] def retrieveDirectorName(index: Int)
-                                                 (f: String => Future[Result])
-                                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
-      retrieve[DirectorDetails](DirectorDetailsId(index)) { directorDetails =>
-        f(directorDetails.fullName)
-      }
-    }
+//    private[controllers] def retrieveDirectorName(index: Int)
+//                                                 (f: String => Future[Result])
+//                                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
+//      retrieve[DirectorDetails](DirectorDetailsId(index)) { directorDetails =>
+//        f(directorDetails.fullName)
+//      }
+//    }
 
   private[controllers] def retrieveCompanyName(index: Int)
                                               (f: String => Future[Result])
