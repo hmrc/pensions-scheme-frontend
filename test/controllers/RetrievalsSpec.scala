@@ -23,6 +23,7 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import models.CompanyDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.requests.DataRequest
+import org.joda.time.LocalDate
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Results._
 import play.api.mvc.{AnyContent, Result}
@@ -45,8 +46,31 @@ class RetrievalsSpec extends ControllerSpecBase {
     Future.successful(Ok("Success"))
   }
 
-  val testIdentifier = new TypedIdentifier[String]{
+  val testIdentifier = new TypedIdentifier[String] {
     override def toString: String = "test"
+  }
+
+  "retrieveDirectorName" must {
+    "reach the intended result when companyName is found" in {
+
+      val validData = Json.obj(
+        "directors" -> Json.arr(
+          Json.obj(
+            "directorDetails" -> Json.obj(
+              "firstName" -> "John",
+              "lastName" -> "Doe",
+              "dateOfBirth" -> Json.toJson(LocalDate.now())
+            )
+          )
+        )
+      )
+
+      implicit val request: DataRequest[AnyContent] = dataRequest(validData)
+
+      val result = controller.retrieveDirectorName(0)(success)
+
+      status(result) must be(OK)
+    }
   }
 
   "retrieveCompanyName" must {

@@ -34,27 +34,35 @@ trait Retrievals {
 
   this: FrontendController =>
 
+  private[controllers] def retrieveDirectorName(index: Int)
+                                               (f: String => Future[Result])
+                                               (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    retrieve[DirectorDetails](DirectorDetailsId(index)) { directorDetails =>
+      f(directorDetails.fullName)
+    }
+  }
+
   private[controllers] def retrieveCompanyName(index: Int)
                                               (f: String => Future[Result])
                                               (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    retrieve[CompanyDetails](CompanyDetailsId(index)){ companyDetails =>
+    retrieve[CompanyDetails](CompanyDetailsId(index)) { companyDetails =>
       f(companyDetails.companyName)
     }
   }
 
   private[controllers] def retrieveSchemeName(f: String => Future[Result])
                                              (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    retrieve[SchemeDetails](SchemeDetailsId){ schemeDetails =>
+    retrieve[SchemeDetails](SchemeDetailsId) { schemeDetails =>
       f(schemeDetails.schemeName)
     }
   }
 
-  private[controllers] def retrieveEstablisherName(index:Int)
-                                     (f: String => Future[Result])
-                                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
-     retrieve[EstablisherDetails](EstablisherDetailsId(index)){ establisherDetails =>
-        f(establisherDetails.establisherName)
-     }
+  private[controllers] def retrieveEstablisherName(index: Int)
+                                                  (f: String => Future[Result])
+                                                  (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    retrieve[EstablisherDetails](EstablisherDetailsId(index)) { establisherDetails =>
+      f(establisherDetails.establisherName)
+    }
   }
 
   private[controllers] def retrieve[A](id: TypedIdentifier[A])

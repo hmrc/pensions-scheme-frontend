@@ -30,12 +30,14 @@ class CompanyDirectorContactDetailsViewSpec extends QuestionViewBehaviours[Compa
   val messageKeyPrefix = "company_director_contact"
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
+  val directorName = "Test Director Name"
   override val form = new CompanyDirectorContactDetailsFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => companyDirectorContactDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyDirectorContactDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex,
+    directorName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyDirectorContactDetails(frontendAppConfig,
-    form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
+    form, NormalMode, establisherIndex, directorIndex, directorName)(fakeRequest, messages)
 
 
   "CompanyContactDetails view" must {
@@ -45,6 +47,6 @@ class CompanyDirectorContactDetailsViewSpec extends QuestionViewBehaviours[Compa
     behave like pageWithBackLink(createView)
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.CompanyDirectorContactDetailsController.onSubmit(NormalMode, establisherIndex, directorIndex).url, "emailAddress", "phoneNumber")
+      routes.CompanyDirectorContactDetailsController.onSubmit(NormalMode, establisherIndex, directorIndex, directorName).url, "emailAddress", "phoneNumber")
   }
 }
