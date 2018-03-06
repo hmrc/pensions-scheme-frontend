@@ -49,6 +49,29 @@ class RetrievalsSpec extends ControllerSpecBase {
     override def toString: String = "test"
   }
 
+
+//  "retrieveDirectorName" must {
+//    "reach the intended result when companyName is found" in {
+//
+//      val validData = Json.obj(
+//        "directors" -> Json.arr(
+//          Json.obj(
+//            "directorDetails" -> Json.obj(
+//              "firstName" -> "John",
+//              "lastName" -> "Doe",
+//              "dateOfBirth" -> Json.toJson(LocalDate.now())
+//            )
+//          )
+//        )
+//      )
+//
+//      implicit val request: DataRequest[AnyContent] = dataRequest(validData)
+//
+//      val result = controller.retrieveDirectorName(0)(success)
+//
+//      status(result) must be(OK)
+//    }
+//  }
   "retrieveCompanyName" must {
     "reach the intended result when companyName is found" in {
 

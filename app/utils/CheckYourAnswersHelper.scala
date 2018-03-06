@@ -19,6 +19,7 @@ package utils
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.company._
+import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherKindId, company}
 import models.EstablisherNino.{No, Yes}
@@ -29,6 +30,14 @@ import models.{CheckMode, EstablisherNino, Index}
 import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
+
+  def companyDirectorUniqueTaxReference(establisherIndex: Int, directorIndex:Int): Seq[AnswerRow] =
+    userAnswers.get(CompanyDirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
+      case Some(x) => Seq(AnswerRow("companyDirectorUniqueTaxReference.checkYourAnswersLabel", Seq(s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}"), true,
+        controllers.register.establishers.company.director.routes.CompanyDirectorUniqueTaxReferenceController.onPageLoad(
+          CheckMode, establisherIndex, directorIndex).url))
+      case _ => Seq.empty
+    }
 
   def companyAddress(index: Int): Option[AnswerRow] = userAnswers.get(company.CompanyAddressId(index)) map { x =>
     AnswerRow(
