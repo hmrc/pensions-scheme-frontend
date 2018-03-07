@@ -91,7 +91,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
             "director" -> Json.arr(
               Json.obj(
                 DirectorDetailsId.toString ->
-                  DirectorDetails("First Name", "Last Name", new LocalDate(year, month, day))
+                  DirectorDetails("First Name",Some("Middle Name"), "Last Name", new LocalDate(year, month, day))
               )
             )
           )
@@ -101,7 +101,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex,firstDirectorIndex)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(DirectorDetails("First Name", "Last Name", new LocalDate(year, month, day))))
+      contentAsString(result) mustBe viewAsString(form.fill(DirectorDetails("First Name",Some("Middle Name"), "Last Name", new LocalDate(year, month, day))))
     }
 
     "redirect to the next page when valid data is submitted" in {

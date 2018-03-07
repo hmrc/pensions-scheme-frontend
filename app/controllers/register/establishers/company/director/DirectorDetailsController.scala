@@ -53,10 +53,7 @@ class DirectorDetailsController @Inject() (
       retrieveCompanyName(establisherIndex) { companyName =>
         val preparedForm = request.userAnswers.get[DirectorDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
           case None => form
-          case Some(value) => {
-
-            form.fill(value)
-          }
+          case Some(value) => form.fill(value)
         }
 
         Future.successful(Ok(directorDetails(appConfig, preparedForm, mode, establisherIndex, directorIndex, companyName)))

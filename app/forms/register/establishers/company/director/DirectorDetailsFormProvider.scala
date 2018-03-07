@@ -27,7 +27,8 @@ class DirectorDetailsFormProvider @Inject() extends Mappings {
 
   val nameMaxLength = 35
   val regexFirstName = "[a-zA-Z]{1}[a-zA-Z-‘]*"
-  val regexLastName = "[a-zA-Z0-9,.‘(&)-/ ]*"
+  val regexMiddleName ="[a-zA-Z]{1}[a-zA-Z-‘]*"
+  val regexLastName =  "[a-zA-Z0-9,.‘(&)-/ ]*"
 
   def apply(): Form[DirectorDetails] = Form(
     mapping(
@@ -35,6 +36,10 @@ class DirectorDetailsFormProvider @Inject() extends Mappings {
         maxLength(nameMaxLength, "messages__error__first_name_length"),
         regexp(regexFirstName, "messages__error__first_name_invalid"))
       ),
+      "middleName" -> optional(text("messages__error__middle_name").verifying(returnOnFirstFailure(
+        maxLength(nameMaxLength, "messages__error__middle_name_length"),
+        regexp(regexMiddleName, "messages__error__middle_name_invalid"))
+      )),
       "lastName" -> text("messages__error__last_name").verifying(returnOnFirstFailure(
         maxLength(nameMaxLength, "messages__error__last_name_length"),
         regexp(regexLastName, "messages__error__last_name_invalid"))

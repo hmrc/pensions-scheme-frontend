@@ -17,7 +17,6 @@
 package views.register.establishers.company.director
 
 import play.api.data.{Form, FormError}
-import controllers.register.establishers.company.director.routes
 import forms.register.establishers.company.director.DirectorDetailsFormProvider
 import models.{Index, NormalMode}
 import models.register.establishers.company.director.DirectorDetails

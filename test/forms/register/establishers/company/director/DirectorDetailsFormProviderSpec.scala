@@ -34,6 +34,7 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours {
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",
     "lastName" -> "testLastName",
+    "middleName"->"testMiddleName",
     "date.day" -> s"$day",
     "date.month" -> s"$month",
     "date.year" -> s"$year"
@@ -44,7 +45,7 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours {
   val date = new LocalDate(year, month, day)
 
   "DirectorDetails form" must {
-    behave like questionForm(DirectorDetails("testFirstName", "testLastName",date))
+    behave like questionForm(DirectorDetails("testFirstName", Some("testMiddleName"), "testLastName",date))
 
     behave like formWithMandatoryTextFields(
       Field("firstName", Required -> "messages__error__first_name"),
@@ -53,6 +54,8 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours {
       Field("date.month", Required -> "messages__error__date"),
       Field("date.year", Required -> "messages__error__date")
     )
+
+    behave like formWithOptionalTextFields("middleName")
   }
 
   "fail to bind when the first name exceeds max length 35" in {
@@ -60,6 +63,14 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours {
     val data = validData + ("firstName" -> testString)
 
     val expectedError = error("firstName", "messages__error__first_name_length", 35)
+    checkForError(form, data, expectedError)
+  }
+
+  "fail to bind when the middle name exceeds max length 35" in {
+    val testString = RandomStringUtils.random(36)
+    val data = validData + ("middleName" -> testString)
+
+    val expectedError = error("middleName", "messages__error__middle_name_length", 35)
     checkForError(form, data, expectedError)
   }
 
@@ -80,6 +91,16 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours {
     }
   }
 
+  Seq("-sfygAFD", "‘GHJGJG", "SDSAF^*NJ", "^*", "first name").foreach { name =>
+    s"fail to bind when the middle name $name is invalid" in {
+      val data = validData + ("middleName" -> name)
+
+      val expectedError = error("middleName", "messages__error__middle_name_invalid", regexFirstName)
+      checkForError(form, data, expectedError)
+    }
+  }
+
+
   s"fail to bind when the last name is invalid" in {
     val data = validData + ("lastName" -> "strbvhjbv^*")
 
@@ -96,7 +117,24 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours {
         "date.month" -> s"$month",
         "date.year" -> s"$year"))
 
-      val expectedData = DirectorDetails(firstName, "testLastName", date)
+      val expectedData = DirectorDetails(firstName,None, "testLastName", date)
+
+      detailsForm.get shouldBe expectedData
+    }
+  }
+
+  Seq("middle-name", "King‘s").foreach { middleName =>
+    s"successfully bind valid middle name $middleName" in {
+
+      val detailsForm = form.bind(Map(
+        "firstName"->"testFirstName",
+        "middleName" -> middleName,
+        "lastName" -> "testLastName",
+        "date.day" -> s"$day",
+        "date.month" -> s"$month",
+        "date.year" -> s"$year"))
+
+      val expectedData = DirectorDetails("testFirstName",Some(middleName), "testLastName", date)
 
       detailsForm.get shouldBe expectedData
     }
@@ -111,7 +149,7 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours {
         "date.month" -> s"$month",
         "date.year" -> s"$year"))
 
-      val expectedData = DirectorDetails("testFirstName", lastName, date)
+      val expectedData = DirectorDetails("testFirstName", None,lastName, date)
       detailsForm.get shouldBe expectedData
     }
   }

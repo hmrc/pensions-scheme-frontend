@@ -19,9 +19,9 @@ package models.register.establishers.company.director
 import org.joda.time.LocalDate
 import play.api.libs.json._
 
-case class DirectorDetails (firstName: String,lastName: String,date:LocalDate){
+case class DirectorDetails (firstName: String,middleName:Option[String],lastName: String,date:LocalDate){
 
-  def directorName: String = s"$firstName $lastName"
+  def directorName: String = s"$firstName $middleName $lastName"
 }
 
 object DirectorDetails {
