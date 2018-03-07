@@ -322,13 +322,13 @@ messages__companyAddress__heading = Company address
 messages__companyAddress__checkYourAnswersLabel = Company address
 messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.
 
-messages__company__director_has_sautr__title = Does the director have a Self Assessment Unique Taxpayer Reference number (SAUTR)?
-messages__company__director_sautr = Self Assessment Unique Taxpayer Reference number
-messages__company__director_no_sautr = Tell us why the director does not have a SAUTR
-messages__company__director_has_sautr_establisher = Select yes if the director has a SAUTR
-messages__company__sautr_hint_what = This is issued by HMRC for Self Assessment.
-messages__company__director_sautr_hint_format = A SAUTR is issued by HMRC when you register your business. It is 10 numbers.
-messages__error__has_sautr_director = Select yes if the director has a SAUTR
-messages__error__no_sautr_director = You need to tell us why the director does not have a SAUTR
+messages__company__director_has_sautr__title = Does the director have a Self Assessment Unique Taxpayer Reference number?
+messages__company__director_sautr = Unique Taxpayer Reference number
+messages__company__director_no_sautr = Tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
+messages__company__director_has_sautr_establisher = Select yes if the director has a Self Assessment Unique Taxpayer Reference number
+messages__company__sautr_hint_what = This is issued by HMRC when you register a business or for Self Assessment.
+messages__company__director_sautr_hint_format = A Unique Taxpayer Reference number is 10 numbers. You will find it on any letters you have from HMRC.
+messages__error__has_sautr_director = Select yes if the director has a Unique Taxpayer Reference number
+messages__error__no_sautr_director = You need to tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
 
 
