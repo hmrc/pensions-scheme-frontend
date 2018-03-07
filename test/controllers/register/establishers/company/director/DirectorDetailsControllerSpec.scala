@@ -44,13 +44,15 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
   val formProvider = new DirectorDetailsFormProvider()
   val form = formProvider()
 
-  val firstIndex = Index(0)
+  val firstEstablisherIndex = Index(0)
+  val firstDirectorIndex=Index(0)
+
   val schemeName="SomeName"
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new DirectorDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = directorDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = directorDetails(frontendAppConfig, form, NormalMode, firstEstablisherIndex,firstDirectorIndex)(fakeRequest, messages).toString
 
   val day = LocalDate.now().getDayOfMonth
   val month = LocalDate.now().getMonthOfYear
@@ -59,26 +61,29 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
   "DirectorDetails Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstEstablisherIndex,firstDirectorIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
+
       val validData = Json.obj(
-        SchemeDetailsId.toString ->
-          SchemeDetails(schemeName, SchemeType.SingleTrust),
-        "establishers" -> Json.arr(
+        EstablishersId.toString -> Json.arr(
           Json.obj(
-            DirectorDetailsId.toString ->
-              DirectorDetails("First Name", "Last Name", new LocalDate(year, month, day))
+            "director" -> Json.arr(
+              Json.obj(
+                DirectorDetailsId.toString ->
+                  DirectorDetails("First Name", "Last Name", new LocalDate(year, month, day))
+              )
+            )
           )
         )
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex,firstDirectorIndex)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(DirectorDetails("First Name", "Last Name", new LocalDate(year, month, day))))
     }
@@ -87,7 +92,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"),
         ("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex,firstDirectorIndex)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -96,14 +101,14 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstEstablisherIndex,firstDirectorIndex)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstEstablisherIndex,firstDirectorIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -112,7 +117,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"),
         ("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstEstablisherIndex,firstDirectorIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

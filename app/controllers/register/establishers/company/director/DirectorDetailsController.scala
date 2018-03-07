@@ -46,26 +46,26 @@ class DirectorDetailsController @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode,establisherIndex:Index, directorIndex:Index) = (authenticate andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get[DirectorDetails](DirectorDetailsId(index:Int)) match {
+      val preparedForm = request.userAnswers.get[DirectorDetails](DirectorDetailsId(establisherIndex,directorIndex:Index)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(directorDetails(appConfig, preparedForm, mode,index))
+      Ok(directorDetails(appConfig, preparedForm, mode,establisherIndex,directorIndex))
   }
 
-  def onSubmit(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode,establisherIndex:Index,directorIndex:Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, index)))
+          Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex,directorIndex)))
        ,
         (value) =>
-          dataCacheConnector.save(request.externalId, DirectorDetailsId(index:Int), value).map(cacheMap =>
-            Redirect(navigator.nextPage(DirectorDetailsId(index), mode)(new UserAnswers(cacheMap))))
+          dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex,directorIndex:Index), value).map(cacheMap =>
+            Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex,directorIndex:Index), mode)(new UserAnswers(cacheMap))))
       )
   }
 }

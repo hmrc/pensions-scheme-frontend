@@ -31,14 +31,15 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
-  def directorDetails(index:Int): Seq[AnswerRow] = userAnswers.get(DirectorDetailsId(index)) match {
+  def directorDetails(establisherIndex:Int,directorIndex:Int): Seq[AnswerRow] =
+    userAnswers.get(DirectorDetailsId(establisherIndex,directorIndex)) match {
 
     case Some(details) =>
             Seq(
               AnswerRow("messages__establisher_director_name_cya_label", Seq(s"${details.firstName} ${details.lastName}"), false,
-                controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url),
+                controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex),Index(directorIndex)).url),
               AnswerRow("messages__establisher_director_dob_cya_label", Seq(s"${DateHelper.formatDate(details.date)}"), false,
-                controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url)
+                controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex),Index(directorIndex)).url)
             )
           case _ => Nil
     }

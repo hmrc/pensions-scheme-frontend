@@ -29,11 +29,14 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[DirectorDetails] {
 
   val messageKeyPrefix = "directorDetails"
 
+  val establisherIndex=Index(1)
+  val directorIndex=Index(1)
+
   override val form = new DirectorDetailsFormProvider()()
 
-  def createView = () => directorDetails(frontendAppConfig, form, NormalMode,Index(1))(fakeRequest, messages)
+  def createView = () => directorDetails(frontendAppConfig, form, NormalMode,establisherIndex,directorIndex)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => directorDetails(frontendAppConfig, form, NormalMode,Index(1))(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => directorDetails(frontendAppConfig, form, NormalMode,establisherIndex,directorIndex)(fakeRequest, messages)
   val day = LocalDate.now().getDayOfMonth
   val year = LocalDate.now().getYear
   val month = LocalDate.now().getMonthOfYear
@@ -54,7 +57,7 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[DirectorDetails] {
     behave like pageWithBackLink(createView)
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      controllers.register.establishers.company.director.routes.DirectorDetailsController.onSubmit(NormalMode,Index(0)).url,
+      controllers.register.establishers.company.director.routes.DirectorDetailsController.onSubmit(NormalMode,establisherIndex,directorIndex).url,
       "firstName", "lastName")
     "display an input text box with the correct label and value for day" in {
       val doc = asDocument(createViewUsingForm(form.bind(validData)))
