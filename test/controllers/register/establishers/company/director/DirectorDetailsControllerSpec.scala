@@ -61,7 +61,13 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider)
 
-  def viewAsString(form: Form[_] = form) = directorDetails(frontendAppConfig, form, NormalMode, firstEstablisherIndex,firstDirectorIndex,companyName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = directorDetails(
+    frontendAppConfig,
+    form,
+    NormalMode,
+    firstEstablisherIndex,
+    firstDirectorIndex,
+    companyName)(fakeRequest, messages).toString
 
   val day = LocalDate.now().getDayOfMonth
   val month = LocalDate.now().getMonthOfYear
