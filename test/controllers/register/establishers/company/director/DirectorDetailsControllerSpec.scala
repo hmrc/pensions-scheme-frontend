@@ -25,12 +25,13 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.company.director.DirectorDetailsFormProvider
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import models.{Index, NormalMode}
+import models.{CompanyDetails, Index, NormalMode}
 import models.register.establishers.company.director.DirectorDetails
 import views.html.register.establishers.company.director.directorDetails
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
@@ -80,6 +81,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       val validData = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
+            CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
             "director" -> Json.arr(
               Json.obj(
                 DirectorDetailsId.toString ->
@@ -92,6 +94,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex,firstDirectorIndex)(fakeRequest)
+
       contentAsString(result) mustBe viewAsString(form.fill(DirectorDetails("First Name", "Last Name", new LocalDate(year, month, day))))
     }
 

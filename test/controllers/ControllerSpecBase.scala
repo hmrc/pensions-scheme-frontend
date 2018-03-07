@@ -51,7 +51,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
       )
     )))
 
-  def getMandatoryEstablisherCompany: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+  def getMandatoryEstablisherCompany: FakeDataRetrievalAction = new FakeDataRetrievalAction({
     Some(Json.obj(
       SchemeDetailsId.toString ->
         SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
@@ -62,5 +62,5 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         )
       )
     ))
-  )
+  })
 }
