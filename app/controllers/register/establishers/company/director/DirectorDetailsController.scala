@@ -24,6 +24,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
+import controllers.Retrievals
 import forms.register.establishers.company.director.DirectorDetailsFormProvider
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.register.establishers.company.director.DirectorDetails
@@ -42,31 +43,33 @@ class DirectorDetailsController @Inject() (
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: DirectorDetailsFormProvider
-                                      ) extends FrontendController with I18nSupport {
+                                      ) extends FrontendController with Retrievals with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode,establisherIndex:Index, directorIndex:Index) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode,establisherIndex:Index, directorIndex:Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get[DirectorDetails](DirectorDetailsId(establisherIndex,directorIndex:Index)) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      retrieveCompanyName(establisherIndex) { companyName =>
+        val preparedForm = request.userAnswers.get[DirectorDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(directorDetails(appConfig, preparedForm, mode, establisherIndex, directorIndex, companyName)))
       }
-      Ok(directorDetails(appConfig, preparedForm, mode,establisherIndex,directorIndex))
   }
 
   def onSubmit(mode: Mode,establisherIndex:Index,directorIndex:Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex,directorIndex)))
-       ,
-        (value) =>
-          dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex,directorIndex:Index), value).map(cacheMap =>
-            Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex,directorIndex:Index), mode)(new UserAnswers(cacheMap))))
-      )
+      retrieveCompanyName(establisherIndex) { companyName =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex,companyName)))
+          ,
+          (value) =>
+            dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
+              Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode)(new UserAnswers(cacheMap))))
+        )
+      }
   }
 }
 

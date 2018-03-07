@@ -32,11 +32,13 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[DirectorDetails] {
   val establisherIndex=Index(1)
   val directorIndex=Index(1)
 
+  val companyName="SomeName"
+
   override val form = new DirectorDetailsFormProvider()()
 
-  def createView = () => directorDetails(frontendAppConfig, form, NormalMode,establisherIndex,directorIndex)(fakeRequest, messages)
+  def createView = () => directorDetails(frontendAppConfig, form, NormalMode,establisherIndex,directorIndex,companyName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => directorDetails(frontendAppConfig, form, NormalMode,establisherIndex,directorIndex)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => directorDetails(frontendAppConfig, form, NormalMode,establisherIndex,directorIndex,companyName)(fakeRequest, messages)
   val day = LocalDate.now().getDayOfMonth
   val year = LocalDate.now().getYear
   val month = LocalDate.now().getMonthOfYear

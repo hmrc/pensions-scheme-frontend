@@ -47,12 +47,20 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
   val firstEstablisherIndex = Index(0)
   val firstDirectorIndex=Index(0)
 
-  val schemeName="SomeName"
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
-    new DirectorDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  val companyName ="test company name"
 
-  def viewAsString(form: Form[_] = form) = directorDetails(frontendAppConfig, form, NormalMode, firstEstablisherIndex,firstDirectorIndex)(fakeRequest, messages).toString
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
+    new DirectorDetailsController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider)
+
+  def viewAsString(form: Form[_] = form) = directorDetails(frontendAppConfig, form, NormalMode, firstEstablisherIndex,firstDirectorIndex,companyName)(fakeRequest, messages).toString
 
   val day = LocalDate.now().getDayOfMonth
   val month = LocalDate.now().getMonthOfYear
@@ -84,7 +92,6 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex,firstDirectorIndex)(fakeRequest)
-
       contentAsString(result) mustBe viewAsString(form.fill(DirectorDetails("First Name", "Last Name", new LocalDate(year, month, day))))
     }
 

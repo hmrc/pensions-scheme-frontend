@@ -20,7 +20,7 @@
 @import models.Mode
 @import models.register.establishers.company.director.DirectorDetails
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex:Index, directorIndex:Index)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex:Index, directorIndex:Index, companyName:String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__directorDetails__title"),
@@ -33,7 +33,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__directorDetails__heading")
+        @components.heading("messages__directorDetails__heading",secondaryHeaderKey = Some(companyName))
 
         @components.input_text(
            field = form("firstName"),
