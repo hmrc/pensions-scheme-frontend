@@ -111,3 +111,9 @@ GET        /:index/company/companyAddress                                   cont
 POST       /:index/company/companyAddress                                   controllers.register.establishers.company.CompanyAddressController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/company/changeCompanyAddress                             controllers.register.establishers.company.CompanyAddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/company/changeCompanyAddress                             controllers.register.establishers.company.CompanyAddressController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+
+GET        /:establisherIndex/company/director/:directorIndex/companyDirectorNino                       controllers.register.establishers.company.director.CompanyDirectorNinoController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
+POST       /:establisherIndex/company/director/:directorIndex/companyDirectorNino                       controllers.register.establishers.company.director.CompanyDirectorNinoController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
+GET        /:establisherIndex/company/director/:directorIndex/changeCompanyDirectorNino                       controllers.register.establishers.company.director.CompanyDirectorNinoController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
+POST       /:establisherIndex/company/director/:directorIndex/changeCompanyDirectorNino                       controllers.register.establishers.company.director.CompanyDirectorNinoController.onSubmit(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
