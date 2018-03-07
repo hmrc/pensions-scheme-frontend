@@ -20,16 +20,15 @@ import identifiers.TypedIdentifier
 import play.api.libs.json._
 import utils.Cleanup
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class FakeDataCacheConnector extends DataCacheConnector {
 
-  override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)(implicit fmt: Format[A], cleanup: Cleanup[I]): Future[JsValue] =
+  override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
+                                               (implicit fmt: Format[A], cleanup: Cleanup[I], ec: ExecutionContext): Future[JsValue] =
     Future.successful(Json.obj())
 
-//  override def remove(cacheId: String, key: String): Future[Boolean] = ???
-
-  override def fetch(cacheId: String): Future[Option[JsValue]] =
+  override def fetch(cacheId: String)(implicit ec: ExecutionContext): Future[Option[JsValue]] =
     Future.successful(Some(Json.obj()))
 }
 
