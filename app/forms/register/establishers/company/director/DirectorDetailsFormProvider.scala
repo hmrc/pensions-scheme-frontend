@@ -36,7 +36,7 @@ class DirectorDetailsFormProvider @Inject() extends Mappings {
         maxLength(nameMaxLength, "messages__error__first_name_length"),
         regexp(regexFirstName, "messages__error__first_name_invalid"))
       ),
-      "middleName" -> optional(text("messages__error__middle_name").verifying(returnOnFirstFailure(
+      "middleName" -> optional(Forms.text.verifying(returnOnFirstFailure(
         maxLength(nameMaxLength, "messages__error__middle_name_length"),
         regexp(regexMiddleName, "messages__error__middle_name_invalid"))
       )),
