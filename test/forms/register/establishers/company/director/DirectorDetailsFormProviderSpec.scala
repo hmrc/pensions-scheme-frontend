@@ -30,6 +30,7 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours {
 
   val regexFirstName = "[a-zA-Z]{1}[a-zA-Z-‘]*"
   val regexLastName = "[a-zA-Z0-9,.‘(&)-/ ]*"
+  val regexMiddleName ="[a-zA-Z-‘]*"
 
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",
@@ -91,11 +92,11 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours {
     }
   }
 
-  Seq("-sfygAFD", "‘GHJGJG", "SDSAF^*NJ", "^*", "first name").foreach { name =>
+  Seq("SDSAF^*NJ", "^*", "first name").foreach { name =>
     s"fail to bind when the middle name $name is invalid" in {
       val data = validData + ("middleName" -> name)
 
-      val expectedError = error("middleName", "messages__error__middle_name_invalid", regexFirstName)
+      val expectedError = error("middleName", "messages__error__middle_name_invalid", regexMiddleName)
       checkForError(form, data, expectedError)
     }
   }
@@ -123,7 +124,7 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours {
     }
   }
 
-  Seq("middle-name", "King‘s").foreach { middleName =>
+  Seq("middle-name", "King‘s","-","‘","sdfsdf").foreach { middleName =>
     s"successfully bind valid middle name $middleName" in {
 
       val detailsForm = form.bind(Map(
