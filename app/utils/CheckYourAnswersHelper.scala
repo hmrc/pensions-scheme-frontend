@@ -31,12 +31,14 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
+
+
   def directorDetails(establisherIndex:Int,directorIndex:Int): Seq[AnswerRow] =
     userAnswers.get(DirectorDetailsId(establisherIndex,directorIndex)) match {
 
     case Some(details) =>
             Seq(
-              AnswerRow("messages__establisher_director_name_cya_label", Seq(s"${details.firstName} ${details.lastName}"), false,
+              AnswerRow("messages__establisher_director_name_cya_label", Seq(Seq(Some(details.firstName), details.middleName, Some(details.lastName)).flatten.mkString(" ")), false,
                 controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex),Index(directorIndex)).url),
               AnswerRow("messages__establisher_director_dob_cya_label", Seq(s"${DateHelper.formatDate(details.date)}"), false,
                 controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex),Index(directorIndex)).url)
