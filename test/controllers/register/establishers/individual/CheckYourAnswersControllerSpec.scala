@@ -25,7 +25,7 @@ import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import utils.{CheckYourAnswersFactory, DateHelper, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import play.api.test.Helpers._
-import views.html.register.establishers.individual.check_your_answers
+import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
@@ -36,21 +36,31 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
 
   val answers: Seq[AnswerRow] = Seq(
-    AnswerRow("messages__establisher_individual_name_cya_label", Seq("test first name test last name"), false,
-      "/pensions-scheme/register/establishers/1/individual/changeEstablisherDetails"),
-    AnswerRow("messages__establisher_individual_dob_cya_label", Seq(DateHelper.formatDate(LocalDate.now)), false,
-      "/pensions-scheme/register/establishers/1/individual/changeEstablisherDetails")
+    AnswerRow(
+      "messages__establisher_individual_name_cya_label",
+      Seq("test first name test last name"),
+      answerIsMessageKey = false,
+      "/pensions-scheme/register/establishers/1/individual/changeEstablisherDetails"
+    ),
+    AnswerRow(
+      "messages__establisher_individual_dob_cya_label",
+      Seq(DateHelper.formatDate(LocalDate.now)),
+      answerIsMessageKey = false,
+      "/pensions-scheme/register/establishers/1/individual/changeEstablisherDetails"
+    )
   )
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersController =
     new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction,
       new DataRequiredActionImpl, checkYourAnswersFactory)
 
   "Check Your Answers Controller" must {
     "return 200 and the correct view for a GET" in {
+      val postUrl = routes.CheckYourAnswersController.onSubmit(firstIndex)
       val result = controller().onPageLoad(firstIndex)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe check_your_answers(frontendAppConfig,
-        Seq(AnswerSection(None, answers)), testSchemeName)(fakeRequest, messages).toString
+        Seq(AnswerSection(None, answers)), Some(testSchemeName), postUrl)(fakeRequest, messages).toString
     }
 
     "redirect to Session Expired page for a GET when establisher name is not present" in {
@@ -66,4 +76,5 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
+
 }
