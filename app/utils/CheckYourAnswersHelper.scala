@@ -19,6 +19,7 @@ package utils
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.company._
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherKindId, company}
 import models.EstablisherNino.{No, Yes}
@@ -29,6 +30,21 @@ import models.{CheckMode, EstablisherNino, Index}
 import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
+
+
+
+  def directorDetails(establisherIndex:Int,directorIndex:Int): Seq[AnswerRow] =
+    userAnswers.get(DirectorDetailsId(establisherIndex,directorIndex)) match {
+
+    case Some(details) =>
+            Seq(
+              AnswerRow("messages__establisher_director_name_cya_label", Seq(Seq(Some(details.firstName), details.middleName, Some(details.lastName)).flatten.mkString(" ")), false,
+                controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex),Index(directorIndex)).url),
+              AnswerRow("messages__establisher_director_dob_cya_label", Seq(s"${DateHelper.formatDate(details.date)}"), false,
+                controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex),Index(directorIndex)).url)
+            )
+          case _ => Nil
+    }
 
   def companyAddress(index: Int): Option[AnswerRow] = userAnswers.get(company.CompanyAddressId(index)) map { x =>
     AnswerRow(
