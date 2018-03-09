@@ -1,37 +1,33 @@
 #!/bin/bash
 
-echo "Applying migration CompanyPreviousAddress"
+echo "Applying migration AddCompanyDirectors"
 
 echo "Adding routes to register.establishers.company.routes"
 
 echo "" >> ../conf/register.establishers.company.routes
-echo "GET        /companyPreviousAddress                       controllers.register.establishers.company.CompanyPreviousAddressController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /companyPreviousAddress                       controllers.register.establishers.company.CompanyPreviousAddressController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "GET        /addCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /addCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 
-echo "GET        /changeCompanyPreviousAddress                       controllers.register.establishers.company.CompanyPreviousAddressController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /changeCompanyPreviousAddress                       controllers.register.establishers.company.CompanyPreviousAddressController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "GET        /changeAddCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /changeAddCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo messages__"companyPreviousAddress__title = companyPreviousAddress" >> ../conf/messages.en
-echo messages__"companyPreviousAddress__heading = companyPreviousAddress" >> ../conf/messages.en
-echo messages__"companyPreviousAddress__field1 = Field 1" >> ../conf/messages.en
-echo messages__"companyPreviousAddress__field2 = Field 2" >> ../conf/messages.en
-echo messages__"companyPreviousAddress__checkYourAnswersLabel = companyPreviousAddress" >> ../conf/messages.en
-echo messages__"companyPreviousAddress__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
-echo messages__"companyPreviousAddress__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
+echo "messages__addCompanyDirectors__title = addCompanyDirectors" >> ../conf/messages.en
+echo "messages__addCompanyDirectors__heading = addCompanyDirectors" >> ../conf/messages.en
+echo "messages__addCompanyDirectors__checkYourAnswersLabel = addCompanyDirectors" >> ../conf/messages.en
+echo "messages__addCompanyDirectors__error__required = Please give an answer for addCompanyDirectors" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def companyPreviousAddress: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.CompanyPreviousAddressId) map {";\
-     print "    x => AnswerRow(\"companyPreviousAddress.checkYourAnswersLabel\", Seq(s\"${x.field1} ${x.field2}\"), false, controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(CheckMode).url)";\
-     print "  }";\
+     print "  def addCompanyDirectors: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.AddCompanyDirectorsId) map {";\
+     print "    x => AnswerRow(\"addCompanyDirectors.checkYourAnswersLabel\", Seq(if(x) \"site.yes\" else \"site.no\"), true, controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(CheckMode).url)"; print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration CompanyPreviousAddress completed"
+echo "Migration AddCompanyDirectors completed"
