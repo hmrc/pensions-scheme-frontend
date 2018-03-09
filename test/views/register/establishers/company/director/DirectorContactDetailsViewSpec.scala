@@ -41,7 +41,7 @@ class DirectorContactDetailsViewSpec extends QuestionViewBehaviours[DirectorCont
     form, NormalMode, establisherIndex, directorIndex,directorName)(fakeRequest, messages)
 
 
-  "CompanyContactDetails view" must {
+  "directorContactDetails view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages("messages__company_director_contact__title"))
 
