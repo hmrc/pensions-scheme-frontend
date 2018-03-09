@@ -18,26 +18,26 @@ package views.register.establishers.company.director
 
 import play.api.data.Form
 import controllers.register.establishers.company.director.routes
-import forms.register.establishers.company.director.CompanyDirectorContactDetailsFormProvider
-import models.register.establishers.company.director.CompanyDirectorContactDetails
+import forms.register.establishers.company.director.DirectorContactDetailsFormProvider
+import models.register.establishers.company.director.{DirectorContactDetails}
 import models.{Index, NormalMode}
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.establishers.company.director.companyDirectorContactDetails
+import views.html.register.establishers.company.director.directorContactDetails
 
-class CompanyDirectorContactDetailsViewSpec extends QuestionViewBehaviours[CompanyDirectorContactDetails] {
+class DirectorContactDetailsViewSpec extends QuestionViewBehaviours[DirectorContactDetails] {
 
   val messageKeyPrefix = "company_director_contact"
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
   val directorName="test director name"
 
-  override val form = new CompanyDirectorContactDetailsFormProvider()()
+  override val form = new DirectorContactDetailsFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => companyDirectorContactDetails(frontendAppConfig, form, NormalMode, establisherIndex,
+  def createView: () => HtmlFormat.Appendable = () => directorContactDetails(frontendAppConfig, form, NormalMode, establisherIndex,
     directorIndex,directorName)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyDirectorContactDetails(frontendAppConfig,
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorContactDetails(frontendAppConfig,
     form, NormalMode, establisherIndex, directorIndex,directorName)(fakeRequest, messages)
 
 
@@ -48,6 +48,6 @@ class CompanyDirectorContactDetailsViewSpec extends QuestionViewBehaviours[Compa
     behave like pageWithBackLink(createView)
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.CompanyDirectorContactDetailsController.onSubmit(NormalMode, establisherIndex, directorIndex).url, "emailAddress", "phoneNumber")
+      routes.DirectorContactDetailsController.onSubmit(NormalMode, establisherIndex, directorIndex).url, "emailAddress", "phoneNumber")
   }
 }

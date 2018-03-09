@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.company.director.routes._
 @import models.Mode
-@import models.register.establishers.company.director.CompanyDirectorContactDetails
+@import models.register.establishers.company.director.DirectorContactDetails
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, directorIndex: Index,directorName:String)(implicit request: Request[_], messages: Messages)
 
@@ -27,7 +27,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = controllers.register.establishers.company.director.routes.CompanyDirectorContactDetailsController.onSubmit(mode, establisherIndex, directorIndex), 'autoComplete -> "off") {
+    @helpers.form(action = controllers.register.establishers.company.director.routes.DirectorContactDetailsController.onSubmit(mode, establisherIndex, directorIndex), 'autoComplete -> "off") {
 
         @components.back_link()
 

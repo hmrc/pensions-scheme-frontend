@@ -26,36 +26,36 @@ import controllers.actions._
 import config.FrontendAppConfig
 import controllers.Retrievals
 import models.{Index, Mode}
-import forms.register.establishers.company.director.CompanyDirectorContactDetailsFormProvider
-import identifiers.register.establishers.company.director.CompanyDirectorContactDetailsId
-import models.register.establishers.company.director.CompanyDirectorContactDetails
+import forms.register.establishers.company.director.DirectorContactDetailsFormProvider
+import identifiers.register.establishers.company.director.DirectorContactDetailsId
+import models.register.establishers.company.director.DirectorContactDetails
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
-import views.html.register.establishers.company.director.companyDirectorContactDetails
+import views.html.register.establishers.company.director.directorContactDetails
 
 import scala.concurrent.Future
 
-class CompanyDirectorContactDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                        override val messagesApi: MessagesApi,
-                                                        dataCacheConnector: DataCacheConnector,
-                                                        navigator: Navigator,
-                                                        authenticate: AuthAction,
-                                                        getData: DataRetrievalAction,
-                                                        requireData: DataRequiredAction,
-                                                        formProvider: CompanyDirectorContactDetailsFormProvider
+class DirectorContactDetailsController @Inject()(appConfig: FrontendAppConfig,
+                                                 override val messagesApi: MessagesApi,
+                                                 dataCacheConnector: DataCacheConnector,
+                                                 navigator: Navigator,
+                                                 authenticate: AuthAction,
+                                                 getData: DataRetrievalAction,
+                                                 requireData: DataRequiredAction,
+                                                 formProvider: DirectorContactDetailsFormProvider
                                                        ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
 
-  val form: Form[CompanyDirectorContactDetails] = formProvider()
+  val form: Form[DirectorContactDetails] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveDirectorName(establisherIndex, directorIndex) {
         directorName =>
-          val redirectResult = request.userAnswers.get(CompanyDirectorContactDetailsId(establisherIndex, directorIndex)) match {
+          val redirectResult = request.userAnswers.get(DirectorContactDetailsId(establisherIndex, directorIndex)) match {
             case None =>
-              Ok(companyDirectorContactDetails(appConfig, form, mode, establisherIndex, directorIndex, directorName))
+              Ok(directorContactDetails(appConfig, form, mode, establisherIndex, directorIndex, directorName))
 
-            case Some(value) => Ok(companyDirectorContactDetails(appConfig, form.fill(value), mode, establisherIndex, directorIndex, directorName))
+            case Some(value) => Ok(directorContactDetails(appConfig, form.fill(value), mode, establisherIndex, directorIndex, directorName))
           }
           Future.successful(redirectResult)
       }
@@ -67,10 +67,10 @@ class CompanyDirectorContactDetailsController @Inject()(appConfig: FrontendAppCo
       retrieveDirectorName(establisherIndex, directorIndex) { directorName =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(companyDirectorContactDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, directorName))),
+            Future.successful(BadRequest(directorContactDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, directorName))),
           (value) =>
-            dataCacheConnector.save(request.externalId, CompanyDirectorContactDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
-              Redirect(navigator.nextPage(CompanyDirectorContactDetailsId(establisherIndex, directorIndex), mode)(new UserAnswers(cacheMap))))
+            dataCacheConnector.save(request.externalId, DirectorContactDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
+              Redirect(navigator.nextPage(DirectorContactDetailsId(establisherIndex, directorIndex), mode)(new UserAnswers(cacheMap))))
         )
       }
   }

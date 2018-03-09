@@ -19,38 +19,38 @@ package controllers.register.establishers.company.director
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.company.director.CompanyDirectorContactDetailsFormProvider
+import forms.register.establishers.company.director.DirectorContactDetailsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{CompanyDirectorContactDetailsId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
 import models._
-import models.register.establishers.company.director.{CompanyDirectorContactDetails, DirectorDetails}
+import models.register.establishers.company.director.{DirectorContactDetails, DirectorDetails}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.{FakeNavigator, UserAnswers}
-import views.html.register.establishers.company.director.companyDirectorContactDetails
+import views.html.register.establishers.company.director.directorContactDetails
 
 
-class CompanyDirectorContactDetailsControllerSpec extends ControllerSpecBase {
+class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val companyName = "test company name"
-  val formProvider = new CompanyDirectorContactDetailsFormProvider()
+  val formProvider = new DirectorContactDetailsFormProvider()
   val form = formProvider()
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
   val invalidIndex = Index(10)
   val directorName = "First Name Middle Name Last Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyDirectorContactDetailsController =
-    new CompanyDirectorContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): DirectorContactDetailsController =
+    new DirectorContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = companyDirectorContactDetails(frontendAppConfig, form, NormalMode,
+  def viewAsString(form: Form[_] = form): String = directorContactDetails(frontendAppConfig, form, NormalMode,
     establisherIndex, directorIndex, directorName)(fakeRequest, messages).toString
 
   val validData = Json.obj(
@@ -61,8 +61,8 @@ class CompanyDirectorContactDetailsControllerSpec extends ControllerSpecBase {
           Json.obj(
             DirectorDetailsId.toString ->
               DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
-            CompanyDirectorContactDetailsId.toString ->
-              CompanyDirectorContactDetails("test@test.com", "123456789"))
+            DirectorContactDetailsId.toString ->
+              DirectorContactDetails("test@test.com", "123456789"))
         )
       )
     )
@@ -115,7 +115,7 @@ class CompanyDirectorContactDetailsControllerSpec extends ControllerSpecBase {
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(CompanyDirectorContactDetails("test@test.com", "123456789")))
+      contentAsString(result) mustBe viewAsString(form.fill(DirectorContactDetails("test@test.com", "123456789")))
     }
 
     "redirect to the next page when valid data is submitted" in {

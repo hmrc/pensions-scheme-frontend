@@ -21,16 +21,16 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.register.establishers.company.director.CompanyDirectorContactDetails
+import models.register.establishers.company.director.{DirectorContactDetails}
 
-class CompanyDirectorContactDetailsFormProvider @Inject() extends Mappings {
+class DirectorContactDetailsFormProvider @Inject() extends Mappings {
 
   val regexPhoneNumber = "\\d*"
   val maxLengthPhone = 24
   val maxEmailLength = 132
   val emailRegex = "^[^@<>]+@[^@<>]+$"
 
-  def apply(): Form[CompanyDirectorContactDetails] = Form(
+  def apply(): Form[DirectorContactDetails] = Form(
     mapping(
       "emailAddress" -> text("messages__error__email").verifying(
         returnOnFirstFailure(regexp(emailRegex, "messages__error__email_invalid"),
@@ -38,6 +38,6 @@ class CompanyDirectorContactDetailsFormProvider @Inject() extends Mappings {
       "phoneNumber" -> text("messages__error__phone").verifying(
         returnOnFirstFailure(regexp(regexPhoneNumber, "messages__error__phone_invalid"),
           maxLength(maxLengthPhone, "messages__error__phone_length")))
-    )(CompanyDirectorContactDetails.apply)(CompanyDirectorContactDetails.unapply)
+    )(DirectorContactDetails.apply)(DirectorContactDetails.unapply)
   )
 }

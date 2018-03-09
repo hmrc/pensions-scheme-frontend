@@ -17,11 +17,11 @@
 package forms.register.establishers.company.director
 
 import forms.behaviours.FormBehaviours
-import models.register.establishers.company.director.CompanyDirectorContactDetails
+import models.register.establishers.company.director.{DirectorContactDetails}
 import models.{Field, Required}
 import org.apache.commons.lang3.RandomStringUtils
 
-class CompanyDirectorContactDetailsFormProviderSpec extends FormBehaviours {
+class DirectorContactDetailsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
     "emailAddress" -> "test@test.com",
@@ -29,10 +29,10 @@ class CompanyDirectorContactDetailsFormProviderSpec extends FormBehaviours {
   )
   val emailRegex = "^[^@<>]+@[^@<>]+$"
   val regexPhoneNumber = "\\d*"
-  val form = new CompanyDirectorContactDetailsFormProvider()()
+  val form = new DirectorContactDetailsFormProvider()()
 
   "CompanyDirectorContactDetails form" must {
-    behave like questionForm(CompanyDirectorContactDetails("test@test.com", "123456789"))
+    behave like questionForm(DirectorContactDetails("test@test.com", "123456789"))
 
     behave like formWithMandatoryTextFields(
       Field("emailAddress", Required -> "messages__error__email"),

@@ -19,7 +19,7 @@ package utils
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.CompanyDirectorContactDetailsId
+import identifiers.register.establishers.company.director.DirectorContactDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherKindId, company}
@@ -33,9 +33,9 @@ import viewmodels.AnswerRow
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
   def companyDirectorContactDetails(establisherIndex:Int, directorIndex: Int): Seq[AnswerRow] =
-    userAnswers.get(CompanyDirectorContactDetailsId(establisherIndex, directorIndex)) match {
+    userAnswers.get(DirectorContactDetailsId(establisherIndex, directorIndex)) match {
     case Some(x) => Seq(AnswerRow("companyDirectorContactDetails.checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false,
-      controllers.register.establishers.company.director.routes.CompanyDirectorContactDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url))
+      controllers.register.establishers.company.director.routes.DirectorContactDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url))
     case _ => Seq.empty
   }
 
