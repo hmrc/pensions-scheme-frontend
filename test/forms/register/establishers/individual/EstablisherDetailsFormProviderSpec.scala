@@ -30,6 +30,7 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",
+    "middleName" -> "testMiddleName",
     "lastName" -> "testLastName",
     "date.day" -> s"$day",
     "date.month" -> s"$month",
@@ -43,10 +44,11 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
   val date = new LocalDate(year, month, day)
 
   "EstablisherDetails form" must {
-    behave like questionForm(EstablisherDetails("testFirstName", "testLastName", date))
+    behave like questionForm(EstablisherDetails("testFirstName", Some("testMiddleName"), "testLastName", date))
 
     behave like formWithMandatoryTextFields(
       Field("firstName", Required -> "messages__error__first_name"),
+      Field("middleName", Required -> "messages__error__middle_name"),
       Field("lastName", Required -> "messages__error__last_name"),
       Field("date.day", Required -> "messages__error__date"),
       Field("date.month", Required -> "messages__error__date"),
@@ -60,6 +62,15 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
       val expectedError = error("firstName", "messages__error__first_name_length", 35)
       checkForError(form, data, expectedError)
     }
+
+    "fail to bind when the middle name exceeds max length 35" in {
+      val testString = RandomStringUtils.random(36)
+      val data = validData + ("middleName" -> testString)
+
+      val expectedError = error("middleName", "messages__error__middle_name_length", 35)
+      checkForError(form, data, expectedError)
+    }
+
 
     "fail to bind when the last name exceeds max length 35" in {
       val testString = RandomStringUtils.random(36)
@@ -78,6 +89,8 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
       }
     }
 
+    //TODO fail to bind when the middle name is invalid
+
     s"fail to bind when the last name is invalid" in {
       val data = validData + ("lastName" -> "strbvhjbv^*")
 
@@ -88,28 +101,32 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
     Seq("first-name", "King‘s").foreach { firstName =>
       s"successfully bind valid first name $firstName" in {
 
-        val detailsForm = form.bind(Map("firstName" -> firstName,
+        val detailsForm = form.bind(Map(
+          "firstName" -> firstName,
           "lastName" -> "testLastName",
           "date.day" -> s"$day",
           "date.month" -> s"$month",
           "date.year" -> s"$year"))
 
-        val expectedData = EstablisherDetails(firstName, "testLastName", date)
+        val expectedData = EstablisherDetails(firstName, None, "testLastName", date)
 
         detailsForm.get shouldBe expectedData
       }
     }
 
+    //TODO Successfully bind when middle name is valid
+
     Seq("-242798‘/", "(last,.&)", "Last Name").foreach { lastName =>
       s"successfully bind valid last name $lastName" in {
 
-        val detailsForm = form.bind(Map("firstName" -> "testFirstName",
+        val detailsForm = form.bind(Map(
+          "firstName" -> "testFirstName",
           "lastName" -> lastName,
           "date.day" -> s"$day",
           "date.month" -> s"$month",
           "date.year" -> s"$year"))
 
-        val expectedData = EstablisherDetails("testFirstName", lastName, date)
+        val expectedData = EstablisherDetails("testFirstName", None, lastName, date)
         detailsForm.get shouldBe expectedData
       }
     }
