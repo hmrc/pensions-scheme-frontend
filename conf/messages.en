@@ -66,7 +66,6 @@ messages__common__cya__name = Name
 messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
 
-
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
@@ -86,6 +85,8 @@ site.save_and_continue = Save and continue
 site.find_address = Find Address
 site.service_name = Pension Scheme Registrations
 site.textarea.char_limit = (Limit is {0} characters)
+site.confirm = Confirm
+site.cancel = Cancel
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -380,4 +381,5 @@ messages__director_sautr_hint_format = A Unique Taxpayer Reference number is 10 
 messages__error__has_sautr_director = Select yes if the director has a Unique Taxpayer Reference number
 messages__error__no_sautr_director = You need to tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
 
-
+messages__confirmDeleteDirector__title = Confirm deletion
+messages__confirmDeleteDirector__heading = Are you sure you want to delete %s?

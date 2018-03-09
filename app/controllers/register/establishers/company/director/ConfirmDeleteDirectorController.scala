@@ -16,16 +16,56 @@
 
 package controllers.register.establishers.company.director
 
-import models.Index
-import play.api.mvc.Action
+import javax.inject.Inject
+
+import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import controllers.actions._
+import config.FrontendAppConfig
+import connectors.DataCacheConnector
+import controllers.Retrievals
+import controllers.register.establishers.company.routes.AddCompanyDirectorsController
+import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId}
+import models.{Index, NormalMode}
+import play.api.mvc.{Action, AnyContent}
+import utils.{Navigator, UserAnswers}
+import views.html.register.establishers.company.director.confirmDeleteDirector
 
-class ConfirmDeleteDirectorController extends FrontendController {
+import scala.concurrent.Future
 
-  // Stub controller will be implemented by PODS-457
+class ConfirmDeleteDirectorController @Inject()(appConfig: FrontendAppConfig,
+    override val messagesApi: MessagesApi,
+    dataCacheConnector: DataCacheConnector,
+    navigator: Navigator,
+    authenticate: AuthAction,
+    getData: DataRetrievalAction,
+    requireData: DataRequiredAction) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(establisherIndex: Index, directorIndex: Index) = Action {
-    Ok
+  def onPageLoad(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+    implicit request =>
+      retrieveCompanyName(establisherIndex) { companyName =>
+        retrieveDirectorName(establisherIndex, directorIndex) { directorName =>
+          Future.successful(
+            Ok(
+              confirmDeleteDirector(
+                appConfig,
+                companyName,
+                directorName,
+                routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
+                AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
+              )
+            )
+          )
+        }
+      }
+  }
+
+  def onSubmit(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+    implicit request =>
+      dataCacheConnector.remove(request.externalId, DirectorDetailsId(establisherIndex, directorIndex)).map {
+        json =>
+          Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode)(UserAnswers(json)))
+      }
   }
 
 }
