@@ -20,7 +20,9 @@ import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
 import models.CompanyDetails
+import models.register.establishers.company.director.{DirectorContactDetails, DirectorDetails}
 import models.register.{SchemeDetails, SchemeType}
 import models.requests.DataRequest
 import org.joda.time.LocalDate
@@ -50,28 +52,32 @@ class RetrievalsSpec extends ControllerSpecBase {
     override def toString: String = "test"
   }
 
- /* "retrieveDirectorName" must {
-    "reach the intended result when companyName is found" in {
+  "retrieveDirectorName" must {
+    "reach the intended result when director details is found" in {
 
       val validData = Json.obj(
-        "directors" -> Json.arr(
+        EstablishersId.toString -> Json.arr(
           Json.obj(
-            "directorDetails" -> Json.obj(
-              "firstName" -> "John",
-              "lastName" -> "Doe",
-              "dateOfBirth" -> Json.toJson(LocalDate.now())
+            "director" -> Json.arr(
+              Json.obj(
+                DirectorDetailsId.toString ->
+                  DirectorDetails(
+                    "First Name",
+                    Some("Middle Name"),
+                    "Last Name",
+                    LocalDate.now)
+              )
             )
           )
         )
       )
-
       implicit val request: DataRequest[AnyContent] = dataRequest(validData)
 
-      val result = controller.retrieveDirectorName(0)(success)
+      val result = controller.retrieveDirectorName(0, 0)(success)
 
       status(result) must be(OK)
     }
-  }*/
+  }
 
   "retrieveCompanyName" must {
     "reach the intended result when companyName is found" in {
