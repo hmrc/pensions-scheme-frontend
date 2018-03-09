@@ -16,31 +16,45 @@
 
 package connectors
 
+import com.google.inject.Inject
 import identifiers.TypedIdentifier
 import play.api.libs.json._
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Cleanup
+import utils.{Cleanup, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeDataCacheConnector extends DataCacheConnector {
+class MongoCacheConnector @Inject() (
+                                      val sessionRepository: SessionRepository
+                                    ) extends DataCacheConnector {
 
   override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
                                                (implicit
                                                 fmt: Format[A],
-                                                cleanup: Cleanup[I],
+                                                cu: Cleanup[I],
                                                 ec: ExecutionContext,
                                                 hc: HeaderCarrier
-                                               ): Future[JsValue] =
-    Future.successful(Json.obj())
+                                               ): Future[JsValue] = {
+
+    sessionRepository().get(cacheId).flatMap {
+      json =>
+        UserAnswers(json.getOrElse(Json.obj())).set(id)(value) match {
+          case JsSuccess(UserAnswers(updatedJson), _) =>
+            sessionRepository().upsert(cacheId, updatedJson)
+              .map(_ => updatedJson)
+          case JsError(errors) =>
+            Future.failed(JsResultException(errors))
+        }
+    }
+  }
 
   override def fetch(cacheId: String)(implicit
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier
                                      ): Future[Option[JsValue]] = {
 
-    Future.successful(Some(Json.obj()))
+    sessionRepository().get(cacheId)
   }
 }
 
-object FakeDataCacheConnector extends FakeDataCacheConnector

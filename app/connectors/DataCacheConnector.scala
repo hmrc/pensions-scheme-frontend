@@ -16,41 +16,25 @@
 
 package connectors
 
-import com.google.inject.{ImplementedBy, Inject}
 import identifiers.TypedIdentifier
 import play.api.libs.json._
-import repositories.SessionRepository
-import utils.{Cleanup, UserAnswers}
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.Cleanup
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataCacheConnectorImpl @Inject()(
-                                        val sessionRepository: SessionRepository
-                                      ) extends DataCacheConnector {
-
-  override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
-                                               (implicit fmt: Format[A], cu: Cleanup[I], ec: ExecutionContext): Future[JsValue] = {
-    sessionRepository().get(cacheId).flatMap {
-      json =>
-        UserAnswers(json.getOrElse(Json.obj())).set(id)(value) match {
-          case JsSuccess(UserAnswers(updatedJson), _) =>
-            sessionRepository().upsert(cacheId, updatedJson)
-              .map(_ => updatedJson)
-          case JsError(errors) =>
-            Future.failed(JsResultException(errors))
-        }
-    }
-  }
-
-  override def fetch(cacheId: String)(implicit ec: ExecutionContext): Future[Option[JsValue]] =
-    sessionRepository().get(cacheId)
-}
-
-@ImplementedBy(classOf[DataCacheConnectorImpl])
 trait DataCacheConnector {
 
   def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
-                                      (implicit fmt: Format[A], cleanup: Cleanup[I], ec: ExecutionContext): Future[JsValue]
+                                      (implicit
+                                       fmt: Format[A],
+                                       cleanup: Cleanup[I],
+                                       ec: ExecutionContext,
+                                       hc: HeaderCarrier
+                                      ): Future[JsValue]
 
-  def fetch(cacheId: String)(implicit ec: ExecutionContext): Future[Option[JsValue]]
+  def fetch(cacheId: String)(implicit
+                             ec: ExecutionContext,
+                             hc: HeaderCarrier
+                            ): Future[Option[JsValue]]
 }
