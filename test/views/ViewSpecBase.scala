@@ -82,7 +82,7 @@ trait ViewSpecBase extends SpecBase {
     assert(elements.first().html().replace("\n", "") == expectedValue)
   }
 
-  def assertPageTitleEqualsMessage(doc: Document, expectedMessage: String) = {
+  def assertPageTitleEqualsMessage(doc: Document, expectedMessage: String): Assertion = {
     val headers = doc.getElementsByTag("h1")
     headers.size mustBe 1
     headers.first.text.replaceAll("\u00a0", " ") mustBe expectedMessage.replaceAll("&nbsp;", " ")
@@ -100,6 +100,12 @@ trait ViewSpecBase extends SpecBase {
 
   def assertNotRenderedById(doc: Document, id: String): Assertion = {
     assert(doc.getElementById(id) == null, "\n\nElement " + id + " was rendered on the page.\n")
+  }
+
+  def assertRenderedByIdWithText(doc: Document, id: String, text: String): Assertion = {
+    val element = doc.getElementById(id)
+    assert(element != null, "\n\nElement " + id + " was not rendered on the page.\n")
+    assert(element.text().equals(text), s"\n\nElement $id had text '${element.text()}' not '$text'.\n")
   }
 
   def assertRenderedByCssSelector(doc: Document, cssSelector: String): Assertion = {
@@ -149,4 +155,12 @@ trait ViewSpecBase extends SpecBase {
       case _ => assert(!select.hasAttr("selected"), s"\n\nElement $id is selected")
     }
   }
+
+  def assertLink(doc: Document, linkId: String, url: String): Assertion = {
+    val link = doc.select(s"a[id=$linkId]")
+    assert(link.size() == 1, s"\n\nLink $linkId is not displayed")
+    val href = link.attr("href")
+    assert(href == url, s"\n\nLink $linkId has href $href no $url")
+  }
+
 }

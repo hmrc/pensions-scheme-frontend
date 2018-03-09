@@ -106,6 +106,7 @@ GET        /:index/company/changeCompanyPostCodeLookup                        co
 POST       /:index/company/changeCompanyPostCodeLookup                        controllers.register.establishers.company.CompanyPostCodeLookupController.onSubmit(mode: Mode = CheckMode, index: Index)
 
 GET        /:index/individual/check-your-answers                          controllers.register.establishers.individual.CheckYourAnswersController.onPageLoad(index: Index)
+POST       /:index/individual/check-your-answers                          controllers.register.establishers.individual.CheckYourAnswersController.onSubmit(index: Index)
 
 GET        /:index/company/companyAddress                                   controllers.register.establishers.company.CompanyAddressController.onPageLoad(mode: Mode = NormalMode, index: Index)
 POST       /:index/company/companyAddress                                   controllers.register.establishers.company.CompanyAddressController.onSubmit(mode: Mode = NormalMode, index: Index)
