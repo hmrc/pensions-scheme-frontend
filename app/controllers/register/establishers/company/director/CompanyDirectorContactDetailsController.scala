@@ -49,22 +49,29 @@ class CompanyDirectorContactDetailsController @Inject()(appConfig: FrontendAppCo
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-        val redirectResult = request.userAnswers.get(CompanyDirectorContactDetailsId(establisherIndex, directorIndex)) match {
-          case None => Ok(companyDirectorContactDetails(appConfig, form, mode, establisherIndex, directorIndex))
-          case Some(value) => Ok(companyDirectorContactDetails(appConfig, form.fill(value), mode, establisherIndex, directorIndex))
-        }
-        Future.successful(redirectResult)
+      retrieveDirectorName(establisherIndex, directorIndex) {
+        directorName =>
+          val redirectResult = request.userAnswers.get(CompanyDirectorContactDetailsId(establisherIndex, directorIndex)) match {
+            case None =>
+              Ok(companyDirectorContactDetails(appConfig, form, mode, establisherIndex, directorIndex, directorName))
+
+            case Some(value) => Ok(companyDirectorContactDetails(appConfig, form.fill(value), mode, establisherIndex, directorIndex, directorName))
+          }
+          Future.successful(redirectResult)
       }
+  }
 
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
+      retrieveDirectorName(establisherIndex, directorIndex) { directorName =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(companyDirectorContactDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
+            Future.successful(BadRequest(companyDirectorContactDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, directorName))),
           (value) =>
             dataCacheConnector.save(request.externalId, CompanyDirectorContactDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
               Redirect(navigator.nextPage(CompanyDirectorContactDetailsId(establisherIndex, directorIndex), mode)(new UserAnswers(cacheMap))))
         )
       }
   }
+}

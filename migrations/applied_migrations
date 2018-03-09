@@ -1,32 +1,32 @@
 #!/bin/bash
 
-echo "Applying migration CompanyDirectorContactDetails"
+echo "Applying migration DirectorDetails"
 
 echo "Adding routes to register.establishers.company.director.routes"
 
 echo "" >> ../conf/register.establishers.company.director.routes
-echo "GET        /companyDirectorContactDetails                       controllers.register.establishers.company.director.CompanyDirectorContactDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
-echo "POST       /companyDirectorContactDetails                       controllers.register.establishers.company.director.CompanyDirectorContactDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
+echo "GET        /directorDetails                       controllers.register.establishers.company.director.DirectorDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
+echo "POST       /directorDetails                       controllers.register.establishers.company.director.DirectorDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
 
-echo "GET        /changeCompanyDirectorContactDetails                       controllers.register.establishers.company.director.CompanyDirectorContactDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
-echo "POST       /changeCompanyDirectorContactDetails                       controllers.register.establishers.company.director.CompanyDirectorContactDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
+echo "GET        /changeDirectorDetails                       controllers.register.establishers.company.director.DirectorDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
+echo "POST       /changeDirectorDetails                       controllers.register.establishers.company.director.DirectorDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo messages__"companyDirectorContactDetails__title = companyDirectorContactDetails" >> ../conf/messages.en
-echo messages__"companyDirectorContactDetails__heading = companyDirectorContactDetails" >> ../conf/messages.en
-echo messages__"companyDirectorContactDetails__field1 = Field 1" >> ../conf/messages.en
-echo messages__"companyDirectorContactDetails__field2 = Field 2" >> ../conf/messages.en
-echo messages__"companyDirectorContactDetails__checkYourAnswersLabel = companyDirectorContactDetails" >> ../conf/messages.en
-echo messages__"companyDirectorContactDetails__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
-echo messages__"companyDirectorContactDetails__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
+echo messages__"directorDetails__title = directorDetails" >> ../conf/messages.en
+echo messages__"directorDetails__heading = directorDetails" >> ../conf/messages.en
+echo messages__"directorDetails__field1 = Field 1" >> ../conf/messages.en
+echo messages__"directorDetails__field2 = Field 2" >> ../conf/messages.en
+echo messages__"directorDetails__checkYourAnswersLabel = directorDetails" >> ../conf/messages.en
+echo messages__"directorDetails__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
+echo messages__"directorDetails__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def companyDirectorContactDetails: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.director.CompanyDirectorContactDetailsId) map {";\
-     print "    x => AnswerRow(\"companyDirectorContactDetails.checkYourAnswersLabel\", Seq(s\"${x.field1} ${x.field2}\"), false, controllers.register.establishers.company.director.routes.CompanyDirectorContactDetailsController.onPageLoad(CheckMode).url)";\
+     print "  def directorDetails: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.director.DirectorDetailsId) map {";\
+     print "    x => AnswerRow(\"directorDetails.checkYourAnswersLabel\", Seq(s\"${x.field1} ${x.field2}\"), false, controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -34,4 +34,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration CompanyDirectorContactDetails completed"
+echo "Migration DirectorDetails completed"
