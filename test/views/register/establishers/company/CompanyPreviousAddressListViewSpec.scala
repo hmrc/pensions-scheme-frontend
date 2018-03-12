@@ -27,7 +27,7 @@ import views.html.register.establishers.company.companyPreviousAddressList
 
 class CompanyPreviousAddressListViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "companyPreviousAddressList"
+  val messageKeyPrefix = "select_the_address"
 
   val form = new AddressListFormProvider()(Seq(0, 1))
   val index = Index(0)
@@ -47,7 +47,7 @@ class CompanyPreviousAddressListViewSpec extends ViewBehaviours {
   def createViewUsingForm = (form: Form[_]) => companyPreviousAddressList(frontendAppConfig, form, NormalMode, index, companyName, addresses)(fakeRequest, messages)
 
   "CompanyPreviousAddressList view" must {
-    behave like normalPage(createView, "select_the_address", messages(s"messages__select_the_address__title"))
+    behave like normalPage(createView, s"$messageKeyPrefix", messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
     behave like pageWithSecondaryHeader(createView, companyName)
