@@ -21,10 +21,12 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorNinoFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.director.DirectorNinoId
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoId}
 import play.api.libs.json.Json
 import models._
-import models.register.establishers.company.director.DirectorNino
+import models.register.establishers.company.director.{DirectorDetails, DirectorNino}
+import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.test.Helpers._
 import utils.FakeNavigator
@@ -33,19 +35,52 @@ import views.html.register.establishers.company.director.directorNino
 class DirectorNinoControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
-
+  val companyName = "test company name"
   val formProvider = new DirectorNinoFormProvider()
   val form = formProvider()
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
-
+  val directorName = "First Name Middle Name Last Name"
   val validData = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
+        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
         "director" -> Json.arr(
           Json.obj(
+            DirectorDetailsId.toString ->
+              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
             DirectorNinoId.toString ->
               DirectorNino.Yes("CS700100A")
+          )
+        )
+      )
+    )
+  )
+
+
+  val validDataNoDirectorDetails = Json.obj(
+    EstablishersId.toString -> Json.arr(
+      Json.obj(
+        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+        "director" -> Json.arr(
+          Json.obj(
+            DirectorDetailsId.toString ->
+              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
+            DirectorNinoId.toString ->
+              DirectorNino.Yes("CS700100A")
+          )
+        )
+      )
+    )
+  )
+  val validDataEmptyForm = Json.obj(
+    EstablishersId.toString -> Json.arr(
+      Json.obj(
+        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+        "director" -> Json.arr(
+          Json.obj(
+            DirectorDetailsId.toString ->
+              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now)
           )
         )
       )
@@ -57,25 +92,28 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = directorNino(frontendAppConfig, form, NormalMode,
-    establisherIndex, directorIndex)(fakeRequest, messages).toString
+    establisherIndex, directorIndex,directorName)(fakeRequest, messages).toString
 
   "DirectorNino Controller" must {
 
+    val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+
     "return OK and the correct view for a GET when establisher name is present" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
+      val getRelevantData = new FakeDataRetrievalAction(Some(validDataEmptyForm))
+
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
       contentAsString(result) mustBe viewAsString(form.fill(DirectorNino.Yes("CS700100A")))
     }
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("directorNino.hasNino", "true"), ("directorNino.nino", "CS700100A"))
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -83,7 +121,7 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
@@ -94,7 +132,22 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
+    "redirect to Session Expired for a GET if no existing director details data is found" in {
+      val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoDirectorDetails))
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
     "redirect to Session Expired for a POST if no existing data is found" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DirectorNino.options.head.value))
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "redirect to Session Expired for a POST if no existing director details data is found" in {
+      val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoDirectorDetails))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DirectorNino.options.head.value))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
       status(result) mustBe SEE_OTHER

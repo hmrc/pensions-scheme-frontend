@@ -24,6 +24,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
+import controllers.Retrievals
 import forms.register.establishers.company.director.DirectorNinoFormProvider
 import identifiers.register.establishers.company.director.DirectorNinoId
 import models.register.establishers.company.director.DirectorNino
@@ -43,38 +44,41 @@ class DirectorNinoController @Inject()(
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: DirectorNinoFormProvider
-                                             ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                             ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[DirectorNino] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-
-      val redirectResult = request.userAnswers.get(DirectorNinoId(establisherIndex, directorIndex)) match {
-        case None =>
-          Ok(directorNino(appConfig, form, mode, establisherIndex, directorIndex))
-        case Some(value) =>
-          Ok(directorNino(appConfig, form.fill(value), mode, establisherIndex, directorIndex))
+      retrieveDirectorName(establisherIndex,directorIndex) { directorName =>
+        val redirectResult = request.userAnswers.get(DirectorNinoId(establisherIndex, directorIndex)) match {
+          case None =>
+            Ok(directorNino(appConfig, form, mode, establisherIndex, directorIndex,directorName))
+          case Some(value) =>
+            Ok(directorNino(appConfig, form.fill(value), mode, establisherIndex, directorIndex,directorName))
+        }
+        Future.successful(redirectResult)
       }
-      Future.successful(redirectResult)
   }
 
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(directorNino(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
-        (value) =>
-          dataCacheConnector.save(
-            request.externalId,
-            DirectorNinoId(establisherIndex, directorIndex),
-            value
-          ).map {
-            json =>
-              Redirect(navigator.nextPage(DirectorNinoId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
-          }
-      )
+      retrieveDirectorName(establisherIndex,directorIndex) { directorName =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(directorNino(appConfig, formWithErrors, mode, establisherIndex, directorIndex,directorName))),
+          (value) =>
+            dataCacheConnector.save(
+              request.externalId,
+              DirectorNinoId(establisherIndex, directorIndex),
+              value
+            ).map {
+              json =>
+                Redirect(navigator.nextPage(DirectorNinoId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
+            }
+        )
+      }
   }
 
 }
