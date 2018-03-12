@@ -18,38 +18,39 @@ package forms.register.establishers.company.director
 
 import forms.FormSpec
 import models.EstablisherNino
-import models.register.establishers.company.director.CompanyDirectorNino
+import models.register.establishers.company.director.DirectorNino
+import org.scalatest.OptionValues
 
-class CompanyDirectorNinoFormProviderSpec extends FormSpec {
+class DirectorNinoFormProviderSpec extends FormSpec {
 
   val requiredKey = "messages__error__has_nino_director"
   val requiredNinoKey = "messages__error__nino"
-  val requiredReasonKey = "messages__companyDirector__no_nino"
+  val requiredReasonKey = "messages__director_no_nino"
   val invalidNinoKey = "messages__error__nino_invalid"
 
   val reasonMaxLength = 150
   val reasonInvalidLength = 151
-  val formProvider = new CompanyDirectorNinoFormProvider()()
+  val formProvider = new DirectorNinoFormProvider()
   val validData:Map[String,String] = Map(
-    "companyDirectorNino.hasNino" ->"true",
-    "companyDirectorNino.nino" -> "AB020202A"
+    "directorNino.hasNino" ->"true",
+    "directorNino.nino" -> "AB020202A"
   )
 
   "CompanyDirector form provider" must {
 
     "successfully bind when yes is selected and valid NINO is provided" in {
-      val form = formProvider.bind(Map("companyDirectorNino.hasNino" -> "true", "companyDirectorNino.nino" -> "AB020202A"))
-      form.get shouldBe CompanyDirectorNino.Yes("AB020202A")
+      val form = formProvider().bind(Map("directorNino.hasNino" -> "true", "directorNino.nino" -> "AB020202A"))
+      form.get shouldEqual DirectorNino.Yes("AB020202A")
     }
 
     "successfully bind when no is selected and reason is provided" in {
-      val form = formProvider.bind(Map("companyDirectorNino.hasNino" -> "false", "companyDirectorNino.reason" -> "haven't got Nino"))
-      form.get shouldBe CompanyDirectorNino.No("haven't got Nino")
+      val form = formProvider().bind(Map("directorNino.hasNino" -> "false", "directorNino.reason" -> "haven't got Nino"))
+      form.get shouldBe DirectorNino.No("haven't got Nino")
     }
 
     "fail to bind when value is omitted" in {
-      val expectedError = error("companyDirectorNino.hasNino", requiredKey)
-      checkForError(formProvider, emptyForm, expectedError)
+      val expectedError = error("directorNino.hasNino", requiredKey)
+      checkForError(formProvider(), emptyForm, expectedError)
     }
   }
 }

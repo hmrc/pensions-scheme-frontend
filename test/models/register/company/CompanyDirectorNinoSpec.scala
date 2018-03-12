@@ -16,52 +16,52 @@
 
 package models.register.company
 
-import models.register.establishers.company.director.CompanyDirectorNino
+import models.register.establishers.company.director.DirectorNino
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 import play.api.libs.json.{JsError, JsPath, Json}
 import reactivemongo.play.json.ValidationError
 
-class CompanyDirectorNinoSpec extends WordSpecLike with MustMatchers with OptionValues {
+class DirectorNinoSpec extends WordSpecLike with MustMatchers with OptionValues {
 
   "Reads" must {
     "successfully read true" in {
       val json = Json.obj("hasNino" -> true, "nino" -> "AB020202A")
 
-      Json.fromJson[CompanyDirectorNino](json).asOpt.value mustEqual CompanyDirectorNino.Yes("AB020202A")
+      Json.fromJson[DirectorNino](json).asOpt.value mustEqual DirectorNino.Yes("AB020202A")
     }
 
     "successfully read false" in {
       val json = Json.obj("hasNino" -> false, "reason" -> "haven't got Nino")
 
-      Json.fromJson[CompanyDirectorNino](json).asOpt.value mustEqual CompanyDirectorNino.No("haven't got Nino")
+      Json.fromJson[DirectorNino](json).asOpt.value mustEqual DirectorNino.No("haven't got Nino")
     }
 
     "return failure for true without nino" in {
       val json = Json.obj("hasNino" -> true)
 
-      Json.fromJson[CompanyDirectorNino](json) mustEqual JsError("NINO Value expected")
+      Json.fromJson[DirectorNino](json) mustEqual JsError("NINO Value expected")
     }
 
     "return failure for false without reason" in {
       val json = Json.obj("hasNino" -> false)
 
-      Json.fromJson[CompanyDirectorNino](json) mustEqual JsError("Reason expected")
+      Json.fromJson[DirectorNino](json) mustEqual JsError("Reason expected")
     }
 
     "return failure for when no input given" in {
       val json = Json.obj("hasNino" -> "notABoolean")
 
 
-      Json.fromJson[CompanyDirectorNino](json) mustEqual JsError(Seq((JsPath \ "hasNino", Seq(ValidationError(Seq("error.expected.jsboolean"), Seq())))))
+      Json.fromJson[DirectorNino](json) mustEqual JsError(Seq((JsPath \ "hasNino", Seq(ValidationError(Seq("error.expected.jsboolean"), Seq())))))
     }
   }
 
   "Writes" must {
     "return successfully write Yes" in {
-      Json.toJson[CompanyDirectorNino](CompanyDirectorNino.Yes("AB020202A")) mustEqual Json.obj("hasNino" -> true, "nino" -> "AB020202A")
+      Json.toJson[DirectorNino](DirectorNino.Yes("AB020202A")) mustEqual Json.obj("hasNino" -> true, "nino" -> "AB020202A")
     }
     "return successfully write No" in {
-      Json.toJson[CompanyDirectorNino](CompanyDirectorNino.No("haven't got Nino")) mustEqual Json.obj("hasNino" -> false, "reason" -> "haven't got Nino")
+      Json.toJson[DirectorNino](DirectorNino.No("haven't got Nino")) mustEqual Json.obj("hasNino" -> false, "reason" -> "haven't got Nino")
     }
   }
 }

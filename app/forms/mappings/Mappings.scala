@@ -28,7 +28,7 @@ import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import uk.gov.voa.play.form.ConditionalMappings._
 import utils.Enumerable
 import models._
-import models.register.establishers.company.director.CompanyDirectorNino
+import models.register.establishers.company.director.DirectorNino
 
 import scala.util.Try
 
@@ -152,34 +152,34 @@ trait Mappings extends Formatters with Constraints {
   }
 
 
-  protected def companyDirectorNinoMapping(requiredKey: String = "messages__error__has_nino_director",
-                                       requiredNinoKey: String = "messages__error__nino",
-                                       requiredReasonKey: String = "messages__companyDirector__no_nino",
-                                       reasonLengthKey: String = "messages__error__no_nino_length",
-                                       invalidNinoKey: String = "messages__error__nino_invalid"):
-  Mapping[CompanyDirectorNino] = {
+  protected def directorNinoMapping(requiredKey: String = "messages__error__has_nino_director",
+                                    requiredNinoKey: String = "messages__error__nino",
+                                    requiredReasonKey: String = "messages__director_no_nino",
+                                    reasonLengthKey: String = "messages__error__no_nino_length",
+                                    invalidNinoKey: String = "messages__error__nino_invalid"):
+  Mapping[DirectorNino] = {
     val reasonMaxLength = 150
 
-    def fromCompanyDirectorNino(nino: CompanyDirectorNino): (Boolean, Option[String], Option[String]) = {
+    def fromDirectorNino(nino: DirectorNino): (Boolean, Option[String], Option[String]) = {
       nino match {
-        case CompanyDirectorNino.Yes(ninoNo) => (true, Some(ninoNo), None)
-        case CompanyDirectorNino.No(reason) =>  (false, None, Some(reason))
+        case DirectorNino.Yes(ninoNo) => (true, Some(ninoNo), None)
+        case DirectorNino.No(reason) =>  (false, None, Some(reason))
       }
     }
 
-    def toCompanyDirectorNino(ninoTuple: (Boolean, Option[String], Option[String])) = {
+    def toDirectorNino(ninoTuple: (Boolean, Option[String], Option[String])) = {
 
       ninoTuple match {
-        case (true, Some(nino), None)  => CompanyDirectorNino.Yes(nino)
-        case (false, None, Some(reason))  => CompanyDirectorNino.No(reason)
+        case (true, Some(nino), None)  => DirectorNino.Yes(nino)
+        case (false, None, Some(reason))  => DirectorNino.No(reason)
         case _ => throw new RuntimeException("Invalid selection")
       }
     }
 
     tuple("hasNino" -> boolean(requiredKey),
-      "nino" -> mandatoryIfTrue("companyDirectorNino.hasNino", text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
-      "reason" -> mandatoryIfFalse("companyDirectorNino.hasNino", text(requiredReasonKey).
-        verifying(maxLength(reasonMaxLength,reasonLengthKey)))).transform(toCompanyDirectorNino, fromCompanyDirectorNino)
+      "nino" -> mandatoryIfTrue("directorNino.hasNino", text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
+      "reason" -> mandatoryIfFalse("directorNino.hasNino", text(requiredReasonKey).
+        verifying(maxLength(reasonMaxLength,reasonLengthKey)))).transform(toDirectorNino, fromDirectorNino)
   }
 
 

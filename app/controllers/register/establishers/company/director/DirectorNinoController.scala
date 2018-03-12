@@ -24,17 +24,17 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
-import forms.register.establishers.company.director.CompanyDirectorNinoFormProvider
-import identifiers.register.establishers.company.director.CompanyDirectorNinoId
-import models.register.establishers.company.director.CompanyDirectorNino
+import forms.register.establishers.company.director.DirectorNinoFormProvider
+import identifiers.register.establishers.company.director.DirectorNinoId
+import models.register.establishers.company.director.DirectorNino
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.establishers.company.director.companyDirectorNino
+import views.html.register.establishers.company.director.directorNino
 
 import scala.concurrent.Future
 
-class CompanyDirectorNinoController @Inject()(
+class DirectorNinoController @Inject()(
                                                appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
                                                dataCacheConnector: DataCacheConnector,
@@ -42,19 +42,19 @@ class CompanyDirectorNinoController @Inject()(
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
-                                               formProvider: CompanyDirectorNinoFormProvider
+                                               formProvider: DirectorNinoFormProvider
                                              ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
-  private val form: Form[CompanyDirectorNino] = formProvider()
+  private val form: Form[DirectorNino] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
 
-      val redirectResult = request.userAnswers.get(CompanyDirectorNinoId(establisherIndex, directorIndex)) match {
+      val redirectResult = request.userAnswers.get(DirectorNinoId(establisherIndex, directorIndex)) match {
         case None =>
-          Ok(companyDirectorNino(appConfig, form, mode, establisherIndex, directorIndex))
+          Ok(directorNino(appConfig, form, mode, establisherIndex, directorIndex))
         case Some(value) =>
-          Ok(companyDirectorNino(appConfig, form.fill(value), mode, establisherIndex, directorIndex))
+          Ok(directorNino(appConfig, form.fill(value), mode, establisherIndex, directorIndex))
       }
       Future.successful(redirectResult)
   }
@@ -64,15 +64,15 @@ class CompanyDirectorNinoController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyDirectorNino(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
+          Future.successful(BadRequest(directorNino(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
         (value) =>
           dataCacheConnector.save(
             request.externalId,
-            CompanyDirectorNinoId(establisherIndex, directorIndex),
+            DirectorNinoId(establisherIndex, directorIndex),
             value
           ).map {
             json =>
-              Redirect(navigator.nextPage(CompanyDirectorNinoId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
+              Redirect(navigator.nextPage(DirectorNinoId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
           }
       )
   }

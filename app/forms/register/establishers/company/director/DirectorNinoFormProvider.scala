@@ -19,12 +19,12 @@ package forms.register.establishers.company.director
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import models.register.establishers.company.director.CompanyDirectorNino
+import models.register.establishers.company.director.DirectorNino
 import play.api.data.Form
 
-class CompanyDirectorNinoFormProvider @Inject() extends Mappings {
+class DirectorNinoFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[CompanyDirectorNino] = Form(
-    "companyDirectorNino" -> companyDirectorNinoMapping()
+  def apply(): Form[DirectorNino] = Form(
+    "directorNino" -> directorNinoMapping()
   )
 }

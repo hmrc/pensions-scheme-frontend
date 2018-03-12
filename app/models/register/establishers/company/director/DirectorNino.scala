@@ -19,40 +19,40 @@ package models.register.establishers.company.director
 import play.api.libs.json._
 import utils.InputOption
 
-sealed trait CompanyDirectorNino
+sealed trait DirectorNino
 
-object CompanyDirectorNino {
+object DirectorNino {
 
-  case class Yes(nino: String) extends CompanyDirectorNino
-  case class No(reason: String) extends CompanyDirectorNino
+  case class Yes(nino: String) extends DirectorNino
+  case class No(reason: String) extends DirectorNino
 
   def options: Seq[InputOption] = Seq(
-    InputOption("true", "site.yes", Some("companyDirectorNino_nino-form")),
-    InputOption("false", "site.no", Some("companyDirectorNino_reason-form"))
+    InputOption("true", "site.yes", Some("directorNino_nino-form")),
+    InputOption("false", "site.no", Some("directorNino_reason-form"))
   )
 
-  implicit val reads: Reads[CompanyDirectorNino] = {
+  implicit val reads: Reads[DirectorNino] = {
 
     (JsPath \ "hasNino").read[Boolean].flatMap {
 
       case true =>
         (JsPath \ "nino").read[String]
-          .map[CompanyDirectorNino](Yes.apply)
-          .orElse(Reads[CompanyDirectorNino](_ => JsError("NINO Value expected")))
+          .map[DirectorNino](Yes.apply)
+          .orElse(Reads[DirectorNino](_ => JsError("NINO Value expected")))
 
       case false =>
         (JsPath \ "reason").read[String]
-          .map[CompanyDirectorNino](No.apply)
-          .orElse(Reads[CompanyDirectorNino](_ => JsError("Reason expected")))
+          .map[DirectorNino](No.apply)
+          .orElse(Reads[DirectorNino](_ => JsError("Reason expected")))
     }
   }
 
-  implicit lazy val writes = new Writes[CompanyDirectorNino] {
-    def writes(o: CompanyDirectorNino) = {
+  implicit lazy val writes = new Writes[DirectorNino] {
+    def writes(o: DirectorNino) = {
       o match {
-        case CompanyDirectorNino.Yes(nino) =>
+        case DirectorNino.Yes(nino) =>
           Json.obj("hasNino" -> true, "nino" -> nino)
-        case CompanyDirectorNino.No(reason) =>
+        case DirectorNino.No(reason) =>
           Json.obj("hasNino" -> false, "reason" -> reason)
       }
     }

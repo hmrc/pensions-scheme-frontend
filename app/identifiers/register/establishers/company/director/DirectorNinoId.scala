@@ -17,13 +17,13 @@
 package identifiers.register.establishers.company.director
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import models.register.establishers.company.director.CompanyDirectorNino
+import models.register.establishers.company.director.DirectorNino
 import play.api.libs.json.JsPath
 
-case class CompanyDirectorNinoId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[CompanyDirectorNino] {
-  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \CompanyDirectorNinoId.toString
+case class DirectorNinoId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[DirectorNino] {
+  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \DirectorNinoId.toString
 }
 
-object CompanyDirectorNinoId {
-  override lazy val toString: String = "companyDirectorNino"
+object DirectorNinoId {
+  override lazy val toString: String = "directorNino"
 }

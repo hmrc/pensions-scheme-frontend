@@ -20,57 +20,57 @@
 @import controllers.register.establishers.company.director._
 @import models.Mode
 @import models.register.establishers.company.director._
-@import models.register.establishers.company.director.CompanyDirectorNino._
+@import models.register.establishers.company.director.DirectorNino._
 
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, directorIndex: Index)(implicit request: Request[_], messages: Messages)
 
 @_options = @{
-        CompanyDirectorNino.options
+        DirectorNino.options
 }
 
 @main_template(
-        title = messages("messages__companyDirectorNino__title"),
+        title = messages("messages__director_nino__title"),
         appConfig = appConfig,
         bodyClasses = None) {
 
-        @helpers.form(action = CompanyDirectorNinoController.onSubmit(mode, establisherIndex, directorIndex), 'autoComplete -> "off") {
+        @helpers.form(action = DirectorNinoController.onSubmit(mode, establisherIndex, directorIndex), 'autoComplete -> "off") {
 
             @components.back_link()
 
             @components.error_summary(form.errors)
 
-            @components.heading(headingKey = "messages__companyDirectorNino__title")
+            @components.heading(headingKey = "messages__director_nino__title")
 
             @components.fieldSet(
-                field = form("companyDirectorNino.hasNino"),
-                legend = "messages__companyDirectorNino__title",
+                field = form("directorNino.hasNino"),
+                legend = "messages__director_nino__title",
                 hiddenLegend = true
             ) {
                 @components.radio(
-                    field = form("companyDirectorNino.hasNino"),
+                    field = form("directorNino.hasNino"),
                     label = _options.head.label,
                     value = options.head.value,
                     dataTarget = options.head.dataTarget
                 )
 
                 @components.input_text(
-                    field = form("companyDirectorNino.nino"),
+                    field = form("directorNino.nino"),
                     label = messages("messages__common__nino"),
                     groupClass = Some("js-hidden panel panel-border-narrow"),
                     hint = Some(messages("messages__common__nino_hint"))
                 )
 
                 @components.radio(
-                    field = form("companyDirectorNino.hasNino"),
+                    field = form("directorNino.hasNino"),
                     label = _options(1).label,
                     value = options(1).value,
                     dataTarget = options(1).dataTarget
                 )
 
                 @components.input_text(
-                    field = form("companyDirectorNino.reason"),
-                    label = messages("messages__companyDirector__no_nino"),
+                    field = form("directorNino.reason"),
+                    label = messages("messages__director_no_nino"),
                     groupClass = Some("js-hidden panel panel-border-narrow")
                 )
             }

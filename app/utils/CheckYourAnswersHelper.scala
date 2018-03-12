@@ -19,7 +19,7 @@ package utils
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.{CompanyDirectorNinoId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoId}
 import identifiers.register.establishers.{EstablisherKindId, company}
 import models.EstablisherNino.{No, Yes}
 import models.addresslookup.Address
@@ -27,31 +27,30 @@ import models.register.CountryOptions
 import models.register.establishers.individual.{AddressYears, UniqueTaxReference}
 import models.{CheckMode, EstablisherNino, Index}
 import viewmodels.AnswerRow
-import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual._
-import models.register.establishers.company.director.CompanyDirectorNino
+import models.register.establishers.company.director.DirectorNino
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
 
-  def companyDirectorNino(establisherIndex: Int, directorIndex: Int): Seq[AnswerRow] = userAnswers.get(CompanyDirectorNinoId(establisherIndex,
+  def directorNino(establisherIndex: Int, directorIndex: Int): Seq[AnswerRow] = userAnswers.get(DirectorNinoId(establisherIndex,
     directorIndex)) match {
-    case Some(models.register.establishers.company.director.CompanyDirectorNino.Yes(nino)) =>
+    case Some(models.register.establishers.company.director.DirectorNino.Yes(nino)) =>
       Seq(
-        AnswerRow("messages__company_director_nino_question_cya_label", Seq(s"${CompanyDirectorNino.Yes}"), false,
-          controllers.register.establishers.company.director.routes.CompanyDirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
+        AnswerRow("messages__director_nino_question_cya_label", Seq(s"${DirectorNino.Yes}"), false,
+          controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
             Index(directorIndex)).url),
         AnswerRow("messages__company_director_nino_cya_label", Seq(nino), false,
-          controllers.register.establishers.company.director.routes.CompanyDirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
+          controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
             Index(directorIndex)).url)
       )
-    case Some(models.register.establishers.company.director.CompanyDirectorNino.No(reason)) =>
+    case Some(models.register.establishers.company.director.DirectorNino.No(reason)) =>
       Seq(
-        AnswerRow("messages__company_director_nino_question_cya_label", Seq(s"${CompanyDirectorNino.No}"), false,
-          controllers.register.establishers.company.director.routes.CompanyDirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
+        AnswerRow("messages__director_nino_question_cya_label", Seq(s"${DirectorNino.No}"), false,
+          controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
             Index(directorIndex)).url),
         AnswerRow("messages__company_director_nino_cya_label", Seq(reason), false,
-          controllers.register.establishers.company.director.routes.CompanyDirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
+          controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
             Index(directorIndex)).url)
       )
     case _ => Nil
