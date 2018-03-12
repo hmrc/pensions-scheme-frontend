@@ -39,7 +39,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
           ),
           Json.obj(
             EstablisherDetailsId.toString ->
-              EstablisherDetails("my", "name", LocalDate.now)
+              EstablisherDetails("my", None, "name", LocalDate.now)
           )
         )
       )

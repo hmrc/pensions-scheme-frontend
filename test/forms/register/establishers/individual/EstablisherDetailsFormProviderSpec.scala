@@ -36,7 +36,9 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
     "date.month" -> s"$month",
     "date.year" -> s"$year"
   )
+
   val regexFirstName = "[a-zA-Z]{1}[a-zA-Z-‘]*"
+  val regexMiddleName ="[a-zA-Z-‘]*"
   val regexLastName = "[a-zA-Z0-9,.‘(&)-/ ]*"
 
   val form = new EstablisherDetailsFormProvider()()
@@ -48,54 +50,60 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
 
     behave like formWithMandatoryTextFields(
       Field("firstName", Required -> "messages__error__first_name"),
-      Field("middleName", Required -> "messages__error__middle_name"),
       Field("lastName", Required -> "messages__error__last_name"),
       Field("date.day", Required -> "messages__error__date"),
       Field("date.month", Required -> "messages__error__date"),
       Field("date.year", Required -> "messages__error__date")
     )
 
-    "fail to bind when the first name exceeds max length 35" in {
-      val testString = RandomStringUtils.random(36)
-      val data = validData + ("firstName" -> testString)
+    "fail to bind" when {
+      "the first name exceeds max length 35" in {
+        val testString = RandomStringUtils.random(36)
+        val data = validData + ("firstName" -> testString)
 
-      val expectedError = error("firstName", "messages__error__first_name_length", 35)
-      checkForError(form, data, expectedError)
-    }
-
-    "fail to bind when the middle name exceeds max length 35" in {
-      val testString = RandomStringUtils.random(36)
-      val data = validData + ("middleName" -> testString)
-
-      val expectedError = error("middleName", "messages__error__middle_name_length", 35)
-      checkForError(form, data, expectedError)
-    }
-
-
-    "fail to bind when the last name exceeds max length 35" in {
-      val testString = RandomStringUtils.random(36)
-      val data = validData + ("lastName" -> testString)
-
-      val expectedError = error("lastName", "messages__error__last_name_length", 35)
-      checkForError(form, data, expectedError)
-    }
-
-    Seq("-sfygAFD", "‘GHJGJG", "SDSAF^*NJ", "^*", "first name").foreach { name =>
-      s"fail to bind when the first name $name is invalid" in {
-        val data = validData + ("firstName" -> name)
-
-        val expectedError = error("firstName", "messages__error__first_name_invalid", regexFirstName)
+        val expectedError = error("firstName", "messages__error__first_name_length", 35)
         checkForError(form, data, expectedError)
       }
-    }
 
-    //TODO fail to bind when the middle name is invalid
+      "the middle name exceeds max length 35" in {
+        val testString = RandomStringUtils.random(36)
+        val data = validData + ("middleName" -> testString)
 
-    s"fail to bind when the last name is invalid" in {
-      val data = validData + ("lastName" -> "strbvhjbv^*")
+        val expectedError = error("middleName", "messages__error__middle_name_length", 35)
+        checkForError(form, data, expectedError)
+      }
 
-      val expectedError = error("lastName", "messages__error__last_name_invalid", regexLastName)
-      checkForError(form, data, expectedError)
+      "the last name exceeds max length 35" in {
+        val testString = RandomStringUtils.random(36)
+        val data = validData + ("lastName" -> testString)
+
+        val expectedError = error("lastName", "messages__error__last_name_length", 35)
+        checkForError(form, data, expectedError)
+      }
+
+      Seq("-sfygAFD", "‘GHJGJG", "SDSAF^*NJ", "^*", "first name").foreach { name =>
+        s"the first name $name is invalid" in {
+          val data = validData + ("firstName" -> name)
+
+          val expectedError = error("firstName", "messages__error__first_name_invalid", regexFirstName)
+          checkForError(form, data, expectedError)
+        }
+      }
+
+      s"the middle name is invalid" in {
+        val data = validData + ("middleName" -> "strbvhjbv^*!")
+
+        val expectedError = error("middleName", "messages__error__middle_name_invalid", regexMiddleName)
+        checkForError(form, data, expectedError)
+      }
+
+      s"the last name is invalid" in {
+        val data = validData + ("lastName" -> "strbvhjbv^*")
+
+        val expectedError = error("lastName", "messages__error__last_name_invalid", regexLastName)
+        checkForError(form, data, expectedError)
+      }
+
     }
 
     Seq("first-name", "King‘s").foreach { firstName =>

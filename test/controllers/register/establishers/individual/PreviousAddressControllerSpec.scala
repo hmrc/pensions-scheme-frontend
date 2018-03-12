@@ -59,7 +59,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase {
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test first name", "test last name", LocalDate.now),
+          EstablisherDetails("test first name", None, "test last name", LocalDate.now),
         PreviousAddressId.toString ->
           Json.toJson(Address("address line 1", "address line 2", Some("test town"),
             Some("test county"), Some("test post code"), "GB")

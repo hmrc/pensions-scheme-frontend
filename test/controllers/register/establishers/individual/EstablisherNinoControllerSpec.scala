@@ -41,20 +41,16 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val firstIndex = Index(0)
   val establisherName = "test first name test last name"
+  val establisherDetails = EstablisherDetails("test first name", None, "test last name", LocalDate.now)
 
   val validData = Json.obj(
     SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     "establishers" -> Json.arr(
       Json.obj(
-        EstablisherDetailsId.toString ->
-          EstablisherDetails("test first name", "test last name", LocalDate.now),
-        EstablisherNinoId.toString ->
-          EstablisherNino.Yes("CS700100A")
+        EstablisherDetailsId.toString -> establisherDetails,
+        EstablisherNinoId.toString -> EstablisherNino.Yes("CS700100A")
       ),
-      Json.obj(
-        EstablisherDetailsId.toString ->
-          EstablisherDetails("test", "test", LocalDate.now)
-      )
+      Json.obj(EstablisherDetailsId.toString -> establisherDetails)
     )
   )
 

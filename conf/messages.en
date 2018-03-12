@@ -21,7 +21,7 @@ error.summary.title = There was a problem with the page
 
 messages__common__firstname = First name
 messages__common__lastname = Last name
-messages__common__middlename= Middle name (optional)
+messages__common__middlename = Middle name (optional)
 messages__common__dob = Date of birth
 messages__common__dob__hint = Example 30 09 1990
 messages__common__day = Day

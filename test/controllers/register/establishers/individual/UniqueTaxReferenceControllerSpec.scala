@@ -49,13 +49,13 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test first name", "test last name", LocalDate.now),
+          EstablisherDetails("test first name", None, "test last name", LocalDate.now),
         UniqueTaxReferenceId.toString ->
           UniqueTaxReference.Yes("1234567891")
       ),
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test", "test", LocalDate.now)
+          EstablisherDetails("test", None, "test", LocalDate.now)
       )
     )
   )
