@@ -49,7 +49,6 @@ class DirectorDetailsController @Inject() (
 
   def onPageLoad(mode: Mode,establisherIndex:Index, directorIndex:Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-
       retrieveCompanyName(establisherIndex) { companyName =>
         val preparedForm = request.userAnswers.get[DirectorDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
           case None => form

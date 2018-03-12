@@ -20,7 +20,9 @@ import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
 import models.CompanyDetails
+import models.register.establishers.company.director.{DirectorContactDetails, DirectorDetails}
 import models.register.{SchemeDetails, SchemeType}
 import models.requests.DataRequest
 import org.scalatest.EitherValues
@@ -31,7 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
-
+import org.joda.time.LocalDate
 import scala.concurrent.Future
 
 class RetrievalsSpec extends ControllerSpecBase with FrontendController with Retrievals with EitherValues with ScalaFutures {
@@ -52,6 +54,34 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
 
   val secondIdentifier: TypedIdentifier[String] = new TypedIdentifier[String] {
     override def toString: String = "second"
+  }
+
+
+  "retrieveDirectorName" must {
+    "reach the intended result when director details is found" in {
+
+      val validData = Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            "director" -> Json.arr(
+              Json.obj(
+                DirectorDetailsId.toString ->
+                  DirectorDetails(
+                    "First Name",
+                    Some("Middle Name"),
+                    "Last Name",
+                    LocalDate.now)
+              )
+            )
+          )
+        )
+      )
+      implicit val request: DataRequest[AnyContent] = dataRequest(validData)
+
+      val result = controller.retrieveDirectorName(0, 0)(success)
+
+      status(result) must be(OK)
+    }
   }
 
   "retrieveCompanyName" must {

@@ -21,6 +21,8 @@ import identifiers.register._
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoId}
 import identifiers.register.establishers.{EstablisherKindId, company}
+import identifiers.register.establishers.company.director.DirectorContactDetailsId
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.EstablisherNino.{No, Yes}
 import models.addresslookup.Address
 import models.register.CountryOptions
@@ -31,6 +33,13 @@ import identifiers.register.establishers.individual._
 import models.register.establishers.company.director.DirectorNino
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
+
+  def companyDirectorContactDetails(establisherIndex:Int, directorIndex: Int): Seq[AnswerRow] =
+    userAnswers.get(DirectorContactDetailsId(establisherIndex, directorIndex)) match {
+      case Some(x) => Seq(AnswerRow("companyDirectorContactDetails.checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false,
+        controllers.register.establishers.company.director.routes.DirectorContactDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url))
+      case _ => Seq.empty
+    }
 
 
   def directorNino(establisherIndex: Int, directorIndex: Int): Seq[AnswerRow] = userAnswers.get(DirectorNinoId(establisherIndex,
@@ -68,6 +77,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
         )
       case _ => Nil
     }
+
 
   def companyAddress(index: Int): Option[AnswerRow] = userAnswers.get(company.CompanyAddressId(index)) map { x =>
     AnswerRow(

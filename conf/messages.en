@@ -329,6 +329,9 @@ messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
 messages__directorDetails__checkYourAnswersLabel = directorDetails
 
+messages__company_director_contact__title = Contact details for director
+messages__company_director_contact__heading = Contact details for director
+
 messages__director_nino_question_cya_label = Does the director have a National Insurance number?
 messages__director_nino_cya_label = National Insurance number
 messages__director_nino__title = Does the director have a National Insurance number?
