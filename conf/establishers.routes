@@ -132,3 +132,8 @@ GET        /:index/company/companyPreviousAddressList               controllers.
 POST       /:index/company/companyPreviousAddressList               controllers.register.establishers.company.CompanyPreviousAddressListController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/company/changeCompanyPreviousAddressList               controllers.register.establishers.company.CompanyPreviousAddressListController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/company/changeCompanyPreviousAddressList               controllers.register.establishers.company.CompanyPreviousAddressListController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /companyPreviousAddress                       controllers.register.establishers.company.CompanyPreviousAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /companyPreviousAddress                       controllers.register.establishers.company.CompanyPreviousAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /changeCompanyPreviousAddress                       controllers.register.establishers.company.CompanyPreviousAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeCompanyPreviousAddress                       controllers.register.establishers.company.CompanyPreviousAddressController.onSubmit(mode: Mode = CheckMode)
