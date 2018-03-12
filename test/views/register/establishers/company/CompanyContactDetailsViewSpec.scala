@@ -20,6 +20,7 @@ import play.api.data.Form
 import controllers.register.establishers.company.routes
 import forms.register.establishers.company.CompanyContactDetailsFormProvider
 import models.{CompanyContactDetails, Index, NormalMode}
+import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.company.companyContactDetails
 
@@ -30,9 +31,10 @@ class CompanyContactDetailsViewSpec extends QuestionViewBehaviours[CompanyContac
   val companyName = "test company name"
   override val form = new CompanyContactDetailsFormProvider()()
 
-  def createView = () => companyContactDetails(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyContactDetails(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyContactDetails(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyContactDetails(frontendAppConfig,
+    form, NormalMode, index, companyName)(fakeRequest, messages)
 
 
   "CompanyContactDetails view" must {

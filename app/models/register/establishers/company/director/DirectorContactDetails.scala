@@ -16,14 +16,10 @@
 
 package models.register.establishers.company.director
 
-import org.joda.time.LocalDate
 import play.api.libs.json._
 
-case class DirectorDetails (firstName: String,middleName:Option[String],lastName: String,date:LocalDate){
+case class DirectorContactDetails(emailAddress: String, phoneNumber: String)
 
-  def directorName: String = s"$firstName ${middleName.getOrElse("")} $lastName"
-}
-
-object DirectorDetails {
-  implicit val format = Json.format[DirectorDetails]
+object DirectorContactDetails {
+  implicit val format = Json.format[DirectorContactDetails]
 }
