@@ -17,7 +17,7 @@
 package forms.register.establishers.company.director
 
 import forms.behaviours.FormBehaviours
-import models.register.establishers.company.director.{DirectorContactDetails}
+import models.register.establishers.company.director.{DirectorContactDetails, DirectorDetails}
 import models.{Field, Required}
 import org.apache.commons.lang3.RandomStringUtils
 
@@ -28,7 +28,7 @@ class DirectorContactDetailsFormProviderSpec extends FormBehaviours {
     "phoneNumber" -> "123456789"
   )
   val emailRegex = "^[^@<>]+@[^@<>]+$"
-  val regexPhoneNumber = "\\d*"
+  val regexPhoneNumber ="^[0-9+()]*$"
   val form = new DirectorContactDetailsFormProvider()()
 
   "CompanyDirectorContactDetails form" must {
@@ -54,6 +54,19 @@ class DirectorContactDetailsFormProviderSpec extends FormBehaviours {
 
       val expectedError = error("emailAddress", "messages__error__email_length", maxlengthEmail)
       checkForError(form, data, expectedError)
+    }
+
+      Seq("1","234234","+0","()1232","(1)1","(0111)22222","(11111)+999+()").foreach { phoneNumber =>
+      s"successfully bind valid phone number $phoneNumber" in {
+
+        val detailsForm = form.bind(Map(
+          "emailAddress" -> "test@test.com",
+          "phoneNumber" -> phoneNumber))
+
+        val expectedData = DirectorContactDetails("test@test.com",phoneNumber)
+
+        detailsForm.get shouldBe expectedData
+      }
     }
 
     Seq("zfsadfdsf", "<>13213cvfdv").foreach { phoneNo =>
