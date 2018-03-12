@@ -16,23 +16,27 @@
 
 package views.register.establishers.company
 
+import forms.register.establishers.individual.AddressFormProvider
+import models.addresslookup.Address
+import models.register.CountryOptions
+import models.{Index, NormalMode}
 import play.api.data.Form
-import controllers.register.establishers.company.routes
-import forms.register.establishers.company.CompanyPreviousAddressFormProvider
-import models.NormalMode
-import models.register.establishers.company.CompanyPreviousAddress
+import utils.InputOption
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.company.companyPreviousAddress
 
-class CompanyPreviousAddressViewSpec extends QuestionViewBehaviours[CompanyPreviousAddress] {
+class CompanyPreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
 
   val messageKeyPrefix = "companyPreviousAddress"
+  val index = Index(0)
+  val companyName = "test company name"
+  val options = Seq(InputOption("territory:AX", "Åland Islands"), InputOption("country:ZW", "Zimbabwe"))
 
-  override val form = new CompanyPreviousAddressFormProvider()()
+  override val form = new AddressFormProvider()()
 
-  def createView = () => companyPreviousAddress(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView = () => companyPreviousAddress(frontendAppConfig, form, NormalMode, index, companyName, options)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyPreviousAddress(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => companyPreviousAddress(frontendAppConfig, form, NormalMode, index, companyName, options)(fakeRequest, messages)
 
 
   "CompanyPreviousAddress view" must {
@@ -41,6 +45,8 @@ class CompanyPreviousAddressViewSpec extends QuestionViewBehaviours[CompanyPrevi
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.register.establishers.company.routes.CompanyPreviousAddressController.onSubmit(NormalMode).url, "field1", "field2")
+    behave like pageWithSecondaryHeader(createView, companyName)
+
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.register.establishers.company.routes.CompanyPreviousAddressController.onSubmit(NormalMode, index).url,  "addressLine1", "addressLine2", "addressLine3", "addressLine4")
   }
 }

@@ -16,55 +16,76 @@
 
 package controllers.register.establishers.company
 
+import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
+import controllers.actions._
+import forms.register.establishers.individual.AddressFormProvider
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.company.{CompanyAddressId, CompanyDetailsId, CompanyPreviousAddressId}
+import models.addresslookup.Address
+import models.{CompanyDetails, Index, NormalMode}
+import models.register.{CountryOptions, SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
-import connectors.FakeDataCacheConnector
-import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.company.CompanyPreviousAddressFormProvider
-import identifiers.register.establishers.company.CompanyPreviousAddressId
-import models.NormalMode
-import models.register.establishers.company.CompanyPreviousAddress
+import utils.{FakeNavigator, InputOption}
 import views.html.register.establishers.company.companyPreviousAddress
-import controllers.ControllerSpecBase
 
 class CompanyPreviousAddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new CompanyPreviousAddressFormProvider()
+  val formProvider = new AddressFormProvider()
   val form = formProvider()
+  val companyName = "test company name"
+  val index = Index(0)
+  val options = Seq(InputOption("territory:AX", "Åland Islands"), InputOption("country:ZW", "Zimbabwe"))
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
+  def countryOptions: CountryOptions = new CountryOptions(options)
+
+  val address = Address("address line 1", "address line 2", None, None, None, "GB")
+
+  val validData = Json.obj(
+    SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    EstablishersId.toString -> Json.arr(
+      Json.obj(
+        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+        CompanyPreviousAddressId.toString -> address
+      )
+    )
+  )
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
     new CompanyPreviousAddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider, countryOptions)
 
-  def viewAsString(form: Form[_] = form) = companyPreviousAddress(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = companyPreviousAddress(frontendAppConfig, form, NormalMode, index, companyName, options)(fakeRequest, messages).toString
 
   "CompanyPreviousAddress Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, index)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(CompanyPreviousAddressId.toString -> CompanyPreviousAddress("value 1", "value 2"))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, index)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(CompanyPreviousAddress("value 1", "value 2")))
+      contentAsString(result) mustBe viewAsString(form.fill(address))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("field1", "value 1"), ("field2", "value 2"))
-
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val postRequest = fakeRequest.withFormUrlEncodedBody(
+        ("addressLine1", "address line 1"),
+        ("addressLine2", "address line 2"),
+        ("postCode.postCode", "AB12 3CD"),
+        "country" -> "GB")
+      val result = controller().onSubmit(NormalMode, index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -74,22 +95,22 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode, index)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("field1", "value 1"), ("field2", "value 2"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("addressLine1", "address line 1"), ("addressLine2", "address line 2"))
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
