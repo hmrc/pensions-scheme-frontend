@@ -328,3 +328,6 @@ messages__companyAddress__lede = This is usually the registered business address
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
 messages__directorDetails__checkYourAnswersLabel = directorDetails
+
+messages__company_director_contact__title = Contact details for director
+messages__company_director_contact__heading = Contact details for director
