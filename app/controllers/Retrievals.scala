@@ -29,6 +29,7 @@ import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
+import scala.language.implicitConversions
 
 trait Retrievals {
 
@@ -66,4 +67,33 @@ trait Retrievals {
 
   }
 
+  case class ~[A, B](a: A, b: B)
+
+  trait Retrieval[A] {
+    self =>
+
+    def retrieve: Either[Future[Result], A]
+
+    def and[B](query: Retrieval[B]): Retrieval[A ~ B] =
+      new Retrieval[A ~ B] {
+        override def retrieve: Either[Future[Result], A ~ B] = {
+          for {
+            a <- self.retrieve.right
+            b <- query.retrieve.right
+          } yield new ~(a, b)
+        }
+      }
+  }
+
+  implicit def fromId[A](id: TypedIdentifier[A])(implicit request: DataRequest[AnyContent], reads: Reads[A]): Retrieval[A] =
+    new Retrieval[A] {
+      override def retrieve: Either[Future[Result], A] =
+        request.userAnswers.get(id) match {
+          case Some(value) => Right(value)
+          case None        => Left(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
+        }
+    }
+
+  implicit def merge(f: Either[Future[Result], Future[Result]]): Future[Result] =
+    f.merge
 }
