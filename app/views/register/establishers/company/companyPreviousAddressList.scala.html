@@ -30,7 +30,7 @@
 }
 
 @main_template(
-    title = messages("messages__companyPreviousAddressList__title"),
+    title = messages("messages__select_the_address__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -40,11 +40,11 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__companyPreviousAddressList__heading", secondaryHeaderKey = Some(companyName))
+        @components.heading("messages__select_the_address__title", secondaryHeaderKey = Some(companyName))
 
         <p>
             @messages("messages__common__select_address")
-            <a id="manual-address-link" href="@CompanyPreviousAddressListController.onPageLoad(mode, index)">
+            <a id="manual-address-link" href="@CompanyPreviousAddressController.onPageLoad(mode, index)">
                 @messages(s"messages__common__select_address_link")
             </a>
         </p>
