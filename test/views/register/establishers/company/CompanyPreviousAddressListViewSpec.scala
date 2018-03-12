@@ -47,14 +47,14 @@ class CompanyPreviousAddressListViewSpec extends ViewBehaviours {
   def createViewUsingForm = (form: Form[_]) => companyPreviousAddressList(frontendAppConfig, form, NormalMode, index, companyName, addresses)(fakeRequest, messages)
 
   "CompanyPreviousAddressList view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView, "select_the_address", messages(s"messages__select_the_address__title"))
 
     behave like pageWithBackLink(createView)
     behave like pageWithSecondaryHeader(createView, companyName)
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString).select("a[id=manual-address-link]") must haveLink(
-        routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, index).url
+        routes.CompanyPreviousAddressController.onPageLoad(NormalMode, index).url
       )
     }
   }
