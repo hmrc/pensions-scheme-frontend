@@ -25,7 +25,7 @@ import models.register.establishers.company.director.{DirectorContactDetails}
 
 class DirectorContactDetailsFormProvider @Inject() extends Mappings {
 
-  val regexPhoneNumber ="^[0-9+()]+$"
+  val regexPhoneNumber ="^[0-9 +()-]+$"
 
   val maxLengthPhone = 24
   val maxEmailLength = 132

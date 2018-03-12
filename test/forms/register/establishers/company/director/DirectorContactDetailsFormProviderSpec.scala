@@ -28,7 +28,7 @@ class DirectorContactDetailsFormProviderSpec extends FormBehaviours {
     "phoneNumber" -> "123456789"
   )
   val emailRegex = "^[^@<>‘“]+@[^@<>‘“]+$"
-  val regexPhoneNumber ="^[0-9+()]+$"
+  val regexPhoneNumber ="^[0-9 +()-]+$"
   val form = new DirectorContactDetailsFormProvider()()
 
   "CompanyDirectorContactDetails form" must {
@@ -56,7 +56,13 @@ class DirectorContactDetailsFormProviderSpec extends FormBehaviours {
       checkForError(form, data, expectedError)
     }
 
-      Seq("1","234234","+0","()1232","(1)1","(0111)22222","(11111)+999+()").foreach { phoneNumber =>
+      Seq("1","234234","+","-","(",")"," ",
+          "+1","-1","(1","(2",
+          "+1111", " 3333", "-33333",
+          "(1)1","(0111)22222",
+          "(11111)+999+()",
+          "1 2", "1 + ) (-"
+      ).foreach { phoneNumber =>
       s"successfully bind valid phone number $phoneNumber" in {
 
         val detailsForm = form.bind(Map(
