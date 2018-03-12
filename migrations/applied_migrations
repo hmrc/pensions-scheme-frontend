@@ -1,33 +1,37 @@
 #!/bin/bash
 
-echo "Applying migration CompanyDirectorNino"
+echo "Applying migration DirectorDetails"
 
 echo "Adding routes to register.establishers.company.director.routes"
 
 echo "" >> ../conf/register.establishers.company.director.routes
-echo "GET        /companyDirectorNino                       controllers.register.establishers.company.director.CompanyDirectorNinoController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
-echo "POST       /companyDirectorNino                       controllers.register.establishers.company.director.CompanyDirectorNinoController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
+echo "GET        /directorDetails                       controllers.register.establishers.company.director.DirectorDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
+echo "POST       /directorDetails                       controllers.register.establishers.company.director.DirectorDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
 
-echo "GET        /changeCompanyDirectorNino                       controllers.register.establishers.company.director.CompanyDirectorNinoController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
-echo "POST       /changeCompanyDirectorNino                       controllers.register.establishers.company.director.CompanyDirectorNinoController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
+echo "GET        /changeDirectorDetails                       controllers.register.establishers.company.director.DirectorDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
+echo "POST       /changeDirectorDetails                       controllers.register.establishers.company.director.DirectorDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "messages__companyDirectorNino__title = companyDirectorNino" >> ../conf/messages.en
-echo "messages__companyDirectorNino__heading = companyDirectorNino" >> ../conf/messages.en
-echo "messages__companyDirectorNino__checkYourAnswersLabel = companyDirectorNino" >> ../conf/messages.en
-echo "messages__companyDirectorNino__error__required = Please give an answer for companyDirectorNino" >> ../conf/messages.en
+echo messages__"directorDetails__title = directorDetails" >> ../conf/messages.en
+echo messages__"directorDetails__heading = directorDetails" >> ../conf/messages.en
+echo messages__"directorDetails__field1 = Field 1" >> ../conf/messages.en
+echo messages__"directorDetails__field2 = Field 2" >> ../conf/messages.en
+echo messages__"directorDetails__checkYourAnswersLabel = directorDetails" >> ../conf/messages.en
+echo messages__"directorDetails__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
+echo messages__"directorDetails__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def companyDirectorNino: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.director.CompanyDirectorNinoId) map {";\
-     print "    x => AnswerRow(\"companyDirectorNino.checkYourAnswersLabel\", Seq(if(x) \"site.yes\" else \"site.no\"), true, controllers.register.establishers.company.director.routes.CompanyDirectorNinoController.onPageLoad(CheckMode).url)"; print "  }";\
+     print "  def directorDetails: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.director.DirectorDetailsId) map {";\
+     print "    x => AnswerRow(\"directorDetails.checkYourAnswersLabel\", Seq(s\"${x.field1} ${x.field2}\"), false, controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(CheckMode).url)";\
+     print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration CompanyDirectorNino completed"
+echo "Migration DirectorDetails completed"

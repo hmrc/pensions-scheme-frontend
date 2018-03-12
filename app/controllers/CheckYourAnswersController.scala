@@ -36,6 +36,12 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       val sections = Seq(AnswerSection(None, Seq()))
-      Ok(check_your_answers(appConfig, sections))
+      Ok(check_your_answers(appConfig, sections, None, routes.CheckYourAnswersController.onSubmit()))
   }
+
+  def onSubmit(): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+    implicit request =>
+      Redirect(routes.IndexController.onPageLoad())
+  }
+
 }

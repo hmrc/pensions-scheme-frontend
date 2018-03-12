@@ -21,6 +21,7 @@ error.summary.title = There was a problem with the page
 
 messages__common__firstname = First name
 messages__common__lastname = Last name
+messages__common__middlename= Middle name (optional)
 messages__common__dob = Date of birth
 messages__common__dob__hint = Example 30 09 1990
 messages__common__day = Day
@@ -201,6 +202,8 @@ messages__error__first_name_length = The first name cannot be more than 35 chara
 messages__error__first_name_invalid = Enter the valid first name
 messages__error__last_name_length = The last name cannot be more than 35 characters
 messages__error__last_name_invalid = Enter the valid last name
+messages__error__middle_name_length = The middle name cannot be more than 35 characters
+messages__error__middle_name_invalid = Enter the valid middle name
 
 messages__establisherNino__title = Does the establisher have a National Insurance number?
 messages__establisher__no_nino = Tell us why the establisher does not have a National Insurance number
@@ -322,6 +325,9 @@ messages__companyAddress__heading = Company address
 messages__companyAddress__checkYourAnswersLabel = Company address
 messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.
 
+messages__directorDetails__title = Company director
+messages__directorDetails__heading = Company director
+messages__directorDetails__checkYourAnswersLabel = directorDetails
 
 messages__company_director_nino_question_cya_label = Does the director have a National Insurance number?
 messages__company_director_nino_cya_label = National Insurance number

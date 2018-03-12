@@ -21,13 +21,13 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import models.Index
+import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswersFactory
 import viewmodels.AnswerSection
-import views.html.register.establishers.individual.check_your_answers
+import views.html.check_your_answers
 
 import scala.concurrent.Future
 
@@ -50,8 +50,13 @@ class CheckYourAnswersController @Inject() (appConfig: FrontendAppConfig,
           checkYourAnswerHelper.previousAddress(index) ++
           checkYourAnswerHelper.contactDetails(index))
         )
-        Future.successful(Ok(check_your_answers(appConfig, sections, schemeName)))
+        Future.successful(Ok(check_your_answers(appConfig, sections, Some(schemeName), routes.CheckYourAnswersController.onSubmit(index))))
       }
+  }
+
+  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData) {
+    implicit request =>
+      Redirect(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
   }
 
 }

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import viewmodels.AnswerSection
-@import views.html._
+package models.register.establishers.company.director
 
-@(answerSection: AnswerSection, idPath: String)(implicit messages: Messages)
+import org.joda.time.LocalDate
+import play.api.libs.json._
 
-@if(answerSection.headingKey.isDefined){
-    <h2 id="cya-@idPath-heading" class="bold">@messages(answerSection.headingKey.get)</h2>
+case class DirectorDetails (firstName: String,middleName:Option[String],lastName: String,date:LocalDate){
+
+  def directorName: String = s"$firstName $middleName $lastName"
 }
 
-<ul class="govuk-check-your-answers form-group cya-questions-short">
-    @for((row, i) <- answerSection.rows.zipWithIndex){
-        @components.answer_row(row, idPath + "-" + i.toString)
-    }
-</ul>
+object DirectorDetails {
+  implicit val format = Json.format[DirectorDetails]
+}

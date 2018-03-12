@@ -19,8 +19,7 @@ package controllers
 import play.api.test.Helpers._
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import models.register.CountryOptions
-import play.api.libs.json.JsNull
-import utils.{CheckYourAnswersFactory, InputOption, UserAnswers}
+import utils.{CheckYourAnswersFactory, InputOption}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -35,9 +34,10 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   "Check Your Answers Controller" must {
     "return 200 and the correct view for a GET" in {
+      val postUrl = routes.CheckYourAnswersController.onSubmit()
       val result = controller().onPageLoad()(fakeRequest)
       status(result) mustBe OK
-      contentAsString(result) mustBe check_your_answers(frontendAppConfig, Seq(AnswerSection(None, Seq())))(fakeRequest, messages).toString
+      contentAsString(result) mustBe check_your_answers(frontendAppConfig, Seq(AnswerSection(None, Seq())), None, postUrl)(fakeRequest, messages).toString
     }
 
     "redirect to Session Expired for a GET if not existing data is found" in {
@@ -46,5 +46,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.SessionExpiredController.onPageLoad().url)
     }
+
+    "redirect to Index for a POST" in {
+      val result = controller().onSubmit()(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.IndexController.onPageLoad().url)
+    }
   }
+
 }
