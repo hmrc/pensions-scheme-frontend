@@ -1,33 +1,18 @@
 #!/bin/bash
 
-echo "Applying migration AddCompanyDirectors"
+echo "Applying migration CheckYourAnswers"
 
 echo "Adding routes to register.establishers.company.routes"
-
 echo "" >> ../conf/register.establishers.company.routes
-echo "GET        /addCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /addCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
-
-echo "GET        /changeAddCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /changeAddCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "GET        /checkYourAnswers                       controllers.register.establishers.company.CheckYourAnswersController.onPageLoad()" >> ../conf/register.establishers.company.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "messages__addCompanyDirectors__title = addCompanyDirectors" >> ../conf/messages.en
-echo "messages__addCompanyDirectors__heading = addCompanyDirectors" >> ../conf/messages.en
-echo "messages__addCompanyDirectors__checkYourAnswersLabel = addCompanyDirectors" >> ../conf/messages.en
-echo "messages__addCompanyDirectors__error__required = Please give an answer for addCompanyDirectors" >> ../conf/messages.en
-
-echo "Adding helper method to CheckYourAnswersHelper"
-awk '/class/ {\
-     print;\
-     print "";\
-     print "  def addCompanyDirectors: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.AddCompanyDirectorsId) map {";\
-     print "    x => AnswerRow(\"addCompanyDirectors.checkYourAnswersLabel\", Seq(if(x) \"site.yes\" else \"site.no\"), true, controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(CheckMode).url)"; print "  }";\
-     next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
+echo "checkYourAnswers.title = checkYourAnswers" >> ../conf/messages.en
+echo "checkYourAnswers.heading = checkYourAnswers" >> ../conf/messages.en
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration AddCompanyDirectors completed"
+echo "Migration CheckYourAnswers completed"
