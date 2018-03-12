@@ -27,8 +27,8 @@ class DirectorContactDetailsFormProviderSpec extends FormBehaviours {
     "emailAddress" -> "test@test.com",
     "phoneNumber" -> "123456789"
   )
-  val emailRegex = "^[^@<>]+@[^@<>]+$"
-  val regexPhoneNumber ="^[0-9+()]*$"
+  val emailRegex = "^[^@<>‘“]+@[^@<>‘“]+$"
+  val regexPhoneNumber ="^[0-9+()]+$"
   val form = new DirectorContactDetailsFormProvider()()
 
   "CompanyDirectorContactDetails form" must {
@@ -38,7 +38,7 @@ class DirectorContactDetailsFormProviderSpec extends FormBehaviours {
       Field("emailAddress", Required -> "messages__error__email"),
       Field("phoneNumber", Required -> "messages__error__phone")
     )
-    Seq("@test.com", "<>@ghghg", "fhgfhgfggf", "test@<>.com").foreach { email =>
+    Seq("@test.com", "<>@ghghg", "fhgfhgfggf", "test@<>.com","a‘@a","a“@com").foreach { email =>
       s"fail to bind when the email $email is invalid" in {
         val data = validData + ("emailAddress" -> email)
 
