@@ -69,6 +69,7 @@ messages__session_expired__title = For your security, this service has been rese
 messages__session_expired__guidance = The details you have given have been deleted because you did not continue the service for 1 hour.
 
 site.back = Back
+site.continue = Continue
 site.delete = Remove
 site.edit = Edit
 site.hidden-delete = Delete {0}
@@ -345,3 +346,12 @@ messages__director_nino__title = Does the director have a National Insurance num
 messages__director_no_nino = Tell us why the director does not have a National Insurance number
 messages__error__has_nino_director = Select yes if the director has a National Insurance number
 messages__error__no_nino_director = You need to tell us why the director does not have a National Insurance number
+
+messages__addCompanyDirectors__title = Company directors
+messages__addCompanyDirectors__heading = Company directors
+messages__addCompanyDirectors__checkYourAnswersLabel = Company directors
+messages__addCompanyDirectors__error__required = You must make a selection
+messages__addCompanyDirectors_lede = You must tell us about all your directors. You can add up to 10 using the digital service.
+messages__addCompanyDirectors_add_director = Add a director
+messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
+messages__addCompanyDirectors_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.

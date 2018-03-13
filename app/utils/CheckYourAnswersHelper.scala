@@ -40,6 +40,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     x => AnswerRow("companyPreviousAddress.checkYourAnswersLabel", addressAnswer(x), false, controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url)
   }
 
+  def addCompanyDirectors(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.AddCompanyDirectorsId) map {
+    x => AnswerRow("addCompanyDirectors.checkYourAnswersLabel", Seq(if(x) "site.yes" else "site.no"), true, controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index).url)
+  }
+
   def companyPreviousAddressList(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.CompanyPreviousAddressListId(index)) map {
     x => AnswerRow("messages__companyPreviousAddressList__checkYourAnswersLabel", Seq(s"companyPreviousAddressList.$x"), true, controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(CheckMode, index).url)
   }
@@ -93,7 +97,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
         )
       case _ => Nil
     }
-
 
   def companyAddress(index: Int): Option[AnswerRow] = userAnswers.get(company.CompanyAddressId(index)) map { x =>
     AnswerRow(

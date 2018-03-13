@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package utils
+package controllers.register.establishers.company.director
 
-import play.api.mvc.Call
-import identifiers.Identifier
-import models.{Mode, NormalMode}
+import models.Index
+import play.api.mvc.Action
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
+class ConfirmDeleteDirectorController extends FrontendController {
 
-  private[this] var userAnswers: Option[UserAnswers] = None
+  // Stub controller will be implemented by PODS-457
 
-  override def nextPage(controllerId: Identifier, mode: Mode): (UserAnswers) => Call = {
-    (ua) => {
-      userAnswers = Some(ua)
-      desiredRoute
-    }
+  def onPageLoad(establisherIndex: Index, directorIndex: Index) = Action {
+    Ok
   }
-
-  def lastUserAnswers: Option[UserAnswers] = userAnswers
 
 }

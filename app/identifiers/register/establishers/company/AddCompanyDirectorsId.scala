@@ -14,23 +14,9 @@
  * limitations under the License.
  */
 
-package utils
+package identifiers.register.establishers.company
+import identifiers._
 
-import play.api.mvc.Call
-import identifiers.Identifier
-import models.{Mode, NormalMode}
-
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
-
-  private[this] var userAnswers: Option[UserAnswers] = None
-
-  override def nextPage(controllerId: Identifier, mode: Mode): (UserAnswers) => Call = {
-    (ua) => {
-      userAnswers = Some(ua)
-      desiredRoute
-    }
-  }
-
-  def lastUserAnswers: Option[UserAnswers] = userAnswers
-
+case object AddCompanyDirectorsId extends TypedIdentifier[Boolean] {
+  override def toString: String = "addCompanyDirectors"
 }

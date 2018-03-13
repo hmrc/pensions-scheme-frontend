@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package utils
+package forms.register.establishers.company
 
-import play.api.mvc.Call
-import identifiers.Identifier
-import models.{Mode, NormalMode}
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
+class AddCompanyDirectorsFormProvider @Inject() extends Mappings {
 
-  private[this] var userAnswers: Option[UserAnswers] = None
-
-  override def nextPage(controllerId: Identifier, mode: Mode): (UserAnswers) => Call = {
-    (ua) => {
-      userAnswers = Some(ua)
-      desiredRoute
-    }
-  }
-
-  def lastUserAnswers: Option[UserAnswers] = userAnswers
-
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__addCompanyDirectors__error__required")
+    )
 }

@@ -142,3 +142,10 @@ GET        /:establisherIndex/company/director/:directorIndex/directorNino      
 POST       /:establisherIndex/company/director/:directorIndex/directorNino                       controllers.register.establishers.company.director.DirectorNinoController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
 GET        /:establisherIndex/company/director/:directorIndex/changeDirectorNino                       controllers.register.establishers.company.director.DirectorNinoController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
 POST       /:establisherIndex/company/director/:directorIndex/changeDirectorNino                        controllers.register.establishers.company.director.DirectorNinoController.onSubmit(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
+
+GET        /:index/company/addCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/company/addCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/company/changeAddCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/company/changeAddCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:establisherIndex/company/director/:directorIndex/confirmDeleteDirector                       controllers.register.establishers.company.director.ConfirmDeleteDirectorController.onPageLoad(establisherIndex: Index, directorIndex: Index)
