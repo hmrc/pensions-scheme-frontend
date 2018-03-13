@@ -36,6 +36,10 @@ import models.register.establishers.company.director.DirectorNino
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
+  def companyPreviousAddressList(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.CompanyPreviousAddressListId(index)) map {
+    x => AnswerRow("messages__companyPreviousAddressList__checkYourAnswersLabel", Seq(s"companyPreviousAddressList.$x"), true, controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(CheckMode, index).url)
+  }
+
   def companyPreviousAddressPostcodeLookup(index: Int): Option[AnswerRow] =
     userAnswers.get(identifiers.register.establishers.company.CompanyPreviousAddressPostcodeLookupId(index)) map {
       x => AnswerRow("companyPreviousAddressPostcodeLookup.checkYourAnswersLabel", Seq(s"$x"), false,
