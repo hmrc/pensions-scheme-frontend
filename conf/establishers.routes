@@ -118,7 +118,13 @@ POST       /:establisherIndex/company/director/:directorIndex/directorDetails   
 GET        /:establisherIndex/company/director/:directorIndex/changeDirectorDetails                 controllers.register.establishers.company.director.DirectorDetailsController.onPageLoad(mode: Mode = CheckMode,establisherIndex:Index,directorIndex:Index)
 POST       /:establisherIndex/company/director/:directorIndex/changeDirectorDetails                 controllers.register.establishers.company.director.DirectorDetailsController.onSubmit(mode: Mode = CheckMode,establisherIndex:Index,directorIndex:Index)
 
+GET        /:index/company/companyPreviousAddressPostcodeLookup               controllers.register.establishers.company.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/company/companyPreviousAddressPostcodeLookup               controllers.register.establishers.company.CompanyPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/company/changeCompanyPreviousAddressPostcodeLookup                        controllers.register.establishers.company.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/company/changeCompanyPreviousAddressPostcodeLookup                        controllers.register.establishers.company.CompanyPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index: Index)
+
 GET        /:establisherIndex/company/director/:directorIndex/directorContactDetails                       controllers.register.establishers.company.director.DirectorContactDetailsController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
 POST       /:establisherIndex/company/director/:directorIndex/directorContactDetails                       controllers.register.establishers.company.director.DirectorContactDetailsController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
 GET        /:establisherIndex/company/director/:directorIndex/directorContactDetails                       controllers.register.establishers.company.director.DirectorContactDetailsController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
 POST       /:establisherIndex/company/director/:directorIndex/directorContactDetails                       controllers.register.establishers.company.director.DirectorContactDetailsController.onSubmit(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
+

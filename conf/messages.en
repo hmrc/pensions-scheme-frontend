@@ -37,7 +37,6 @@ messages__common__phone = Phone number
 messages__common__enter_postcode = Enter the postcode below, or
 messages__common__select_address_link = enter the address manually
 messages__common__address_postcode = Postal code
-messages__common__address_postcode_hint = For example NE12 8ER
 messages__common__address1 = Address line 1
 messages__common__address2 = Address line 2
 messages__common__address3 = Address line 3 (optional)
@@ -328,6 +327,10 @@ messages__companyAddress__lede = This is usually the registered business address
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
 messages__directorDetails__checkYourAnswersLabel = directorDetails
+
+messages__companyPreviousAddressPostcodeLookup__title = Previous address of the company
+messages__companyPreviousAddressPostcodeLookup__heading = Previous address of the company
+messages__companyPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous address
 
 messages__company_director_contact__title = Contact details for director
 messages__company_director_contact__heading = Contact details for director

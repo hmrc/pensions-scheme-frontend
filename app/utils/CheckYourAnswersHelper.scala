@@ -32,6 +32,12 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
+  def companyPreviousAddressPostcodeLookup(index: Int): Option[AnswerRow] =
+    userAnswers.get(identifiers.register.establishers.company.CompanyPreviousAddressPostcodeLookupId(index)) map {
+    x => AnswerRow("companyPreviousAddressPostcodeLookup.checkYourAnswersLabel", Seq(s"$x"), false,
+      controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, index).url)
+    }
+  
   def companyDirectorContactDetails(establisherIndex:Int, directorIndex: Int): Seq[AnswerRow] =
     userAnswers.get(DirectorContactDetailsId(establisherIndex, directorIndex)) match {
     case Some(x) => Seq(AnswerRow("companyDirectorContactDetails.checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false,
