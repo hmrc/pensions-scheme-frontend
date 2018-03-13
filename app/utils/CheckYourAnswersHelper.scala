@@ -23,6 +23,8 @@ import identifiers.register.establishers.company.director.{DirectorDetailsId, Di
 import identifiers.register.establishers.{EstablisherKindId, company}
 import identifiers.register.establishers.company.director.DirectorContactDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.individual._
+import identifiers.register.establishers.{EstablisherKindId, company}
 import models.EstablisherNino.{No, Yes}
 import models.addresslookup.Address
 import models.register.CountryOptions
@@ -34,12 +36,18 @@ import models.register.establishers.company.director.DirectorNino
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
-  def directorContactDetails(establisherIndex:Int, directorIndex: Int): Seq[AnswerRow] =
-    userAnswers.get(DirectorContactDetailsId(establisherIndex, directorIndex)) match {
-      case Some(x) => Seq(AnswerRow("companyDirectorContactDetails.checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false,
-        controllers.register.establishers.company.director.routes.DirectorContactDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url))
-      case _ => Seq.empty
+  def companyPreviousAddressPostcodeLookup(index: Int): Option[AnswerRow] =
+    userAnswers.get(identifiers.register.establishers.company.CompanyPreviousAddressPostcodeLookupId(index)) map {
+      x => AnswerRow("companyPreviousAddressPostcodeLookup.checkYourAnswersLabel", Seq(s"$x"), false,
+        controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, index).url)
     }
+
+  def companyDirectorContactDetails(establisherIndex:Int, directorIndex: Int): Seq[AnswerRow] =
+    userAnswers.get(DirectorContactDetailsId(establisherIndex, directorIndex)) match {
+    case Some(x) => Seq(AnswerRow("companyDirectorContactDetails.checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false,
+      controllers.register.establishers.company.director.routes.DirectorContactDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url))
+    case _ => Seq.empty
+  }
 
 
   def directorNino(establisherIndex: Int, directorIndex: Int): Seq[AnswerRow] = userAnswers.get(DirectorNinoId(establisherIndex,
