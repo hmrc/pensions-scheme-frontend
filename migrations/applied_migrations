@@ -1,29 +1,31 @@
 #!/bin/bash
 
-echo "Applying migration CompanyPreviousAddressPostcodeLookup"
+echo "Applying migration CompanyPreviousAddressList"
 
-echo "Adding routes to register.establishers.company.routes"
+echo "Adding routes to conf/register.establishers.company.routes"
 
-echo "" >> ../conf/register.establishers.company.routes
-echo "GET        /companyPreviousAddressPostcodeLookup               controllers.register.establishers.company.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /companyPreviousAddressPostcodeLookup               controllers.register.establishers.company.CompanyPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "" >> ../conf/app.routes
+echo "GET        /companyPreviousAddressList               controllers.register.establishers.company.CompanyPreviousAddressListController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /companyPreviousAddressList               controllers.register.establishers.company.CompanyPreviousAddressListController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.routes
 
-echo "GET        /changeCompanyPreviousAddressPostcodeLookup                        controllers.register.establishers.company.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
-echo "POST       /changeCompanyPreviousAddressPostcodeLookup                        controllers.register.establishers.company.CompanyPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "GET        /changeCompanyPreviousAddressList               controllers.register.establishers.company.CompanyPreviousAddressListController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
+echo "POST       /changeCompanyPreviousAddressList               controllers.register.establishers.company.CompanyPreviousAddressListController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "messages__companyPreviousAddressPostcodeLookup__title = companyPreviousAddressPostcodeLookup" >> ../conf/messages.en
-echo "messages__companyPreviousAddressPostcodeLookup__heading = companyPreviousAddressPostcodeLookup" >> ../conf/messages.en
-echo "messages__companyPreviousAddressPostcodeLookup__checkYourAnswersLabel = companyPreviousAddressPostcodeLookup" >> ../conf/messages.en
-echo "messages__companyPreviousAddressPostcodeLookup__error__required = Please give an answer for companyPreviousAddressPostcodeLookup" >> ../conf/messages.en
+echo "messages__companyPreviousAddressList__title = companyPreviousAddressList" >> ../conf/messages.en
+echo "messages__companyPreviousAddressList__heading = companyPreviousAddressList" >> ../conf/messages.en
+echo "messages__companyPreviousAddressList__option1 = companyPreviousAddressList" Option 1 >> ../conf/messages.en
+echo "messages__companyPreviousAddressList__option2 = companyPreviousAddressList" Option 2 >> ../conf/messages.en
+echo "messages__companyPreviousAddressList__checkYourAnswersLabel = companyPreviousAddressList" >> ../conf/messages.en
+echo "messages__companyPreviousAddressList__error__required = Please give an answer for companyPreviousAddressList" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def companyPreviousAddressPostcodeLookup: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.CompanyPreviousAddressPostcodeLookupId) map {";\
-     print "    x => AnswerRow(\"companyPreviousAddressPostcodeLookup.checkYourAnswersLabel\", Seq(s\"$x\"), false, controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(CheckMode).url)";\
+     print "  def companyPreviousAddressList: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.CompanyPreviousAddressListId) map {";\
+     print "    x => AnswerRow(\"messages__companyPreviousAddressList__checkYourAnswersLabel\", Seq(s\"companyPreviousAddressList.$x\"), true, controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -31,4 +33,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration CompanyPreviousAddressPostcodeLookup completed"
+echo "Migration CompanyPreviousAddressList completed"
