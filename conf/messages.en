@@ -338,3 +338,10 @@ messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
 
 messages__company_director_contact__title = Contact details for director
 messages__company_director_contact__heading = Contact details for director
+
+messages__director_nino_question_cya_label = Does the director have a National Insurance number?
+messages__director_nino_cya_label = National Insurance number
+messages__director_nino__title = Does the director have a National Insurance number?
+messages__director_no_nino = Tell us why the director does not have a National Insurance number
+messages__error__has_nino_director = Select yes if the director has a National Insurance number
+messages__error__no_nino_director = You need to tell us why the director does not have a National Insurance number

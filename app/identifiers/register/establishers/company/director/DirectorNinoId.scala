@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package models.register.establishers.company.director
+package identifiers.register.establishers.company.director
+import identifiers._
+import identifiers.register.establishers.EstablishersId
+import models.register.establishers.company.director.DirectorNino
+import play.api.libs.json.JsPath
 
-import org.joda.time.LocalDate
-import play.api.libs.json._
-
-case class DirectorDetails (firstName: String,middleName:Option[String],lastName: String,date:LocalDate){
-
-  def directorName: String = Seq(Some(firstName), middleName, Some(lastName)).flatten.mkString(" ")
+case class DirectorNinoId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[DirectorNino] {
+  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \DirectorNinoId.toString
 }
 
-object DirectorDetails {
-  implicit val format = Json.format[DirectorDetails]
+object DirectorNinoId {
+  override lazy val toString: String = "directorNino"
 }

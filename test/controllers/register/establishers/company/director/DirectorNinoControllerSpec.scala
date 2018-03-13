@@ -19,40 +19,29 @@ package controllers.register.establishers.company.director
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.company.director.DirectorContactDetailsFormProvider
+import forms.register.establishers.company.director.DirectorNinoFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoId}
+import play.api.libs.json.Json
 import models._
-import models.register.establishers.company.director.{DirectorContactDetails, DirectorDetails}
+import models.register.establishers.company.director.{DirectorDetails, DirectorNino}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.libs.json.Json
-import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, UserAnswers}
-import views.html.register.establishers.company.director.directorContactDetails
+import utils.FakeNavigator
+import views.html.register.establishers.company.director.directorNino
 
+class DirectorNinoControllerSpec extends ControllerSpecBase {
 
-class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
-
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
-
+  def onwardRoute = controllers.routes.IndexController.onPageLoad()
   val companyName = "test company name"
-  val formProvider = new DirectorContactDetailsFormProvider()
+  val formProvider = new DirectorNinoFormProvider()
   val form = formProvider()
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
-  val invalidIndex = Index(10)
+  val invalidIndex = Index(11)
   val directorName = "First Name Middle Name Last Name"
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): DirectorContactDetailsController =
-    new DirectorContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
-
-  def viewAsString(form: Form[_] = form): String = directorContactDetails(frontendAppConfig, form, NormalMode,
-    establisherIndex, directorIndex, directorName)(fakeRequest, messages).toString
-
   val validData = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
@@ -61,13 +50,30 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
           Json.obj(
             DirectorDetailsId.toString ->
               DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
-            DirectorContactDetailsId.toString ->
-              DirectorContactDetails("test@test.com", "123456789"))
+            DirectorNinoId.toString ->
+              DirectorNino.Yes("CS700100A")
+          )
         )
       )
     )
   )
 
+
+  val validDataNoDirectorDetails = Json.obj(
+    EstablishersId.toString -> Json.arr(
+      Json.obj(
+        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+        "director" -> Json.arr(
+          Json.obj(
+            DirectorDetailsId.toString ->
+              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
+            DirectorNinoId.toString ->
+              DirectorNino.Yes("CS700100A")
+          )
+        )
+      )
+    )
+  )
   val validDataEmptyForm = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
@@ -82,35 +88,32 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
     )
   )
 
-  val validDataNoDirectorDetails = Json.obj(
-    EstablishersId.toString -> Json.arr(
-      Json.obj(
-        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
-        "director" -> Json.arr()
-        )
-      )
-    )
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorNinoController =
+    new DirectorNinoController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+  def viewAsString(form: Form[_] = form): String = directorNino(frontendAppConfig, form, NormalMode,
+    establisherIndex, directorIndex,directorName)(fakeRequest, messages).toString
 
-  "CompanyDirectorContactDetails Controller" must {
+  "DirectorNino Controller" must {
 
-    "return OK and the correct view for a GET" in {
+    val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+
+    "return OK and the correct view for a GET when establisher name is present" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataEmptyForm))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
 
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect to session expired from a GET when the index is invalid" ignore {
+    "redirect to session expired from a GET when the establisher  index is invalid" ignore {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataEmptyForm))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, invalidIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex, establisherIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
-
     "redirect to session expired from a GET when the director index is invalid" ignore {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataEmptyForm))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, invalidIndex)(fakeRequest)
@@ -120,17 +123,13 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
-
-      contentAsString(result) mustBe viewAsString(form.fill(DirectorContactDetails("test@test.com", "123456789")))
+      contentAsString(result) mustBe viewAsString(form.fill(DirectorNino.Yes("CS700100A")))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("emailAddress", "test@test.com"), ("phoneNumber", "123456789"))
-
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("directorNino.hasNino", "true"), ("directorNino.nino", "CS700100A"))
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -138,43 +137,42 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
-
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
-
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "redirect to Session Expired for a GET if no existing Director Details data is found" in {
+    "redirect to Session Expired for a GET if no existing director details data is found" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoDirectorDetails))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
-
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("emailAddress", "test@test.com"), ("phoneNumber", "123456789"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DirectorNino.options.head.value))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
-
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-
     "redirect to Session Expired for a POST if no existing director details data is found" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoDirectorDetails))
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("emailAddress", "test@test.com"), ("phoneNumber", "123456789"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DirectorNino.options.head.value))
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
 
-      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
-
+    "redirect to Session Expired page when the index is not valid" ignore {
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, Index(2))(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
@@ -186,7 +184,6 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
-
     "redirect to session expired from a POST when the director index is invalid" ignore {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataEmptyForm))
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, invalidIndex)(fakeRequest)

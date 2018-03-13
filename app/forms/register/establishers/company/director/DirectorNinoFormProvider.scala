@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package models.register.establishers.company.director
+package forms.register.establishers.company.director
 
-import org.joda.time.LocalDate
-import play.api.libs.json._
+import javax.inject.Inject
 
-case class DirectorDetails (firstName: String,middleName:Option[String],lastName: String,date:LocalDate){
+import forms.mappings.Mappings
+import models.register.establishers.company.director.DirectorNino
+import play.api.data.Form
 
-  def directorName: String = Seq(Some(firstName), middleName, Some(lastName)).flatten.mkString(" ")
-}
+class DirectorNinoFormProvider @Inject() extends Mappings {
 
-object DirectorDetails {
-  implicit val format = Json.format[DirectorDetails]
+  def apply(): Form[DirectorNino] = Form(
+    "directorNino" -> directorNinoMapping()
+  )
 }

@@ -28,6 +28,8 @@ import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import uk.gov.voa.play.form.ConditionalMappings._
 import utils.Enumerable
 import models._
+import models.register.establishers.company.director.DirectorNino
+
 import scala.util.Try
 
 trait Mappings extends Formatters with Constraints {
@@ -147,6 +149,37 @@ trait Mappings extends Formatters with Constraints {
       "nino" -> mandatoryIfTrue("establisherNino.hasNino", text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
       "reason" -> mandatoryIfFalse("establisherNino.hasNino", text(requiredReasonKey).
         verifying(maxLength(reasonMaxLength,reasonLengthKey)))).transform(toEstablisherNino, fromEstablisherNino)
+  }
+
+
+  protected def directorNinoMapping(requiredKey: String = "messages__error__has_nino_director",
+                                    requiredNinoKey: String = "messages__error__nino",
+                                    requiredReasonKey: String = "messages__director_no_nino",
+                                    reasonLengthKey: String = "messages__error__no_nino_length",
+                                    invalidNinoKey: String = "messages__error__nino_invalid"):
+  Mapping[DirectorNino] = {
+    val reasonMaxLength = 150
+
+    def fromDirectorNino(nino: DirectorNino): (Boolean, Option[String], Option[String]) = {
+      nino match {
+        case DirectorNino.Yes(ninoNo) => (true, Some(ninoNo), None)
+        case DirectorNino.No(reason) =>  (false, None, Some(reason))
+      }
+    }
+
+    def toDirectorNino(ninoTuple: (Boolean, Option[String], Option[String])) = {
+
+      ninoTuple match {
+        case (true, Some(nino), None)  => DirectorNino.Yes(nino)
+        case (false, None, Some(reason))  => DirectorNino.No(reason)
+        case _ => throw new RuntimeException("Invalid selection")
+      }
+    }
+
+    tuple("hasNino" -> boolean(requiredKey),
+      "nino" -> mandatoryIfTrue("directorNino.hasNino", text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
+      "reason" -> mandatoryIfFalse("directorNino.hasNino", text(requiredReasonKey).
+        verifying(maxLength(reasonMaxLength,reasonLengthKey)))).transform(toDirectorNino, fromDirectorNino)
   }
 
 
