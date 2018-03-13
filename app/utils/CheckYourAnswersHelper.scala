@@ -46,7 +46,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
         controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, index).url)
     }
 
-  def companyDirectorContactDetails(establisherIndex:Int, directorIndex: Int): Seq[AnswerRow] =
+  def directorContactDetails(establisherIndex:Int, directorIndex: Int): Seq[AnswerRow] =
     userAnswers.get(DirectorContactDetailsId(establisherIndex, directorIndex)) match {
     case Some(x) => Seq(AnswerRow("companyDirectorContactDetails.checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false,
       controllers.register.establishers.company.director.routes.DirectorContactDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url))
@@ -61,7 +61,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
         AnswerRow("messages__director_nino_question_cya_label", Seq(s"${DirectorNino.Yes}"), false,
           controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
             Index(directorIndex)).url),
-        AnswerRow("messages__company_director_nino_cya_label", Seq(nino), false,
+        AnswerRow("messages__director_nino_cya_label", Seq(nino), false,
           controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
             Index(directorIndex)).url)
       )
@@ -70,7 +70,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
         AnswerRow("messages__director_nino_question_cya_label", Seq(s"${DirectorNino.No}"), false,
           controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
             Index(directorIndex)).url),
-        AnswerRow("messages__company_director_nino_cya_label", Seq(reason), false,
+        AnswerRow("messages__director_nino_cya_label", Seq(reason), false,
           controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
             Index(directorIndex)).url)
       )
