@@ -93,7 +93,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
 
 
 
-  "CompanyDirectorContactDetails Controller" must {
+  "DirectorContactDetails Controller" must {
 
     "return OK and the correct view for a GET" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoPreviousAnswer))
@@ -103,7 +103,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect to session expired from a GET when the index is invalid" ignore {
+    "redirect to session expired from a GET when the establisher index is invalid" ignore {
       val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoPreviousAnswer))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, invalidIndex)(fakeRequest)
 
