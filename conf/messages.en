@@ -332,5 +332,9 @@ messages__companyPreviousAddressPostcodeLookup__title = Previous address of the 
 messages__companyPreviousAddressPostcodeLookup__heading = Previous address of the company
 messages__companyPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous address
 
+messages__companyPreviousAddress__title = Previous address of the company
+messages__companyPreviousAddress__heading = Previous address of the company
+messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
+
 messages__company_director_contact__title = Contact details for director
 messages__company_director_contact__heading = Contact details for director
