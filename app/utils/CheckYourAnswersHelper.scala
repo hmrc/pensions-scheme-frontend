@@ -19,8 +19,10 @@ package utils
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director._
+import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId, DirectorNinoId, DirectorUniqueTaxReferenceId}
+import identifiers.register.establishers.{EstablisherKindId, company}
 import identifiers.register.establishers.individual._
+import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.{EstablisherKindId, company}
 import models.EstablisherNino.{No, Yes}
 import models.addresslookup.Address
@@ -28,6 +30,8 @@ import models.register.CountryOptions
 import models.register.establishers.individual.{AddressYears, UniqueTaxReference}
 import models.{CheckMode, EstablisherNino, Index}
 import viewmodels.AnswerRow
+import identifiers.register.establishers.individual._
+import models.register.establishers.company.director.DirectorNino
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
@@ -37,6 +41,68 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
         controllers.register.establishers.company.director.routes.DirectorUniqueTaxReferenceController.onPageLoad(
           CheckMode, establisherIndex, directorIndex).url))
       case _ => Seq.empty
+    }
+
+  def companyPreviousAddress(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.CompanyPreviousAddressId(index)) map {
+    x => AnswerRow("companyPreviousAddress.checkYourAnswersLabel", addressAnswer(x), false, controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url)
+  }
+
+  def addCompanyDirectors(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.AddCompanyDirectorsId) map {
+    x => AnswerRow("addCompanyDirectors.checkYourAnswersLabel", Seq(if(x) "site.yes" else "site.no"), true, controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index).url)
+  }
+
+  def companyPreviousAddressList(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.CompanyPreviousAddressListId(index)) map {
+    x => AnswerRow("messages__companyPreviousAddressList__checkYourAnswersLabel", Seq(s"companyPreviousAddressList.$x"), true, controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(CheckMode, index).url)
+  }
+
+  def companyPreviousAddressPostcodeLookup(index: Int): Option[AnswerRow] =
+    userAnswers.get(identifiers.register.establishers.company.CompanyPreviousAddressPostcodeLookupId(index)) map {
+    x => AnswerRow("companyPreviousAddressPostcodeLookup.checkYourAnswersLabel", Seq(s"$x"), false,
+      controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, index).url)
+    }
+
+  def directorContactDetails(establisherIndex:Int, directorIndex: Int): Seq[AnswerRow] =
+    userAnswers.get(DirectorContactDetailsId(establisherIndex, directorIndex)) match {
+    case Some(x) => Seq(AnswerRow("directorContactDetails.checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false,
+      controllers.register.establishers.company.director.routes.DirectorContactDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url))
+    case _ => Seq.empty
+  }
+
+
+  def directorNino(establisherIndex: Int, directorIndex: Int): Seq[AnswerRow] = userAnswers.get(DirectorNinoId(establisherIndex,
+    directorIndex)) match {
+    case Some(models.register.establishers.company.director.DirectorNino.Yes(nino)) =>
+      Seq(
+        AnswerRow("messages__director_nino_question_cya_label", Seq(s"${DirectorNino.Yes}"), false,
+          controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
+            Index(directorIndex)).url),
+        AnswerRow("messages__director_nino_cya_label", Seq(nino), false,
+          controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
+            Index(directorIndex)).url)
+      )
+    case Some(models.register.establishers.company.director.DirectorNino.No(reason)) =>
+      Seq(
+        AnswerRow("messages__director_nino_question_cya_label", Seq(s"${DirectorNino.No}"), false,
+          controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
+            Index(directorIndex)).url),
+        AnswerRow("messages__director_nino_cya_label", Seq(reason), false,
+          controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
+            Index(directorIndex)).url)
+      )
+    case _ => Nil
+  }
+
+  def directorDetails(establisherIndex:Int,directorIndex:Int): Seq[AnswerRow] =
+    userAnswers.get(DirectorDetailsId(establisherIndex,directorIndex)) match {
+
+      case Some(details) =>
+        Seq(
+          AnswerRow("messages__establisher_director_name_cya_label", Seq(Seq(Some(details.firstName), details.middleName, Some(details.lastName)).flatten.mkString(" ")), false,
+            controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex),Index(directorIndex)).url),
+          AnswerRow("messages__establisher_director_dob_cya_label", Seq(s"${DateHelper.formatDate(details.date)}"), false,
+            controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex),Index(directorIndex)).url)
+        )
+      case _ => Nil
     }
 
   def companyAddress(index: Int): Option[AnswerRow] = userAnswers.get(company.CompanyAddressId(index)) map { x =>
@@ -62,12 +128,12 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     case _ => Seq.empty
   }
 
-  def companyRegistrationNumber(index:Int): Seq[AnswerRow] =
+  def companyRegistrationNumber(index: Int): Seq[AnswerRow] =
     userAnswers.get(CompanyRegistrationNumberId(index)) match {
       case Some(x) => Seq(AnswerRow("companyRegistrationNumber.checkYourAnswersLabel", Seq(s"companyRegistrationNumber.$x"), true,
         controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(CheckMode, Index(index)).url))
-      case _=> Seq.empty
-  }
+      case _ => Seq.empty
+    }
 
   def companyDetails(index: Int): Seq[AnswerRow] =
     userAnswers.get(CompanyDetailsId(index)) match {
@@ -175,8 +241,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
       address.addressLine4.map(line4 => s"$line4,"), address.postcode.map(postcode => s"$postcode,"), Some(country)).flatten
   }
 
-  def establisherKind(index:Int): Seq[AnswerRow] = userAnswers.get(EstablisherKindId(index)) match {
-    case Some(x) => Seq(AnswerRow("establisherKind.checkYourAnswersLabel", Seq(s"${x.toString}"),false,
+  def establisherKind(index: Int): Seq[AnswerRow] = userAnswers.get(EstablisherKindId(index)) match {
+    case Some(x) => Seq(AnswerRow("establisherKind.checkYourAnswersLabel", Seq(s"${x.toString}"), false,
       controllers.register.establishers.routes.EstablisherKindController.onPageLoad(CheckMode, Index(index)).url))
     case _ => Seq.empty
   }
@@ -188,7 +254,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
   }
 
   def uKBankAccount: Seq[AnswerRow] = userAnswers.get(UKBankAccountId) match {
-    case Some(x) => Seq(AnswerRow("uKBankAccount.checkYourAnswersLabel", if(x) Seq("site.yes") else Seq("site.no"), true,
+    case Some(x) => Seq(AnswerRow("uKBankAccount.checkYourAnswersLabel", if (x) Seq("site.yes") else Seq("site.no"), true,
       routes.UKBankAccountController.onPageLoad(CheckMode).url))
     case _ => Seq.empty
   }
@@ -224,19 +290,19 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
   }
 
   def investmentRegulated: Seq[AnswerRow] = userAnswers.get(InvestmentRegulatedId) match {
-    case Some(x) => Seq(AnswerRow("investmentRegulated.checkYourAnswersLabel", Seq(if(x) "site.yes" else "site.no"), true,
+    case Some(x) => Seq(AnswerRow("investmentRegulated.checkYourAnswersLabel", Seq(if (x) "site.yes" else "site.no"), true,
       routes.InvestmentRegulatedController.onPageLoad(CheckMode).url))
     case _ => Seq.empty
   }
 
   def securedBenefits: Seq[AnswerRow] = userAnswers.get(SecuredBenefitsId) match {
-    case Some(x) => Seq(AnswerRow("securedBenefits.checkYourAnswersLabel", Seq(if(x) "site.yes" else "site.no"), true,
+    case Some(x) => Seq(AnswerRow("securedBenefits.checkYourAnswersLabel", Seq(if (x) "site.yes" else "site.no"), true,
       routes.SecuredBenefitsController.onPageLoad(CheckMode).url))
     case _ => Seq.empty
   }
 
   def occupationalPensionScheme: Seq[AnswerRow] = userAnswers.get(OccupationalPensionSchemeId) match {
-    case Some(x) => Seq(AnswerRow("occupationalPensionScheme.checkYourAnswersLabel", Seq(if(x) "site.yes" else "site.no"), true,
+    case Some(x) => Seq(AnswerRow("occupationalPensionScheme.checkYourAnswersLabel", Seq(if (x) "site.yes" else "site.no"), true,
       routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url))
     case _ => Seq.empty
   }

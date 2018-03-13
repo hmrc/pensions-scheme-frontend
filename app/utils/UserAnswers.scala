@@ -42,6 +42,16 @@ case class UserAnswers(json: JsValue) {
       .flatMap(Json.fromJson[Seq[A]]).asOpt
   }
 
+  def getAllRecursive[A](path: JsPath)(implicit rds: Reads[A]): Option[Seq[A]] = {
+    JsLens
+      .fromPath(path)
+      .getAll(json)
+      .asOpt
+      .flatMap(vs =>
+        Some(vs.map(v => v.as[A]))
+      )
+  }
+
   def set[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data], cleanup: Cleanup[I]): JsResult[UserAnswers] = {
 
     val jsValue = Json.toJson(value)

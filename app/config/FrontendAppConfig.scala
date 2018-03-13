@@ -41,6 +41,8 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated"
 
   lazy val authUrl = baseUrl("auth")
+  lazy val pensionsSchemeUrl = baseUrl("pensions-scheme")
+
   lazy val loginUrl = loadConfig("urls.login")
   lazy val loginContinueUrl = loadConfig("urls.loginContinue")
 
@@ -51,4 +53,5 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   def routeToSwitchLanguage: (String => Call) = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
   lazy val locationCanonicalList = loadConfig("location.canonical.list")
   lazy val addressLookUp = baseUrl("address-lookup")
+  lazy val maxDirectors: Int = loadConfig("company.maxDirectors").toInt
 }

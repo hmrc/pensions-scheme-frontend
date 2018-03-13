@@ -123,7 +123,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       val dataCacheConnector = mock[DataCacheConnector]
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
-      when(dataCacheConnector.save[Address, AddressId](any(), Matchers.eq(AddressId(0)), any())(any(), any()))
+      when(dataCacheConnector.save[Address, AddressId](any(), Matchers.eq(AddressId(0)), any())(any(), any(), any(), any()))
         .thenReturn(Future.successful(Json.obj()))
 
       val result = controller(new FakeDataRetrievalAction(Some(validData)), dataCacheConnector)
@@ -131,7 +131,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
 
       status(result) mustEqual SEE_OTHER
       verify(dataCacheConnector, times(1))
-        .save[Address, AddressId](any(), Matchers.eq(AddressId(0)), Matchers.eq(addresses.head.copy(country = "GB")))(any(), any())
+        .save[Address, AddressId](any(), Matchers.eq(AddressId(0)), Matchers.eq(addresses.head.copy(country = "GB")))(any(), any(), any(), any())
     }
 
     "return a Bad Request and errors when no data is submitted" in {

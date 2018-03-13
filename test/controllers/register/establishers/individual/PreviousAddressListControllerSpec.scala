@@ -44,7 +44,6 @@ import scala.concurrent.Future
 
 class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
 
-
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new AddressListFormProvider()
@@ -56,7 +55,6 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     address("test post code 1"),
     address("test post code 2")
   )
-
 
    def controller(
                    dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
@@ -125,7 +123,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     "update the country of the chosen address to `GB`" in {
       val dataCacheConnector = mock[DataCacheConnector]
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
-      when(dataCacheConnector.save[Address, PreviousAddressId](any(), Matchers.eq(PreviousAddressId(0)), any())(any(), any()))
+      when(dataCacheConnector.save[Address, PreviousAddressId](any(), Matchers.eq(PreviousAddressId(0)), any())(any(), any(), any(), any()))
         .thenReturn(Future.successful(Json.obj()))
 
       val result = controller(new FakeDataRetrievalAction(Some(validData)), dataCacheConnector)
@@ -133,7 +131,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
 
       status(result) mustEqual SEE_OTHER
       verify(dataCacheConnector, times(1))
-        .save[Address, PreviousAddressId](any(), Matchers.eq(PreviousAddressId(0)), Matchers.eq(previousAddresses.head.copy(country = "GB")))(any(), any())
+        .save[Address, PreviousAddressId](any(), Matchers.eq(PreviousAddressId(0)), Matchers.eq(previousAddresses.head.copy(country = "GB")))(any(), any(), any(), any())
     }
 
     "return a Bad Request and errors when no data is submitted" in {
