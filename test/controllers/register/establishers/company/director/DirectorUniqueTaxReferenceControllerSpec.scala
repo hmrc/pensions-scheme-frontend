@@ -21,9 +21,12 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.director.{DirectorUniqueTaxReferenceId, DirectorUniqueTaxReferenceId$}
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorUniqueTaxReferenceId}
 import models._
+import models.register.establishers.company.director.DirectorDetails
 import models.register.establishers.individual.UniqueTaxReference
+import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -31,7 +34,7 @@ import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.register.establishers.company.director.directorUniqueTaxReference
 
-class CompanyDirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
+class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -40,8 +43,24 @@ class CompanyDirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase
   val invalidIndex = Index(10)
   val formProvider = new DirectorUniqueTaxReferenceFormProvider()
   val form: Form[UniqueTaxReference] = formProvider()
-
+  val companyName = "test company name"
+  val directorName = "First Name Middle Name Last Name"
   val validData = Json.obj(
+    EstablishersId.toString -> Json.arr(
+      Json.obj(
+        "director" -> Json.arr(
+          Json.obj(
+            DirectorDetailsId.toString ->
+              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
+            DirectorUniqueTaxReferenceId.toString ->
+              UniqueTaxReference.Yes("1234567891")
+          )
+        )
+      )
+    )
+  )
+
+  val validDataNoDirectorDetails = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         "director" -> Json.arr(
@@ -54,16 +73,35 @@ class CompanyDirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase
     )
   )
 
+  val validDataEmptyForm = Json.obj(
+    EstablishersId.toString -> Json.arr(
+      Json.obj(
+        CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
+        "director" -> Json.arr(
+          Json.obj(
+            DirectorDetailsId.toString ->
+              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now)
+          )
+        )
+      )
+    )
+  )
+
+
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): DirectorUniqueTaxReferenceController =
     new DirectorUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = directorUniqueTaxReference(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = directorUniqueTaxReference(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex,directorName)(fakeRequest, messages).toString
 
   "DirectorUniqueTaxReference Controller" must {
+    val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
     "return OK and the correct view for a GET when director name is present" in {
-      val result = controller().onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
+      val getRelevantData = new FakeDataRetrievalAction(Some(validDataEmptyForm))
+
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -76,7 +114,15 @@ class CompanyDirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase
       contentAsString(result) mustBe viewAsString(form.fill(UniqueTaxReference.Yes("1234567891")))
     }
 
-    "redirect to Session Expired page when the index is not valid" ignore {
+    "redirect to Session Expired page when the establisher index is not valid" ignore {
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex, directorIndex)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+
+    "redirect to Session Expired page when the director index is not valid" ignore {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, invalidIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
@@ -85,7 +131,7 @@ class CompanyDirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("uniqueTaxReference.hasUtr", "true"), ("uniqueTaxReference.utr", "1234565656"))
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -94,7 +140,7 @@ class CompanyDirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
-      val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
@@ -107,9 +153,26 @@ class CompanyDirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
+    "redirect to Session Expired for a GET if no director data is found" in {
+      val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoDirectorDetails))
+      val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid"))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "redirect to Session Expired for a POST if no director data is found" in {
+      val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoDirectorDetails))
+      val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, directorIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

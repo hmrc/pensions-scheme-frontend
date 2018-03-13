@@ -42,6 +42,7 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
   val directorIndex = Index(0)
   val invalidIndex = Index(11)
   val directorName = "First Name Middle Name Last Name"
+
   val validData = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(

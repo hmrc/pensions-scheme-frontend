@@ -29,16 +29,17 @@ class DirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
   val form: Form[_] = new CompanyUniqueTaxReferenceFormProvider().apply()
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
-
+  val directorName = "First Name Middle Name Last Name"
 
 
   def createView: () => HtmlFormat.Appendable = () => directorUniqueTaxReference(frontendAppConfig, form, NormalMode,
-    establisherIndex, directorIndex)(fakeRequest, messages)
+    establisherIndex, directorIndex,directorName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorUniqueTaxReference(frontendAppConfig, form,
-    NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
+    NormalMode, establisherIndex, directorIndex,directorName)(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" must {
+    behave like pageWithSecondaryHeader(createView, "First Name Middle Name Last Name")
 
     behave like normalPage(createView, messageKeyPrefix, messages("messages__director_has_sautr__title"))
   }

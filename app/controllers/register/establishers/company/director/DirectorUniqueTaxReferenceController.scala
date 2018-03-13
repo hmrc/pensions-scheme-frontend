@@ -50,31 +50,35 @@ class DirectorUniqueTaxReferenceController @Inject()(
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val redirectResult = request.userAnswers.get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
-        case None =>
-          Ok(directorUniqueTaxReference(appConfig, form, mode, establisherIndex, directorIndex))
-        case Some(value) =>
-          Ok(directorUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, directorIndex))
+      retrieveDirectorName(establisherIndex,directorIndex) { directorName =>
+        val redirectResult = request.userAnswers.get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
+          case None =>
+            Ok(directorUniqueTaxReference(appConfig, form, mode, establisherIndex, directorIndex, directorName))
+          case Some(value) =>
+            Ok(directorUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, directorIndex,directorName))
+        }
+        Future.successful(redirectResult)
       }
-      Future.successful(redirectResult)
   }
 
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(directorUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
-        (value) =>
-          dataCacheConnector.save(
-            request.externalId,
-            DirectorUniqueTaxReferenceId(establisherIndex, directorIndex),
-            value
-          ).map {
-            json =>
-              Redirect(navigator.nextPage(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
-          }
-      )
+      retrieveDirectorName(establisherIndex,directorIndex) { directorName =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(directorUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, directorIndex,directorName))),
+          (value) =>
+            dataCacheConnector.save(
+              request.externalId,
+              DirectorUniqueTaxReferenceId(establisherIndex, directorIndex),
+              value
+            ).map {
+              json =>
+                Redirect(navigator.nextPage(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
+            }
+        )
+      }
   }
 
 }
