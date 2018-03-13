@@ -21,7 +21,7 @@ import play.api.libs.json._
 
 case class DirectorDetails (firstName: String,middleName:Option[String],lastName: String,date:LocalDate){
 
-  def directorName: String = s"$firstName ${middleName.getOrElse("")} $lastName"
+  def directorName: String = Seq(Some(firstName), middleName, Some(lastName)).flatten.mkString(" ")
 }
 
 object DirectorDetails {
