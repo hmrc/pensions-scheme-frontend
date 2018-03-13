@@ -1,0 +1,50 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.play.views.html._
+@import controllers.register.establishers.company.director.routes._
+@import models.Mode
+@import models.register.establishers.company.director.DirectorContactDetails
+
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, directorIndex: Index,directorName:String)(implicit request: Request[_], messages: Messages)
+
+@main_template(
+    title = messages("messages__company_director_contact__title"),
+    appConfig = appConfig,
+    bodyClasses = None) {
+
+    @helpers.form(action = controllers.register.establishers.company.director.routes.DirectorContactDetailsController.onSubmit(mode, establisherIndex, directorIndex), 'autoComplete -> "off") {
+
+        @components.back_link()
+
+        @components.error_summary(form.errors)
+
+        @components.heading("messages__company_director_contact__heading",secondaryHeaderKey = Some(directorName))
+
+        @components.input_text(
+            field = form("emailAddress"),
+            label = messages("messages__common__email")
+        )
+
+        @components.input_text(
+            field = form("phoneNumber"),
+            label = messages("messages__common__phone")
+        )
+
+        @components.submit_button()
+    }
+}

@@ -19,9 +19,11 @@ package controllers
 import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models.CompanyDetails
 import models.register.SchemeDetails
+import models.register.establishers.company.director.DirectorDetails
 import models.register.establishers.individual.EstablisherDetails
 import models.requests.DataRequest
 import play.api.libs.json.Reads
@@ -29,40 +31,41 @@ import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
+import scala.language.implicitConversions
 
 trait Retrievals {
 
   this: FrontendController =>
 
-//    private[controllers] def retrieveDirectorName(index: Int)
-//                                                 (f: String => Future[Result])
-//                                                 (implicit request: DataRequest[AnyContent]): Future[Result] = {
-//      retrieve[DirectorDetails](DirectorDetailsId(index)) { directorDetails =>
-//        f(directorDetails.fullName)
-//      }
-//    }
+  private[controllers] def retrieveDirectorName(establisherIndex: Int,directorIndex:Int)
+                                               (f: String => Future[Result])
+                                               (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    retrieve[DirectorDetails](DirectorDetailsId(establisherIndex,directorIndex)) { directorDetails =>
+         f(directorDetails.directorName)
+    }
+  }
 
   private[controllers] def retrieveCompanyName(index: Int)
                                               (f: String => Future[Result])
                                               (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    retrieve[CompanyDetails](CompanyDetailsId(index)){ companyDetails =>
+    retrieve[CompanyDetails](CompanyDetailsId(index)) { companyDetails =>
       f(companyDetails.companyName)
     }
   }
 
   private[controllers] def retrieveSchemeName(f: String => Future[Result])
                                              (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    retrieve[SchemeDetails](SchemeDetailsId){ schemeDetails =>
+    retrieve[SchemeDetails](SchemeDetailsId) { schemeDetails =>
       f(schemeDetails.schemeName)
     }
   }
 
-  private[controllers] def retrieveEstablisherName(index:Int)
-                                     (f: String => Future[Result])
-                                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
-     retrieve[EstablisherDetails](EstablisherDetailsId(index)){ establisherDetails =>
-        f(establisherDetails.establisherName)
-     }
+  private[controllers] def retrieveEstablisherName(index: Int)
+                                                  (f: String => Future[Result])
+                                                  (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    retrieve[EstablisherDetails](EstablisherDetailsId(index)) { establisherDetails =>
+      f(establisherDetails.establisherName)
+    }
   }
 
   private[controllers] def retrieve[A](id: TypedIdentifier[A])
@@ -74,4 +77,33 @@ trait Retrievals {
 
   }
 
+  case class ~[A, B](a: A, b: B)
+
+  trait Retrieval[A] {
+    self =>
+
+    def retrieve: Either[Future[Result], A]
+
+    def and[B](query: Retrieval[B]): Retrieval[A ~ B] =
+      new Retrieval[A ~ B] {
+        override def retrieve: Either[Future[Result], A ~ B] = {
+          for {
+            a <- self.retrieve.right
+            b <- query.retrieve.right
+          } yield new ~(a, b)
+        }
+      }
+  }
+
+  implicit def fromId[A](id: TypedIdentifier[A])(implicit request: DataRequest[AnyContent], reads: Reads[A]): Retrieval[A] =
+    new Retrieval[A] {
+      override def retrieve: Either[Future[Result], A] =
+        request.userAnswers.get(id) match {
+          case Some(value) => Right(value)
+          case None        => Left(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
+        }
+    }
+
+  implicit def merge(f: Either[Future[Result], Future[Result]]): Future[Result] =
+    f.merge
 }

@@ -20,21 +20,23 @@ import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
 import models.CompanyDetails
+import models.register.establishers.company.director.{DirectorContactDetails, DirectorDetails}
 import models.register.{SchemeDetails, SchemeType}
 import models.requests.DataRequest
-import org.joda.time.LocalDate
+import org.scalatest.EitherValues
+import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.Results._
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
-
+import org.joda.time.LocalDate
 import scala.concurrent.Future
 
-class RetrievalsSpec extends ControllerSpecBase {
+class RetrievalsSpec extends ControllerSpecBase with FrontendController with Retrievals with EitherValues with ScalaFutures {
 
   def dataRequest(data: JsValue): DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "", UserAnswers(data))
 
@@ -46,32 +48,41 @@ class RetrievalsSpec extends ControllerSpecBase {
     Future.successful(Ok("Success"))
   }
 
-  val testIdentifier = new TypedIdentifier[String] {
+  val testIdentifier: TypedIdentifier[String] = new TypedIdentifier[String] {
     override def toString: String = "test"
   }
 
-//  "retrieveDirectorName" must {
-//    "reach the intended result when companyName is found" in {
-//
-//      val validData = Json.obj(
-//        "directors" -> Json.arr(
-//          Json.obj(
-//            "directorDetails" -> Json.obj(
-//              "firstName" -> "John",
-//              "lastName" -> "Doe",
-//              "dateOfBirth" -> Json.toJson(LocalDate.now())
-//            )
-//          )
-//        )
-//      )
-//
-//      implicit val request: DataRequest[AnyContent] = dataRequest(validData)
-//
-//      val result = controller.retrieveDirectorName(0)(success)
-//
-//      status(result) must be(OK)
-//    }
-//  }
+  val secondIdentifier: TypedIdentifier[String] = new TypedIdentifier[String] {
+    override def toString: String = "second"
+  }
+
+
+  "retrieveDirectorName" must {
+    "reach the intended result when director details is found" in {
+
+      val validData = Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            "director" -> Json.arr(
+              Json.obj(
+                DirectorDetailsId.toString ->
+                  DirectorDetails(
+                    "First Name",
+                    Some("Middle Name"),
+                    "Last Name",
+                    LocalDate.now)
+              )
+            )
+          )
+        )
+      )
+      implicit val request: DataRequest[AnyContent] = dataRequest(validData)
+
+      val result = controller.retrieveDirectorName(0, 0)(success)
+
+      status(result) must be(OK)
+    }
+  }
 
   "retrieveCompanyName" must {
     "reach the intended result when companyName is found" in {
@@ -106,16 +117,30 @@ class RetrievalsSpec extends ControllerSpecBase {
     }
   }
 
+
   "retrieve" must {
 
     "reach the intended result when identifier gets value from answers" in {
 
       implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result"))
 
-      val result = controller.retrieve(testIdentifier)(success)
+      testIdentifier.retrieve.right.value mustEqual "result"
+    }
 
-      status(result) must be(OK)
+    "reach the intended result when identifier uses and to get the value from answers" in {
 
+      implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result", "second" -> "answer"))
+
+      (testIdentifier and secondIdentifier).retrieve.right.value mustEqual new ~("result", "answer")
+    }
+
+    "redirect to the session expired page when cant find identifier" in {
+
+      implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test1" -> "result"))
+
+      whenReady(testIdentifier.retrieve.left.value) {
+        _ mustEqual Redirect(routes.SessionExpiredController.onPageLoad())
+      }
     }
 
     "redirect to Session Expired page when company name is not present" in {
@@ -125,9 +150,6 @@ class RetrievalsSpec extends ControllerSpecBase {
       val result = controller.retrieve(testIdentifier)(success)
 
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-
     }
-
   }
-
 }

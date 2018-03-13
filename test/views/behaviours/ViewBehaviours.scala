@@ -22,8 +22,9 @@ import views.ViewSpecBase
 
 trait ViewBehaviours extends ViewSpecBase {
 
-  def normalPage(view: () => HtmlFormat.Appendable,
+  def normalPageWithTitle(view: () => HtmlFormat.Appendable,
                  messageKeyPrefix: String,
+                 title: String,
                  pageHeader: String,
                  expectedGuidanceKeys: String*): Unit = {
 
@@ -38,7 +39,7 @@ trait ViewBehaviours extends ViewSpecBase {
 
         "display the correct browser title" in {
           val doc = asDocument(view())
-          assertEqualsMessage(doc, "title", messagesApi(s"messages__${messageKeyPrefix}__title") + " - " + messagesApi(
+          assertEqualsMessage(doc, "title", title + " - " + messagesApi(
             "messages__pension_scheme_registration__title"))
         }
 
@@ -58,6 +59,21 @@ trait ViewBehaviours extends ViewSpecBase {
         }
       }
     }
+
+  }
+
+  def normalPage(view: () => HtmlFormat.Appendable,
+                 messageKeyPrefix: String,
+                 pageHeader: String,
+                 expectedGuidanceKeys: String*): Unit = {
+
+    normalPageWithTitle(
+      view,
+      messageKeyPrefix,
+      messagesApi(s"messages__${messageKeyPrefix}__title"),
+      pageHeader,
+      expectedGuidanceKeys: _*
+    )
   }
 
   def pageWithBackLink(view: () => HtmlFormat.Appendable): Unit = {
@@ -77,6 +93,13 @@ trait ViewBehaviours extends ViewSpecBase {
       Jsoup.parse(view().toString()).getElementsByClass("heading-secondary").text() must include(heading)
     }
 
+  }
+
+  def pageWithSubmitButton(view: () => HtmlFormat.Appendable): Unit = {
+    "behave like a page with a submit button" in {
+      val doc = asDocument(view())
+      assertRenderedById(doc, "submit")
+    }
   }
 
 }

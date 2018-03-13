@@ -21,6 +21,7 @@ error.summary.title = There was a problem with the page
 
 messages__common__firstname = First name
 messages__common__lastname = Last name
+messages__common__middlename= Middle name (optional)
 messages__common__dob = Date of birth
 messages__common__dob__hint = Example 30 09 1990
 messages__common__day = Day
@@ -36,7 +37,6 @@ messages__common__phone = Phone number
 messages__common__enter_postcode = Enter the postcode below, or
 messages__common__select_address_link = enter the address manually
 messages__common__address_postcode = Postal code
-messages__common__address_postcode_hint = For example NE12 8ER
 messages__common__address1 = Address line 1
 messages__common__address2 = Address line 2
 messages__common__address3 = Address line 3 (optional)
@@ -62,6 +62,11 @@ messages__error__addr3_length = The third line of address cannot be more than 35
 messages__error__addr4_length = The fourth line of address cannot be more than 35 characters
 messages__error__country = Enter a country
 
+messages__common__cya__name = Name
+messages__common__cya__address = Address
+messages__common__cya__previous_address = Previous Address
+
+
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
@@ -69,8 +74,10 @@ messages__session_expired__title = For your security, this service has been rese
 messages__session_expired__guidance = The details you have given have been deleted because you did not continue the service for 1 hour.
 
 site.back = Back
+site.continue = Continue
 site.delete = Remove
 site.edit = Edit
+site.change = Change
 site.hidden-delete = Delete {0}
 site.hidden-edit = Change {0}
 site.no = No
@@ -201,6 +208,8 @@ messages__error__first_name_length = The first name cannot be more than 35 chara
 messages__error__first_name_invalid = Enter the valid first name
 messages__error__last_name_length = The last name cannot be more than 35 characters
 messages__error__last_name_invalid = Enter the valid last name
+messages__error__middle_name_length = The middle name cannot be more than 35 characters
+messages__error__middle_name_invalid = Enter the valid middle name
 
 messages__establisherNino__title = Does the establisher have a National Insurance number?
 messages__establisher__no_nino = Tell us why the establisher does not have a National Insurance number
@@ -310,12 +319,57 @@ addEstablisher.checkYourAnswersLabel = addEstablisher
 messages__manualAddress_checkYourAnswersLabel = manualAddress
 establisherKind.checkYourAnswersLabel = establisherKind
 
-companyAddressYears.checkYourAnswersLabel = companyAddressYears
-companyDetails.checkYourAnswersLabel = companyDetails
+companyAddressYears.checkYourAnswersLabel = How long has the company been at this address?
+companyAddressYears.under_a_year = Less than 12 months
+companyAddressYears.over_a_year = More than 12 months
 companyContactDetails.checkYourAnswersLabel = companyContactDetails
 
 messages__establisher_company_postcode__title = Company address
 messages__establisher_company_postcode_hint = This is usually the registered business address but you can enter any address you have for this company.
+
+messages__companyAddress__title = Company address
+messages__companyAddress__heading = Company address
+messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.
+
+messages__directorDetails__title = Company director
+messages__directorDetails__heading = Company director
+messages__directorDetails__checkYourAnswersLabel = directorDetails
+
+messages__companyPreviousAddressPostcodeLookup__title = Previous address of the company
+messages__companyPreviousAddressPostcodeLookup__heading = Previous address of the company
+messages__companyPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous address
+
+messages__companyPreviousAddress__title = Previous address of the company
+messages__companyPreviousAddress__heading = Previous address of the company
+
+messages__company__cya__vat = VAT registration number (optional)
+messages__company__cya__paye_ern = PAYE employer reference number
+messages__company__cya__crn_yes_no = Does the scheme establisher have a Company Registration number?
+messages__company__cya__crn_no_reason = Why the scheme establisher does not have a Company Registration number
+messages__company__cya__utr_yes_no = Does the scheme establisher have a Unique Taxpayer Reference number?
+messages__company__cya__utr = UTR
+messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number
+
+messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
+
+messages__company_director_contact__title = Contact details for director
+messages__company_director_contact__heading = Contact details for director
+
+messages__director_nino_question_cya_label = Does the director have a National Insurance number?
+messages__director_nino_cya_label = National Insurance number
+messages__director_nino__title = Does the director have a National Insurance number?
+messages__director_no_nino = Tell us why the director does not have a National Insurance number
+messages__error__has_nino_director = Select yes if the director has a National Insurance number
+messages__error__no_nino_director = You need to tell us why the director does not have a National Insurance number
+
+messages__addCompanyDirectors__title = Company directors
+messages__addCompanyDirectors__heading = Company directors
+messages__addCompanyDirectors__checkYourAnswersLabel = Company directors
+messages__addCompanyDirectors__error__required = You must make a selection
+messages__addCompanyDirectors_lede = You must tell us about all your directors. You can add up to 10 using the digital service.
+messages__addCompanyDirectors_add_director = Add a director
+messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
+messages__addCompanyDirectors_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
 
 messages__company_director_address_years__title = How long has the director lived at this address?
 messages__company_director_address_years__heading = How long has the director lived at this address?
