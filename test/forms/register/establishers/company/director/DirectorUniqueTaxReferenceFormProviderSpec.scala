@@ -19,7 +19,7 @@ package forms.register.establishers.company.director
 import forms.FormSpec
 import models.register.establishers.individual.UniqueTaxReference
 
-class CompanyDirectorUniqueTaxReferenceFormProviderSpec extends FormSpec {
+class DirectorUniqueTaxReferenceFormProviderSpec extends FormSpec {
 
   val  requiredKey = "messages__error__has_sautr_director"
   val  requiredUtrKey = "messages__error__sautr"
@@ -27,7 +27,7 @@ class CompanyDirectorUniqueTaxReferenceFormProviderSpec extends FormSpec {
   val  invalidUtrKey = "messages__error__sautr_invalid"
   val  maxLengthReasonKey = "messages__error__no_sautr_length"
 
-  val formProvider = new CompanyDirectorUniqueTaxReferenceFormProvider()
+  val formProvider = new DirectorUniqueTaxReferenceFormProvider()
 
   "CompanyUniqueTaxReference form" must {
     "successfully bind when the utr is provided and yes is selected" in {

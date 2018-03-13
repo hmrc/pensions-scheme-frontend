@@ -21,26 +21,26 @@ import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import models.{Index, NormalMode}
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.company.director.companyDirectorUniqueTaxReference
+import views.html.register.establishers.company.director.directorUniqueTaxReference
 
-class CompanyDirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
+class DirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "company__director_has_sautr"
+  val messageKeyPrefix = "director_has_sautr"
   val form: Form[_] = new CompanyUniqueTaxReferenceFormProvider().apply()
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
 
 
 
-  def createView: () => HtmlFormat.Appendable = () => companyDirectorUniqueTaxReference(frontendAppConfig, form, NormalMode,
+  def createView: () => HtmlFormat.Appendable = () => directorUniqueTaxReference(frontendAppConfig, form, NormalMode,
     establisherIndex, directorIndex)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyDirectorUniqueTaxReference(frontendAppConfig, form,
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorUniqueTaxReference(frontendAppConfig, form,
     NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__company__director_has_sautr__title"))
+    behave like normalPage(createView, messageKeyPrefix, messages("messages__director_has_sautr__title"))
   }
 
   "CompanyUniqueTaxReference view" when {
@@ -72,8 +72,8 @@ class CompanyDirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
         val expectedValue = "1234567891"
         val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" ->
           expectedValue))))
-        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__company__director_sautr")} ${messages(
-          "messages__company__director_sautr_hint_format")}",
+        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__director_sautr")} ${messages(
+          "messages__director_sautr_hint_format")}",
           expectedValue)
       }
 
@@ -82,7 +82,7 @@ class CompanyDirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
         val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" ->
           expectedValue))))
         doc must haveLabelAndValue("uniqueTaxReference_reason", messages(
-          "messages__company__director_no_sautr"), expectedValue)
+          "messages__director_no_sautr"), expectedValue)
       }
     }
   }

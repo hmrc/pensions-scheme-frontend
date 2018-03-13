@@ -22,8 +22,8 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.company.director.CompanyDirectorUniqueTaxReferenceFormProvider
-import identifiers.register.establishers.company.director.CompanyDirectorUniqueTaxReferenceId
+import forms.register.establishers.company.director.DirectorUniqueTaxReferenceFormProvider
+import identifiers.register.establishers.company.director.DirectorUniqueTaxReferenceId
 import models.register.establishers.individual.UniqueTaxReference
 import models.{Index, Mode}
 import play.api.data.Form
@@ -31,11 +31,11 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.establishers.company.director.companyDirectorUniqueTaxReference
+import views.html.register.establishers.company.director.directorUniqueTaxReference
 
 import scala.concurrent.Future
 
-class CompanyDirectorUniqueTaxReferenceController @Inject()(
+class DirectorUniqueTaxReferenceController @Inject()(
                                                              appConfig: FrontendAppConfig,
                                                              override val messagesApi: MessagesApi,
                                                              dataCacheConnector: DataCacheConnector,
@@ -43,18 +43,18 @@ class CompanyDirectorUniqueTaxReferenceController @Inject()(
                                                              authenticate: AuthAction,
                                                              getData: DataRetrievalAction,
                                                              requireData: DataRequiredAction,
-                                                             formProvider: CompanyDirectorUniqueTaxReferenceFormProvider
+                                                             formProvider: DirectorUniqueTaxReferenceFormProvider
                                                            ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val redirectResult = request.userAnswers.get(CompanyDirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
+      val redirectResult = request.userAnswers.get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
         case None =>
-          Ok(companyDirectorUniqueTaxReference(appConfig, form, mode, establisherIndex, directorIndex))
+          Ok(directorUniqueTaxReference(appConfig, form, mode, establisherIndex, directorIndex))
         case Some(value) =>
-          Ok(companyDirectorUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, directorIndex))
+          Ok(directorUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, directorIndex))
       }
       Future.successful(redirectResult)
   }
@@ -64,15 +64,15 @@ class CompanyDirectorUniqueTaxReferenceController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyDirectorUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
+          Future.successful(BadRequest(directorUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
         (value) =>
           dataCacheConnector.save(
             request.externalId,
-            CompanyDirectorUniqueTaxReferenceId(establisherIndex, directorIndex),
+            DirectorUniqueTaxReferenceId(establisherIndex, directorIndex),
             value
           ).map {
             json =>
-              Redirect(navigator.nextPage(CompanyDirectorUniqueTaxReferenceId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
+              Redirect(navigator.nextPage(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
           }
       )
   }

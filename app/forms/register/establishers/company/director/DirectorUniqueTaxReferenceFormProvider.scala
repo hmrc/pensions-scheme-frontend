@@ -22,7 +22,7 @@ import forms.mappings.Mappings
 import models.register.establishers.individual.UniqueTaxReference
 import play.api.data.Form
 
-class CompanyDirectorUniqueTaxReferenceFormProvider @Inject() extends Mappings {
+class DirectorUniqueTaxReferenceFormProvider @Inject() extends Mappings {
 
   def apply(): Form[UniqueTaxReference] = Form(
     "uniqueTaxReference" -> uniqueTaxReferenceMapping(

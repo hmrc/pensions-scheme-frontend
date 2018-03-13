@@ -31,10 +31,10 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
-  def companyDirectorUniqueTaxReference(establisherIndex: Int, directorIndex:Int): Seq[AnswerRow] =
-    userAnswers.get(CompanyDirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
-      case Some(x) => Seq(AnswerRow("companyDirectorUniqueTaxReference.checkYourAnswersLabel", Seq(s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}"), true,
-        controllers.register.establishers.company.director.routes.CompanyDirectorUniqueTaxReferenceController.onPageLoad(
+  def directorUniqueTaxReference(establisherIndex: Int, directorIndex:Int): Seq[AnswerRow] =
+    userAnswers.get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
+      case Some(x) => Seq(AnswerRow("directorUniqueTaxReference.checkYourAnswersLabel", Seq(s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}"), true,
+        controllers.register.establishers.company.director.routes.DirectorUniqueTaxReferenceController.onPageLoad(
           CheckMode, establisherIndex, directorIndex).url))
       case _ => Seq.empty
     }

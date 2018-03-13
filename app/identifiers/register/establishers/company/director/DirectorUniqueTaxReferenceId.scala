@@ -20,10 +20,10 @@ import identifiers.register.establishers.EstablishersId
 import models.register.establishers.individual.UniqueTaxReference
 import play.api.libs.json.JsPath
 
-case class CompanyDirectorUniqueTaxReferenceId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[UniqueTaxReference] {
-  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \CompanyDirectorUniqueTaxReferenceId.toString
+case class DirectorUniqueTaxReferenceId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[UniqueTaxReference] {
+  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \DirectorUniqueTaxReferenceId.toString
 }
 
-object CompanyDirectorUniqueTaxReferenceId {
-  override def toString: String = "companyDirectorUniqueTaxReference"
+object DirectorUniqueTaxReferenceId {
+  override def toString: String = "directorUniqueTaxReference"
 }

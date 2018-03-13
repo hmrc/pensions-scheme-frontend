@@ -28,19 +28,19 @@
 }
 
 @main_template(
-        title = messages("messages__company__director_has_sautr__title"),
+        title = messages("messages__director_has_sautr__title"),
         appConfig = appConfig,
         bodyClasses = None) {
 
-        @helpers.form(action = CompanyDirectorUniqueTaxReferenceController.onSubmit(mode, establisherIndex, directorIndex), 'autoComplete -> "off") {
+        @helpers.form(action = DirectorUniqueTaxReferenceController.onSubmit(mode, establisherIndex, directorIndex), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
-        @components.heading(headingKey = "messages__company__director_has_sautr__title")
+        @components.heading(headingKey = "messages__director_has_sautr__title")
 
         @components.fieldSet(
-            field = form("companyDirectorUniqueTaxReference.hasUtr"),
-            legend = "messages__company__director_has_sautr__title",
+            field = form("directorUniqueTaxReference.hasUtr"),
+            legend = "messages__director_has_sautr__title",
             hint = Some("messages__company__sautr_hint_what"),
             hiddenLegend = true
         ){
@@ -53,9 +53,9 @@
 
         @components.input_text(
             field = form("uniqueTaxReference.utr"),
-            label = messages("messages__company__director_sautr"),
+            label = messages("messages__director_sautr"),
             groupClass = Some("js-hidden panel panel-border-narrow"),
-            hint = Some(messages("messages__company__director_sautr_hint_format"))
+            hint = Some(messages("messages__director_sautr_hint_format"))
         )
 
         @components.radio(
@@ -67,7 +67,7 @@
 
         @components.input_text(
             field = form("uniqueTaxReference.reason"),
-            label = messages("messages__company__director_no_sautr"),
+            label = messages("messages__director_no_sautr"),
             groupClass = Some("js-hidden panel panel-border-narrow")
             )
         }
