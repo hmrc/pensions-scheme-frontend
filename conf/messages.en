@@ -62,6 +62,11 @@ messages__error__addr3_length = The third line of address cannot be more than 35
 messages__error__addr4_length = The fourth line of address cannot be more than 35 characters
 messages__error__country = Enter a country
 
+messages__common__cya__name = Name
+messages__common__cya__address = Address
+messages__common__cya__previous_address = Previous Address
+
+
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
@@ -72,6 +77,7 @@ site.back = Back
 site.continue = Continue
 site.delete = Remove
 site.edit = Edit
+site.change = Change
 site.hidden-delete = Delete {0}
 site.hidden-edit = Change {0}
 site.no = No
@@ -313,8 +319,9 @@ addEstablisher.checkYourAnswersLabel = addEstablisher
 messages__manualAddress_checkYourAnswersLabel = manualAddress
 establisherKind.checkYourAnswersLabel = establisherKind
 
-companyAddressYears.checkYourAnswersLabel = companyAddressYears
-companyDetails.checkYourAnswersLabel = companyDetails
+companyAddressYears.checkYourAnswersLabel = How long has the company been at this address?
+companyAddressYears.under_a_year = Less than 12 months
+companyAddressYears.over_a_year = More than 12 months
 companyContactDetails.checkYourAnswersLabel = companyContactDetails
 
 messages__establisher_company_postcode__title = Company address
@@ -322,7 +329,6 @@ messages__establisher_company_postcode_hint = This is usually the registered bus
 
 messages__companyAddress__title = Company address
 messages__companyAddress__heading = Company address
-messages__companyAddress__checkYourAnswersLabel = Company address
 messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.
 
 messages__directorDetails__title = Company director
@@ -335,6 +341,15 @@ messages__companyPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous
 
 messages__companyPreviousAddress__title = Previous address of the company
 messages__companyPreviousAddress__heading = Previous address of the company
+
+messages__company__cya__vat = VAT registration number (optional)
+messages__company__cya__paye_ern = PAYE employer reference number
+messages__company__cya__crn_yes_no = Does the scheme establisher have a Company Registration number?
+messages__company__cya__crn_no_reason = Why the scheme establisher does not have a Company Registration number
+messages__company__cya__utr_yes_no = Does the scheme establisher have a Unique Taxpayer Reference number?
+messages__company__cya__utr = UTR
+messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number
+
 messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
 
 messages__company_director_contact__title = Contact details for director
