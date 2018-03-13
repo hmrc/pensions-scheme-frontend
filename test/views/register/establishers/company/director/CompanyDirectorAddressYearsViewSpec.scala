@@ -21,7 +21,7 @@ import models.{AddressYears, Index, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.company.director.companyDirectorAddressYears
+import views.html.register.establishers.company.director.directorAddressYears
 
 class CompanyDirectorAddressYearsViewSpec extends ViewBehaviours {
 
@@ -32,10 +32,10 @@ class CompanyDirectorAddressYearsViewSpec extends ViewBehaviours {
 
   val form = new DirectorAddressYearsFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => companyDirectorAddressYears(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex
+  def createView: () => HtmlFormat.Appendable = () => directorAddressYears(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex
   )(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyDirectorAddressYears(frontendAppConfig,
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorAddressYears(frontendAppConfig,
     form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
 
   "CompanyDirectorAddressYears view" must {

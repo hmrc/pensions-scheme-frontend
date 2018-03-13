@@ -21,10 +21,10 @@ import identifiers.register.establishers.EstablishersId
 import models.AddressYears
 import play.api.libs.json.JsPath
 
-case class CompanyDirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[AddressYears] {
-  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \ CompanyDirectorAddressYearsId.toString
+case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[AddressYears] {
+  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \ DirectorAddressYearsId.toString
 }
 
-object CompanyDirectorAddressYearsId {
+object DirectorAddressYearsId {
   override lazy val toString: String = "companyDirectorAddressYears"
 }

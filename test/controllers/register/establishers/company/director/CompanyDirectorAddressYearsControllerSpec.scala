@@ -21,13 +21,13 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.director.CompanyDirectorAddressYearsId
+import identifiers.register.establishers.company.director.DirectorAddressYearsId
 import models.{AddressYears, Index, NormalMode}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.FakeNavigator
-import views.html.register.establishers.company.director.companyDirectorAddressYears
+import views.html.register.establishers.company.director.directorAddressYears
 
 class CompanyDirectorAddressYearsControllerSpec extends ControllerSpecBase {
 
@@ -40,11 +40,11 @@ class CompanyDirectorAddressYearsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(10)
 
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyDirectorAddressYearsController =
-    new CompanyDirectorAddressYearsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): DirectorAddressYearsController =
+    new DirectorAddressYearsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = companyDirectorAddressYears(frontendAppConfig, form, NormalMode,
+  def viewAsString(form: Form[_] = form): String = directorAddressYears(frontendAppConfig, form, NormalMode,
     establisherIndex, directorIndex)(fakeRequest, messages).toString
 
   val validData = Json.obj(
@@ -52,7 +52,7 @@ class CompanyDirectorAddressYearsControllerSpec extends ControllerSpecBase {
       Json.obj(
         "director" -> Json.arr(
           Json.obj(
-            CompanyDirectorAddressYearsId.toString ->
+            DirectorAddressYearsId.toString ->
               AddressYears.options.head.value.toString
           )
         )

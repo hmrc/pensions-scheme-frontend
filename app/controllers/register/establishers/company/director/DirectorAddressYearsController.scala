@@ -23,18 +23,18 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
-import identifiers.register.establishers.company.director.CompanyDirectorAddressYearsId
+import identifiers.register.establishers.company.director.DirectorAddressYearsId
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.establishers.company.director.companyDirectorAddressYears
+import views.html.register.establishers.company.director.directorAddressYears
 
 import scala.concurrent.Future
 
-class CompanyDirectorAddressYearsController @Inject()(
+class DirectorAddressYearsController @Inject()(
                                                        appConfig: FrontendAppConfig,
                                                        override val messagesApi: MessagesApi,
                                                        dataCacheConnector: DataCacheConnector,
@@ -49,11 +49,11 @@ class CompanyDirectorAddressYearsController @Inject()(
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-        request.userAnswers.get(CompanyDirectorAddressYearsId(establisherIndex, directorIndex)) match {
+        request.userAnswers.get(DirectorAddressYearsId(establisherIndex, directorIndex)) match {
           case None =>
-            Ok(companyDirectorAddressYears(appConfig, form, mode, establisherIndex, directorIndex))
+            Ok(directorAddressYears(appConfig, form, mode, establisherIndex, directorIndex))
           case Some(value) =>
-            Ok(companyDirectorAddressYears(appConfig, form.fill(value), mode, establisherIndex, directorIndex))
+            Ok(directorAddressYears(appConfig, form.fill(value), mode, establisherIndex, directorIndex))
         }
       }
 
@@ -62,15 +62,15 @@ class CompanyDirectorAddressYearsController @Inject()(
     implicit request =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(companyDirectorAddressYears(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
+            Future.successful(BadRequest(directorAddressYears(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,
-              CompanyDirectorAddressYearsId(establisherIndex, directorIndex),
+              DirectorAddressYearsId(establisherIndex, directorIndex),
               value
             ).map {
               json =>
-                Redirect(navigator.nextPage(CompanyDirectorAddressYearsId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
+                Redirect(navigator.nextPage(DirectorAddressYearsId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
             }
         )
       }
