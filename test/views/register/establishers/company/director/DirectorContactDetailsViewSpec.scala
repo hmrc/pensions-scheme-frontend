@@ -45,6 +45,8 @@ class DirectorContactDetailsViewSpec extends QuestionViewBehaviours[DirectorCont
 
     behave like normalPage(createView, messageKeyPrefix, messages("messages__company_director_contact__title"))
 
+    behave like pageWithSecondaryHeader(createView, "test director name")
+
     behave like pageWithBackLink(createView)
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
