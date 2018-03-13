@@ -46,7 +46,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
       "establishers" -> Json.arr(
         Json.obj(
-          EstablisherDetailsId.toString -> EstablisherDetails("test first name", "test last name", LocalDate.now())
+          EstablisherDetailsId.toString -> EstablisherDetails("test first name", None, "test last name", LocalDate.now())
         )
       )
     )))

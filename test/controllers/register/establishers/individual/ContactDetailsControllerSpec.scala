@@ -52,18 +52,17 @@ class ContactDetailsControllerSpec extends ControllerSpecBase {
     firstIndex, establisherName)(fakeRequest, messages).toString
 
   val validData = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test first name", "test last name", LocalDate.now),
+          EstablisherDetails("test first name", None, "test last name", LocalDate.now),
         ContactDetailsId.toString ->
           ContactDetails("test@test.com", "123456789")
       ),
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test", "test", LocalDate.now)
+          EstablisherDetails("test", None, "test", LocalDate.now)
       )
     )
   )
