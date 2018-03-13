@@ -16,25 +16,24 @@
 
 package controllers.register.establishers.company.director
 
-import play.api.data.Form
-import play.api.libs.json.Json
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import models.{Index, NormalMode}
 import controllers.ControllerSpecBase
-import forms.register.establishers.company.director.CompanyDirectorAddressYearsFormProvider
+import controllers.actions._
+import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.CompanyDirectorAddressYearsId
-import models.register.establishers.company.director.CompanyDirectorAddressYears
+import models.{AddressYears, Index, NormalMode}
+import play.api.data.Form
+import play.api.libs.json.Json
+import play.api.test.Helpers._
+import utils.FakeNavigator
 import views.html.register.establishers.company.director.companyDirectorAddressYears
 
 class CompanyDirectorAddressYearsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new CompanyDirectorAddressYearsFormProvider()
+  val formProvider = new DirectorAddressYearsFormProvider()
   val form = formProvider()
   val establisherIndex = Index(0)
   val directorIndex = Index (0)
@@ -54,7 +53,7 @@ class CompanyDirectorAddressYearsControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             CompanyDirectorAddressYearsId.toString ->
-              CompanyDirectorAddressYears.options.head.value.toString
+              AddressYears.options.head.value.toString
           )
         )
       )
@@ -72,7 +71,7 @@ class CompanyDirectorAddressYearsControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill(CompanyDirectorAddressYears.values.head))
+      contentAsString(result) mustBe viewAsString(form.fill(AddressYears.values.head))
     }
 
     "redirect to session expired from a GET when the index is invalid" ignore {
@@ -83,7 +82,7 @@ class CompanyDirectorAddressYearsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", CompanyDirectorAddressYears.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
       val result = controller().onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -104,7 +103,7 @@ class CompanyDirectorAddressYearsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", CompanyDirectorAddressYears.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package models.register.establishers.company.director
+package models
 
 import utils.{Enumerable, InputOption, WithName}
 
-sealed trait CompanyDirectorAddressYears
+sealed trait AddressYears
 
-object CompanyDirectorAddressYears {
+object AddressYears extends Enumerable.Implicits {
 
-  case object UnderAYear extends WithName("under_a_year") with CompanyDirectorAddressYears
-  case object OverAYear extends WithName("over_a_year") with CompanyDirectorAddressYears
+  case object UnderAYear extends WithName("under_a_year") with AddressYears
+  case object OverAYear extends WithName("over_a_year") with AddressYears
 
-  val values: Seq[CompanyDirectorAddressYears] = Seq(
+  val values: Seq[AddressYears] = Seq(
     UnderAYear, OverAYear
   )
 
@@ -34,6 +34,6 @@ object CompanyDirectorAddressYears {
       InputOption(value.toString, s"messages__common__${value.toString}")
   }
 
-  implicit val enumerable: Enumerable[CompanyDirectorAddressYears] =
+  implicit val enumerable: Enumerable[AddressYears] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

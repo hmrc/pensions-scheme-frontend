@@ -19,13 +19,13 @@ package forms.register.establishers.company.director
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import models.register.establishers.company.director.CompanyDirectorAddressYears
+import models.AddressYears
 import play.api.data.Form
 
-class CompanyDirectorAddressYearsFormProvider @Inject() extends Mappings {
+class DirectorAddressYearsFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[CompanyDirectorAddressYears] =
+  def apply(): Form[AddressYears] =
     Form(
-      "value" -> enumerable[CompanyDirectorAddressYears]("messages__error__selection")
+      "value" -> enumerable[AddressYears]("messages__error__selection")
     )
 }

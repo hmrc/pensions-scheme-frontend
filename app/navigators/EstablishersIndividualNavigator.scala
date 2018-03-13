@@ -19,8 +19,7 @@ package navigators
 import com.google.inject.{Inject, Singleton}
 import identifiers.Identifier
 import identifiers.register.establishers.individual._
-import models.{CheckMode, NormalMode}
-import models.register.establishers.individual.AddressYears
+import models.{AddressYears, CheckMode, NormalMode}
 import play.api.mvc.Call
 import utils.{Navigator, UserAnswers}
 

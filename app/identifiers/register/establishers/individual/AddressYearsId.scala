@@ -18,7 +18,7 @@ package identifiers.register.establishers.individual
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import models.register.establishers.individual.AddressYears
+import models.AddressYears
 import play.api.libs.json._
 import utils.Cleanup
 

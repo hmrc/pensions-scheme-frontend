@@ -16,8 +16,8 @@
 
 package identifiers.register.establishers.individual
 
+import models.AddressYears
 import models.addresslookup.Address
-import models.register.establishers.individual.AddressYears
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}

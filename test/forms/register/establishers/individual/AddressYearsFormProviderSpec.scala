@@ -17,8 +17,7 @@
 package forms.register.establishers.individual
 
 import forms.behaviours.FormBehaviours
-import models.register.establishers.individual.AddressYears
-import models.{Field, Invalid, Required}
+import models.{AddressYears, Field, Invalid, Required}
 
 class AddressYearsFormProviderSpec extends FormBehaviours {
 

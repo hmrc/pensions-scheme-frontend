@@ -27,7 +27,7 @@ import models._
 import models.addresslookup.Address
 import models.register.CountryOptions
 import models.register.establishers.company.director.DirectorNino
-import models.register.establishers.individual.{AddressYears, UniqueTaxReference}
+import models.register.establishers.individual.UniqueTaxReference
 import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {

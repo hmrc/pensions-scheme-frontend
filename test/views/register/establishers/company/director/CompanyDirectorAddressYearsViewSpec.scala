@@ -16,10 +16,9 @@
 
 package views.register.establishers.company.director
 
-import forms.register.establishers.company.director.CompanyDirectorAddressYearsFormProvider
+import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
+import models.{AddressYears, Index, NormalMode}
 import play.api.data.Form
-import models.register.establishers.company.director.CompanyDirectorAddressYears
-import models.{Index, NormalMode}
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.director.companyDirectorAddressYears
@@ -31,7 +30,7 @@ class CompanyDirectorAddressYearsViewSpec extends ViewBehaviours {
   val directorIndex = Index(1)
 
 
-  val form = new CompanyDirectorAddressYearsFormProvider()()
+  val form = new DirectorAddressYearsFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () => companyDirectorAddressYears(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex
   )(fakeRequest, messages)
@@ -49,19 +48,19 @@ class CompanyDirectorAddressYearsViewSpec extends ViewBehaviours {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- CompanyDirectorAddressYears.options) {
+        for (option <- AddressYears.options) {
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, isChecked = false)
         }
       }
     }
 
-    for (option <- CompanyDirectorAddressYears.options) {
+    for (option <- AddressYears.options) {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, isChecked = true)
 
-          for (unselectedOption <- CompanyDirectorAddressYears.options.filterNot(o => o == option)) {
+          for (unselectedOption <- AddressYears.options.filterNot(o => o == option)) {
             assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, isChecked = false)
           }
         }

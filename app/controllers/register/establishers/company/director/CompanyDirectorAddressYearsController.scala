@@ -22,9 +22,8 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.company.director.CompanyDirectorAddressYearsFormProvider
+import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
 import identifiers.register.establishers.company.director.CompanyDirectorAddressYearsId
-import models.register.establishers.company.director.CompanyDirectorAddressYears
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -43,15 +42,14 @@ class CompanyDirectorAddressYearsController @Inject()(
                                                        authenticate: AuthAction,
                                                        getData: DataRetrievalAction,
                                                        requireData: DataRequiredAction,
-                                                       formProvider: CompanyDirectorAddressYearsFormProvider
+                                                       formProvider: DirectorAddressYearsFormProvider
                                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals{
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-        request.userAnswers
-          .get(CompanyDirectorAddressYearsId(establisherIndex, directorIndex)) match {
+        request.userAnswers.get(CompanyDirectorAddressYearsId(establisherIndex, directorIndex)) match {
           case None =>
             Ok(companyDirectorAddressYears(appConfig, form, mode, establisherIndex, directorIndex))
           case Some(value) =>
