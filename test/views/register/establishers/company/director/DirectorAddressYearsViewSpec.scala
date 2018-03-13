@@ -23,7 +23,7 @@ import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.director.directorAddressYears
 
-class CompanyDirectorAddressYearsViewSpec extends ViewBehaviours {
+class DirectorAddressYearsViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "company_director_address_years"
   val establisherIndex = Index(1)

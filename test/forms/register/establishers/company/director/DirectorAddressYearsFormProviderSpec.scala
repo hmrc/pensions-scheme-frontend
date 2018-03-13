@@ -19,7 +19,7 @@ package forms.register.establishers.company.director
 import forms.behaviours.FormBehaviours
 import models.{AddressYears, Field, Invalid, Required}
 
-class CompanyDirectorAddressYearsFormProviderSpec extends FormBehaviours {
+class DirectorAddressYearsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
     "value" -> AddressYears.options.head.value

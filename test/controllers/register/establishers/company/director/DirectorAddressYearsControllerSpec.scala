@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.register.establishers.company.director.directorAddressYears
 
-class CompanyDirectorAddressYearsControllerSpec extends ControllerSpecBase {
+class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
