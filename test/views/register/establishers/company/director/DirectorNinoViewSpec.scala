@@ -41,6 +41,8 @@ class DirectorNinoViewSpec extends ViewBehaviours {
   "rectorNino view" must {
     behave like normalPage(createView, messageKeyPrefix, messages("messages__director_nino__title"))
 
+    behave like pageWithSecondaryHeader(createView, "First Name Middle Name Last Name")
+
     behave like pageWithBackLink(createView)
   }
 
