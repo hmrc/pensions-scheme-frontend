@@ -56,6 +56,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Redirect(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, index, Index(0)))
+      Redirect(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index))
   }
 }
