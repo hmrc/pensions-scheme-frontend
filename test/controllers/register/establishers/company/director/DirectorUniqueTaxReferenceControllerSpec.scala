@@ -130,6 +130,7 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
+      val getRelevantData = new FakeDataRetrievalAction(Some(validDataEmptyForm))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("uniqueTaxReference.hasUtr", "true"), ("uniqueTaxReference.utr", "1234565656"))
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
 
