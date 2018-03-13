@@ -52,7 +52,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
 
   def directorContactDetails(establisherIndex:Int, directorIndex: Int): Seq[AnswerRow] =
     userAnswers.get(DirectorContactDetailsId(establisherIndex, directorIndex)) match {
-    case Some(x) => Seq(AnswerRow("companyDirectorContactDetails.checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false,
+    case Some(x) => Seq(AnswerRow("directorContactDetails.checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false,
       controllers.register.establishers.company.director.routes.DirectorContactDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url))
     case _ => Seq.empty
   }
