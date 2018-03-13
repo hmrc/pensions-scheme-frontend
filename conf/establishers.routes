@@ -133,6 +133,11 @@ POST       /:index/company/companyPreviousAddressList               controllers.
 GET        /:index/company/changeCompanyPreviousAddressList               controllers.register.establishers.company.CompanyPreviousAddressListController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/company/changeCompanyPreviousAddressList               controllers.register.establishers.company.CompanyPreviousAddressListController.onSubmit(mode: Mode = CheckMode, index: Index)
 
+GET        /:index/company/companyPreviousAddress                       controllers.register.establishers.company.CompanyPreviousAddressController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/company/companyPreviousAddress                       controllers.register.establishers.company.CompanyPreviousAddressController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/company/changeCompanyPreviousAddress                       controllers.register.establishers.company.CompanyPreviousAddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/company/changeCompanyPreviousAddress                       controllers.register.establishers.company.CompanyPreviousAddressController.onSubmit(mode: Mode = CheckMode, index: Index)
+
 GET        /:establisherIndex/company/director/:directorIndex/directorNino                       controllers.register.establishers.company.director.DirectorNinoController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
 POST       /:establisherIndex/company/director/:directorIndex/directorNino                       controllers.register.establishers.company.director.DirectorNinoController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
 GET        /:establisherIndex/company/director/:directorIndex/changeDirectorNino                       controllers.register.establishers.company.director.DirectorNinoController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
