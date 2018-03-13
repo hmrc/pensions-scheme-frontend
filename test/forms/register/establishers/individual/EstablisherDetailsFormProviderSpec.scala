@@ -122,7 +122,22 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
       }
     }
 
-    //TODO Successfully bind when middle name is valid
+    Seq("name", "someone‘s", "two-names", "NAME").foreach{ middleName =>
+      s"successfully bind valid middle name $middleName" in {
+
+        val detailsForm = form.bind(Map(
+          "firstName" -> "firstName",
+          "middleName" -> middleName,
+          "lastName" -> "testLastName",
+          "date.day" -> s"$day",
+          "date.month" -> s"$month",
+          "date.year" -> s"$year"))
+
+        val expectedData = EstablisherDetails("firstName", Some(middleName), "testLastName", date)
+
+        detailsForm.get shouldBe expectedData
+      }
+    }
 
     Seq("-242798‘/", "(last,.&)", "Last Name").foreach { lastName =>
       s"successfully bind valid last name $lastName" in {
