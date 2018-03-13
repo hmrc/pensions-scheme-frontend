@@ -19,9 +19,9 @@ package models.register.establishers.individual
 import org.joda.time.LocalDate
 import play.api.libs.json._
 
-case class EstablisherDetails (firstName: String, lastName: String, date: LocalDate) {
+case class EstablisherDetails (firstName: String, middleName: Option[String], lastName: String, date: LocalDate) {
 
-  def establisherName: String = s"$firstName $lastName"
+  def establisherName: String = Seq(Some(firstName), middleName, Some(lastName)).flatten.mkString(" ")
 }
 
 object EstablisherDetails {

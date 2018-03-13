@@ -47,6 +47,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
   val formProvider = new AddressListFormProvider()
   val form = formProvider(Seq(0))
   val firstIndex = Index(0)
+
   val establisherName: String = "test first name test last name"
   val addresses = Seq(
     address("test post code 1"),
@@ -79,7 +80,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test first name", "test last name", LocalDate.now),
+          EstablisherDetails("test first name", None, "test last name", LocalDate.now),
         UniqueTaxReferenceId.toString ->
           UniqueTaxReference.Yes("1234567891"),
         PostCodeLookupId.toString -> addresses)

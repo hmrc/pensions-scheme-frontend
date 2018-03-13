@@ -39,25 +39,36 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new EstablisherDetailsFormProvider()
+
   val form = formProvider()
   val schemeName = "Test Scheme Name"
 
   val firstIndex = Index(0)
   val invalidIndex = Index(3)
 
+  val day = LocalDate.now().getDayOfMonth
+  val month = LocalDate.now().getMonthOfYear
+  val year = LocalDate.now().getYear - 20
+
+  val establisherDetailsObj = EstablisherDetails("firstName", None, "lastName", new LocalDate(year, month, day))
+
   val minimalDataCacheMap = new FakeDataRetrievalAction(Some(Json.obj(
     SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)))))
 
   def controller(dataRetrievalAction: DataRetrievalAction = minimalDataCacheMap): EstablisherDetailsController =
-    new EstablisherDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+    new EstablisherDetailsController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
 
   def viewAsString(form: Form[_] = form): String =
     establisherDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages).toString
-
-  val day = LocalDate.now().getDayOfMonth
-  val month = LocalDate.now().getMonthOfYear
-  val year = LocalDate.now().getYear - 20
 
   "EstablisherDetails Controller" must {
 
@@ -72,24 +83,19 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
         SchemeDetailsId.toString ->
           SchemeDetails(schemeName, SchemeType.SingleTrust),
         "establishers" -> Json.arr(
-          Json.obj(
-            EstablisherDetailsId.toString ->
-              EstablisherDetails("firstName", "lastName", new LocalDate(year, month, day))
-          )
+          Json.obj(EstablisherDetailsId.toString -> establisherDetailsObj)
         )
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill(EstablisherDetails("firstName", "lastName",
-        new LocalDate(year, month, day))))
+      contentAsString(result) mustBe viewAsString(form.fill(establisherDetailsObj))
     }
 
     "redirect to session expired page on a GET when the index is not valid" in {
       val validData = Json.obj(
         "establishers" -> Json.arr(
           Json.obj(
-            EstablisherDetailsId.toString ->
-              EstablisherDetails("firstName", "lastName", new LocalDate(year, month, day))
+            EstablisherDetailsId.toString -> establisherDetailsObj
           )
         )
       )

@@ -48,10 +48,27 @@ class AddressControllerSpec extends ControllerSpecBase {
   def countryOptions: CountryOptions = new CountryOptions(options)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): AddressController =
-    new AddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider, countryOptions)
+    new AddressController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider,
+      countryOptions
+    )
 
-  def viewAsString(form: Form[_] = form): String = address(frontendAppConfig, form, NormalMode, firstIndex, options, establisherName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = address(
+    frontendAppConfig,
+    form,
+    NormalMode,
+    firstIndex,
+    options,
+    establisherName
+  )(fakeRequest, messages).toString
+
   val addressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
 
   val validData: JsObject = Json.obj(SchemeDetailsId.toString -> Json.toJson(
@@ -59,7 +76,7 @@ class AddressControllerSpec extends ControllerSpecBase {
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test first name", "test last name", LocalDate.now),
+          EstablisherDetails("test first name", None, "test last name", LocalDate.now),
         AddressId.toString ->
           Json.toJson(Address("address line 1", "address line 2", Some("test town"),
             Some("test county"), Some("test post code"), "GB")
