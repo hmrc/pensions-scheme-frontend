@@ -37,9 +37,28 @@ class MongoCacheConnector @Inject() (
                                                 hc: HeaderCarrier
                                                ): Future[JsValue] = {
 
+    modify(cacheId, _.set(id)(value))
+  }
+
+  def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+                                     (implicit
+                                      cleanup: Cleanup[I],
+                                      ec: ExecutionContext,
+                                      hc: HeaderCarrier
+                                     ): Future[JsValue] = {
+
+    modify(cacheId, _.remove(id))
+  }
+
+  private def modify(cacheId: String, modification: (UserAnswers) => JsResult[UserAnswers])
+                                             (implicit
+                                              ec: ExecutionContext,
+                                              hc: HeaderCarrier
+                                             ): Future[JsValue] = {
+
     sessionRepository().get(cacheId).flatMap {
       json =>
-        UserAnswers(json.getOrElse(Json.obj())).set(id)(value) match {
+        modification(UserAnswers(json.getOrElse(Json.obj()))) match {
           case JsSuccess(UserAnswers(updatedJson), _) =>
             sessionRepository().upsert(cacheId, updatedJson)
               .map(_ => updatedJson)
@@ -52,9 +71,9 @@ class MongoCacheConnector @Inject() (
   override def fetch(cacheId: String)(implicit
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier
-                                     ): Future[Option[JsValue]] = {
+  ): Future[Option[JsValue]] = {
 
     sessionRepository().get(cacheId)
   }
-}
 
+}

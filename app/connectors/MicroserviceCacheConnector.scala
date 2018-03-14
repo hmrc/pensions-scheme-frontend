@@ -43,10 +43,27 @@ class MicroserviceCacheConnector @Inject() (
                                                 ec: ExecutionContext,
                                                 hc: HeaderCarrier
                                                ): Future[JsValue] = {
+    modify(cacheId, _.set(id)(value))
+  }
+
+  def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+                                     (implicit
+                                      cleanup: Cleanup[I],
+                                      ec: ExecutionContext,
+                                      hc: HeaderCarrier
+                                     ): Future[JsValue] = {
+    modify(cacheId, _.remove(id))
+  }
+
+  private def modify(cacheId: String, modification: (UserAnswers) => JsResult[UserAnswers])
+                    (implicit
+                     ec: ExecutionContext,
+                     hc: HeaderCarrier
+                    ): Future[JsValue] = {
 
     fetch(cacheId).flatMap {
       json =>
-        UserAnswers(json.getOrElse(Json.obj())).set(id)(value) match {
+        modification(UserAnswers(json.getOrElse(Json.obj()))) match {
           case JsSuccess(UserAnswers(updatedJson), _) =>
 
             val decrypted = PlainText(Json.stringify(updatedJson))
@@ -55,14 +72,14 @@ class MicroserviceCacheConnector @Inject() (
             http.url(url(cacheId))
               .withHeaders(hc.headers: _*)
               .post(encrypted.value).flatMap {
-                response =>
-                  response.status match {
-                    case OK =>
-                      Future.successful(updatedJson)
-                    case _ =>
-                      Future.failed(new HttpException(response.body, response.status))
-                  }
-              }
+              response =>
+                response.status match {
+                  case OK =>
+                    Future.successful(updatedJson)
+                  case _ =>
+                    Future.failed(new HttpException(response.body, response.status))
+                }
+            }
           case JsError(errors) =>
             Future.failed(JsResultException(errors))
         }

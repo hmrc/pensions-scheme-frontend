@@ -19,8 +19,10 @@ package utils
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId, DirectorNinoId}
+import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId, DirectorNinoId, DirectorUniqueTaxReferenceId}
+import identifiers.register.establishers.{EstablisherKindId, company}
 import identifiers.register.establishers.individual._
+import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.{EstablisherKindId, company}
 import models.EstablisherNino.{No, Yes}
 import models._
@@ -32,12 +34,20 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
+  def directorUniqueTaxReference(establisherIndex: Int, directorIndex:Int): Seq[AnswerRow] =
+    userAnswers.get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
+      case Some(x) => Seq(AnswerRow("directorUniqueTaxReference.checkYourAnswersLabel", Seq(s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}"), true,
+        controllers.register.establishers.company.director.routes.DirectorUniqueTaxReferenceController.onPageLoad(
+          CheckMode, establisherIndex, directorIndex).url))
+      case _ => Seq.empty
+    }
+
   def companyPreviousAddress(index: Int): Seq[AnswerRow] =
     userAnswers.get(identifiers.register.establishers.company.CompanyPreviousAddressId(index)) match {
-    case Some(x) => Seq(AnswerRow("messages__common__cya__previous_address", addressAnswer(x), false,
-      controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url))
-    case _ => Nil
-  }
+      case Some(x) => Seq(AnswerRow("messages__common__cya__previous_address", addressAnswer(x), false,
+        controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url))
+      case _ => Nil
+    }
 
   def addCompanyDirectors(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.AddCompanyDirectorsId) map {
     x => AnswerRow("addCompanyDirectors.checkYourAnswersLabel", Seq(if(x) "site.yes" else "site.no"), true, controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index).url)
