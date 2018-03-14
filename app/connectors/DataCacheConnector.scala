@@ -33,8 +33,16 @@ trait DataCacheConnector {
                                        hc: HeaderCarrier
                                       ): Future[JsValue]
 
+  def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+                                     (implicit
+                                      cleanup: Cleanup[I],
+                                      ec: ExecutionContext,
+                                      hc: HeaderCarrier
+                                     ): Future[JsValue]
+
   def fetch(cacheId: String)(implicit
                              ec: ExecutionContext,
                              hc: HeaderCarrier
                             ): Future[Option[JsValue]]
+
 }

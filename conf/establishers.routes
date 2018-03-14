@@ -152,6 +152,7 @@ GET        /:index/company/changeAddCompanyDirectors                       contr
 POST       /:index/company/changeAddCompanyDirectors                       controllers.register.establishers.company.AddCompanyDirectorsController.onSubmit(mode: Mode = CheckMode, index: Index)
 
 GET        /:establisherIndex/company/director/:directorIndex/confirmDeleteDirector                       controllers.register.establishers.company.director.ConfirmDeleteDirectorController.onPageLoad(establisherIndex: Index, directorIndex: Index)
+POST       /:establisherIndex/company/director/:directorIndex/confirmDeleteDirector                       controllers.register.establishers.company.director.ConfirmDeleteDirectorController.onSubmit(establisherIndex: Index, directorIndex: Index)
 
 GET        /:establisherIndex/company/director/:directorIndex/directorUniqueTaxReference                             controllers.register.establishers.company.director.DirectorUniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
 POST       /:establisherIndex/company/director/:directorIndex/directorUniqueTaxReference                             controllers.register.establishers.company.director.DirectorUniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
