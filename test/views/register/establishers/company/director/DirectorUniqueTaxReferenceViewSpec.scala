@@ -42,6 +42,8 @@ class DirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
     behave like pageWithSecondaryHeader(createView, "First Name Middle Name Last Name")
 
     behave like normalPage(createView, messageKeyPrefix, messages("messages__director_has_sautr__title"))
+
+    behave like pageWithBackLink(createView)
   }
 
   "CompanyUniqueTaxReference view" when {
