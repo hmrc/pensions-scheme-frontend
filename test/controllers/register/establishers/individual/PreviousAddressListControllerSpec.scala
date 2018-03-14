@@ -79,7 +79,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test first name", "test last name", LocalDate.now),
+          EstablisherDetails("test first name", None, "test last name", LocalDate.now),
         UniqueTaxReferenceId.toString ->
           UniqueTaxReference.Yes("1234567891"),
         PreviousPostCodeLookupId.toString -> previousAddresses)

@@ -29,8 +29,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
-    new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction,
-      new DataRequiredActionImpl, checkYourAnswersFactory)
+    new CheckYourAnswersController(
+      frontendAppConfig,
+      messagesApi,
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      checkYourAnswersFactory
+    )
 
   "Check Your Answers Controller" must {
     "return 200 and the correct view for a GET" in {

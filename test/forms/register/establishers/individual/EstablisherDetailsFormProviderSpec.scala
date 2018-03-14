@@ -30,12 +30,15 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",
+    "middleName" -> "testMiddleName",
     "lastName" -> "testLastName",
     "date.day" -> s"$day",
     "date.month" -> s"$month",
     "date.year" -> s"$year"
   )
+
   val regexFirstName = "[a-zA-Z]{1}[a-zA-Z-‘]*"
+  val regexMiddleName ="[a-zA-Z-‘]*"
   val regexLastName = "[a-zA-Z0-9,.‘(&)-/ ]*"
 
   val form = new EstablisherDetailsFormProvider()()
@@ -43,7 +46,7 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
   val date = new LocalDate(year, month, day)
 
   "EstablisherDetails form" must {
-    behave like questionForm(EstablisherDetails("testFirstName", "testLastName", date))
+    behave like questionForm(EstablisherDetails("testFirstName", Some("testMiddleName"), "testLastName", date))
 
     behave like formWithMandatoryTextFields(
       Field("firstName", Required -> "messages__error__first_name"),
@@ -53,48 +56,84 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
       Field("date.year", Required -> "messages__error__date")
     )
 
-    "fail to bind when the first name exceeds max length 35" in {
-      val testString = RandomStringUtils.random(36)
-      val data = validData + ("firstName" -> testString)
+    "fail to bind" when {
+      "the first name exceeds max length 35" in {
+        val testString = RandomStringUtils.random(36)
+        val data = validData + ("firstName" -> testString)
 
-      val expectedError = error("firstName", "messages__error__first_name_length", 35)
-      checkForError(form, data, expectedError)
-    }
-
-    "fail to bind when the last name exceeds max length 35" in {
-      val testString = RandomStringUtils.random(36)
-      val data = validData + ("lastName" -> testString)
-
-      val expectedError = error("lastName", "messages__error__last_name_length", 35)
-      checkForError(form, data, expectedError)
-    }
-
-    Seq("-sfygAFD", "‘GHJGJG", "SDSAF^*NJ", "^*", "first name").foreach { name =>
-      s"fail to bind when the first name $name is invalid" in {
-        val data = validData + ("firstName" -> name)
-
-        val expectedError = error("firstName", "messages__error__first_name_invalid", regexFirstName)
+        val expectedError = error("firstName", "messages__error__first_name_length", 35)
         checkForError(form, data, expectedError)
       }
-    }
 
-    s"fail to bind when the last name is invalid" in {
-      val data = validData + ("lastName" -> "strbvhjbv^*")
+      "the middle name exceeds max length 35" in {
+        val testString = RandomStringUtils.random(36)
+        val data = validData + ("middleName" -> testString)
 
-      val expectedError = error("lastName", "messages__error__last_name_invalid", regexLastName)
-      checkForError(form, data, expectedError)
+        val expectedError = error("middleName", "messages__error__middle_name_length", 35)
+        checkForError(form, data, expectedError)
+      }
+
+      "the last name exceeds max length 35" in {
+        val testString = RandomStringUtils.random(36)
+        val data = validData + ("lastName" -> testString)
+
+        val expectedError = error("lastName", "messages__error__last_name_length", 35)
+        checkForError(form, data, expectedError)
+      }
+
+      Seq("-sfygAFD", "‘GHJGJG", "SDSAF^*NJ", "^*", "first name").foreach { name =>
+        s"the first name $name is invalid" in {
+          val data = validData + ("firstName" -> name)
+
+          val expectedError = error("firstName", "messages__error__first_name_invalid", regexFirstName)
+          checkForError(form, data, expectedError)
+        }
+      }
+
+      s"the middle name is invalid" in {
+        val data = validData + ("middleName" -> "strbvhjbv^*!")
+
+        val expectedError = error("middleName", "messages__error__middle_name_invalid", regexMiddleName)
+        checkForError(form, data, expectedError)
+      }
+
+      s"the last name is invalid" in {
+        val data = validData + ("lastName" -> "strbvhjbv^*")
+
+        val expectedError = error("lastName", "messages__error__last_name_invalid", regexLastName)
+        checkForError(form, data, expectedError)
+      }
+
     }
 
     Seq("first-name", "King‘s").foreach { firstName =>
       s"successfully bind valid first name $firstName" in {
 
-        val detailsForm = form.bind(Map("firstName" -> firstName,
+        val detailsForm = form.bind(Map(
+          "firstName" -> firstName,
           "lastName" -> "testLastName",
           "date.day" -> s"$day",
           "date.month" -> s"$month",
           "date.year" -> s"$year"))
 
-        val expectedData = EstablisherDetails(firstName, "testLastName", date)
+        val expectedData = EstablisherDetails(firstName, None, "testLastName", date)
+
+        detailsForm.get shouldBe expectedData
+      }
+    }
+
+    Seq("name", "someone‘s", "two-names", "NAME").foreach{ middleName =>
+      s"successfully bind valid middle name $middleName" in {
+
+        val detailsForm = form.bind(Map(
+          "firstName" -> "firstName",
+          "middleName" -> middleName,
+          "lastName" -> "testLastName",
+          "date.day" -> s"$day",
+          "date.month" -> s"$month",
+          "date.year" -> s"$year"))
+
+        val expectedData = EstablisherDetails("firstName", Some(middleName), "testLastName", date)
 
         detailsForm.get shouldBe expectedData
       }
@@ -103,13 +142,14 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
     Seq("-242798‘/", "(last,.&)", "Last Name").foreach { lastName =>
       s"successfully bind valid last name $lastName" in {
 
-        val detailsForm = form.bind(Map("firstName" -> "testFirstName",
+        val detailsForm = form.bind(Map(
+          "firstName" -> "testFirstName",
           "lastName" -> lastName,
           "date.day" -> s"$day",
           "date.month" -> s"$month",
           "date.year" -> s"$year"))
 
-        val expectedData = EstablisherDetails("testFirstName", lastName, date)
+        val expectedData = EstablisherDetails("testFirstName", None, lastName, date)
         detailsForm.get shouldBe expectedData
       }
     }
