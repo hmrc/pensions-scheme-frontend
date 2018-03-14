@@ -27,14 +27,14 @@ class DirectorAddressYearsFormProviderSpec extends FormBehaviours {
 
   val form = new DirectorAddressYearsFormProvider()()
 
-  "CompanyAddressYears form" must {
+  "DirectorAddressYearsFormProviderSpec form" must {
 
     behave like questionForm[AddressYears](AddressYears.values.head)
 
     behave like formWithOptionField(
       Field(
         "value",
-        Required -> "messages__error__selection",
+        Required -> "messages__common_error__current_address_years",
         Invalid -> "error.invalid"),
       AddressYears.options.map(_.value): _*)
   }

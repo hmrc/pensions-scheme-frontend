@@ -26,6 +26,6 @@ class DirectorAddressYearsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[AddressYears] =
     Form(
-      "value" -> enumerable[AddressYears]("messages__error__selection")
+      "value" -> enumerable[AddressYears]("messages__common_error__current_address_years")
     )
 }

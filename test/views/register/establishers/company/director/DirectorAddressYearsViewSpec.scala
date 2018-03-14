@@ -25,7 +25,7 @@ import views.html.register.establishers.company.director.directorAddressYears
 
 class DirectorAddressYearsViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "company_director_address_years"
+  val messageKeyPrefix = "director_address_years"
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
 

@@ -23,7 +23,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, directorIndex: Index)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__company_director_address_years__title"),
+    title = messages("messages__director_address_years__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -33,11 +33,11 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__company_director_address_years__heading")
+        @components.heading("messages__director_address_years__heading")
 
         @components.input_radio(
             field = form("value"),
-            legend = messages("messages__company_director_address_years__title"),
+            legend = messages("messages__director_address_years__title"),
             legendClass = Some("visually-hidden"),
             inputs = AddressYears.options
         )
