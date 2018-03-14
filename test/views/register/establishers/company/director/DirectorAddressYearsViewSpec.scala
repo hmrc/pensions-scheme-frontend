@@ -17,7 +17,9 @@
 package views.register.establishers.company.director
 
 import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
+import models.register.establishers.company.director.DirectorDetails
 import models.{AddressYears, Index, NormalMode}
+import org.joda.time.LocalDate
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
@@ -28,18 +30,32 @@ class DirectorAddressYearsViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "director_address_years"
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
-
+  val director = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
 
   val form = new DirectorAddressYearsFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => directorAddressYears(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex
+  def createView: () => HtmlFormat.Appendable = () => directorAddressYears(
+    frontendAppConfig,
+    form,
+    NormalMode,
+    establisherIndex,
+    directorIndex,
+    director.directorName
   )(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorAddressYears(frontendAppConfig,
-    form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorAddressYears(
+    frontendAppConfig,
+    form,
+    NormalMode,
+    establisherIndex,
+    directorIndex,
+    director.directorName
+  )(fakeRequest, messages)
 
   "CompanyDirectorAddressYears view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+    behave like pageWithSecondaryHeader(createView, director.directorName)
 
     behave like pageWithBackLink(createView)
   }

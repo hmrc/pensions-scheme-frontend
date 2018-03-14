@@ -22,7 +22,9 @@ import controllers.actions._
 import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.DirectorAddressYearsId
+import models.register.establishers.company.director.DirectorDetails
 import models.{AddressYears, Index, NormalMode}
+import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -38,14 +40,28 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
   val establisherIndex = Index(0)
   val directorIndex = Index (0)
   val invalidIndex = Index(10)
-
+  val director = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): DirectorAddressYearsController =
-    new DirectorAddressYearsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+    new DirectorAddressYearsController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
 
-  def viewAsString(form: Form[_] = form): String = directorAddressYears(frontendAppConfig, form, NormalMode,
-    establisherIndex, directorIndex)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = directorAddressYears(
+    frontendAppConfig,
+    form,
+    NormalMode,
+    establisherIndex,
+    directorIndex,
+    director.directorName
+  )(fakeRequest, messages).toString
 
   val validData = Json.obj(
     EstablishersId.toString -> Json.arr(

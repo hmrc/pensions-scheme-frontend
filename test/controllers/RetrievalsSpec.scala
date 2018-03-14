@@ -120,36 +120,41 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
 
   "retrieve" must {
 
-    "reach the intended result when identifier gets value from answers" in {
+    "reach the intended result" when {
+      "identifier gets value from answers" in {
 
-      implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result"))
+        implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result"))
 
-      testIdentifier.retrieve.right.value mustEqual "result"
-    }
+        testIdentifier.retrieve.right.value mustEqual "result"
+      }
 
-    "reach the intended result when identifier uses and to get the value from answers" in {
+      "identifier uses and to get the value from answers" in {
 
-      implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result", "second" -> "answer"))
+        implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result", "second" -> "answer"))
 
-      (testIdentifier and secondIdentifier).retrieve.right.value mustEqual new ~("result", "answer")
-    }
-
-    "redirect to the session expired page when cant find identifier" in {
-
-      implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test1" -> "result"))
-
-      whenReady(testIdentifier.retrieve.left.value) {
-        _ mustEqual Redirect(routes.SessionExpiredController.onPageLoad())
+        (testIdentifier and secondIdentifier).retrieve.right.value mustEqual new ~("result", "answer")
       }
     }
 
-    "redirect to Session Expired page when company name is not present" in {
+    "redirect to the session expired page" when {
+      "cant find identifier" in {
 
-      implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj())
+        implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test1" -> "result"))
 
-      val result = controller.retrieve(testIdentifier)(success)
+        whenReady(testIdentifier.retrieve.left.value) {
+          _ mustEqual Redirect(routes.SessionExpiredController.onPageLoad())
+        }
+      }
 
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      "company name is not present" in {
+
+        implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj())
+
+        val result = controller.retrieve(testIdentifier)(success)
+
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      }
     }
+
   }
 }

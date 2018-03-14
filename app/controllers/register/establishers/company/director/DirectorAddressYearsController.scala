@@ -47,15 +47,17 @@ class DirectorAddressYearsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
+      retrieveDirectorName(establisherIndex, directorIndex) { name =>
         request.userAnswers.get(DirectorAddressYearsId(establisherIndex, directorIndex)) match {
           case None =>
-            Ok(directorAddressYears(appConfig, form, mode, establisherIndex, directorIndex))
+            Future.successful(Ok(directorAddressYears(appConfig, form, mode, establisherIndex, directorIndex, name)))
           case Some(value) =>
-            Ok(directorAddressYears(appConfig, form.fill(value), mode, establisherIndex, directorIndex))
+            Future.successful(Ok(directorAddressYears(appConfig, form.fill(value), mode, establisherIndex, directorIndex, name)))
         }
       }
+  }
 
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
