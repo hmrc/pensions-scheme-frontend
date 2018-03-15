@@ -159,3 +159,8 @@ POST       /:establisherIndex/company/director/:directorIndex/directorUniqueTaxR
 GET        /:establisherIndex/company/director/:directorIndex/changeDirectorUniqueTaxReference                       controllers.register.establishers.company.director.DirectorUniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
 POST       /:establisherIndex/company/director/:directorIndex/changeDirectorUniqueTaxReference                       controllers.register.establishers.company.director.DirectorUniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
 
+
+GET        /:establisherIndex/company/director/:directorIndex/directorAddressYears               controllers.register.establishers.company.director.DirectorAddressYearsController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
+POST       /:establisherIndex/company/director/:directorIndex/directorAddressYears               controllers.register.establishers.company.director.DirectorAddressYearsController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
+GET        /:establisherIndex/company/director/:directorIndex/directorAddressYears               controllers.register.establishers.company.director.DirectorAddressYearsController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
+POST       /:establisherIndex/company/director/:directorIndex/directorAddressYears               controllers.register.establishers.company.director.DirectorAddressYearsController.onSubmit(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)

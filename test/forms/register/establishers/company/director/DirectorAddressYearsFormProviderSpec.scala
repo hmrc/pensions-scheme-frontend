@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package forms.register.establishers.company.director
 
 import forms.behaviours.FormBehaviours
 import models.{AddressYears, Field, Invalid, Required}
 
-class CompanyAddressYearsFormProviderSpec extends FormBehaviours {
+class DirectorAddressYearsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
     "value" -> AddressYears.options.head.value
   )
 
-  val form = new AddressYearsFormProvider()()
+  val form = new DirectorAddressYearsFormProvider()()
 
-  "CompanyAddressYears form" must {
+  "DirectorAddressYearsFormProviderSpec form" must {
 
     behave like questionForm[AddressYears](AddressYears.values.head)
 
     behave like formWithOptionField(
       Field(
         "value",
-        Required -> "messages__error__selection",
+        Required -> "messages__common_error__current_address_years",
         Invalid -> "error.invalid"),
       AddressYears.options.map(_.value): _*)
   }

@@ -17,8 +17,6 @@
 package utils
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.individual.{AddressYearsId, PreviousAddressId, PreviousPostCodeLookupId}
-import models.register.establishers.individual.AddressYears
 import play.api.libs.json._
 
 trait Cleanup[I <: TypedIdentifier.PathDependent] {

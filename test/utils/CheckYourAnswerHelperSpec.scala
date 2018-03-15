@@ -17,17 +17,17 @@
 package utils
 
 import base.SpecBase
+import controllers.register.establishers.individual.routes._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
-import models.{CheckMode, EstablisherNino, Index}
 import models.addresslookup.Address
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
-import models.register.establishers.individual.{AddressYears, ContactDetails, EstablisherDetails}
 import models.register.establishers.individual.UniqueTaxReference.{No, Yes}
+import models.register.establishers.individual.{ContactDetails, EstablisherDetails}
+import models.register.{CountryOptions, SchemeDetails, SchemeType}
+import models.{AddressYears, CheckMode, EstablisherNino, Index}
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import viewmodels.AnswerRow
-import controllers.register.establishers.individual.routes._
 
 class CheckYourAnswerHelperSpec extends SpecBase {
 

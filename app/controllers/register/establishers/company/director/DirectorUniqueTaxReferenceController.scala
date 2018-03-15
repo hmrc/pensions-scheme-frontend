@@ -23,7 +23,7 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorUniqueTaxReferenceFormProvider
-import identifiers.register.establishers.company.director.DirectorUniqueTaxReferenceId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorUniqueTaxReferenceId}
 import models.register.establishers.individual.UniqueTaxReference
 import models.{Index, Mode}
 import play.api.data.Form
@@ -50,24 +50,22 @@ class DirectorUniqueTaxReferenceController @Inject()(
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveDirectorName(establisherIndex,directorIndex) { directorName =>
-        val redirectResult = request.userAnswers.get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
-          case None =>
-            Ok(directorUniqueTaxReference(appConfig, form, mode, establisherIndex, directorIndex, directorName))
-          case Some(value) =>
-            Ok(directorUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, directorIndex,directorName))
+      DirectorDetailsId(establisherIndex,directorIndex).retrieve.right.flatMap { director =>
+        DirectorUniqueTaxReferenceId(establisherIndex, directorIndex).retrieve.right.map{ value =>
+          Future.successful(Ok(directorUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, directorIndex, director.directorName)))
+        }.left.map{ _ =>
+          Future.successful(Ok(directorUniqueTaxReference(appConfig, form, mode, establisherIndex, directorIndex, director.directorName)))
         }
-        Future.successful(redirectResult)
       }
   }
 
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveDirectorName(establisherIndex,directorIndex) { directorName =>
+      DirectorDetailsId(establisherIndex,directorIndex).retrieve.right.map { director =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, directorIndex,directorName))),
+            Future.successful(BadRequest(directorUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, directorIndex,director.directorName))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,

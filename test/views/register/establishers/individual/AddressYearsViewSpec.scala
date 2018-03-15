@@ -16,10 +16,9 @@
 
 package views.register.establishers.individual
 
-import play.api.data.Form
 import forms.register.establishers.individual.AddressYearsFormProvider
-import models.register.establishers.individual.AddressYears
-import models.{Index, NormalMode}
+import models.{AddressYears, Index, NormalMode}
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.individual.addressYears

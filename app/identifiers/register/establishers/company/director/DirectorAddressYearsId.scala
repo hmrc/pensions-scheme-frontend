@@ -14,28 +14,17 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.individual
+package identifiers.register.establishers.company.director
 
-import identifiers.TypedIdentifier
+import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.AddressYears
-import play.api.libs.json._
-import utils.Cleanup
+import play.api.libs.json.JsPath
 
-case class AddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
-  override def path: JsPath = EstablishersId.path \ index \ AddressYearsId.toString
+case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[AddressYears] {
+  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \ DirectorAddressYearsId.toString
 }
 
-object AddressYearsId {
-
-  override lazy val toString: String =
-    "addressYears"
-
-  implicit lazy val addressYears: Cleanup[AddressYearsId] =
-    Cleanup[AddressYears, AddressYearsId] {
-      case (AddressYearsId(id), Some(AddressYears.OverAYear), answers) =>
-        answers
-          .remove(PreviousPostCodeLookupId(id))
-          .flatMap(_.remove(PreviousAddressId(id)))
-    }
+object DirectorAddressYearsId {
+  override lazy val toString: String = "companyDirectorAddressYears"
 }

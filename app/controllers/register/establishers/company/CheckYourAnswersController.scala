@@ -43,14 +43,28 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveSchemeName { schemeName =>
         val checkYourAnswersHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
-        val answerSections = Seq(
-          AnswerSection(Some("messages__common__company_details__title"), checkYourAnswersHelper.companyDetails(index.id) ++
-        checkYourAnswersHelper.companyRegistrationNumber(index.id) ++ checkYourAnswersHelper.companyUniqueTaxReference(index.id)),
-        AnswerSection(Some("messages__establisher_company_contact_details__title"), checkYourAnswersHelper.companyAddress(index.id) ++
-        checkYourAnswersHelper.companyAddressYears(index.id) ++ checkYourAnswersHelper.companyPreviousAddress(index.id) ++
-          checkYourAnswersHelper.companyContactDetails(index.id)))
 
-        Future.successful(Ok(check_your_answers(appConfig, answerSections, Some(schemeName), routes.CheckYourAnswersController.onSubmit(index))))
+        val companyDetails = AnswerSection(
+          Some("messages__common__company_details__title"),
+          checkYourAnswersHelper.companyDetails(index.id) ++
+            checkYourAnswersHelper.companyRegistrationNumber(index.id) ++
+            checkYourAnswersHelper.companyUniqueTaxReference(index.id)
+        )
+
+        val companyContactDetails = AnswerSection(
+          Some("messages__establisher_company_contact_details__title"),
+          checkYourAnswersHelper.companyAddress(index.id) ++
+            checkYourAnswersHelper.companyAddressYears(index.id) ++
+            checkYourAnswersHelper.companyPreviousAddress(index.id) ++
+            checkYourAnswersHelper.companyContactDetails(index.id)
+        )
+
+        Future.successful(Ok(check_your_answers(
+          appConfig,
+          Seq(companyDetails,companyContactDetails),
+          Some(schemeName),
+          routes.CheckYourAnswersController.onSubmit(index)))
+        )
       }
   }
 

@@ -152,7 +152,7 @@ messages__error__benefits_insurance__policy_length = The policy number cannot be
 messages__establisher_address_years__title = How long has the establisher been at this address?
 messages__common__under_a_year = Less than 12 months
 messages__common__over_a_year = More than 12 months
-messages__error__address_years = Select how long they have been at the current address
+messages__common_error__current_address_years = Select how long they have been at the current address
 
 messages__common__what_you_need_to_know = What you need to know
 messages__complete__title = Your application has been successfully submitted
@@ -176,10 +176,6 @@ messages__uk_bank_account_details__sort_code_hint = For example ’00 55 66’ o
 messages__uk_bank_account_details__account_number = Account number
 messages__uk_bank_account_details__date_bank_account = Date the account was opened
 messages__common__dob__hint = Example 30 09 1990
-
-messages__common__day = Day
-messages__common__month = Month
-messages__common__year = Year
 
 messages__error__bank_name = Enter the bank name
 messages__error__account_name = Enter the account name
@@ -371,6 +367,9 @@ messages__addCompanyDirectors_lede = You must tell us about all your directors. 
 messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.
 messages__addCompanyDirectors_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
+
+messages__director_address_years__title = How long has the director lived at this address?
+messages__director_address_years__heading = How long has the director lived at this address?
 
 messages__director_has_sautr__title = Does the director have a Self Assessment Unique Taxpayer Reference number?
 messages__director_sautr = Unique Taxpayer Reference number

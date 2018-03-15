@@ -17,8 +17,7 @@
 package forms.register.establishers.individual
 
 import forms.behaviours.FormBehaviours
-import models.register.establishers.individual.AddressYears
-import models.{Field, Invalid, Required}
+import models.{AddressYears, Field, Invalid, Required}
 
 class AddressYearsFormProviderSpec extends FormBehaviours {
 
@@ -35,7 +34,7 @@ class AddressYearsFormProviderSpec extends FormBehaviours {
     behave like formWithOptionField(
       Field(
         "value",
-        Required -> "messages__error__address_years",
+        Required -> "messages__common_error__current_address_years",
         Invalid -> "error.invalid"),
       AddressYears.options.map(_.value): _*)
   }

@@ -23,8 +23,7 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import forms.register.establishers.company.AddressYearsFormProvider
 import identifiers.register.establishers.company.CompanyAddressYearsId
-import models.register.establishers.company.CompanyAddressYears
-import models.{Index, Mode}
+import models.{AddressYears, Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -49,8 +48,7 @@ class CompanyAddressYearsController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      request.userAnswers
-        .get[CompanyAddressYears](CompanyAddressYearsId(index)) match {
+      request.userAnswers.get[AddressYears](CompanyAddressYearsId(index)) match {
         case None =>
           Ok(companyAddressYears(appConfig, form, mode, index))
         case Some(value) =>

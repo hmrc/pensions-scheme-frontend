@@ -14,33 +14,53 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company
+package views.register.establishers.company.director
 
-import forms.register.establishers.company.AddressYearsFormProvider
+import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
+import models.register.establishers.company.director.DirectorDetails
 import models.{AddressYears, Index, NormalMode}
+import org.joda.time.LocalDate
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.company.companyAddressYears
+import views.html.register.establishers.company.director.directorAddressYears
 
-class CompanyAddressYearsViewSpec extends ViewBehaviours {
+class DirectorAddressYearsViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "company_address_years"
+  val messageKeyPrefix = "director_address_years"
+  val establisherIndex = Index(1)
+  val directorIndex = Index(1)
+  val director = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
 
-  val form = new AddressYearsFormProvider()()
+  val form = new DirectorAddressYearsFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => companyAddressYears(frontendAppConfig, form, NormalMode, Index(0))(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => directorAddressYears(
+    frontendAppConfig,
+    form,
+    NormalMode,
+    establisherIndex,
+    directorIndex,
+    director.directorName
+  )(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyAddressYears(frontendAppConfig,
-    form, NormalMode, Index(0))(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorAddressYears(
+    frontendAppConfig,
+    form,
+    NormalMode,
+    establisherIndex,
+    directorIndex,
+    director.directorName
+  )(fakeRequest, messages)
 
-  "CompanyAddressYears view" must {
+  "CompanyDirectorAddressYears view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+    behave like pageWithSecondaryHeader(createView, director.directorName)
 
     behave like pageWithBackLink(createView)
   }
 
-  "CompanyAddressYears view" when {
+  "CompanyDirectorAddressYears view" when {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
@@ -64,3 +84,4 @@ class CompanyAddressYearsViewSpec extends ViewBehaviours {
     }
   }
 }
+

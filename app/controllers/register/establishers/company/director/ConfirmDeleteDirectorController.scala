@@ -25,6 +25,7 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
+import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId}
 import models.{Index, NormalMode}
 import play.api.mvc.{Action, AnyContent}
@@ -33,30 +34,31 @@ import views.html.register.establishers.company.director.confirmDeleteDirector
 
 import scala.concurrent.Future
 
-class ConfirmDeleteDirectorController @Inject()(appConfig: FrontendAppConfig,
-    override val messagesApi: MessagesApi,
-    dataCacheConnector: DataCacheConnector,
-    navigator: Navigator,
-    authenticate: AuthAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction) extends FrontendController with I18nSupport with Retrievals {
+class ConfirmDeleteDirectorController @Inject()(
+                                                 appConfig: FrontendAppConfig,
+                                                 override val messagesApi: MessagesApi,
+                                                 dataCacheConnector: DataCacheConnector,
+                                                 navigator: Navigator,
+                                                 authenticate: AuthAction,
+                                                 getData: DataRetrievalAction,
+                                                 requireData: DataRequiredAction
+                                               ) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveCompanyName(establisherIndex) { companyName =>
-        retrieveDirectorName(establisherIndex, directorIndex) { directorName =>
+      (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
+        case company ~ director =>
           Future.successful(
             Ok(
               confirmDeleteDirector(
                 appConfig,
-                companyName,
-                directorName,
+                company.companyName,
+                director.directorName,
                 routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
                 AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
               )
             )
           )
-        }
       }
   }
 
