@@ -17,18 +17,18 @@
 package forms.register.establishers.company
 
 import forms.behaviours.FormBehaviours
+import forms.mappings.Constraints
 import models.{Field, Required}
 import models.CompanyContactDetails
 import org.apache.commons.lang3.RandomStringUtils
 
-class CompanyContactDetailsFormProviderSpec extends FormBehaviours {
+class CompanyContactDetailsFormProviderSpec extends FormBehaviours with Constraints {
 
   val validData: Map[String, String] = Map(
     "emailAddress" -> "test@test.com",
     "phoneNumber" -> "123456789"
   )
-  val emailRegex = "^[^@<>]+@[^@<>]+$"
-  val regexPhoneNumber = "\\d*"
+
   val form = new CompanyContactDetailsFormProvider()()
 
   "CompanyContactDetails form" must {

@@ -17,20 +17,17 @@
 package forms.register.establishers.company.director
 
 import forms.behaviours.FormBehaviours
+import forms.mappings.Constraints
 import models.{Field, Required}
 import models.register.establishers.company.director.DirectorDetails
 import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.LocalDate
 
-class DirectorDetailsFormProviderSpec extends FormBehaviours {
+class DirectorDetailsFormProviderSpec extends FormBehaviours with Constraints {
 
   val day = LocalDate.now().getDayOfMonth
   val month = LocalDate.now().getMonthOfYear
   val year = LocalDate.now().getYear
-
-  val regexFirstName = "[a-zA-Z]{1}[a-zA-Z-‘]*"
-  val regexLastName = "[a-zA-Z0-9,.‘(&)-/ ]*"
-  val regexMiddleName ="[a-zA-Z-‘]*"
 
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",

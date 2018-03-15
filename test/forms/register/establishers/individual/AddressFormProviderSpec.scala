@@ -17,12 +17,13 @@
 package forms.register.establishers.individual
 
 import forms.behaviours.FormBehaviours
+import forms.mappings.Constraints
 import models.addresslookup.Address
 import models.{Field, Required}
 import org.apache.commons.lang3.RandomStringUtils
 import play.api.data.FormError
 
-class AddressFormProviderSpec extends FormBehaviours {
+class AddressFormProviderSpec extends FormBehaviours with Constraints {
 
   val validData: Map[String, String] = Map(
     "addressLine1" -> "address line 1",
@@ -33,7 +34,6 @@ class AddressFormProviderSpec extends FormBehaviours {
     "country" -> "GB"
   )
 
-  val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
   val form = new AddressFormProvider()()
 
   "Address form" must {

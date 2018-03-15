@@ -17,12 +17,13 @@
 package forms.register
 
 import forms.behaviours.FormBehaviours
+import forms.mappings.Constraints
 import models._
 import models.register.{SortCode, UKBankDetails}
 import org.apache.commons.lang3.{RandomStringUtils, RandomUtils}
 import org.joda.time.LocalDate
 
-class UKBankDetailsFormProviderSpec extends FormBehaviours {
+class UKBankDetailsFormProviderSpec extends FormBehaviours with Constraints {
 
   val testSortCode = SortCode("24", "56", "56")
   val testAccountNumber: String = RandomUtils.nextInt(10000000, 99999999).toString
@@ -78,7 +79,6 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours {
 
     Seq("12$12£14", "asdcffdsf", "11 23%12").foreach { code =>
       s"fail to bind when sort code $code is invalid" in {
-        val regexSortCode = "[0-9 -]*"
         val data = validData + ("sortCode" -> code)
 
         val expectedError = error("sortCode", "messages__error__sort_code_invalid")
@@ -97,7 +97,6 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours {
 
     Seq("Abffgk", "1 1 1 1 1 1 ", "A1b3j4b2").foreach { code =>
       s"fail to bind when account number $code is invalid" in {
-        val regexAccountNo = """[0-9]*""".r.toString()
         val data = validData + ("accountNumber" -> code)
 
         val expectedError = error("accountNumber", "messages__error__account_number_invalid", regexAccountNo)

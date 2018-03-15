@@ -17,12 +17,13 @@
 package forms.register.establishers.individual
 
 import forms.behaviours.FormBehaviours
+import forms.mappings.Constraints
 import models.register.establishers.individual.EstablisherDetails
 import models.{Field, Required}
 import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.LocalDate
 
-class EstablisherDetailsFormProviderSpec extends FormBehaviours {
+class EstablisherDetailsFormProviderSpec extends FormBehaviours with Constraints {
 
   val day = LocalDate.now().getDayOfMonth
   val month = LocalDate.now().getMonthOfYear
@@ -36,10 +37,6 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
     "date.month" -> s"$month",
     "date.year" -> s"$year"
   )
-
-  val regexFirstName = "[a-zA-Z]{1}[a-zA-Z-‘]*"
-  val regexMiddleName ="[a-zA-Z-‘]*"
-  val regexLastName = "[a-zA-Z0-9,.‘(&)-/ ]*"
 
   val form = new EstablisherDetailsFormProvider()()
 

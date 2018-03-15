@@ -25,10 +25,8 @@ import play.api.data.Forms._
 
 class ContactDetailsFormProvider @Inject() extends Mappings {
 
-  val regexPhoneNumber = "\\d*"
   val maxLengthPhone = 24
   val maxEmailLength = 132
-  val emailRegex = "^[^@<>]+@[^@<>]+$"
 
    def apply(): Form[ContactDetails] = Form(
      mapping(

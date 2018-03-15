@@ -26,9 +26,6 @@ import play.api.data.Forms._
 class EstablisherDetailsFormProvider @Inject() extends Mappings {
 
   val nameMaxLength = 35
-  val regexFirstName = "[a-zA-Z]{1}[a-zA-Z-‘]*"
-  val regexMiddleName ="[a-zA-Z-‘]*"
-  val regexLastName = "[a-zA-Z0-9,.‘(&)-/ ]*"
 
    def apply(): Form[EstablisherDetails] = Form(
      mapping(

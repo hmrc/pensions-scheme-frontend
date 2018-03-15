@@ -17,7 +17,6 @@
 package forms.mappings
 
 import models.EstablisherNino
-import models.addresslookup.Address
 import models.register.{SchemeType, SortCode}
 import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
 import models.register.establishers.individual.UniqueTaxReference
@@ -96,7 +95,6 @@ trait Mappings extends Formatters with Constraints {
                                            maxLengthReasonKey: String = "messages__error__no_sautr_length"):
     Mapping[UniqueTaxReference] = {
 
-    val regexUtr = "\\d{10}"
     val reasonMaxLength = 150
     def fromUniqueTaxReference(utr: UniqueTaxReference): (Boolean, Option[String], Option[String]) = {
       utr match {
@@ -210,7 +208,6 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
     val formatter: Formatter[SortCode] = new Formatter[SortCode] {
 
       val baseFormatter: Formatter[String] = stringFormatter(requiredKey)
-      val regexSortCode: String = """\d*""".r.toString()
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], SortCode] = {
 
@@ -274,7 +271,6 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
   }
 
   protected def postCodeMapping(requiredKey: String, invalidKey: String): Mapping[Option[String]] = {
-    val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
 
     def toPostCode(data: (Option[String], Option[String])): Option[String] = data._2
 

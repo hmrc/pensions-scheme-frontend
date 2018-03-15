@@ -18,18 +18,15 @@ package forms.register.establishers.company.director
 
 import javax.inject.Inject
 
-import forms.mappings.Mappings
+import forms.mappings.{Constraints, Mappings}
 import play.api.data.Form
 import play.api.data.Forms._
-import models.register.establishers.company.director.{DirectorContactDetails}
+import models.register.establishers.company.director.DirectorContactDetails
 
-class DirectorContactDetailsFormProvider @Inject() extends Mappings {
-
-  val regexPhoneNumber ="^[0-9 +()-]+$"
+class DirectorContactDetailsFormProvider @Inject() extends Mappings with Constraints {
 
   val maxLengthPhone = 24
   val maxEmailLength = 132
-  val emailRegex = "^[^@<>‘“]+@[^@<>‘“]+$"
 
   def apply(): Form[DirectorContactDetails] = Form(
     mapping(

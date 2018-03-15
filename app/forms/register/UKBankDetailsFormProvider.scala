@@ -25,7 +25,6 @@ import play.api.data.Forms._
 
 class UKBankDetailsFormProvider @Inject() extends Mappings {
 
-  val regexAccountNo = "[0-9]*"
   val nameMaxLength = 28
   val accountNoMaxLength = 8
 

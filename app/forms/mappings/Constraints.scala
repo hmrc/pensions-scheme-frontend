@@ -23,6 +23,16 @@ import uk.gov.hmrc.domain.Nino
 
 trait Constraints {
 
+  val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
+  val regexSortCode: String = """\d*""".r.toString()
+  val regexUtr = "^[0-9]{10}$"
+  val regexFirstName = "[a-zA-Z]{1}[a-zA-Z-‘]*"
+  val regexMiddleName ="[a-zA-Z-‘]*"
+  val regexLastName = "[a-zA-Z0-9,.‘(&)-/ ]*"
+  val regexAccountNo = "[0-9]*"
+  val emailRegex = "^[^@<>‘“]+@[^@<>‘“]+$"
+  val regexPhoneNumber ="^[0-9 +()-]+$"
+
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint {
       input =>

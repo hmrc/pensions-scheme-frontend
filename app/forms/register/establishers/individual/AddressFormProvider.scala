@@ -18,15 +18,14 @@ package forms.register.establishers.individual
 
 import javax.inject.Inject
 
-import forms.mappings.Mappings
+import forms.mappings.{Constraints, Mappings}
 import models.addresslookup.Address
 import play.api.data.Forms.{mapping, optional}
 import play.api.data.{Form, Forms}
 
-class AddressFormProvider @Inject() extends Mappings {
+class AddressFormProvider @Inject() extends Mappings with Constraints {
 
   val addressLineMaxLength = 35
-  val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
 
   def apply(): Form[Address] = Form(
     mapping(
