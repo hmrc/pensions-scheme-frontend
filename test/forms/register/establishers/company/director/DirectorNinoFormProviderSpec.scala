@@ -17,9 +17,7 @@
 package forms.register.establishers.company.director
 
 import forms.FormSpec
-import models.EstablisherNino
-import models.register.establishers.company.director.DirectorNino
-import org.scalatest.OptionValues
+import models.Nino
 
 class DirectorNinoFormProviderSpec extends FormSpec {
 
@@ -32,24 +30,24 @@ class DirectorNinoFormProviderSpec extends FormSpec {
   val reasonInvalidLength = 151
   val formProvider = new DirectorNinoFormProvider()
   val validData:Map[String,String] = Map(
-    "directorNino.hasNino" ->"true",
-    "directorNino.nino" -> "AB020202A"
+    "nino.hasNino" ->"true",
+    "nino.nino" -> "AB020202A"
   )
 
   "CompanyDirector form provider" must {
 
     "successfully bind when yes is selected and valid NINO is provided" in {
-      val form = formProvider().bind(Map("directorNino.hasNino" -> "true", "directorNino.nino" -> "AB020202A"))
-      form.get shouldEqual DirectorNino.Yes("AB020202A")
+      val form = formProvider().bind(Map("nino.hasNino" -> "true", "nino.nino" -> "AB020202A"))
+      form.get shouldEqual Nino.Yes("AB020202A")
     }
 
     "successfully bind when no is selected and reason is provided" in {
-      val form = formProvider().bind(Map("directorNino.hasNino" -> "false", "directorNino.reason" -> "haven't got Nino"))
-      form.get shouldBe DirectorNino.No("haven't got Nino")
+      val form = formProvider().bind(Map("nino.hasNino" -> "false", "nino.reason" -> "haven't got Nino"))
+      form.get shouldBe Nino.No("haven't got Nino")
     }
 
     "fail to bind when value is omitted" in {
-      val expectedError = error("directorNino.hasNino", requiredKey)
+      val expectedError = error("nino.hasNino", requiredKey)
       checkForError(formProvider(), emptyForm, expectedError)
     }
   }

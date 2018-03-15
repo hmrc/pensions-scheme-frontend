@@ -26,11 +26,8 @@ class DirectorUniqueTaxReferenceFormProvider @Inject() extends Mappings {
 
   def apply(): Form[UniqueTaxReference] = Form(
     "uniqueTaxReference" -> uniqueTaxReferenceMapping(
-      key = "uniqueTaxReference",
       requiredKey = "messages__error__has_sautr_director",
-      requiredUtrKey = "messages__error__sautr",
-      requiredReasonKey = "messages__error__no_sautr_director",
-      invalidUtrKey = "messages__error__sautr_invalid",
-      maxLengthReasonKey = "messages__error__no_sautr_length")
+      requiredReasonKey = "messages__error__no_sautr_director"
+    )
   )
 }

@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.register.establishers.individual.routes._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
+import models.{CheckMode, Nino, Index}
 import models.addresslookup.Address
 import models.register.establishers.individual.UniqueTaxReference.{No, Yes}
 import models.register.establishers.individual.{ContactDetails, EstablisherDetails}
@@ -148,7 +149,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "establishers" -> Json.arr(
             Json.obj(
               EstablisherDetailsId.toString -> establisherDetails,
-              EstablisherNinoId.toString -> EstablisherNino.Yes("test Nino"))
+              EstablisherNinoId.toString -> Nino.Yes("test Nino"))
           ))
       )
       val expectedOutput = Seq(
@@ -175,7 +176,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "establishers" -> Json.arr(
             Json.obj(
               EstablisherDetailsId.toString -> establisherDetails,
-              EstablisherNinoId.toString -> EstablisherNino.No("No nino"))
+              EstablisherNinoId.toString -> Nino.No("No nino"))
           ))
       )
       val expectedOutput = Seq(

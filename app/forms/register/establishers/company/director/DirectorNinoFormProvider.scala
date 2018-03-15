@@ -19,12 +19,15 @@ package forms.register.establishers.company.director
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import models.register.establishers.company.director.DirectorNino
+import models.Nino
 import play.api.data.Form
 
 class DirectorNinoFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[DirectorNino] = Form(
-    "directorNino" -> directorNinoMapping()
+  def apply(): Form[Nino] = Form(
+    "nino" -> ninoMapping(
+      requiredKey = "messages__error__has_nino_director",
+      requiredReasonKey = "messages__director_no_nino"
+    )
   )
 }

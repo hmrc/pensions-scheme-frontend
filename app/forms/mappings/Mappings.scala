@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.EstablisherNino
+import models.Nino
 import models.register.{SchemeType, SortCode}
 import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
 import models.register.establishers.individual.UniqueTaxReference
@@ -27,7 +27,6 @@ import play.api.data.{FieldMapping, FormError, Forms, Mapping}
 import uk.gov.voa.play.form.ConditionalMappings._
 import utils.Enumerable
 import models._
-import models.register.establishers.company.director.DirectorNino
 
 import scala.util.Try
 
@@ -119,67 +118,35 @@ trait Mappings extends Formatters with Constraints {
       transform(toUniqueTaxReference, fromUniqueTaxReference)
   }
 
-  protected def establisherNinoMapping(requiredKey: String = "messages__error__has_nino_establisher",
+  protected def ninoMapping(requiredKey: String = "messages__error__has_nino_establisher",
                                        requiredNinoKey: String = "messages__error__nino",
                                        requiredReasonKey: String = "messages__establisher__no_nino",
                                        reasonLengthKey: String = "messages__error__no_nino_length",
                                        invalidNinoKey: String = "messages__error__nino_invalid"):
-  Mapping[EstablisherNino] = {
+  Mapping[Nino] = {
     val reasonMaxLength = 150
 
-    def fromEstablisherNino(nino: EstablisherNino): (Boolean, Option[String], Option[String]) = {
+    def fromNino(nino: Nino): (Boolean, Option[String], Option[String]) = {
       nino match {
-        case EstablisherNino.Yes(ninoNo) => (true, Some(ninoNo), None)
-        case EstablisherNino.No(reason) =>  (false, None, Some(reason))
+        case Nino.Yes(ninoNo) => (true, Some(ninoNo), None)
+        case Nino.No(reason) =>  (false, None, Some(reason))
       }
     }
 
-    def toEstablisherNino(ninoTuple: (Boolean, Option[String], Option[String])) = {
+    def toNino(ninoTuple: (Boolean, Option[String], Option[String])) = {
 
       ninoTuple match {
-        case (true, Some(nino), None)  => EstablisherNino.Yes(nino)
-        case (false, None, Some(reason))  => EstablisherNino.No(reason)
+        case (true, Some(nino), None)  => Nino.Yes(nino)
+        case (false, None, Some(reason))  => Nino.No(reason)
         case _ => throw new RuntimeException("Invalid selection")
       }
     }
 
     tuple("hasNino" -> boolean(requiredKey),
-      "nino" -> mandatoryIfTrue("establisherNino.hasNino", text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
-      "reason" -> mandatoryIfFalse("establisherNino.hasNino", text(requiredReasonKey).
-        verifying(maxLength(reasonMaxLength,reasonLengthKey)))).transform(toEstablisherNino, fromEstablisherNino)
+      "nino" -> mandatoryIfTrue("nino.hasNino", text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
+      "reason" -> mandatoryIfFalse("nino.hasNino", text(requiredReasonKey).
+        verifying(maxLength(reasonMaxLength,reasonLengthKey)))).transform(toNino, fromNino)
   }
-
-
-  protected def directorNinoMapping(requiredKey: String = "messages__error__has_nino_director",
-                                    requiredNinoKey: String = "messages__error__nino",
-                                    requiredReasonKey: String = "messages__director_no_nino",
-                                    reasonLengthKey: String = "messages__error__no_nino_length",
-                                    invalidNinoKey: String = "messages__error__nino_invalid"):
-  Mapping[DirectorNino] = {
-    val reasonMaxLength = 150
-
-    def fromDirectorNino(nino: DirectorNino): (Boolean, Option[String], Option[String]) = {
-      nino match {
-        case DirectorNino.Yes(ninoNo) => (true, Some(ninoNo), None)
-        case DirectorNino.No(reason) =>  (false, None, Some(reason))
-      }
-    }
-
-    def toDirectorNino(ninoTuple: (Boolean, Option[String], Option[String])) = {
-
-      ninoTuple match {
-        case (true, Some(nino), None)  => DirectorNino.Yes(nino)
-        case (false, None, Some(reason))  => DirectorNino.No(reason)
-        case _ => throw new RuntimeException("Invalid selection")
-      }
-    }
-
-    tuple("hasNino" -> boolean(requiredKey),
-      "nino" -> mandatoryIfTrue("directorNino.hasNino", text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
-      "reason" -> mandatoryIfFalse("directorNino.hasNino", text(requiredReasonKey).
-        verifying(maxLength(reasonMaxLength,reasonLengthKey)))).transform(toDirectorNino, fromDirectorNino)
-  }
-
 
 protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
