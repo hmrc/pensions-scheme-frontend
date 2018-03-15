@@ -27,7 +27,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import models.{Index, Mode}
 import forms.register.establishers.company.director.DirectorContactDetailsFormProvider
-import identifiers.register.establishers.company.director.DirectorContactDetailsId
+import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
 import models.register.establishers.company.director.DirectorContactDetails
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
@@ -49,25 +49,22 @@ class DirectorContactDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveDirectorName(establisherIndex, directorIndex) {
-        directorName =>
-          val redirectResult = request.userAnswers.get(DirectorContactDetailsId(establisherIndex, directorIndex)) match {
-            case None =>
-              Ok(directorContactDetails(appConfig, form, mode, establisherIndex, directorIndex, directorName))
-
-            case Some(value) => Ok(directorContactDetails(appConfig, form.fill(value), mode, establisherIndex, directorIndex, directorName))
-          }
-          Future.successful(redirectResult)
+      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { director =>
+        DirectorContactDetailsId(establisherIndex, directorIndex).retrieve.right.map{ value =>
+          Future.successful(Ok(directorContactDetails(appConfig, form.fill(value), mode, establisherIndex, directorIndex, director.directorName)))
+        }.left.map{ _ =>
+          Future.successful(Ok(directorContactDetails(appConfig, form, mode, establisherIndex, directorIndex, director.directorName)))
+        }
       }
   }
 
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveDirectorName(establisherIndex, directorIndex) { directorName =>
+      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorContactDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, directorName))),
+            Future.successful(BadRequest(directorContactDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, director.directorName))),
           (value) =>
             dataCacheConnector.save(request.externalId, DirectorContactDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
               Redirect(navigator.nextPage(DirectorContactDetailsId(establisherIndex, directorIndex), mode)(new UserAnswers(cacheMap))))

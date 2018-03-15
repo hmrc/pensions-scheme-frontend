@@ -37,14 +37,6 @@ trait Retrievals {
 
   this: FrontendController =>
 
-  private[controllers] def retrieveDirectorName(establisherIndex: Int,directorIndex:Int)
-                                               (f: String => Future[Result])
-                                               (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    retrieve[DirectorDetails](DirectorDetailsId(establisherIndex,directorIndex)) { directorDetails =>
-         f(directorDetails.directorName)
-    }
-  }
-
   private[controllers] def retrieveCompanyName(index: Int)
                                               (f: String => Future[Result])
                                               (implicit request: DataRequest[AnyContent]): Future[Result] = {

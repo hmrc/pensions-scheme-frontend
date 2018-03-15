@@ -56,34 +56,6 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
     override def toString: String = "second"
   }
 
-
-  "retrieveDirectorName" must {
-    "reach the intended result when director details is found" in {
-
-      val validData = Json.obj(
-        EstablishersId.toString -> Json.arr(
-          Json.obj(
-            "director" -> Json.arr(
-              Json.obj(
-                DirectorDetailsId.toString ->
-                  DirectorDetails(
-                    "First Name",
-                    Some("Middle Name"),
-                    "Last Name",
-                    LocalDate.now)
-              )
-            )
-          )
-        )
-      )
-      implicit val request: DataRequest[AnyContent] = dataRequest(validData)
-
-      val result = controller.retrieveDirectorName(0, 0)(success)
-
-      status(result) must be(OK)
-    }
-  }
-
   "retrieveCompanyName" must {
     "reach the intended result when companyName is found" in {
 
@@ -116,7 +88,6 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
       status(result) must be(OK)
     }
   }
-
 
   "retrieve" must {
 

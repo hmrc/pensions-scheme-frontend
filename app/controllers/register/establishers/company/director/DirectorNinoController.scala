@@ -26,7 +26,7 @@ import controllers.actions._
 import config.FrontendAppConfig
 import controllers.Retrievals
 import forms.register.establishers.company.director.DirectorNinoFormProvider
-import identifiers.register.establishers.company.director.DirectorNinoId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoId}
 import models.register.establishers.company.director.DirectorNino
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
@@ -50,31 +50,28 @@ class DirectorNinoController @Inject()(
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveDirectorName(establisherIndex,directorIndex) { directorName =>
-        val redirectResult = request.userAnswers.get(DirectorNinoId(establisherIndex, directorIndex)) match {
-          case None =>
-            Ok(directorNino(appConfig, form, mode, establisherIndex, directorIndex,directorName))
-          case Some(value) =>
-            Ok(directorNino(appConfig, form.fill(value), mode, establisherIndex, directorIndex,directorName))
+      DirectorDetailsId(establisherIndex,directorIndex).retrieve.right.flatMap { director =>
+        DirectorNinoId(establisherIndex, directorIndex).retrieve.right.map{ value =>
+          Future.successful(Ok(directorNino(appConfig, form.fill(value), mode, establisherIndex, directorIndex,director.directorName)))
+        }.left.map{ _ =>
+          Future.successful(Ok(directorNino(appConfig, form, mode, establisherIndex, directorIndex,director.directorName)))
         }
-        Future.successful(redirectResult)
       }
   }
 
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveDirectorName(establisherIndex,directorIndex) { directorName =>
+      DirectorDetailsId(establisherIndex,directorIndex).retrieve.right.map { director =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorNino(appConfig, formWithErrors, mode, establisherIndex, directorIndex,directorName))),
+            Future.successful(BadRequest(directorNino(appConfig, formWithErrors, mode, establisherIndex, directorIndex,director.directorName))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,
               DirectorNinoId(establisherIndex, directorIndex),
               value
-            ).map {
-              json =>
+            ) map { json =>
                 Redirect(navigator.nextPage(DirectorNinoId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
             }
         )
