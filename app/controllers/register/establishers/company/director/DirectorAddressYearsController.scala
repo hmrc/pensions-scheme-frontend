@@ -23,7 +23,7 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
-import identifiers.register.establishers.company.director.DirectorAddressYearsId
+import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorDetailsId}
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,36 +35,50 @@ import views.html.register.establishers.company.director.directorAddressYears
 import scala.concurrent.Future
 
 class DirectorAddressYearsController @Inject()(
-                                                       appConfig: FrontendAppConfig,
-                                                       override val messagesApi: MessagesApi,
-                                                       dataCacheConnector: DataCacheConnector,
-                                                       navigator: Navigator,
-                                                       authenticate: AuthAction,
-                                                       getData: DataRetrievalAction,
-                                                       requireData: DataRequiredAction,
-                                                       formProvider: DirectorAddressYearsFormProvider
-                                                     ) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals{
+                                                appConfig: FrontendAppConfig,
+                                                override val messagesApi: MessagesApi,
+                                                dataCacheConnector: DataCacheConnector,
+                                                navigator: Navigator,
+                                                authenticate: AuthAction,
+                                                getData: DataRetrievalAction,
+                                                requireData: DataRequiredAction,
+                                                formProvider: DirectorAddressYearsFormProvider
+                                              ) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveDirectorName(establisherIndex, directorIndex) { name =>
-        request.userAnswers.get(DirectorAddressYearsId(establisherIndex, directorIndex)) match {
-          case None =>
-            Future.successful(Ok(directorAddressYears(appConfig, form, mode, establisherIndex, directorIndex, name)))
-          case Some(value) =>
-            Future.successful(Ok(directorAddressYears(appConfig, form.fill(value), mode, establisherIndex, directorIndex, name)))
+      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { directorDetails =>
+        DirectorAddressYearsId(establisherIndex, directorIndex).retrieve.right.map { value =>
+            Future.successful(Ok(directorAddressYears(appConfig, form.fill(value), mode, establisherIndex, directorIndex, directorDetails.directorName)))
+        }.left.map{ _ =>
+          Future.successful(Ok(directorAddressYears(appConfig, form, mode, establisherIndex, directorIndex, directorDetails.directorName)))
         }
       }
   }
 
-
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
+      println(">>>>>>>>" + request.userAnswers)
+
+      println({
+        ">>" + DirectorDetailsId(establisherIndex, directorIndex).retrieve
+      })
+
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorAddressYears(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
+          (formWithErrors: Form[_]) => {
+            DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
+              Future.successful(BadRequest(directorAddressYears(
+                appConfig,
+                formWithErrors,
+                mode,
+                establisherIndex,
+                directorIndex,
+                directorDetails.directorName
+              )))
+            }
+          },
           (value) =>
             dataCacheConnector.save(
               request.externalId,
