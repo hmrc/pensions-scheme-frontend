@@ -118,7 +118,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     userAnswers.get(identifiers.register.establishers.company.director.DirectorAddressYearsId(establisherIndex, directorIndex)).fold(Seq.empty[AnswerRow]){ x =>
       Seq(AnswerRow(
         "messages__companyDirectorAddressYears__checkYourAnswersLabel",
-        Seq(s"companyDirectorAddressYears.$x"),
+        Seq(s"messages__common__.$x"),
         true,
         controllers.register.establishers.company.director.routes.DirectorAddressYearsController.onPageLoad(
           CheckMode, establisherIndex, directorIndex).url
@@ -136,7 +136,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
 
   def companyAddressYears(index: Int): Seq[AnswerRow] =
     userAnswers.get(CompanyAddressYearsId(index)) match {
-      case Some(x) => Seq(AnswerRow("companyAddressYears.checkYourAnswersLabel", Seq(s"companyAddressYears.$x"), true,
+      case Some(x) => Seq(AnswerRow("companyAddressYears.checkYourAnswersLabel", Seq(s"messages__common__.$x"), true,
         controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(CheckMode, Index(index)).url))
       case _ => Seq.empty
     }
