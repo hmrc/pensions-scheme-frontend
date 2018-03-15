@@ -31,26 +31,27 @@ import play.api.data.Form
 import play.api.i18n._
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 import views.html.register.insurerAddress
 
 import scala.concurrent.Future
 
 class InsurerAddressController @Inject()(appConfig: FrontendAppConfig,
-                                  override val messagesApi: MessagesApi,
-                                  dataCacheConnector: DataCacheConnector,
-                                  navigator: Navigator,
-                                  authenticate: AuthAction,
-                                  getData: DataRetrievalAction,
-                                  requireData: DataRequiredAction,
-                                  formProvider: AddressFormProvider,
-                                  countryOptions: CountryOptions) extends FrontendController with Retrievals with I18nSupport {
+                                         override val messagesApi: MessagesApi,
+                                         dataCacheConnector: DataCacheConnector,
+                                         @Register navigator: Navigator,
+                                         authenticate: AuthAction,
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         formProvider: AddressFormProvider,
+                                         countryOptions: CountryOptions) extends FrontendController with Retrievals with I18nSupport {
 
   val form: Form[Address] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName{
+      retrieveSchemeName {
         schemeName =>
           val result = request.userAnswers.get(InsurerAddressId) match {
             case None => Ok(insurerAddress(appConfig, form, mode, countryOptions.options, schemeName))

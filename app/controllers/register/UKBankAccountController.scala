@@ -33,15 +33,16 @@ import views.html.register.uKBankAccount
 
 import scala.concurrent.Future
 import play.api.libs.json._
+import utils.annotations.Register
 
 class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         dataCacheConnector: DataCacheConnector,
-                                         navigator: Navigator,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: UKBankAccountFormProvider) extends FrontendController with I18nSupport {
+                                        override val messagesApi: MessagesApi,
+                                        dataCacheConnector: DataCacheConnector,
+                                        @Register navigator: Navigator,
+                                        authenticate: AuthAction,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
+                                        formProvider: UKBankAccountFormProvider) extends FrontendController with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 

@@ -34,16 +34,16 @@ import views.html.register.membership
 
 import scala.concurrent.Future
 import play.api.libs.json._
+import utils.annotations.Register
 
-class MembershipController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: MembershipFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
+class MembershipController @Inject()(appConfig: FrontendAppConfig,
+                                     override val messagesApi: MessagesApi,
+                                     dataCacheConnector: DataCacheConnector,
+                                     @Register navigator: Navigator,
+                                     authenticate: AuthAction,
+                                     getData: DataRetrievalAction,
+                                     requireData: DataRequiredAction,
+                                     formProvider: MembershipFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 

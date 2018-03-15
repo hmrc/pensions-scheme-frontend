@@ -32,18 +32,18 @@ import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.benefits
 import play.api.libs.json._
+import utils.annotations.Register
 
 import scala.concurrent.Future
 
-class BenefitsController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: BenefitsFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
+class BenefitsController @Inject()(appConfig: FrontendAppConfig,
+                                   override val messagesApi: MessagesApi,
+                                   dataCacheConnector: DataCacheConnector,
+                                   @Register navigator: Navigator,
+                                   authenticate: AuthAction,
+                                   getData: DataRetrievalAction,
+                                   requireData: DataRequiredAction,
+                                   formProvider: BenefitsFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 

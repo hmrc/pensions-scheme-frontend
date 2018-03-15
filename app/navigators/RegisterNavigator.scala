@@ -20,8 +20,6 @@ import com.google.inject.{Inject, Singleton}
 import identifiers.Identifier
 import identifiers.register._
 import models.NormalMode
-import models.register.Benefits
-import models.register.establishers._
 import play.api.mvc.Call
 import utils.{Navigator, UserAnswers}
 
@@ -43,12 +41,35 @@ class RegisterNavigator @Inject() extends Navigator {
       _ => controllers.register.routes.BenefitsController.onPageLoad(NormalMode)
     case BenefitsId =>
       _ => controllers.register.routes.SecuredBenefitsController.onPageLoad(NormalMode)
+    case SecuredBenefitsId => securedBenefitsRoutes()
+    case BenefitsInsurerId =>
+      _ => controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(NormalMode)
+    case InsurerPostCodeLookupId =>
+      _ => controllers.register.routes.InsurerAddressListController.onPageLoad(NormalMode)
+    case InsurerAddressListId =>
+      _ => controllers.register.routes.InsurerAddressController.onPageLoad(NormalMode)
+    case InsurerAddressId =>
+      _ => controllers.register.routes.UKBankAccountController.onPageLoad(NormalMode)
+    case UKBankAccountId => UKBankAccountRoutes()
+
+
   }
 
   private def securedBenefitsRoutes()(answers: UserAnswers): Call = {
     answers.get(SecuredBenefitsId) match {
       case Some(true) =>
         controllers.register.routes.BenefitsInsurerController.onPageLoad(NormalMode)
+      case Some(false) =>
+        controllers.register.routes.UKBankAccountController.onPageLoad(NormalMode)
+      case None =>
+        controllers.routes.SessionExpiredController.onPageLoad()
+    }
+  }
+
+  private def UKBankAccountRoutes()(answers: UserAnswers): Call = {
+    answers.get(UKBankAccountId) match {
+      case Some(true) =>
+        controllers.register.routes.UKBankDetailsController.onPageLoad(NormalMode)
       case Some(false) =>
         controllers.register.routes.UKBankAccountController.onPageLoad(NormalMode)
       case None =>

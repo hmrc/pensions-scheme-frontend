@@ -30,21 +30,21 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.insurerAddressList
 
 import scala.concurrent.Future
 
-class InsurerAddressListController @Inject()(
-                                       appConfig: FrontendAppConfig,
-                                       override val messagesApi: MessagesApi,
-                                       dataCacheConnector: DataCacheConnector,
-                                       navigator: Navigator,
-                                       authenticate: AuthAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: AddressListFormProvider
-                                     ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class InsurerAddressListController @Inject()(appConfig: FrontendAppConfig,
+                                             override val messagesApi: MessagesApi,
+                                             dataCacheConnector: DataCacheConnector,
+                                             @Register navigator: Navigator,
+                                             authenticate: AuthAction,
+                                             getData: DataRetrievalAction,
+                                             requireData: DataRequiredAction,
+                                             formProvider: AddressListFormProvider
+                                            ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -53,7 +53,7 @@ class InsurerAddressListController @Inject()(
 
         request.userAnswers.get(InsurerPostCodeLookupId) match {
           case None =>
-           Future.successful(Redirect(controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(mode)))
+            Future.successful(Redirect(controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(mode)))
           case Some(addresses) =>
             Future.successful(Ok(insurerAddressList(appConfig, formProvider(addresses), mode, schemeName, addresses)))
         }
