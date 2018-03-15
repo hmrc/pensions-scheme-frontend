@@ -60,12 +60,6 @@ class DirectorAddressYearsController @Inject()(
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      println(">>>>>>>>" + request.userAnswers)
-
-      println({
-        ">>" + DirectorDetailsId(establisherIndex, directorIndex).retrieve
-      })
-
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) => {
             DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
