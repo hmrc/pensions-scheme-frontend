@@ -24,6 +24,9 @@ import play.api.data.{Form, FormError}
 
 class NinoBehaviours extends FormSpec with NinoMapping {
 
+  val reasonMaxLength = 150
+  val reasonInvalidLength = 151
+
   def formWithNino(testForm: Form[Nino],
                    requiredKey:String = "messages__error__has_nino_director",
                    requiredNinoKey:String = "messages__error__nino" :String,
@@ -51,9 +54,9 @@ class NinoBehaviours extends FormSpec with NinoMapping {
       }
 
       "fail to bind when no is selected and reason exceeds max length of 150" in {
-        val testString = RandomStringUtils.randomAlphabetic(151)
+        val testString = RandomStringUtils.randomAlphabetic(reasonInvalidLength)
         val result = testForm.bind(Map("nino.hasNino" -> "false", "nino.reason" -> testString))
-        result.errors shouldBe Seq(FormError("nino.reason", "messages__error__no_nino_length", Seq(150)))
+        result.errors shouldBe Seq(FormError("nino.reason", "messages__error__no_nino_length", Seq(reasonMaxLength)))
       }
 
       "successfully bind when yes is selected and valid NINO is provided" in {

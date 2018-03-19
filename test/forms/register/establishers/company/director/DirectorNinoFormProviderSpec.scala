@@ -16,9 +16,9 @@
 
 package forms.register.establishers.company.director
 
-import forms.FormSpec
+
 import forms.behaviours.NinoBehaviours
-import models.Nino
+
 
 class DirectorNinoFormProviderSpec extends NinoBehaviours {
 
@@ -30,27 +30,10 @@ class DirectorNinoFormProviderSpec extends NinoBehaviours {
 
     "DirectorNinoFormProviderSpec" should {
 
-
       behave like formWithNino(testForm,
       requiredKey,
       requiredNinoKey,
       requiredReasonKey,
       invalidNinoKey)
     }
-//
-//    "successfully bind when yes is selected and valid NINO is provided" in {
-//      val form = testForm.bind(Map("nino.hasNino" -> "true", "nino.nino" -> "AB020202A"))
-//      form.get shouldEqual Nino.Yes("AB020202A")
-//    }
-//
-//    "successfully bind when no is selected and reason is provided" in {
-//      val form = testForm.bind(Map("nino.hasNino" -> "false", "nino.reason" -> "haven't got Nino"))
-//      form.get shouldBe Nino.No("haven't got Nino")
-//    }
-
-//    "fail to bind when value is omitted" in {
-//      val expectedError = error("nino.hasNino", requiredKey)
-//      checkForError(testForm, emptyForm, expectedError)
-//    }
-
 }
