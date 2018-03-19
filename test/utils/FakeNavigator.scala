@@ -23,3 +23,5 @@ import models.{Mode, NormalMode}
 class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
   override def nextPage(controllerId: Identifier, mode: Mode): (UserAnswers) => Call = (ua) => desiredRoute
 }
+
+object FakeNavigator extends FakeNavigator(Call("GET", "www.example.com"), NormalMode)
