@@ -18,11 +18,11 @@ package forms.register.establishers.individual
 
 import javax.inject.Inject
 
-import forms.mappings.Mappings
+import forms.mappings.{Mappings, NinoMapping}
 import play.api.data.Form
 import models.Nino
 
-class EstablisherNinoFormProvider @Inject() extends Mappings {
+class EstablisherNinoFormProvider @Inject() extends NinoMapping {
 
   def apply(): Form[Nino] = Form(
     "nino" -> ninoMapping()

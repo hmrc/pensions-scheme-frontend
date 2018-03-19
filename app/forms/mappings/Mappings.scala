@@ -118,36 +118,6 @@ trait Mappings extends Formatters with Constraints {
       transform(toUniqueTaxReference, fromUniqueTaxReference)
   }
 
-  protected def ninoMapping(requiredKey: String = "messages__error__has_nino_establisher",
-                                       requiredNinoKey: String = "messages__error__nino",
-                                       requiredReasonKey: String = "messages__establisher__no_nino",
-                                       reasonLengthKey: String = "messages__error__no_nino_length",
-                                       invalidNinoKey: String = "messages__error__nino_invalid"):
-  Mapping[Nino] = {
-    val reasonMaxLength = 150
-
-    def fromNino(nino: Nino): (Boolean, Option[String], Option[String]) = {
-      nino match {
-        case Nino.Yes(ninoNo) => (true, Some(ninoNo), None)
-        case Nino.No(reason) =>  (false, None, Some(reason))
-      }
-    }
-
-    def toNino(ninoTuple: (Boolean, Option[String], Option[String])) = {
-
-      ninoTuple match {
-        case (true, Some(nino), None)  => Nino.Yes(nino)
-        case (false, None, Some(reason))  => Nino.No(reason)
-        case _ => throw new RuntimeException("Invalid selection")
-      }
-    }
-
-    tuple("hasNino" -> boolean(requiredKey),
-      "nino" -> mandatoryIfTrue("nino.hasNino", text(requiredNinoKey).verifying(validNino(invalidNinoKey))),
-      "reason" -> mandatoryIfFalse("nino.hasNino", text(requiredReasonKey).
-        verifying(maxLength(reasonMaxLength,reasonLengthKey)))).transform(toNino, fromNino)
-  }
-
 protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
     def toLocalDate(date: (String, String, String)): LocalDate =
