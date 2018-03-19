@@ -84,10 +84,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
   import PostcodeLookupControllerSpec._
 
   "get" must {
-
     "return a successful result" in {
-
-      val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
 
       running(_.overrides()) {
         app =>
@@ -142,63 +139,100 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
       }
     }
 
-    "return a bad request when the postcode is invalid" in {
+    "return a bad request" when {
+      "the postcode look fails to return result" in {
 
-      val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
-      val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
+        val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
+        val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
-      when(addressConnector.addressLookupByPostCode(eqTo("ZZ11ZZ"))(any(), any())) thenReturn Future.successful {
-        None
+        when(addressConnector.addressLookupByPostCode(eqTo("ZZ11ZZ"))(any(), any())) thenReturn Future.successful {
+          None
+        }
+
+        running(_.overrides(
+          bind[Navigator].toInstance(FakeNavigator),
+          bind[DataCacheConnector].toInstance(cacheConnector),
+          bind[AddressLookupConnector].toInstance(addressConnector)
+        )) {
+          app =>
+
+            implicit val mat: Materializer = app.materializer
+
+            val appConfig = app.injector.instanceOf[FrontendAppConfig]
+            val formProvider = app.injector.instanceOf[PostCodeLookupFormProvider]
+            val request = FakeRequest()
+            val messages = app.injector.instanceOf[MessagesApi].preferred(request)
+            val controller = app.injector.instanceOf[TestController]
+            val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("value" -> "ZZ11ZZ"))
+
+            status(result) mustEqual BAD_REQUEST
+            contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider().withError("value", "foo"), viewmodel)(request, messages).toString
+        }
       }
+      "the postcode is invalid" in {
 
-      running(_.overrides(
-        bind[Navigator].toInstance(FakeNavigator),
-        bind[DataCacheConnector].toInstance(cacheConnector),
-        bind[AddressLookupConnector].toInstance(addressConnector)
-      )) {
-        app =>
+        val invalidPostcode = "*" * 10
 
-          implicit val mat: Materializer = app.materializer
+        val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
+        val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
-          val formProvider = app.injector.instanceOf[PostCodeLookupFormProvider]
-          val request = FakeRequest()
-          val messages = app.injector.instanceOf[MessagesApi].preferred(request)
-          val controller = app.injector.instanceOf[TestController]
-          val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("value" -> "ZZ11ZZ"))
+        verifyZeroInteractions(addressConnector)
 
-          status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider().withError("value", "foo"), viewmodel)(request, messages).toString
+        running(_.overrides(
+          bind[Navigator].toInstance(FakeNavigator),
+          bind[DataCacheConnector].toInstance(cacheConnector),
+          bind[AddressLookupConnector].toInstance(addressConnector)
+        )) {
+          app =>
+
+            implicit val mat: Materializer = app.materializer
+
+            val request = FakeRequest().withFormUrlEncodedBody("value" -> invalidPostcode)
+
+            val appConfig = app.injector.instanceOf[FrontendAppConfig]
+            val formProvider = app.injector.instanceOf[PostCodeLookupFormProvider]
+            val messages = app.injector.instanceOf[MessagesApi].preferred(request)
+            val controller = app.injector.instanceOf[TestController]
+            val result = controller.onSubmit(viewmodel, UserAnswers(), request)
+            val form = formProvider().bind(Map("value" -> invalidPostcode))
+
+            status(result) mustEqual BAD_REQUEST
+            contentAsString(result) mustEqual postcodeLookup(appConfig, form, viewmodel)(request, messages).toString
+        }
       }
     }
 
-    "return ok but with form errors when the postcode returns no results" in {
+    "return ok" when {
+      "the postcode returns no results" which {
+        "presents with form errors" in {
 
-      val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
-      val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
+          val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
+          val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
-      when(addressConnector.addressLookupByPostCode(eqTo("ZZ11ZZ"))(any(), any())) thenReturn Future.successful {
-        Some(Seq.empty)
-      }
+          when(addressConnector.addressLookupByPostCode(eqTo("ZZ11ZZ"))(any(), any())) thenReturn Future.successful {
+            Some(Seq.empty)
+          }
 
-      running(_.overrides(
-        bind[Navigator].toInstance(FakeNavigator),
-        bind[DataCacheConnector].toInstance(cacheConnector),
-        bind[AddressLookupConnector].toInstance(addressConnector)
-      )) {
-        app =>
+          running(_.overrides(
+            bind[Navigator].toInstance(FakeNavigator),
+            bind[DataCacheConnector].toInstance(cacheConnector),
+            bind[AddressLookupConnector].toInstance(addressConnector)
+          )) {
+            app =>
 
-          implicit val mat: Materializer = app.materializer
+              implicit val mat: Materializer = app.materializer
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
-          val formProvider = app.injector.instanceOf[PostCodeLookupFormProvider]
-          val request = FakeRequest()
-          val messages = app.injector.instanceOf[MessagesApi].preferred(request)
-          val controller = app.injector.instanceOf[TestController]
-          val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("value" -> "ZZ11ZZ"))
+              val appConfig = app.injector.instanceOf[FrontendAppConfig]
+              val formProvider = app.injector.instanceOf[PostCodeLookupFormProvider]
+              val request = FakeRequest()
+              val messages = app.injector.instanceOf[MessagesApi].preferred(request)
+              val controller = app.injector.instanceOf[TestController]
+              val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("value" -> "ZZ11ZZ"))
 
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider().withError("value", "bar"), viewmodel)(request, messages).toString
+              status(result) mustEqual OK
+              contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider().withError("value", "bar"), viewmodel)(request, messages).toString
+          }
+        }
       }
     }
   }
