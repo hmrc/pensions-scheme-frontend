@@ -17,13 +17,18 @@
 package connectors
 
 import identifiers.TypedIdentifier
+import org.scalatest.Matchers
 import play.api.libs.json._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cleanup
 
+import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeDataCacheConnector extends DataCacheConnector {
+class FakeDataCacheConnector extends DataCacheConnector with Matchers {
+
+  private val data: mutable.HashMap[String, JsValue] = mutable.HashMap()
+  private val removed: mutable.ListBuffer[String] = mutable.ListBuffer()
 
   override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
                                                (implicit
@@ -31,8 +36,20 @@ class FakeDataCacheConnector extends DataCacheConnector {
                                                 cleanup: Cleanup[I],
                                                 ec: ExecutionContext,
                                                 hc: HeaderCarrier
-                                               ): Future[JsValue] =
+                                               ): Future[JsValue] = {
+    data += (id.toString -> Json.toJson(value))
     Future.successful(Json.obj())
+  }
+
+  def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+                                     (implicit
+                                      cleanup: Cleanup[I],
+                                      ec: ExecutionContext,
+                                      hc: HeaderCarrier
+                                     ): Future[JsValue] = {
+    removed += id.toString
+    Future.successful(Json.obj())
+  }
 
   override def fetch(cacheId: String)(implicit
                                       ec: ExecutionContext,
@@ -41,6 +58,19 @@ class FakeDataCacheConnector extends DataCacheConnector {
 
     Future.successful(Some(Json.obj()))
   }
+
+  def verify[A, I <: TypedIdentifier[A]](id: I, value: A)(implicit fmt: Format[A]): Unit = {
+    data should contain (id.toString -> Json.toJson(value))
+  }
+
+  def verifyNot(id: TypedIdentifier[_]): Unit = {
+    data should not contain key (id.toString)
+  }
+
+  def verifyRemoved(id: TypedIdentifier[_]): Unit = {
+    removed should contain (id.toString)
+  }
+
 }
 
 object FakeDataCacheConnector extends FakeDataCacheConnector

@@ -47,6 +47,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
 
   val firstEstablisherIndex = Index(0)
   val firstDirectorIndex=Index(0)
+  val invalidIndex=Index(10)
 
   val companyName ="test company name"
 
@@ -129,6 +130,40 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
+
+
+    "redirect to session expired from a GET when the index is invalid for establisher" ignore {
+
+      val result = controller().onPageLoad(NormalMode, invalidIndex,firstDirectorIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "redirect to session expired from a GET when the index is invalid for director" ignore {
+
+      val result = controller().onPageLoad(NormalMode,firstEstablisherIndex ,invalidIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "redirect to session expired from a POST when the index is invalid for establisher" ignore {
+
+      val result = controller().onSubmit(NormalMode, invalidIndex,firstDirectorIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "redirect to session expired from a POST when the index is invalid for director" ignore {
+
+      val result = controller().onSubmit(NormalMode,firstEstablisherIndex ,invalidIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"),

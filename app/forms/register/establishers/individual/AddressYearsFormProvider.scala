@@ -17,14 +17,15 @@
 package forms.register.establishers.individual
 
 import javax.inject.Inject
+
 import forms.mappings.Mappings
+import models.AddressYears
 import play.api.data.Form
-import models.register.establishers.individual.AddressYears
 
 class AddressYearsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[AddressYears] =
     Form(
-      "value" -> enumerable[AddressYears]("messages__error__address_years")
+      "value" -> enumerable[AddressYears]("messages__common_error__current_address_years")
     )
 }

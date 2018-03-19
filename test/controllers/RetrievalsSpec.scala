@@ -20,7 +20,9 @@ import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
 import models.CompanyDetails
+import models.register.establishers.company.director.{DirectorContactDetails, DirectorDetails}
 import models.register.{SchemeDetails, SchemeType}
 import models.requests.DataRequest
 import org.scalatest.EitherValues
@@ -31,7 +33,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
-
+import org.joda.time.LocalDate
 import scala.concurrent.Future
 
 class RetrievalsSpec extends ControllerSpecBase with FrontendController with Retrievals with EitherValues with ScalaFutures {
@@ -87,39 +89,43 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
     }
   }
 
-
   "retrieve" must {
 
-    "reach the intended result when identifier gets value from answers" in {
+    "reach the intended result" when {
+      "identifier gets value from answers" in {
 
-      implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result"))
+        implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result"))
 
-      testIdentifier.retrieve.right.value mustEqual "result"
-    }
+        testIdentifier.retrieve.right.value mustEqual "result"
+      }
 
-    "reach the intended result when identifier uses and to get the value from answers" in {
+      "identifier uses and to get the value from answers" in {
 
-      implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result", "second" -> "answer"))
+        implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test" -> "result", "second" -> "answer"))
 
-      (testIdentifier and secondIdentifier).retrieve.right.value mustEqual new ~("result", "answer")
-    }
-
-    "redirect to the session expired page when cant find identifier" in {
-
-      implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test1" -> "result"))
-
-      whenReady(testIdentifier.retrieve.left.value) {
-        _ mustEqual Redirect(routes.SessionExpiredController.onPageLoad())
+        (testIdentifier and secondIdentifier).retrieve.right.value mustEqual new ~("result", "answer")
       }
     }
 
-    "redirect to Session Expired page when company name is not present" in {
+    "redirect to the session expired page" when {
+      "cant find identifier" in {
 
-      implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj())
+        implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj("test1" -> "result"))
 
-      val result = controller.retrieve(testIdentifier)(success)
+        whenReady(testIdentifier.retrieve.left.value) {
+          _ mustEqual Redirect(routes.SessionExpiredController.onPageLoad())
+        }
+      }
 
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      "company name is not present" in {
+
+        implicit val request: DataRequest[AnyContent] = dataRequest(Json.obj())
+
+        val result = controller.retrieve(testIdentifier)(success)
+
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      }
     }
+
   }
 }

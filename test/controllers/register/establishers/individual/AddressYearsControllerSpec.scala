@@ -16,21 +16,19 @@
 
 package controllers.register.establishers.individual
 
+import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
+import controllers.actions._
+import forms.register.establishers.individual.AddressYearsFormProvider
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.individual.AddressYearsId
+import models.{AddressYears, Index, NormalMode}
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
-import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import forms.register.establishers.individual.AddressYearsFormProvider
-import identifiers.register.establishers.individual.AddressYearsId
-import models.{Index, NormalMode}
-import views.html.register.establishers.individual.addressYears
-import controllers.ControllerSpecBase
-import identifiers.register.establishers.EstablishersId
-import models.register.establishers.individual.AddressYears
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator
+import views.html.register.establishers.individual.addressYears
 
 class AddressYearsControllerSpec extends ControllerSpecBase {
 

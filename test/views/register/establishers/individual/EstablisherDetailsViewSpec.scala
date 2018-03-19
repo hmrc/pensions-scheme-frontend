@@ -46,6 +46,7 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[EstablisherDetai
 
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",
+    "middleName" -> "testMiddleName",
     "lastName" -> "testLastName",
     "date.day" -> s"$day",
     "date.month" -> s"$month",
@@ -59,7 +60,7 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[EstablisherDetai
     behave like pageWithBackLink(createView)
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.EstablisherDetailsController.onSubmit(NormalMode, Index(0)).url, "firstName", "lastName")
+      routes.EstablisherDetailsController.onSubmit(NormalMode, Index(0)).url, "firstName", "middleName", "lastName")
 
     "display an input text box with the correct label and value for day" in {
       val doc = asDocument(createViewUsingForm(form.bind(validData)))

@@ -21,9 +21,13 @@ import play.api.libs.json._
 
 case class DirectorDetails (firstName: String,middleName:Option[String],lastName: String,date:LocalDate){
 
-  def directorName: String = s"$firstName $middleName $lastName"
+  def directorName: String = middleName match {
+    case Some(middle) => s"$firstName $middle $lastName"
+    case _ => s"$firstName $lastName"
+  }
+
 }
 
 object DirectorDetails {
-  implicit val format = Json.format[DirectorDetails]
+  implicit val format: OFormat[DirectorDetails] = Json.format[DirectorDetails]
 }

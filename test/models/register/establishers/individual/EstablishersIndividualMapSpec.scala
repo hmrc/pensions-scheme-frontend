@@ -16,6 +16,7 @@
 
 package models.register.establishers.individual
 
+import models.AddressYears
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json._
 import utils.{Enumerable, MapFormats}

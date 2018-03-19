@@ -42,8 +42,8 @@ class MicroserviceCacheConnectorSpec extends WordSpec
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private def url(id: String): String = s"/pensions-scheme/journey-cache/scheme/$id"
 
-  lazy val connector = injector.instanceOf[MicroserviceCacheConnector]
-  lazy val crypto = injector.instanceOf[ApplicationCrypto].JsonCrypto
+  private lazy val connector = injector.instanceOf[MicroserviceCacheConnector]
+  private lazy val crypto = injector.instanceOf[ApplicationCrypto].JsonCrypto
 
   ".fetch" must {
 
@@ -260,4 +260,43 @@ class MicroserviceCacheConnectorSpec extends WordSpec
       }
     }
   }
+
+  ".remove" must {
+    "remove existing data" in {
+      val json = Json.obj(
+        FakeIdentifier.toString -> "fake value",
+        "other-key" -> "meh"
+      )
+
+      val updatedJson = Json.obj(
+        "other-key" -> "meh"
+      )
+
+      val cryptoText = crypto.encrypt(PlainText(Json.stringify(json))).value
+      val updatedCrypto = crypto.encrypt(PlainText(Json.stringify(updatedJson))).value
+
+      server.stubFor(
+        get(urlEqualTo(url("foo")))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(cryptoText)
+          )
+      )
+
+      server.stubFor(
+        post(urlEqualTo(url("foo")))
+          .withRequestBody(equalTo(updatedCrypto))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+          )
+      )
+
+      whenReady(connector.remove("foo", FakeIdentifier)) {
+        _ mustEqual updatedJson
+      }
+    }
+  }
+
 }
