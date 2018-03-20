@@ -32,6 +32,8 @@ trait Constraints {
   val regexAccountNo = "[0-9]*"
   val emailRegex = "^[^@<>‘“]+@[^@<>‘“]+$"
   val regexPhoneNumber ="^[0-9 +()-]+$"
+  val regexCrn = "^(\\d{7}|[A-Z]\\d{6}|[A-Z][A-Z]\\d{6})$"
+
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint {
@@ -90,7 +92,7 @@ trait Constraints {
       SchemeType.GroupLifeDeath.toString, SchemeType.BodyCorporate.toString, "other")
 
     Constraint {
-      case schemeType if(validSchemeTypes.contains(schemeType)) => Valid
+      case schemeType if validSchemeTypes.contains(schemeType) => Valid
       case _ => Invalid(invalidKey)
     }
   }
@@ -99,30 +101,28 @@ trait Constraints {
     val validCountries = countries.options.map(_.value)
 
     Constraint {
-      case country if(validCountries.contains(country)) => Valid
+      case country if validCountries.contains(country) => Valid
       case _ => Invalid(invalidKey)
     }
   }
 
   protected def futureDate(invalidKey: String): Constraint[LocalDate] = {
     Constraint {
-      case date if(date.isAfter(LocalDate.now())) => Invalid(invalidKey)
+      case date if date.isAfter(LocalDate.now()) => Invalid(invalidKey)
       case _ => Valid
     }
   }
 
   protected def validNino(invalidKey: String) : Constraint[String] = {
     Constraint {
-      case nino if(Nino.isValid(nino.replaceAll(" ", "").toUpperCase)) => Valid
+      case nino if Nino.isValid(nino.replaceAll(" ", "").toUpperCase) => Valid
       case _ => Invalid(invalidKey)
     }
   }
 
   protected def validCrn(invalidKey: String) : Constraint[String] = {
-    val validCrnString = "^(\\d{7}|[A-Z]\\d{6}|[A-Z][A-Z]\\d{6})$"
-
     Constraint {
-      case crn if (crn.replaceAll(" ", "").toUpperCase).matches(validCrnString) => Valid
+      case crn if crn.replaceAll(" ", "").toUpperCase.matches(regexCrn) => Valid
       case _ => Invalid(invalidKey)
     }
   }
@@ -135,4 +135,9 @@ trait Constraints {
           .filterNot(_ == Valid)
           .headOption.getOrElse(Valid)
   }
+
+  protected def emailAddress(errorKey: String): Constraint[String] = regexp(emailRegex, errorKey)
+
+  protected def phoneNumber(errorKey: String): Constraint[String] = regexp(regexPhoneNumber, errorKey)
+
 }
