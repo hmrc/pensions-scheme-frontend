@@ -22,12 +22,12 @@ import utils.{FakeNavigator, InputOption}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId, PreviousAddressId}
 import models.{Index, NormalMode}
 import models.register.establishers.individual.EstablisherDetails
 import views.html.register.establishers.individual.previousAddress
 import controllers.ControllerSpecBase
+import forms.address.AddressFormProvider
 import identifiers.register.SchemeDetailsId
 import models.addresslookup.Address
 import models.register.{CountryOptions, SchemeDetails, SchemeType}

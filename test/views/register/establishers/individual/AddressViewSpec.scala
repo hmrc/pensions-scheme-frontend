@@ -18,7 +18,7 @@ package views.register.establishers.individual
 
 import play.api.data.Form
 import controllers.register.establishers.individual.routes
-import forms.register.establishers.individual.AddressFormProvider
+import forms.address.AddressFormProvider
 import models.addresslookup.Address
 import models.register.CountryOptions
 import models.{Index, NormalMode}
