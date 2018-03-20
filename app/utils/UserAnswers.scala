@@ -38,8 +38,8 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   def getAll[A](path: JsPath)(implicit rds: Reads[A]): Option[Seq[A]] = {
-    (JsLens.fromPath(path) andThen JsLens.atAllIndices).get(json)
-      .flatMap(Json.fromJson[Seq[A]]).asOpt
+    (JsLens.fromPath(path) andThen JsLens.atAllIndices).getAll(json)
+      .flatMap(a => traverse(a.map(Json.fromJson[A]))).asOpt
   }
 
   def getAllRecursive[A](path: JsPath)(implicit rds: Reads[A]): Option[Seq[A]] = {
@@ -47,8 +47,8 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       .fromPath(path)
       .getAll(json)
       .asOpt
-      .flatMap(vs =>
-        Some(vs.map(v => v.as[A]))
+      .map(vs =>
+        vs.map(v => v.as[A])
       )
   }
 
@@ -93,5 +93,19 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url
       }
     )
+  }
+
+  private def traverse[A](seq: Seq[JsResult[A]]): JsResult[Seq[A]] = {
+    seq match {
+      case Seq(e @ JsError(_)) =>
+        e
+      case _ =>
+        JsSuccess(seq.foldLeft(Seq.empty[A]) {
+          case (m, JsSuccess(n, _)) =>
+            m :+ n
+          case (m, _) =>
+            m
+        })
+    }
   }
 }

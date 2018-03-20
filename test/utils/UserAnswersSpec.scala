@@ -23,9 +23,20 @@ import models.register.establishers.individual.EstablisherDetails
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsPath, Json}
 
 class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
+
+  private val establishers = Json.obj(
+    "establishers" -> Json.arr(
+      Json.obj(
+        "name" -> "foo"
+      ),
+      Json.obj(
+        "name" -> "bar"
+      )
+    )
+  )
 
   ".allEstablishers" must {
 
@@ -54,4 +65,16 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
       )
     }
   }
+
+    ".getAllRecursive" must{
+      "UserAnswers should get all matching recursive results" in {
+        val userAnswers = UserAnswers(establishers)
+       userAnswers.getAllRecursive[String](JsPath \ "establishers" \\ "name").value must contain("foo", "bar")
+      }
+
+      "it should return an empty list when no matches" in {
+        val userAnswers = UserAnswers(establishers)
+        userAnswers.getAllRecursive[String](JsPath \ "establishers" \\ "address").value.size mustBe 0
+      }
+    }
 }
