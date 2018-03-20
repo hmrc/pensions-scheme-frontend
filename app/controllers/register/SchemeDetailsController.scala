@@ -34,14 +34,15 @@ import views.html.register.schemeDetails
 
 import scala.concurrent.Future
 import play.api.libs.json._
+import utils.annotations.Register
 
 class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  dataCacheConnector: DataCacheConnector,
-                                                  navigator: Navigator,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  formProvider: SchemeDetailsFormProvider) extends FrontendController with I18nSupport {
+                                        override val messagesApi: MessagesApi,
+                                        dataCacheConnector: DataCacheConnector,
+                                        @Register navigator: Navigator,
+                                        authenticate: AuthAction,
+                                        getData: DataRetrievalAction,
+                                        formProvider: SchemeDetailsFormProvider) extends FrontendController with I18nSupport {
 
   private val form = formProvider()
 

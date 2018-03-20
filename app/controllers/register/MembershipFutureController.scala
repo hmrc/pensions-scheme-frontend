@@ -28,20 +28,20 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.membershipFuture
 
 import scala.concurrent.Future
 
-class MembershipFutureController @Inject()(
-                                            appConfig: FrontendAppConfig,
-                                            override val messagesApi: MessagesApi,
-                                            dataCacheConnector: DataCacheConnector,
-                                            navigator: Navigator,
-                                            authenticate: AuthAction,
-                                            getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction,
-                                            formProvider: MembershipFutureFormProvider
+class MembershipFutureController @Inject()(appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           dataCacheConnector: DataCacheConnector,
+                                           @Register navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           formProvider: MembershipFutureFormProvider
                                           ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()

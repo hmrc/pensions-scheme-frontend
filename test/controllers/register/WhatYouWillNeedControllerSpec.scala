@@ -20,11 +20,19 @@ import controllers.actions._
 import play.api.test.Helpers._
 import views.html.register.whatYouWillNeed
 import controllers.ControllerSpecBase
+import models.NormalMode
+import play.api.mvc.Call
+import utils.FakeNavigator
+import utils.annotations.Register
 
 class WhatYouWillNeedControllerSpec extends ControllerSpecBase {
 
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
-    new WhatYouWillNeedController(frontendAppConfig, messagesApi, FakeAuthAction,
+    new WhatYouWillNeedController(frontendAppConfig,
+      messagesApi,
+      FakeAuthAction,
       dataRetrievalAction)
 
   def viewAsString() = whatYouWillNeed(frontendAppConfig)(fakeRequest, messages).toString

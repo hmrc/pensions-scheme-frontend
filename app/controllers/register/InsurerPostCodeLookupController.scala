@@ -29,22 +29,22 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.insurerPostCodeLookup
 
 import scala.concurrent.Future
 
-class InsurerPostCodeLookupController @Inject()(
-                                          appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          dataCacheConnector: DataCacheConnector,
-                                          addressLookupConnector: AddressLookupConnector,
-                                          navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          requireData: DataRequiredAction,
-                                          formProvider: PostCodeLookupFormProvider
-                                        ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class InsurerPostCodeLookupController @Inject()(appConfig: FrontendAppConfig,
+                                                override val messagesApi: MessagesApi,
+                                                dataCacheConnector: DataCacheConnector,
+                                                addressLookupConnector: AddressLookupConnector,
+                                                @Register navigator: Navigator,
+                                                authenticate: AuthAction,
+                                                getData: DataRetrievalAction,
+                                                requireData: DataRequiredAction,
+                                                formProvider: PostCodeLookupFormProvider
+                                               ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 

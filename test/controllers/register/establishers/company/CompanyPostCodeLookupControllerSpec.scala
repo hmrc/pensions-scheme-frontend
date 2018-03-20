@@ -16,6 +16,7 @@
 
 package controllers.register.establishers.company
 
+import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
@@ -41,7 +42,7 @@ import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 
-class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
+class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -85,7 +86,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany)
       )){ app =>
 
-        val result = route(app, FakeRequest(call)).get
+        val result = route(app, FakeRequest("GET", call.url)).get
 
         status(result) must be(OK)
 
@@ -94,24 +95,12 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
     "redirect to next page on POST request" in {
 
-      def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyPostCodeLookupController =
-        new CompanyPostCodeLookupController(
-          frontendAppConfig,
-          messagesApi,
-          FakeDataCacheConnector,
-          fakeAddressLookupConnector,
-          new FakeNavigator(desiredRoute = onwardRoute),
-          FakeAuthAction,
-          dataRetrievalAction,
-          new DataRequiredActionImpl,
-          formProvider
-        )
-
       val call: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
 
       val validPostcode = "ZZ11ZZ"
 
-      val fakeRequest = FakeRequest(call).withFormUrlEncodedBody("value" -> validPostcode)
+      val fakeRequest = addToken(FakeRequest(call)
+        .withFormUrlEncodedBody("value" -> validPostcode))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(
@@ -131,9 +120,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
       )){ app =>
 
         val result = route(app, fakeRequest).get
-        val result1 = controller().onSubmit(NormalMode, firstIndex)(fakeRequest)
 
-        status(result1) must be(SEE_OTHER)
         status(result) must be(SEE_OTHER)
         redirectLocation(result) mustEqual Some(onwardRoute.url)
 

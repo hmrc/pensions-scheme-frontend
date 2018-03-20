@@ -34,17 +34,17 @@ import views.html.register.schemeEstablishedCountry
 
 import scala.concurrent.Future
 import play.api.libs.json._
+import utils.annotations.Register
 
-class SchemeEstablishedCountryController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: SchemeEstablishedCountryFormProvider,
-                                        countryOptions: CountryOptions) extends FrontendController with I18nSupport {
+class SchemeEstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
+                                                   override val messagesApi: MessagesApi,
+                                                   dataCacheConnector: DataCacheConnector,
+                                                   @Register navigator: Navigator,
+                                                   authenticate: AuthAction,
+                                                   getData: DataRetrievalAction,
+                                                   requireData: DataRequiredAction,
+                                                   formProvider: SchemeEstablishedCountryFormProvider,
+                                                   countryOptions: CountryOptions) extends FrontendController with I18nSupport {
 
   private val form = formProvider()
 

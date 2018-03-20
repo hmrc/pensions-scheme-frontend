@@ -15,9 +15,9 @@
  */
 
 import com.google.inject.AbstractModule
-import navigators.EstablishersIndividualNavigator
+import navigators.{EstablishersIndividualNavigator, RegisterNavigator}
+import utils.annotations.{EstablishersIndividual, Register}
 import utils.Navigator
-import utils.annotations.EstablishersIndividual
 
 class PODSModule extends AbstractModule {
 
@@ -27,5 +27,8 @@ class PODSModule extends AbstractModule {
       .annotatedWith(classOf[EstablishersIndividual])
       .to(classOf[EstablishersIndividualNavigator])
 
+    bind(classOf[Navigator])
+      .annotatedWith(classOf[Register])
+      .to(classOf[RegisterNavigator])
   }
 }
