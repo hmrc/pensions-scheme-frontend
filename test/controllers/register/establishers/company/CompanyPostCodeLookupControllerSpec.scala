@@ -39,12 +39,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, Navigator}
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
+import views.html.helper.CSRF
 
 import scala.concurrent.Future
 
 class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
+  def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex)
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
@@ -57,15 +59,17 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
   val company = CompanyDetails(companyName, None, None)
 
+  lazy val viewModel = PostcodeLookupViewModel(
+    postCall = onwardRoute,
+    manualInputCall = manualInputCall,
+    subHeading = Some(company.companyName)
+  )
+
   def viewAsString(form: Form[_] = form): String =
     postcodeLookup(
       frontendAppConfig,
       form,
-      PostcodeLookupViewModel(
-        postCall = onwardRoute,
-        manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex),
-        subHeading = Some(company.companyName)
-      )
+      viewModel
     )(fakeRequest, messages).toString
 
   "Company Postcode Controller" must {
@@ -77,6 +81,8 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
       val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
       val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
+      val fakeRequest = addToken(FakeRequest(call))
+
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
@@ -86,10 +92,10 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany)
       )){ app =>
 
-        val result = route(app, FakeRequest("GET", call.url)).get
+        val result = route(app, fakeRequest).get
 
         status(result) must be(OK)
-
+        contentAsString(result) mustEqual viewAsString(form)
       }
     }
 
