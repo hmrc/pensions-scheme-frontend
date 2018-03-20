@@ -16,7 +16,6 @@
 
 package controllers.register.establishers.company
 
-import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
@@ -29,7 +28,6 @@ import org.mockito.Matchers.{eq => eqTo}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -43,7 +41,7 @@ import views.html.helper.CSRF
 
 import scala.concurrent.Future
 
-class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest {
+class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
 
   def onwardRoute: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
   def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex)
@@ -65,23 +63,12 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
     subHeading = Some(company.companyName)
   )
 
-  def viewAsString(form: Form[_] = form): String =
-    postcodeLookup(
-      frontendAppConfig,
-      form,
-      viewModel
-    )(fakeRequest, messages).toString
-
   "Company Postcode Controller" must {
 
     "render postcodeLookup from GET request" in {
 
-      val call: Call = routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex)
-
       val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
       val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
-
-      val fakeRequest = addToken(FakeRequest(call))
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
@@ -90,12 +77,20 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany)
-      )){ app =>
+      )){ implicit app =>
 
-        val result = route(app, fakeRequest).get
+        val request = FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex))
+          .withHeaders("Csrf-Token" -> "nocheck")
+
+        val result = route(app, request).get
 
         status(result) must be(OK)
-        contentAsString(result) mustEqual viewAsString(form)
+
+        contentAsString(result) mustEqual postcodeLookup(
+          frontendAppConfig,
+          form,
+          viewModel
+        )(request, messages).toString
       }
     }
 
@@ -104,9 +99,6 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
       val call: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
 
       val validPostcode = "ZZ11ZZ"
-
-      val fakeRequest = addToken(FakeRequest(call)
-        .withFormUrlEncodedBody("value" -> validPostcode))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(
@@ -123,7 +115,11 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
         bind[PostCodeLookupFormProvider].to(formProvider)
-      )){ app =>
+      )){ implicit app =>
+
+        val fakeRequest = FakeRequest(call)
+          .withFormUrlEncodedBody("value" -> validPostcode)
+          .withHeaders("Csrf-Token" -> "nocheck")
 
         val result = route(app, fakeRequest).get
 
