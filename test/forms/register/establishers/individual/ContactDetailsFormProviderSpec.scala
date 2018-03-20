@@ -53,7 +53,5 @@ class ContactDetailsFormProviderSpec extends StringFieldBehaviours with EmailBeh
       keyPhoneNumberLength,
       keyPhoneNumberInvalid
     )
-
   }
-
 }

@@ -18,21 +18,21 @@ package views.register.establishers.company.director
 
 import play.api.data.Form
 import controllers.register.establishers.company.director.routes
-import forms.register.establishers.company.director.DirectorContactDetailsFormProvider
-import models.register.establishers.company.director.{DirectorContactDetails}
+import forms.register.establishers.individual.ContactDetailsFormProvider
+import models.register.establishers.individual.ContactDetails
 import models.{Index, NormalMode}
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.company.director.directorContactDetails
 
-class DirectorContactDetailsViewSpec extends QuestionViewBehaviours[DirectorContactDetails] {
+class DirectorContactDetailsViewSpec extends QuestionViewBehaviours[ContactDetails] {
 
   val messageKeyPrefix = "company_director_contact"
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
   val directorName="test director name"
 
-  override val form = new DirectorContactDetailsFormProvider()()
+  override val form = new ContactDetailsFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () => directorContactDetails(frontendAppConfig, form, NormalMode, establisherIndex,
     directorIndex,directorName)(fakeRequest, messages)
