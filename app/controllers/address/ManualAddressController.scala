@@ -19,6 +19,9 @@ package controllers.address
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
+import identifiers.TypedIdentifier
+import models.addresslookup.Address
+import models.register.CountryOptions
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -26,6 +29,8 @@ import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
 import viewmodels.Message
+import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
 import scala.concurrent.Future
 
@@ -34,14 +39,19 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
   protected def appConfig: FrontendAppConfig
   protected def cacheConnector: DataCacheConnector
   protected def navigator: Navigator
+  protected def countryOptions: CountryOptions
 
-  protected def form: Form[String]
+  protected def form: Form[Address]
 
-  protected def get()(implicit request: DataRequest[AnyContent]): Future[Result] = ???
-
+  protected def get(
+                     id: TypedIdentifier[Address],
+                     viewModel: ManualAddressViewModel
+                   )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+    Future.successful(Ok(manualAddress(appConfig, form, viewModel, countryOptions.options)))
+  }
   protected def post()(implicit request: DataRequest[AnyContent]): Future[Result] = ???
 
-  protected def formWithError(message: Message)(implicit request: DataRequest[AnyContent]): Form[String] = {
+  protected def formWithError(message: Message)(implicit request: DataRequest[AnyContent]): Form[Address] = {
     form.withError("value", message.resolve)
   }
 

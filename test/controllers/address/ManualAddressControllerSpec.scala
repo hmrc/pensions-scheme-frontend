@@ -17,36 +17,93 @@
 package controllers.address
 
 import akka.stream.Materializer
+import com.google.inject.Inject
+import play.api.inject._
 import config.FrontendAppConfig
+import connectors.DataCacheConnector
 import forms.address.AddressFormProvider
+import identifiers.TypedIdentifier
+import models.addresslookup.Address
+import models.register.CountryOptions
+import models.requests.DataRequest
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import play.api.data.Form
 import play.api.i18n.MessagesApi
+import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.running
-import play.mvc.Result
+import play.api.test.Helpers._
+import utils.{InputOption, Navigator, UserAnswers}
+import viewmodels.Message
+import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
 import scala.concurrent.Future
 
+object ManualAddressControllerSpec {
+
+  class TestController @Inject() (
+                                   override val appConfig: FrontendAppConfig,
+                                   override val messagesApi: MessagesApi,
+                                   override val cacheConnector: DataCacheConnector,
+                                   override val navigator: Navigator,
+                                   override val countryOptions: CountryOptions,
+                                   formProvider: AddressFormProvider
+                                 ) extends ManualAddressController {
+
+    object FakeIdentifier extends TypedIdentifier[Address]
+
+    def onPageLoad(viewModel: ManualAddressViewModel, answers: UserAnswers): Future[Result] =
+      get(FakeIdentifier, viewModel)(DataRequest(FakeRequest(), "cacheId", answers))
+
+    def onSubmit(answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] = ???
+
+    private val invalidError: Message = "foo"
+
+    private val noResultError: Message = "bar"
+
+    override protected def form: Form[Address] = formProvider()
+  }
+
+}
+
 class ManualAddressControllerSpec extends WordSpec with MustMatchers with MockitoSugar with ScalaFutures with OptionValues {
 
+  import ManualAddressControllerSpec._
+
+  val viewModel = ManualAddressViewModel(
+    Call("GET", "/"),
+    "title",
+    "heading",
+    Some("secondary.header")
+  )
+
+  val countryOptions = new CountryOptions(
+    Seq(InputOption("GB", "GB"))
+  )
 
   "get" must {
     "return a successful result" in {
 
-      running(_.overrides()) {
+      running(_.overrides(
+        bind[CountryOptions].to(countryOptions)
+      )) {
         app =>
 
           implicit val mat: Materializer = app.materializer
 
+          val request = FakeRequest()
+
           val appConfig = app.injector.instanceOf[FrontendAppConfig]
           val formProvider = app.injector.instanceOf[AddressFormProvider]
-          val request = FakeRequest()
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
-          val controller = ???
-          val result: Future[Result] = ???
+          val controller = app.injector.instanceOf[TestController]
 
+          val result = controller.onPageLoad(viewModel, UserAnswers())
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual manualAddress(appConfig, formProvider(), viewModel, countryOptions.options)(request, messages).toString
       }
     }
   }
