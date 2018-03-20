@@ -382,3 +382,11 @@ messages__error__no_sautr_director = You need to tell us why the director does n
 
 messages__confirmDeleteDirector__title = Confirm deletion
 messages__confirmDeleteDirector__heading = Are you sure you want to delete %s?
+
+messages__companyDetails__title = companyDetails
+messages__companyDetails__heading = companyDetails
+messages__companyDetails__field1 = Field 1
+messages__companyDetails__field2 = Field 2
+messages__companyDetails__checkYourAnswersLabel = companyDetails
+messages__companyDetails__error__field1_required = Please give an answer for field1
+messages__companyDetails__error__field2_required = Please give an answer for field2
