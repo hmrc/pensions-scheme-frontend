@@ -21,8 +21,10 @@ import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models.CompanyDetails
+import models.register.establishers.company.director.DirectorDetails
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
@@ -59,6 +61,24 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         Json.obj(
           CompanyDetailsId.toString ->
             CompanyDetails("test company name", Some("123456"), Some("abcd"))
+        )
+      )
+    ))
+  )
+
+  def getMandatoryEstablisherCompanyDirector: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      SchemeDetailsId.toString ->
+        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString ->
+            CompanyDetails("test company name", Some("123456"), Some("abcd")),
+          "director" -> Json.arr(
+            Json.obj(
+              DirectorDetailsId.toString -> DirectorDetails("test first name", Some("test middle name"), "test last name", LocalDate.now())
+            )
+          )
         )
       )
     ))
