@@ -155,6 +155,8 @@ messages__benefits_insurance__title = Benefits insurer
 messages__benefits_insurance__name = Name of insurance company
 messages__benefits_insurance__policy = Policy number
 messages__error__company_name = Enter the company name
+messages__error__company_name_invalid = The name contains invalid characters
+
 messages__error__benefits_insurance__policy = Enter the policy number
 messages__error__company_name_length = The company name cannot be more than 255 characters
 messages__error__benefits_insurance__policy_length = The policy number cannot be more than 255 characters
@@ -353,6 +355,9 @@ messages__company__cya__crn_no_reason = Why the scheme establisher does not have
 messages__company__cya__utr_yes_no = Does the scheme establisher have a Unique Taxpayer Reference number?
 messages__company__cya__utr = UTR
 messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number
+messages__company__paye_error_length = The PAYE number cannot be more than 13 characters
+messages__company__paye_error_invalid = Enter a valid PAYE number
+
 
 messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
 

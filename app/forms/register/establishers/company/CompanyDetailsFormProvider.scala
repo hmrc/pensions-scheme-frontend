@@ -18,24 +18,41 @@ package forms.register.establishers.company
 
 import javax.inject.Inject
 
-import forms.mappings.{Mappings, Transforms, VatMapping}
-import play.api.data.{Form, Forms}
+import forms.mappings.{Mappings, PayeMapping, Transforms, VatMapping}
+import play.api.data.Form
 import play.api.data.Forms._
 import models.CompanyDetails
 
-class CompanyDetailsFormProvider @Inject() extends Mappings with VatMapping with Transforms {
 
-  val companyNameMaxLength = 160
-  val payeNumberMaxLength = 13
+class CompanyDetailsFormProvider @Inject() extends Mappings with PayeMapping with VatMapping with Transforms {
 
-   def apply(): Form[CompanyDetails] = Form(
-     mapping(
-      "companyName" -> text("messages__error__company_name").verifying(
-        maxLength(companyNameMaxLength, "messages__error__company_name_length")),
+  def apply(): Form[CompanyDetails] = Form(
+    mapping(
+      "companyName" -> text("messages__error__company_name")
+        .verifying(
+          firstError(
+            maxLength(
+              CompanyDetailsFormProvider.companyNameLength,
+              "messages__error__company_name_length"
+            ),
+            safeText("messages__error__company_name_invalid")
+          )
+        ),
       "vatNumber" -> optional(
-        vatMapping("messages__error__vat_invalid", "messages__error__vat_length")),
-      "payeNumber" -> optional(Forms.text.verifying(
-        maxLength(payeNumberMaxLength, "messages__error__paye_length")))
+        vatMapping(
+          "messages__error__vat_length",
+          "messages__error__vat_invalid"
+        )),
+      "payeNumber" -> optional(
+        payeMapping(
+          "messages__company__paye_error_length",
+          "messages__company__paye_error_invalid"
+        )
+      )
     )(CompanyDetails.apply)(CompanyDetails.unapply)
-   )
- }
+  )
+}
+
+object CompanyDetailsFormProvider {
+  val companyNameLength: Int = 160
+}

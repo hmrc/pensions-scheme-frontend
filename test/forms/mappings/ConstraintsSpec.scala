@@ -195,4 +195,49 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
 
     behave like regexWithValidAndInvalidExamples(phoneNumber, validNumber, invalidNumber, invalidMsg, regexPhoneNumber)
   }
+
+
+  "payeEmployerReferenceNumber" must {
+
+    val validPaye = Table(
+      "paye",
+      "123A",
+      "123abcdefghijklm",
+      "123ABCDEFGHIJKLM",
+      "0001234567890123",
+      "121AB45CD67QWERT"
+    )
+
+    val invalidPaye = Table(
+      "paye",
+      "123",
+      "123abcdefghijklmN",
+      "12abcdefghijklm",
+      "123***?."
+    )
+
+    val invalidMsg = "payeEmployerReferenceNumber.error.invalid"
+
+    behave like regexWithValidAndInvalidExamples(payeEmployerReferenceNumber, validPaye, invalidPaye, invalidMsg, payeRegex)
+  }
+
+
+  "safeText" must {
+
+    val validText = Table(
+      "text",
+      "some valid text"
+    )
+
+    val invalidText = Table(
+      "text",
+      "[invalid text]"
+    )
+
+    val invalidMsg = "Invalid text"
+
+    behave like regexWithValidAndInvalidExamples(safeText, validText, invalidText, invalidMsg, safeTextRegex)
+
+  }
+
 }

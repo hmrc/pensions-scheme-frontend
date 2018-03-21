@@ -34,6 +34,9 @@ trait Constraints {
   val regexPhoneNumber ="^[0-9 +()-]+$"
   val regexCrn = "^(\\d{7}|[A-Z]\\d{6}|[A-Z][A-Z]\\d{6})$"
   val regexVat = """^\d{9}$"""
+  val payeRegex = """^[0-9]{3}[0-9A-Za-z]{1,13}$"""
+  val safeTextRegex = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’\"“”«»()*+,./:;=?@\\[\\]|~£€¥\\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,160}$"""
+
 
 
 
@@ -143,5 +146,9 @@ trait Constraints {
   protected def phoneNumber(errorKey: String): Constraint[String] = regexp(regexPhoneNumber, errorKey)
 
   protected def vatRegistrationNumber(errorKey: String): Constraint[String] = regexp(regexVat, errorKey)
+
+  protected def payeEmployerReferenceNumber(errorKey: String): Constraint[String] = regexp(payeRegex, errorKey)
+
+  protected def safeText(errorKey: String): Constraint[String] = regexp(safeTextRegex, errorKey)
 
 }
