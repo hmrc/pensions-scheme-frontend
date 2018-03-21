@@ -24,11 +24,10 @@ import identifiers.register.establishers.{EstablisherKindId, company}
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.{EstablisherKindId, company}
-import models.EstablisherNino.{No, Yes}
+import models.Nino.{No, Yes}
 import models._
 import models.addresslookup.Address
 import models.register.CountryOptions
-import models.register.establishers.company.director.DirectorNino
 import models.register.establishers.individual.UniqueTaxReference
 import viewmodels.AnswerRow
 
@@ -80,18 +79,18 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
 
   def directorNino(establisherIndex: Int, directorIndex: Int): Seq[AnswerRow] = userAnswers.get(DirectorNinoId(establisherIndex,
     directorIndex)) match {
-    case Some(models.register.establishers.company.director.DirectorNino.Yes(nino)) =>
+    case Some(Nino.Yes(nino)) =>
       Seq(
-        AnswerRow("messages__director_nino_question_cya_label", Seq(s"${DirectorNino.Yes}"), false,
+        AnswerRow("messages__director_nino_question_cya_label", Seq(s"${Nino.Yes}"), false,
           controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
             Index(directorIndex)).url),
         AnswerRow("messages__director_nino_cya_label", Seq(nino), false,
           controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
             Index(directorIndex)).url)
       )
-    case Some(models.register.establishers.company.director.DirectorNino.No(reason)) =>
+    case Some(Nino.No(reason)) =>
       Seq(
-        AnswerRow("messages__director_nino_question_cya_label", Seq(s"${DirectorNino.No}"), false,
+        AnswerRow("messages__director_nino_question_cya_label", Seq(s"${Nino.No}"), false,
           controllers.register.establishers.company.director.routes.DirectorNinoController.onPageLoad(CheckMode, Index(establisherIndex),
             Index(directorIndex)).url),
         AnswerRow("messages__director_nino_cya_label", Seq(reason), false,
@@ -228,14 +227,14 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
   def establisherNino(index: Int): Seq[AnswerRow] = userAnswers.get(EstablisherNinoId(index)) match {
     case Some(Yes(nino)) =>
       Seq(
-        AnswerRow("messages__establisher_individual_nino_question_cya_label", Seq(s"${EstablisherNino.Yes}"), false,
+        AnswerRow("messages__establisher_individual_nino_question_cya_label", Seq(s"${Nino.Yes}"), false,
           controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index)).url),
         AnswerRow("messages__establisher_individual_nino_cya_label", Seq(nino), false,
           controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index)).url)
       )
     case Some(No(reason)) =>
       Seq(
-        AnswerRow("messages__establisher_individual_nino_question_cya_label", Seq(s"${EstablisherNino.No}"), false,
+        AnswerRow("messages__establisher_individual_nino_question_cya_label", Seq(s"${Nino.No}"), false,
           controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index)).url),
         AnswerRow("messages__establisher_individual_nino_reason_cya_label", Seq(reason), false,
           controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, Index(index)).url)

@@ -20,12 +20,11 @@ import base.SpecBase
 import controllers.register.establishers.individual.routes._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
-import models.{CheckMode, Nino, Index}
 import models.addresslookup.Address
 import models.register.establishers.individual.UniqueTaxReference.{No, Yes}
 import models.register.establishers.individual.{ContactDetails, EstablisherDetails}
 import models.register.{CountryOptions, SchemeDetails, SchemeType}
-import models.{AddressYears, CheckMode, EstablisherNino, Index}
+import models.{AddressYears, CheckMode, Nino, Index}
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import viewmodels.AnswerRow
