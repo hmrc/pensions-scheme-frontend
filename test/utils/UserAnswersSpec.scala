@@ -39,7 +39,6 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
   )
 
   ".allEstablishers" must {
-
     "return a map of establishers names and edit links" in {
 
       val json = Json.obj(
@@ -66,15 +65,44 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
     }
   }
 
-    ".getAllRecursive" must{
-      "UserAnswers should get all matching recursive results" in {
-        val userAnswers = UserAnswers(establishers)
-       userAnswers.getAllRecursive[String](JsPath \ "establishers" \\ "name").value must contain("foo", "bar")
-      }
-
-      "it should return an empty list when no matches" in {
-        val userAnswers = UserAnswers(establishers)
-        userAnswers.getAllRecursive[String](JsPath \ "establishers" \\ "address").value.size mustBe 0
-      }
+  ".getAllRecursive" must {
+    "get all matching recursive results" in {
+      val userAnswers = UserAnswers(establishers)
+      val values = userAnswers.getAllRecursive[String](JsPath \ "establishers" \\ "name").value
+      values must contain("foo")
+      values must contain("bar")
     }
+
+    "return an empty list when no matches" in {
+      val userAnswers = UserAnswers(establishers)
+      userAnswers.getAllRecursive[String](JsPath \ "establishers" \\ "address").value.size mustBe 0
+    }
+  }
+
+  ".getAll" must {
+    "get all matching results" in {
+      val userAnswers = UserAnswers(establishers)
+      val values = userAnswers.getAll[String](JsPath \ "establishers" \\ "name").value
+      values must contain("foo")
+    }
+
+    "return an empty list when no matches" in {
+      val userAnswers = UserAnswers(establishers)
+      userAnswers.getAll[String](JsPath \ "establishers" \\ "address").value.size mustBe 0
+    }
+  }
+
+  ".get" must {
+    "get a matching result" in {
+      val userAnswers = UserAnswers(establishers)
+      val values = userAnswers.get[String](JsPath \ "establishers" \ 0).value
+      values mustBe "foo"
+
+    }
+
+    "return empty when no matches" in {
+      val userAnswers = UserAnswers(establishers)
+      userAnswers.get[String](JsPath \ "establishers" \ 8).value.size mustBe 0
+    }
+  }
 }
