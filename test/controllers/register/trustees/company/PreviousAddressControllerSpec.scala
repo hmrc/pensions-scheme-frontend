@@ -20,21 +20,28 @@ import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
-import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
+import controllers.actions._
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
+import models.address.Address
 import models.register.CountryOptions
 import models.{Index, NormalMode}
+import org.mockito.Matchers
+import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
+import play.api.i18n.MessagesApi
 import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.{FakeNavigator, InputOption, Navigator}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
+
+import scala.concurrent.Future
 
 class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
@@ -45,7 +52,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   )
 
   val formProvider = new AddressFormProvider()
-  val form = formProvider()
+  val form: Form[Address] = formProvider()
 
   "PreviousAddress Controller" must {
 
@@ -88,6 +95,37 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
 
       }
 
+    }
+
+    "redirect to next page on POST request" in {
+
+      val onwardCall = Call("GET", "/")
+
+      running(_.overrides(
+        bind[FrontendAppConfig].to(frontendAppConfig),
+        bind[MessagesApi].to(messagesApi),
+        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].to(getMandatoryEstablisherCompany),
+        bind[DataRequiredAction].to(new DataRequiredActionImpl),
+        bind[AddressFormProvider].to(formProvider)
+      )) {
+        implicit app =>
+
+          val fakeRequest = addToken(FakeRequest(PreviousAddressController.onSubmit(NormalMode, firstIndex))
+            .withHeaders("Csrf-Token" -> "nocheck")
+            .withFormUrlEncodedBody(
+              ("addressLine1", "value 1"),
+              ("addressLine2", "value 2"),
+              ("postCode.postCode", "AB1 1AB"),
+              "country" -> "GB"))
+
+          val result = route(app, fakeRequest).value
+
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).value mustEqual onwardCall.url
+      }
     }
 
   }

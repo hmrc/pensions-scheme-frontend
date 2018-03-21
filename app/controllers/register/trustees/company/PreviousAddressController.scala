@@ -26,13 +26,13 @@ import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.trustees.company.PreviousAddressId
 import models.address.Address
 import models.register.CountryOptions
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -76,6 +76,9 @@ class PreviousAddressController @Inject() (
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      ???
+      viewmodel(index, mode).retrieve.right.map {
+        vm =>
+          post(PreviousAddressId(index), vm, mode)
+      }
   }
 }
