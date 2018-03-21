@@ -69,10 +69,7 @@ class CompanyPostCodeLookupController @Inject() (
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right.map {
-          vm =>
-            get(CompanyPostCodeLookupId(index), vm)
-        }
+        viewmodel(index, mode).retrieve.right map get
     }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] =

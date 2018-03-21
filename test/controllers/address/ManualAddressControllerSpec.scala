@@ -57,14 +57,10 @@ object ManualAddressControllerSpec {
 
 
     def onPageLoad(viewModel: ManualAddressViewModel, answers: UserAnswers): Future[Result] =
-      get(fakeIdentifier, viewModel)(DataRequest(FakeRequest(), "cacheId", answers))
+      get(viewModel)(DataRequest(FakeRequest(), "cacheId", answers))
 
     def onSubmit(viewModel: ManualAddressViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
       post(fakeIdentifier, viewModel)(DataRequest(request, "cacheId", answers))
-
-    private val invalidError: Message = "foo"
-
-    private val noResultError: Message = "bar"
 
     override protected def form: Form[Address] = formProvider()
   }

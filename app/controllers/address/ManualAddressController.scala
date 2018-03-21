@@ -43,10 +43,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
   protected def form: Form[Address]
 
-  protected def get(
-                     id: TypedIdentifier[Address],
-                     viewModel: ManualAddressViewModel
-                   )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+  protected def get(viewModel: ManualAddressViewModel)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     Future.successful(Ok(manualAddress(appConfig, form, viewModel, countryOptions.options)))
   }
   protected def post(
@@ -66,10 +63,6 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
         }
       }
     )
-  }
-
-  protected def formWithError(message: Message)(implicit request: DataRequest[AnyContent]): Form[Address] = {
-    form.withError("value", message.resolve)
   }
 
 }
