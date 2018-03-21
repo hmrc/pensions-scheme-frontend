@@ -56,7 +56,14 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
     form.bindFromRequest().fold(
       (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel, countryOptions.options))),
       (value) => {
-        Future.successful(Redirect(viewModel.postCall))
+        cacheConnector.save(
+          request.externalId,
+          id,
+          value
+        ).map {
+          _ =>
+            Redirect(viewModel.postCall)
+        }
       }
     )
   }

@@ -16,11 +16,9 @@
 
 package controllers.address
 
-import akka.stream.Materializer
 import com.google.inject.Inject
-import play.api.inject._
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import forms.address.AddressFormProvider
 import identifiers.TypedIdentifier
 import models.address.Address
@@ -28,10 +26,10 @@ import models.register.CountryOptions
 import models.requests.DataRequest
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{Assertion, MustMatchers, OptionValues, WordSpec}
-import play.api.Application
+import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
+import play.api.inject._
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -44,6 +42,10 @@ import scala.concurrent.Future
 
 object ManualAddressControllerSpec {
 
+  val fakeIdentifier = new TypedIdentifier[Address]{
+    override def toString = "testPath"
+  }
+
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
@@ -53,13 +55,12 @@ object ManualAddressControllerSpec {
                                   formProvider: AddressFormProvider
                                 ) extends ManualAddressController {
 
-    object FakeIdentifier extends TypedIdentifier[Address]
 
     def onPageLoad(viewModel: ManualAddressViewModel, answers: UserAnswers): Future[Result] =
-      get(FakeIdentifier, viewModel)(DataRequest(FakeRequest(), "cacheId", answers))
+      get(fakeIdentifier, viewModel)(DataRequest(FakeRequest(), "cacheId", answers))
 
     def onSubmit(viewModel: ManualAddressViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
-      post(FakeIdentifier, viewModel)(DataRequest(request, "cacheId", answers))
+      post(fakeIdentifier, viewModel)(DataRequest(request, "cacheId", answers))
 
     private val invalidError: Message = "foo"
 
@@ -123,31 +124,38 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
   "post" must {
 
-    "redirect to the postCall on valid data request" in {
+    "redirect to the postCall on valid data request" which {
+      "will save address to answers" in {
 
-      running(_.overrides(
-        bind[CountryOptions].to(new CountryOptions(
-          Seq(InputOption("GB", "GB"))
-        ))
-      )) {
-        app =>
+        running(_.overrides(
+          bind[CountryOptions].to(new CountryOptions(
+            Seq(InputOption("GB", "GB"))
+          )),
+          bind[DataCacheConnector].to(FakeDataCacheConnector)
+        )) {
+          app =>
 
-          val controller = app.injector.instanceOf[TestController]
+            val controller = app.injector.instanceOf[TestController]
 
-          val result = controller.onSubmit(viewModel, UserAnswers(), FakeRequest().withFormUrlEncodedBody(
-            ("addressLine1", "value 1"),
-            ("addressLine2", "value 2"),
-            ("postCode.postCode", "AB1 1AB"),
-            "country" -> "GB")
-          )
+            val result = controller.onSubmit(viewModel, UserAnswers(), FakeRequest().withFormUrlEncodedBody(
+              ("addressLine1", "value 1"),
+              ("addressLine2", "value 2"),
+              ("postCode.postCode", "AB1 1AB"),
+              "country" -> "GB")
+            )
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustEqual Some(viewModel.postCall.url)
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustEqual Some(viewModel.postCall.url)
+
+            FakeDataCacheConnector.verify(fakeIdentifier, Address(
+              "value 1", "value 2", None, None, Some("AB1 1AB"), "GB"
+            ))
+        }
+
       }
-
     }
 
-    "return BAD_REQUEST with view" in {
+    "return BAD_REQUEST with view on invalid data request" in {
 
       running(_.overrides(
         bind[CountryOptions].to(new CountryOptions(
