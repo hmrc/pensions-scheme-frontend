@@ -28,7 +28,8 @@ import models.register.CountryOptions
 import models.requests.DataRequest
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.{Assertion, MustMatchers, OptionValues, WordSpec}
+import play.api.Application
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc._
@@ -43,14 +44,14 @@ import scala.concurrent.Future
 
 object ManualAddressControllerSpec {
 
-  class TestController @Inject() (
-                                   override val appConfig: FrontendAppConfig,
-                                   override val messagesApi: MessagesApi,
-                                   override val cacheConnector: DataCacheConnector,
-                                   override val navigator: Navigator,
-                                   override val countryOptions: CountryOptions,
-                                   formProvider: AddressFormProvider
-                                 ) extends ManualAddressController {
+  class TestController @Inject()(
+                                  override val appConfig: FrontendAppConfig,
+                                  override val messagesApi: MessagesApi,
+                                  override val cacheConnector: DataCacheConnector,
+                                  override val navigator: Navigator,
+                                  override val countryOptions: CountryOptions,
+                                  formProvider: AddressFormProvider
+                                ) extends ManualAddressController {
 
     object FakeIdentifier extends TypedIdentifier[Address]
 
@@ -94,14 +95,14 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
   )
 
   "get" must {
-    "return a successful result" in {
+    "return OK with view" in {
 
       running(_.overrides(
-        bind[CountryOptions].to(countryOptions)
+        bind[CountryOptions].to(new CountryOptions(
+          Seq(InputOption("GB", "GB"))
+        ))
       )) {
         app =>
-
-          implicit val mat: Materializer = app.materializer
 
           val request = FakeRequest()
 
@@ -114,7 +115,9 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual manualAddress(appConfig, formProvider(), viewModel, countryOptions.options)(request, messages).toString
+
       }
+
     }
   }
 
@@ -123,11 +126,11 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
     "redirect to the postCall on valid data request" in {
 
       running(_.overrides(
-        bind[CountryOptions].to(countryOptions)
+        bind[CountryOptions].to(new CountryOptions(
+          Seq(InputOption("GB", "GB"))
+        ))
       )) {
         app =>
-
-          implicit val mat: Materializer = app.materializer
 
           val controller = app.injector.instanceOf[TestController]
 
@@ -140,6 +143,35 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustEqual Some(viewModel.postCall.url)
+      }
+
+    }
+
+    "return BAD_REQUEST with view" in {
+
+      running(_.overrides(
+        bind[CountryOptions].to(new CountryOptions(
+          Seq(InputOption("GB", "GB"))
+        ))
+      )) {
+        app =>
+
+          val request = FakeRequest()
+
+          val appConfig = app.injector.instanceOf[FrontendAppConfig]
+          val formProvider = app.injector.instanceOf[AddressFormProvider]
+          val messages = app.injector.instanceOf[MessagesApi].preferred(request)
+          val controller = app.injector.instanceOf[TestController]
+
+          val form = formProvider()
+            .withError("addressLine1", "messages__error__addr1")
+            .withError("addressLine2", "messages__error__addr2")
+            .withError("country", "messages__error__scheme_country")
+
+          val result = controller.onSubmit(viewModel, UserAnswers(), request.withFormUrlEncodedBody())
+
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual manualAddress(appConfig, form, viewModel, countryOptions.options)(request, messages).toString
       }
 
     }
