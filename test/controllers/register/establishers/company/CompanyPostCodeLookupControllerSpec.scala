@@ -26,6 +26,7 @@ import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers
 import org.mockito.Matchers.{eq => eqTo}
 import org.mockito.Mockito.when
+import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
@@ -37,11 +38,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, Navigator}
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
-import views.html.helper.CSRF
 
 import scala.concurrent.Future
 
-class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
+class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with OptionValues {
 
   def onwardRoute: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
   def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex)
@@ -77,21 +77,22 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany)
-      )){ implicit app =>
+      )) {
+        implicit app =>
 
-        val request = FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex))
-          .withHeaders("Csrf-Token" -> "nocheck")
+          val request = FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex))
+            .withHeaders("Csrf-Token" -> "nocheck")
 
-        val result = route(app, request).get
+          val result = route(app, request).value
 
-        status(result) must be(OK)
+          status(result) must be(OK)
 
-        contentAsString(result) mustEqual postcodeLookup(
-          frontendAppConfig,
-          form,
-          viewModel
-        )(request, messages).toString
-      }
+          contentAsString(result) mustEqual postcodeLookup(
+            frontendAppConfig,
+            form,
+            viewModel
+          )(request, messages).toString
+        }
     }
 
     "redirect to next page on POST request" in {
@@ -115,19 +116,18 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
         bind[PostCodeLookupFormProvider].to(formProvider)
-      )){ implicit app =>
+      )) {
+        implicit app =>
 
-        val fakeRequest = FakeRequest(call)
-          .withFormUrlEncodedBody("value" -> validPostcode)
-          .withHeaders("Csrf-Token" -> "nocheck")
+          val fakeRequest = FakeRequest(call)
+            .withFormUrlEncodedBody("value" -> validPostcode)
+            .withHeaders("Csrf-Token" -> "nocheck")
 
-        val result = route(app, fakeRequest).get
+          val result = route(app, fakeRequest).value
 
-        status(result) must be(SEE_OTHER)
-        redirectLocation(result) mustEqual Some(onwardRoute.url)
-
-      }
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).value mustEqual onwardRoute.url
+        }
     }
-
   }
 }
