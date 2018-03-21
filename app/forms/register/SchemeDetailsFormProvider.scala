@@ -18,12 +18,12 @@ package forms.register
 
 import javax.inject.Inject
 
-import forms.mappings.{Constraints, Mappings}
+import forms.mappings.{Constraints, SchemeTypeMapping}
 import models.register.SchemeDetails
 import play.api.data.Form
 import play.api.data.Forms._
 
-class SchemeDetailsFormProvider @Inject() extends Mappings with Constraints {
+class SchemeDetailsFormProvider @Inject() extends SchemeTypeMapping with Constraints {
   val schemeNameMaxLength = 255
 
   def apply(): Form[SchemeDetails] = Form(mapping(

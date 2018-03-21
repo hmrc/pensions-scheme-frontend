@@ -48,42 +48,6 @@ trait Mappings extends Formatters with Constraints {
                               invalidKey: String = "error.invalid")(implicit ev: Enumerable[A]): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey))
 
-  protected def schemeTypeMapping(requiredTypeKey: String = "messages__error__selection",
-                                  invalidTypeKey: String = "messages__error__scheme_type_invalid",
-                                  requiredOtherKey: String = "messages__error__scheme_type_information",
-                                  invalidOtherKey: String = "messages__error__scheme_type_length"): Mapping[SchemeType] = {
-    val schemeTypeDetailsMaxLength = 150
-    val other = "other"
-
-    def fromSchemeType(schemeType: SchemeType): (String, Option[String]) = {
-      schemeType match {
-        case SchemeType.Other(someValue) => (other, Some(someValue))
-        case _ => (schemeType.toString, None)
-      }
-    }
-
-    def toSchemeType(schemeTypeTuple: (String, Option[String])): SchemeType = {
-
-      val mappings: Map[String, SchemeType] = Seq(
-        SingleTrust,
-        GroupLifeDeath,
-        BodyCorporate
-      ).map(v => (v.toString, v)).toMap
-
-      schemeTypeTuple match {
-        case (key, Some(value)) if key == other => Other(value)
-        case (key, _) if mappings.keySet.contains(key) => {
-          mappings.apply(key)
-        }
-      }
-    }
-
-    tuple(
-      "type" -> text(requiredTypeKey).verifying(schemeTypeConstraint(invalidTypeKey)),
-      "schemeTypeDetails" -> mandatoryIfEqual("schemeType.type", other, text(requiredOtherKey).
-        verifying(maxLength(schemeTypeDetailsMaxLength, invalidOtherKey)))
-    ).transform(toSchemeType, fromSchemeType)
-  }
 
   protected def uniqueTaxReferenceMapping(
                                            key: String = "uniqueTaxReference",

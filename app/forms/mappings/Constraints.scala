@@ -151,4 +151,5 @@ trait Constraints {
 
   protected def safeText(errorKey: String): Constraint[String] = regexp(safeTextRegex, errorKey)
 
+
 }
