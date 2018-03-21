@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import identifiers.TypedIdentifier
+import models.Mode
 import models.address.Address
 import models.register.CountryOptions
 import models.requests.DataRequest
@@ -27,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.{Navigator, UserAnswers}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
@@ -36,29 +37,31 @@ import scala.concurrent.Future
 trait ManualAddressController extends FrontendController with Retrievals with I18nSupport {
 
   protected def appConfig: FrontendAppConfig
-  protected def cacheConnector: DataCacheConnector
+  protected def dataCacheConnector: DataCacheConnector
   protected def navigator: Navigator
-  protected def countryOptions: CountryOptions
 
-  protected def form: Form[Address]
+  protected val countryOptions: CountryOptions
+
+  protected val form: Form[Address]
 
   protected def get(viewModel: ManualAddressViewModel)(implicit request: DataRequest[AnyContent]): Future[Result] = {
     Future.successful(Ok(manualAddress(appConfig, form, viewModel)))
   }
   protected def post(
                       id: TypedIdentifier[Address],
-                      viewModel: ManualAddressViewModel
+                      viewModel: ManualAddressViewModel,
+                      mode: Mode
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel))),
       (value) => {
-        cacheConnector.save(
+        dataCacheConnector.save(
           request.externalId,
           id,
           value
         ).map {
-          _ =>
-            Redirect(viewModel.postCall)
+          cacheMap =>
+            Redirect(navigator.nextPage(id, mode)(new UserAnswers(cacheMap)))
         }
       }
     )

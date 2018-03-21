@@ -20,32 +20,61 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.Retrievals
 import controllers.actions._
+import controllers.address.ManualAddressController
+import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
+import identifiers.register.establishers.company.CompanyDetailsId
+import models.address.Address
+import models.register.CountryOptions
 import models.{Index, Mode}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
+import viewmodels.Message
+import viewmodels.address.ManualAddressViewModel
 
 class PreviousAddressController @Inject() (
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
+                                        val appConfig: FrontendAppConfig,
+                                        val messagesApi: MessagesApi,
+                                        val dataCacheConnector: DataCacheConnector,
+                                        val navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: AddressFormProvider
-                                      ) extends FrontendController with I18nSupport {
+                                        val formProvider: AddressFormProvider,
+                                        val countryOptions: CountryOptions
+                                      ) extends ManualAddressController with I18nSupport with Retrievals {
 
-  private val form = formProvider()
+  private val title: Message = "messages__companyAddress__title"
+  private val heading: Message = "messages__companyAddress__heading"
 
-  def onPageLoad(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData) {
+  protected val form: Form[Address] = formProvider()
+
+  private def viewmodel(index: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
+    Retrieval {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            ManualAddressViewModel(
+              PreviousAddressController.onSubmit(mode, Index(index)),
+              countryOptions.options,
+              title = Message(title),
+              heading = Message(heading),
+              secondaryHeader = Some(details.companyName)
+            )
+        }
+    }
+
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      ???
+      viewmodel(index, mode).retrieve.right map get
   }
 
-  def onSubmit(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       ???
   }

@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import forms.address.AddressFormProvider
 import identifiers.TypedIdentifier
+import models.NormalMode
 import models.address.Address
 import models.register.CountryOptions
 import models.requests.DataRequest
@@ -48,7 +49,7 @@ object ManualAddressControllerSpec {
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
-                                  override val cacheConnector: DataCacheConnector,
+                                  override val dataCacheConnector: DataCacheConnector,
                                   override val navigator: Navigator,
                                   override val countryOptions: CountryOptions,
                                   formProvider: AddressFormProvider
@@ -59,9 +60,9 @@ object ManualAddressControllerSpec {
       get(viewModel)(DataRequest(FakeRequest(), "cacheId", answers))
 
     def onSubmit(viewModel: ManualAddressViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
-      post(fakeIdentifier, viewModel)(DataRequest(request, "cacheId", answers))
+      post(fakeIdentifier, viewModel, NormalMode)(DataRequest(request, "cacheId", answers))
 
-    override protected def form: Form[Address] = formProvider()
+    override protected val form: Form[Address] = formProvider()
   }
 
 }

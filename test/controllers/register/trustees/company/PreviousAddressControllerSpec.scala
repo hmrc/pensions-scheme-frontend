@@ -16,30 +16,79 @@
 
 package controllers.register.trustees.company
 
+import base.CSRFRequest
+import config.FrontendAppConfig
+import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
+import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
+import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
+import models.register.CountryOptions
+import models.{Index, NormalMode}
+import org.scalatest.OptionValues
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.mvc.Call
-import utils.InputOption
+import play.api.inject.bind
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import utils.{FakeNavigator, InputOption, Navigator}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
-class PreviousAddressControllerSpec extends ControllerSpecBase {
+class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
-  val viewmodel = ManualAddressViewModel(
-    Call("GET", "/"),
-    Seq.empty[InputOption],
-    "title",
-    "heading",
-    None
+  val firstIndex = Index(0)
+
+  val countryOptions = new CountryOptions(
+    Seq(InputOption("GB", "GB"))
   )
 
   val formProvider = new AddressFormProvider()
   val form = formProvider()
 
-  def viewAsString(form: Form[_] = form) = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
-
   "PreviousAddress Controller" must {
+
+    "render postcodeLookup from GET request" in {
+
+      running(_.overrides(
+        bind[FrontendAppConfig].to(frontendAppConfig),
+        bind[Navigator].toInstance(FakeNavigator),
+        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataRetrievalAction].to(getMandatoryEstablisherCompany),
+        bind[CountryOptions].to(countryOptions)
+      )) {
+        implicit app =>
+
+          val viewmodel = ManualAddressViewModel(
+            PreviousAddressController.onSubmit(NormalMode, firstIndex),
+            countryOptions.options,
+            "messages__companyAddress__title",
+            "messages__companyAddress__heading",
+            secondaryHeader = Some("test company name")
+          )
+
+          def viewAsString(form: Form[_] = form) = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
+
+          val request = addToken(
+            FakeRequest(PreviousAddressController.onPageLoad(NormalMode, firstIndex))
+            .withHeaders("Csrf-Token" -> "nocheck")
+          )
+
+          val result = route(app, request).value
+
+          status(result) must be(OK)
+
+          contentAsString(result) mustEqual manualAddress(
+            frontendAppConfig,
+            form,
+            viewmodel
+          )(request, messages).toString
+
+      }
+
+    }
 
   }
 }
