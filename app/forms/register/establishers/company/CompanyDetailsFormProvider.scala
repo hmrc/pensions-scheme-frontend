@@ -18,12 +18,12 @@ package forms.register.establishers.company
 
 import javax.inject.Inject
 
-import forms.mappings.Mappings
+import forms.mappings.{Mappings, Transforms, VatMapping}
 import play.api.data.{Form, Forms}
 import play.api.data.Forms._
 import models.CompanyDetails
 
-class CompanyDetailsFormProvider @Inject() extends Mappings {
+class CompanyDetailsFormProvider @Inject() extends Mappings with VatMapping with Transforms {
 
   val companyNameMaxLength = 160
   val payeNumberMaxLength = 13

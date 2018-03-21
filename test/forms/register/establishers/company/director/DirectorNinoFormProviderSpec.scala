@@ -25,6 +25,7 @@ class DirectorNinoFormProviderSpec extends NinoBehaviours {
   val requiredKey = "messages__error__has_nino_director"
   val requiredNinoKey = "messages__error__nino"
   val requiredReasonKey = "messages__director_no_nino"
+  val reasonLengthKey: String = "messages__error__no_nino_length"
   val invalidNinoKey = "messages__error__nino_invalid"
   val testForm = new DirectorNinoFormProvider().apply()
 
@@ -34,6 +35,7 @@ class DirectorNinoFormProviderSpec extends NinoBehaviours {
       requiredKey,
       requiredNinoKey,
       requiredReasonKey,
+      reasonLengthKey,
       invalidNinoKey)
     }
 }

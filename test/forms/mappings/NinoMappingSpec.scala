@@ -14,21 +14,31 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package forms.mappings
 
 import forms.behaviours.NinoBehaviours
+import models.Nino
+import play.api.data.Form
 
-class EstablisherNinoFormProviderSpec extends NinoBehaviours  {
+class NinoMappingSpec extends NinoBehaviours {
 
-  val requiredKey = "messages__error__has_nino_establisher"
-  val requiredNinoKey = "messages__error__nino"
-  val requiredReasonKey = "messages__establisher__no_nino"
-  val reasonLengthKey: String = "messages__error__no_nino_length"
-  val invalidNinoKey = "messages__error__nino_invalid"
+    private val requiredKey = "error.required"
+    private val requiredNinoKey = "error.nino.required"
+    private val requiredReasonKey = "error.reason.required"
+    private val reasonLengthKey = "error.reason.length"
+    private val invalidNinoKey = "error.nino.invalid"
 
-  val testForm = new EstablisherNinoFormProvider().apply()
+  "A form with a Nino" should {
+    val mapping = ninoMapping(
+      requiredKey,
+      requiredNinoKey,
+      requiredReasonKey,
+      reasonLengthKey,
+      invalidNinoKey
+    )
 
-  "EstablisherNino form provider" must {
+    val testForm:Form[Nino] = Form("nino" -> mapping)
+
     behave like formWithNino(testForm,
       requiredKey,
       requiredNinoKey,
@@ -37,4 +47,5 @@ class EstablisherNinoFormProviderSpec extends NinoBehaviours  {
       invalidNinoKey
     )
   }
+
 }

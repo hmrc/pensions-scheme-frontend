@@ -33,6 +33,8 @@ trait Constraints {
   val emailRegex = "^[^@<>‘“]+@[^@<>‘“]+$"
   val regexPhoneNumber ="^[0-9 +()-]+$"
   val regexCrn = "^(\\d{7}|[A-Z]\\d{6}|[A-Z][A-Z]\\d{6})$"
+  val regexVat = """^\d{9}$"""
+
 
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
@@ -139,5 +141,7 @@ trait Constraints {
   protected def emailAddress(errorKey: String): Constraint[String] = regexp(emailRegex, errorKey)
 
   protected def phoneNumber(errorKey: String): Constraint[String] = regexp(regexPhoneNumber, errorKey)
+
+  protected def vatRegistrationNumber(errorKey: String): Constraint[String] = regexp(regexVat, errorKey)
 
 }

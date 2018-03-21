@@ -172,10 +172,6 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
     Forms.of(formatter)
   }
 
-  protected def vatMapping(invalidKey: String, maxErrorKey: String): FieldMapping[String] = {
-    of(vatFormatter(invalidKey, maxErrorKey))
-  }
-
   protected def companyRegistrationNumberMapping(requiredKey: String = "messages__error__has_crn_company",
                                        requiredCRNKey: String = "messages__error__crn",
                                        requiredReasonKey: String = "messages__company__no_crn",

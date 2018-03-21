@@ -346,35 +346,6 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
   }
 
-  "vat number" must {
-
-    val testForm = Form("vatNumber" -> vatMapping("error.invalid", "error.maxlength"))
-
-    Seq("GB123456789", "123435464", "gb123456789").foreach{ vatNo =>
-      s"successfully bind valid vat number $vatNo" in {
-        val coForm = testForm.bind(Map("vatNumber" -> vatNo))
-
-        coForm.get mustEqual vatNo.toUpperCase.replace("GB", "")
-      }
-    }
-
-    Seq("AB123456", "GB", "12345ff56", "12345").foreach { vatNo =>
-      s"fail to bind when vat number $vatNo is not valid" in {
-        val coForm = testForm.bind(Map("vatNumber" -> vatNo))
-
-        coForm.errors mustEqual Seq(FormError("vatNumber", "error.invalid"))
-      }
-    }
-
-    Seq("GB1234568908", "1234567898").foreach { vatNo =>
-      s"fail to bind when vat number $vatNo exceeds max length 9" in {
-        val coForm = testForm.bind(Map("vatNumber" -> vatNo))
-
-        coForm.errors mustEqual Seq(FormError("vatNumber", "error.maxlength"))
-      }
-    }
-  }
-
   "companyRegistrationNumber" must {
     val testForm:Form[CompanyRegistrationNumber]=Form("companyRegistrationNumber" -> companyRegistrationNumberMapping())
 
