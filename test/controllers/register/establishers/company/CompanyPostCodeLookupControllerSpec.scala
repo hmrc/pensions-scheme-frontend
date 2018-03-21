@@ -22,7 +22,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConn
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
-import models.addresslookup.{Address, AddressRecord}
+import models.address.{Address, AddressRecord}
 import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers
 import org.mockito.Matchers.{eq => eqTo}
@@ -37,6 +37,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, Navigator}
+import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
@@ -61,6 +62,8 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   lazy val viewModel = PostcodeLookupViewModel(
     postCall = onwardRoute,
     manualInputCall = manualInputCall,
+    title = Message("messages__companyAddress__title"),
+    heading = Message("messages__companyAddress__heading"),
     subHeading = Some(company.companyName)
   )
 

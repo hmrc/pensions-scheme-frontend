@@ -44,6 +44,8 @@ class CompanyPostCodeLookupController @Inject() (
                                           formProvider: PostCodeLookupFormProvider
                                         ) extends PostcodeLookupController {
 
+  private val title: Message = "messages__companyAddress__title"
+  private val heading: Message = "messages__companyAddress__heading"
   private val invalidPostcode: Message = "messages__common__postcode_lookup__error__invalid"
   private val noResults: Message = "messages__common__postcode_lookup__error__no_results"
 
@@ -57,6 +59,8 @@ class CompanyPostCodeLookupController @Inject() (
             PostcodeLookupViewModel(
               routes.CompanyPostCodeLookupController.onSubmit(mode, index),
               routes.CompanyAddressController.onPageLoad(mode, index),
+              title = Message(title),
+              heading = Message(heading),
               subHeading = Some(details.companyName)
             )
         }

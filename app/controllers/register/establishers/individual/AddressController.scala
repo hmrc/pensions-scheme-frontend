@@ -24,7 +24,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.individual.AddressId
-import models.addresslookup.Address
+import models.address.Address
 import models.register.CountryOptions
 import models.{Index, Mode}
 import play.api.data.Form

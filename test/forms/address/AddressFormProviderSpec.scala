@@ -18,7 +18,7 @@ package forms.address
 
 import forms.behaviours.FormBehaviours
 import models.{Field, Required}
-import models.addresslookup.Address
+import models.address.Address
 import org.apache.commons.lang3.RandomStringUtils
 import play.api.data.FormError
 

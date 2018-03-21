@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import identifiers.TypedIdentifier
-import models.addresslookup.Address
+import models.address.Address
 import models.register.CountryOptions
 import models.requests.DataRequest
 import play.api.data.Form
@@ -49,7 +49,17 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
                    )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     Future.successful(Ok(manualAddress(appConfig, form, viewModel, countryOptions.options)))
   }
-  protected def post()(implicit request: DataRequest[AnyContent]): Future[Result] = ???
+  protected def post(
+                      id: TypedIdentifier[Address],
+                      viewModel: ManualAddressViewModel
+                    )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+    form.bindFromRequest().fold(
+      (formWithError: Form[_]) => ???,
+      (value) => {
+        Future.successful(Redirect(viewModel.postCall))
+      }
+    )
+  }
 
   protected def formWithError(message: Message)(implicit request: DataRequest[AnyContent]): Form[Address] = {
     form.withError("value", message.resolve)

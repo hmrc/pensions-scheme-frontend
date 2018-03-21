@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.addresslookup
+package models.address
 
 import play.api.libs.json._
 

@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.address.AddressFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
-import models.addresslookup.Address
+import models.address.Address
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{CountryOptions, SchemeDetails, SchemeType}
 import models.{Index, NormalMode}

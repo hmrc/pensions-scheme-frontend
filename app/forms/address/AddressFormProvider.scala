@@ -19,7 +19,7 @@ package forms.address
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import models.addresslookup.Address
+import models.address.Address
 import play.api.data.{Form, Forms}
 import play.api.data.Forms.{mapping, optional}
 

@@ -21,7 +21,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.Retrievals
 import identifiers.TypedIdentifier
 import models.Mode
-import models.addresslookup.Address
+import models.address.Address
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
