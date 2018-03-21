@@ -34,7 +34,6 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.{InputOption, Navigator, UserAnswers}
-import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
@@ -80,15 +79,16 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
     "country" -> "GB"
   )
 
+  val countryOptions = new CountryOptions(
+    Seq(InputOption("GB", "GB"))
+  )
+
   val viewModel = ManualAddressViewModel(
     Call("GET", "/"),
+    countryOptions.options,
     "title",
     "heading",
     Some("secondary.header")
-  )
-
-  val countryOptions = new CountryOptions(
-    Seq(InputOption("GB", "GB"))
   )
 
   "get" must {
@@ -111,7 +111,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
           val result = controller.onPageLoad(viewModel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual manualAddress(appConfig, formProvider(), viewModel, countryOptions.options)(request, messages).toString
+          contentAsString(result) mustEqual manualAddress(appConfig, formProvider(), viewModel)(request, messages).toString
 
       }
 
@@ -175,7 +175,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
           val result = controller.onSubmit(viewModel, UserAnswers(), request.withFormUrlEncodedBody())
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual manualAddress(appConfig, form, viewModel, countryOptions.options)(request, messages).toString
+          contentAsString(result) mustEqual manualAddress(appConfig, form, viewModel)(request, messages).toString
       }
 
     }

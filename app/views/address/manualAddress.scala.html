@@ -20,7 +20,7 @@
 @import viewmodels.address.ManualAddressViewModel
 @import utils.InputOption
 
-@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: ManualAddressViewModel, options: Seq[InputOption])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: ManualAddressViewModel)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages(viewmodel.title),
@@ -37,7 +37,7 @@
 
         <p>@messages(viewmodel.hint)</p>
 
-        @components.address(form, options)
+        @components.address(form, viewmodel.countryOptions)
 
         @components.submit_button()
     }

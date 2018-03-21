@@ -28,7 +28,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
-import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
@@ -44,14 +43,14 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
   protected def form: Form[Address]
 
   protected def get(viewModel: ManualAddressViewModel)(implicit request: DataRequest[AnyContent]): Future[Result] = {
-    Future.successful(Ok(manualAddress(appConfig, form, viewModel, countryOptions.options)))
+    Future.successful(Ok(manualAddress(appConfig, form, viewModel)))
   }
   protected def post(
                       id: TypedIdentifier[Address],
                       viewModel: ManualAddressViewModel
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
-      (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel, countryOptions.options))),
+      (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel))),
       (value) => {
         cacheConnector.save(
           request.externalId,

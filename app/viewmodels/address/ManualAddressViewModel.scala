@@ -17,13 +17,16 @@
 package viewmodels.address
 
 import play.api.mvc.Call
+import utils.InputOption
+import viewmodels.Message
 
 case class ManualAddressViewModel(
                                    postCall: Call,
-                                   title: String,
-                                   heading: String,
-                                   secondaryHeader: Option[String],
-                                   hint: String = "messages__common__company_address_hint"
+                                   countryOptions: Seq[InputOption],
+                                   title: Message,
+                                   heading: Message,
+                                   secondaryHeader: Option[Message],
+                                   hint: Message = "messages__common__address_lede"
                                  ) {
 
 }
