@@ -28,6 +28,9 @@ import models.{Index, NormalMode}
 import views.html.register.trustees.company.companyDetails
 import controllers.ControllerSpecBase
 import forms.register.trustees.company.CompanyDetailsFormProvider
+import identifiers.register.SchemeDetailsId
+import identifiers.register.trustees.TrusteesId
+import models.register.{SchemeDetails, SchemeType}
 import models.register.trustees.company.CompanyDetails
 import views.html.register.trustees.company.companyDetails
 
@@ -40,11 +43,23 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(0)
   val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName) =
     new CompanyDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form) = companyDetails(frontendAppConfig, form, NormalMode,firstIndex, schemeName)(fakeRequest, messages).toString
+
+  val validData = Json.obj(
+    SchemeDetailsId.toString ->
+    SchemeDetails(schemeName, SchemeType.SingleTrust),
+    TrusteesId.toString -> Json.arr(
+      Json.obj(
+        CompanyDetailsId.toString ->
+        CompanyDetails("test company name", Some("test vat number"), Some("test paye number"))
+      )
+    )
+
+  )
 
   "CompanyDetails Controller" must {
 
@@ -56,8 +71,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(CompanyDetailsId.toString -> CompanyDetails("test company name", Some("test vat number"), Some("test paye number")))
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+     val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 

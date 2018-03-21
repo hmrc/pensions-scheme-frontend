@@ -24,11 +24,12 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
+import controllers.Retrievals
 import forms.register.trustees.company.CompanyDetailsFormProvider
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.register.trustees.company.CompanyDetails
 import models.{Index, Mode}
-import utils.{Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.company.companyDetails
 
 import scala.concurrent.Future
@@ -42,28 +43,44 @@ class CompanyDetailsController @Inject() (
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: CompanyDetailsFormProvider
-                                      ) extends FrontendController with I18nSupport {
+                                      ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(CompanyDetailsId(index)) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      retrieveSchemeName {
+        schemeName =>
+          val redirectResult = request.userAnswers
+            .get(CompanyDetailsId(index)) match {
+            case None =>
+              Ok(companyDetails(appConfig, form, mode, index, schemeName))
+            case Some(value) =>
+              Ok(companyDetails(appConfig,form.fill(value), mode, index, schemeName))
+          }
+          Future.successful(redirectResult)
+
       }
-      Ok(companyDetails(appConfig, preparedForm, mode, index,"test"))
-  }
+     }
 
   def onSubmit(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode,index,"Test Scheme Name"))),
-        (value) => {
-          dataCacheConnector.save(request.externalId, CompanyDetailsId(index), value).map(cacheMap =>
-            Redirect(navigator.nextPage(CompanyDetailsId(index), mode)(new UserAnswers(cacheMap))))
-        }
-      )
+      retrieveSchemeName {
+        schemeName =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index,schemeName))),
+            (value) =>
+            dataCacheConnector.save(
+              request.externalId,
+              CompanyDetailsId(index),
+              value
+            ).map{
+              json =>
+                Redirect(navigator.nextPage(CompanyDetailsId(index), mode)(new UserAnswers(json)))
+            }
+            )
+      }
   }
+
 }
