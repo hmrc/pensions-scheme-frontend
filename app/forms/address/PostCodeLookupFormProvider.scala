@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package utils
+package forms.address
 
-import play.api.mvc.Call
-import identifiers.Identifier
-import models.{Mode, NormalMode}
+import javax.inject.Inject
 
-class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigator {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  private[this] var userAnswers: Option[UserAnswers] = None
-
-  override def nextPage(controllerId: Identifier, mode: Mode): (UserAnswers) => Call = {
-    (ua) => {
-      userAnswers = Some(ua)
-      desiredRoute
-    }
-  }
-
-  def lastUserAnswers: Option[UserAnswers] = userAnswers
-
+class PostCodeLookupFormProvider @Inject() extends Mappings {
+  val maxLength = 8
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("messages__error__postcode").
+        verifying(maxLength(maxLength, "messages__error__postcode_length"))
+    )
 }
-
-object FakeNavigator extends FakeNavigator(Call("GET", "www.example.com"), NormalMode)

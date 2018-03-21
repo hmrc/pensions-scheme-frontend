@@ -16,25 +16,20 @@
 
 package base
 
-import config.FrontendAppConfig
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice._
-import play.api.Environment
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.Injector
+import play.api.Application
 import play.api.test.FakeRequest
+import play.filters.csrf.CSRF.Token
+import play.filters.csrf.{CSRF, CSRFConfigProvider, CSRFFilter}
 
-trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
+trait CSRFRequest {
+  def addToken[T](fakeRequest: FakeRequest[T])(implicit app: Application) = {
+    val csrfConfig     = app.injector.instanceOf[CSRFConfigProvider].get
+    val csrfFilter     = app.injector.instanceOf[CSRFFilter]
+    val token          = csrfFilter.tokenProvider.generateToken
 
-  def injector: Injector = app.injector
-
-  def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
-
-  def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
-
-  def fakeRequest = FakeRequest("", "")
-
-  implicit def messages: Messages = messagesApi.preferred(fakeRequest)
-
-  def environment: Environment = injector.instanceOf[Environment]
+    fakeRequest.copyFakeRequest(tags = fakeRequest.tags ++ Map(
+      Token.NameRequestTag  -> csrfConfig.tokenName,
+      Token.RequestTag      -> token
+    )).withHeaders((csrfConfig.headerName, token))
+  }
 }

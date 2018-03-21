@@ -26,7 +26,7 @@ import play.api.libs.json._
 
 import scala.language.implicitConversions
 
-case class UserAnswers(json: JsValue) {
+case class UserAnswers(json: JsValue = Json.obj()) {
 
   def get[A](id: TypedIdentifier[A])(implicit rds: Reads[A]): Option[A] = {
     get[A](id.path)

@@ -62,7 +62,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect a Bad Request when post code is not valid" in {
+    "return a Bad Request when post code is not valid" in {
       val invalidPostCode = "invalid"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", invalidPostCode))
       val boundForm = form.withError(FormError("value", "messages__error__postcode_invalid"))
@@ -75,7 +75,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
-    "redirect a Bad Request when no results found for the input post code" in {
+    "return a Bad Request when no results found for the input post code" in {
       val notFoundPostCode = "noResult"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", notFoundPostCode))
       val boundForm = form.withError(FormError("value", "messages__error__postcode_no_results"))
