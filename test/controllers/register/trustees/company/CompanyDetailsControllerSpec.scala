@@ -41,6 +41,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
   val formProvider = new CompanyDetailsFormProvider()
   val form = formProvider()
   val firstIndex = Index(0)
+  val invalidIndex = Index(3)
   val schemeName = "Test Scheme Name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName) =
@@ -63,7 +64,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
 
   "CompanyDetails Controller" must {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET when scheme name is present" in {
       val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
@@ -76,6 +77,13 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(CompanyDetails("test company name", Some("test vat number"), Some("test paye number"))))
+    }
+
+    "redirect to session expired page on a GET when the index is not valid" ignore {
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to the next page when valid data is submitted" in {
