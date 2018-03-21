@@ -16,6 +16,7 @@
 
 package controllers.register.establishers.company
 
+import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
@@ -41,7 +42,7 @@ import views.html.helper.CSRF
 
 import scala.concurrent.Future
 
-class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
+class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest {
 
   def onwardRoute: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
   def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex)
@@ -79,8 +80,8 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany)
       )){ implicit app =>
 
-        val request = FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex))
-          .withHeaders("Csrf-Token" -> "nocheck")
+        val request = addToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex))
+          .withHeaders("Csrf-Token" -> "nocheck"))
 
         val result = route(app, request).get
 
@@ -117,9 +118,9 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[PostCodeLookupFormProvider].to(formProvider)
       )){ implicit app =>
 
-        val fakeRequest = FakeRequest(call)
+        val fakeRequest = addToken(FakeRequest(call)
           .withFormUrlEncodedBody("value" -> validPostcode)
-          .withHeaders("Csrf-Token" -> "nocheck")
+          .withHeaders("Csrf-Token" -> "nocheck"))
 
         val result = route(app, fakeRequest).get
 
