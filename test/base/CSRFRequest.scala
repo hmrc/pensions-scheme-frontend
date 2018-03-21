@@ -19,7 +19,7 @@ package base
 import play.api.Application
 import play.api.test.FakeRequest
 import play.filters.csrf.CSRF.Token
-import play.filters.csrf.{CSRFConfigProvider, CSRFFilter}
+import play.filters.csrf.{CSRF, CSRFConfigProvider, CSRFFilter}
 
 trait CSRFRequest {
   def addToken[T](fakeRequest: FakeRequest[T])(implicit app: Application) = {

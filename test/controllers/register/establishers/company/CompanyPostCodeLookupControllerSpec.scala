@@ -27,9 +27,9 @@ import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers
 import org.mockito.Matchers.{eq => eqTo}
 import org.mockito.Mockito.when
+import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -42,9 +42,10 @@ import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 
-class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest {
+class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
+  def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex)
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
@@ -57,22 +58,15 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
   val company = CompanyDetails(companyName, None, None)
 
-  def viewAsString(form: Form[_] = form): String =
-    postcodeLookup(
-      frontendAppConfig,
-      form,
-      PostcodeLookupViewModel(
-        postCall = onwardRoute,
-        manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex),
-        subHeading = Some(company.companyName)
-      )
-    )(fakeRequest, messages).toString
+  lazy val viewModel = PostcodeLookupViewModel(
+    postCall = onwardRoute,
+    manualInputCall = manualInputCall,
+    subHeading = Some(company.companyName)
+  )
 
   "Company Postcode Controller" must {
 
     "render postcodeLookup from GET request" in {
-
-      val call: Call = routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex)
 
       val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
       val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
@@ -84,13 +78,22 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany)
-      )){ app =>
+      )) {
+        implicit app =>
 
-        val result = route(app, FakeRequest("GET", call.url)).get
+        val request = addToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex))
+          .withHeaders("Csrf-Token" -> "nocheck"))
 
-        status(result) must be(OK)
+          val result = route(app, request).value
 
-      }
+          status(result) must be(OK)
+
+          contentAsString(result) mustEqual postcodeLookup(
+            frontendAppConfig,
+            form,
+            viewModel
+          )(request, messages).toString
+        }
     }
 
     "redirect to next page on POST request" in {
@@ -98,9 +101,6 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
       val call: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
 
       val validPostcode = "ZZ11ZZ"
-
-      val fakeRequest = addToken(FakeRequest(call)
-        .withFormUrlEncodedBody("value" -> validPostcode))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(
@@ -117,15 +117,18 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
         bind[PostCodeLookupFormProvider].to(formProvider)
-      )){ app =>
+      )) {
+        implicit app =>
 
-        val result = route(app, fakeRequest).get
+        val fakeRequest = addToken(FakeRequest(call)
+          .withFormUrlEncodedBody("value" -> validPostcode)
+          .withHeaders("Csrf-Token" -> "nocheck"))
 
-        status(result) must be(SEE_OTHER)
-        redirectLocation(result) mustEqual Some(onwardRoute.url)
+          val result = route(app, fakeRequest).value
 
-      }
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).value mustEqual onwardRoute.url
+        }
     }
-
   }
 }
