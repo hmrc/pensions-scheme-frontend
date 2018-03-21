@@ -38,6 +38,7 @@ class DirectorContactDetailsFormProviderSpec extends FormBehaviours {
       Field("emailAddress", Required -> "messages__error__email"),
       Field("phoneNumber", Required -> "messages__error__phone")
     )
+
     Seq("@test.com", "<>@ghghg", "fhgfhgfggf", "test@<>.com","a‘@a","a“@com").foreach { email =>
       s"fail to bind when the email $email is invalid" in {
         val data = validData + ("emailAddress" -> email)
@@ -49,14 +50,14 @@ class DirectorContactDetailsFormProviderSpec extends FormBehaviours {
 
     "fail to bind when email exceeds max length 132" in {
       val maxlengthEmail = 132
-      val testString = s"${RandomStringUtils.random(50)}@${RandomStringUtils.random(83)}"
+      val testString = s"${"a" * 50}@${"b" * 83}.com"
       val data = validData + ("emailAddress" -> testString)
 
       val expectedError = error("emailAddress", "messages__error__email_length", maxlengthEmail)
       checkForError(form, data, expectedError)
     }
 
-      Seq("1","234234","+","-","(",")"," ",
+    Seq("1","234234","+","-","(",")"," ",
           "+1","-1","(1","(2",
           "+1111", " 3333", "-33333",
           "(1)1","(0111)22222",

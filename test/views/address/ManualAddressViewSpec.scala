@@ -23,6 +23,7 @@ import models.address.Address
 import play.api.data.Form
 import play.api.mvc.Call
 import utils.InputOption
+import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.behaviours.QuestionViewBehaviours
 import views.html.address.manualAddress
@@ -36,8 +37,8 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
   val viewModel = ManualAddressViewModel(
     Call("GET", "/"),
     countryOptions,
-    "messages__common__manual__address__title",
-    "messages__common__manual__address__heading",
+    Message("messages__common__manual__address__title"),
+    Message("messages__common__manual__address__heading"),
     Some("secondary.header")
   )
 
