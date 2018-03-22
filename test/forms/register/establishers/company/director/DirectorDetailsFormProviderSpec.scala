@@ -80,11 +80,11 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours with Constraints {
     checkForError(form, data, expectedError)
   }
 
-  Seq("-sfygAFD", "‘GHJGJG", "SDSAF^*NJ", "^*", "first name").foreach { name =>
+  Seq("-sfy gAFD", "‘GHJ=GJG", "SDSAF^*NJ", "^*", "first name").foreach { name =>
     s"fail to bind when the first name $name is invalid" in {
       val data = validData + ("firstName" -> name)
 
-      val expectedError = error("firstName", "messages__error__first_name_invalid", regexFirstName)
+      val expectedError = error("firstName", "messages__error__first_name_invalid", regexName)
       checkForError(form, data, expectedError)
     }
   }
@@ -93,7 +93,7 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours with Constraints {
     s"fail to bind when the middle name $name is invalid" in {
       val data = validData + ("middleName" -> name)
 
-      val expectedError = error("middleName", "messages__error__middle_name_invalid", regexMiddleName)
+      val expectedError = error("middleName", "messages__error__middle_name_invalid", regexName)
       checkForError(form, data, expectedError)
     }
   }
@@ -102,7 +102,7 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours with Constraints {
   s"fail to bind when the last name is invalid" in {
     val data = validData + ("lastName" -> "strbvhjbv^*")
 
-    val expectedError = error("lastName", "messages__error__last_name_invalid", regexLastName)
+    val expectedError = error("lastName", "messages__error__last_name_invalid", regexName)
     checkForError(form, data, expectedError)
   }
 
@@ -138,7 +138,7 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours with Constraints {
     }
   }
 
-  Seq("-242798‘/", "(last,.&)", "Last Name").foreach { lastName =>
+  Seq("Steven", "Last-Name").foreach { lastName =>
     s"successfully bind valid last name $lastName" in {
 
       val detailsForm = form.bind(Map("firstName" -> "testFirstName",

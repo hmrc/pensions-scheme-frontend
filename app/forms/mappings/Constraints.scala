@@ -26,9 +26,7 @@ trait Constraints {
   val regexPostcode = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
   val regexSortCode: String = """\d*""".r.toString()
   val regexUtr = "^[0-9]{10}$"
-  val regexFirstName = "[a-zA-Z]{1}[a-zA-Z-‘]*"
-  val regexMiddleName ="[a-zA-Z-‘]*"
-  val regexLastName = "[a-zA-Z0-9,.‘(&)-/ ]*"
+  val regexName = """^[a-zA-Z\u00C0-\u00FF'‘’\u2014\u2013\u2010\u002d]{1,35}$"""
   val regexAccountNo = "[0-9]*"
   val regexEmail = "^[^@<>‘“]+@[^@<>‘“]+$"
   val regexPhoneNumber ="^[0-9 +()-]+$"
@@ -37,6 +35,8 @@ trait Constraints {
   val regexPaye = """^[0-9]{3}[0-9A-Za-z]{1,13}$"""
   val regexSafeText = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’\"“”«»()*+,./:;=?@\\[\\]|~£€¥\\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,160}$"""
   val regexNino = "^[0-9a-zA-Z]{1,9}|((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D]?$"
+  val regexAddressLine = """^[A-Za-z0-9 !'‘’"“”(),./\u2014\u2013\u2010\u002d]{1,35}$"""
+
 
 
 
