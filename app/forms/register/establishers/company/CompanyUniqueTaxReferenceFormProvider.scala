@@ -18,12 +18,12 @@ package forms.register.establishers.company
 
 import javax.inject.Inject
 
-import forms.mappings.Mappings
+import forms.mappings.UtrMapping
 import play.api.data.Form
 import models.register.establishers.individual.UniqueTaxReference
 
 
-class CompanyUniqueTaxReferenceFormProvider @Inject()() extends Mappings {
+class CompanyUniqueTaxReferenceFormProvider @Inject()() extends UtrMapping {
 
   def apply(): Form[UniqueTaxReference] = Form(
     "uniqueTaxReference" -> uniqueTaxReferenceMapping(

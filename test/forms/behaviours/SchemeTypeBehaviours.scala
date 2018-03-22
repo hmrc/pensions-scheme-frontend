@@ -22,7 +22,7 @@ import models.register.SchemeType
 import org.apache.commons.lang3.RandomStringUtils
 import play.api.data.{Form, FormError}
 
-class SchemeTypeBehaviours extends FormSpec with SchemeTypeMapping {
+trait SchemeTypeBehaviours extends FormSpec with SchemeTypeMapping {
 
   def formWithSchemeType(testForm: Form[SchemeType],
                          requiredTypeKey: String,

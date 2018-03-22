@@ -50,5 +50,4 @@ trait CrnBehaviour extends FormSpec with CrnMapping {
       }
     }
   }
-
 }

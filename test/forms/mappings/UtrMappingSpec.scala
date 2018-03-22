@@ -14,30 +14,36 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company.director
+package forms.mappings
 
 import forms.behaviours.UtrBehaviour
+import models.register.establishers.individual.UniqueTaxReference
+import play.api.data.Form
 
-class DirectorUniqueTaxReferenceFormProviderSpec extends UtrBehaviour {
+class UtrMappingSpec extends UtrBehaviour {
 
-  val requiredKey = "messages__error__has_sautr_director"
-  val requiredUtrKey = "messages__error__sautr"
-  val requiredReasonKey = "messages__error__no_sautr_director"
-  val invalidUtrKey = "messages__error__sautr_invalid"
-  val maxLengthReasonKey = "messages__error__no_sautr_length"
+  private val requiredKey = "error.required"
+  private val requiredUtrKey = "error.utr.required"
+  private val requiredReasonKey = "error.reason"
+  private val invalidUtrKey = "error.invalid.utr"
+  private val maxLengthReasonKey = "error.reason.length"
 
-  val formProvider = new DirectorUniqueTaxReferenceFormProvider()
 
-  "DirectorUniqueTaxReference form" must {
-
-    behave like formWithUtr(
-      formProvider(),
+  "UtrMapping" should {
+    val testForm: Form[UniqueTaxReference] = Form("uniqueTaxReference" -> uniqueTaxReferenceMapping(
       requiredKey,
       requiredUtrKey,
       requiredReasonKey,
       invalidUtrKey,
       maxLengthReasonKey
-    )
+    ))
+
+    behave like formWithUtr(testForm,
+      requiredKey,
+      requiredUtrKey,
+      requiredReasonKey,
+      invalidUtrKey,
+      maxLengthReasonKey)
 
   }
 }

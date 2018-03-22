@@ -22,7 +22,7 @@ import models.Nino
 import org.apache.commons.lang3.RandomStringUtils
 import play.api.data.{Form, FormError}
 
-class NinoBehaviours extends FormSpec with NinoMapping {
+trait NinoBehaviours extends FormSpec with NinoMapping {
 
   val reasonMaxLength = 150
   val reasonInvalidLength = 151

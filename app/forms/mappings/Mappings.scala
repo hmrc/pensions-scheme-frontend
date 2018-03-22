@@ -70,39 +70,6 @@ trait Mappings extends Formatters with Constraints {
       "year" -> text(invalidKey)).verifying(invalidKey, validateDate(_)).transform(toLocalDate, fromLocalDate)
   }
 
-  protected def uniqueTaxReferenceMapping(
-                                           key: String = "uniqueTaxReference",
-                                           requiredKey: String = "messages__error__has_sautr_establisher",
-                                           requiredUtrKey: String = "messages__error__sautr",
-                                           requiredReasonKey: String = "messages__error__no_sautr_establisher",
-                                           invalidUtrKey: String = "messages__error__sautr_invalid",
-                                           maxLengthReasonKey: String = "messages__error__no_sautr_length"):
-    Mapping[UniqueTaxReference] = {
-
-    val reasonMaxLength = 150
-    def fromUniqueTaxReference(utr: UniqueTaxReference): (Boolean, Option[String], Option[String]) = {
-      utr match {
-        case UniqueTaxReference.Yes(utrNo) => (true, Some(utrNo), None)
-        case UniqueTaxReference.No(reason) =>  (false, None, Some(reason))
-      }
-    }
-
-    def toUniqueTaxReference(utrTuple: (Boolean, Option[String], Option[String])) = {
-
-      utrTuple match {
-        case (true, Some(utr), None) => UniqueTaxReference.Yes(utr)
-        case (false, None, Some(reason)) => UniqueTaxReference.No(reason)
-        case _ => throw new RuntimeException("Invalid selection")
-      }
-    }
-
-    tuple("hasUtr" -> boolean(requiredKey),
-    "utr" -> mandatoryIfTrue(s"$key.hasUtr", text(requiredUtrKey).verifying(regexp(regexUtr, invalidUtrKey))),
-    "reason" -> mandatoryIfFalse(s"$key.hasUtr",
-      text(requiredReasonKey).verifying(maxLength(reasonMaxLength, maxLengthReasonKey)))).
-      transform(toUniqueTaxReference, fromUniqueTaxReference)
-  }
-
   protected def postCodeMapping(requiredKey: String, invalidKey: String): Mapping[Option[String]] = {
 
     def toPostCode(data: (Option[String], Option[String])): Option[String] = data._2
