@@ -1,0 +1,5 @@
+
+GET        /:index/companyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/companyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/changeCompanyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/changeCompanyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)

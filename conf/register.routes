@@ -1,6 +1,7 @@
 # microservice specific routes
 
 ->         /establishers                                establishers.Routes
+->         /trustees                                    trustees.Routes
 
 GET        /whatYouWillNeed                             controllers.register.WhatYouWillNeedController.onPageLoad()
 GET        /schemeDetails                               controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = NormalMode)
