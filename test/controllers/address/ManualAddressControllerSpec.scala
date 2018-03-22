@@ -34,7 +34,7 @@ import play.api.inject._
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{InputOption, Navigator, UserAnswers}
+import utils.{FakeNavigator, InputOption, Navigator, UserAnswers}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
@@ -98,7 +98,8 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
       running(_.overrides(
         bind[CountryOptions].to(new CountryOptions(
           Seq(InputOption("GB", "GB"))
-        ))
+        )),
+        bind[Navigator].to(FakeNavigator)
       )) {
         app =>
 
@@ -124,11 +125,14 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
     "redirect to the postCall on valid data request" which {
       "will save address to answers" in {
 
+        val onwardRoute = Call("GET", "/")
+
+        val navigator = new FakeNavigator(onwardRoute, NormalMode)
+
         running(_.overrides(
-          bind[CountryOptions].to(new CountryOptions(
-            Seq(InputOption("GB", "GB"))
-          )),
-          bind[DataCacheConnector].to(FakeDataCacheConnector)
+          bind[CountryOptions].to(new CountryOptions(Seq(InputOption("GB", "GB")))),
+          bind[DataCacheConnector].to(FakeDataCacheConnector),
+          bind[Navigator].to(navigator)
         )) {
           app =>
 
@@ -142,7 +146,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
             )
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result) mustEqual Some(viewModel.postCall.url)
+            redirectLocation(result) mustEqual Some(onwardRoute.url)
 
             FakeDataCacheConnector.verify(fakeIdentifier, Address(
               "value 1", "value 2", None, None, Some("AB1 1AB"), "GB"

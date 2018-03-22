@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company.director
+package identifiers.register.trustees
 
-import identifiers._
-import identifiers.register.establishers.EstablishersId
-import models.address.Address
-import play.api.libs.json.JsPath
+import identifiers.Identifier
+import play.api.libs.json._
 
-case class DirectorAddressPostcodeLookupId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Seq[Address]] {
-  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \ DirectorAddressPostcodeLookupId.toString
-
-}
-
-object DirectorAddressPostcodeLookupId {
-  override def toString: String = "directorAddressPostcodeLookup"
+case object TrusteesId extends Identifier {
+  override def toString: String = "trustees"
+  override def path: JsPath = __ \ toString
 }

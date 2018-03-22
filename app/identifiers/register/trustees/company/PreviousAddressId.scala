@@ -17,11 +17,12 @@
 package identifiers.register.trustees.company
 
 import identifiers._
+import identifiers.register.trustees.TrusteesId
 import models.address.Address
 import play.api.libs.json._
 
 case class PreviousAddressId(index: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = __ \ PreviousAddressId.toString
+  override def path: JsPath = TrusteesId.path \ index \ PreviousAddressId.toString
 }
 
 object PreviousAddressId {
