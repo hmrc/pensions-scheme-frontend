@@ -48,6 +48,27 @@ trait Mappings extends Formatters with Constraints {
                               invalidKey: String = "error.invalid")(implicit ev: Enumerable[A]): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey))
 
+  protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
+
+    def toLocalDate(date: (String, String, String)): LocalDate =
+    {
+      date match {
+        case (day, month, year) =>
+          new LocalDate(year.toInt, month.toInt, day.toInt)
+      }
+    }
+
+    def fromLocalDate(date: LocalDate): (String, String, String) = {
+      (date.getDayOfMonth.toString, date.getMonthOfYear.toString, date.getYear.toString)
+    }
+
+    def validateDate(date: (String, String, String)): Boolean =
+      Try(toLocalDate(date)).isSuccess
+
+    tuple("day" -> text(invalidKey),
+      "month" -> text(invalidKey),
+      "year" -> text(invalidKey)).verifying(invalidKey, validateDate(_)).transform(toLocalDate, fromLocalDate)
+  }
 
   protected def uniqueTaxReferenceMapping(
                                            key: String = "uniqueTaxReference",
@@ -80,59 +101,6 @@ trait Mappings extends Formatters with Constraints {
     "reason" -> mandatoryIfFalse(s"$key.hasUtr",
       text(requiredReasonKey).verifying(maxLength(reasonMaxLength, maxLengthReasonKey)))).
       transform(toUniqueTaxReference, fromUniqueTaxReference)
-  }
-
-protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
-
-    def toLocalDate(date: (String, String, String)): LocalDate =
-    {
-      date match {
-        case (day, month, year) =>
-          new LocalDate(year.toInt, month.toInt, day.toInt)
-      }
-    }
-
-    def fromLocalDate(date: LocalDate): (String, String, String) = {
-      (date.getDayOfMonth.toString, date.getMonthOfYear.toString, date.getYear.toString)
-    }
-
-    def validateDate(date: (String, String, String)): Boolean =
-      Try(toLocalDate(date)).isSuccess
-
-    tuple("day" -> text(invalidKey),
-    "month" -> text(invalidKey),
-    "year" -> text(invalidKey)).verifying(invalidKey, validateDate(_)).transform(toLocalDate, fromLocalDate)
-  }
-
-  protected def companyRegistrationNumberMapping(requiredKey: String = "messages__error__has_crn_company",
-                                       requiredCRNKey: String = "messages__error__crn",
-                                       requiredReasonKey: String = "messages__company__no_crn",
-                                       reasonLengthKey: String = "messages__error__no_crn_length",
-                                       invalidCRNKey: String = "messages__error__crn_invalid",
-                                       noReasonKey: String = "messages__error__no_crn_company"):
-  Mapping[CompanyRegistrationNumber] = {
-    val reasonMaxLength =150
-
-    def fromCompanyRegistrationNumber(crn: CompanyRegistrationNumber): (Boolean, Option[String], Option[String]) = {
-      crn match {
-        case CompanyRegistrationNumber.Yes(crn) => (true, Some(crn), None)
-        case CompanyRegistrationNumber.No(reason) =>  (false, None, Some(reason))
-      }
-    }
-
-    def toCompanyRegistrationNumber(crnTuple: (Boolean, Option[String], Option[String])) = {
-
-      crnTuple match {
-        case (true, Some(crn), None)  => CompanyRegistrationNumber.Yes(crn)
-        case (false, None, Some(reason))  => CompanyRegistrationNumber.No(reason)
-        case _ => throw new RuntimeException("Invalid selection")
-      }
-    }
-
-    tuple("hasCrn" -> boolean(requiredKey),
-      "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey).verifying(validCrn(invalidCRNKey))),
-      "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(noReasonKey).
-        verifying(maxLength(reasonMaxLength,reasonLengthKey)))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
   }
 
   protected def postCodeMapping(requiredKey: String, invalidKey: String): Mapping[Option[String]] = {

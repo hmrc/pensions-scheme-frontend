@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package forms.mappings
 
-import forms.FormSpec
 import forms.behaviours.CrnBehaviour
+import models.CompanyRegistrationNumber
+import play.api.data.Form
 
-class CompanyRegistrationNumberFormProviderSpec extends FormSpec with CrnBehaviour {
+class CrnMappingSpec extends CrnBehaviour {
 
-  val formProvider = new CompanyRegistrationNumberFormProvider()()
+  "CrnMapping" should {
 
-  "CompanyRegistrationNumber form" must {
+    val testForm: Form[CompanyRegistrationNumber] = Form("companyRegistrationNumber" -> companyRegistrationNumberMapping())
 
-    behave like formWithCrn(formProvider)
-
+    behave like formWithCrn(testForm)
   }
 }

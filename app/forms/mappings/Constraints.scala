@@ -32,7 +32,7 @@ trait Constraints {
   val regexAccountNo = "[0-9]*"
   val emailRegex = "^[^@<>‘“]+@[^@<>‘“]+$"
   val regexPhoneNumber ="^[0-9 +()-]+$"
-  val regexCrn = "^(\\d{7}|[A-Z]\\d{6}|[A-Z][A-Z]\\d{6})$"
+  val regexCrn = "^[A-Za-z0-9 -]{7,8}$"
   val regexVat = """^\d{9}$"""
   val payeRegex = """^[0-9]{3}[0-9A-Za-z]{1,13}$"""
   val safeTextRegex = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’\"“”«»()*+,./:;=?@\\[\\]|~£€¥\\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,160}$"""
@@ -127,7 +127,7 @@ trait Constraints {
 
   protected def validCrn(invalidKey: String) : Constraint[String] = {
     Constraint {
-      case crn if crn.replaceAll(" ", "").toUpperCase.matches(regexCrn) => Valid
+      case crn if crn.matches(regexCrn) => Valid
       case _ => Invalid(invalidKey)
     }
   }
