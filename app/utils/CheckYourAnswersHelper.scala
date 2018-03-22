@@ -34,6 +34,10 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
+  def directorAddressPostcodeLookup(establisherIndex: Int, directorIndex:Int): Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.director.DirectorAddressPostcodeLookupId(establisherIndex, directorIndex)) map {
+    x => AnswerRow("directorAddressPostcodeLookup.checkYourAnswersLabel", Seq(s"$x"), false, controllers.register.establishers.company.director.routes.DirectorAddressPostcodeLookupController.onPageLoad(CheckMode, establisherIndex, directorIndex).url)
+  }
+
   def directorUniqueTaxReference(establisherIndex: Int, directorIndex:Int): Seq[AnswerRow] =
     userAnswers.get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
       case Some(x) => Seq(AnswerRow("directorUniqueTaxReference.checkYourAnswersLabel", Seq(s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}"), true,

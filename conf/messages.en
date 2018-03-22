@@ -391,3 +391,6 @@ messages__error__no_sautr_director = You need to tell us why the director does n
 
 messages__confirmDeleteDirector__title = Confirm deletion
 messages__confirmDeleteDirector__heading = Are you sure you want to delete %s?
+
+messages__directorAddressPostcodeLookup__title = Director’s address
+messages__directorAddressPostcodeLookup__heading = Director’s address
