@@ -50,7 +50,7 @@ class PreviousAddressController @Inject() (
                                       ) extends ManualAddressController with I18nSupport with Retrievals {
 
   private val title: Message = "messages__companyAddress__title"
-  private val heading: Message = "messages__companyAddress__heading"
+  private[controllers] val heading: Message = "messages__companyAddress__heading"
 
   protected val form: Form[Address] = formProvider()
 
@@ -71,7 +71,10 @@ class PreviousAddressController @Inject() (
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right map get
+      viewmodel(index, mode).retrieve.right.map{
+        vm =>
+          get(PreviousAddressId(index), vm)
+      }
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {

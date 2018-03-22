@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import identifiers.TypedIdentifier
+import identifiers.register.BenefitsInsurerId
 import models.Mode
 import models.address.Address
 import models.register.CountryOptions
@@ -44,8 +45,15 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
   protected val form: Form[Address]
 
-  protected def get(viewModel: ManualAddressViewModel)(implicit request: DataRequest[AnyContent]): Future[Result] = {
-    Future.successful(Ok(manualAddress(appConfig, form, viewModel)))
+  protected def get(
+                     id: TypedIdentifier[Address],
+                     viewModel: ManualAddressViewModel
+                   )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+    val preparedForm = request.userAnswers.get(id) match {
+      case None => form
+      case Some(value) => form.fill(value)
+    }
+    Future.successful(Ok(manualAddress(appConfig, preparedForm, viewModel)))
   }
   protected def post(
                       id: TypedIdentifier[Address],

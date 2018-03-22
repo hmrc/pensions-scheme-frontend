@@ -31,6 +31,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject._
+import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -57,7 +58,7 @@ object ManualAddressControllerSpec {
 
 
     def onPageLoad(viewModel: ManualAddressViewModel, answers: UserAnswers): Future[Result] =
-      get(viewModel)(DataRequest(FakeRequest(), "cacheId", answers))
+      get(fakeIdentifier, viewModel)(DataRequest(FakeRequest(), "cacheId", answers))
 
     def onSubmit(viewModel: ManualAddressViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
       post(fakeIdentifier, viewModel, NormalMode)(DataRequest(request, "cacheId", answers))
@@ -93,30 +94,63 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
   )
 
   "get" must {
-    "return OK with view" in {
+    "return OK with view" when {
+      "data is retrieved" in {
 
-      running(_.overrides(
-        bind[CountryOptions].to(new CountryOptions(
-          Seq(InputOption("GB", "GB"))
-        )),
-        bind[Navigator].to(FakeNavigator)
-      )) {
-        app =>
+        running(_.overrides(
+          bind[CountryOptions].to(new CountryOptions(
+            Seq(InputOption("GB", "GB"))
+          )),
+          bind[Navigator].to(FakeNavigator)
+        )) {
+          app =>
 
-          val request = FakeRequest()
+            val request = FakeRequest()
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
-          val formProvider = app.injector.instanceOf[AddressFormProvider]
-          val messages = app.injector.instanceOf[MessagesApi].preferred(request)
-          val controller = app.injector.instanceOf[TestController]
+            val appConfig = app.injector.instanceOf[FrontendAppConfig]
+            val formProvider = app.injector.instanceOf[AddressFormProvider]
+            val messages = app.injector.instanceOf[MessagesApi].preferred(request)
+            val controller = app.injector.instanceOf[TestController]
 
-          val result = controller.onPageLoad(viewModel, UserAnswers())
+            val result = controller.onPageLoad(viewModel, UserAnswers())
 
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual manualAddress(appConfig, formProvider(), viewModel)(request, messages).toString
+            status(result) mustEqual OK
+            contentAsString(result) mustEqual manualAddress(appConfig, formProvider(), viewModel)(request, messages).toString
+
+        }
 
       }
+      "data is not retrieved" in {
+        running(_.overrides(
+          bind[CountryOptions].to(new CountryOptions(
+            Seq(InputOption("GB", "GB"))
+          )),
+          bind[Navigator].to(FakeNavigator)
+        )) {
+          app =>
 
+            val testAddress = Address(
+              "address line 1",
+              "address line 2",
+              Some("test town"),
+              Some("test county"),
+              Some("test post code"), "GB"
+            )
+
+            val request = FakeRequest()
+
+            val appConfig = app.injector.instanceOf[FrontendAppConfig]
+            val formProvider = app.injector.instanceOf[AddressFormProvider]
+            val messages = app.injector.instanceOf[MessagesApi].preferred(request)
+            val controller = app.injector.instanceOf[TestController]
+
+            val result = controller.onPageLoad(viewModel, UserAnswers(Json.obj(fakeIdentifier.toString -> testAddress)))
+
+            status(result) mustEqual OK
+            contentAsString(result) mustEqual manualAddress(appConfig, formProvider().fill(testAddress), viewModel)(request, messages).toString
+
+        }
+      }
     }
   }
 
