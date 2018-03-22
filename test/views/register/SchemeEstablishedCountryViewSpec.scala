@@ -18,7 +18,6 @@ package views.register
 
 import play.api.data.Form
 import forms.register.SchemeEstablishedCountryFormProvider
-import models.register.CountryOptions
 import models.NormalMode
 import play.twirl.api.HtmlFormat
 import utils.InputOption

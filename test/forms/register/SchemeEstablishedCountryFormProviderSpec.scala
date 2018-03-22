@@ -17,7 +17,6 @@
 package forms.register
 
 import forms.FormSpec
-import models.register.CountryOptions
 import utils.InputOption
 
 class SchemeEstablishedCountryFormProviderSpec extends FormSpec {

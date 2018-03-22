@@ -23,7 +23,7 @@ import identifiers.register.establishers.individual._
 import models.addresslookup.Address
 import models.register.establishers.individual.UniqueTaxReference.{No, Yes}
 import models.register.establishers.individual.{ContactDetails, EstablisherDetails}
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeType}
 import models.{AddressYears, CheckMode, Nino, Index}
 import org.joda.time.LocalDate
 import play.api.libs.json._

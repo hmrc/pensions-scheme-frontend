@@ -20,14 +20,11 @@ import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId, DirectorNinoId, DirectorUniqueTaxReferenceId}
-import identifiers.register.establishers.{EstablisherKindId, company}
 import identifiers.register.establishers.individual._
-import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.{EstablisherKindId, company}
 import models.Nino.{No, Yes}
 import models._
-import models.addresslookup.Address
-import models.register.CountryOptions
+import models.Address
 import models.register.establishers.individual.UniqueTaxReference
 import viewmodels.AnswerRow
 

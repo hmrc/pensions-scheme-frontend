@@ -24,7 +24,7 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
 import models.addresslookup.Address
 import models.register.establishers.individual.EstablisherDetails
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form

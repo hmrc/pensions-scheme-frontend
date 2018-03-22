@@ -19,7 +19,6 @@ package controllers.register.establishers.individual
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.ControllerSpecBase
 import models.Index
-import models.register.CountryOptions
 import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
 import utils.{CheckYourAnswersFactory, DateHelper, InputOption}

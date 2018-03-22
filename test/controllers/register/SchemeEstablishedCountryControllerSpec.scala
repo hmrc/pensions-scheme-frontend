@@ -28,7 +28,6 @@ import identifiers.register.SchemeEstablishedCountryId
 import models.NormalMode
 import views.html.register.schemeEstablishedCountry
 import controllers.ControllerSpecBase
-import models.register.CountryOptions
 import play.api.mvc.Call
 
 class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {

@@ -16,10 +16,9 @@
 
 package forms.mappings
 
-import models.register.CountryOptions
 import org.scalatest.{Matchers, WordSpec}
 import play.api.data.validation.{Invalid, Valid}
-import utils.InputOption
+import utils.{CountryOptions, InputOption}
 
 class ConstraintsSpec extends WordSpec with Matchers with Constraints with RegexBehaviourSpec {
 

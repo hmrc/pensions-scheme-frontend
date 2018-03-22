@@ -21,7 +21,6 @@ import controllers.register.establishers.individual.routes
 import forms.register.establishers.individual.AddressFormProvider
 import models.{Index, NormalMode}
 import models.addresslookup.Address
-import models.register.CountryOptions
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import utils.InputOption

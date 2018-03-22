@@ -25,7 +25,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyDetailsId, CompanyPreviousAddressId}
 import models.addresslookup.Address
 import models.{CompanyDetails, Index, NormalMode}
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._

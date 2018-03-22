@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.addresslookup
+package models
 
 import play.api.libs.json._
 
@@ -45,8 +45,8 @@ case class Address(addressLine1: String,
 object Address {
 
   implicit val readAddress: Reads[Address] = {
-    import play.api.libs.json._
     import play.api.libs.functional.syntax._
+    import play.api.libs.json._
 
     (
       (__ \ "lines").read[Seq[String]] and
@@ -62,8 +62,8 @@ object Address {
   }
 
   implicit val writeAddress: Writes[Address] = {
-    import play.api.libs.json._
     import play.api.libs.functional.syntax._
+    import play.api.libs.json._
     (
       (__ \ "lines").write[Seq[String]] and
         (__ \ "town").writeNullable[String] and

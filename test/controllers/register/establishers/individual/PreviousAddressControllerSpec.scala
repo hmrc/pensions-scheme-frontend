@@ -30,7 +30,7 @@ import views.html.register.establishers.individual.previousAddress
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
 import models.addresslookup.Address
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 

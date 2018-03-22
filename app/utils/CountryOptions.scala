@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.register
+package utils
 
 import javax.inject.{Inject, Singleton}
 
@@ -22,7 +22,6 @@ import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
 import play.api.Environment
 import play.api.libs.json.Json
-import utils.InputOption
 
 @Singleton
 class CountryOptions(val options: Seq[InputOption]) {
@@ -35,7 +34,7 @@ class CountryOptions(val options: Seq[InputOption]) {
           val locationJsValue = Json.parse(in)
           Json.fromJson[Seq[Seq[String]]](locationJsValue).asOpt.map {
             _.map { countryList =>
-              InputOption(countryList(1).replaceAll("country:", ""), countryList(0))
+              InputOption(countryList(1).replaceAll("country:", ""), countryList.head)
             }
           }
       }.getOrElse{

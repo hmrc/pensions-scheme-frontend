@@ -268,6 +268,19 @@ messages__error__vat_length = The VAT Registration number cannot be more than 9 
 messages__error__vat_invalid = Enter a valid VAT Registration number
 messages__error__paye_length = The PAYE number cannot be more than 13 characters
 
+messages__error__address_line_1_required = Enter the first line of address
+messages__error__address_line_2_required = Enter the second line of address
+messages__error__address_line_1_length = The first line of address cannot be more than 35 characters
+messages__error__address_line_2_length = The second line of address cannot be more than 35 characters
+messages__error__address_line_3_length = The third line of address cannot be more than 35 characters
+messages__error__address_line_4_length = The fourth line of address cannot be more than 35 characters
+messages__error__address_line_1_invalid = The first line of the address contains invalid characters
+messages__error__address_line_2_invalid = The second line of the address contains invalid characters
+messages__error__address_line_3_invalid = The third line of the address contains invalid characters
+messages__error__address_line_4_invalid = The fourth line of the address contains invalid characters
+messages__error_country_required = Enter a country
+messages__error_country_invalid = Enter a valid country
+
 messages__establisher_company_contact_details__title = Company contact details
 
 messages__establisher_individual_address__title = Establisher’s address

@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-package identifiers.register
+package utils
 
-import identifiers._
-import models.Address
+class FakeCountryOptions extends CountryOptions(FakeCountryOptions.fakeCountries)
 
-case object InsurerAddressId extends TypedIdentifier[Address] {
-  override def toString: String = "insurerAddress"
+object FakeCountryOptions {
+
+  def apply() = new FakeCountryOptions()
+
+  def fakeCountries: Seq[InputOption] = {
+
+    for {
+      a <- 'A' to 'Z'
+      b <- 'A' to 'Z'
+    } yield {
+      val country: String = Seq(a, b).mkString("")
+      InputOption(country, s"Country of $country", None)
+    }
+  }
 }

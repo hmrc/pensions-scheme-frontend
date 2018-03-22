@@ -18,7 +18,6 @@ package views.register.establishers.company
 
 import forms.register.establishers.individual.AddressFormProvider
 import models.addresslookup.Address
-import models.register.CountryOptions
 import models.{Index, NormalMode}
 import play.api.data.Form
 import utils.InputOption

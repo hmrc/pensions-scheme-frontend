@@ -16,14 +16,16 @@
 
 package forms.mappings
 
-import models.register.{CountryOptions, SchemeType}
+import models.register.SchemeType
 import org.joda.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.domain.Nino
+import utils.CountryOptions
 
 trait Constraints {
 
   val regexPostcode = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
+  val regexPostCodeNonUk = """^([0-9]+-)*[0-9]+$"""
   val regexSortCode: String = """\d*""".r.toString()
   val regexUtr = "^[0-9]{10}$"
   val regexName = """^[a-zA-Z\u00C0-\u00FF'‘’\u2014\u2013\u2010\u002d]{1,35}$"""
@@ -34,7 +36,6 @@ trait Constraints {
   val regexVat = """^\d{9}$"""
   val regexPaye = """^[0-9]{3}[0-9A-Za-z]{1,13}$"""
   val regexSafeText = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’\"“”«»()*+,./:;=?@\\[\\]|~£€¥\\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,160}$"""
-  val regexNino = "^[0-9a-zA-Z]{1,9}|((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D]?$"
   val regexAddressLine = """^[A-Za-z0-9 !'‘’"“”(),./\u2014\u2013\u2010\u002d]{1,35}$"""
 
 
@@ -102,14 +103,6 @@ trait Constraints {
     }
   }
 
-  protected def validCountries(invalidKey: String, countries: CountryOptions): Constraint[String] = {
-    val validCountries = countries.options.map(_.value)
-
-    Constraint {
-      case country if validCountries.contains(country) => Valid
-      case _ => Invalid(invalidKey)
-    }
-  }
 
   protected def futureDate(invalidKey: String): Constraint[LocalDate] = {
     Constraint {
@@ -141,7 +134,22 @@ trait Constraints {
           .headOption.getOrElse(Valid)
   }
 
+  protected def country(countryOptions: CountryOptions, errorKey: String): Constraint[String] =
+    Constraint {
+      input =>
+        countryOptions.options
+          .find(_.value == input)
+          .map(_ => Valid)
+          .getOrElse(Invalid(errorKey))
+    }
+
   protected def emailAddress(errorKey: String): Constraint[String] = regexp(regexEmail, errorKey)
+
+  protected def postCode(errorKey: String): Constraint[String] = regexp(regexPostcode, errorKey)
+
+  protected def postCodeNonUk(errorKey: String): Constraint[String] = regexp(regexPostCodeNonUk, errorKey)
+
+  protected def addressLine(errorKey: String): Constraint[String] = regexp(regexAddressLine, errorKey)
 
   protected def phoneNumber(errorKey: String): Constraint[String] = regexp(regexPhoneNumber, errorKey)
 
@@ -150,6 +158,9 @@ trait Constraints {
   protected def payeEmployerReferenceNumber(errorKey: String): Constraint[String] = regexp(regexPaye, errorKey)
 
   protected def safeText(errorKey: String): Constraint[String] = regexp(regexSafeText, errorKey)
+
+  protected def name(errorKey: String): Constraint[String] = regexp(regexName, errorKey)
+
 
 
 }

@@ -69,15 +69,4 @@ trait Mappings extends Formatters with Constraints {
       "month" -> text(invalidKey),
       "year" -> text(invalidKey)).verifying(invalidKey, validateDate(_)).transform(toLocalDate, fromLocalDate)
   }
-
-  protected def postCodeMapping(requiredKey: String, invalidKey: String): Mapping[Option[String]] = {
-
-    def toPostCode(data: (Option[String], Option[String])): Option[String] = data._2
-
-    def fromPostCode(data: Option[String]): (Option[String], Option[String]) = (data, data)
-
-    tuple("postCode" -> mandatoryIfEqual[String]("country", "GB", text(requiredKey).verifying(
-      regexp(regexPostcode, invalidKey))),
-      "postCode" -> optional(text(requiredKey))).transform(toPostCode, fromPostCode)
-  }
 }
