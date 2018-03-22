@@ -43,14 +43,13 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          requireData: DataRequiredAction,
                                          formProvider: AddEstablisherFormProvider) extends FrontendController with Retrievals with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          Future.successful(Ok(addEstablisher(appConfig, form, mode,
-            request.userAnswers.allEstablishers, schemeName)))
+          val establishers = request.userAnswers.allEstablishers
+          Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
+            establishers, schemeName)))
       }
   }
 
@@ -58,14 +57,14 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
+          val establishers = request.userAnswers.allEstablishers
+          formProvider(establishers).bindFromRequest().fold(
+            formWithErrors =>
               Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
                 request.userAnswers.allEstablishers, schemeName))),
-            (_) =>
-                Future.successful(Redirect(navigator.nextPage(AddEstablisherId, mode)(request.userAnswers)))
+            value =>
+                Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode)(request.userAnswers)))
           )
       }
   }
-
 }
