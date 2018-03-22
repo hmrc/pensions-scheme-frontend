@@ -195,42 +195,6 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
   }
 
-  "sortCode" must {
-
-    val testForm: Form[SortCode] = Form("sortCode" -> sortCodeMapping("error.required", "error.invalid", "error.max.error"))
-
-    Seq("12 34 56", "12-34-56", " 123456").foreach{ sortCode =>
-      s"bind a valid sort code $sortCode" in {
-        val result = testForm.bind(Map("sortCode" -> sortCode))
-        result.get mustEqual SortCode("12", "34", "56")
-      }
-    }
-
-    "not bind an empty Map" in {
-      val result = testForm.bind(Map.empty[String, String])
-      result.errors mustEqual Seq(FormError("sortCode", "error.required"))
-    }
-
-    Seq("12%34&56", "abdgfg").foreach { sortCode =>
-      s"not bind an invalid sort code $sortCode" in {
-        val result = testForm.bind(Map("sortCode" -> sortCode))
-        result.errors mustEqual Seq(FormError("sortCode", "error.invalid"))
-      }
-    }
-
-    Seq("12 34 56 56", "12345678").foreach { sortCode =>
-      s"not bind a sort code $sortCode which exceeds max length" in {
-        val result = testForm.bind(Map("sortCode" -> sortCode))
-        result.errors mustEqual Seq(FormError("sortCode", "error.max.error"))
-      }
-    }
-
-    "not bind a sort code which is less than the expected length" in {
-      val result = testForm.bind(Map("sortCode" -> "123"))
-      result.errors mustEqual Seq(FormError("sortCode", "error.invalid"))
-    }
-  }
-
   "uniqueTaxReference" must {
 
     val testForm: Form[UniqueTaxReference] = Form("uniqueTaxReference" -> uniqueTaxReferenceMapping("uniqueTaxReference", "error.required",

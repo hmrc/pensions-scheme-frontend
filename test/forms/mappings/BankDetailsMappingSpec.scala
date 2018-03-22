@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-package models.register
+package forms.mappings
 
-import play.api.libs.json.Json
+import forms.behaviours.BankDetailsBehaviour
+import models.register.SortCode
+import play.api.data.Form
 
-case class SortCode(first: String, second: String, third: String)
 
-object SortCode {
-  implicit val format = Json.format[SortCode]
+class BankDetailsMappingSpec extends BankDetailsBehaviour {
+
+  "SortCodeMapping" should {
+    val testForm: Form[SortCode] = Form("sortCode" -> sortCodeMapping("error.required", "error.invalid", "error.max.error"))
+
+    behave like formWithSortCode(
+      testForm,
+      "error.required",
+      "error.invalid",
+      "error.max.error",
+      Map.empty,
+      (sortCode: SortCode) => sortCode
+    )
+  }
 }

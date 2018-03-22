@@ -18,12 +18,12 @@ package forms.register
 
 import javax.inject.Inject
 
-import forms.mappings.Mappings
+import forms.mappings.BankDetailsMapping
 import models.register.UKBankDetails
 import play.api.data.Form
 import play.api.data.Forms._
 
-class UKBankDetailsFormProvider @Inject() extends Mappings {
+class UKBankDetailsFormProvider @Inject() extends BankDetailsMapping {
 
   val nameMaxLength = 28
   val accountNoMaxLength = 8

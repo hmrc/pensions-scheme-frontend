@@ -16,21 +16,23 @@
 
 package forms.register
 
-import forms.behaviours.FormBehaviours
+import forms.behaviours.{BankDetailsBehaviour, FormBehaviours}
 import forms.mappings.Constraints
 import models._
 import models.register.{SortCode, UKBankDetails}
 import org.apache.commons.lang3.{RandomStringUtils, RandomUtils}
 import org.joda.time.LocalDate
 
-class UKBankDetailsFormProviderSpec extends FormBehaviours with Constraints {
+class UKBankDetailsFormProviderSpec extends FormBehaviours with Constraints with BankDetailsBehaviour {
+
+  //scalastyle:off magic.number
 
   val testSortCode = SortCode("24", "56", "56")
   val testAccountNumber: String = RandomUtils.nextInt(10000000, 99999999).toString
 
-  val day = LocalDate.now().getDayOfMonth
-  val month = LocalDate.now().getMonthOfYear
-  val year = LocalDate.now().getYear
+  private val day = LocalDate.now().getDayOfMonth
+  private val month = LocalDate.now().getMonthOfYear
+  private val year = LocalDate.now().getYear
 
   val validData: Map[String, String] = Map(
     "bankName" -> "test bank",
@@ -61,6 +63,22 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours with Constraints {
       Field("date.year", Required -> "messages__error__date")
     )
 
+    behave like formWithSortCode(
+      form,
+      "messages__error__sort_code",
+      "messages__error__sort_code_invalid",
+      "messages__error__sort_code_length",
+      Map(
+        "bankName" -> "test bank",
+        "accountName" -> "test account",
+        "accountNumber" -> testAccountNumber,
+        "date.day" -> s"$day",
+        "date.month" -> s"$month",
+        "date.year" -> s"${year - 20}"
+      ),
+      (bankDetails: UKBankDetails) => bankDetails.sortCode
+    )
+
     "fail to bind when the bank name exceeds max length 28" in {
       val testString = RandomStringUtils.random(29)
       val data = validData + ("bankName" -> testString)
@@ -75,24 +93,6 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours with Constraints {
 
       val expectedError = error("accountName", "messages__error__account_name_length", 28)
       checkForError(form, data, expectedError)
-    }
-
-    Seq("12$12£14", "asdcffdsf", "11 23%12").foreach { code =>
-      s"fail to bind when sort code $code is invalid" in {
-        val data = validData + ("sortCode" -> code)
-
-        val expectedError = error("sortCode", "messages__error__sort_code_invalid")
-        checkForError(form, data, expectedError)
-      }
-    }
-
-    Seq("1234567", "12 45 67 78", "12-56-90-0").foreach { code =>
-      s"fail to bind when sort code $code exceeds max length 6" in {
-        val data = validData + ("sortCode" -> code)
-
-        val expectedError = error("sortCode", "messages__error__sort_code_length")
-        checkForError(form, data, expectedError)
-      }
     }
 
     Seq("Abffgk", "1 1 1 1 1 1 ", "A1b3j4b2").foreach { code =>

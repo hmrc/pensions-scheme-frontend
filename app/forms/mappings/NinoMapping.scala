@@ -40,6 +40,7 @@ import uk.gov.voa.play.form.ConditionalMappings.{mandatoryIfFalse, mandatoryIfTr
 import play.api.data.Mapping
 
 trait NinoMapping extends Mappings {
+
    def ninoMapping(requiredKey: String = "messages__error__has_nino_establisher",
                             requiredNinoKey: String = "messages__error__nino",
                             requiredReasonKey: String = "messages__establisher__no_nino",
