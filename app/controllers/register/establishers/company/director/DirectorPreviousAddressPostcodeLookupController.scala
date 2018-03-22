@@ -16,16 +16,65 @@
 
 package controllers.register.establishers.company.director
 
+import javax.inject.Inject
+
+import config.FrontendAppConfig
+import connectors.{AddressLookupConnector, DataCacheConnector}
+import controllers.actions._
+import controllers.address.PostcodeLookupController
+import forms.address.PostCodeLookupFormProvider
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressPostcodeLookupId}
 import models.{Index, Mode}
-import play.api.mvc.Action
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import play.api.data.Form
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent}
+import utils.Navigator
+import viewmodels.Message
+import viewmodels.address.PostcodeLookupViewModel
 
-class DirectorPreviousAddressPostcodeLookupController extends BaseController {
+class DirectorPreviousAddressPostcodeLookupController @Inject() (
+                                        override val appConfig: FrontendAppConfig,
+                                        override val messagesApi: MessagesApi,
+                                        override val cacheConnector: DataCacheConnector,
+                                        override val addressLookupConnector: AddressLookupConnector,
+                                        override val navigator: Navigator,
+                                        authenticate: AuthAction,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
+                                        formProvider: PostCodeLookupFormProvider
+                                      ) extends PostcodeLookupController {
 
-  // Stub implementation
+  private val invalidPostcode: Message = "messages__error__postcode_invalid"
+  private val noResults: Message = "messages__error__postcode_no_results"
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index) = Action {
-    Ok
+  protected val form: Form[String] = formProvider()
+
+  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index) = Retrieval {
+    implicit request =>
+      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(
+        details => PostcodeLookupViewModel(
+          routes.DirectorPreviousAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex),
+          routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex),
+          Message("messages__directorPreviousAddressPostcodeLookup__title"),
+          Message("messages__directorPreviousAddressPostcodeLookup__heading"),
+          Some(details.directorName)
+        )
+      )
   }
 
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+    implicit request =>
+      viewmodel(mode,establisherIndex, directorIndex).retrieve.right.map(
+          vm =>
+            get(DirectorPreviousAddressPostcodeLookupId(directorIndex, establisherIndex), vm)
+      )
+  }
+
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+    implicit request =>
+      viewmodel(mode, establisherIndex, directorIndex).retrieve.right.map(
+        vm =>
+          post(DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex), vm, invalidPostcode, noResults, mode)
+      )
+  }
 }
