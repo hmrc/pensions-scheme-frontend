@@ -27,6 +27,6 @@ class SchemeEstablishedCountryFormProvider @Inject()(countries: CountryOptions) 
   def apply(): Form[String] =
     Form(
       "value" -> text("messages__error__scheme_country").verifying(
-        ("messages__error__scheme_country", countries))
+        country(countries, "messages__error__scheme_country"))
     )
 }
