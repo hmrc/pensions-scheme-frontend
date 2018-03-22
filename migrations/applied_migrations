@@ -1,29 +1,29 @@
 #!/bin/bash
 
-echo "Applying migration DirectorAddressPostcodeLookup"
+echo "Applying migration DirectorPreviousAddressPostcodeLookup"
 
 echo "Adding routes to register.establishers.company.director.routes"
 
 echo "" >> ../conf/register.establishers.company.director.routes
-echo "GET        /directorAddressPostcodeLookup               controllers.register.establishers.company.director.DirectorAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
-echo "POST       /directorAddressPostcodeLookup               controllers.register.establishers.company.director.DirectorAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
+echo "GET        /directorPreviousAddressPostcodeLookup               controllers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
+echo "POST       /directorPreviousAddressPostcodeLookup               controllers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
 
-echo "GET        /changeDirectorAddressPostcodeLookup                        controllers.register.establishers.company.director.DirectorAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
-echo "POST       /changeDirectorAddressPostcodeLookup                        controllers.register.establishers.company.director.DirectorAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
+echo "GET        /changeDirectorPreviousAddressPostcodeLookup                        controllers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
+echo "POST       /changeDirectorPreviousAddressPostcodeLookup                        controllers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "messages__directorAddressPostcodeLookup__title = directorAddressPostcodeLookup" >> ../conf/messages.en
-echo "messages__directorAddressPostcodeLookup__heading = directorAddressPostcodeLookup" >> ../conf/messages.en
-echo "messages__directorAddressPostcodeLookup__checkYourAnswersLabel = directorAddressPostcodeLookup" >> ../conf/messages.en
-echo "messages__directorAddressPostcodeLookup__error__required = Please give an answer for directorAddressPostcodeLookup" >> ../conf/messages.en
+echo "messages__directorPreviousAddressPostcodeLookup__title = directorPreviousAddressPostcodeLookup" >> ../conf/messages.en
+echo "messages__directorPreviousAddressPostcodeLookup__heading = directorPreviousAddressPostcodeLookup" >> ../conf/messages.en
+echo "messages__directorPreviousAddressPostcodeLookup__checkYourAnswersLabel = directorPreviousAddressPostcodeLookup" >> ../conf/messages.en
+echo "messages__directorPreviousAddressPostcodeLookup__error__required = Please give an answer for directorPreviousAddressPostcodeLookup" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def directorAddressPostcodeLookup: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.director.DirectorAddressPostcodeLookupId) map {";\
-     print "    x => AnswerRow(\"directorAddressPostcodeLookup.checkYourAnswersLabel\", Seq(s\"$x\"), false, controllers.register.establishers.company.director.routes.DirectorAddressPostcodeLookupController.onPageLoad(CheckMode).url)";\
+     print "  def directorPreviousAddressPostcodeLookup: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupId) map {";\
+     print "    x => AnswerRow(\"directorPreviousAddressPostcodeLookup.checkYourAnswersLabel\", Seq(s\"$x\"), false, controllers.register.establishers.company.director.routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -31,4 +31,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration DirectorAddressPostcodeLookup completed"
+echo "Migration DirectorPreviousAddressPostcodeLookup completed"
