@@ -33,7 +33,7 @@ trait PayeBehaviours extends FormSpec with StringFieldBehaviours with Constraint
       behave like fieldThatBindsValidData(
         form,
         fieldName,
-        RegexpGen.from(payeRegex)
+        RegexpGen.from(regexPaye)
       )
 
       behave like fieldWithMaxLength(
@@ -47,7 +47,7 @@ trait PayeBehaviours extends FormSpec with StringFieldBehaviours with Constraint
         form,
         fieldName,
         "A1_",
-        FormError(fieldName, keyPayeInvalid, Seq(payeRegex))
+        FormError(fieldName, keyPayeInvalid, Seq(regexPaye))
       )
     }
   }

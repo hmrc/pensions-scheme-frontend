@@ -23,20 +23,20 @@ import uk.gov.hmrc.domain.Nino
 
 trait Constraints {
 
-  val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
+  val regexPostcode = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
   val regexSortCode: String = """\d*""".r.toString()
   val regexUtr = "^[0-9]{10}$"
   val regexFirstName = "[a-zA-Z]{1}[a-zA-Z-‘]*"
   val regexMiddleName ="[a-zA-Z-‘]*"
   val regexLastName = "[a-zA-Z0-9,.‘(&)-/ ]*"
   val regexAccountNo = "[0-9]*"
-  val emailRegex = "^[^@<>‘“]+@[^@<>‘“]+$"
+  val regexEmail = "^[^@<>‘“]+@[^@<>‘“]+$"
   val regexPhoneNumber ="^[0-9 +()-]+$"
   val regexCrn = "^[A-Za-z0-9 -]{7,8}$"
   val regexVat = """^\d{9}$"""
-  val payeRegex = """^[0-9]{3}[0-9A-Za-z]{1,13}$"""
-  val safeTextRegex = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’\"“”«»()*+,./:;=?@\\[\\]|~£€¥\\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,160}$"""
-
+  val regexPaye = """^[0-9]{3}[0-9A-Za-z]{1,13}$"""
+  val regexSafeText = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’\"“”«»()*+,./:;=?@\\[\\]|~£€¥\\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,160}$"""
+  val regexNino = "^[0-9a-zA-Z]{1,9}|((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D]?$"
 
 
 
@@ -141,15 +141,15 @@ trait Constraints {
           .headOption.getOrElse(Valid)
   }
 
-  protected def emailAddress(errorKey: String): Constraint[String] = regexp(emailRegex, errorKey)
+  protected def emailAddress(errorKey: String): Constraint[String] = regexp(regexEmail, errorKey)
 
   protected def phoneNumber(errorKey: String): Constraint[String] = regexp(regexPhoneNumber, errorKey)
 
   protected def vatRegistrationNumber(errorKey: String): Constraint[String] = regexp(regexVat, errorKey)
 
-  protected def payeEmployerReferenceNumber(errorKey: String): Constraint[String] = regexp(payeRegex, errorKey)
+  protected def payeEmployerReferenceNumber(errorKey: String): Constraint[String] = regexp(regexPaye, errorKey)
 
-  protected def safeText(errorKey: String): Constraint[String] = regexp(safeTextRegex, errorKey)
+  protected def safeText(errorKey: String): Constraint[String] = regexp(regexSafeText, errorKey)
 
 
 }

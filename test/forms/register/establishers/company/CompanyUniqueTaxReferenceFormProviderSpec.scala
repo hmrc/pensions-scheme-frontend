@@ -17,7 +17,6 @@
 package forms.register.establishers.company
 
 import forms.behaviours.UtrBehaviour
-import models.register.establishers.individual.UniqueTaxReference
 
 
 class CompanyUniqueTaxReferenceFormProviderSpec extends UtrBehaviour {

@@ -171,7 +171,7 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
 
     val invalidMsg = "contactDetails.error.email.valid"
 
-    behave like regexWithValidAndInvalidExamples(emailAddress, validEmail, invalidEmail, invalidMsg, emailRegex)
+    behave like regexWithValidAndInvalidExamples(emailAddress, validEmail, invalidEmail, invalidMsg, regexEmail)
   }
 
 
@@ -218,7 +218,7 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
 
     val invalidMsg = "payeEmployerReferenceNumber.error.invalid"
 
-    behave like regexWithValidAndInvalidExamples(payeEmployerReferenceNumber, validPaye, invalidPaye, invalidMsg, payeRegex)
+    behave like regexWithValidAndInvalidExamples(payeEmployerReferenceNumber, validPaye, invalidPaye, invalidMsg, regexPaye)
   }
 
 
@@ -236,7 +236,7 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
 
     val invalidMsg = "Invalid text"
 
-    behave like regexWithValidAndInvalidExamples(safeText, validText, invalidText, invalidMsg, safeTextRegex)
+    behave like regexWithValidAndInvalidExamples(safeText, validText, invalidText, invalidMsg, regexSafeText)
 
   }
 
