@@ -32,7 +32,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new AddEstablisherFormProvider()
-  val form = formProvider()
+  val form = formProvider(Seq.empty)
   val schemeName = "Test Scheme Name"
   val day = LocalDate.now().getDayOfMonth
   val month = LocalDate.now().getMonthOfYear
@@ -43,7 +43,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form, allEstablishers: Option[Seq[(String, String)]] = None): String = addEstablisher(frontendAppConfig,
+  def viewAsString(form: Form[_] = form, allEstablishers: Seq[(String, String)] = Seq.empty): String = addEstablisher(frontendAppConfig,
     form, NormalMode, allEstablishers, schemeName)(fakeRequest, messages).toString
 
   "AddEstablisher Controller" must {
