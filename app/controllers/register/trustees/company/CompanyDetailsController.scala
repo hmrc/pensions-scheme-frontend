@@ -23,6 +23,7 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
+import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.{Index, Mode}
 import play.api.data.Form
@@ -49,13 +50,13 @@ class CompanyDetailsController @Inject() (
 
   def onPageLoad(mode: Mode,index:Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
+      SchemeDetailsId.retrieve.right.map {
+        schemeDetails =>
           val redirectResult = request.userAnswers.get(CompanyDetailsId(index)) match {
             case None =>
-              Ok(companyDetails(appConfig, form, mode, index, schemeName))
+              Ok(companyDetails(appConfig, form, mode, index, schemeDetails.schemeName))
             case Some(value) =>
-              Ok(companyDetails(appConfig,form.fill(value), mode, index, schemeName))
+              Ok(companyDetails(appConfig,form.fill(value), mode, index, schemeDetails.schemeName))
           }
           Future.successful(redirectResult)
 
@@ -64,11 +65,11 @@ class CompanyDetailsController @Inject() (
 
   def onSubmit(mode: Mode,index:Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
+      SchemeDetailsId.retrieve.right.map {
+        schemeDetails =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index,schemeName))),
+              Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index,schemeDetails.schemeName))),
             (value) =>
             dataCacheConnector.save(
               request.externalId,
