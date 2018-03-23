@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package forms
 
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import play.api.data.{Form, Forms}
-import play.api.data.Forms._
 import models.CompanyDetails
+import play.api.data.Forms._
+import play.api.data.{Form, Forms}
 
 class CompanyDetailsFormProvider @Inject() extends Mappings {
 
