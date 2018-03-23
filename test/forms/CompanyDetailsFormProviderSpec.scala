@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package forms.register.trustees.company
+package forms
 
 import forms.behaviours.FormBehaviours
-import models.register.trustees.company.CompanyDetails
-import models.{Field, Required}
+import models.{CompanyDetails, Field, Required}
 import org.apache.commons.lang3.RandomStringUtils
 import play.api.data.FormError
-
 
 class CompanyDetailsFormProviderSpec extends FormBehaviours {
 
@@ -39,18 +37,18 @@ class CompanyDetailsFormProviderSpec extends FormBehaviours {
     behave like formWithMandatoryTextFields(
       Field("companyName", Required -> "messages__error__company_name")
     )
-  }
 
-  Seq("GB123456789", "123435464").foreach { vatNo =>
-    s"successfully bind valid vat number $vatNo" in {
-      val coForm = form.bind(Map("companyName" -> "test company name",
-        "vatNumber" -> vatNo,
-        "payeNumber" -> "123/A56789"
-      ))
+    Seq("GB123456789", "123435464").foreach{ vatNo =>
+      s"successfully bind valid vat number $vatNo" in {
+       val coForm = form.bind(Map("companyName" -> "test company name",
+          "vatNumber" -> vatNo,
+          "payeNumber" -> "123/A56789"
+        ))
 
-      coForm.get shouldBe CompanyDetails("test company name", Some(vatNo.replace("GB", "")), Some("123/A56789"))
+        coForm.get shouldBe CompanyDetails("test company name", Some(vatNo.replace("GB", "")), Some("123/A56789"))
+      }
     }
-  }
+
     "fail to bind when a company name exceeds max length 255" in {
       val companyName = RandomStringUtils.randomAlphabetic(161)
       val data = validData + ("companyName" -> companyName)
@@ -66,5 +64,5 @@ class CompanyDetailsFormProviderSpec extends FormBehaviours {
       val expectedError: Seq[FormError] = error("payeNumber", "messages__error__paye_length", 13)
       checkForError(form, data, expectedError)
     }
-
+  }
 }

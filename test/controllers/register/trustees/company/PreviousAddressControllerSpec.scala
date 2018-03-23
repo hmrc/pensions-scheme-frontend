@@ -27,8 +27,7 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.Address
 import models.register.CountryOptions
-import models.register.trustees.company.CompanyDetails
-import models.{Index, NormalMode}
+import models.{CompanyDetails, Index, NormalMode}
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar

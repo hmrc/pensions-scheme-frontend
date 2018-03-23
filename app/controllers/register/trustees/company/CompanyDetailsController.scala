@@ -18,17 +18,17 @@ package controllers.register.trustees.company
 
 import javax.inject.Inject
 
+import config.FrontendAppConfig
+import connectors.DataCacheConnector
+import controllers.Retrievals
+import controllers.actions._
+import forms.CompanyDetailsFormProvider
+import identifiers.register.trustees.company.CompanyDetailsId
+import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
-import config.FrontendAppConfig
-import controllers.Retrievals
-import forms.register.trustees.company.CompanyDetailsFormProvider
-import identifiers.register.trustees.company.CompanyDetailsId
-import models.register.trustees.company.CompanyDetails
-import models.{Index, Mode}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.company.companyDetails
 
@@ -47,12 +47,11 @@ class CompanyDetailsController @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode,index:Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          val redirectResult = request.userAnswers
-            .get(CompanyDetailsId(index)) match {
+          val redirectResult = request.userAnswers.get(CompanyDetailsId(index)) match {
             case None =>
               Ok(companyDetails(appConfig, form, mode, index, schemeName))
             case Some(value) =>
@@ -63,7 +62,7 @@ class CompanyDetailsController @Inject() (
       }
      }
 
-  def onSubmit(mode: Mode,index:Index) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode,index:Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
@@ -79,7 +78,7 @@ class CompanyDetailsController @Inject() (
               json =>
                 Redirect(navigator.nextPage(CompanyDetailsId(index), mode)(new UserAnswers(json)))
             }
-            )
+          )
       }
   }
 

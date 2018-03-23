@@ -17,11 +17,9 @@
 package views.register.trustees.company
 
 import controllers.register.trustees.company
-import controllers.register.trustees.company.routes
-import forms.register.trustees.company.CompanyDetailsFormProvider
+import forms.CompanyDetailsFormProvider
+import models.{CompanyDetails, Index, NormalMode}
 import play.api.data.Form
-import models.{Index, NormalMode}
-import models.register.trustees.company.CompanyDetails
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.trustees.company.companyDetails
 

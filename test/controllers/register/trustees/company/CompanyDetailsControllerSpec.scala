@@ -16,22 +16,19 @@
 
 package controllers.register.trustees.company
 
-import play.api.data.Form
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import identifiers.register.trustees.company.CompanyDetailsId
-import models.{Index, NormalMode}
-import views.html.register.trustees.company.companyDetails
 import controllers.ControllerSpecBase
-import forms.register.trustees.company.CompanyDetailsFormProvider
+import controllers.actions._
+import forms.CompanyDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.company.CompanyDetailsId
 import models.register.{SchemeDetails, SchemeType}
-import models.register.trustees.company.CompanyDetails
+import models.{CompanyDetails, Index, NormalMode}
+import play.api.data.Form
+import play.api.libs.json.Json
+import play.api.test.Helpers._
+import utils.FakeNavigator
 import views.html.register.trustees.company.companyDetails
 
 class CompanyDetailsControllerSpec extends ControllerSpecBase {
