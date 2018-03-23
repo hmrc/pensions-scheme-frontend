@@ -1,32 +1,32 @@
 #!/bin/bash
 
-echo "Applying migration CompanyContactDetails"
+echo "Applying migration CompanyDetails"
 
 echo "Adding routes to trustees.routes"
 
-echo "" >> ../conf/register.trustees.company.routes
-echo "GET        /companyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.company.routes
-echo "POST       /companyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.company.routes
+echo "" >> ../conf/register.trustee.company.routes
+echo "GET        /companyDetails                       controllers.register.trustee.company.CompanyDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustee.company.routes
+echo "POST       /companyDetails                       controllers.register.trustee.company.CompanyDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustee.company.routes
 
-echo "GET        /changeCompanyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.company.routes
-echo "POST       /changeCompanyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.company.routes
+echo "GET        /changeCompanyDetails                       controllers.register.trustee.company.CompanyDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustee.company.routes
+echo "POST       /changeCompanyDetails                       controllers.register.trustee.company.CompanyDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustee.company.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo messages__"companyContactDetails__title = companyContactDetails" >> ../conf/messages.en
-echo messages__"companyContactDetails__heading = companyContactDetails" >> ../conf/messages.en
-echo messages__"companyContactDetails__field1 = Field 1" >> ../conf/messages.en
-echo messages__"companyContactDetails__field2 = Field 2" >> ../conf/messages.en
-echo messages__"companyContactDetails__checkYourAnswersLabel = companyContactDetails" >> ../conf/messages.en
-echo messages__"companyContactDetails__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
-echo messages__"companyContactDetails__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
+echo messages__"companyDetails__title = companyDetails" >> ../conf/messages.en
+echo messages__"companyDetails__heading = companyDetails" >> ../conf/messages.en
+echo messages__"companyDetails__field1 = Field 1" >> ../conf/messages.en
+echo messages__"companyDetails__field2 = Field 2" >> ../conf/messages.en
+echo messages__"companyDetails__checkYourAnswersLabel = companyDetails" >> ../conf/messages.en
+echo messages__"companyDetails__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
+echo messages__"companyDetails__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def companyContactDetails: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.company.CompanyContactDetailsId) map {";\
-     print "    x => AnswerRow(\"companyContactDetails.checkYourAnswersLabel\", Seq(s\"${x.field1} ${x.field2}\"), false, controllers.trustees.routes.CompanyContactDetailsController.onPageLoad(CheckMode).url)";\
+     print "  def companyDetails: Option[AnswerRow] = userAnswers.get(identifiers.register.trustee.company.CompanyDetailsId) map {";\
+     print "    x => AnswerRow(\"companyDetails.checkYourAnswersLabel\", Seq(s\"${x.field1} ${x.field2}\"), false, controllers.trustees.routes.CompanyDetailsController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -34,4 +34,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration CompanyContactDetails completed"
+echo "Migration CompanyDetails completed"

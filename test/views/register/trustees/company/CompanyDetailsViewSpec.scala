@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company
+package views.register.trustees.company
 
-import play.api.data.Form
-import controllers.register.establishers.company.routes
+import controllers.register.trustees.company
 import forms.CompanyDetailsFormProvider
-import models.NormalMode
-import models.CompanyDetails
+import models.{CompanyDetails, Index, NormalMode}
+import play.api.data.Form
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.establishers.company.companyDetails
-import models.Index
-import play.twirl.api.HtmlFormat
+import views.html.register.trustees.company.companyDetails
 
 class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
 
@@ -34,10 +31,9 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
   val firstIndex = Index(1)
   val schemeName = "test scheme name"
 
-  def createView: () => HtmlFormat.Appendable = () => companyDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages)
+  def createView = () => companyDetails(frontendAppConfig, form, NormalMode,firstIndex,schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => companyDetails(frontendAppConfig, form, NormalMode,firstIndex, schemeName)(fakeRequest, messages)
 
 
   "CompanyDetails view" must {
@@ -46,7 +42,6 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex).url, "companyName", "vatNumber", "payeNumber")
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, company.routes.CompanyDetailsController.onSubmit(NormalMode,firstIndex).url, "companyName", "vatNumber", "payeNumber")
   }
 }
