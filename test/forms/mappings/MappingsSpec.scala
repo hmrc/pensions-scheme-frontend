@@ -297,6 +297,11 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
         result.errors mustEqual Seq(FormError("sortCode", "error.max.error"))
       }
     }
+
+    "not bind a sort code which is less than the expected length" in {
+      val result = testForm.bind(Map("sortCode" -> "123"))
+      result.errors mustEqual Seq(FormError("sortCode", "error.invalid"))
+    }
   }
 
   "uniqueTaxReference" must {

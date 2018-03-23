@@ -17,7 +17,7 @@
 package identifiers.register
 
 import identifiers._
-import models.addresslookup.Address
+import models.address.Address
 
 
 object InsurerPostCodeLookupId extends TypedIdentifier[Seq[Address]]  {
