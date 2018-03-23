@@ -23,8 +23,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostcodeLookupFormProvider
-import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.trustees.company.PreviousAddressPostcodeLookupId
+import identifiers.register.trustees.company.{PreviousAddressPostcodeLookupId, CompanyDetailsId}
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
