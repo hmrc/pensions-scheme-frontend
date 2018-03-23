@@ -33,7 +33,7 @@ import controllers.ControllerSpecBase
 import forms.register.establishers.individual.PostCodeLookupFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
-import models.{Address, AddressRecord}
+import models.address.{Address, AddressRecord}
 import models.register.{SchemeDetails, SchemeType}
 
 import scala.concurrent.Future

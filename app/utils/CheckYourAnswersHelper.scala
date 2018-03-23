@@ -24,7 +24,7 @@ import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherKindId, company}
 import models.Nino.{No, Yes}
 import models._
-import models.Address
+import models.address.Address
 import models.register.establishers.individual.UniqueTaxReference
 import viewmodels.AnswerRow
 

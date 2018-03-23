@@ -21,8 +21,9 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register._
+import models.NormalMode
 import models.register._
-import models.{Address, NormalMode}
+import models.address.Address
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call

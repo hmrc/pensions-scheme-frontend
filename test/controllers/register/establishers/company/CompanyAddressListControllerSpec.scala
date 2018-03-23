@@ -21,7 +21,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
-import models.Address
+import models.address.Address
 import models.{CompanyDetails, NormalMode}
 import org.scalatest.OptionValues
 import play.api.data.Form

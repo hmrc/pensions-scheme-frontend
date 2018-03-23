@@ -22,7 +22,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConn
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
-import models.{Address, AddressRecord}
+import models.address.{Address, AddressRecord}
 import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers
 import org.mockito.Mockito.when

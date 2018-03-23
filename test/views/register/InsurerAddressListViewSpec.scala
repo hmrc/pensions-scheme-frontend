@@ -18,7 +18,7 @@ package views.register
 
 import forms.register.establishers.individual.AddressListFormProvider
 import models.NormalMode
-import models.Address
+import models.address.Address
 import org.jsoup.Jsoup
 import play.api.data.Form
 import views.behaviours.ViewBehaviours

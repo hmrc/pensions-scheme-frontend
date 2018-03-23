@@ -20,8 +20,8 @@ import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
-import models.{Address, AddressRecord}
 import models.NormalMode
+import models.address.{Address, AddressRecord}
 import org.mockito.Mockito._
 import org.mockito._
 import org.scalatest.mockito.MockitoSugar

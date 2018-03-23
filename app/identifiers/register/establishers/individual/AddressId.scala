@@ -18,7 +18,7 @@ package identifiers.register.establishers.individual
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import models.Address
+import models.address.Address
 import play.api.libs.json.JsPath
 
 case class AddressId(index: Int) extends TypedIdentifier[Address] {

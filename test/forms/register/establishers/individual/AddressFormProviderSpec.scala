@@ -19,7 +19,7 @@ package forms.register.establishers.individual
 import forms.FormSpec
 import forms.behaviours.{AddressBehaviours, FormBehaviours}
 import forms.mappings.AddressMapping
-import models.Address
+import models.address.Address
 import utils.FakeCountryOptions
 
 import scala.util.Random

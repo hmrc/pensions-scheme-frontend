@@ -17,10 +17,10 @@
 package views.register.establishers.company
 
 import forms.register.establishers.individual.AddressListFormProvider
-import models.Address
 import play.api.data.Form
 import models.{Index, NormalMode}
 import controllers.register.establishers.company.routes
+import models.address.Address
 import org.jsoup.Jsoup
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.companyPreviousAddressList

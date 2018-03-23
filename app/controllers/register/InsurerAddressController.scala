@@ -24,7 +24,8 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register._
-import models.{Address, Mode}
+import models.Mode
+import models.address.Address
 import play.api.data.Form
 import play.api.i18n._
 import play.api.mvc._

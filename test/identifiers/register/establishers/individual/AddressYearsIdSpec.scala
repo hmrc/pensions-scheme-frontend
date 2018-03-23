@@ -16,7 +16,8 @@
 
 package identifiers.register.establishers.individual
 
-import models.{Address, AddressYears}
+import models.AddressYears
+import models.address.Address
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}

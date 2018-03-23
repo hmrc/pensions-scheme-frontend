@@ -20,7 +20,8 @@ import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.Retrievals
 import identifiers.TypedIdentifier
-import models.{Address, Mode}
+import models.address.Address
+import models.Mode
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport

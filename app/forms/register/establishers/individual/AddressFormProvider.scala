@@ -18,9 +18,8 @@ package forms.register.establishers.individual
 
 import javax.inject.Inject
 
-
 import forms.mappings.AddressMapping
-import models.Address
+import models.address.Address
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import utils.CountryOptions

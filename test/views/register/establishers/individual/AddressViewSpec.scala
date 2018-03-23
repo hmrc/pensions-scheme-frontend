@@ -19,7 +19,7 @@ package views.register.establishers.individual
 import play.api.data.Form
 import controllers.register.establishers.individual.routes
 import forms.register.establishers.individual.AddressFormProvider
-import models.Address
+import models.address.Address
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
 import utils.{CountryOptions, InputOption}

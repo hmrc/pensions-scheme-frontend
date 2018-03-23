@@ -18,7 +18,7 @@ package identifiers.register.establishers.company
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import models.Address
+import models.address.Address
 import play.api.libs.json.JsPath
 
 case class CompanyPreviousAddressPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[Address]] {

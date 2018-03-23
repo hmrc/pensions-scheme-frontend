@@ -25,7 +25,7 @@ import forms.register.establishers.individual.PostCodeLookupFormProvider
 import models.{Index, NormalMode}
 import views.html.register.establishers.individual.postCodeLookup
 import controllers.ControllerSpecBase
-import models.{Address, AddressRecord}
+import models.address.{Address, AddressRecord}
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._

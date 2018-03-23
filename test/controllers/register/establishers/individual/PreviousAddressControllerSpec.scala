@@ -24,11 +24,12 @@ import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId, PreviousAddressId}
-import models.{Address, Index, NormalMode}
+import models.{Index, NormalMode}
 import models.register.establishers.individual.EstablisherDetails
 import views.html.register.establishers.individual.previousAddress
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
+import models.address.Address
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.mvc.Call

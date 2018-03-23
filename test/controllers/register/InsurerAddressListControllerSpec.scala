@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register.{InsurerAddressId, InsurerPostCodeLookupId}
 import models.NormalMode
-import models.Address
+import models.address.Address
 import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
 import org.mockito.Matchers.any

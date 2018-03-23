@@ -23,7 +23,7 @@ import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyDetailsId}
-import models.Address
+import models.address.Address
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import play.api.data.Form
