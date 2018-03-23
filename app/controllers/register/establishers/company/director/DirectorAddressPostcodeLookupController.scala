@@ -64,20 +64,18 @@ class DirectorAddressPostcodeLookupController @Inject() (
         }
     )
 
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        viewmodel(establisherIndex, directorIndex, mode).retrieve.right map get
+    }
 
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map(
-        vm =>
-          get(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex), vm)
-      )
-  }
-
-  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index) = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map(
-        vm =>
-          post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex), vm, invalidPostcode, noResults, mode)
-      )
-  }
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map(
+          vm =>
+            post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex), vm, invalidPostcode, noResults, mode)
+        )
+    }
 }

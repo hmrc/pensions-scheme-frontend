@@ -17,7 +17,7 @@
 package identifiers.register
 
 import identifiers._
-import models.addresslookup.Address
+import models.address.Address
 
 case object InsurerAddressId extends TypedIdentifier[Address] {
   override def toString: String = "insurerAddress"

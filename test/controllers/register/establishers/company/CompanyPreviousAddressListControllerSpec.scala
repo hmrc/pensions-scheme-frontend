@@ -31,7 +31,7 @@ import controllers.ControllerSpecBase
 import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
-import models.addresslookup.Address
+import models.address.Address
 import models.register.{SchemeDetails, SchemeType}
 
 class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {

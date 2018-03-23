@@ -21,7 +21,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.Retrievals
 import identifiers.TypedIdentifier
 import models.Mode
-import models.addresslookup.Address
+import models.address.Address
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -43,10 +43,7 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
 
   protected def form: Form[String]
 
-  protected def get(
-                     id: TypedIdentifier[Seq[Address]],
-                     viewmodel: PostcodeLookupViewModel
-                   )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+  protected def get(viewmodel: PostcodeLookupViewModel)(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     Future.successful(Ok(postcodeLookup(appConfig, form, viewmodel)))
   }

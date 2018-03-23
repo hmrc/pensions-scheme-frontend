@@ -19,11 +19,11 @@ package controllers.register.establishers.company
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.AddressFormProvider
+import forms.address.AddressFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyDetailsId, CompanyPreviousAddressId}
-import models.addresslookup.Address
+import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
 import models.register.{CountryOptions, SchemeDetails, SchemeType}
 import play.api.data.Form
