@@ -118,29 +118,35 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
     }
   }
 
-  "validCountries" must {
 
-    val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
+  "country" must {
 
-    val countryOptions: CountryOptions = new CountryOptions(options)
+    val keyInvalid = "error.invalid"
 
-    "return Valid for a string which is in the recognised country list" in {
-      val result = country(countryOptions, "error.invalid")("territory:AE-AZ")
-      result shouldEqual Valid
+    val countryOptions: CountryOptions = new CountryOptions(
+      Seq(
+        InputOption("GB", "United Kingdom"),
+        InputOption("PN", "Ponteland")
+      )
+    )
+
+    "return valid when the country code exists" in {
+      val result = country(countryOptions, keyInvalid).apply("GB")
+      result shouldBe Valid
     }
 
-    "return Invalid for a string which is not in the recognised country list" in {
-      val result = country(countryOptions, "error.invalid")("territory:FF")
-      result shouldEqual Invalid("error.invalid")
+    "return invalid when the country code does not exist" in {
+      val result = country(countryOptions, keyInvalid).apply("XXX")
+      result shouldBe Invalid(keyInvalid)
     }
   }
 
   "validCrn" must {
 
     Seq("1234567", "12345678", "ABCDEFG", "abcdefgh", "abc def", "abd-defg").foreach { crn =>
-     s"return Valid for a string ($crn) which meets the CRN validity requirements" in {
-       val result = validCrn("error.invalid")(crn)
-       result shouldEqual Valid
+      s"return Valid for a string ($crn) which meets the CRN validity requirements" in {
+        val result = validCrn("error.invalid")(crn)
+        result shouldEqual Valid
       }
     }
 
@@ -239,4 +245,72 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
 
   }
 
+  "addressLine" must {
+
+    val validAddress = Table(
+      "address",
+      "1 Main St."
+    )
+
+    val invalidAddress = Table(
+      "address",
+      "Apt [12]"
+    )
+
+    val invalidMsg = "Invalid address"
+
+    behave like regexWithValidAndInvalidExamples(addressLine, validAddress, invalidAddress, invalidMsg, regexAddressLine)
+
+  }
+
+  "postCode" must {
+
+    val validPostCode = Table(
+      "postCode",
+      "A12 1AB",
+      "AB12 1AB",
+      "AB1A 1AB",
+      "AB121AB",
+      "aB12 1AB",
+      "Ab12 1AB",
+      "AB1a 1AB"
+    )
+
+    val invalidPostCode = Table(
+      "postCode",
+      "0B12 1AB",
+      "A012 1AB",
+      "ABC2 1AB",
+      "AB12 AAB",
+      "AB12 11B",
+      "AB12 1A1"
+    )
+
+    val invalidMsg = "Invalid post code"
+
+    behave like regexWithValidAndInvalidExamples(postCode, validPostCode, invalidPostCode, invalidMsg, regexPostcode)
+  }
+
+  "postCodeNonUk" must {
+
+    val validPostCode = Table(
+      "postCode",
+      "1",
+      "1234567890",
+      "1-2-3"
+    )
+
+    val invalidPostCode = Table(
+      "postCode",
+      "-",
+      "-1",
+      "1-"
+    )
+
+    val invalidMsg = "Invalid post code"
+
+    behave like regexWithValidAndInvalidExamples(postCodeNonUk, validPostCode, invalidPostCode, invalidMsg, regexPostCodeNonUk)
+
+
+  }
 }
