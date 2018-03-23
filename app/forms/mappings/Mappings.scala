@@ -17,7 +17,7 @@
 package forms.mappings
 
 import models.EstablisherNino
-import models.addresslookup.Address
+import models.address.Address
 import models.register.{SchemeType, SortCode}
 import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
 import models.register.establishers.individual.UniqueTaxReference

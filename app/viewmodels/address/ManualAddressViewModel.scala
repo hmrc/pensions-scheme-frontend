@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees
+package viewmodels.address
 
-import identifiers.Identifier
-import play.api.libs.json._
+import play.api.mvc.Call
+import utils.InputOption
+import viewmodels.Message
 
-case object TrusteesId extends Identifier {
-  override def toString: String = "trustees"
-  override def path: JsPath = __ \ toString
+case class ManualAddressViewModel(
+                                   postCall: Call,
+                                   countryOptions: Seq[InputOption],
+                                   title: Message,
+                                   heading: Message,
+                                   secondaryHeader: Option[Message],
+                                   hint: Message = "messages__common__address_lede"
+                                 ) {
+
 }

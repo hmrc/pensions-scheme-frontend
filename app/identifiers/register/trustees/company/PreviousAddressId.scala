@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees
+package identifiers.register.trustees.company
 
-import identifiers.Identifier
+import identifiers._
+import identifiers.register.trustees.TrusteesId
+import models.address.Address
 import play.api.libs.json._
 
-case object TrusteesId extends Identifier {
-  override def toString: String = "trustees"
-  override def path: JsPath = __ \ toString
+case class PreviousAddressId(index: Int) extends TypedIdentifier[Address] {
+  override def path: JsPath = TrusteesId.path \ index \ PreviousAddressId.toString
+}
+
+object PreviousAddressId {
+  override def toString: String = "previousAddress"
 }

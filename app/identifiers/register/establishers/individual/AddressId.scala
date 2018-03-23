@@ -16,7 +16,7 @@
 
 package identifiers.register.establishers.individual
 
-import models.addresslookup.Address
+import models.address.Address
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import play.api.libs.json.JsPath

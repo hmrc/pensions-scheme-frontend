@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.addresslookup.Address
+import models.address.Address
 import play.api.data.FormError
 import play.api.data.format.Formatter
 import utils.Enumerable

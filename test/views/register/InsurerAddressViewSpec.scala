@@ -17,9 +17,9 @@
 package views.register
 
 import controllers.register.routes
-import forms.register.establishers.individual.AddressFormProvider
+import forms.address.AddressFormProvider
 import models.NormalMode
-import models.addresslookup.Address
+import models.address.Address
 import org.jsoup.Jsoup
 import play.api.data.Form
 import utils.InputOption
