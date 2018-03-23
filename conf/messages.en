@@ -52,7 +52,7 @@ messages__common__postcode_lookup__address_postcode = Postal code
 messages__common__postcode_lookup__address_postcode_hint = For example NE12 8ER
 messages__error__postcode = Enter the postal code
 messages__error__postcode_length = The postal code cannot be more than 8 characters
-messages__error__postcode_invalid = Enter a valid postal code
+messages__error__postcode_invalid = Enter a valid postal codes
 messages__error__postcode_no_results = No results for that postcode
 
 messages__error__first_name = Enter the first name

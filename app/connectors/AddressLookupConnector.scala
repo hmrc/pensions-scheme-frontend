@@ -29,7 +29,7 @@ class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
   override def addressLookupByPostCode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Seq[AddressRecord]]] = {
     val schemeHc = hc.withExtraHeaders("X-Hmrc-Origin" -> "PODS")
 
-    val addressLookupUrl = s"${config.addressLookUp}/v2/uk/addresses?postCode=$postCode"
+    val addressLookupUrl = s"${config.addressLookUp}/v2/uk/addresses?postcode=$postCode"
 
     http.GET[Seq[AddressRecord]](addressLookupUrl)(implicitly, schemeHc, implicitly).map(Some(_)) recoverWith {
       case _ => Future.successful(None)
