@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package forms.address
 
 import forms.FormSpec
 import forms.behaviours.{AddressBehaviours, FormBehaviours}
@@ -112,8 +112,6 @@ class AddressFormProviderSpec extends FormBehaviours with FormSpec with AddressB
         "messages__error__address_line_4_length",
         "messages__error__address_line_4_invalid"
       )
-
     }
-
   }
 }

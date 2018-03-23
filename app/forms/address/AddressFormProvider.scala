@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package forms.address
 
 import javax.inject.Inject
 
@@ -44,4 +44,4 @@ class AddressFormProvider @Inject()(countryOptions: CountryOptions) extends Addr
         countryMapping(countryOptions, "messages__error_country_required", "messages__error_country_invalid")
     )(Address.apply)(Address.unapply)
   )
- }
+}

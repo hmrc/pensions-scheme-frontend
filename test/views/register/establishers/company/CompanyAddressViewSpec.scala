@@ -16,7 +16,7 @@
 
 package views.register.establishers.company
 
-import forms.register.establishers.individual.AddressFormProvider
+import forms.address.AddressFormProvider
 import models.address.Address
 import models.{Index, NormalMode}
 import play.api.data.Form

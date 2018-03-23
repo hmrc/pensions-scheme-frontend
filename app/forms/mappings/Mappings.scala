@@ -16,17 +16,10 @@
 
 package forms.mappings
 
-import models.Nino
-import models.register.{SchemeType, SortCode}
-import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
-import models.register.establishers.individual.UniqueTaxReference
 import org.joda.time.LocalDate
 import play.api.data.Forms.{of, _}
-import play.api.data.format.Formatter
-import play.api.data.{FieldMapping, FormError, Forms, Mapping}
-import uk.gov.voa.play.form.ConditionalMappings._
+import play.api.data.{FieldMapping,  Mapping}
 import utils.Enumerable
-import models._
 
 import scala.util.Try
 

@@ -37,6 +37,9 @@ messages__common__phone = Phone number
 messages__common__enter_postcode = Enter the postcode below, or
 messages__common__select_address_link = enter the address manually
 messages__common__address_postcode = Postal code
+messages__common__manual__address__title = Address
+messages__common__manual__address__heading = Address
+messages__common__address_lede = This is usually the registered business address but you can enter any address you have for this company.
 messages__common__address1 = Address line 1
 messages__common__address2 = Address line 2
 messages__common__address3 = Address line 3 (optional)
@@ -44,7 +47,6 @@ messages__common__address4 = Address line 4 (optional)
 messages__common__address_postcode_hint = For example NE12 8ER
 messages__common__country = Country
 
-messages__common__postcode_lookup__hint = This is usually the registered business address but you can enter any address you have for this company.
 messages__common__postcode_lookup__enter_postcode = Enter the postcode below, or {0} enter the address manually {1}
 messages__common__postcode_lookup__address_postcode = Postal code
 messages__common__postcode_lookup__address_postcode_hint = For example NE12 8ER

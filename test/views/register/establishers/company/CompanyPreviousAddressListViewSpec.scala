@@ -22,6 +22,7 @@ import models.{Index, NormalMode}
 import controllers.register.establishers.company.routes
 import models.address.Address
 import org.jsoup.Jsoup
+import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.companyPreviousAddressList
 
@@ -42,9 +43,9 @@ class CompanyPreviousAddressListViewSpec extends ViewBehaviours {
 
 
 
-  def createView = () => companyPreviousAddressList(frontendAppConfig, form, NormalMode, index, companyName, addresses)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyPreviousAddressList(frontendAppConfig, form, NormalMode, index, companyName, addresses)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyPreviousAddressList(frontendAppConfig, form, NormalMode, index, companyName, addresses)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyPreviousAddressList(frontendAppConfig, form, NormalMode, index, companyName, addresses)(fakeRequest, messages)
 
   "CompanyPreviousAddressList view" must {
     behave like normalPage(createView, s"$messageKeyPrefix", messages(s"messages__${messageKeyPrefix}__title"))
