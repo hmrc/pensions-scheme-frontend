@@ -16,14 +16,10 @@
 
 package forms.mappings
 
-import models.register.establishers.individual.UniqueTaxReference
-import models.register.{SchemeType, SortCode}
-import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.data.{Form, FormError}
 import utils.Enumerable
-import models._
 
 object MappingsSpec {
 
@@ -165,8 +161,6 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
       result.errors must contain(FormError("value", "error.required"))
     }
   }
-
-
 
   "date" must {
     val testForm: Form[LocalDate] = Form("date"->dateMapping("messages__error__date"))
