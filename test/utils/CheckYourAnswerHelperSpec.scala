@@ -35,7 +35,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
   val countryOptions: CountryOptions = new CountryOptions(inputOptions)
   val firstIndex = Index(0)
 
-  val establisherDetails = EstablisherDetails("test first name", None, "test last name", LocalDate.now)
+  val establisherDetails = EstablisherDetails("test first name", Some("test middle name"), "test last name", LocalDate.now)
 
   def checkYourAnswerHelper(userAnswers: UserAnswers): CheckYourAnswersHelper = new CheckYourAnswersHelper(
     userAnswers, countryOptions
@@ -232,7 +232,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
       val expectedOutput = Seq(
         AnswerRow(
           "messages__establisher_individual_name_cya_label",
-          Seq("test first name test last name"),
+          Seq("test first name test middle name test last name"),
           false,
           EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url
         ),
