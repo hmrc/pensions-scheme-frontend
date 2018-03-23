@@ -24,6 +24,7 @@ import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostcodeLookupFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.trustees.company.PreviousAddressPostcodeLookupId
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -73,6 +74,8 @@ class PreviousAddressPostcodeLookupController @Inject() (
 
   def onSubmit(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      ???
+      viewmodel(index, mode).retrieve.right.map{ vm =>
+        post(PreviousAddressPostcodeLookupId(index), vm, invalidPostcode, noResults, mode)
+      }
   }
 }
