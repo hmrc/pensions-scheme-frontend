@@ -16,15 +16,18 @@
 
 package views.register.establishers.company
 
+import controllers.register.establishers.company.routes
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.register.establishers.company.director.DirectorDetails
 import models.register.{SchemeDetails, SchemeType}
-import models.{CompanyDetails, Index}
+import models.{CheckMode, CompanyDetails, Index}
 import org.joda.time.LocalDate
-import play.api.libs.json.Json
+import org.jsoup.Jsoup
+import play.api.libs.json.{JsObject, Json}
+import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.companyReview
 
@@ -35,11 +38,11 @@ class CompanyReviewViewSpec extends ViewBehaviours {
   val schemeName = "Test Scheme Name"
   val companyName = "test company name"
   val directors = Seq("director a", "director b", "director c")
-  def director(lastName: String) = Json.obj(
+  def director(lastName: String): JsObject = Json.obj(
     DirectorDetailsId.toString -> DirectorDetails("director", None, lastName, LocalDate.now())
   )
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     SchemeDetailsId.toString ->
       SchemeDetails(schemeName, SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
@@ -51,10 +54,39 @@ class CompanyReviewViewSpec extends ViewBehaviours {
     )
   )
 
-  def createView = () => companyReview(frontendAppConfig, index, schemeName, companyName, directors)(fakeRequest, messages)
+  def createView: (() => HtmlFormat.Appendable) = () => companyReview(frontendAppConfig, index, schemeName, companyName, directors)(fakeRequest, messages)
 
   "CompanyReview view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
+    behave like normalPage(
+      createView,
+      messageKeyPrefix,
+      messages(s"messages__${messageKeyPrefix}__heading"),
+    "_directors__heading")
 
-  }
+    behave like pageWithSecondaryHeader(
+      createView,
+      s"${messages("messages__companyReview__secondaryHeading__partial")} $schemeName")
+
+    "display company name" in {
+      Jsoup.parse(createView().toString) must haveDynamicText(companyName)
+    }
+
+    "have link to edit company details" in {
+      Jsoup.parse(createView().toString).select("a[id=edit-company-details]") must haveLink(
+        routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
+      )
+    }
+
+    "have link to edit director details" in {
+      Jsoup.parse(createView().toString).select("a[id=edit-director-details]") must haveLink(
+        routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index).url
+      )
+    }
+
+    "contain list of directors" in {
+      for( director <- directors)
+        Jsoup.parse(createView().toString) must haveDynamicText(director)
+      }
+    }
+
 }

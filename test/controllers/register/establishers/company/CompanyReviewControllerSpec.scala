@@ -16,41 +16,41 @@
 
 package controllers.register.establishers.company
 
-import play.api.data.Form
-import play.api.libs.json.{JsBoolean, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
-import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import models.{CompanyDetails, Index, NormalMode}
-import views.html.register.establishers.company.companyReview
 import controllers.ControllerSpecBase
+import controllers.actions._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.register.establishers.company.director.DirectorDetails
 import models.register.{SchemeDetails, SchemeType}
+import models.{CompanyDetails, Index}
 import org.joda.time.LocalDate
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator
+import views.html.register.establishers.company.companyReview
 
 class CompanyReviewControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyReviewController =
     new CompanyReviewController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl)
 
   val index = Index(0)
+  val invalIndex= 10
+  val invalidIndex = Index(invalIndex)
   val schemeName = "Test Scheme Name"
   val companyName = "test company name"
   val directors = Seq("director a", "director b", "director c")
-  def director(lastName: String) = Json.obj(
+  def director(lastName: String): JsObject = Json.obj(
     DirectorDetailsId.toString -> DirectorDetails("director", None, lastName, LocalDate.now())
   )
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     SchemeDetailsId.toString ->
       SchemeDetails(schemeName, SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
@@ -62,7 +62,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
     )
   )
 
-  def viewAsString() = companyReview(frontendAppConfig, index, schemeName, companyName, directors)(fakeRequest, messages).toString
+  def viewAsString(): String = companyReview(frontendAppConfig, index, schemeName, companyName, directors)(fakeRequest, messages).toString
 
   "CompanyReview Controller" must {
 
@@ -72,6 +72,19 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+    }
+
+    "redirect to session expired page on a GET when the index is not valid" ignore {
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val result = controller(getRelevantData).onPageLoad(invalidIndex)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "redirect to the next page on submit" in {
+      val result = controller().onSubmit(index)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
     }
   }
 }
