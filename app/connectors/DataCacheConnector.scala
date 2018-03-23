@@ -17,13 +17,26 @@
 package connectors
 
 import identifiers.TypedIdentifier
+import models.requests.DataRequest
 import play.api.libs.json._
+import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Cleanup
+import utils.{Cleanup, UserAnswers}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait DataCacheConnector {
+
+  def save[A, I <: TypedIdentifier[A]](id: I, value: A)
+                                      (implicit
+                                       request: DataRequest[AnyContent],
+                                       wrts: Format[A],
+                                       cleanup: Cleanup[I],
+                                       ec: ExecutionContext,
+                                       hc: HeaderCarrier
+                                      ): Future[UserAnswers] = {
+    save(request.externalId, id, value).map(UserAnswers)
+  }
 
   def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
                                       (implicit
