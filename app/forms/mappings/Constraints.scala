@@ -24,7 +24,7 @@ import utils.CountryOptions
 
 trait Constraints {
 
-  val regexPostcode = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
+  val regexPostcode = """^[A-Za-z]{1,2}[0-9][0-9A-Za-z]?[ ]?[0-9][A-Za-z]{2}$"""
   val regexPostCodeNonUk = """^([0-9]+-)*[0-9]+$"""
   val regexSortCode: String = """\d*""".r.toString()
   val regexUtr = "^[0-9]{10}$"

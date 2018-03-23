@@ -34,21 +34,20 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
+import utils._
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
-import scala.concurrent.Future
 
 class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
+  def countryOptions: CountryOptions = new CountryOptions(options)
+
+  val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
+
   val firstIndex = Index(0)
 
-  val countryOptions = new CountryOptions(
-    Seq(InputOption("GB", "GB"))
-  )
-
-  val formProvider = new AddressFormProvider(countryOptions)
+  val formProvider = new AddressFormProvider(FakeCountryOptions())
   val form: Form[Address] = formProvider()
 
   "PreviousAddress Controller" must {
@@ -115,7 +114,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
             .withFormUrlEncodedBody(
               ("addressLine1", "value 1"),
               ("addressLine2", "value 2"),
-              ("postCode.postCode", "AB1 1AB"),
+              ("postCode", "AB1 1AB"),
               "country" -> "GB"))
 
           val result = route(app, fakeRequest).value

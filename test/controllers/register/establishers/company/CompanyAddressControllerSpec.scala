@@ -97,7 +97,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(
         ("addressLine1", "value 1"),
         ("addressLine2", "value 2"),
-        ("postCode.postCode", "AB1 1AB"),
+        ("postCode", "AB1 1AB"),
         "country" -> "GB"
       )
 

@@ -50,16 +50,31 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
   val form = formProvider()
 
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
+
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
 
   val estIndex = Index(0)
   val dirIndex = Index(0)
   val companyName: String = "test company name"
 
+  private def fakeAddress(postCode: String) = Address(
+    "Address Line 1",
+    "Address Line 2",
+    Some("Address Line 3"),
+    Some("Address Line 4"),
+    Some(postCode),
+    "GB"
+  )
+
   val company = CompanyDetails(companyName, None, None)
   val director = DirectorDetails("test first name", Some("test middle name"), "test last name", LocalDate.now())
 
-  def viewAsString(form: Form[_] = form) = postcodeLookup(frontendAppConfig, form, PostcodeLookupViewModel(onwardRoute, routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex), subHeading = Some(director.directorName)))(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = postcodeLookup(
+    frontendAppConfig,
+    form,
+    PostcodeLookupViewModel(onwardRoute,
+      routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex),
+      subHeading = Some(director.directorName)))(fakeRequest, messages).toString
 
   "DirectorAddressPostcodeLookup Controller" must {
 
@@ -89,15 +104,15 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
 
       val call: Call = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex)
 
-      val validPostcode = "ZZ11ZZ"
+      val validPostcode = "ZZ1 1ZZ"
 
       val fakeRequest = addToken(FakeRequest(call)
         .withFormUrlEncodedBody("value" -> validPostcode))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(
-          Some(Seq(AddressRecord(Address("address line 1", "address line 2", None, None, Some(validPostcode), "GB"))))
-        ))
+          Some(Seq(AddressRecord(fakeAddress(validPostcode)))))
+        )
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
