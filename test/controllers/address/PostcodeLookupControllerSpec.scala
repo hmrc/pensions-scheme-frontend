@@ -113,7 +113,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
 
       val address = Address("", "", None, None, None, "GB")
 
-      when(addressConnector.addressLookupByPostCode(eqTo("ZZ11ZZ"))(any(), any())) thenReturn Future.successful {
+      when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any())) thenReturn Future.successful {
         Some(Seq(AddressRecord(address)))
       }
 
@@ -145,7 +145,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
         val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
         val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
-        when(addressConnector.addressLookupByPostCode(eqTo("ZZ11ZZ"))(any(), any())) thenReturn Future.successful {
+        when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any())) thenReturn Future.successful {
           None
         }
 
@@ -209,7 +209,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
           val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
           val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
-          when(addressConnector.addressLookupByPostCode(eqTo("ZZ11ZZ"))(any(), any())) thenReturn Future.successful {
+          when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any())) thenReturn Future.successful {
             Some(Seq.empty)
           }
 

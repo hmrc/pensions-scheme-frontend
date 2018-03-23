@@ -62,11 +62,13 @@ class InsurerPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
     }
 
     "redirect a Bad Request when post code is not valid" in {
-      val invalidPostCode = "invalid"
+      val invalidPostCode = "Invalid"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", invalidPostCode))
-      val boundForm = form.withError(FormError("value", "messages__error__postcode_invalid"))
 
-      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(invalidPostCode))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+      val boundForm = form.bindFromRequest()(postRequest)
+
+      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(invalidPostCode))(Matchers.any(), Matchers.any())).thenReturn(
+        Future.successful(Some(Seq(AddressRecord(Address("address line 1", "address line 2", None, None, Some(invalidPostCode), "GB"))))))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -75,11 +77,11 @@ class InsurerPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
     }
 
     "redirect a Bad Request when no results found for the input post code" in {
-      val notFoundPostCode = "noResult"
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", notFoundPostCode))
+      val validPostCode = "zz11zz"
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", validPostCode))
       val boundForm = form.withError(FormError("value", "messages__error__postcode_no_results"))
 
-      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(notFoundPostCode))
+      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.any())
       (Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(Nil)))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
@@ -89,9 +91,9 @@ class InsurerPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val validPostCode = "valid"
+      val validPostCode = "zz11zz"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", validPostCode))
-      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostCode))(Matchers.any(), Matchers.any())).thenReturn(
+      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any())).thenReturn(
         Future.successful(Some(Seq(AddressRecord(Address("address line 1", "address line 2", None, None, Some(validPostCode), "GB"))))))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
