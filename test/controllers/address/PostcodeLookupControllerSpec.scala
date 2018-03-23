@@ -20,7 +20,7 @@ import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
-import forms.register.establishers.individual.PostCodeLookupFormProvider
+import forms.address.PostCodeLookupFormProvider
 import identifiers.TypedIdentifier
 import models.NormalMode
 import models.address.{Address, AddressRecord}

@@ -21,10 +21,10 @@ import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.individual.PostCodeLookupFormProvider
 import models.{Index, NormalMode}
 import views.html.register.establishers.individual.previousPostCodeLookup
 import controllers.ControllerSpecBase
+import forms.address.PostCodeLookupFormProvider
 import models.address.{Address, AddressRecord}
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._

@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.PostCodeLookupFormProvider
+import forms.address.PostCodeLookupFormProvider
 import models.address.{Address, AddressRecord}
 import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers

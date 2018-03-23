@@ -31,14 +31,14 @@ import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{CountryOptions, FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption}
 import views.html.register.establishers.individual.address
 
 class AddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new AddressFormProvider(countryOptions)
+  val formProvider = new AddressFormProvider(FakeCountryOptions())
   val form: Form[Address] = formProvider()
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"

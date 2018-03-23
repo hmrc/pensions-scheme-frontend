@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.Retrievals
 import identifiers.TypedIdentifier
-import models.address.Address
 import models.Mode
 import models.address.Address
 import models.requests.DataRequest

@@ -30,7 +30,7 @@ import models.{CompanyDetails, Index, NormalMode}
 import views.html.register.establishers.company.companyPreviousAddressPostcodeLookup
 import play.api.libs.json._
 import controllers.ControllerSpecBase
-import forms.register.establishers.individual.PostCodeLookupFormProvider
+import forms.address.PostCodeLookupFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import models.address.{Address, AddressRecord}

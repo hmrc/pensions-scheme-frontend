@@ -16,34 +16,27 @@
 
 package forms.address
 
-import forms.FormSpec
+import forms.behaviours.AddressBehaviours
 
-class PostCodeLookupFormProviderSpec extends FormSpec {
+class PostCodeLookupFormProviderSpec extends AddressBehaviours {
 
-  val requiredKey = "messages__error__postcode"
 
-  "Address Form" must {
+  private val requiredKey = "messages__error__postcode"
+  private val lengthKey = "messages__error__postcode_length"
+  private val invalid = "messages__error__postcode_invalid"
+  private val fieldName = "value"
 
-    val formProvider = new PostCodeLookupFormProvider()
+  val form = new PostCodeLookupFormProvider()()
 
-    "bind a string" in {
-      val form = formProvider().bind(Map("value" -> "answer"))
-      form.get shouldBe "answer"
-    }
-
-    "fail to bind a blank value" in {
-      val expectedError = error("value", requiredKey)
-      checkForError(formProvider(), Map("value" -> ""), expectedError)
-    }
-
-    "fail to bind when value is omitted" in {
-      val expectedError = error("value", requiredKey)
-      checkForError(formProvider(), emptyForm, expectedError)
-    }
-
-    "fail to bind when value more then 8 characters" in {
-      val expectedError = error("value", "messages__error__postcode_length", 8)
-      checkForError(formProvider(), Map("value" -> "123456789"),expectedError)
-    }
+  ".value" must {
+    behave like formWithPostCode(
+      form,
+      fieldName,
+      requiredKey,
+      lengthKey,
+      invalid
+    )
   }
+
 }
+

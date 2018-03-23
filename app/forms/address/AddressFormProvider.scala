@@ -26,8 +26,6 @@ import utils.CountryOptions
 
 class AddressFormProvider @Inject()(countryOptions: CountryOptions) extends AddressMapping {
 
-  val addressLineMaxLength = 35
-
   def apply(): Form[Address] = Form(
     mapping(
       "addressLine1" ->

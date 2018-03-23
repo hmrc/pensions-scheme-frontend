@@ -18,14 +18,19 @@ package forms.address
 
 import javax.inject.Inject
 
-import forms.mappings.Mappings
+import forms.FormErrorHelper
+import forms.mappings.AddressMapping
 import play.api.data.Form
 
-class PostCodeLookupFormProvider @Inject() extends Mappings {
-  val maxLength = 8
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("messages__error__postcode").
-        verifying(maxLength(maxLength, "messages__error__postcode_length"))
-    )
-}
+  class PostCodeLookupFormProvider @Inject() extends FormErrorHelper with AddressMapping {
+
+    def apply(): Form[String] =
+      Form(
+        "value" -> postCodeMapping(
+          "messages__error__postcode",
+          "messages__error__postcode_length",
+          "messages__error__postcode_invalid"
+        )
+      )
+
+  }
