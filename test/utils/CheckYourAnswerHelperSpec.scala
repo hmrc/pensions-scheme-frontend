@@ -246,6 +246,31 @@ class CheckYourAnswerHelperSpec extends SpecBase {
       checkYourAnswerHelper(userAnswers).establisherDetails(firstIndex) mustEqual expectedOutput
     }
 
+    "return the AnswerRows for establisher details No MiddleName" in {
+      val userAnswers = new UserAnswers(
+        Json.obj(SchemeDetailsId.toString -> Json.toJson(
+          SchemeDetails("value 1", SchemeType.SingleTrust)),
+          "establishers" -> Json.arr(
+            Json.obj(EstablisherDetailsId.toString -> establisherDetails.copy(middleName=None))
+          ))
+      )
+      val expectedOutput = Seq(
+        AnswerRow(
+          "messages__establisher_individual_name_cya_label",
+          Seq("test first name test last name"),
+          false,
+          EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url
+        ),
+        AnswerRow(
+          "messages__establisher_individual_dob_cya_label",
+          Seq(s"${DateHelper.formatDate(LocalDate.now)}"),
+          false,
+          EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url
+        )
+      )
+      checkYourAnswerHelper(userAnswers).establisherDetails(firstIndex) mustEqual expectedOutput
+    }
+
     "return the AnswerRows for address years" in {
       val userAnswers = new UserAnswers(
         Json.obj(SchemeDetailsId.toString -> Json.toJson(
