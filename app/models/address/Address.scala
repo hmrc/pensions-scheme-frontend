@@ -28,7 +28,7 @@ case class Address(addressLine1: String,
                    addressLine2: String,
                    addressLine3: Option[String],
                    addressLine4: Option[String],
-                   postcode: Option[String],
+                   postCode: Option[String],
                    country: String) {
 
   def print: String = {
@@ -37,7 +37,7 @@ case class Address(addressLine1: String,
       Some(addressLine2),
       addressLine3,
       addressLine4,
-      postcode
+      postCode
     ).flatten.mkString(", ")
   }
 }
@@ -52,12 +52,12 @@ object Address {
       (__ \ "lines").read[Seq[String]] and
         (__ \ "town").readNullable[String] and
         (__ \ "county").readNullable[String] and
-        (__ \ "postcode").readNullable[String] and
+        (__ \ "postCode").readNullable[String] and
         (__ \ "country" \ "name").read[String]
-      ) { (lines, town, county, postcode, country) =>
+      ) { (lines, town, county, postCode, country) =>
       val line1 = lines.head
       val line2 = lines.tail.head
-      Address(line1, line2, town, county, postcode, country)
+      Address(line1, line2, town, county, postCode, country)
     }
   }
 
@@ -68,14 +68,14 @@ object Address {
       (__ \ "lines").write[Seq[String]] and
         (__ \ "town").writeNullable[String] and
         (__ \ "county").writeNullable[String] and
-        (__ \ "postcode").writeNullable[String] and
+        (__ \ "postCode").writeNullable[String] and
         (__ \ "country" \ "name").write[String]
       ) { model =>
       (
         Seq(model.addressLine1, model.addressLine2),
         model.addressLine3,
         model.addressLine4,
-        model.postcode,
+        model.postCode,
         model.country)
     }
   }

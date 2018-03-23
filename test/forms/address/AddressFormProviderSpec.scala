@@ -78,7 +78,7 @@ class AddressFormProviderSpec extends FormBehaviours with FormSpec with AddressB
         "addressLine1" -> addressLine1,
         "addressLine2" -> addressLine2
       ),
-      (address: Address) => address.postcode.getOrElse("")
+      (address: Address) => address.postCode.getOrElse("")
     )
 
     "behave like a form with address lines" when {
