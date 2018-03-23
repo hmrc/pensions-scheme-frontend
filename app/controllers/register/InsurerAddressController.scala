@@ -22,10 +22,10 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.individual.AddressFormProvider
+import forms.address.AddressFormProvider
 import identifiers.register._
 import models.Mode
-import models.addresslookup.Address
+import models.address.Address
 import models.register.CountryOptions
 import play.api.data.Form
 import play.api.i18n._

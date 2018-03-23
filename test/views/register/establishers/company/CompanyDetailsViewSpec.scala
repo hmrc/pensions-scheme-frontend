@@ -18,7 +18,7 @@ package views.register.establishers.company
 
 import play.api.data.Form
 import controllers.register.establishers.company.routes
-import forms.register.establishers.company.CompanyDetailsFormProvider
+import forms.CompanyDetailsFormProvider
 import models.NormalMode
 import models.CompanyDetails
 import views.behaviours.QuestionViewBehaviours

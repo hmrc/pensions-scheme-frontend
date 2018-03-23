@@ -26,17 +26,13 @@ import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.{EstablisherKindId, company}
 import models.EstablisherNino.{No, Yes}
 import models._
-import models.addresslookup.Address
+import models.address.Address
 import models.register.CountryOptions
 import models.register.establishers.company.director.DirectorNino
 import models.register.establishers.individual.UniqueTaxReference
 import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
-
-  def directorAddressPostcodeLookup(establisherIndex: Int, directorIndex:Int): Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.director.DirectorAddressPostcodeLookupId(establisherIndex, directorIndex)) map {
-    x => AnswerRow("directorAddressPostcodeLookup.checkYourAnswersLabel", Seq(s"$x"), false, controllers.register.establishers.company.director.routes.DirectorAddressPostcodeLookupController.onPageLoad(CheckMode, establisherIndex, directorIndex).url)
-  }
 
   def directorUniqueTaxReference(establisherIndex: Int, directorIndex:Int): Seq[AnswerRow] =
     userAnswers.get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {

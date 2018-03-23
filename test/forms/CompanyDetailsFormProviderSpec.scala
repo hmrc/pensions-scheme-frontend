@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package forms
 
 import forms.behaviours.FormBehaviours
-import models.{Field, Required}
-import models.CompanyDetails
+import models.{CompanyDetails, Field, Required}
 import org.apache.commons.lang3.RandomStringUtils
 import play.api.data.FormError
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package forms.address
 
 import forms.behaviours.FormBehaviours
-import models.addresslookup.Address
 import models.{Field, Required}
+import models.address.Address
 import org.apache.commons.lang3.RandomStringUtils
 import play.api.data.FormError
 

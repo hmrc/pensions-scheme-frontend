@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package forms.address
 
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import models.addresslookup.Address
-import play.api.data.Forms.{mapping, optional}
+import models.address.Address
 import play.api.data.{Form, Forms}
+import play.api.data.Forms.{mapping, optional}
 
 class AddressFormProvider @Inject() extends Mappings {
 
@@ -38,4 +38,4 @@ class AddressFormProvider @Inject() extends Mappings {
       "country" -> text("messages__error__scheme_country")
     )(Address.apply)(Address.unapply)
   )
- }
+}
