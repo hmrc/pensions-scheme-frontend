@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package identifiers.register.establishers.company.director
 
-import javax.inject.Inject
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.address.Address
+import play.api.libs.json.JsPath
 
-import forms.mappings.{Constraints, Mappings}
-import play.api.data.Form
+case class DirectorPreviousAddressId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Address] {
+  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \ DirectorPreviousAddressId.toString
+}
 
-class AddressListFormProvider @Inject() () extends Mappings with Constraints {
-
-  def apply(addresses: Seq[_]): Form[Int] =
-    Form(
-      "value" -> int("messages__error__select_address")
-        .verifying(minimumValue(0, "error.invalid"))
-        .verifying(maximumValue(addresses.length - 1, "error.invalid"))
-    )
+object DirectorPreviousAddressId {
+  override def toString: String = "directorPreviousAddressId"
 }

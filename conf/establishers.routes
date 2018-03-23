@@ -169,3 +169,19 @@ GET        /:establisherIndex/company/director/:directorIndex/directorAddressPos
 POST       /:establisherIndex/company/director/:directorIndex/directorAddressPostcodeLookup               controllers.register.establishers.company.director.DirectorAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
 GET        /:establisherIndex/company/director/:directorIndex/changeDirectorAddressPostcodeLookup                        controllers.register.establishers.company.director.DirectorAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
 POST       /:establisherIndex/company/director/:directorIndex/changeDirectorAddressPostcodeLookup                        controllers.register.establishers.company.director.DirectorAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
+
+GET        /:establisherIndex/company/director/:directorIndex/directorAddressList               controllers.register.establishers.company.director.DirectorAddressListController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
+POST       /:establisherIndex/company/director/:directorIndex/directorAddressList               controllers.register.establishers.company.director.DirectorAddressListController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
+GET        /:establisherIndex/company/director/:directorIndex/changeDirectorAddressList               controllers.register.establishers.company.director.DirectorAddressListController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
+POST       /:establisherIndex/company/director/:directorIndex/changeDirectorAddressList               controllers.register.establishers.company.director.DirectorAddressListController.onSubmit(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
+
+GET        /:establisherIndex/company/director/:directorIndex/directorAddress               controllers.register.establishers.company.director.DirectorAddressController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
+
+GET        /:establisherIndex/company/director/:directorIndex/directorPreviousAddressList               controllers.register.establishers.company.director.DirectorPreviousAddressListController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
+POST       /:establisherIndex/company/director/:directorIndex/directorPreviousAddressList               controllers.register.establishers.company.director.DirectorPreviousAddressListController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
+GET        /:establisherIndex/company/director/:directorIndex/changeDirectorPreviousAddressList               controllers.register.establishers.company.director.DirectorPreviousAddressListController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
+POST       /:establisherIndex/company/director/:directorIndex/changeDirectorPreviousAddressList               controllers.register.establishers.company.director.DirectorPreviousAddressListController.onSubmit(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
+
+GET        /:establisherIndex/company/director/:directorIndex/directorPreviousAddress               controllers.register.establishers.company.director.DirectorPreviousAddressController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
+
+GET        /:establisherIndex/company/director/:directorIndex/directorPreviousAddressPostcodeLookup               controllers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)

@@ -14,52 +14,71 @@
  * limitations under the License.
  */
 
-package views.register.establishers.individual
+package views.address
 
-import controllers.register.establishers.individual.routes
-import play.api.data.Form
 import forms.address.AddressListFormProvider
 import models.address.Address
-import models.{Index, NormalMode}
 import org.jsoup.Jsoup
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import viewmodels.Message
+import viewmodels.address.AddressListViewModel
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.individual.addressList
+import views.html.address.addressList
 
-class AddressListViewSpec extends ViewBehaviours {
+class AddressListSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "select_the_address"
+  private val messageKeyPrefix = "select_the_address"
 
-  val form = new AddressListFormProvider()(Seq(0))
-  val firstIndex = Index(0)
-  val establisherName: String = "test first name test last name"
+  private val form = new AddressListFormProvider()(Nil)
 
-  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), Some(postCode), "GB")
+  private val addresses = Seq(address("postcode 1"), address("postcode 2"))
+  private val addressIndexes = Seq.range(0, 2)
+  private val call = controllers.routes.IndexController.onPageLoad()
+  private val subHeading = "sub-heading"
 
-  val addressSeq = Seq(address("postcode 1"), address("postcode 2"))
-  val addressIndexes = Seq.range(0, 2)
+  private val viewModel = AddressListViewModel(call, call, addresses, subHeading = Some(Message(subHeading)))
 
-  def createView: () => HtmlFormat.Appendable = () => addressList(frontendAppConfig, form, NormalMode, firstIndex, addressSeq,
-    establisherName)(fakeRequest, messages)
+  private def address(postCode: String): Address =
+    Address(
+      "address line 1",
+      "address line 2",
+      Some("test town"),
+      Some("test county"),
+      Some(postCode),
+      "GB"
+    )
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressList(frontendAppConfig, form, NormalMode,
-    firstIndex, addressSeq, establisherName)(fakeRequest, messages)
+  private def createView: () => HtmlFormat.Appendable =
+    () =>
+      addressList(
+        frontendAppConfig,
+        form,
+        viewModel
+      )(fakeRequest, messages)
+
+  private def createViewUsingForm: Form[_] => HtmlFormat.Appendable =
+    (form: Form[_]) =>
+      addressList(
+        frontendAppConfig,
+        form,
+        viewModel
+      )(fakeRequest, messages)
 
   "AddressListView view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView, messageKeyPrefix, viewModel.title.resolve)
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithSecondaryHeader(createView, establisherName)
+    behave like pageWithSecondaryHeader(createView, subHeading)
 
     "have link for enter address manually" in {
-      Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
-        routes.AddressController.onPageLoad(NormalMode, firstIndex).url)
+      Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(call.url)
     }
   }
 
   "AddressListView view" when {
+
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
@@ -81,5 +100,7 @@ class AddressListViewSpec extends ViewBehaviours {
         }
       }
     }
+
   }
+
 }

@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.AddressListFormProvider
+import forms.address.AddressListFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
 import models.address.Address
