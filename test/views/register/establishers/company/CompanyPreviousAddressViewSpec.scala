@@ -17,10 +17,11 @@
 package views.register.establishers.company
 
 import forms.register.establishers.individual.AddressFormProvider
-import models.addresslookup.Address
+import models.Address
 import models.{Index, NormalMode}
 import play.api.data.Form
-import utils.InputOption
+import play.twirl.api.HtmlFormat
+import utils.{FakeCountryOptions, InputOption}
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.company.companyPreviousAddress
 
@@ -31,11 +32,24 @@ class CompanyPreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
   val companyName = "test company name"
   val options = Seq(InputOption("territory:AX", "Åland Islands"), InputOption("country:ZW", "Zimbabwe"))
 
-  override val form = new AddressFormProvider()()
+  override val form = new AddressFormProvider(FakeCountryOptions())()
 
-  def createView = () => companyPreviousAddress(frontendAppConfig, form, NormalMode, index, companyName, options)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyPreviousAddress(
+    frontendAppConfig,
+    form,
+    NormalMode,
+    index,
+    companyName,
+    options
+  )(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyPreviousAddress(frontendAppConfig, form, NormalMode, index, companyName, options)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyPreviousAddress(
+    frontendAppConfig,
+    form,
+    NormalMode,
+    index,
+    companyName,
+    options)(fakeRequest, messages)
 
 
   "CompanyPreviousAddress view" must {
@@ -46,6 +60,9 @@ class CompanyPreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
 
     behave like pageWithSecondaryHeader(createView, companyName)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.register.establishers.company.routes.CompanyPreviousAddressController.onSubmit(NormalMode, index).url,  "addressLine1", "addressLine2", "addressLine3", "addressLine4")
+    behave like pageWithTextFields(
+      createViewUsingForm,
+      messageKeyPrefix,
+      controllers.register.establishers.company.routes.CompanyPreviousAddressController.onSubmit(NormalMode, index).url,  "addressLine1", "addressLine2", "addressLine3", "addressLine4")
   }
 }

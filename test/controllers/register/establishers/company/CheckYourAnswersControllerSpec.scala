@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import models.Index
 import play.api.test.Helpers._
-import utils.{CheckYourAnswersFactory, InputOption}
+import utils.{CheckYourAnswersFactory, CountryOptions, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 

@@ -22,7 +22,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConn
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
-import models.addresslookup.{Address, AddressRecord}
+import models.{Address, AddressRecord}
 import models.register.establishers.company.director.DirectorDetails
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate

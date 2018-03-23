@@ -17,19 +17,15 @@
 package controllers.register.establishers.individual
 
 import play.api.data.{Form, FormError}
-import play.api.libs.json.JsString
-import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
-import identifiers.register.establishers.individual.PreviousPostCodeLookupId
 import models.{Index, NormalMode}
 import views.html.register.establishers.individual.previousPostCodeLookup
-import play.api.libs.json._
 import controllers.ControllerSpecBase
-import models.addresslookup.{Address, AddressRecord}
+import models.{Address, AddressRecord}
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._

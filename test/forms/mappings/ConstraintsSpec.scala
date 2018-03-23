@@ -125,12 +125,12 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
     val countryOptions: CountryOptions = new CountryOptions(options)
 
     "return Valid for a string which is in the recognised country list" in {
-      val result = validCountries("error.invalid", countryOptions)("territory:AE-AZ")
+      val result = country(countryOptions, "error.invalid")("territory:AE-AZ")
       result shouldEqual Valid
     }
 
     "return Invalid for a string which is not in the recognised country list" in {
-      val result = validCountries("error.invalid", countryOptions)("territory:FF")
+      val result = country(countryOptions, "error.invalid")("territory:FF")
       result shouldEqual Invalid("error.invalid")
     }
   }

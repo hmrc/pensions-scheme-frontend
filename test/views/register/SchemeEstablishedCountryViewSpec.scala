@@ -20,7 +20,7 @@ import play.api.data.Form
 import forms.register.SchemeEstablishedCountryFormProvider
 import models.NormalMode
 import play.twirl.api.HtmlFormat
-import utils.InputOption
+import utils.{CountryOptions, InputOption}
 import views.behaviours.StringViewBehaviours
 import views.html.register.schemeEstablishedCountry
 

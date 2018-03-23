@@ -23,21 +23,21 @@ import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyDetailsId}
-import models.addresslookup.Address
+import models.Address
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption}
 import views.html.register.establishers.company.companyAddress
 
 class CompanyAddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new AddressFormProvider()
+  val formProvider = new AddressFormProvider(FakeCountryOptions())
   val form: Form[Address] = formProvider()
 
   val companyName = "test company name"

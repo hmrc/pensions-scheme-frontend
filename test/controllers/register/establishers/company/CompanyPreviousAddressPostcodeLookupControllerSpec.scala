@@ -17,8 +17,6 @@
 package controllers.register.establishers.company
 
 import play.api.data.Form
-import play.api.libs.json.JsString
-import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.actions._
@@ -26,7 +24,6 @@ import play.api.test.Helpers._
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._
-import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
 import models.{CompanyDetails, Index, NormalMode}
@@ -36,7 +33,7 @@ import controllers.ControllerSpecBase
 import forms.register.establishers.individual.PostCodeLookupFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
-import models.addresslookup.{Address, AddressRecord}
+import models.{Address, AddressRecord}
 import models.register.{SchemeDetails, SchemeType}
 
 import scala.concurrent.Future

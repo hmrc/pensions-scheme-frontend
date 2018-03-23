@@ -21,9 +21,8 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register._
-import models.addresslookup.Address
 import models.register._
-import models.NormalMode
+import models.{Address, NormalMode}
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -35,7 +34,7 @@ class InsurerAddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new AddressFormProvider()
+  val formProvider = new AddressFormProvider(FakeCountryOptions())
   val form: Form[Address] = formProvider()
   val schemeName: String = "Test Scheme Name"
 

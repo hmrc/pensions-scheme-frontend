@@ -18,18 +18,17 @@ package controllers.register.establishers.individual
 
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
-import utils.{FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeNavigator, InputOption}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId, PreviousAddressId}
-import models.{Index, NormalMode}
+import models.{Address, Index, NormalMode}
 import models.register.establishers.individual.EstablisherDetails
 import views.html.register.establishers.individual.previousAddress
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
-import models.addresslookup.Address
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
@@ -38,7 +37,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new AddressFormProvider()
+  val formProvider = new AddressFormProvider(countryOptions)
   val form = formProvider()
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"

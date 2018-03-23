@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.register.establishers.individual.routes._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
-import models.addresslookup.Address
+import models.Address
 import models.register.establishers.individual.UniqueTaxReference.{No, Yes}
 import models.register.establishers.individual.{ContactDetails, EstablisherDetails}
 import models.register.{SchemeDetails, SchemeType}

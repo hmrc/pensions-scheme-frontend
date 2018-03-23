@@ -19,10 +19,10 @@ package views.register
 import controllers.register.routes
 import forms.register.establishers.individual.AddressFormProvider
 import models.NormalMode
-import models.addresslookup.Address
+import models.Address
 import org.jsoup.Jsoup
 import play.api.data.Form
-import utils.InputOption
+import utils.{FakeCountryOptions, InputOption}
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.insurerAddress
 
@@ -33,9 +33,10 @@ class InsurerAddressViewSpec extends QuestionViewBehaviours[Address] {
   val validData: Seq[InputOption] = Seq(InputOption("AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
   val schemeName: String = "Test Scheme Name"
 
-  override val form = new AddressFormProvider()()
+  override val form = new AddressFormProvider(FakeCountryOptions())()
 
-  def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable = () => insurerAddress(frontendAppConfig, new AddressFormProvider().apply(),
+  def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable = () =>
+    insurerAddress(frontendAppConfig, new AddressFormProvider(FakeCountryOptions()).apply(),
     NormalMode, validData, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[_]) => insurerAddress(frontendAppConfig, form, NormalMode,

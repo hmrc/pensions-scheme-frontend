@@ -21,7 +21,7 @@ import controllers.ControllerSpecBase
 import models.Index
 import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
-import utils.{CheckYourAnswersFactory, DateHelper, InputOption}
+import utils.{CheckYourAnswersFactory, CountryOptions, DateHelper, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import play.api.test.Helpers._
 import views.html.check_your_answers

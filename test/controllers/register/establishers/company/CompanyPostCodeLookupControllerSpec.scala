@@ -22,10 +22,9 @@ import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConn
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
-import models.addresslookup.{Address, AddressRecord}
+import models.{Address, AddressRecord}
 import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers
-import org.mockito.Matchers.{eq => eqTo}
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures

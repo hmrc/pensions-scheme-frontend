@@ -23,7 +23,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector}
 import forms.register.establishers.individual.PostCodeLookupFormProvider
 import identifiers.TypedIdentifier
 import models.NormalMode
-import models.addresslookup.{Address, AddressRecord}
+import models.{Address, AddressRecord}
 import models.requests.DataRequest
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar

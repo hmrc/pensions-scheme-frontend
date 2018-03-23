@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.register.establishers.individual.AddressFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
-import models.addresslookup.Address
+import models.Address
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode}
@@ -31,14 +31,14 @@ import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeNavigator, InputOption}
 import views.html.register.establishers.individual.address
 
 class AddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new AddressFormProvider()
+  val formProvider = new AddressFormProvider(countryOptions)
   val form: Form[Address] = formProvider()
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"

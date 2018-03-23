@@ -19,7 +19,7 @@ package controllers.register
 import play.api.data.Form
 import play.api.libs.json.{JsString, Json}
 import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.{FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeNavigator, InputOption}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._

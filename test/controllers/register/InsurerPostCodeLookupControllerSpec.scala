@@ -20,7 +20,7 @@ import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.individual.PostCodeLookupFormProvider
-import models.addresslookup.{Address, AddressRecord}
+import models.{Address, AddressRecord}
 import models.NormalMode
 import org.mockito.Mockito._
 import org.mockito._
