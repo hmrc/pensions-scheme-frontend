@@ -22,6 +22,8 @@ import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConn
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostcodeLookupFormProvider
+import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.{Address, AddressRecord}
 import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers
@@ -31,6 +33,7 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -53,6 +56,12 @@ class PreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
   val companyName: String = "test company name"
   val company = CompanyDetails(companyName, None, None)
 
+  val retrieval = new FakeDataRetrievalAction(Some(
+    Json.obj(TrusteesId.toString -> Json.arr(
+      Json.obj(CompanyDetailsId.toString -> company)
+    ))
+  ))
+
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
   "PreviousAddressPostcodeLookup Controller" must {
@@ -67,7 +76,7 @@ class PreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         bind[DataCacheConnector].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompany)
+        bind[DataRetrievalAction].to(retrieval)
       )) {
         implicit app =>
 
@@ -117,7 +126,7 @@ class PreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
           bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
           bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
           bind[AuthAction].to(FakeAuthAction),
-          bind[DataRetrievalAction].to(getMandatoryEstablisherCompany),
+          bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
           bind[PostcodeLookupFormProvider].to(formProvider)
         )) {
