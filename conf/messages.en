@@ -101,6 +101,15 @@ messages__what_you_will_need__item_4 = the name, contact details and address of 
 messages__what_you_will_need__item_5 = PAYE, Company Registration and VAT Registration numbers
 messages__common__start = Start
 
+messages__trustee__has_ct_utr__title = Does the trustee have a Corporation Tax Unique Taxpayer Reference number (CTUTR)?
+messages__trustee__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
+messages__trustee__ct_utr = Corporation Tax Unique Taxpayer Reference number
+messages__trustee__ct_utr_hint_format = A CTUTR is 10 or 13 digits, if it is 13 digits only enter the last 10.
+messages__trustee__no_ct_utr = Tell us why the trustee does not have a CTUTR
+messages__error__ct_utr = Enter the Corporation Tax Unique Tax Reference number
+messages__error__no_ct_utr_trustee = You need to tell us why the trustee does not have a CTUTR
+messages__error__has_ct_utr_trustee = Select yes if the trustee has a CTUTR
+
 messages__scheme_details__title = Scheme details
 messages__scheme_details__name_label = Name of the scheme
 messages__scheme_details__name_hint = The scheme name cannot be the same as the PSA or the scheme establisher
