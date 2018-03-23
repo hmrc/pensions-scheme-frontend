@@ -23,14 +23,17 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
+import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.Address
-import models.{Index, NormalMode}
+import models.{CompanyDetails, Index, NormalMode}
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -48,7 +51,13 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   val firstIndex = Index(0)
 
   val formProvider = new AddressFormProvider(FakeCountryOptions())
+  val companyDetails = CompanyDetails("companyName", None, None)
+
   val form: Form[Address] = formProvider()
+
+  val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
+    TrusteesId.toString -> Json.arr(Json.obj(CompanyDetailsId.toString -> companyDetails))
+  )))
 
   "PreviousAddress Controller" must {
 
@@ -59,7 +68,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
         bind[Navigator].toInstance(FakeNavigator),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompany),
+        bind[DataRetrievalAction].to(retrieval),
         bind[CountryOptions].to(countryOptions)
       )) {
         implicit app =>
@@ -69,7 +78,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
             countryOptions.options,
             "messages__companyAddress__title",
             "messages__companyAddress__heading",
-            secondaryHeader = Some("test company name")
+            secondaryHeader = Some(companyDetails.companyName)
           )
 
           def viewAsString(form: Form[_] = form) = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
@@ -103,7 +112,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompany),
+        bind[DataRetrievalAction].to(retrieval),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
         bind[AddressFormProvider].to(formProvider)
       )) {

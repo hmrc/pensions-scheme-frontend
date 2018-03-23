@@ -16,11 +16,11 @@
 
 package views.register.establishers.company
 
-import play.api.data.Form
 import controllers.register.establishers.company.routes
 import forms.register.establishers.individual.ContactDetailsFormProvider
 import models.register.establishers.individual.ContactDetails
 import models.{Index, NormalMode}
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.company.companyContactDetails

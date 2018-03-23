@@ -25,8 +25,7 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.trustees.company.PreviousAddressId
+import identifiers.register.trustees.company.{PreviousAddressId, CompanyDetailsId}
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
