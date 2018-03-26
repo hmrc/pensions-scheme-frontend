@@ -19,24 +19,28 @@ package controllers.register.trustees.company
 import javax.inject.Inject
 
 import config.FrontendAppConfig
+import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
-import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId}
+import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId, CompanyPostcodeLookupId}
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
+import utils.Navigator
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.Future
 
-class CompanyAddressListController @Inject()(override val appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                      authenticate: AuthAction,
-                                      getData: DataRetrievalAction,
-                                      requireData: DataRequiredAction) extends AddressListController with Retrievals  {
+class CompanyAddressListController @Inject()( override val appConfig: FrontendAppConfig,
+                                              override val messagesApi: MessagesApi,
+                                              override val cacheConnector: DataCacheConnector,
+                                              override val navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction) extends AddressListController with Retrievals  {
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
@@ -44,15 +48,16 @@ class CompanyAddressListController @Inject()(override val appConfig: FrontendApp
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    viewmodel(mode, index).right.map{
+    implicit request =>
+      viewmodel(mode, index).right.map{
       vm =>
         post(vm, CompanyAddressId(index), mode)
     }
   }
 
   private def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
-    CompanyDetailsId(index).retrieve.right.map{
-      companyDetails => AddressListViewModel(
+    (CompanyDetailsId(index) and CompanyPostcodeLookupId(index)).retrieve.right.map{
+      case companyDetails ~ addresses => AddressListViewModel(
         postCall = routes.CompanyAddressListController.onSubmit(mode, index),
         manualInputCall = routes.CompanyAddressListController.onPageLoad(mode, index),
         addresses = addresses,
