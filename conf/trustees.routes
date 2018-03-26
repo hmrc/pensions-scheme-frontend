@@ -24,7 +24,7 @@ POST       /:index/company/companyPostcodeLookup                       controlle
 GET        /:index/company/changeCompanyPostcodeLookup                       controllers.register.trustees.company.CompanyPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index:Index)
 POST       /:index/company/changeCompanyPostcodeLookup                       controllers.register.trustees.company.CompanyPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index:Index)
 
-GET        /:index/company/addressList                       controllers.register.trustees.company.CompanyAddressListController.onPageLoad(mode: Mode = NormalMode, index:Index)
-POST       /:index/company/addressList                       controllers.register.trustees.company.CompanyAddressListController.onSubmit(mode: Mode = NormalMode, index:Index)
-GET        /:index/company/changeAddressList                 controllers.register.trustees.company.CompanyAddressListController.onPageLoad(mode: Mode = CheckMode, index:Index)
-POST       /:index/company/changeAddressList                 controllers.register.trustees.company.CompanyAddressListController.onSubmit(mode: Mode = CheckMode, index:Index)
+GET        /:index/company/companyAddressList                       controllers.register.trustees.company.CompanyAddressListController.onPageLoad(mode: Mode = NormalMode, index:Index)
+POST       /:index/company/companyAddressList                       controllers.register.trustees.company.CompanyAddressListController.onSubmit(mode: Mode = NormalMode, index:Index)
+GET        /:index/company/changeCompanyAddressList                 controllers.register.trustees.company.CompanyAddressListController.onPageLoad(mode: Mode = CheckMode, index:Index)
+POST       /:index/company/changeCompanyAddressList                 controllers.register.trustees.company.CompanyAddressListController.onSubmit(mode: Mode = CheckMode, index:Index)
