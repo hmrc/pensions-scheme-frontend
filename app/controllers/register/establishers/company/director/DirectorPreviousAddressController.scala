@@ -26,12 +26,11 @@ import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressId}
 import models.address.Address
-import models.register.CountryOptions
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import utils.Navigator
+import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -48,9 +47,8 @@ class DirectorPreviousAddressController @Inject()(
                                       ) extends ManualAddressController with I18nSupport with Retrievals {
 
   private[controllers] val postCall = routes.DirectorPreviousAddressController.onSubmit _
-
-  private[controllers] val title: Message = "messages__companyAddress__title"
-  private[controllers] val heading: Message = "messages__companyAddress__heading"
+  private[controllers] val title: Message = "messages__companyDirectorAddress__title"
+  private[controllers] val heading: Message = "messages__companyDirectorAddress__heading"
 
   protected val form: Form[Address] = formProvider()
 

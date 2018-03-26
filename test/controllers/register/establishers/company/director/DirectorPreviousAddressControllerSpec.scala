@@ -21,16 +21,12 @@ import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.director.DirectorDetailsId
-import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressId}
 import models.address.Address
-import models.register.CountryOptions
 import models.register.establishers.company.director.DirectorDetails
-import models.{CompanyDetails, Index, NormalMode}
+import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -42,7 +38,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeNavigator, InputOption, Navigator}
+import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
@@ -57,7 +53,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
     Seq(InputOption("GB", "GB"))
   )
 
-  val formProvider = new AddressFormProvider()
+  val formProvider = new AddressFormProvider(countryOptions)
   val form: Form[Address] = formProvider()
 
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
@@ -112,34 +108,46 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
 
     }
 
-    "redirect to next page on POST request" in {
+    "redirect to next page on POST request" which {
+      "saves director address" in {
 
-      val onwardCall = Call("GET", "/")
+        val onwardCall = Call("GET", "/")
 
-      running(_.overrides(
-        bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[MessagesApi].to(messagesApi),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
-        bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(retrieval),
-        bind[DataRequiredAction].to(new DataRequiredActionImpl),
-        bind[AddressFormProvider].to(formProvider)
-      )) {
-        implicit app =>
+        running(_.overrides(
+          bind[FrontendAppConfig].to(frontendAppConfig),
+          bind[MessagesApi].to(messagesApi),
+          bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+          bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
+          bind[AuthAction].to(FakeAuthAction),
+          bind[DataRetrievalAction].to(retrieval),
+          bind[DataRequiredAction].to(new DataRequiredActionImpl),
+          bind[AddressFormProvider].to(formProvider)
+        )) {
+          implicit app =>
 
-          val fakeRequest = addToken(FakeRequest(routes.DirectorPreviousAddressController.onSubmit(NormalMode, establisherIndex, directorIndex))
-            .withHeaders("Csrf-Token" -> "nocheck")
-            .withFormUrlEncodedBody(
-              ("addressLine1", "value 1"),
-              ("addressLine2", "value 2"),
-              ("postCode.postCode", "AB1 1AB"),
-              "country" -> "GB"))
+            val address = Address(
+              "value 1",
+              "value 2",
+              None, None,
+              Some("AB1 1AB"),
+              "GB"
+            )
 
-          val result = route(app, fakeRequest).value
+            val fakeRequest = addToken(FakeRequest(routes.DirectorPreviousAddressController.onSubmit(NormalMode, establisherIndex, directorIndex))
+              .withHeaders("Csrf-Token" -> "nocheck")
+              .withFormUrlEncodedBody(
+                ("addressLine1", address.addressLine1),
+                ("addressLine2", address.addressLine2),
+                ("postCode", address.postCode.get),
+                "country" -> address.country))
 
-          status(result) must be(SEE_OTHER)
-          redirectLocation(result).value mustEqual onwardCall.url
+            val result = route(app, fakeRequest).value
+
+            status(result) must be(SEE_OTHER)
+            redirectLocation(result).value mustEqual onwardCall.url
+
+            FakeDataCacheConnector.verify(DirectorPreviousAddressId(establisherIndex, directorIndex), address)
+        }
       }
     }
 
