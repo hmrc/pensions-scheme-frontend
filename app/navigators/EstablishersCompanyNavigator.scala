@@ -41,6 +41,14 @@ class EstablishersCompanyNavigator @Inject() extends Navigator {
       _ => controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, index)
     case CompanyAddressYearsId(index) =>
       addressYearsRoutes(index)
+    case CompanyPreviousAddressPostcodeLookupId(index) =>
+      _ => controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, index)
+    case CompanyPreviousAddressListId(index) =>
+      _ => controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(NormalMode, index)
+    case CompanyPreviousAddressId(index) =>
+      _ => controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index)
+    case CompanyContactDetailsId(index) =>
+      _ => controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
   }
 
   private def addressYearsRoutes(index: Int)(answers: UserAnswers): Call = {

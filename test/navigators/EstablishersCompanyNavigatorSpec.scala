@@ -99,18 +99,54 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         val result = navigator.nextPage(CompanyAddressYearsId(0), NormalMode)(answers)
         result mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0)
       }
-    }
-    "return a 'Call' to 'Company Contact Details' page when 'AddressYears' is 'MoreThanOneYear'" in {
-      val answers = new UserAnswers(Json.obj(
-        EstablishersId.toString -> Json.arr(
-          Json.obj(
-            CompanyAddressYearsId.toString ->
-              "over_a_year"
+      "return a 'Call' to 'Company Contact Details' page when 'AddressYears' is 'MoreThanOneYear'" in {
+        val answers = new UserAnswers(Json.obj(
+          EstablishersId.toString -> Json.arr(
+            Json.obj(
+              CompanyAddressYearsId.toString ->
+                "over_a_year"
+            )
           )
-        )
-      ))
-      val result = navigator.nextPage(CompanyAddressYearsId(0), NormalMode)(answers)
-      result mustEqual controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, 0)
+        ))
+        val result = navigator.nextPage(CompanyAddressYearsId(0), NormalMode)(answers)
+        result mustEqual controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, 0)
+      }
+    }
+    ".nextPage(PreviousAddressPostCode" must {
+      "return a 'Call' to 'Previous Address Picker' page" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyPreviousAddressPostcodeLookupId(index), NormalMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, index)
+        }
+      }
+    }
+  }
+  ".nextPage(PreviousAddressPicker" must {
+    "return a 'Call' to 'Previous Address Manual' page" in {
+      (0 to 10).foreach {
+        index =>
+          val result = navigator.nextPage(CompanyPreviousAddressListId(index), NormalMode)(emptyAnswers)
+          result mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(NormalMode, index)
+      }
+    }
+  }
+  ".nextPage(PreviousAddressManual" must {
+    "return a 'Call' to 'Company Contact Details" in {
+      (0 to 10).foreach {
+        index =>
+          val result = navigator.nextPage(CompanyPreviousAddressId(index), NormalMode)(emptyAnswers)
+          result mustEqual controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index)
+      }
+    }
+  }
+  ".nextPage(CompanyContactDetails" must {
+    "return a 'Call' to 'Company Check Your Answers" in {
+      (0 to 10).foreach {
+        index =>
+          val result = navigator.nextPage(CompanyContactDetailsId(index), NormalMode)(emptyAnswers)
+          result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
+      }
     }
   }
   "CheckMode" when {
