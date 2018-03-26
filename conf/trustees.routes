@@ -13,3 +13,8 @@ GET        /:index/company/previousAddressPostcodeLookup                       c
 POST       /:index/company/previousAddressPostcodeLookup                       controllers.register.trustees.company.PreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index:Index)
 GET        /:index/company/changePreviousAddressPostcodeLookup                       controllers.register.trustees.company.PreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index:Index)
 POST       /:index/company/changePreviousAddressPostcodeLookup                       controllers.register.trustees.company.PreviousAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index:Index)
+
+GET        /:index/company/companyPostcodeLookup                       controllers.register.trustees.company.CompanyPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index:Index)
+POST       /:index/company/companyPostcodeLookup                       controllers.register.trustees.company.CompanyPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index:Index)
+GET        /:index/company/changeCompanyPostcodeLookup                       controllers.register.trustees.company.CompanyPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index:Index)
+POST       /:index/company/changeCompanyPostcodeLookup                       controllers.register.trustees.company.CompanyPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index:Index)
