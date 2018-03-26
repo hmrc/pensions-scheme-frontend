@@ -271,7 +271,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         (0 to 10).foreach {
           index =>
             val result = navigator.nextPage(CompanyPreviousAddressId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(CheckMode, index)
+            result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
         }
       }
     }
