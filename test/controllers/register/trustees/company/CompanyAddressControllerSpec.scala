@@ -39,10 +39,11 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.{FakeNavigator, InputOption, Navigator}
+import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
-class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
+class CompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
   val firstIndex = Index(0)
 
@@ -59,7 +60,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
     TrusteesId.toString -> Json.arr(Json.obj(CompanyDetailsId.toString -> companyDetails))
   )))
 
-  "PreviousAddress Controller" must {
+  "CompanyAddress Controller" must {
 
     "render manualAddress from GET request" in {
 
@@ -73,11 +74,13 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
       )) {
         implicit app =>
 
+          val controller = app.injector.instanceOf[CompanyAddressController]
+
           val viewmodel = ManualAddressViewModel(
-            PreviousAddressController.onSubmit(NormalMode, firstIndex),
+            controller.postCall(NormalMode, firstIndex),
             countryOptions.options,
-            "messages__companyAddress__title",
-            "messages__companyAddress__heading",
+            Message(controller.title),
+            Message(controller.heading),
             secondaryHeader = Some(companyDetails.companyName)
           )
 
