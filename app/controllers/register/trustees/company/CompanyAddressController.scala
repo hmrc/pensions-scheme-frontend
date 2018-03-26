@@ -24,7 +24,7 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, PreviousAddressId}
+import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId, PreviousAddressId}
 import models.address.Address
 import models.register.CountryOptions
 import models.{Index, Mode}
@@ -47,8 +47,7 @@ class CompanyAddressController @Inject()(
                                         val countryOptions: CountryOptions
                                       ) extends ManualAddressController with I18nSupport {
 
-  private[controllers] val postCall = PreviousAddressController.onSubmit _
-
+  private[controllers] val postCall = CompanyAddressController.onSubmit _
   private[controllers] val title: Message = "messages__companyAddress__title"
   private[controllers] val heading: Message = "messages__companyAddress__heading"
   private[controllers] val hint: Message = "messages__companyAddress__trustee__lede"
@@ -83,7 +82,7 @@ class CompanyAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(PreviousAddressId(index), vm, mode)
+          post(CompanyAddressId(index), vm, mode)
       }
   }
 }

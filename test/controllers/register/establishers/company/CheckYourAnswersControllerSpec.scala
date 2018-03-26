@@ -61,7 +61,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad(index)(fakeRequest)
 
       status(result) mustBe OK
-      println(postUrl)
       contentAsString(result) mustBe viewAsString()
     }
 

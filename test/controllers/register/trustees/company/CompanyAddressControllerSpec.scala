@@ -24,7 +24,7 @@ import controllers.actions._
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.company.CompanyDetailsId
+import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId}
 import models.address.Address
 import models.register.CountryOptions
 import models.{CompanyDetails, Index, NormalMode}
@@ -88,7 +88,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
           def viewAsString(form: Form[_] = form) = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
 
           val request = addToken(
-            FakeRequest(PreviousAddressController.onPageLoad(NormalMode, firstIndex))
+            FakeRequest(CompanyAddressController.onPageLoad(NormalMode, firstIndex))
             .withHeaders("Csrf-Token" -> "nocheck")
           )
 
@@ -106,34 +106,46 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
 
     }
 
-    "redirect to next page on POST request" in {
+    "redirect to next page on POST request" which {
+      "save address" in {
 
-      val onwardCall = Call("GET", "/")
+        val onwardCall = Call("GET", "/")
 
-      running(_.overrides(
-        bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[MessagesApi].to(messagesApi),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
-        bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(retrieval),
-        bind[DataRequiredAction].to(new DataRequiredActionImpl),
-        bind[AddressFormProvider].to(formProvider)
-      )) {
-        implicit app =>
+        val address = Address(
+          addressLine1 = "value 1",
+          addressLine2 = "value 2",
+          None, None,
+          postcode = Some("AB1 1AB"),
+          country = "GB"
+        )
 
-          val fakeRequest = addToken(FakeRequest(PreviousAddressController.onSubmit(NormalMode, firstIndex))
-            .withHeaders("Csrf-Token" -> "nocheck")
-            .withFormUrlEncodedBody(
-              ("addressLine1", "value 1"),
-              ("addressLine2", "value 2"),
-              ("postCode.postCode", "AB1 1AB"),
-              "country" -> "GB"))
+        running(_.overrides(
+          bind[FrontendAppConfig].to(frontendAppConfig),
+          bind[MessagesApi].to(messagesApi),
+          bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+          bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
+          bind[AuthAction].to(FakeAuthAction),
+          bind[DataRetrievalAction].to(retrieval),
+          bind[DataRequiredAction].to(new DataRequiredActionImpl),
+          bind[AddressFormProvider].to(formProvider)
+        )) {
+          implicit app =>
 
-          val result = route(app, fakeRequest).value
+            val fakeRequest = addToken(FakeRequest(CompanyAddressController.onSubmit(NormalMode, firstIndex))
+              .withHeaders("Csrf-Token" -> "nocheck")
+              .withFormUrlEncodedBody(
+                ("addressLine1", address.addressLine1),
+                ("addressLine2", address.addressLine2),
+                ("postCode.postCode", address.postcode.get),
+                "country" -> address.country))
 
-          status(result) must be(SEE_OTHER)
-          redirectLocation(result).value mustEqual onwardCall.url
+            val result = route(app, fakeRequest).value
+
+            status(result) must be(SEE_OTHER)
+            redirectLocation(result).value mustEqual onwardCall.url
+
+            FakeDataCacheConnector.verify(CompanyAddressId(firstIndex), address)
+        }
       }
     }
 
