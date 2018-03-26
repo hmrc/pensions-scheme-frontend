@@ -170,6 +170,9 @@ POST       /:establisherIndex/company/director/:directorIndex/directorAddressPos
 GET        /:establisherIndex/company/director/:directorIndex/changeDirectorAddressPostcodeLookup                        controllers.register.establishers.company.director.DirectorAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
 POST       /:establisherIndex/company/director/:directorIndex/changeDirectorAddressPostcodeLookup                        controllers.register.establishers.company.director.DirectorAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)
 
+GET        /:index/company/companyReview                       controllers.register.establishers.company.CompanyReviewController.onPageLoad(index: Index)
+POST       /:index/company/companyReview                       controllers.register.establishers.company.CompanyReviewController.onSubmit(index: Index)
+
 GET        /:establisherIndex/company/director/:directorIndex/directorAddressList               controllers.register.establishers.company.director.DirectorAddressListController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
 POST       /:establisherIndex/company/director/:directorIndex/directorAddressList               controllers.register.establishers.company.director.DirectorAddressListController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
 GET        /:establisherIndex/company/director/:directorIndex/changeDirectorAddressList               controllers.register.establishers.company.director.DirectorAddressListController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)

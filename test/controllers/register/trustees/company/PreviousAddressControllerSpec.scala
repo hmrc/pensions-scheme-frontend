@@ -26,7 +26,6 @@ import forms.address.AddressFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.Address
-import models.register.CountryOptions
 import models.{CompanyDetails, Index, NormalMode}
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -38,21 +37,22 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeNavigator, InputOption, Navigator}
+import utils._
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
+
 class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
+
+  def countryOptions: CountryOptions = new CountryOptions(options)
+
+  val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
   val firstIndex = Index(0)
 
+  val formProvider = new AddressFormProvider(FakeCountryOptions())
   val companyDetails = CompanyDetails("companyName", None, None)
 
-  val countryOptions = new CountryOptions(
-    Seq(InputOption("GB", "GB"))
-  )
-
-  val formProvider = new AddressFormProvider()
   val form: Form[Address] = formProvider()
 
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
@@ -123,7 +123,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
             .withFormUrlEncodedBody(
               ("addressLine1", "value 1"),
               ("addressLine2", "value 2"),
-              ("postCode.postCode", "AB1 1AB"),
+              ("postCode", "AB1 1AB"),
               "country" -> "GB"))
 
           val result = route(app, fakeRequest).value

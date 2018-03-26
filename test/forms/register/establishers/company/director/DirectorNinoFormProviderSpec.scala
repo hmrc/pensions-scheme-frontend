@@ -16,41 +16,26 @@
 
 package forms.register.establishers.company.director
 
-import forms.FormSpec
-import models.EstablisherNino
-import models.register.establishers.company.director.DirectorNino
-import org.scalatest.OptionValues
 
-class DirectorNinoFormProviderSpec extends FormSpec {
+import forms.behaviours.NinoBehaviours
+
+
+class DirectorNinoFormProviderSpec extends NinoBehaviours {
 
   val requiredKey = "messages__error__has_nino_director"
   val requiredNinoKey = "messages__error__nino"
   val requiredReasonKey = "messages__director_no_nino"
+  val reasonLengthKey: String = "messages__error__no_nino_length"
   val invalidNinoKey = "messages__error__nino_invalid"
+  val testForm = new DirectorNinoFormProvider().apply()
 
-  val reasonMaxLength = 150
-  val reasonInvalidLength = 151
-  val formProvider = new DirectorNinoFormProvider()
-  val validData:Map[String,String] = Map(
-    "directorNino.hasNino" ->"true",
-    "directorNino.nino" -> "AB020202A"
-  )
+    "DirectorNinoFormProviderSpec" should {
 
-  "CompanyDirector form provider" must {
-
-    "successfully bind when yes is selected and valid NINO is provided" in {
-      val form = formProvider().bind(Map("directorNino.hasNino" -> "true", "directorNino.nino" -> "AB020202A"))
-      form.get shouldEqual DirectorNino.Yes("AB020202A")
+      behave like formWithNino(testForm,
+      requiredKey,
+      requiredNinoKey,
+      requiredReasonKey,
+      reasonLengthKey,
+      invalidNinoKey)
     }
-
-    "successfully bind when no is selected and reason is provided" in {
-      val form = formProvider().bind(Map("directorNino.hasNino" -> "false", "directorNino.reason" -> "haven't got Nino"))
-      form.get shouldBe DirectorNino.No("haven't got Nino")
-    }
-
-    "fail to bind when value is omitted" in {
-      val expectedError = error("directorNino.hasNino", requiredKey)
-      checkForError(formProvider(), emptyForm, expectedError)
-    }
-  }
 }

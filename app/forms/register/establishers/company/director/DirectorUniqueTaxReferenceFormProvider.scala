@@ -18,19 +18,16 @@ package forms.register.establishers.company.director
 
 import javax.inject.Inject
 
-import forms.mappings.Mappings
+import forms.mappings.UtrMapping
 import models.register.establishers.individual.UniqueTaxReference
 import play.api.data.Form
 
-class DirectorUniqueTaxReferenceFormProvider @Inject() extends Mappings {
+class DirectorUniqueTaxReferenceFormProvider @Inject() extends UtrMapping {
 
   def apply(): Form[UniqueTaxReference] = Form(
     "uniqueTaxReference" -> uniqueTaxReferenceMapping(
-      key = "uniqueTaxReference",
       requiredKey = "messages__error__has_sautr_director",
-      requiredUtrKey = "messages__error__sautr",
-      requiredReasonKey = "messages__error__no_sautr_director",
-      invalidUtrKey = "messages__error__sautr_invalid",
-      maxLengthReasonKey = "messages__error__no_sautr_length")
+      requiredReasonKey = "messages__error__no_sautr_director"
+    )
   )
 }

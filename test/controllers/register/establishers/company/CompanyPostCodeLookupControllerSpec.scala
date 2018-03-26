@@ -21,11 +21,10 @@ import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.PostCodeLookupFormProvider
+import forms.address.PostCodeLookupFormProvider
 import models.address.{Address, AddressRecord}
 import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers
-import org.mockito.Matchers.{eq => eqTo}
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -48,6 +47,17 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   def onwardRoute: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
   def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex)
 
+  private def fakeAddress(postCode: String) = Address(
+    "Address Line 1",
+    "Address Line 2",
+    Some("Address Line 3"),
+    Some("Address Line 4"),
+    Some(postCode),
+    "GB"
+  )
+
+  private val testAnswer = "AB12 1AB"
+
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
 
@@ -56,6 +66,8 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
   val firstIndex = Index(0)
   val companyName: String = "test company name"
+
+
 
   val company = CompanyDetails(companyName, None, None)
 
@@ -103,12 +115,12 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
       val call: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
 
-      val validPostcode = "ZZ11ZZ"
+      val validPostcode = "ZZ1 1ZZ"
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(
-          Some(Seq(AddressRecord(Address("address line 1", "address line 2", None, None, Some(validPostcode), "GB"))))
-        ))
+          Some(Seq(AddressRecord(fakeAddress(testAnswer)))))
+        )
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),

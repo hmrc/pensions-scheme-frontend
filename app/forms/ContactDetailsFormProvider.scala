@@ -14,37 +14,30 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package forms
 
 import javax.inject.Inject
 
-import forms.mappings.Mappings
+import forms.mappings.{EmailMapping, PhoneNumberMapping}
 import models.register.establishers.individual.ContactDetails
 import play.api.data.Form
 import play.api.data.Forms._
 
-class ContactDetailsFormProvider @Inject() extends Mappings {
+class ContactDetailsFormProvider @Inject() extends EmailMapping with PhoneNumberMapping {
 
-  val regexPhoneNumber = "\\d*"
-  val maxLengthPhone = 24
-  val maxEmailLength = 132
-  val emailRegex = "^[^@<>]+@[^@<>]+$"
-
-   def apply(): Form[ContactDetails] = Form(
-     mapping(
-      "emailAddress" -> text("messages__error__email").verifying(
-        returnOnFirstFailure(
-          maxLength(maxEmailLength, "messages__error__email_length"),
-          regexp(emailRegex, "messages__error__email_invalid")
-        )
+  def apply(): Form[ContactDetails] = Form(
+    mapping(
+      "emailAddress" -> emailMapping(
+        "messages__error__email",
+        "messages__error__email_length",
+        "messages__error__email_invalid"
       ),
-      "phoneNumber" -> text("messages__error__phone").verifying(
-        returnOnFirstFailure(
-          maxLength(maxLengthPhone, "messages__error__phone_length"),
-          regexp(regexPhoneNumber, "messages__error__phone_invalid")
-        )
+      "phoneNumber" -> phoneNumberMapping(
+        "messages__error__phone",
+        "messages__error__phone_length",
+        "messages__error__phone_invalid"
       )
     )(ContactDetails.apply)(ContactDetails.unapply)
-   )
+  )
 
 }

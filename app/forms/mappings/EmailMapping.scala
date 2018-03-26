@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-package models.register.establishers.company.director
+package forms.mappings
 
-import play.api.libs.json._
+import play.api.data.Mapping
 
-case class DirectorContactDetails(emailAddress: String, phoneNumber: String)
+trait EmailMapping extends Mappings {
 
-object DirectorContactDetails {
-  implicit val format = Json.format[DirectorContactDetails]
+  def emailMapping(keyEmailRequired: String, keyEmailLength: String, keyEmailInvalid: String): Mapping[String] = {
+    text(keyEmailRequired)
+      .verifying(
+        returnOnFirstFailure(
+          maxLength(EmailMapping.maxEmailLength, keyEmailLength),
+          emailAddress(keyEmailInvalid)
+        )
+      )
+  }
+
 }
+
+object EmailMapping {
+  val maxEmailLength: Int = 132
+}
+

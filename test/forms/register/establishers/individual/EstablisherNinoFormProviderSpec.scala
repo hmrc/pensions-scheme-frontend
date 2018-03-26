@@ -16,39 +16,25 @@
 
 package forms.register.establishers.individual
 
-import forms.FormSpec
-import models.EstablisherNino
+import forms.behaviours.NinoBehaviours
 
-class EstablisherNinoFormProviderSpec extends FormSpec {
+class EstablisherNinoFormProviderSpec extends NinoBehaviours  {
 
   val requiredKey = "messages__error__has_nino_establisher"
   val requiredNinoKey = "messages__error__nino"
   val requiredReasonKey = "messages__establisher__no_nino"
+  val reasonLengthKey: String = "messages__error__no_nino_length"
   val invalidNinoKey = "messages__error__nino_invalid"
 
-  val reasonMaxLength = 150
-  val reasonInvalidLength = 151
-  val formProvider = new EstablisherNinoFormProvider()()
-  val validData:Map[String,String] = Map(
-    "establisherNino.hasNino" ->"true",
-    "establisherNino.nino" -> "AB020202A"
-  )
+  val testForm = new EstablisherNinoFormProvider().apply()
 
   "EstablisherNino form provider" must {
-
-    "successfully bind when yes is selected and valid NINO is provided" in {
-      val form = formProvider.bind(Map("establisherNino.hasNino" -> "true", "establisherNino.nino" -> "AB020202A"))
-      form.get shouldBe EstablisherNino.Yes("AB020202A")
-    }
-
-    "successfully bind when no is selected and reason is provided" in {
-      val form = formProvider.bind(Map("establisherNino.hasNino" -> "false", "establisherNino.reason" -> "haven't got Nino"))
-      form.get shouldBe EstablisherNino.No("haven't got Nino")
-    }
-
-    "fail to bind when value is omitted" in {
-      val expectedError = error("establisherNino.hasNino", requiredKey)
-      checkForError(formProvider, emptyForm, expectedError)
-    }
+    behave like formWithNino(testForm,
+      requiredKey,
+      requiredNinoKey,
+      requiredReasonKey,
+      reasonLengthKey,
+      invalidNinoKey
+    )
   }
 }

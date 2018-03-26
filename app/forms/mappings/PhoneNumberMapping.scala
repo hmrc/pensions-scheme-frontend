@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-package models
+package forms.mappings
 
-import play.api.libs.json._
+import play.api.data.Mapping
 
-case class CompanyContactDetails (emailAddress: String, phoneNumber: String)
+trait PhoneNumberMapping extends Mappings {
 
-object CompanyContactDetails {
-  implicit val format = Json.format[CompanyContactDetails]
+  def phoneNumberMapping(keyPhoneNumberRequired: String, keyPhoneNumberLength: String, keyPhoneNumberInvalid: String): Mapping[String] = {
+    text(keyPhoneNumberRequired)
+      .verifying(
+        returnOnFirstFailure(
+          maxLength(PhoneNumberMapping.maxPhoneNumberLength, keyPhoneNumberLength),
+          phoneNumber(keyPhoneNumberInvalid)
+        )
+      )
+  }
+
+}
+
+object PhoneNumberMapping {
+  val maxPhoneNumberLength = 24
 }

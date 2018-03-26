@@ -24,14 +24,13 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.individual.PreviousAddressId
-import models.register.CountryOptions
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
-import utils.{Navigator, UserAnswers}
+import utils.{CountryOptions, Navigator, UserAnswers}
 import views.html.register.establishers.individual.previousAddress
 
 import scala.concurrent.Future

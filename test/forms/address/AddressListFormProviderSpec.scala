@@ -26,7 +26,7 @@ class AddressListFormProviderSpec extends FormBehaviours {
 
   val form = new AddressListFormProvider()(Seq(0, 1))
 
-  "AddressResults form" must {
+  "AddressList form" must {
 
     behave like questionForm[Int](0)
 
