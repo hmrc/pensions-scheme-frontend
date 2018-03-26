@@ -431,3 +431,6 @@ messages__companyPostcodeLookup__field2 = Field 2
 messages__companyPostcodeLookup__checkYourAnswersLabel = companyPostcodeLookup
 messages__companyPostcodeLookup__error__field1_required = Please give an answer for field1
 messages__companyPostcodeLookup__error__field2_required = Please give an answer for field2
+
+addressList.title = addressList
+addressList.heading = addressList
