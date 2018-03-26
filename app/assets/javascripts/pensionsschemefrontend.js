@@ -51,7 +51,7 @@
   })
 
   if (document.querySelectorAll('select').length > 0) {
-    var graphUrl = '/assets/javascripts/autocomplete/location-autocomplete-graph.json'
+    var graphUrl = '/pensions-scheme/assets/javascripts/autocomplete/location-autocomplete-graph.json'
 
     openregisterLocationPicker({
       defaultValue: '',
