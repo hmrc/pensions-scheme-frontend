@@ -34,6 +34,10 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
+  def companyRegistrationNumberTrustee(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.company.CompanyRegistrationNumberId(index)) map {
+    x => AnswerRow("messages__companyRegistrationNumber__checkYourAnswersLabel", Seq(s"companyRegistrationNumber.$x"), true, controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index).url)
+  }
+
   def directorUniqueTaxReference(establisherIndex: Int, directorIndex:Int): Seq[AnswerRow] =
     userAnswers.get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
       case Some(x) => Seq(AnswerRow("directorUniqueTaxReference.checkYourAnswersLabel", Seq(s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}"), true,

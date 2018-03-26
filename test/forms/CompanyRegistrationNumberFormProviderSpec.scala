@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package forms
 
-import forms.FormSpec
-import forms.behaviours.FormBehaviours
 import models._
 
 class CompanyRegistrationNumberFormProviderSpec extends FormSpec {
