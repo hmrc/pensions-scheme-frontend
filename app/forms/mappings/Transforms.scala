@@ -16,8 +16,6 @@
 
 package forms.mappings
 
-import scala.annotation.tailrec
-
 trait Transforms {
 
   def vatRegistrationNumberTransform(value: String): String = {
