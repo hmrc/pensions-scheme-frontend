@@ -253,9 +253,13 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
   def establisherDetails(index: Int): Seq[AnswerRow] = userAnswers.get(EstablisherDetailsId(index)) match {
     case Some(details) =>
       Seq(
-        AnswerRow("messages__establisher_individual_name_cya_label", Seq(s"${details.firstName} ${details.lastName}"), false,
+        AnswerRow("messages__establisher_individual_name_cya_label",
+          Seq(Seq(Some(details.firstName), details.middleName, Some(details.lastName)).flatten.mkString(" ")),
+          false,
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url),
-        AnswerRow("messages__establisher_individual_dob_cya_label", Seq(s"${DateHelper.formatDate(details.date)}"), false,
+        AnswerRow("messages__establisher_individual_dob_cya_label",
+          Seq(s"${DateHelper.formatDate(details.date)}"),
+          false,
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, Index(index)).url)
       )
     case _ => Nil
