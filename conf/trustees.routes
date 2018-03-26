@@ -8,3 +8,8 @@ GET        /:index/company/previousAddress                       controllers.reg
 POST       /:index/company/previousAddress                       controllers.register.trustees.company.PreviousAddressController.onSubmit(mode: Mode = NormalMode, index:Index)
 GET        /:index/company/changePreviousAddress                 controllers.register.trustees.company.PreviousAddressController.onPageLoad(mode: Mode = CheckMode, index:Index)
 POST       /:index/company/changePreviousAddress                 controllers.register.trustees.company.PreviousAddressController.onSubmit(mode: Mode = CheckMode, index:Index)
+
+GET        /:index/company/companyAddress                       controllers.register.trustees.company.CompanyAddressController.onPageLoad(mode: Mode = NormalMode, index:Index)
+POST       /:index/company/companyAddress                       controllers.register.trustees.company.CompanyAddressController.onSubmit(mode: Mode = NormalMode, index:Index)
+GET        /:index/company/changeCompanyAddress                 controllers.register.trustees.company.CompanyAddressController.onPageLoad(mode: Mode = CheckMode, index:Index)
+POST       /:index/company/changeCompanyAddress                 controllers.register.trustees.company.CompanyAddressController.onSubmit(mode: Mode = CheckMode, index:Index)

@@ -20,12 +20,11 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.company.{PreviousAddressId, CompanyDetailsId}
+import identifiers.register.trustees.company.{CompanyDetailsId, PreviousAddressId}
 import models.address.Address
 import models.register.CountryOptions
 import models.{Index, Mode}
@@ -36,7 +35,7 @@ import utils.Navigator
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
-class PreviousAddressController @Inject() (
+class CompanyAddressController @Inject()(
                                         val appConfig: FrontendAppConfig,
                                         val messagesApi: MessagesApi,
                                         val dataCacheConnector: DataCacheConnector,
@@ -46,7 +45,9 @@ class PreviousAddressController @Inject() (
                                         requireData: DataRequiredAction,
                                         val formProvider: AddressFormProvider,
                                         val countryOptions: CountryOptions
-                                      ) extends ManualAddressController with I18nSupport with Retrievals {
+                                      ) extends ManualAddressController with I18nSupport {
+
+  private[controllers] val postCall = PreviousAddressController.onSubmit _
 
   private[controllers] val title: Message = "messages__companyAddress__title"
   private[controllers] val heading: Message = "messages__companyAddress__heading"
@@ -60,7 +61,7 @@ class PreviousAddressController @Inject() (
         CompanyDetailsId(index).retrieve.right.map {
           details =>
             ManualAddressViewModel(
-              PreviousAddressController.onSubmit(mode, Index(index)),
+              postCall(mode, Index(index)),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
