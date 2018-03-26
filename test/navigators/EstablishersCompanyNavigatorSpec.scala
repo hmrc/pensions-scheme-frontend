@@ -87,36 +87,30 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
       }
     }
     ".nextPage(CompanyAddressYears" must {
-      "return a 'Call' to 'Previous Address Postcode' page when 'AddressYears' is 'LessThanOneYear'" in {
-        (0 to 1).foreach {
-          index =>
-            val answers = new UserAnswers(Json.obj(
-              EstablishersId.toString -> Json.arr(
-                Json.obj(
-                  AddressYearsId.toString ->
-                    "under_a_year"
-                )
-              )
-            ))
-            val result = navigator.nextPage(CompanyAddressYearsId(index), NormalMode)(answers)
-            result mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0)
-        }
+      "return a 'Call' to 'Previous Address Postcode' page when 'CompanyAddressYears' is 'LessThanOneYear'" in {
+        val answers = new UserAnswers(Json.obj(
+          EstablishersId.toString -> Json.arr(
+            Json.obj(
+              CompanyAddressYearsId.toString ->
+                "under_a_year"
+            )
+          )
+        ))
+        val result = navigator.nextPage(CompanyAddressYearsId(0), NormalMode)(answers)
+        result mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0)
       }
-      "return a 'Call' to 'Company Contact Details' page when 'AddressYears' is 'MoreThanOneYear'" in {
-        (0 to 10).foreach {
-          index =>
-            val answers = new UserAnswers(Json.obj(
-              EstablishersId.toString -> Json.arr(
-                Json.obj(
-                  AddressYearsId.toString ->
-                    "over_a_year"
-                )
-              )
-            ))
-            val result = navigator.nextPage(CompanyAddressYearsId(index), NormalMode)(answers)
-            result mustEqual controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, 0)
-        }
-      }
+    }
+    "return a 'Call' to 'Company Contact Details' page when 'AddressYears' is 'MoreThanOneYear'" in {
+      val answers = new UserAnswers(Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            CompanyAddressYearsId.toString ->
+              "over_a_year"
+          )
+        )
+      ))
+      val result = navigator.nextPage(CompanyAddressYearsId(0), NormalMode)(answers)
+      result mustEqual controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, 0)
     }
   }
   "CheckMode" when {

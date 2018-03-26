@@ -44,7 +44,6 @@ class EstablishersCompanyNavigator @Inject() extends Navigator {
   }
 
   private def addressYearsRoutes(index: Int)(answers: UserAnswers): Call = {
-    println(answers.get(CompanyAddressYearsId(index)))
     answers.get(CompanyAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
         controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, index)
