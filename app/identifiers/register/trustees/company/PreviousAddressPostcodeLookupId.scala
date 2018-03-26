@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package forms.address
+package identifiers.register.trustees.company
 
-import javax.inject.Inject
+import identifiers._
+import identifiers.register.trustees.TrusteesId
+import models.address.Address
+import play.api.libs.json._
 
-import forms.mappings.Mappings
-import play.api.data.Form
+case class PreviousAddressPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[Address]] {
+  override def path: JsPath = __ \ TrusteesId.toString \ index \ PreviousAddressPostcodeLookupId.toString
+}
 
-class PostCodeLookupFormProvider @Inject() extends Mappings {
-  val maxLength = 8
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("messages__error__postcode").
-        verifying(maxLength(maxLength, "messages__error__postcode_length"))
-    )
+object PreviousAddressPostcodeLookupId {
+  override def toString: String = "previousAddressPostcodeLookup"
 }
