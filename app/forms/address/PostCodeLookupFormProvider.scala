@@ -17,12 +17,10 @@
 package forms.address
 
 import javax.inject.Inject
-
-import forms.FormErrorHelper
 import forms.mappings.AddressMapping
 import play.api.data.Form
 
-  class PostCodeLookupFormProvider @Inject() extends FormErrorHelper with AddressMapping {
+  class PostCodeLookupFormProvider @Inject() extends AddressMapping {
 
     def apply(): Form[String] =
       Form(
@@ -32,5 +30,4 @@ import play.api.data.Form
           "messages__error__postcode_invalid"
         )
       )
-
   }

@@ -68,6 +68,18 @@ trait UtrBehaviour extends FormSpec with UtrMapping {
         val result = testForm.bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" -> reason))
         result.errors shouldBe Seq(FormError("uniqueTaxReference.reason", maxLengthReasonKey, Seq(150)))
       }
+
+      "Successfully unbind 'uniqueTaxReference.hasUtr'" in {
+        val result = testForm.fill(UniqueTaxReference.Yes("utr")).data
+        result should contain("uniqueTaxReference.hasUtr" -> "true")
+        result should contain("uniqueTaxReference.utr" -> "utr")
+      }
+
+      "Successfully unbind 'uniqueTaxReference.no'" in {
+        val result = testForm.fill(UniqueTaxReference.No("reason")).data
+        result should contain("uniqueTaxReference.hasUtr" -> "false")
+        result should contain("uniqueTaxReference.reason" -> "reason")
+      }
     }
   }
 }

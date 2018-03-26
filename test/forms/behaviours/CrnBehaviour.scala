@@ -18,12 +18,14 @@ package forms.behaviours
 
 import forms.FormSpec
 import forms.mappings.CrnMapping
+import models.CompanyRegistrationNumber
+import models.CompanyRegistrationNumber
 import models.CompanyRegistrationNumber.Yes
 import play.api.data.{Form, FormError}
 
 trait CrnBehaviour extends FormSpec with CrnMapping {
 
-  def formWithCrn(testForm: Form[_]): Unit = {
+  def formWithCrn(testForm: Form[CompanyRegistrationNumber]): Unit = {
 
     "behave like form with crn" must {
 
@@ -47,6 +49,18 @@ trait CrnBehaviour extends FormSpec with CrnMapping {
       "fail to bind when CRN is invalid" in {
         val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "true", "companyRegistrationNumber.crn" -> "123.456"))
         result.errors shouldBe Seq(FormError("companyRegistrationNumber.crn", "messages__error__crn_invalid"))
+      }
+
+      "Successfully unbind 'companyRegistrationNumber.hasCrn'" in {
+        val result = testForm.fill(CompanyRegistrationNumber.Yes("crn")).data
+        result should contain("companyRegistrationNumber.hasCrn" -> "true")
+        result should contain("companyRegistrationNumber.crn" -> "crn")
+      }
+
+      "Successfully unbind 'companyRegistrationNumber.No'" in {
+        val result = testForm.fill(CompanyRegistrationNumber.No("reason")).data
+        result should contain("companyRegistrationNumber.hasCrn" -> "false")
+        result should contain("companyRegistrationNumber.reason" -> "reason")
       }
     }
   }

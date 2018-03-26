@@ -74,6 +74,18 @@ trait NinoBehaviours extends FormSpec with NinoMapping {
         val expectedError = error("nino.hasNino", requiredKey)
         checkForError(testForm, emptyForm, expectedError)
       }
+
+      "successfully unbind `Nino.Yes`" in {
+        val result = testForm.fill(Nino.Yes("nino")).data
+        result should contain("nino.hasNino" -> "true")
+        result should contain("nino.nino" -> "nino")
+      }
+
+      "successfully unbind `Nino.No`" in {
+        val result = testForm.fill(Nino.No("reason")).data
+        result should contain("nino.hasNino" -> "false")
+        result should contain("nino.reason" -> "reason")
+      }
     }
   }
 }
