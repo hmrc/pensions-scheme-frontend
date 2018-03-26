@@ -61,8 +61,11 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
   val form: Form[Address] = formProvider()
 
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
-    EstablishersId.toString -> Json.arr(Json.obj(DirectorDetailsId.toString -> directorDetails))
-  )))
+    EstablishersId.toString -> Json.arr(
+      Json.obj("director" -> Json.arr(
+        Json.obj(DirectorDetailsId.toString -> directorDetails)
+      )
+  )))))
 
   "PreviousAddress Controller" must {
 
