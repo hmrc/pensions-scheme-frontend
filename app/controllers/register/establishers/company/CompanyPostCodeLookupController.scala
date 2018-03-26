@@ -38,6 +38,7 @@ class CompanyPostCodeLookupController @Inject() (
                                                   override val messagesApi: MessagesApi,
                                                   override val cacheConnector: DataCacheConnector,
                                                   override val addressLookupConnector: AddressLookupConnector,
+                                                  @EstablishersCompany
                                                   override val  navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
