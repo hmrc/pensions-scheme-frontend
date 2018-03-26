@@ -29,13 +29,15 @@ import play.api.data.{Form, Forms}
 
 class CompanyDetailsFormProvider @Inject() extends Mappings with PayeMapping with VatMapping with Transforms {
 
+  val companyNameLength: Int = 160
+
   def apply(): Form[CompanyDetails] = Form(
     mapping(
       "companyName" -> text("messages__error__company_name")
         .verifying(
           firstError(
             maxLength(
-              CompanyDetailsFormProvider.companyNameLength,
+              companyNameLength,
               "messages__error__company_name_length"
             ),
             safeText("messages__error__company_name_invalid")
@@ -54,8 +56,4 @@ class CompanyDetailsFormProvider @Inject() extends Mappings with PayeMapping wit
       )
     )(CompanyDetails.apply)(CompanyDetails.unapply)
   )
-}
-
-object CompanyDetailsFormProvider {
-  val companyNameLength: Int = 160
 }

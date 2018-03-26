@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.individual.ContactDetailsFormProvider
+import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.company.CompanyContactDetailsId
 import models.register.establishers.individual.ContactDetails
 import models.{Index, Mode}

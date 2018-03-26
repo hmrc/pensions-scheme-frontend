@@ -35,7 +35,7 @@ package controllers.register.establishers.company
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.ContactDetailsFormProvider
+import forms.ContactDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyContactDetailsId, CompanyDetailsId}

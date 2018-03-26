@@ -17,7 +17,7 @@
 package views.register.establishers.company
 
 import controllers.register.establishers.company.routes
-import forms.register.establishers.individual.ContactDetailsFormProvider
+import forms.ContactDetailsFormProvider
 import models.register.establishers.individual.ContactDetails
 import models.{Index, NormalMode}
 import play.api.data.Form

@@ -25,7 +25,7 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import controllers.Retrievals
-import forms.register.establishers.individual.ContactDetailsFormProvider
+import forms.ContactDetailsFormProvider
 import models.{Index, Mode}
 import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
 import models.register.establishers.individual.ContactDetails

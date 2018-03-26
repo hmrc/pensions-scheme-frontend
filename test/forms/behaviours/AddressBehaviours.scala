@@ -43,8 +43,8 @@ trait AddressBehaviours extends FormSpec with StringFieldBehaviours with Constra
       behave like fieldWithMaxLength(
         form,
         fieldName,
-        maxLength = AddressMapping.maxAddressLineLength,
-        lengthError = FormError(fieldName, keyAddressLength, Seq(AddressMapping.maxAddressLineLength))
+        maxLength = maxAddressLineLength,
+        lengthError = FormError(fieldName, keyAddressLength, Seq(maxAddressLineLength))
       )
 
       behave like mandatoryField(
@@ -80,8 +80,8 @@ trait AddressBehaviours extends FormSpec with StringFieldBehaviours with Constra
       behave like fieldWithMaxLength(
         form,
         fieldName,
-        maxLength = AddressMapping.maxAddressLineLength,
-        lengthError = FormError(fieldName, keyAddressLength, Seq(AddressMapping.maxAddressLineLength))
+        maxLength = maxAddressLineLength,
+        lengthError = FormError(fieldName, keyAddressLength, Seq(maxAddressLineLength))
       )
 
       behave like fieldWithRegex(
@@ -108,8 +108,8 @@ trait AddressBehaviours extends FormSpec with StringFieldBehaviours with Constra
       behave like fieldWithMaxLength(
         form,
         fieldName,
-        maxLength = AddressMapping.maxPostCodeLength,
-        lengthError = FormError(fieldName, keyLength, Seq(AddressMapping.maxPostCodeLength))
+        maxLength = maxPostCodeLength,
+        lengthError = FormError(fieldName, keyLength, Seq(maxPostCodeLength))
       )
 
       behave like mandatoryField(

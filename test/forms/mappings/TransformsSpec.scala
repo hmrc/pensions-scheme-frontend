@@ -36,4 +36,11 @@ class TransformsSpec extends WordSpec with MustMatchers with TableDrivenProperty
     }
   }
 
+  "minimiseSpace" must {
+    "remove double spacing" in {
+      val actual = minimiseSpace("ABC  DEF")
+      actual mustBe "ABC DEF"
+    }
+  }
+
 }

@@ -16,9 +16,6 @@
 
 package forms
 
-import forms.behaviours.FormBehaviours
-import models.{CompanyDetails, Field, Required}
-import org.apache.commons.lang3.RandomStringUtils
 import forms.behaviours.{PayeBehaviours, StringFieldBehaviours, VatBehaviours}
 import forms.mappings.Constraints
 import org.scalatest.OptionValues
@@ -28,13 +25,15 @@ class CompanyDetailsFormProviderSpec extends StringFieldBehaviours with Constrai
 
   val form = new CompanyDetailsFormProvider()()
 
+  val companyNameLength: Int = 160
+
   ".companyName" must {
 
     val fieldName = "companyName"
     val requiredKey = "messages__error__company_name"
     val lengthKey = "messages__error__company_name_length"
     val invalidKey = "messages__error__company_name_invalid"
-    val maxLength = CompanyDetailsFormProvider.companyNameLength
+    val maxLength = companyNameLength
 
     behave like fieldThatBindsValidData(
       form,

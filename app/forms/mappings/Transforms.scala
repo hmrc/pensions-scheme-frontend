@@ -36,13 +36,6 @@ trait Transforms {
     value.replaceAll(" ", "")
   }
 
-  @tailrec
-  protected final def minimiseSpace(value: String): String = {
-    if (value.contains("  ")) {
-      minimiseSpace(value.replaceAll("  ", " "))
-    } else {
-      value
-    }
-  }
-
+  protected def minimiseSpace(value: String): String =
+    value.replaceAll(" {2,}", " ")
 }

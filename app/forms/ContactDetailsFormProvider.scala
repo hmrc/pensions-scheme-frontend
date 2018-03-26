@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package forms
 
 import javax.inject.Inject
 

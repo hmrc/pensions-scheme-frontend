@@ -22,12 +22,16 @@ import utils.CountryOptions
 
 trait AddressMapping extends Mappings with Transforms {
 
+
+  val maxAddressLineLength = 35
+  val maxPostCodeLength = 8
+
   def addressLineMapping(keyRequired: String, keyLength: String, keyInvalid: String): Mapping[String] = {
     text(keyRequired)
       .verifying(
         firstError(
           maxLength(
-            AddressMapping.maxAddressLineLength,
+            maxAddressLineLength,
             keyLength
           ),
           addressLine(keyInvalid)
@@ -41,7 +45,7 @@ trait AddressMapping extends Mappings with Transforms {
         .verifying(
           firstError(
             maxLength(
-              AddressMapping.maxAddressLineLength,
+              maxAddressLineLength,
               keyLength
             ),
             addressLine(keyInvalid)
@@ -73,7 +77,7 @@ trait AddressMapping extends Mappings with Transforms {
       .verifying(
         firstError(
           maxLength(
-            AddressMapping.maxPostCodeLength,
+            maxPostCodeLength,
             keyLength
           ),
           postCode(keyInvalid)
@@ -121,10 +125,4 @@ trait AddressMapping extends Mappings with Transforms {
     text(keyRequired)
       .verifying(country(countryOptions, keyInvalid))
   }
-
-}
-
-object AddressMapping {
-  val maxAddressLineLength = 35
-  val maxPostCodeLength = 8
 }

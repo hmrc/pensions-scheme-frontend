@@ -16,6 +16,7 @@
 
 package forms.register.establishers.individual
 
+import forms.ContactDetailsFormProvider
 import forms.behaviours.{EmailBehaviours, PhoneNumberBehaviours, StringFieldBehaviours}
 import forms.mappings.Constraints
 
