@@ -18,24 +18,28 @@ package forms.address
 
 import javax.inject.Inject
 
-import forms.mappings.Mappings
+import forms.mappings.AddressMapping
 import models.address.Address
-import play.api.data.{Form, Forms}
-import play.api.data.Forms.{mapping, optional}
+import play.api.data.Form
+import play.api.data.Forms.mapping
+import utils.CountryOptions
 
-class AddressFormProvider @Inject() extends Mappings {
-
-  val addressLineMaxLength = 35
-  val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
+class AddressFormProvider @Inject()(countryOptions: CountryOptions) extends AddressMapping {
 
   def apply(): Form[Address] = Form(
     mapping(
-      "addressLine1" -> text("messages__error__addr1").verifying(maxLength(addressLineMaxLength, "messages__error__addr1_length")),
-      "addressLine2" -> text("messages__error__addr2").verifying(maxLength(addressLineMaxLength, "messages__error__addr2_length")),
-      "addressLine3" -> optional(Forms.text.verifying(maxLength(addressLineMaxLength, "messages__error__addr3_length"))),
-      "addressLine4" -> optional(Forms.text.verifying(maxLength(addressLineMaxLength, "messages__error__addr4_length"))),
-      "postCode" -> postCodeMapping("messages__error__postcode", "messages__error__postcode_invalid"),
-      "country" -> text("messages__error__scheme_country")
+      "addressLine1" ->
+        addressLineMapping("messages__error__address_line_1_required", "messages__error__address_line_1_length", "messages__error__address_line_1_invalid"),
+      "addressLine2" ->
+        addressLineMapping("messages__error__address_line_2_required", "messages__error__address_line_2_length", "messages__error__address_line_2_invalid"),
+      "addressLine3" ->
+        optionalAddressLineMapping("messages__error__address_line_3_length", "messages__error__address_line_3_invalid"),
+      "addressLine4" ->
+        optionalAddressLineMapping("messages__error__address_line_4_length", "messages__error__address_line_4_invalid"),
+      "postCode" ->
+        postCodeWithCountryMapping("messages__error__postcode", "messages__error__postcode_invalid"),
+      "country" ->
+        countryMapping(countryOptions, "messages__error_country_required", "messages__error_country_invalid")
     )(Address.apply)(Address.unapply)
   )
 }

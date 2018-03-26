@@ -25,12 +25,11 @@ import controllers.actions._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.company.CompanyAddressId
 import models.Mode
-import models.register.CountryOptions
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
+import utils.{CountryOptions, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyAddress
 
 import scala.concurrent.Future

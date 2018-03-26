@@ -36,7 +36,7 @@ class CompanyAddressListViewSpec extends ViewBehaviours {
   )
 
   private def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
+    Some("test county"), postCode = Some(postCode), country = "United Kingdom")
 
   private def createView =
     () => companyAddressList(frontendAppConfig, form, NormalMode, 0, addresses, "Company Name")(fakeRequest, messages)

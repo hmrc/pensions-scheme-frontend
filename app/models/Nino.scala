@@ -14,49 +14,47 @@
  * limitations under the License.
  */
 
-package models.register.establishers.company.director
+package models
 
 import play.api.libs.json._
 import utils.InputOption
 
-sealed trait DirectorNino
+sealed trait Nino
 
-object DirectorNino {
+object Nino {
 
-  case class Yes(nino: String) extends DirectorNino
-  case class No(reason: String) extends DirectorNino
+  case class Yes(nino: String) extends Nino
+  case class No(reason: String) extends Nino
 
   def options: Seq[InputOption] = Seq(
-    InputOption("true", "site.yes", Some("directorNino_nino-form")),
-    InputOption("false", "site.no", Some("directorNino_reason-form"))
+    InputOption("true", "site.yes", Some("nino_nino-form")),
+    InputOption("false", "site.no", Some("nino_reason-form"))
   )
 
-  implicit val reads: Reads[DirectorNino] = {
+  implicit val reads: Reads[Nino] = {
 
     (JsPath \ "hasNino").read[Boolean].flatMap {
 
       case true =>
         (JsPath \ "nino").read[String]
-          .map[DirectorNino](Yes.apply)
-          .orElse(Reads[DirectorNino](_ => JsError("NINO Value expected")))
+          .map[Nino](Yes.apply)
+          .orElse(Reads[Nino](_ => JsError("NINO Value expected")))
 
       case false =>
         (JsPath \ "reason").read[String]
-          .map[DirectorNino](No.apply)
-          .orElse(Reads[DirectorNino](_ => JsError("Reason expected")))
+          .map[Nino](No.apply)
+          .orElse(Reads[Nino](_ => JsError("Reason expected")))
     }
   }
 
-  implicit lazy val writes = new Writes[DirectorNino] {
-    def writes(o: DirectorNino) = {
+  implicit lazy val writes = new Writes[Nino] {
+    def writes(o: Nino) = {
       o match {
-        case DirectorNino.Yes(nino) =>
+        case Nino.Yes(nino) =>
           Json.obj("hasNino" -> true, "nino" -> nino)
-        case DirectorNino.No(reason) =>
+        case Nino.No(reason) =>
           Json.obj("hasNino" -> false, "reason" -> reason)
       }
     }
   }
 }
-
-

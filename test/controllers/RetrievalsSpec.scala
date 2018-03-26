@@ -20,9 +20,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
 import models.CompanyDetails
-import models.register.establishers.company.director.{DirectorContactDetails, DirectorDetails}
 import models.register.{SchemeDetails, SchemeType}
 import models.requests.DataRequest
 import org.scalatest.EitherValues
@@ -33,7 +31,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.UserAnswers
-import org.joda.time.LocalDate
 import scala.concurrent.Future
 
 class RetrievalsSpec extends ControllerSpecBase with FrontendController with Retrievals with EitherValues with ScalaFutures {

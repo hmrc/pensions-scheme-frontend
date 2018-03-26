@@ -25,18 +25,19 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyDetailsId, CompanyPreviousAddressId}
 import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption}
 import views.html.register.establishers.company.companyPreviousAddress
 
 class CompanyPreviousAddressControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new AddressFormProvider()
+  val formProvider = new AddressFormProvider(FakeCountryOptions())
   val form = formProvider()
   val companyName = "test company name"
   val index = Index(0)
@@ -56,7 +57,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase {
     )
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyPreviousAddressController =
     new CompanyPreviousAddressController(
       frontendAppConfig,
       messagesApi,
@@ -69,7 +70,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase {
       countryOptions
     )
 
-  def viewAsString(form: Form[_] = form) = companyPreviousAddress(frontendAppConfig, form, NormalMode, index, companyName, options)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = companyPreviousAddress(frontendAppConfig, form, NormalMode, index, companyName, options)(fakeRequest, messages).toString
 
   "CompanyPreviousAddress Controller" must {
 
@@ -92,7 +93,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(
         ("addressLine1", "address line 1"),
         ("addressLine2", "address line 2"),
-        ("postCode.postCode", "AB12 3CD"),
+        ("postCode", "AB12 3CD"),
         "country" -> "GB")
       val result = controller().onSubmit(NormalMode, index)(postRequest)
 

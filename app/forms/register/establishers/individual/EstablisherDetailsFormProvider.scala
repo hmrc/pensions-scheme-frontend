@@ -26,23 +26,20 @@ import play.api.data.Forms._
 class EstablisherDetailsFormProvider @Inject() extends Mappings {
 
   val nameMaxLength = 35
-  val regexFirstName = "[a-zA-Z]{1}[a-zA-Z-‘]*"
-  val regexMiddleName ="[a-zA-Z-‘]*"
-  val regexLastName = "[a-zA-Z0-9,.‘(&)-/ ]*"
 
    def apply(): Form[EstablisherDetails] = Form(
      mapping(
        "firstName" -> text("messages__error__first_name").verifying(returnOnFirstFailure(
          maxLength(nameMaxLength, "messages__error__first_name_length"),
-         regexp(regexFirstName, "messages__error__first_name_invalid"))
+         regexp(regexName, "messages__error__first_name_invalid"))
        ),
        "middleName" -> optional(text("messages__error__middle_name").verifying(returnOnFirstFailure(
          maxLength(nameMaxLength, "messages__error__middle_name_length"),
-         regexp(regexMiddleName, "messages__error__middle_name_invalid"))
+         regexp(regexName, "messages__error__middle_name_invalid"))
        )),
        "lastName" -> text("messages__error__last_name").verifying(returnOnFirstFailure(
          maxLength(nameMaxLength, "messages__error__last_name_length"),
-         regexp(regexLastName, "messages__error__last_name_invalid"))
+         regexp(regexName, "messages__error__last_name_invalid"))
        ),
        "date" -> dateMapping("messages__error__date").verifying(futureDate("messages__error__date_future"))
     )(EstablisherDetails.apply)(EstablisherDetails.unapply)

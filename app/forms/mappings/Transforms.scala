@@ -14,12 +14,26 @@
  * limitations under the License.
  */
 
-package models
+package forms.mappings
 
-import play.api.libs.json._
+trait Transforms {
 
-case class CompanyContactDetails (emailAddress: String, phoneNumber: String)
+  def vatRegistrationNumberTransform(value: String): String = {
+    strip(value).replaceAll("^[gG][bB]", "")
+  }
 
-object CompanyContactDetails {
-  implicit val format = Json.format[CompanyContactDetails]
+  def noTransform(value: String): String = {
+    value
+  }
+
+  def standardTextTransform(value: String): String = {
+    value.trim
+  }
+
+  protected def strip(value: String): String = {
+    value.replaceAll(" ", "")
+  }
+
+  protected def minimiseSpace(value: String): String =
+    value.replaceAll(" {2,}", " ")
 }

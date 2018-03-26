@@ -27,9 +27,8 @@ import config.FrontendAppConfig
 import forms.register.SchemeEstablishedCountryFormProvider
 import identifiers.register.SchemeEstablishedCountryId
 import models.Mode
-import models.register.CountryOptions
 import play.api.mvc.{Action, AnyContent}
-import utils.{Navigator, UserAnswers}
+import utils.{CountryOptions, Navigator, UserAnswers}
 import views.html.register.schemeEstablishedCountry
 
 import scala.concurrent.Future

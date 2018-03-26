@@ -26,14 +26,14 @@ import forms.behaviours.FormBehaviours
 
     val form = new AddressListFormProvider()(Seq(0, 1))
 
-  "AddressResults form" must {
+  "AddressList form" must {
 
     behave like questionForm[Int](0)
 
     "fail to bind when value is omitted" in {
       val expectedError = error("value", "messages__error__select_address")
       checkForError(form, emptyForm, expectedError)
-    } 
+    }
 
     "fail to bind when value is negative" in {
       val expectedError = error("value", "error.invalid", 0)

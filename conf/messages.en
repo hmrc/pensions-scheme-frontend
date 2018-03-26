@@ -66,13 +66,18 @@ messages__error__no_sautr_establisher = You need to tell us why the establisher 
 messages__error__no_sautr_length = The reason cannot be more than 150 characters
 messages__error__email = Enter an email address
 messages__error__phone = Enter a phone number
-messages__error__addr1 = Enter the first line of address
-messages__error__addr2 = Enter the second line of address
-messages__error__addr1_length = The first line of address cannot be more than 35 characters
-messages__error__addr2_length = The second line of address cannot be more than 35 characters
-messages__error__addr3_length = The third line of address cannot be more than 35 characters
-messages__error__addr4_length = The fourth line of address cannot be more than 35 characters
-messages__error__country = Enter a country
+messages__error__address_line_1_required = Enter the first line of address
+messages__error__address_line_2_required = Enter the second line of address
+messages__error__address_line_1_length = The first line of address cannot be more than 35 characters
+messages__error__address_line_2_length = The second line of address cannot be more than 35 characters
+messages__error__address_line_3_length = The third line of address cannot be more than 35 characters
+messages__error__address_line_4_length = The fourth line of address cannot be more than 35 characters
+messages__error__address_line_1_invalid = The first line of the address contains invalid characters
+messages__error__address_line_2_invalid = The second line of the address contains invalid characters
+messages__error__address_line_3_invalid = The third line of the address contains invalid characters
+messages__error__address_line_4_invalid = The fourth line of the address contains invalid characters
+messages__error_country_required = Enter a country
+messages__error_country_invalid = Enter a valid country
 
 messages__common__cya__name = Name
 messages__common__cya__address = Address
@@ -157,6 +162,8 @@ messages__benefits_insurance__title = Benefits insurer
 messages__benefits_insurance__name = Name of insurance company
 messages__benefits_insurance__policy = Policy number
 messages__error__company_name = Enter the company name
+messages__error__company_name_invalid = The name contains invalid characters
+
 messages__error__benefits_insurance__policy = Enter the policy number
 messages__error__company_name_length = The company name cannot be more than 255 characters
 messages__error__benefits_insurance__policy_length = The policy number cannot be more than 255 characters
@@ -355,6 +362,9 @@ messages__company__cya__crn_no_reason = Why the scheme establisher does not have
 messages__company__cya__utr_yes_no = Does the scheme establisher have a Unique Taxpayer Reference number?
 messages__company__cya__utr = UTR
 messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number
+messages__company__paye_error_length = The PAYE number cannot be more than 13 characters
+messages__company__paye_error_invalid = Enter a valid PAYE number
+
 
 messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
 

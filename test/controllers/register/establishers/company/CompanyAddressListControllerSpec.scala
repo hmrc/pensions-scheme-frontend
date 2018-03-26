@@ -42,7 +42,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionVal
   )
 
   def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
+    Some("test county"), postCode = Some(postCode), country = "United Kingdom")
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyAddressListController =
     new CompanyAddressListController(

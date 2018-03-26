@@ -17,14 +17,12 @@
 package controllers.register.establishers.company
 
 import play.api.data.Form
-import play.api.libs.json.JsString
-import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import play.api.libs.json._
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.company.CompanyPreviousAddressPostcodeLookupId
 import models.{CompanyDetails, Index, NormalMode}
 import views.html.register.establishers.company.companyPreviousAddressList
 import controllers.ControllerSpecBase
@@ -49,7 +47,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
   )
 
   def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
+    Some("test county"), postCode = Some(postCode), country = "United Kingdom")
 
   val validData = Json.obj(
     SchemeDetailsId.toString ->
