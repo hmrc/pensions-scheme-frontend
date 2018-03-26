@@ -19,13 +19,13 @@ package controllers.register.establishers.company
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import controllers.register.establishers.company.routes.CompanyPostCodeLookupController
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyDetailsId, CompanyPostCodeLookupId}
-import models.{Index, Mode}
-import models.address.Address
 import models.requests.DataRequest
+import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.Navigator
@@ -41,53 +41,29 @@ class CompanyAddressListController @Inject()(
         override val messagesApi: MessagesApi,
         authenticate: AuthAction,
         getData: DataRetrievalAction,
-        requireData: DataRequiredAction) extends AddressListController {
+        requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async { implicit request =>
-
-    addressListViewModel(mode, index) match {
-      case Some(viewModel) => get(viewModel)
-      case _ => redirectToPostCodeLookup(mode, index)
-    }
-
+    viewmodel(mode, index).right.map(get)
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async { implicit request =>
 
-    addressListViewModel(mode, index) match {
-      case Some(viewModel) => post(viewModel, CompanyAddressId(index), mode)
-      case _ => redirectToPostCodeLookup(mode, index)
+    viewmodel(mode, index).right.map {
+      vm =>
+        post(vm, CompanyAddressId(index), mode)
     }
-
   }
 
-  private def addressListViewModel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Option[AddressListViewModel] = {
-
-    retrieve(index).map { case (companyName, addresses) =>
-        val postCall = routes.CompanyAddressListController.onSubmit(mode, index)
-        val manualInputCall = routes.CompanyAddressController.onPageLoad(mode, index)
-
+  private def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+    (CompanyDetailsId(index) and CompanyPostCodeLookupId(index)).retrieve.right.map {
+      case companyDetails ~ addresses =>
         AddressListViewModel(
-          postCall,
-          manualInputCall,
-          addresses,
-          subHeading = Some(Message(companyName))
+          postCall        = routes.CompanyAddressListController.onSubmit(mode, index),
+          manualInputCall = routes.CompanyAddressController.onPageLoad(mode, index),
+          addresses       = addresses,
+          subHeading      = Some(Message(companyDetails.companyName))
         )
-    }
-
+    }.left.map(_ => Future.successful(Redirect(CompanyPostCodeLookupController.onPageLoad(mode, index))))
   }
-
-  private def retrieve(index: Index)(implicit request: DataRequest[AnyContent]): Option[(String, Seq[Address])] = {
-
-    (request.userAnswers.get(CompanyDetailsId(index)), request.userAnswers.get(CompanyPostCodeLookupId(index))) match {
-      case (Some(companyDetails), Some(addresses)) => Some((companyDetails.companyName, addresses))
-      case _ => None
-    }
-
-  }
-
-  private def redirectToPostCodeLookup(mode: Mode, index: Index): Future[Result] = {
-    Future.successful(Redirect(CompanyPostCodeLookupController.onPageLoad(mode, index)))
-  }
-
 }

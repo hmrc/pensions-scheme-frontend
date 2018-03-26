@@ -44,7 +44,6 @@ trait AddressListController extends FrontendController with I18nSupport {
 
     val form = formProvider(viewModel.addresses)
     Future.successful(Ok(addressList(appConfig, form, viewModel)))
-
   }
 
   protected def post(viewModel: AddressListViewModel, id: TypedIdentifier[Address], mode: Mode)
@@ -58,7 +57,5 @@ trait AddressListController extends FrontendController with I18nSupport {
           json => Redirect(navigator.nextPage(id, mode)(UserAnswers(json)))
         )
     )
-
   }
-
 }
