@@ -16,7 +16,8 @@
 
 package views.register.establishers.company
 
-import forms.register.establishers.individual.AddressListFormProvider
+import forms.address.AddressListFormProvider
+import models.address.Address
 import play.api.data.Form
 import models.{Index, NormalMode}
 import controllers.register.establishers.company.routes

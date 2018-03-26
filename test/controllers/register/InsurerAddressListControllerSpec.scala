@@ -19,7 +19,7 @@ package controllers.register
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.AddressListFormProvider
+import forms.address.AddressListFormProvider
 import identifiers.register.{InsurerAddressId, InsurerPostCodeLookupId}
 import models.NormalMode
 import models.address.Address

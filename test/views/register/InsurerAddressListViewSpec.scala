@@ -16,7 +16,7 @@
 
 package views.register
 
-import forms.register.establishers.individual.AddressListFormProvider
+import forms.address.AddressListFormProvider
 import models.NormalMode
 import models.address.Address
 import org.jsoup.Jsoup

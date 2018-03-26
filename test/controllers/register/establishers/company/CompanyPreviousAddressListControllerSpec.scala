@@ -26,7 +26,7 @@ import identifiers.register.establishers.company.CompanyPreviousAddressPostcodeL
 import models.{CompanyDetails, Index, NormalMode}
 import views.html.register.establishers.company.companyPreviousAddressList
 import controllers.ControllerSpecBase
-import forms.register.establishers.individual.AddressListFormProvider
+import forms.address.AddressListFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import models.address.Address

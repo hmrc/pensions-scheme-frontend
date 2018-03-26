@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
+package controllers.register.establishers.company.director
 
 import base.CSRFRequest
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
+import identifiers.register.establishers.company.director.{DirectorPreviousAddressPostcodeLookupId, DirectorDetailsId}
 import models.address.Address
-import models.{CompanyDetails, Index, NormalMode}
+import models.register.establishers.company.director.DirectorDetails
+import models.{Index, NormalMode}
+import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -33,9 +35,9 @@ import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
-class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
+class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
 
-  private val companyDetails = CompanyDetails("test company name", None, None)
+  private val directorDetails = DirectorDetails("Joe", None, "Bloggs", LocalDate.now())
 
   private val addresses = Seq(
     Address(
@@ -58,13 +60,13 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
   private val data =
     UserAnswers(Json.obj())
-      .set(CompanyDetailsId(0))(companyDetails)
-      .flatMap(_.set(CompanyPostCodeLookupId(0))(addresses))
+      .set(DirectorDetailsId(0, 0))(directorDetails)
+      .flatMap(_.set(DirectorPreviousAddressPostcodeLookupId(0, 0))(addresses))
       .asOpt.map(_.json)
 
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
 
-  "Company Address List Controller" must {
+  "Company Director Previous Address List Controller" must {
 
     "return Ok and the correct view on a GET request" in {
 
@@ -73,7 +75,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))))
+        val request = addToken(FakeRequest(routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, Index(0), Index(0))))
         val result = route(app, request).value
 
         status(result) mustBe OK
@@ -93,11 +95,11 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))))
+        val request = addToken(FakeRequest(routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, Index(0), Index(0))))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(Index(0), Index(0)).url)
       }
 
     }
@@ -109,7 +111,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
-        val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))))
+        val request = addToken(FakeRequest(routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, Index(0), Index(0))))
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
@@ -127,7 +129,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)))
+            FakeRequest(routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0)))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
@@ -148,7 +150,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)))
+            FakeRequest(routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0)))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
@@ -169,14 +171,14 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       )) { implicit app =>
         val request =
           addToken(
-            FakeRequest(routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)))
+            FakeRequest(routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0)))
               .withFormUrlEncodedBody(("value", "0"))
           )
 
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(Index(0), Index(0)).url)
       }
 
     }
@@ -185,10 +187,10 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
   private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
     AddressListViewModel(
-      routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)),
-      routes.CompanyAddressController.onPageLoad(NormalMode, Index(0)),
+      routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0)),
+      routes.DirectorPreviousAddressController.onPageLoad(Index(0), Index(0)),
       addresses,
-      subHeading = Some(Message(companyDetails.companyName))
+      subHeading = Some(Message(directorDetails.directorName))
     )
   }
 

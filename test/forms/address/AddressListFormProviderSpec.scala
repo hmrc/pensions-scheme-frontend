@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.individual
+package forms.address
 
 import forms.behaviours.FormBehaviours
 
-  class AddressListFormProviderSpec extends FormBehaviours {
+class AddressListFormProviderSpec extends FormBehaviours {
 
-    val validData: Map[String, String] = Map(
-      "value" -> "0"
-    )
+  val validData: Map[String, String] = Map(
+    "value" -> "0"
+  )
 
-    val form = new AddressListFormProvider()(Seq(0, 1))
+  val form = new AddressListFormProvider()(Seq(0, 1))
 
   "AddressList form" must {
 
@@ -44,5 +44,7 @@ import forms.behaviours.FormBehaviours
       val expectedError = error("value", "error.invalid", 1)
       checkForError(form, Map("value" -> "2"), expectedError)
     }
+
   }
+
 }
