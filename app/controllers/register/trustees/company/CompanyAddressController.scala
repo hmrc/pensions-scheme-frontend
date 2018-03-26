@@ -24,7 +24,7 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId, PreviousAddressId}
+import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId}
 import models.address.Address
 import models.register.CountryOptions
 import models.{Index, Mode}
@@ -74,7 +74,7 @@ class CompanyAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map{
         vm =>
-          get(PreviousAddressId(index), vm)
+          get(CompanyAddressId(index), vm)
       }
   }
 
