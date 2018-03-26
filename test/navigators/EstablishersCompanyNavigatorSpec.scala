@@ -112,7 +112,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         result mustEqual controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, 0)
       }
     }
-    ".nextPage(PreviousAddressPostCode" must {
+    ".nextPage(CompanyPreviousAddressPostCode" must {
       "return a 'Call' to 'Previous Address Picker' page" in {
         (0 to 10).foreach {
           index =>
@@ -122,7 +122,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
       }
     }
   }
-  ".nextPage(PreviousAddressPicker" must {
+  ".nextPage(CompanyPreviousAddressPicker" must {
     "return a 'Call' to 'Previous Address Manual' page" in {
       (0 to 10).foreach {
         index =>
@@ -131,7 +131,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
       }
     }
   }
-  ".nextPage(PreviousAddressManual" must {
+  ".nextPage(CompanyPreviousAddressManual" must {
     "return a 'Call' to 'Company Contact Details" in {
       (0 to 10).foreach {
         index =>
@@ -271,7 +271,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         (0 to 10).foreach {
           index =>
             val result = navigator.nextPage(CompanyPreviousAddressId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
+            result mustEqual controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(CheckMode, index)
         }
       }
     }
