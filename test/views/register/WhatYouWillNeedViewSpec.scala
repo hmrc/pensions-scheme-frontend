@@ -17,6 +17,7 @@
 package views.register
 
 import controllers.register.routes
+import models.NormalMode
 import views.behaviours.ViewBehaviours
 import org.jsoup.Jsoup
 import views.html.register.whatYouWillNeed
@@ -33,7 +34,7 @@ class WhatYouWillNeedViewSpec extends ViewBehaviours {
       "_lede", "_item_1", "_item_2", "_item_3", "_item_4", "_item_5")
 
     "have link" in {
-      Jsoup.parse(createView().toString()).select("a.button") must haveLink(routes.WhatYouWillNeedController.onPageLoad().url)
+      Jsoup.parse(createView().toString()).select("a.button") must haveLink(routes.SchemeDetailsController.onPageLoad(NormalMode).url)
     }
   }
 }

@@ -29,7 +29,7 @@ import models.{Index, NormalMode}
 import views.html.register.establishers.individual.previousPostCodeLookup
 import play.api.libs.json._
 import controllers.ControllerSpecBase
-import models.addresslookup.{Address, AddressRecord}
+import models.address.{Address, AddressRecord}
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._

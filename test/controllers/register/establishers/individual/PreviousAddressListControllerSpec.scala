@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.register.establishers.individual.AddressListFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
-import models.addresslookup.Address
+import models.address.Address
 import models.register.establishers.individual.{EstablisherDetails, UniqueTaxReference}
 import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode}

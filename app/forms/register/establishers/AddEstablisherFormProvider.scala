@@ -18,12 +18,20 @@ package forms.register.establishers
 
 import javax.inject.Inject
 import forms.mappings.Mappings
-import play.api.data.Form
+import play.api.data.{Form, Forms}
 
 class AddEstablisherFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("messages__error__selection")
-    )
+  def apply(establishers: Seq[_]): Form[Option[Boolean]] = {
+    if (establishers.isEmpty) {
+      Form(
+        "value" -> Forms.optional(boolean("messages__error__selection"))
+      )
+    } else {
+      Form(
+        "value" -> Forms.optional(boolean("messages__error__selection"))
+          .verifying("messages__error__selection", _.isDefined)
+      )
+    }
+  }
 }

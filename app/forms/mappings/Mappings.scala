@@ -17,7 +17,7 @@
 package forms.mappings
 
 import models.EstablisherNino
-import models.addresslookup.Address
+import models.address.Address
 import models.register.{SchemeType, SortCode}
 import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
 import models.register.establishers.individual.UniqueTaxReference
@@ -222,8 +222,12 @@ protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
           case str if str.trim.replaceAll("[- ]", "").length > 6 =>
             Left(Seq(FormError(key, maxErrorKey)))
           case str =>
-            val a :: b :: c :: Nil = str.sliding(2, 2).toList
-            Right(SortCode(a, b, c))
+            str.sliding(2, 2).toList match {
+              case a :: b :: c :: Nil =>
+                Right(SortCode(a, b, c))
+              case _ =>
+                Left(Seq(FormError(key, invalidKey)))
+            }
         }
       }
 

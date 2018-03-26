@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.register.establishers.individual.routes._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
-import models.addresslookup.Address
+import models.address.Address
 import models.register.establishers.individual.UniqueTaxReference.{No, Yes}
 import models.register.establishers.individual.{ContactDetails, EstablisherDetails}
 import models.register.{CountryOptions, SchemeDetails, SchemeType}
@@ -35,7 +35,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
   val countryOptions: CountryOptions = new CountryOptions(inputOptions)
   val firstIndex = Index(0)
 
-  val establisherDetails = EstablisherDetails("test first name", None, "test last name", LocalDate.now)
+  val establisherDetails = EstablisherDetails("test first name", Some("test middle name"), "test last name", LocalDate.now)
 
   def checkYourAnswerHelper(userAnswers: UserAnswers): CheckYourAnswersHelper = new CheckYourAnswersHelper(
     userAnswers, countryOptions
@@ -227,6 +227,31 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           SchemeDetails("value 1", SchemeType.SingleTrust)),
           "establishers" -> Json.arr(
             Json.obj(EstablisherDetailsId.toString -> establisherDetails)
+          ))
+      )
+      val expectedOutput = Seq(
+        AnswerRow(
+          "messages__establisher_individual_name_cya_label",
+          Seq("test first name test middle name test last name"),
+          false,
+          EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url
+        ),
+        AnswerRow(
+          "messages__establisher_individual_dob_cya_label",
+          Seq(s"${DateHelper.formatDate(LocalDate.now)}"),
+          false,
+          EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url
+        )
+      )
+      checkYourAnswerHelper(userAnswers).establisherDetails(firstIndex) mustEqual expectedOutput
+    }
+
+    "return the AnswerRows for establisher details No MiddleName" in {
+      val userAnswers = new UserAnswers(
+        Json.obj(SchemeDetailsId.toString -> Json.toJson(
+          SchemeDetails("value 1", SchemeType.SingleTrust)),
+          "establishers" -> Json.arr(
+            Json.obj(EstablisherDetailsId.toString -> establisherDetails.copy(middleName=None))
           ))
       )
       val expectedOutput = Seq(

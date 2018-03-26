@@ -19,11 +19,11 @@ package controllers.register.establishers.company
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.AddressFormProvider
+import forms.address.AddressFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyDetailsId, CompanyPreviousAddressId}
-import models.addresslookup.Address
+import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
 import models.register.{CountryOptions, SchemeDetails, SchemeType}
 import play.api.data.Form
@@ -57,8 +57,17 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
-    new CompanyPreviousAddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider, countryOptions)
+    new CompanyPreviousAddressController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider,
+      countryOptions
+    )
 
   def viewAsString(form: Form[_] = form) = companyPreviousAddress(frontendAppConfig, form, NormalMode, index, companyName, options)(fakeRequest, messages).toString
 

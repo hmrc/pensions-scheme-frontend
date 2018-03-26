@@ -34,3 +34,5 @@ class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigat
   def lastUserAnswers: Option[UserAnswers] = userAnswers
 
 }
+
+object FakeNavigator extends FakeNavigator(Call("GET", "www.example.com"), NormalMode)
