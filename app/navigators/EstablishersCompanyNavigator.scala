@@ -17,7 +17,7 @@
 package navigators
 
 import identifiers.Identifier
-import models.{AddressYears, NormalMode}
+import models.{AddressYears, CheckMode, NormalMode}
 import play.api.mvc.Call
 import utils.{Navigator, UserAnswers}
 import com.google.inject.{Inject, Singleton}
@@ -25,6 +25,9 @@ import identifiers.register.establishers.company._
 
 @Singleton
 class EstablishersCompanyNavigator @Inject() extends Navigator {
+
+  private def checkYourAnswers(index: Int)(answers: UserAnswers): Call =
+    controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
 
   override protected val routeMap: PartialFunction[Identifier, UserAnswers => Call] = {
     case CompanyDetailsId(index) =>
@@ -51,12 +54,41 @@ class EstablishersCompanyNavigator @Inject() extends Navigator {
       _ => controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
   }
 
+  override protected val editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
+    case CompanyDetailsId(index) => checkYourAnswers(index)
+    case CompanyRegistrationNumberId(index) => checkYourAnswers(index)
+    case CompanyUniqueTaxReferenceId(index) => checkYourAnswers(index)
+    case CompanyPostCodeLookupId(index) =>
+      _ => controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(CheckMode, index)
+    case CompanyAddressListId(index) =>
+      _ => controllers.register.establishers.company.routes.CompanyAddressController.onPageLoad(CheckMode, index)
+    case CompanyAddressId(index) => checkYourAnswers(index)
+    case CompanyAddressYearsId(index) => editAddressYearsRoutes(index)
+    case CompanyPreviousAddressPostcodeLookupId(index) =>
+      _ => controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(CheckMode, index)
+    case CompanyPreviousAddressListId(index) =>
+      _ => controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index)
+    case CompanyPreviousAddressId(index) => checkYourAnswers(index)
+    case CompanyContactDetailsId(index) => checkYourAnswers(index)
+  }
+
   private def addressYearsRoutes(index: Int)(answers: UserAnswers): Call = {
     answers.get(CompanyAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
         controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, index)
       case Some(AddressYears.OverAYear) =>
         controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index)
+      case None =>
+        controllers.routes.SessionExpiredController.onPageLoad()
+    }
+  }
+
+  private def editAddressYearsRoutes(index: Int)(answers: UserAnswers): Call = {
+    answers.get(CompanyAddressYearsId(index)) match {
+      case Some(AddressYears.UnderAYear) =>
+        controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, index)
+      case Some(AddressYears.OverAYear) =>
+        controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
       case None =>
         controllers.routes.SessionExpiredController.onPageLoad()
     }

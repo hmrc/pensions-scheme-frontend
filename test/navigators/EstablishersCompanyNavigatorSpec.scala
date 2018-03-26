@@ -19,7 +19,7 @@ package navigators
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.individual.AddressYearsId
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{FunSuite, MustMatchers, WordSpec}
 import play.api.libs.json.Json
@@ -149,6 +149,141 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
       }
     }
   }
+
   "CheckMode" when {
+
+    ".nextPage(CompanyDetails)" must {
+      "return a `Call` to `CheckYourAnswers` page" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyDetailsId(index), CheckMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
+        }
+      }
+    }
+
+    ".nextPage(CompanyRegistrationNumber)" must {
+      "return a `Call` to `CheckYourAnswers` page" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyRegistrationNumberId(index), CheckMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
+        }
+      }
+    }
+
+    ".nextPage(CompanyUniqueTaxReference)" must {
+      "return a `Call` to `CheckYourAnswers` page" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyUniqueTaxReferenceId(index), CheckMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
+        }
+      }
+    }
+
+    ".nextPage(CompanyPostCodeLookupId)" must {
+      "return a `Call` to `CompanyAddressList` page" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyPostCodeLookupId(index), CheckMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CompanyAddressListController.onPageLoad(CheckMode, index)
+        }
+      }
+    }
+
+    ".nextPage(CompanyAddressListId)" must {
+      "return a `Call` to `CompanyAddress` page" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyAddressListId(index), CheckMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CompanyAddressController.onPageLoad(CheckMode, index)
+        }
+      }
+    }
+
+    ".nextPage(CompanyAddressId)" must {
+      "return a `Call` to `CheckYourAnswers` page" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyAddressId(index), CheckMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
+        }
+      }
+    }
+
+    ".nextPage(CompanyAddressYears)" must {
+
+      "return a `Call` to `CompanyPreviousPostCodeLookup` page when `CompanyAddressYears` is `UnderAYear`" in {
+        val answers = new UserAnswers(Json.obj(
+          EstablishersId.toString -> Json.arr(
+            Json.obj(
+              CompanyAddressYearsId.toString ->
+                "under_a_year"
+            )
+          )
+        ))
+        val result = navigator.nextPage(CompanyAddressYearsId(0), CheckMode)(answers)
+        result mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, 0)
+      }
+
+      "return a `Call` to `CheckYourAnswersPage` page when `CompanyAddressYears` is `OverAYear`" in {
+        val answers = new UserAnswers(Json.obj(
+          EstablishersId.toString -> Json.arr(
+            Json.obj(
+              CompanyAddressYearsId.toString ->
+                "over_a_year"
+            )
+          )
+        ))
+        val result = navigator.nextPage(CompanyAddressYearsId(0), CheckMode)(answers)
+        result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(0)
+      }
+
+      "return a `Call` to `SessionExpired` page when `CompanyAddressYears` is undefined" in {
+        val result = navigator.nextPage(CompanyAddressYearsId(0), CheckMode)(emptyAnswers)
+        result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
+      }
+    }
+
+    ".nextPage(CompanyPreviousAddressPostCodeLookup)" must {
+      "return a `Call` to `CompanyPreviousAddressList`" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyPreviousAddressPostcodeLookupId(index), CheckMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(CheckMode, index)
+        }
+      }
+    }
+
+    ".nextPage(CompanyPreviousAddressList)" must {
+      "return a `Call` to `CompanyPreviousAddress`" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyPreviousAddressListId(index), CheckMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index)
+        }
+      }
+    }
+
+    ".nextPage(CompanyPreviousAddress)" must {
+      "return a `Call` to `CheckYourAnswers`" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyPreviousAddressId(index), CheckMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
+        }
+      }
+    }
+
+    ".nextPage(CompanyContactDetails)" must {
+      "return a `Call` to `CheckYourAnswers`" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyContactDetailsId(index), CheckMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
+        }
+      }
+    }
   }
 }
