@@ -81,7 +81,8 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
             countryOptions.options,
             Message(controller.title),
             Message(controller.heading),
-            secondaryHeader = Some(companyDetails.companyName)
+            secondaryHeader = Some(companyDetails.companyName),
+            Message(controller.hint)
           )
 
           def viewAsString(form: Form[_] = form) = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
