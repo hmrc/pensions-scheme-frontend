@@ -44,9 +44,6 @@ class DirectorAddressPostcodeLookupController @Inject() (
                                         formProvider: PostCodeLookupFormProvider
                                       ) extends PostcodeLookupController {
 
-  private val invalidPostcode: Message = "messages__error__postcode_invalid"
-  private val noResults: Message = "messages__error__postcode_no_results"
-
   protected val form: Form[String] = formProvider()
 
   private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode): Retrieval[PostcodeLookupViewModel] =
