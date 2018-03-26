@@ -1,32 +1,29 @@
 #!/bin/bash
 
-echo "Applying migration PreviousAddressPostcodeLookup"
+echo "Applying migration CompanyPreviousAddressList"
 
-echo "Adding routes to trustees.routes"
+echo "Adding routes to register.trustees.company.routes"
 
-echo "" >> ../conf/trustees.routes
-echo "GET        /previousAddressPostcodeLookup                       controllers.trustees.PreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/trustees.routes
-echo "POST       /previousAddressPostcodeLookup                       controllers.trustees.PreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode)" >> ../conf/trustees.routes
+echo "" >> ../conf/register.trustees.company.routes
+echo "GET        /companyPreviousAddressList               controllers.register.trustees.company.CompanyPreviousAddressListController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.company.routes
+echo "POST       /companyPreviousAddressList               controllers.register.trustees.company.CompanyPreviousAddressListController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.company.routes
 
-echo "GET        /changePreviousAddressPostcodeLookup                       controllers.trustees.PreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/trustees.routes
-echo "POST       /changePreviousAddressPostcodeLookup                       controllers.trustees.PreviousAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode)" >> ../conf/trustees.routes
+echo "GET        /changeCompanyPreviousAddressList                        controllers.register.trustees.company.CompanyPreviousAddressListController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.company.routes
+echo "POST       /changeCompanyPreviousAddressList                        controllers.register.trustees.company.CompanyPreviousAddressListController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.company.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo messages__"previousAddressPostcodeLookup__title = previousAddressPostcodeLookup" >> ../conf/messages.en
-echo messages__"previousAddressPostcodeLookup__heading = previousAddressPostcodeLookup" >> ../conf/messages.en
-echo messages__"previousAddressPostcodeLookup__field1 = Field 1" >> ../conf/messages.en
-echo messages__"previousAddressPostcodeLookup__field2 = Field 2" >> ../conf/messages.en
-echo messages__"previousAddressPostcodeLookup__checkYourAnswersLabel = previousAddressPostcodeLookup" >> ../conf/messages.en
-echo messages__"previousAddressPostcodeLookup__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
-echo messages__"previousAddressPostcodeLookup__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
+echo "messages__companyPreviousAddressList__title = companyPreviousAddressList" >> ../conf/messages.en
+echo "messages__companyPreviousAddressList__heading = companyPreviousAddressList" >> ../conf/messages.en
+echo "messages__companyPreviousAddressList__checkYourAnswersLabel = companyPreviousAddressList" >> ../conf/messages.en
+echo "messages__companyPreviousAddressList__error__required = Please give an answer for companyPreviousAddressList" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def previousAddressPostcodeLookup: Option[AnswerRow] = userAnswers.get(identifiers.trustees.PreviousAddressPostcodeLookupId) map {";\
-     print "    x => AnswerRow(\"previousAddressPostcodeLookup.checkYourAnswersLabel\", Seq(s\"${x.field1} ${x.field2}\"), false, controllers.trustees.routes.PreviousAddressPostcodeLookupController.onPageLoad(CheckMode).url)";\
+     print "  def companyPreviousAddressList: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.company.CompanyPreviousAddressListId) map {";\
+     print "    x => AnswerRow(\"companyPreviousAddressList.checkYourAnswersLabel\", Seq(s\"$x\"), false, controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -34,4 +31,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration PreviousAddressPostcodeLookup completed"
+echo "Migration CompanyPreviousAddressList completed"
