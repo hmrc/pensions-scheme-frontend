@@ -16,13 +16,13 @@
 
 package views.register.establishers.company
 
-import forms.register.establishers.individual.PostCodeLookupFormProvider
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
 import play.api.data.Form
 import views.behaviours.StringViewBehaviours
 import views.html.register.establishers.company.companyPreviousAddressPostcodeLookup
 import controllers.register.establishers.company.routes
+import forms.address.PostCodeLookupFormProvider
 
 class CompanyPreviousAddressPostcodeLookupViewSpec extends StringViewBehaviours {
 

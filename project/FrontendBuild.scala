@@ -26,6 +26,7 @@ private object AppDependencies {
   private val playLanguageVersion = "3.4.0"
   private val bootstrapVersion = "1.4.0"
   private val domainVersion = "5.1.0"
+  private val scalacheckGenRegexp = "0.1.0"
   private val wireMockVersion = "2.15.0"
 
   val compile = Seq(
@@ -58,7 +59,9 @@ private object AppDependencies {
         "org.jsoup" % "jsoup" % "1.10.3" % scope,
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
         "org.mockito" % "mockito-all" % mockitoAllVersion % scope,
-        "com.github.tomakehurst" % "wiremock" % wireMockVersion % scope
+        "com.github.tomakehurst" % "wiremock" % wireMockVersion % scope,
+        "wolfendale" %% "scalacheck-gen-regexp" % scalacheckGenRegexp % scope
+
       )
     }.test
   }

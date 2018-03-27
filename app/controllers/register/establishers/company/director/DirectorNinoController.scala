@@ -27,8 +27,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import forms.register.establishers.company.director.DirectorNinoFormProvider
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoId}
-import models.register.establishers.company.director.DirectorNino
-import models.{Index, Mode}
+import models.{Index, Mode, Nino}
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.director.directorNino
@@ -46,7 +45,7 @@ class DirectorNinoController @Inject()(
                                                formProvider: DirectorNinoFormProvider
                                              ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private val form: Form[DirectorNino] = formProvider()
+  private val form: Form[Nino] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

@@ -22,7 +22,7 @@ import models.NormalMode
 import models.address.Address
 import play.api.data.Form
 import play.api.mvc.Call
-import utils.InputOption
+import utils.{FakeCountryOptions, InputOption}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.behaviours.QuestionViewBehaviours
@@ -42,10 +42,10 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
     Some("secondary.header")
   )
 
-  override val form = new AddressFormProvider()()
+  override val form = new AddressFormProvider(FakeCountryOptions())()
 
   def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable = () =>
-    manualAddress(frontendAppConfig, new AddressFormProvider().apply(), viewModel)(fakeRequest, messages)
+    manualAddress(frontendAppConfig, new AddressFormProvider(FakeCountryOptions()).apply(), viewModel)(fakeRequest, messages)
 
   def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[_]) =>
     manualAddress(frontendAppConfig, form, viewModel)(fakeRequest, messages)

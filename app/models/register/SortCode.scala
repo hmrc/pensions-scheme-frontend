@@ -16,7 +16,7 @@
 
 package models.register
 
-import play.api.libs.json.{Format, JsPath, Json}
+import play.api.libs.json.Json
 
 case class SortCode(first: String, second: String, third: String)
 

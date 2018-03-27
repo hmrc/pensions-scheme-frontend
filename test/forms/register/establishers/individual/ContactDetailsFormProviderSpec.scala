@@ -16,64 +16,43 @@
 
 package forms.register.establishers.individual
 
-import forms.behaviours.FormBehaviours
-import models.{Field, Required}
-import models.register.establishers.individual.ContactDetails
-import org.apache.commons.lang3.RandomStringUtils
+import forms.ContactDetailsFormProvider
+import forms.behaviours.{EmailBehaviours, PhoneNumberBehaviours, StringFieldBehaviours}
+import forms.mappings.Constraints
 
-class ContactDetailsFormProviderSpec extends FormBehaviours {
+class ContactDetailsFormProviderSpec extends StringFieldBehaviours with EmailBehaviours with PhoneNumberBehaviours with Constraints {
 
-  val validData: Map[String, String] = Map(
-    "emailAddress" -> "test@test.com",
-    "phoneNumber" -> "123456789"
-  )
-  val emailRegex = "^[^@<>]+@[^@<>]+$"
-  val regexPhoneNumber = "\\d*"
   val form = new ContactDetailsFormProvider()()
 
-  "ContactDetails form" must {
-    behave like questionForm(ContactDetails("test@test.com", "123456789"))
+  ".email" must {
 
-    behave like formWithMandatoryTextFields(
-      Field("emailAddress", Required -> "messages__error__email"),
-      Field("phoneNumber", Required -> "messages__error__phone")
+    val fieldName = "emailAddress"
+    val keyEmailRequired = "messages__error__email"
+    val keyEmailLength = "messages__error__email_length"
+    val keyEmailInvalid = "messages__error__email_invalid"
+
+    behave like formWithEmailField(
+      form,
+      fieldName,
+      keyEmailRequired,
+      keyEmailLength,
+      keyEmailInvalid
     )
 
-    Seq("@test.com", "<>@ghghg", "fhgfhgfggf", "test@<>.com").foreach { email =>
-      s"fail to bind when the email $email is invalid" in {
-        val data = validData + ("emailAddress" -> email)
-
-        val expectedError = error("emailAddress", "messages__error__email_invalid", emailRegex)
-        checkForError(form, data, expectedError)
-      }
-    }
-
-    "fail to bind when email exceeds max length 132" in {
-      val maxlengthEmail = 132
-      val testString = s"${RandomStringUtils.random(50)}@${RandomStringUtils.random(82)}"
-      val data = validData + ("emailAddress" -> testString)
-
-      val expectedError = error("emailAddress", "messages__error__email_length", maxlengthEmail)
-      checkForError(form, data, expectedError)
-    }
-
-    Seq("zfsadfdsf", "<>13213cvfdv").foreach { phoneNo =>
-      s"fail to bind when the phone number $phoneNo is invalid" in {
-        val data = validData + ("phoneNumber" -> phoneNo)
-
-        val expectedError = error("phoneNumber", "messages__error__phone_invalid", regexPhoneNumber)
-        checkForError(form, data, expectedError)
-      }
-    }
-
-    "fail to bind when phoneNumber exceeds max length 24" in {
-      val invalidPhoneNumber = "1234567890123456789012345"
-      val maxlengthPhone = 24
-      val data = validData + ("phoneNumber" -> invalidPhoneNumber)
-
-      val expectedError = error("phoneNumber", "messages__error__phone_length", maxlengthPhone)
-      checkForError(form, data, expectedError)
-    }
   }
 
+  ".phone" must {
+    val fieldName = "phoneNumber"
+    val keyPhoneNumberRequired = "messages__error__phone"
+    val keyPhoneNumberLength = "messages__error__phone_length"
+    val keyPhoneNumberInvalid = "messages__error__phone_invalid"
+
+    behave like formWithPhoneNumberField(
+      form,
+      fieldName,
+      keyPhoneNumberRequired,
+      keyPhoneNumberLength,
+      keyPhoneNumberInvalid
+    )
+  }
 }

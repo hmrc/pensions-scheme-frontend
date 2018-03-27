@@ -25,10 +25,10 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import controllers.Retrievals
+import forms.ContactDetailsFormProvider
 import models.{Index, Mode}
-import forms.register.establishers.company.director.DirectorContactDetailsFormProvider
 import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
-import models.register.establishers.company.director.DirectorContactDetails
+import models.register.establishers.individual.ContactDetails
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.director.directorContactDetails
@@ -42,10 +42,10 @@ class DirectorContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
-                                                 formProvider: DirectorContactDetailsFormProvider
+                                                 formProvider: ContactDetailsFormProvider
                                                        ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
 
-  val form: Form[DirectorContactDetails] = formProvider()
+  val form: Form[ContactDetails] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
