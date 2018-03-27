@@ -24,7 +24,6 @@ import controllers.actions._
 import play.api.test.Helpers._
 import identifiers.register.trustees.company.CompanyContactDetailsId
 import models.{CompanyDetails, Index, NormalMode}
-import models.register.trustees.company.CompanyContactDetails
 import views.html.register.trustees.company.companyContactDetails
 import controllers.ControllerSpecBase
 import forms.ContactDetailsFormProvider
@@ -57,7 +56,7 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
         CompanyDetailsId.toString ->
         CompanyDetails("test company name", Some("123456"), Some("abcd")),
         CompanyContactDetailsId.toString ->
-        CompanyContactDetails("test@test.com", "123456789")
+        ContactDetails("test@test.com", "123456789")
       ),
       Json.obj(
         CompanyDetailsId.toString ->
