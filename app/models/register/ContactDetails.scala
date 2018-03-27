@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.register.establishers.individual
+package models.register
 
 import play.api.libs.json._
 

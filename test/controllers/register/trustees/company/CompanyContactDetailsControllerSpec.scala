@@ -31,8 +31,7 @@ import forms.ContactDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.trustees.TrusteesId
-import models.register.establishers.individual.ContactDetails
-import models.register.{SchemeDetails, SchemeType}
+import models.register.{ContactDetails, SchemeDetails, SchemeType}
 
 class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
 

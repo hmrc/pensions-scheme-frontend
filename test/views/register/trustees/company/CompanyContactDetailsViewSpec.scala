@@ -19,7 +19,7 @@ package views.register.trustees.company
 import play.api.data.Form
 import controllers.register.trustees.company.routes
 import forms.ContactDetailsFormProvider
-import models.register.establishers.individual.ContactDetails
+import models.register.ContactDetails
 import models.{Index, NormalMode}
 import models.register.trustees.company.CompanyContactDetails
 import views.behaviours.QuestionViewBehaviours

@@ -28,7 +28,7 @@ import controllers.Retrievals
 import forms.ContactDetailsFormProvider
 import models.{Index, Mode}
 import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
-import models.register.establishers.individual.ContactDetails
+import models.register.ContactDetails
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.director.directorContactDetails

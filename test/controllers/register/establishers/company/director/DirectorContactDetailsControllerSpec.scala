@@ -24,8 +24,8 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
 import models._
+import models.register.ContactDetails
 import models.register.establishers.company.director.DirectorDetails
-import models.register.establishers.individual.ContactDetails
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json

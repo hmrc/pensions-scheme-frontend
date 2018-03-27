@@ -18,7 +18,7 @@ package identifiers.register.establishers.company.director
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import models.register.establishers.individual.ContactDetails
+import models.register.ContactDetails
 import play.api.libs.json.JsPath
 
 

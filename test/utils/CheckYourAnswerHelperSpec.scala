@@ -22,8 +22,8 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
 import models.address.Address
 import models.register.establishers.individual.UniqueTaxReference.{No, Yes}
-import models.register.establishers.individual.{ContactDetails, EstablisherDetails}
-import models.register.{SchemeDetails, SchemeType}
+import models.register.establishers.individual.EstablisherDetails
+import models.register.{ContactDetails, SchemeDetails, SchemeType}
 import models.{AddressYears, CheckMode, Index, Nino}
 import org.joda.time.LocalDate
 import play.api.libs.json._

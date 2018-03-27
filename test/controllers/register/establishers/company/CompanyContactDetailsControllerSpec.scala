@@ -40,8 +40,7 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyContactDetailsId, CompanyDetailsId}
 import models._
-import models.register.establishers.individual.ContactDetails
-import models.register.{SchemeDetails, SchemeType}
+import models.register.{ContactDetails, SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
