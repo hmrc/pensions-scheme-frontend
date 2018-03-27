@@ -19,7 +19,7 @@ package forms
 import javax.inject.Inject
 
 import forms.mappings.{EmailMapping, PhoneNumberMapping}
-import models.register.ContactDetails
+import models.ContactDetails
 import play.api.data.Form
 import play.api.data.Forms._
 
