@@ -412,6 +412,10 @@ messages__director_sautr_hint_format = A Unique Taxpayer Reference number is 10 
 messages__error__has_sautr_director = Select yes if the director has a Unique Taxpayer Reference number
 messages__error__no_sautr_director = You need to tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
 
+messages__director__cya__utr_yes_no = Does the director have a Self Assessment Unique Taxpayer Reference number?
+messages__director__cya__utr = Unique Taxpayer Reference number
+messages__director__cya__utr_no_reason = Why the director does not have a Self Assessment Unique Taxpayer Reference number
+
 messages__confirmDeleteDirector__title = Confirm deletion
 messages__confirmDeleteDirector__heading = Are you sure you want to delete %s?
 

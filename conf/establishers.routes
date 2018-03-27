@@ -141,6 +141,9 @@ POST       /:index/company/changeCompanyPreviousAddress                       co
 GET        /:index/company/checkYourAnswers                       controllers.register.establishers.company.CheckYourAnswersController.onPageLoad(index: Index)
 POST       /:index/company/checkYourAnswers                       controllers.register.establishers.company.CheckYourAnswersController.onSubmit(index: Index)
 
+GET        /:establisherIndex/company/:directorIndex/checkYourAnswers                       controllers.register.establishers.company.director.CheckYourAnswersController.onPageLoad(establisherIndex: Index, directorIndex: Index)
+POST       /:establisherIndex/company/:directorIndex/checkYourAnswers                       controllers.register.establishers.company.director.CheckYourAnswersController.onSubmit(establisherIndex: Index, directorIndex: Index)
+
 GET        /:establisherIndex/company/director/:directorIndex/directorNino                       controllers.register.establishers.company.director.DirectorNinoController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
 POST       /:establisherIndex/company/director/:directorIndex/directorNino                       controllers.register.establishers.company.director.DirectorNinoController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, directorIndex: Index)
 GET        /:establisherIndex/company/director/:directorIndex/changeDirectorNino                       controllers.register.establishers.company.director.DirectorNinoController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, directorIndex: Index)

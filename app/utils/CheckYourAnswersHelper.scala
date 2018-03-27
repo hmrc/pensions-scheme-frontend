@@ -40,9 +40,26 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
 
   def directorUniqueTaxReference(establisherIndex: Int, directorIndex:Int): Seq[AnswerRow] =
     userAnswers.get(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex)) match {
-      case Some(x) => Seq(AnswerRow("directorUniqueTaxReference.checkYourAnswersLabel", Seq(s"${UniqueTaxReference.Yes} ${UniqueTaxReference.No}"), true,
+      case Some(UniqueTaxReference.Yes(utr)) => Seq(
+        AnswerRow("messages__director__cya__utr_yes_no", Seq(s"${UniqueTaxReference.Yes}"), false,
         controllers.register.establishers.company.director.routes.DirectorUniqueTaxReferenceController.onPageLoad(
-          CheckMode, establisherIndex, directorIndex).url))
+          CheckMode,Index(establisherIndex), Index(directorIndex)
+        ).url),
+        AnswerRow("messages__director__cya__utr", Seq(s"$utr"), false,
+          controllers.register.establishers.company.director.routes.DirectorUniqueTaxReferenceController.onPageLoad(
+            CheckMode,Index(establisherIndex), Index(directorIndex)
+          ).url)
+      )
+      case Some(UniqueTaxReference.No(reason)) => Seq(
+        AnswerRow("messages__director__cya__utr_yes_no", Seq(s"${UniqueTaxReference.No}"), false,
+        controllers.register.establishers.company.director.routes.DirectorUniqueTaxReferenceController.onPageLoad(
+          CheckMode,Index(establisherIndex), Index(directorIndex)
+        ).url),
+        AnswerRow("messages__director__cya__utr_no_reason", Seq(s"$reason"), false,
+          controllers.register.establishers.company.director.routes.DirectorUniqueTaxReferenceController.onPageLoad(
+            CheckMode,Index(establisherIndex), Index(directorIndex)
+          ).url)
+      )
       case _ => Seq.empty
     }
 
