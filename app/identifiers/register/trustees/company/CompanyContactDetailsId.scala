@@ -19,7 +19,7 @@ package identifiers.register.trustees.company
 import identifiers.TypedIdentifier
 import play.api.libs.json.JsPath
 import identifiers.register.trustees.TrusteesId
-import models.register.ContactDetails
+import models.ContactDetails
 
 
 case class CompanyContactDetailsId(index: Int) extends TypedIdentifier[ContactDetails] {

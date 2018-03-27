@@ -24,8 +24,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.individual.ContactDetailsId
-import models.register.ContactDetails
-import models.{Index, Mode}
+import models.{ContactDetails, Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}

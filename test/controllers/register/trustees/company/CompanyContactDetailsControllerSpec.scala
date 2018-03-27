@@ -23,14 +23,14 @@ import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import identifiers.register.trustees.company.CompanyContactDetailsId
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, ContactDetails, Index, NormalMode}
 import views.html.register.trustees.company.companyContactDetails
 import controllers.ControllerSpecBase
 import forms.ContactDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.trustees.TrusteesId
-import models.register.{ContactDetails, SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeType}
 
 class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
 

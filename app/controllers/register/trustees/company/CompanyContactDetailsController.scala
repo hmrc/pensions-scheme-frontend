@@ -27,8 +27,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import forms.ContactDetailsFormProvider
 import identifiers.register.trustees.company.{CompanyContactDetailsId, CompanyDetailsId}
-import models.register.ContactDetails
-import models.{Index, Mode}
+import models.{ContactDetails, Index, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.trustees.company.companyContactDetails

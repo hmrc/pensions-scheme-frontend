@@ -18,7 +18,7 @@ package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import models.register.ContactDetails
+import models.ContactDetails
 import play.api.libs.json.JsPath
 
 case class CompanyContactDetailsId(index: Int) extends TypedIdentifier[ContactDetails] {
