@@ -19,6 +19,7 @@ package views.address
 import forms.address.AddressYearsFormProvider
 import models.AddressYears
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import viewmodels.address.AddressYearsViewModel
@@ -33,7 +34,7 @@ class AddressYearsViewSpec extends ViewBehaviours {
 
   val viewmodel = AddressYearsViewModel(
     postCall = Call("GET", "www.example.com"),
-    title = "title",
+    title = "How long has the establisher been at this address?",
     heading = "heading",
     legend = "legend"
   )
@@ -44,7 +45,7 @@ class AddressYearsViewSpec extends ViewBehaviours {
     addressYears(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
 
   "AddressYears view" must {
-    behave like normalPage(createView, messageKeyPrefix, viewmodel.title)
+    behave like normalPage(createView, messageKeyPrefix, viewmodel.heading)
 
     behave like pageWithBackLink(createView)
   }

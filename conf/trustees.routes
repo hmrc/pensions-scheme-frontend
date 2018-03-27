@@ -39,6 +39,11 @@ POST       /:index/company/companyContactDetails                       controlle
 GET        /:index/company/changeCompanyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/company/changeCompanyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
 
+GET        /:index/company/companyAddressYears                       controllers.register.trustees.company.AddressYearsController.onPageLoad(mode: Mode = NormalMode, index:Index)
+POST       /:index/company/companyAddressYears                       controllers.register.trustees.company.AddressYearsController.onSubmit(mode: Mode = NormalMode, index:Index)
+GET        /:index/company/changeCompanyAddressYears                controllers.register.trustees.company.AddressYearsController.onPageLoad(mode: Mode = CheckMode, index:Index)
+POST       /:index/company/changeCompanyAddressYears               controllers.register.trustees.company.AddressYearsController.onSubmit(mode: Mode = CheckMode, index:Index)
+
 GET        /:index/company/companyRegistrationNumber               controllers.register.trustees.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = NormalMode, index:Index)
 POST       /:index/company/companyRegistrationNumber               controllers.register.trustees.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = NormalMode, index:Index)
 GET        /:index/company/changeCompanyRegistrationNumber               controllers.register.trustees.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = CheckMode, index:Index)

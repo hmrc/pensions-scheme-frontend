@@ -42,23 +42,24 @@ class AddressYearsController @Inject() (
                                        ) extends controllers.address.AddressYearsController {
 
   private def viewmodel(index: Index, mode: Mode): AddressYearsViewModel = {
+    val questionText = "messages__company_address_years__title"
     AddressYearsViewModel(
-      postCall = ???, //routes.AddressYearsController.onSubmit(index, mode),
-      title = Message(""),
-      heading = Message(""),
-      legend = Message("")
+      postCall = routes.AddressYearsController.onSubmit(mode, index),
+      title = Message(questionText),
+      heading = Message(questionText),
+      legend = Message(questionText)
     )
   }
 
-  private val form: Form[AddressYears] = formProvider("")
+  private val form: Form[AddressYears] = formProvider(Message("messages__common_error__current_address_years"))
 
-  def onPageLoad(index: Index, mode: Mode): Action[AnyContent] =
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         get(AddressYearsId(index), form, viewmodel(index, mode))
     }
 
-  def onSubmit(index: Index, mode: Mode): Action[AnyContent] =
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         post(AddressYearsId(index), mode, form, viewmodel(index, mode))
