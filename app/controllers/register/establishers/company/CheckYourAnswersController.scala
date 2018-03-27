@@ -21,6 +21,7 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.SchemeDetailsId
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -41,7 +42,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName { schemeName =>
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
         val checkYourAnswersHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
 
         val companyDetails = AnswerSection(
@@ -62,7 +63,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(check_your_answers(
           appConfig,
           Seq(companyDetails,companyContactDetails),
-          Some(schemeName),
+          Some(schemeDetails.schemeName),
           routes.CheckYourAnswersController.onSubmit(index)))
         )
       }
