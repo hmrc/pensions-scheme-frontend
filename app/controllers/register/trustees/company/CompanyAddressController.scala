@@ -20,12 +20,11 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.company.{PreviousAddressId, CompanyDetailsId}
+import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId}
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
@@ -35,7 +34,7 @@ import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
-class PreviousAddressController @Inject() (
+class CompanyAddressController @Inject()(
                                         val appConfig: FrontendAppConfig,
                                         val messagesApi: MessagesApi,
                                         val dataCacheConnector: DataCacheConnector,
@@ -45,9 +44,9 @@ class PreviousAddressController @Inject() (
                                         requireData: DataRequiredAction,
                                         val formProvider: AddressFormProvider,
                                         val countryOptions: CountryOptions
-                                      ) extends ManualAddressController with I18nSupport with Retrievals {
+                                      ) extends ManualAddressController with I18nSupport {
 
-  private[controllers] val postCall = PreviousAddressController.onSubmit _
+  private[controllers] val postCall = CompanyAddressController.onSubmit _
   private[controllers] val title: Message = "messages__companyAddress__title"
   private[controllers] val heading: Message = "messages__companyAddress__heading"
   private[controllers] val hint: Message = "messages__companyAddress__trustee__lede"
@@ -74,7 +73,7 @@ class PreviousAddressController @Inject() (
     implicit request =>
       viewmodel(index, mode).retrieve.right.map{
         vm =>
-          get(PreviousAddressId(index), vm)
+          get(CompanyAddressId(index), vm)
       }
   }
 
@@ -82,7 +81,7 @@ class PreviousAddressController @Inject() (
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(PreviousAddressId(index), vm, mode)
+          post(CompanyAddressId(index), vm, mode)
       }
   }
 }

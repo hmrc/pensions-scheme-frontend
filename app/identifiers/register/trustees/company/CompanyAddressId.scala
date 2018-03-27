@@ -19,7 +19,7 @@ package identifiers.register.trustees.company
 import identifiers._
 import identifiers.register.trustees.TrusteesId
 import models.address.Address
-import play.api.libs.json.JsPath
+import play.api.libs.json._
 
 case class CompanyAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = TrusteesId.path \ index \ CompanyAddressId.toString

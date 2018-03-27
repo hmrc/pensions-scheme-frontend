@@ -343,6 +343,7 @@ companyContactDetails.checkYourAnswersLabel = companyContactDetails
 messages__companyAddress__title = Company address
 messages__companyAddress__heading = Company address
 messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.
+messages__companyAddress__trustee__lede = This is usually the registered business address of the trustee but you can enter any address you have for this company.
 
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
