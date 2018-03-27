@@ -16,11 +16,10 @@
 
 package forms.register.establishers.company
 
-import forms.FormSpec
-import models.register.establishers.individual.UniqueTaxReference
+import forms.behaviours.UtrBehaviour
 
 
-class CompanyUniqueTaxReferenceFormProviderSpec extends FormSpec {
+class CompanyUniqueTaxReferenceFormProviderSpec extends UtrBehaviour {
 
   val requiredKey = "messages__error__has_ct_utr_establisher"
   val requiredUtrKey = "messages__error__ct_utr"
@@ -31,30 +30,14 @@ class CompanyUniqueTaxReferenceFormProviderSpec extends FormSpec {
   val formProvider = new CompanyUniqueTaxReferenceFormProvider()
 
   "CompanyUniqueTaxReference form" must {
-    "successfully bind when the utr is provided and yes is selected" in {
-      val form = formProvider().bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" -> "1234556676"))
-      form.get shouldBe UniqueTaxReference.Yes("1234556676")
-    }
 
-    "successfully bind when the reason is provided and no is selected" in {
-      val form = formProvider().bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" -> "haven't got ctutr"))
-      form.get shouldBe UniqueTaxReference.No("haven't got ctutr")
-    }
-
-    "fail to bind when value is omitted" in {
-      val expectedError = error("uniqueTaxReference.hasUtr", requiredKey)
-      checkForError(formProvider(), emptyForm, expectedError)
-    }
-
-    "fail to bind when yes is selected but utr is not provided" in {
-      val expectedError = error("uniqueTaxReference.utr", requiredUtrKey)
-      checkForError(formProvider(), Map("uniqueTaxReference.hasUtr" -> "true"), expectedError)
-    }
-
-    "fail to bind when no is selected and reason is not provided" in {
-      val expectedError = error("uniqueTaxReference.reason", requiredReasonKey)
-      checkForError(formProvider(), Map("uniqueTaxReference.hasUtr" -> "false"), expectedError)
-    }
-
+    behave like formWithUtr(
+      formProvider(),
+      requiredKey,
+      requiredUtrKey,
+      requiredReasonKey,
+      invalidUtrKey,
+      maxLengthReasonKey
+    )
   }
 }

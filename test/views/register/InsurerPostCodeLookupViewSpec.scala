@@ -17,7 +17,7 @@
 package views.register
 
 import controllers.register.routes
-import forms.register.establishers.individual.PostCodeLookupFormProvider
+import forms.address.PostCodeLookupFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import play.api.data.Form

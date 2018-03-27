@@ -17,19 +17,20 @@
 package views.register.establishers.company
 
 import controllers.register.establishers.company.routes
-import forms.register.establishers.company.CompanyContactDetailsFormProvider
-import models.{CompanyContactDetails, Index, NormalMode}
+import forms.ContactDetailsFormProvider
+import models.register.establishers.individual.ContactDetails
+import models.{Index, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.company.companyContactDetails
 
-class CompanyContactDetailsViewSpec extends QuestionViewBehaviours[CompanyContactDetails] {
+class CompanyContactDetailsViewSpec extends QuestionViewBehaviours[ContactDetails] {
 
   val messageKeyPrefix = "establisher_company_contact_details"
   val index = Index(1)
   val companyName = "test company name"
-  override val form = new CompanyContactDetailsFormProvider()()
+  override val form = new ContactDetailsFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () => companyContactDetails(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
 

@@ -20,7 +20,8 @@ import forms.address.AddressFormProvider
 import models.address.Address
 import models.{Index, NormalMode}
 import play.api.data.Form
-import utils.InputOption
+import play.twirl.api.HtmlFormat
+import utils.{FakeCountryOptions, InputOption}
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.company.companyAddress
 
@@ -30,15 +31,16 @@ class CompanyAddressViewSpec extends QuestionViewBehaviours[Address] {
 
   val messageKeyPrefix = "companyAddress"
 
-  val companyName = Random.alphanumeric take 6 mkString ""
+  val companyName: String = Random.alphanumeric take 6 mkString ""
 
   val options = Seq.empty[InputOption]
 
-  override val form: Form[Address] = new AddressFormProvider()()
+  override val form: Form[Address] = new AddressFormProvider(FakeCountryOptions())()
 
-  def createView = () => companyAddress(frontendAppConfig, form, NormalMode, Index(0), companyName, options)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyAddress(frontendAppConfig, form, NormalMode, Index(0), companyName, options)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyAddress(frontendAppConfig, form, NormalMode, Index(0), companyName, options)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] =>
+    HtmlFormat.Appendable = (form: Form[_]) => companyAddress(frontendAppConfig, form, NormalMode, Index(0), companyName, options)(fakeRequest, messages)
 
   "CompanyAddress view" must {
 

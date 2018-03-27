@@ -23,8 +23,8 @@ import identifiers.register.establishers.individual._
 import models.address.Address
 import models.register.establishers.individual.UniqueTaxReference.{No, Yes}
 import models.register.establishers.individual.{ContactDetails, EstablisherDetails}
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
-import models.{AddressYears, CheckMode, EstablisherNino, Index}
+import models.register.{SchemeDetails, SchemeType}
+import models.{AddressYears, CheckMode, Index, Nino}
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import viewmodels.AnswerRow
@@ -148,7 +148,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "establishers" -> Json.arr(
             Json.obj(
               EstablisherDetailsId.toString -> establisherDetails,
-              EstablisherNinoId.toString -> EstablisherNino.Yes("test Nino"))
+              EstablisherNinoId.toString -> Nino.Yes("test Nino"))
           ))
       )
       val expectedOutput = Seq(
@@ -175,7 +175,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "establishers" -> Json.arr(
             Json.obj(
               EstablisherDetailsId.toString -> establisherDetails,
-              EstablisherNinoId.toString -> EstablisherNino.No("No nino"))
+              EstablisherNinoId.toString -> Nino.No("No nino"))
           ))
       )
       val expectedOutput = Seq(

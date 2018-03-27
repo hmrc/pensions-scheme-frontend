@@ -17,16 +17,17 @@
 package forms.register.establishers.individual
 
 import forms.behaviours.FormBehaviours
+import forms.mappings.Constraints
 import models.register.establishers.individual.EstablisherDetails
 import models.{Field, Required}
 import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.LocalDate
 
-class EstablisherDetailsFormProviderSpec extends FormBehaviours {
+class EstablisherDetailsFormProviderSpec extends FormBehaviours with Constraints {
 
-  val day = LocalDate.now().getDayOfMonth
-  val month = LocalDate.now().getMonthOfYear
-  val year = LocalDate.now().getYear
+  private val day = LocalDate.now().getDayOfMonth
+  private val month = LocalDate.now().getMonthOfYear
+  private val year = LocalDate.now().getYear
 
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",
@@ -36,10 +37,6 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
     "date.month" -> s"$month",
     "date.year" -> s"$year"
   )
-
-  val regexFirstName = "[a-zA-Z]{1}[a-zA-Z-‘]*"
-  val regexMiddleName ="[a-zA-Z-‘]*"
-  val regexLastName = "[a-zA-Z0-9,.‘(&)-/ ]*"
 
   val form = new EstablisherDetailsFormProvider()()
 
@@ -81,11 +78,11 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
         checkForError(form, data, expectedError)
       }
 
-      Seq("-sfygAFD", "‘GHJGJG", "SDSAF^*NJ", "^*", "first name").foreach { name =>
+      Seq("-sfy gAFD", "'SDSAF^*NJ", "^*", "first name").foreach { name =>
         s"the first name $name is invalid" in {
           val data = validData + ("firstName" -> name)
 
-          val expectedError = error("firstName", "messages__error__first_name_invalid", regexFirstName)
+          val expectedError = error("firstName", "messages__error__first_name_invalid", regexName)
           checkForError(form, data, expectedError)
         }
       }
@@ -93,14 +90,14 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
       s"the middle name is invalid" in {
         val data = validData + ("middleName" -> "strbvhjbv^*!")
 
-        val expectedError = error("middleName", "messages__error__middle_name_invalid", regexMiddleName)
+        val expectedError = error("middleName", "messages__error__middle_name_invalid", regexName)
         checkForError(form, data, expectedError)
       }
 
       s"the last name is invalid" in {
         val data = validData + ("lastName" -> "strbvhjbv^*")
 
-        val expectedError = error("lastName", "messages__error__last_name_invalid", regexLastName)
+        val expectedError = error("lastName", "messages__error__last_name_invalid", regexName)
         checkForError(form, data, expectedError)
       }
 
@@ -139,7 +136,7 @@ class EstablisherDetailsFormProviderSpec extends FormBehaviours {
       }
     }
 
-    Seq("-242798‘/", "(last,.&)", "Last Name").foreach { lastName =>
+    Seq("James", "Last-Name").foreach { lastName =>
       s"successfully bind valid last name $lastName" in {
 
         val detailsForm = form.bind(Map(

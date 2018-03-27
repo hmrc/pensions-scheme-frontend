@@ -23,11 +23,11 @@ import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.individual.ContactDetailsFormProvider
 import identifiers.register.establishers.individual.{ContactDetailsId, EstablisherDetailsId}
 import models._
 import views.html.register.establishers.individual.contactDetails
 import controllers.ControllerSpecBase
+import forms.ContactDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import models.register.{SchemeDetails, SchemeType}
 import models.register.establishers.individual.{ContactDetails, EstablisherDetails, EstablishersIndividualMap}

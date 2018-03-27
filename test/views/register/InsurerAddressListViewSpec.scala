@@ -16,7 +16,7 @@
 
 package views.register
 
-import forms.register.establishers.individual.AddressListFormProvider
+import forms.address.AddressListFormProvider
 import models.NormalMode
 import models.address.Address
 import org.jsoup.Jsoup
@@ -35,7 +35,7 @@ class InsurerAddressListViewSpec extends ViewBehaviours {
   )
 
   def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
+    Some("test county"), postCode = Some(postCode), country = "United Kingdom")
   
   val form = new AddressListFormProvider()(Seq.empty)
 

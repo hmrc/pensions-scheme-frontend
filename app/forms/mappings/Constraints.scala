@@ -16,12 +16,27 @@
 
 package forms.mappings
 
-import models.register.{CountryOptions, SchemeType}
+import models.register.SchemeType
 import org.joda.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.domain.Nino
+import utils.CountryOptions
 
 trait Constraints {
+
+  val regexPostcode = """^[A-Za-z]{1,2}[0-9][0-9A-Za-z]?[ ]?[0-9][A-Za-z]{2}$"""
+  val regexPostCodeNonUk = """^([0-9]+-)*[0-9]+$"""
+  val regexSortCode: String = """\d*""".r.toString()
+  val regexUtr = "^[0-9]{10}$"
+  val regexName = """^[a-zA-Z\u00C0-\u00FF'‘’\u2014\u2013\u2010\u002d]{1,35}$"""
+  val regexAccountNo = "[0-9]*"
+  val regexEmail = "^[^@<>‘“]+@[^@<>‘“]+$"
+  val regexPhoneNumber ="^[0-9 +()-]+$"
+  val regexCrn = "^[A-Za-z0-9 -]{7,8}$"
+  val regexVat = """^\d{9}$"""
+  val regexPaye = """^[0-9]{3}[0-9A-Za-z]{1,13}$"""
+  val regexSafeText = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’\"“”«»()*+,./:;=?@\\[\\]|~£€¥\\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,160}$"""
+  val regexAddressLine = """^[A-Za-z0-9 !'‘’"“”(),./\u2014\u2013\u2010\u002d]{1,35}$"""
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint {
@@ -80,39 +95,29 @@ trait Constraints {
       SchemeType.GroupLifeDeath.toString, SchemeType.BodyCorporate.toString, "other")
 
     Constraint {
-      case schemeType if(validSchemeTypes.contains(schemeType)) => Valid
+      case schemeType if validSchemeTypes.contains(schemeType) => Valid
       case _ => Invalid(invalidKey)
     }
   }
 
-  protected def validCountries(invalidKey: String, countries: CountryOptions): Constraint[String] = {
-    val validCountries = countries.options.map(_.value)
-
-    Constraint {
-      case country if(validCountries.contains(country)) => Valid
-      case _ => Invalid(invalidKey)
-    }
-  }
 
   protected def futureDate(invalidKey: String): Constraint[LocalDate] = {
     Constraint {
-      case date if(date.isAfter(LocalDate.now())) => Invalid(invalidKey)
+      case date if date.isAfter(LocalDate.now()) => Invalid(invalidKey)
       case _ => Valid
     }
   }
 
   protected def validNino(invalidKey: String) : Constraint[String] = {
     Constraint {
-      case nino if(Nino.isValid(nino.replaceAll(" ", "").toUpperCase)) => Valid
+      case nino if Nino.isValid(nino.replaceAll(" ", "").toUpperCase) => Valid
       case _ => Invalid(invalidKey)
     }
   }
 
   protected def validCrn(invalidKey: String) : Constraint[String] = {
-    val validCrnString = "^(\\d{7}|[A-Z]\\d{6}|[A-Z][A-Z]\\d{6})$"
-
     Constraint {
-      case crn if (crn.replaceAll(" ", "").toUpperCase).matches(validCrnString) => Valid
+      case crn if crn.matches(regexCrn) => Valid
       case _ => Invalid(invalidKey)
     }
   }
@@ -125,4 +130,34 @@ trait Constraints {
           .filterNot(_ == Valid)
           .headOption.getOrElse(Valid)
   }
+
+  protected def country(countryOptions: CountryOptions, errorKey: String): Constraint[String] =
+    Constraint {
+      input =>
+        countryOptions.options
+          .find(_.value == input)
+          .map(_ => Valid)
+          .getOrElse(Invalid(errorKey))
+    }
+
+  protected def emailAddress(errorKey: String): Constraint[String] = regexp(regexEmail, errorKey)
+
+  protected def postCode(errorKey: String): Constraint[String] = regexp(regexPostcode, errorKey)
+
+  protected def postCodeNonUk(errorKey: String): Constraint[String] = regexp(regexPostCodeNonUk, errorKey)
+
+  protected def addressLine(errorKey: String): Constraint[String] = regexp(regexAddressLine, errorKey)
+
+  protected def phoneNumber(errorKey: String): Constraint[String] = regexp(regexPhoneNumber, errorKey)
+
+  protected def vatRegistrationNumber(errorKey: String): Constraint[String] = regexp(regexVat, errorKey)
+
+  protected def payeEmployerReferenceNumber(errorKey: String): Constraint[String] = regexp(regexPaye, errorKey)
+
+  protected def safeText(errorKey: String): Constraint[String] = regexp(regexSafeText, errorKey)
+
+  protected def name(errorKey: String): Constraint[String] = regexp(regexName, errorKey)
+
+
+
 }

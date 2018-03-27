@@ -26,7 +26,6 @@ import forms.address.AddressFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId, PreviousAddressId}
 import models.address.Address
-import models.register.CountryOptions
 import models.{CompanyDetails, Index, NormalMode}
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -38,22 +37,23 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeNavigator, InputOption, Navigator}
+import utils._
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
+
 class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
+
+  def countryOptions: CountryOptions = new CountryOptions(options)
+
+  val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
   val firstIndex = Index(0)
 
+  val formProvider = new AddressFormProvider(FakeCountryOptions())
   val companyDetails = CompanyDetails("companyName", None, None)
 
-  val countryOptions = new CountryOptions(
-    Seq(InputOption("GB", "GB"))
-  )
-
-  val formProvider = new AddressFormProvider()
   val form: Form[Address] = formProvider()
 
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
@@ -115,7 +115,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
           addressLine1 = "value 1",
           addressLine2 = "value 2",
           None, None,
-          postcode = Some("AB1 1AB"),
+          postCode = Some("AB1 1AB"),
           country = "GB"
         )
 
@@ -136,7 +136,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
                 ("addressLine2", address.addressLine2),
-                ("postCode.postCode", address.postcode.get),
+                ("postCode", address.postCode.get),
                 "country" -> address.country))
 
             val result = route(app, fakeRequest).value
