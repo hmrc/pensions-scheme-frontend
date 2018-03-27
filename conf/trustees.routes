@@ -19,10 +19,10 @@ POST       /:index/company/companyPreviousAddressList               controllers.
 GET        /:index/company/changeCompanyPreviousAddressList                        controllers.register.trustees.company.CompanyPreviousAddressListController.onPageLoad(mode: Mode = CheckMode, index:Index)
 POST       /:index/company/changeCompanyPreviousAddressList                        controllers.register.trustees.company.CompanyPreviousAddressListController.onSubmit(mode: Mode = CheckMode, index:Index)
 
-GET        /:index/company/companyPostcodeLookup                       controllers.register.trustees.company.CompanyPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index:Index)
-POST       /:index/company/companyPostcodeLookup                       controllers.register.trustees.company.CompanyPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index:Index)
-GET        /:index/company/changeCompanyPostcodeLookup                       controllers.register.trustees.company.CompanyPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index:Index)
-POST       /:index/company/changeCompanyPostcodeLookup                       controllers.register.trustees.company.CompanyPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index:Index)
+GET        /:index/company/companyPostcodeLookup                       controllers.register.trustees.company.CompanyPostCodeLookupController.onPageLoad(mode: Mode = NormalMode, index:Index)
+POST       /:index/company/companyPostcodeLookup                       controllers.register.trustees.company.CompanyPostCodeLookupController.onSubmit(mode: Mode = NormalMode, index:Index)
+GET        /:index/company/changeCompanyPostcodeLookup                       controllers.register.trustees.company.CompanyPostCodeLookupController.onPageLoad(mode: Mode = CheckMode, index:Index)
+POST       /:index/company/changeCompanyPostcodeLookup                       controllers.register.trustees.company.CompanyPostCodeLookupController.onSubmit(mode: Mode = CheckMode, index:Index)
 
 GET        /:index/company/companyAddressList                       controllers.register.trustees.company.CompanyAddressListController.onPageLoad(mode: Mode = NormalMode, index:Index)
 POST       /:index/company/companyAddressList                       controllers.register.trustees.company.CompanyAddressListController.onSubmit(mode: Mode = NormalMode, index:Index)

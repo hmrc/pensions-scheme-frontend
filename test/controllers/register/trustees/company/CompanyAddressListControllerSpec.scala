@@ -97,7 +97,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPostcodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
       }
 
     }
@@ -176,7 +176,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.CompanyPostcodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
       }
 
     }

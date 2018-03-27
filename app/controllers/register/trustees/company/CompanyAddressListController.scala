@@ -63,6 +63,6 @@ class CompanyAddressListController @Inject()( override val appConfig: FrontendAp
         addresses = addresses,
         subHeading = Some(Message(companyDetails.companyName))
       )
-    }.left.map(_ => Future.successful(Redirect(routes.CompanyPostcodeLookupController.onPageLoad(mode, index))))
+    }.left.map(_ => Future.successful(Redirect(routes.CompanyPostCodeLookupController.onPageLoad(mode, index))))
   }
 }

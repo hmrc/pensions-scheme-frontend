@@ -16,14 +16,13 @@
 
 package controllers.register.trustees.company
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import controllers.address.PostcodeLookupController
-import forms.address.PostcodeLookupFormProvider
+import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, PreviousAddressPostcodeLookupId}
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -32,7 +31,7 @@ import utils.Navigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
-class CompanyPostcodeLookupController @Inject() (
+class CompanyPostCodeLookupController @Inject() (
                                         val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         val cacheConnector: DataCacheConnector,
@@ -40,12 +39,12 @@ class CompanyPostcodeLookupController @Inject() (
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: PostcodeLookupFormProvider,
+                                        formProvider: PostCodeLookupFormProvider,
                                         val addressLookupConnector: AddressLookupConnector
                                       ) extends PostcodeLookupController with I18nSupport {
 
   private[controllers] val manualAddressCall = routes.PreviousAddressController.onPageLoad _
-  private[controllers] val postCall = routes.CompanyPostcodeLookupController.onSubmit _
+  private[controllers] val postCall = routes.CompanyPostCodeLookupController.onSubmit _
 
   private[controllers] val title: Message = "messages__companyAddress__title"
   private[controllers] val heading: Message = "messages__companyAddress__title"
@@ -77,7 +76,7 @@ class CompanyPostcodeLookupController @Inject() (
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         viewmodel(index, mode).retrieve.right.map{ vm =>
-          post(PreviousAddressPostcodeLookupId(index), vm, invalidPostcode, noResults, mode)
+          post(PreviousAddressPostcodeLookupId(index), vm, mode)
         }
     }
 }
