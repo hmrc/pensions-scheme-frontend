@@ -72,7 +72,7 @@ class DirectorAddressPostcodeLookupController @Inject() (
       implicit request =>
         viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map(
           vm =>
-            post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex), vm, invalidPostcode, noResults, mode)
+            post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex), vm, mode)
         )
     }
 }

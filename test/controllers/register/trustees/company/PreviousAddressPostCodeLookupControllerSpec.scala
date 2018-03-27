@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.address.PostcodeLookupFormProvider
+import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.{Address, AddressRecord}
@@ -44,11 +44,11 @@ import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 
-class PreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures  {
+class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures  {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new PostcodeLookupFormProvider()
+  val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
 
   val firstIndex = Index(0)
@@ -112,7 +112,7 @@ class PreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
 
         val call: Call = routes.PreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex)
 
-        val validPostcode = "ZZ11ZZ"
+        val validPostcode = "ZZ1 1ZZ"
 
         when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful(
@@ -128,7 +128,7 @@ class PreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
-          bind[PostcodeLookupFormProvider].to(formProvider)
+          bind[PostCodeLookupFormProvider].to(formProvider)
         )) {
           implicit app =>
 

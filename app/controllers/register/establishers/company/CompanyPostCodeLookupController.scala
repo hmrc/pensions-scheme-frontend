@@ -77,7 +77,7 @@ class CompanyPostCodeLookupController @Inject() (
       implicit request =>
         viewmodel(index, mode).retrieve.right.map {
           vm =>
-            post(CompanyPostCodeLookupId(index), vm, invalidPostcode, noResults, mode)
+            post(CompanyPostCodeLookupId(index), vm, mode)
         }
     }
 }

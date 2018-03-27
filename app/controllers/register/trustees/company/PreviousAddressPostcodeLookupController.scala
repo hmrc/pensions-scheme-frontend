@@ -16,17 +16,17 @@
 
 package controllers.register.trustees.company
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import controllers.address.PostcodeLookupController
-import forms.address.PostcodeLookupFormProvider
-import identifiers.register.trustees.company.{PreviousAddressPostcodeLookupId, CompanyDetailsId}
+import forms.address.PostCodeLookupFormProvider
+import identifiers.register.trustees.company.{CompanyDetailsId, PreviousAddressPostcodeLookupId}
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
 import utils.Navigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -39,7 +39,7 @@ class PreviousAddressPostcodeLookupController @Inject() (
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: PostcodeLookupFormProvider,
+                                        formProvider: PostCodeLookupFormProvider,
                                         val addressLookupConnector: AddressLookupConnector
                                       ) extends PostcodeLookupController with I18nSupport {
 
@@ -66,15 +66,17 @@ class PreviousAddressPostcodeLookupController @Inject() (
         }
     }
 
-  def onPageLoad(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      viewmodel(index, mode).retrieve.right map get
-  }
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode).retrieve.right map get
+    }
 
-  def onSubmit(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      viewmodel(index, mode).retrieve.right.map{ vm =>
-        post(PreviousAddressPostcodeLookupId(index), vm, invalidPostcode, noResults, mode)
-      }
-  }
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode).retrieve.right.map{ vm =>
+          post(PreviousAddressPostcodeLookupId(index), vm, mode)
+        }
+    }
 }
