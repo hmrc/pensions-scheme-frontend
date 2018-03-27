@@ -33,3 +33,8 @@ GET        /:index/company/companyAddressList                       controllers.
 POST       /:index/company/companyAddressList                       controllers.register.trustees.company.CompanyAddressListController.onSubmit(mode: Mode = NormalMode, index:Index)
 GET        /:index/company/changeCompanyAddressList                 controllers.register.trustees.company.CompanyAddressListController.onPageLoad(mode: Mode = CheckMode, index:Index)
 POST       /:index/company/changeCompanyAddressList                 controllers.register.trustees.company.CompanyAddressListController.onSubmit(mode: Mode = CheckMode, index:Index)
+
+GET        /:index/company/companyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/company/companyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/company/changeCompanyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/company/changeCompanyContactDetails                       controllers.register.trustees.company.CompanyContactDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)

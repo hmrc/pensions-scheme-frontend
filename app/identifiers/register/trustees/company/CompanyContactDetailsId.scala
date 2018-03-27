@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company.director
+package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import models.ContactDetails
 import play.api.libs.json.JsPath
+import identifiers.register.trustees.TrusteesId
+import models.ContactDetails
 
 
-case class DirectorContactDetailsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ContactDetails] {
-  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \ DirectorContactDetailsId.toString
+case class CompanyContactDetailsId(index: Int) extends TypedIdentifier[ContactDetails] {
+  override def path: JsPath = TrusteesId.path \ index \ CompanyContactDetailsId.toString
 }
 
-object DirectorContactDetailsId {
-  override def toString: String = "directorContactDetails"
+ object CompanyContactDetailsId {
+  override def toString: String = "companyContactDetails"
 }

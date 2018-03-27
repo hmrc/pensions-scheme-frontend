@@ -23,6 +23,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.trustees.TrusteesId
 import models.CompanyDetails
 import models.register.establishers.company.director.DirectorDetails
 import models.register.establishers.individual.EstablisherDetails
@@ -52,6 +53,19 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         )
       )
     )))
+
+  def getMandatoryTrusteeCompany: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      SchemeDetailsId.toString ->
+        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+      TrusteesId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString ->
+            CompanyDetails("test company name", Some("123456"), Some("abcd"))
+        )
+      )
+    ))
+  )
 
   def getMandatoryEstablisherCompany: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(

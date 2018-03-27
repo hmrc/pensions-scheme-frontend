@@ -14,38 +14,23 @@
  * limitations under the License.
  */
 
-/*
- * Copyright 2018 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package controllers.register.trustees.company
 
-package controllers.register.establishers.company
-
-import connectors.FakeDataCacheConnector
-import controllers.ControllerSpecBase
-import controllers.actions._
-import forms.ContactDetailsFormProvider
-import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.{CompanyContactDetailsId, CompanyDetailsId}
-import models._
-import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json.Json
-import play.api.test.Helpers._
 import utils.FakeNavigator
-import views.html.register.establishers.company.companyContactDetails
+import connectors.FakeDataCacheConnector
+import controllers.actions._
+import play.api.test.Helpers._
+import identifiers.register.trustees.company.CompanyContactDetailsId
+import models.{CompanyDetails, ContactDetails, Index, NormalMode}
+import views.html.register.trustees.company.companyContactDetails
+import controllers.ControllerSpecBase
+import forms.ContactDetailsFormProvider
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.trustees.TrusteesId
+import models.register.{SchemeDetails, SchemeType}
 
 class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
 
@@ -57,26 +42,25 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(10)
   val companyName = "test company name"
 
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) : CompanyContactDetailsController =
-    new CompanyContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany) :
+  CompanyContactDetailsController  = new CompanyContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form) = companyContactDetails(frontendAppConfig, form, NormalMode, firstIndex, companyName)(fakeRequest, messages).toString
 
   val validData = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-    EstablishersId.toString -> Json.arr(
+    SchemeDetailsId.toString->
+    SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    TrusteesId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test company name", Some("123456"), Some("abcd")),
+        CompanyDetails("test company name", Some("123456"), Some("abcd")),
         CompanyContactDetailsId.toString ->
-          ContactDetails("test@test.com", "123456789")
+        ContactDetails("test@test.com", "123456789")
       ),
       Json.obj(
         CompanyDetailsId.toString ->
-          CompanyDetails("test", Some("654321"), Some("bcda"))
+        CompanyDetails("test", Some("654321"), Some("bcda"))
       )
     )
   )

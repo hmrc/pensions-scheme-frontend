@@ -14,36 +14,38 @@
  * limitations under the License.
  */
 
-package views.register.establishers.company
+package views.register.trustees.company
 
-import controllers.register.establishers.company.routes
+import play.api.data.Form
+import controllers.register.trustees.company.routes
 import forms.ContactDetailsFormProvider
 import models.{ContactDetails, Index, NormalMode}
-import play.api.data.Form
-import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.establishers.company.companyContactDetails
+import views.html.register.trustees.company.companyContactDetails
+import play.twirl.api.HtmlFormat
 
 class CompanyContactDetailsViewSpec extends QuestionViewBehaviours[ContactDetails] {
 
   val messageKeyPrefix = "establisher_company_contact_details"
   val index = Index(1)
   val companyName = "test company name"
+
+
   override val form = new ContactDetailsFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () => companyContactDetails(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyContactDetails(frontendAppConfig,
+  def createViewUsingForm: Form[_] =>HtmlFormat.Appendable = (form: Form[_]) => companyContactDetails(frontendAppConfig,
     form, NormalMode, index, companyName)(fakeRequest, messages)
 
 
   "CompanyContactDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__establisher_company_contact_details__title"))
+    behave like normalPage(createView, messageKeyPrefix, messages("messages__trustee_company_contact_details__title"))
 
     behave like pageWithBackLink(createView)
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.CompanyContactDetailsController.onSubmit(NormalMode, index).url, "emailAddress", "phoneNumber")
+      controllers.register.trustees.company.routes.CompanyContactDetailsController.onSubmit(NormalMode, index).url, "emailAddress", "phoneNumber")
   }
 }
