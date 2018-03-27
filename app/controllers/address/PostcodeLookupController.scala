@@ -43,6 +43,9 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
 
   protected def form: Form[String]
 
+  private val invalidPostcode: Message = "messages__error__postcode_invalid"
+  private val noResults: Message = "messages__error__postcode_no_results"
+
   protected def get(viewmodel: PostcodeLookupViewModel)(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     Future.successful(Ok(postcodeLookup(appConfig, form, viewmodel)))
@@ -51,9 +54,9 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
   protected def post(
                       id: TypedIdentifier[Seq[Address]],
                       viewmodel: PostcodeLookupViewModel,
-                      invalidPostcode: Message,
-                      noResults: Message,
-                      mode: Mode
+                      mode: Mode,
+                      invalidPostcode: Message = invalidPostcode,
+                      noResults: Message = noResults
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     form.bindFromRequest().fold(
@@ -65,9 +68,13 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
     )
   }
 
-  private def lookupPostcode(id: TypedIdentifier[Seq[Address]], viewmodel: PostcodeLookupViewModel,
-                             invalidPostcode: Message, noResults: Message, mode: Mode)
-                            (postcode: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
+  private def lookupPostcode(
+                              id: TypedIdentifier[Seq[Address]],
+                              viewmodel: PostcodeLookupViewModel,
+                              invalidPostcode: Message,
+                              noResults: Message,
+                              mode: Mode
+                            )(postcode: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     addressLookupConnector.addressLookupByPostCode(postcode).flatMap {
       case None => Future.successful {
