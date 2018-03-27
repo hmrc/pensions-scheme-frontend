@@ -20,9 +20,10 @@ import identifiers.TypedIdentifier
 import models.register.trustees.company.CompanyContactDetails
 import play.api.libs.json.JsPath
 import identifiers.register.trustees.TrusteesId
+import models.register.establishers.individual.ContactDetails
 
 
-case class CompanyContactDetailsId(index: Int) extends TypedIdentifier[CompanyContactDetails] {
+case class CompanyContactDetailsId(index: Int) extends TypedIdentifier[ContactDetails] {
   override def path: JsPath = TrusteesId.path \ index \ CompanyContactDetailsId.toString
 }
 

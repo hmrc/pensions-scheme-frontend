@@ -25,10 +25,10 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import controllers.Retrievals
-import forms.register.trustees.company.CompanyContactDetailsFormProvider
+import forms.ContactDetailsFormProvider
 import identifiers.register.trustees.company.{CompanyContactDetailsId, CompanyDetailsId}
+import models.register.establishers.individual.ContactDetails
 import models.{Index, Mode}
-import models.register.trustees.company.CompanyContactDetails
 import play.api.mvc.{Action, AnyContent}
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.trustees.company.companyContactDetails
@@ -43,10 +43,10 @@ class CompanyContactDetailsController @Inject() (
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: CompanyContactDetailsFormProvider
+                                        formProvider: ContactDetailsFormProvider
                                       ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats{
 
-  val form: Form[CompanyContactDetails] = formProvider()
+  val form: Form[ContactDetails] = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

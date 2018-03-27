@@ -22,22 +22,23 @@ import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.trustees.company.CompanyContactDetailsFormProvider
 import identifiers.register.trustees.company.CompanyContactDetailsId
 import models.{CompanyDetails, Index, NormalMode}
 import models.register.trustees.company.CompanyContactDetails
 import views.html.register.trustees.company.companyContactDetails
 import controllers.ControllerSpecBase
+import forms.ContactDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.trustees.TrusteesId
+import models.register.establishers.individual.ContactDetails
 import models.register.{SchemeDetails, SchemeType}
 
 class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new CompanyContactDetailsFormProvider()
+  val formProvider = new ContactDetailsFormProvider()
   val form = formProvider()
   val firstIndex = Index(0)
   val invalidIndex = Index(10)
@@ -89,7 +90,7 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(CompanyContactDetails("test@test.com", "123456789")))
+      contentAsString(result) mustBe viewAsString(form.fill(ContactDetails("test@test.com", "123456789")))
     }
 
     "redirect to the next page when valid data is submitted" in {
