@@ -16,53 +16,79 @@
 
 package forms
 
-import forms.behaviours.FormBehaviours
-import models.{CompanyDetails, Field, Required}
-import org.apache.commons.lang3.RandomStringUtils
+import forms.behaviours.{PayeBehaviours, StringFieldBehaviours, VatBehaviours}
+import forms.mappings.Constraints
+import org.scalatest.OptionValues
 import play.api.data.FormError
-
-class CompanyDetailsFormProviderSpec extends FormBehaviours {
-
-  val validData: Map[String, String] = Map(
-    "companyName" -> "test company name",
-    "vatNumber" -> "GB123456789",
-    "payeNumber" -> "123/A56789"
-  )
+import wolfendale.scalacheck.regexp.RegexpGen
+class CompanyDetailsFormProviderSpec extends StringFieldBehaviours with Constraints with OptionValues with PayeBehaviours with VatBehaviours {
 
   val form = new CompanyDetailsFormProvider()()
 
-  "CompanyDetails form" must {
-    behave like questionForm(CompanyDetails("test company name", Some("123456789"), Some("123/A56789")))
+  val companyNameLength: Int = 160
 
-    behave like formWithMandatoryTextFields(
-      Field("companyName", Required -> "messages__error__company_name")
+  ".companyName" must {
+
+    val fieldName = "companyName"
+    val requiredKey = "messages__error__company_name"
+    val lengthKey = "messages__error__company_name_length"
+    val invalidKey = "messages__error__company_name_invalid"
+    val maxLength = companyNameLength
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      RegexpGen.from(regexSafeText)
     )
 
-    Seq("GB123456789", "123435464").foreach{ vatNo =>
-      s"successfully bind valid vat number $vatNo" in {
-       val coForm = form.bind(Map("companyName" -> "test company name",
-          "vatNumber" -> vatNo,
-          "payeNumber" -> "123/A56789"
-        ))
+    behave like fieldWithMaxLength(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+    )
 
-        coForm.get shouldBe CompanyDetails("test company name", Some(vatNo.replace("GB", "")), Some("123/A56789"))
-      }
-    }
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
 
-    "fail to bind when a company name exceeds max length 255" in {
-      val companyName = RandomStringUtils.randomAlphabetic(161)
-      val data = validData + ("companyName" -> companyName)
-
-      val expectedError: Seq[FormError] = error("companyName", "messages__error__company_name_length", 160)
-      checkForError(form, data, expectedError)
-    }
-
-    "fail to bind when a paye number exceeds the max length 13" in {
-      val payeNumber = RandomStringUtils.randomAlphabetic(14)
-      val data = validData + ("payeNumber" -> payeNumber)
-
-      val expectedError: Seq[FormError] = error("payeNumber", "messages__error__paye_length", 13)
-      checkForError(form, data, expectedError)
-    }
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      "[invalid]",
+      error = FormError(fieldName, invalidKey, Seq(regexSafeText))
+    )
   }
+
+  ".vatRegistrationNumber" must {
+    val fieldName = "vatNumber"
+    val keyVatLength = "messages__error__vat_length"
+    val keyVatInvalid = "messages__error__vat_invalid"
+
+    behave like formWithVatField(
+      form,
+      fieldName,
+      keyVatLength,
+      keyVatInvalid
+    )
+
+  }
+
+  ".payeEmployerReferenceNumber" must {
+
+    val fieldName = "payeNumber"
+    val keyPayeLength = "messages__company__paye_error_length"
+    val keyPayeInvalid = "messages__company__paye_error_invalid"
+
+    behave like formWithPayeField(
+      form,
+      fieldName,
+      keyPayeLength,
+      keyPayeInvalid
+    )
+
+  }
+
 }

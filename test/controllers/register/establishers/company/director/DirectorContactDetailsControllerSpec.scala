@@ -19,12 +19,13 @@ package controllers.register.establishers.company.director
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.company.director.DirectorContactDetailsFormProvider
+import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
 import models._
-import models.register.establishers.company.director.{DirectorContactDetails, DirectorDetails}
+import models.register.establishers.company.director.DirectorDetails
+import models.register.establishers.individual.ContactDetails
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -39,7 +40,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val companyName = "test company name"
-  val formProvider = new DirectorContactDetailsFormProvider()
+  val formProvider = new ContactDetailsFormProvider()
   val form = formProvider()
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
@@ -62,7 +63,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
             DirectorDetailsId.toString ->
               DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
             DirectorContactDetailsId.toString ->
-              DirectorContactDetails("test@test.com", "123456789"))
+              ContactDetails("test@test.com", "123456789"))
         )
       )
     )
@@ -123,7 +124,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(DirectorContactDetails("test@test.com", "123456789")))
+      contentAsString(result) mustBe viewAsString(form.fill(ContactDetails("test@test.com", "123456789")))
     }
 
     "redirect to the next page when valid data is submitted" in {

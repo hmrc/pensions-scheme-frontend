@@ -24,7 +24,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.EstablisherNinoFormProvider
 import identifiers.register.establishers.individual.EstablisherNinoId
-import models.{EstablisherNino, Index, Mode}
+import models.{Index, Mode, Nino}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -46,7 +46,7 @@ class EstablisherNinoController @Inject()(
                                            formProvider: EstablisherNinoFormProvider
                                          ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
-  private val form: Form[EstablisherNino] = formProvider()
+  private val form: Form[Nino] = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

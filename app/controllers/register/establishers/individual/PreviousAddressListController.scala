@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.individual.AddressListFormProvider
+import forms.address.AddressListFormProvider
 import identifiers.register.establishers.individual._
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}

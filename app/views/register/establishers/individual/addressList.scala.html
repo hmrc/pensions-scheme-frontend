@@ -19,6 +19,7 @@
 @import controllers.register.establishers.individual.routes._
 @import models.Mode
 @import models.address._
+@import models.address.Address
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, addresses: Seq[Address], establisherName: String)(implicit request: Request[_], messages: Messages)
 

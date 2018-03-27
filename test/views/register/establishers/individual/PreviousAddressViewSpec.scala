@@ -21,10 +21,9 @@ import controllers.register.establishers.individual.routes
 import forms.address.AddressFormProvider
 import models.{Index, NormalMode}
 import models.address.Address
-import models.register.CountryOptions
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
-import utils.InputOption
+import utils.{CountryOptions, InputOption}
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.individual.previousAddress
 
@@ -36,7 +35,7 @@ class PreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
   val countryOptions: CountryOptions = new CountryOptions(validCountryData)
   val establisherName: String = "test first name test last name"
 
-  override val form = new AddressFormProvider()()
+  override val form = new AddressFormProvider(countryOptions)()
 
   def createView: () => HtmlFormat.Appendable = () => previousAddress(frontendAppConfig, form, NormalMode, firstIndex,
     countryOptions.options, establisherName)(fakeRequest, messages)

@@ -48,7 +48,7 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString -> establisherDetails,
-        EstablisherNinoId.toString -> EstablisherNino.Yes("CS700100A")
+        EstablisherNinoId.toString -> Nino.Yes("CS700100A")
       ),
       Json.obj(EstablisherDetailsId.toString -> establisherDetails)
     )
@@ -72,11 +72,11 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill(EstablisherNino.Yes("CS700100A")))
+      contentAsString(result) mustBe viewAsString(form.fill(Nino.Yes("CS700100A")))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("establisherNino.hasNino", "true"), ("establisherNino.nino", "CS700100A"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("nino.hasNino", "true"), ("nino.nino", "CS700100A"))
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -97,7 +97,7 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", EstablisherNino.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", Nino.options.head.value))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

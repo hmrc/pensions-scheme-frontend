@@ -19,7 +19,7 @@ package controllers.register
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.AddressListFormProvider
+import forms.address.AddressListFormProvider
 import identifiers.register.{InsurerAddressId, InsurerPostCodeLookupId}
 import models.NormalMode
 import models.address.Address
@@ -74,7 +74,7 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
     "address line 2",
     Some("test town"),
     Some("test county"),
-    postcode = Some(postCode),
+    postCode = Some(postCode),
     country = "United Kingdom"
   )
 

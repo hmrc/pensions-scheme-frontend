@@ -18,7 +18,7 @@ package controllers.register.establishers.individual
 
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
-import utils.{FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
@@ -30,7 +30,7 @@ import controllers.ControllerSpecBase
 import forms.address.AddressFormProvider
 import identifiers.register.SchemeDetailsId
 import models.address.Address
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 
@@ -38,7 +38,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new AddressFormProvider()
+  val formProvider = new AddressFormProvider(FakeCountryOptions())
   val form = formProvider()
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
@@ -84,7 +84,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("addressLine1", "value 1"),
-        ("addressLine2", "value 2"), ("postCode.postCode", "AB1 1AB"), "country" -> "GB")
+        ("addressLine2", "value 2"), ("postCode", "AB1 1AB"), "country" -> "GB")
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 

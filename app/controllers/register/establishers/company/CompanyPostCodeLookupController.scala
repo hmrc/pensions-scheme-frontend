@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
-import forms.register.establishers.individual.PostCodeLookupFormProvider
+import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
 import models.{Index, Mode}
 import play.api.data.Form
@@ -46,8 +46,8 @@ class CompanyPostCodeLookupController @Inject() (
 
   private val title: Message = "messages__companyAddress__title"
   private val heading: Message = "messages__companyAddress__heading"
-  private val invalidPostcode: Message = "messages__common__postcode_lookup__error__invalid"
-  private val noResults: Message = "messages__common__postcode_lookup__error__no_results"
+  private val invalidPostcode: Message = "messages__error__postcode_invalid"
+  private val noResults: Message = "messages__error__postcode_no_results"
 
   protected val form: Form[String] = formProvider()
 

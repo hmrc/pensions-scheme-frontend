@@ -38,7 +38,7 @@ class DirectorNinoViewSpec extends ViewBehaviours {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorNino(frontendAppConfig, form, NormalMode,
     establisherIndex, directorIndex, directorName)(fakeRequest, messages)
 
-  "rectorNino view" must {
+  "DirectorNino view" must {
     behave like normalPage(createView, messageKeyPrefix, messages("messages__director_nino__title"))
 
     behave like pageWithSecondaryHeader(createView, "First Name Middle Name Last Name")
@@ -46,25 +46,25 @@ class DirectorNinoViewSpec extends ViewBehaviours {
     behave like pageWithBackLink(createView)
   }
 
-  "CompanyDirectorNino view" when {
+  "DirectorNino view" when {
     "rendered" must {
       val ninoOptions = Seq("true", "false")
 
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
         for (option <- ninoOptions) {
-          assertContainsRadioButton(doc, s"directorNino_hasNino-$option", "directorNino.hasNino", option, isChecked = false)
+          assertContainsRadioButton(doc, s"nino_hasNino-$option", "nino.hasNino", option, isChecked = false)
         }
       }
 
       for (option <- ninoOptions) {
         s"rendered with a value of '$option'" must {
           s"have the '$option' radio button selected" in {
-            val doc = asDocument(createViewUsingForm(form.bind(Map("directorNino.hasNino" -> s"$option"))))
-            assertContainsRadioButton(doc, s"directorNino_hasNino-$option", "directorNino.hasNino", option, isChecked = true)
+            val doc = asDocument(createViewUsingForm(form.bind(Map("nino.hasNino" -> s"$option"))))
+            assertContainsRadioButton(doc, s"nino_hasNino-$option", "nino.hasNino", option, isChecked = true)
 
             for (unselectedOption <- ninoOptions.filterNot(o => o == option)) {
-              assertContainsRadioButton(doc, s"directorNino_hasNino-$unselectedOption", "directorNino.hasNino", unselectedOption, isChecked = false)
+              assertContainsRadioButton(doc, s"nino_hasNino-$unselectedOption", "nino.hasNino", unselectedOption, isChecked = false)
             }
           }
         }
@@ -72,14 +72,14 @@ class DirectorNinoViewSpec extends ViewBehaviours {
 
       "display an input text box with the value when yes is selected" in {
         val expectedValue = "AB020202A"
-        val doc = asDocument(createViewUsingForm(form.bind(Map("directorNino.hasNino" -> "true", "directorNino.nino" -> expectedValue))))
-        doc must haveLabelAndValue("directorNino_nino", s"${messages("messages__common__nino")} ${messages("messages__common__nino_hint")}", expectedValue)
+        val doc = asDocument(createViewUsingForm(form.bind(Map("nino.hasNino" -> "true", "nino.nino" -> expectedValue))))
+        doc must haveLabelAndValue("nino_nino", s"${messages("messages__common__nino")} ${messages("messages__common__nino_hint")}", expectedValue)
       }
 
       "display an input text box with the value when no is selected" in {
         val expectedValue = "don't have nino"
-        val doc = asDocument(createViewUsingForm(form.bind(Map("directorNino.hasNino" -> "false", "directorNino.reason" -> expectedValue))))
-        doc must haveLabelAndValue("directorNino_reason", messages("messages__director_no_nino"), expectedValue)
+        val doc = asDocument(createViewUsingForm(form.bind(Map("nino.hasNino" -> "false", "nino.reason" -> expectedValue))))
+        doc must haveLabelAndValue("nino_reason", messages("messages__director_no_nino"), expectedValue)
       }
     }
   }

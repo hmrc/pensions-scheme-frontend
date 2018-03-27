@@ -19,7 +19,6 @@ package utils
 import base.SpecBase
 import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
-import models.register.CountryOptions
 import play.api.test.Helpers._
 import play.api.inject.guice.GuiceApplicationBuilder
 

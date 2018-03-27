@@ -23,7 +23,6 @@ import forms.address.AddressFormProvider
 import identifiers.TypedIdentifier
 import models.NormalMode
 import models.address.Address
-import models.register.CountryOptions
 import models.requests.DataRequest
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -35,7 +34,7 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeNavigator, InputOption, Navigator, UserAnswers}
+import utils._
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
@@ -77,7 +76,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
     "addressLine2" -> "address line 2",
     "addressLine3" -> "address line 3",
     "addressLine4" -> "address line 4",
-    "postCode.postCode" -> "AB1 1AP",
+    "postCode" -> "AB1 1AP",
     "country" -> "GB"
   )
 
@@ -175,7 +174,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
             val result = controller.onSubmit(viewModel, UserAnswers(), FakeRequest().withFormUrlEncodedBody(
               ("addressLine1", "value 1"),
               ("addressLine2", "value 2"),
-              ("postCode.postCode", "AB1 1AB"),
+              ("postCode", "AB1 1AB"),
               "country" -> "GB")
             )
 
@@ -207,9 +206,9 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
           val controller = app.injector.instanceOf[TestController]
 
           val form = formProvider()
-            .withError("addressLine1", "messages__error__addr1")
-            .withError("addressLine2", "messages__error__addr2")
-            .withError("country", "messages__error__scheme_country")
+            .withError("addressLine1", "messages__error__address_line_1_required")
+            .withError("addressLine2", "messages__error__address_line_2_required")
+            .withError("country", "messages__error_country_required")
 
           val result = controller.onSubmit(viewModel, UserAnswers(), request.withFormUrlEncodedBody())
 

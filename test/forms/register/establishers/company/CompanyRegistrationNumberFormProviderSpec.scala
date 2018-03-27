@@ -17,38 +17,15 @@
 package forms.register.establishers.company
 
 import forms.FormSpec
-import forms.behaviours.FormBehaviours
-import models._
+import forms.behaviours.CrnBehaviour
 
-class CompanyRegistrationNumberFormProviderSpec extends FormSpec {
-
-  val requiredKey: String = "messages__error__has_crn_company"
-  val requiredCRNKey: String = "messages__error__crn"
-  val requiredReasonKey : String = "messages__company__no_crn"
-  val invalidCRNKey: String = "messages__error__crn_invalid"
+class CompanyRegistrationNumberFormProviderSpec extends FormSpec with CrnBehaviour {
 
   val formProvider = new CompanyRegistrationNumberFormProvider()()
 
-  val validData:Map[String,String] = Map(
-    "companyRegistrationNumber.hasCrn" ->"true",
-    "companyRegistrationNumber.crn" -> "1234567"
-  )
-
   "CompanyRegistrationNumber form" must {
 
-    "successfully bind when yes is selected and valid CRN is provided" in {
-      val form = formProvider.bind(Map("companyRegistrationNumber.hasCrn" -> "true", "companyRegistrationNumber.crn" -> "1234567"))
-      form.get shouldBe CompanyRegistrationNumber.Yes("1234567")
-    }
+    behave like formWithCrn(formProvider)
 
-    "successfully bind when no is selected and reason is provided" in {
-      val form = formProvider.bind(Map("companyRegistrationNumber.hasCrn" -> "false", "companyRegistrationNumber.reason" -> "haven't got Crn"))
-      form.get shouldBe CompanyRegistrationNumber.No("haven't got Crn")
-    }
-
-    "fail to bind when value is omitted" in {
-      val expectedError = error("companyRegistrationNumber.hasCrn", requiredKey)
-      checkForError(formProvider, emptyForm, expectedError)
-    }
   }
 }
