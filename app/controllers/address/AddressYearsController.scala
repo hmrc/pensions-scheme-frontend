@@ -18,6 +18,7 @@ package controllers.address
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.Retrievals
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import models.{AddressYears, Mode}
@@ -31,7 +32,7 @@ import views.html.address.addressYears
 
 import scala.concurrent.Future
 
-trait AddressYearsController extends FrontendController with I18nSupport {
+trait AddressYearsController extends FrontendController with Retrievals with I18nSupport {
 
   protected def appConfig: FrontendAppConfig
   protected def cacheConnector: DataCacheConnector
