@@ -188,7 +188,7 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
   private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
     AddressListViewModel(
       routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0)),
-      routes.DirectorPreviousAddressController.onPageLoad(Index(0), Index(0)),
+      routes.DirectorPreviousAddressController.onPageLoad(NormalMode, Index(0), Index(0)),
       addresses,
       subHeading = Some(Message(directorDetails.directorName))
     )
