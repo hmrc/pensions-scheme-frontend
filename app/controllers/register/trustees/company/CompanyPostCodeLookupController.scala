@@ -14,42 +14,42 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.company
-
-import javax.inject.Inject
+package controllers.register.trustees.company
 
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
+import identifiers.register.trustees.company.{CompanyDetailsId, PreviousAddressPostcodeLookupId}
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import utils.Navigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
 class CompanyPostCodeLookupController @Inject() (
-                                          override val appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          override val cacheConnector: DataCacheConnector,
-                                          override val addressLookupConnector: AddressLookupConnector,
-                                          override val navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          requireData: DataRequiredAction,
-                                          formProvider: PostCodeLookupFormProvider
-                                        ) extends PostcodeLookupController {
+                                        val appConfig: FrontendAppConfig,
+                                        override val messagesApi: MessagesApi,
+                                        val cacheConnector: DataCacheConnector,
+                                        val navigator: Navigator,
+                                        authenticate: AuthAction,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
+                                        formProvider: PostCodeLookupFormProvider,
+                                        val addressLookupConnector: AddressLookupConnector
+                                      ) extends PostcodeLookupController with I18nSupport {
 
-  private val title: Message = "messages__companyAddress__title"
-  private val heading: Message = "messages__companyAddress__heading"
-  private val invalidPostcode: Message = "messages__error__postcode_invalid"
-  private val noResults: Message = "messages__error__postcode_no_results"
+  private[controllers] val manualAddressCall = routes.PreviousAddressController.onPageLoad _
+  private[controllers] val postCall = routes.CompanyPostCodeLookupController.onSubmit _
 
-  protected val form: Form[String] = formProvider()
+  private[controllers] val title: Message = "messages__companyAddress__title"
+  private[controllers] val heading: Message = "messages__companyAddress__title"
+
+  override protected val form: Form[String] = formProvider()
 
   private def viewmodel(index: Int, mode: Mode): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
@@ -57,8 +57,8 @@ class CompanyPostCodeLookupController @Inject() (
         CompanyDetailsId(index).retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
-              routes.CompanyPostCodeLookupController.onSubmit(mode, index),
-              routes.CompanyAddressController.onPageLoad(mode, index),
+              postCall(mode, index),
+              manualAddressCall(mode, index),
               title = Message(title),
               heading = Message(heading),
               subHeading = Some(details.companyName)
@@ -75,9 +75,8 @@ class CompanyPostCodeLookupController @Inject() (
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right.map {
-          vm =>
-            post(CompanyPostCodeLookupId(index), vm, mode)
+        viewmodel(index, mode).retrieve.right.map{ vm =>
+          post(PreviousAddressPostcodeLookupId(index), vm, mode)
         }
     }
 }

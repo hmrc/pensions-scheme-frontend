@@ -365,7 +365,6 @@ messages__company__cya__utr_no_reason = Why the scheme establisher does not have
 messages__company__paye_error_length = The PAYE number cannot be more than 13 characters
 messages__company__paye_error_invalid = Enter a valid PAYE number
 
-
 messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
 
 messages__company_director_contact__title = Contact details for director
@@ -405,12 +404,36 @@ messages__confirmDeleteDirector__heading = Are you sure you want to delete %s?
 messages__directorAddressPostcodeLookup__title = Director’s address
 messages__directorAddressPostcodeLookup__heading = Director’s address
 
+messages__previousAddressPostcodeLookup__title = previousAddressPostcodeLookup
+messages__previousAddressPostcodeLookup__heading = previousAddressPostcodeLookup
+messages__previousAddressPostcodeLookup__field1 = Field 1
+messages__previousAddressPostcodeLookup__field2 = Field 2
+messages__previousAddressPostcodeLookup__checkYourAnswersLabel = previousAddressPostcodeLookup
+messages__previousAddressPostcodeLookup__error__field1_required = Please give an answer for field1
+messages__previousAddressPostcodeLookup__error__field2_required = Please give an answer for field2
+
+messages__companyPreviousAddressList__title = companyPreviousAddressList
+messages__companyPreviousAddressList__heading = companyPreviousAddressList
+messages__companyPreviousAddressList__checkYourAnswersLabel = companyPreviousAddressList
+messages__companyPreviousAddressList__error__required = Please give an answer for companyPreviousAddressList
+
 messages__companyReview__title = Review the company details
 messages__companyReview__heading = Review the company details
 messages__companyReview__secondaryHeading__partial = Establishers for
 messages__companyReview__company__editLink = Edit company details
 messages__companyReview__directors__heading = Company directors
 messages__companyReview__directors__editLink = Add, delete or edit company directors
+
+messages__companyPostcodeLookup__title = companyPostcodeLookup
+messages__companyPostcodeLookup__heading = companyPostcodeLookup
+messages__companyPostcodeLookup__field1 = Field 1
+messages__companyPostcodeLookup__field2 = Field 2
+messages__companyPostcodeLookup__checkYourAnswersLabel = companyPostcodeLookup
+messages__companyPostcodeLookup__error__field1_required = Please give an answer for field1
+messages__companyPostcodeLookup__error__field2_required = Please give an answer for field2
+
+addressList.title = addressList
+addressList.heading = addressList
 
 messages__companyContactDetails__title = companyContactDetails
 messages__companyContactDetails__heading = companyContactDetails
