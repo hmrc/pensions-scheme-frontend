@@ -435,10 +435,4 @@ messages__companyPostcodeLookup__error__field2_required = Please give an answer 
 addressList.title = addressList
 addressList.heading = addressList
 
-messages__companyContactDetails__title = companyContactDetails
-messages__companyContactDetails__heading = companyContactDetails
-messages__companyContactDetails__field1 = Field 1
-messages__companyContactDetails__field2 = Field 2
-messages__companyContactDetails__checkYourAnswersLabel = companyContactDetails
-messages__companyContactDetails__error__field1_required = Please give an answer for field1
-messages__companyContactDetails__error__field2_required = Please give an answer for field2
+messages__trustee_company_contact_details__title = Company contact details

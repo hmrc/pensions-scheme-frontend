@@ -43,7 +43,7 @@ class CompanyContactDetailsViewSpec extends QuestionViewBehaviours[ContactDetail
 
   "CompanyContactDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__establisher_company_contact_details__title"))
+    behave like normalPage(createView, messageKeyPrefix, messages("messages__trustee_company_contact_details__title"))
 
     behave like pageWithBackLink(createView)
 
