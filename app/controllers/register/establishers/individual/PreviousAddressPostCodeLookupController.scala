@@ -89,5 +89,4 @@ class PreviousAddressPostCodeLookupController @Inject()(
           )
       }
   }
-
 }
