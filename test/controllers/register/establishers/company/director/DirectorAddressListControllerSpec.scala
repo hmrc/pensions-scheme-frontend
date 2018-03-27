@@ -188,7 +188,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
   private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
     AddressListViewModel(
       routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0)),
-      routes.DirectorAddressController.onPageLoad(Index(0), Index(0)),
+      routes.DirectorAddressController.onPageLoad(NormalMode, Index(0), Index(0)),
       addresses,
       subHeading = Some(Message(directorDetails.directorName))
     )

@@ -63,7 +63,7 @@ class DirectorAddressListController @Inject()(
         case directorDetails ~ addresses =>
           AddressListViewModel(
             postCall = routes.DirectorAddressListController.onSubmit(mode, establisherIndex, directorIndex),
-            manualInputCall = routes.DirectorAddressController.onPageLoad(establisherIndex, directorIndex),
+            manualInputCall = routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex),
             addresses = addresses,
             subHeading = Some(Message(directorDetails.directorName))
           )
