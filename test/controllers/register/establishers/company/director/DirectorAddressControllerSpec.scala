@@ -64,17 +64,17 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   val form: Form[Address] = formProvider()
 
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
-    EstablishersId.toString -> Json.arr(
-      Json.obj(
-        "director" -> Json.arr(
+        EstablishersId.toString -> Json.arr(
           Json.obj(
-            DirectorDetailsId.toString -> director
+            "director" -> Json.arr(
+              Json.obj(
+                DirectorDetailsId.toString -> director
+              )
+            )
           )
         )
       )
     )
-  )
-  )
   )
 
   "DirectorAddress Controller" must {
