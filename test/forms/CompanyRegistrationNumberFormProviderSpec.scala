@@ -16,7 +16,6 @@
 
 package forms
 
-import forms.FormSpec
 import forms.behaviours.CrnBehaviour
 
 class CompanyRegistrationNumberFormProviderSpec extends FormSpec with CrnBehaviour {
