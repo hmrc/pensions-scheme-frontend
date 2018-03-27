@@ -26,6 +26,9 @@ import models.Index
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.check_your_answers
+
+import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
@@ -37,7 +40,12 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map{ companyDetails =>
-        ???
+        Future.successful(Ok(check_your_answers(
+          appConfig,
+          Seq.empty,
+          Some(companyDetails.companyName),
+          routes.CheckYourAnswersController.onSubmit(index)
+        )))
       }
   }
 
