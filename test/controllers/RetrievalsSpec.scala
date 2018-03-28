@@ -54,7 +54,7 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
   }
 
   "static" must {
-    "return a retrieval which alwaus successfully returns the argument" in {
+    "return a retrieval which always successfully returns the argument" in {
       Retrieval.static("foobar").retrieve(dataRequest(Json.obj())).right.value mustEqual "foobar"
     }
   }
