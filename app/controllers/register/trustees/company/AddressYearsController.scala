@@ -63,12 +63,18 @@ class AddressYearsController @Inject()(
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right map get
+        viewmodel(index, mode).retrieve.right.map {
+          vm =>
+            get(AddressYearsId(index), form, vm)
+        }
     }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        post(AddressYearsId(index), mode, form, viewmodel(index, mode))
+        viewmodel(index, mode).retrieve.right.map {
+          vm =>
+            post(AddressYearsId(index), mode, form, vm)
+        }
     }
 }
