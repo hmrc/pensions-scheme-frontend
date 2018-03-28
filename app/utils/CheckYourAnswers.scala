@@ -17,10 +17,11 @@
 package utils
 
 import identifiers.TypedIdentifier
+import models.{CheckMode, CompanyDetails, Index}
 import models.requests.DataRequest
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 import scala.language.implicitConversions
 
@@ -42,6 +43,46 @@ object CheckYourAnswers {
               changeUrl
             ))
         }.getOrElse(Seq.empty)
+    }
+
+  implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]](implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] =
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+
+        val nameLabel = "messages__common__cya__name"
+        val vatLabel = "messages__company__cya__vat"
+        val payeLabel = "messages__company__cya__paye_ern"
+
+        userAnswers.get(id).map {
+          companyDetails =>
+
+            val nameRow = AnswerRow(
+              nameLabel,
+              Seq(s"${companyDetails.companyName}"),
+              false,
+              changeUrl
+            )
+
+            val withVat = companyDetails.vatNumber.fold(Seq(nameRow)){ vat =>
+              Seq(nameRow, AnswerRow(
+                vatLabel,
+                Seq(s"$vat"),
+                false,
+                changeUrl
+              ))
+            }
+
+            companyDetails.payeNumber.fold(withVat){ paye =>
+              withVat :+ AnswerRow(
+                payeLabel,
+                Seq(s"$paye"),
+                false,
+                changeUrl
+              )
+            }
+
+        }.getOrElse(Seq.empty[AnswerRow])
+      }
     }
 
   trait Ops[A] {

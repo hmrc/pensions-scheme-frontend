@@ -17,6 +17,7 @@
 package utils
 
 import identifiers.TypedIdentifier
+import models.{CheckMode, CompanyDetails, Index}
 import models.requests.DataRequest
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -28,20 +29,134 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues {
 
+  val onwardUrl = "onwardUrl"
+
   "CheckYourAnswers" must {
 
     "produce row of answers" when {
 
       "string" in {
 
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj()))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> "value")))
 
         val testIdentifier = new TypedIdentifier[String] {
           override def toString = "testId"
         }
 
-        testIdentifier.row("onwardUrl") must equal(Seq.empty[AnswerRow])
+        testIdentifier.row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("value"), false, onwardUrl)))
 
+      }
+
+      "companyDetails" when {
+        "only name exists" in {
+
+          val companyDetails = CompanyDetails("Company Name", None, None)
+
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
+            "testId" -> companyDetails
+          )))
+
+          val testIdentifier = new TypedIdentifier[CompanyDetails] {
+            override def toString = "testId"
+          }
+
+          testIdentifier.row("onwardUrl") must equal(Seq(AnswerRow(
+            "messages__common__cya__name",
+            Seq(companyDetails.companyName),
+            false,
+            onwardUrl
+          )))
+
+        }
+        "vat number exists" in {
+
+          val companyDetails = CompanyDetails("Company Name", Some("VAT123"), None)
+
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
+            "testId" -> companyDetails
+          )))
+
+          val testIdentifier = new TypedIdentifier[CompanyDetails] {
+            override def toString = "testId"
+          }
+
+          testIdentifier.row(onwardUrl) must equal(Seq(
+            AnswerRow(
+              "messages__common__cya__name",
+              Seq(s"${companyDetails.companyName}"),
+              false,
+              onwardUrl
+            ),
+            AnswerRow(
+              "messages__company__cya__vat",
+              Seq(s"${companyDetails.vatNumber.get}"),
+              false,
+              onwardUrl
+            )))
+
+        }
+        "paye ref exists" in {
+
+          val companyDetails = CompanyDetails("Company Name", None, Some("PAYE/123"))
+
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
+            "testId" -> companyDetails
+          )))
+
+          val testIdentifier = new TypedIdentifier[CompanyDetails] {
+            override def toString = "testId"
+          }
+
+          testIdentifier.row(onwardUrl) must equal(Seq(
+            AnswerRow(
+              "messages__common__cya__name",
+              Seq(s"${companyDetails.companyName}"),
+              false,
+              onwardUrl
+            ),
+            AnswerRow(
+              "messages__company__cya__paye_ern",
+              Seq(s"${companyDetails.payeNumber.get}"),
+              false,
+              onwardUrl
+            )))
+
+        }
+
+        "all values exist" in {
+
+          val companyDetails = CompanyDetails("Company Name", Some("VAT123"), Some("PAYE/123"))
+
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
+            "testId" -> companyDetails
+          )))
+
+          val testIdentifier = new TypedIdentifier[CompanyDetails] {
+            override def toString = "testId"
+          }
+
+          testIdentifier.row(onwardUrl) must equal(Seq(
+            AnswerRow(
+              "messages__common__cya__name",
+              Seq(s"${companyDetails.companyName}"),
+              false,
+              onwardUrl
+            ),
+            AnswerRow(
+              "messages__company__cya__vat",
+              Seq(s"${companyDetails.vatNumber.get}"),
+              false,
+              onwardUrl
+            ),
+            AnswerRow(
+              "messages__company__cya__paye_ern",
+              Seq(s"${companyDetails.payeNumber.get}"),
+              false,
+              onwardUrl
+            )))
+
+
+        }
       }
 
     }

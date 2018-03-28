@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAut
 import models.Index
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{CountryOptions, InputOption}
+import utils.{CheckYourAnswersFactory, CountryOptions, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -49,7 +49,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      new CheckYourAnswersFactory(countryOptions)
     )
 
   def viewAsString() = check_your_answers(

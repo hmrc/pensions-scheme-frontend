@@ -26,6 +26,7 @@ import models.Index
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.CheckYourAnswersFactory
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -35,7 +36,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
-                                           requiredData: DataRequiredAction
+                                           requiredData: DataRequiredAction,
+                                           checkYourAnswersFactory: CheckYourAnswersFactory
                                           ) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {

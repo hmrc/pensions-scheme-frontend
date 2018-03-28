@@ -86,7 +86,6 @@ class CheckYourAnswerHelperSpec extends SpecBase {
       checkYourAnswerHelper(userAnswers).previousAddress(firstIndex) mustEqual expectedOutput
     }
 
-
     "return the AnswerRows for uniqueTaxReference when answered Yes" in {
       val userAnswers = new UserAnswers(
         Json.obj(SchemeDetailsId.toString -> Json.toJson(
