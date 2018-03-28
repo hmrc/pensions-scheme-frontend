@@ -21,7 +21,7 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId, CompanyRegistrationNumberId}
+import identifiers.register.trustees.company._
 import models.{CheckMode, Index}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -65,9 +65,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           routes.CompanyAddressController.onPageLoad(CheckMode, index).url
         )
 
+        val companyAddressYears = CompanyAddressYearsId(index).row(
+          routes.CompanyAddressYearsController.onPageLoad(CheckMode, index).url
+        )
+
         val contactDetailsSection = AnswerSection(
           Some("messages__checkYourAnswers__section__contact_details"),
-          companyAddress
+          companyAddress ++ companyAddressYears
         )
 
         Future.successful(Ok(check_your_answers(

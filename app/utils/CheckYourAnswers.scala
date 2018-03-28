@@ -20,7 +20,7 @@ import identifiers.TypedIdentifier
 import models.address.Address
 import models.register.establishers.individual.UniqueTaxReference
 import models.requests.DataRequest
-import models.{CompanyDetails, CompanyRegistrationNumber}
+import models.{AddressYears, CompanyDetails, CompanyRegistrationNumber}
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
 import viewmodels.AnswerRow
@@ -186,6 +186,17 @@ object CheckYourAnswers {
           ))
         }.getOrElse(Seq.empty[AnswerRow])
       }
+    }
+
+  implicit def addressYears[I <: TypedIdentifier[AddressYears]](implicit rds: Reads[AddressYears]): CheckYourAnswers[I] =
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map( addressYears =>
+        Seq(AnswerRow(
+        "messages__establisher_individual_address_years_cya_label",
+        Seq(s"messages__common__$addressYears"),
+        true,
+        changeUrl
+      ))).getOrElse(Seq.empty[AnswerRow])
     }
 
   trait Ops[A] {
