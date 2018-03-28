@@ -20,7 +20,7 @@ import identifiers.TypedIdentifier
 import models.address.Address
 import models.register.establishers.individual.UniqueTaxReference
 import models.requests.DataRequest
-import models.{AddressYears, CompanyDetails, CompanyRegistrationNumber}
+import models.{AddressYears, CompanyDetails, CompanyRegistrationNumber, ContactDetails}
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
 import viewmodels.AnswerRow
@@ -197,6 +197,26 @@ object CheckYourAnswers {
         true,
         changeUrl
       ))).getOrElse(Seq.empty[AnswerRow])
+    }
+
+  implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] =
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map{
+        contactDetails =>
+          Seq(
+            AnswerRow(
+              "messages__common__email",
+              Seq(s"${contactDetails.emailAddress}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__common__phone",
+              Seq(s"${contactDetails.phoneNumber}"),
+              false,
+              changeUrl
+            ))
+      }.getOrElse(Seq.empty[AnswerRow])
     }
 
   trait Ops[A] {

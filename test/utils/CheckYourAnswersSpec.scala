@@ -17,11 +17,10 @@
 package utils
 
 import identifiers.TypedIdentifier
-import models.AddressYears.UnderAYear
 import models.address.Address
 import models.register.establishers.individual.UniqueTaxReference
 import models.requests.DataRequest
-import models.{AddressYears, CompanyDetails, CompanyRegistrationNumber}
+import models.{AddressYears, CompanyDetails, CompanyRegistrationNumber, ContactDetails}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
@@ -291,6 +290,27 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
       }
 
+      "contactDetails" in {
+
+        val contactDetails = ContactDetails("e@mail.com", "0987654")
+
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> contactDetails)))
+
+        testIdentifier[ContactDetails].row(onwardUrl) must equal(Seq(
+          AnswerRow(
+            "messages__establisher_individual_email_cya_label",
+            Seq(s"${contactDetails.emailAddress}"),
+            false,
+            onwardUrl
+          ),
+          AnswerRow(
+            "messages__establisher_individual_phone_cya_label",
+            Seq(s"${contactDetails.phoneNumber}"),
+            false,
+            onwardUrl
+          )))
+
+      }
     }
 
   }

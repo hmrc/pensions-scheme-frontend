@@ -75,7 +75,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
         val contactDetailsSection = AnswerSection(
           Some("messages__checkYourAnswers__section__contact_details"),
-          companyAddress ++ companyAddressYears
+          companyAddress ++ companyAddressYears ++ companyPreviousAddress
         )
 
         Future.successful(Ok(check_your_answers(
