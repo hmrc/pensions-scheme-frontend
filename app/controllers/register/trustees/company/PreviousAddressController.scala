@@ -27,12 +27,11 @@ import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.company.{PreviousAddressId, CompanyDetailsId}
 import models.address.Address
-import models.register.CountryOptions
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import utils.Navigator
+import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -48,8 +47,10 @@ class PreviousAddressController @Inject() (
                                         val countryOptions: CountryOptions
                                       ) extends ManualAddressController with I18nSupport with Retrievals {
 
-  private val title: Message = "messages__companyAddress__title"
+  private[controllers] val postCall = PreviousAddressController.onSubmit _
+  private[controllers] val title: Message = "messages__companyAddress__title"
   private[controllers] val heading: Message = "messages__companyAddress__heading"
+  private[controllers] val hint: Message = "messages__companyAddress__trustee__lede"
 
   protected val form: Form[Address] = formProvider()
 
@@ -59,10 +60,11 @@ class PreviousAddressController @Inject() (
         CompanyDetailsId(index).retrieve.right.map {
           details =>
             ManualAddressViewModel(
-              PreviousAddressController.onSubmit(mode, Index(index)),
+              postCall(mode, Index(index)),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
+              hint = Message(hint),
               secondaryHeader = Some(details.companyName)
             )
         }

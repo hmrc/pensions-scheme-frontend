@@ -16,93 +16,102 @@
 
 package forms.address
 
-import forms.behaviours.FormBehaviours
-import models.{Field, Required}
+import forms.FormSpec
+import forms.behaviours.{AddressBehaviours, FormBehaviours}
+import forms.mappings.AddressMapping
 import models.address.Address
-import org.apache.commons.lang3.RandomStringUtils
-import play.api.data.FormError
+import utils.FakeCountryOptions
 
-class AddressFormProviderSpec extends FormBehaviours {
+import scala.util.Random
+
+class AddressFormProviderSpec extends FormBehaviours with FormSpec with AddressBehaviours {
+
+  private def alphaString(max: Int = maxAddressLineLength) =
+    Random.alphanumeric take Random.shuffle(Range(1, max).toList).head mkString ""
+
+  private val addressLine1 = alphaString()
+  private val addressLine2 = alphaString()
+  private val addressLine3 = alphaString()
+  private val addressLine4 = alphaString()
+  private val postCode = "ZZ1 1ZZ"
+
+  private val countryOptions = FakeCountryOptions()
 
   val validData: Map[String, String] = Map(
-    "addressLine1" -> "address line 1",
-    "addressLine2" -> "address line 2",
-    "addressLine3" -> "address line 3",
-    "addressLine4" -> "address line 4",
-    "postCode.postCode" -> "AB1 1AP",
+    "addressLine1" -> addressLine1,
+    "addressLine2" -> addressLine2,
+    "addressLine3" -> addressLine3,
+    "addressLine4" -> addressLine4,
+    "postCode" -> postCode,
     "country" -> "GB"
   )
 
-  val postCodeRegex = "^(?i)[A-Z]{1,2}[0-9][0-9A-Z]?[ ]?[0-9][A-Z]{2}"
-  val form = new AddressFormProvider()()
+  val form = new AddressFormProvider(countryOptions)()
 
   "Address form" must {
-    behave like questionForm(Address("address line 1", "address line 2",
-      Some("address line 3"), Some("address line 4"), Some("AB1 1AP"), "GB"))
+    behave like questionForm(Address(
+      addressLine1,
+      addressLine2,
+      Some(addressLine3),
+      Some(addressLine4),
+      Some(postCode),
+      "GB"
+    ))
 
-    behave like formWithMandatoryTextFields(
-      Field("addressLine1", Required -> "messages__error__addr1"),
-      Field("addressLine2", Required -> "messages__error__addr2"),
-      Field("country", Required -> "messages__error__scheme_country"
+    behave like formWithCountry(
+      form,
+      "country",
+      "messages__error_country_required",
+      "messages__error_country_invalid",
+      countryOptions,
+      Map(
+        "addressLine1" -> addressLine1,
+        "addressLine2" -> addressLine2
       )
     )
 
-    "successfully bind when country is not UK and postcode is any postcode" in {
-      val data = validData + ("postCode.postCode" -> "zxadsafd", "country" -> "AF")
-      val result = form.bind(data)
-      result.get shouldEqual Address("address line 1", "address line 2",
-        Some("address line 3"), Some("address line 4"), Some("zxadsafd"), "AF")
-    }
+    behave like formWithCountryAndPostCode(
+      form,
+      "messages__error__postcode",
+      "messages__error__postcode_invalid",
+      Map(
+        "addressLine1" -> addressLine1,
+        "addressLine2" -> addressLine2
+      ),
+      (address: Address) => address.postCode.getOrElse("")
+    )
 
-    "successfully bind when country is UK and postcode is a valid postcode" in {
-      val data = validData + ("postCode.postCode" -> "AB1 1AB", "country" -> "GB")
-      val result = form.bind(data)
-      result.get shouldEqual Address("address line 1", "address line 2",
-        Some("address line 3"), Some("address line 4"), Some("AB1 1AB"), "GB")
-    }
+    "behave like a form with address lines" when {
 
-    "fail to bind when address line 1 exceeds max length 35" in {
-      val addressLine1 = RandomStringUtils.randomAlphabetic(36)
-      val data = validData + ("addressLine1" -> addressLine1)
-
-      val expectedError: Seq[FormError] = error("addressLine1", "messages__error__addr1_length", 35)
-      checkForError(form, data, expectedError)
-    }
-
-    "fail to bind when address line 2 exceeds max length 35" in {
-      val addressLine2 = RandomStringUtils.randomAlphabetic(36)
-      val data = validData + ("addressLine2" -> addressLine2)
-
-      val expectedError: Seq[FormError] = error("addressLine2", "messages__error__addr2_length", 35)
-      checkForError(form, data, expectedError)
-    }
-
-    "fail to bind when address line 3 exceeds max length 35" in {
-      val addressLine3 = RandomStringUtils.randomAlphabetic(36)
-      val data = validData + ("addressLine3" -> addressLine3)
-
-      val expectedError: Seq[FormError] = error("addressLine3", "messages__error__addr3_length", 35)
-      checkForError(form, data, expectedError)
-    }
-
-    "fail to bind when address line 4 exceeds max length 35" in {
-      val addressLine4 = RandomStringUtils.randomAlphabetic(36)
-      val data = validData + ("addressLine4" -> addressLine4)
-
-      val expectedError: Seq[FormError] = error("addressLine4", "messages__error__addr4_length", 35)
-      checkForError(form, data, expectedError)
-    }
-
-    "fail to bind when postcode is missing for country UK" in {
-      val validData: Map[String, String] = Map(
-        "addressLine1" -> "address line 1",
-        "addressLine2" -> "address line 2",
-        "addressLine3" -> "address line 3",
-        "addressLine4" -> "address line 4",
-        "country" -> "GB"
+      behave like formWithAddressField(
+        form,
+        "addressLine1",
+        "messages__error__address_line_1_required",
+        "messages__error__address_line_1_length",
+        "messages__error__address_line_1_invalid"
       )
-      val expectedError: Seq[FormError] = error("postCode.postCode", "messages__error__postcode")
-      checkForError(form, validData, expectedError)
+
+      behave like formWithAddressField(
+        form,
+        "addressLine2",
+        "messages__error__address_line_2_required",
+        "messages__error__address_line_2_length",
+        "messages__error__address_line_2_invalid"
+      )
+
+      behave like formWithOptionalAddressField(
+        form,
+        "addressLine3",
+        "messages__error__address_line_3_length",
+        "messages__error__address_line_3_invalid"
+      )
+
+      behave like formWithOptionalAddressField(
+        form,
+        "addressLine4",
+        "messages__error__address_line_4_length",
+        "messages__error__address_line_4_invalid"
+      )
     }
   }
 }

@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import controllers.address.PostcodeLookupController
-import forms.register.establishers.individual.PostCodeLookupFormProvider
+import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorDetailsId}
 import models.{Index, Mode}
 import play.api.data.Form
@@ -43,9 +43,6 @@ class DirectorAddressPostcodeLookupController @Inject() (
                                         requireData: DataRequiredAction,
                                         formProvider: PostCodeLookupFormProvider
                                       ) extends PostcodeLookupController {
-
-  private val invalidPostcode: Message = "messages__error__postcode_invalid"
-  private val noResults: Message = "messages__error__postcode_no_results"
 
   protected val form: Form[String] = formProvider()
 
@@ -75,7 +72,7 @@ class DirectorAddressPostcodeLookupController @Inject() (
       implicit request =>
         viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map(
           vm =>
-            post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex), vm, invalidPostcode, noResults, mode)
+            post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex), vm, mode)
         )
     }
 }

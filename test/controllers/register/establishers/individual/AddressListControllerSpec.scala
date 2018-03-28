@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.AddressListFormProvider
+import forms.address.AddressListFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
 import models.address.Address
@@ -72,7 +72,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     addressList(frontendAppConfig, form, NormalMode, firstIndex, address, establisherName)(fakeRequest, messages).toString
 
   def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
+    Some("test county"), postCode = Some(postCode), country = "United Kingdom")
 
   val validData = Json.obj(
     SchemeDetailsId.toString -> Json.toJson(

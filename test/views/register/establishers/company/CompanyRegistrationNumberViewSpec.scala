@@ -16,7 +16,7 @@
 
 package views.register.establishers.company
 
-import forms.register.establishers.company.CompanyRegistrationNumberFormProvider
+import forms.CompanyRegistrationNumberFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
 import views.behaviours.ViewBehaviours

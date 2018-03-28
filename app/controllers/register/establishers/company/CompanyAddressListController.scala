@@ -16,74 +16,59 @@
 
 package controllers.register.establishers.company
 
-import javax.inject.Inject
-
+import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
-import controllers.actions._
-import forms.register.establishers.individual.AddressListFormProvider
-import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyPostCodeLookupId}
-import models.address.Address
+import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.address.AddressListController
+import controllers.register.establishers.company.routes._
+import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostCodeLookupId}
 import models.requests.DataRequest
 import models.{Index, Mode}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.EstablishersCompany
-import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.establishers.company.companyAddressList
+import viewmodels.Message
+import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.Future
 
-class CompanyAddressListController @Inject() (
-                                               appConfig: FrontendAppConfig,
-                                               override val messagesApi: MessagesApi,
-                                               dataCacheConnector: DataCacheConnector,
-                                               @EstablishersCompany navigator: Navigator,
-                                               authenticate: AuthAction,
-                                               getData: DataRetrievalAction,
-                                               requireData: DataRequiredAction,
-                                               formProvider: AddressListFormProvider
-                                     ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class CompanyAddressListController @Inject()(
+        override val appConfig: FrontendAppConfig,
+        override val cacheConnector: DataCacheConnector,
+        @EstablishersCompany override val navigator: Navigator,
+        override val messagesApi: MessagesApi,
+        authenticate: AuthAction,
+        getData: DataRetrievalAction,
+        requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      retrieve(mode, index) {
-        case (name, addresses) =>
-          Future.successful(Ok(
-            companyAddressList(appConfig, formProvider(addresses), mode, index, addresses, name)
-          ))
-      }
-  }
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async { implicit request =>
+      viewmodel(mode, index).right.map(get)
+    }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      retrieve(mode, index) {
-        case (name, addresses) =>
-          formProvider(addresses).bindFromRequest().fold(
-            form =>
-              Future.successful(BadRequest(
-                companyAddressList(appConfig, form, mode, index, addresses, name)
-              )),
-            id =>
-              dataCacheConnector.save(request.externalId, CompanyAddressId(index), addresses(id).copy(country = "GB")).map {
-                json =>
-                  Redirect(navigator.nextPage(CompanyAddressListId(index), mode)(UserAnswers(json)))
-              }
-          )
-      }
-  }
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async { implicit request =>
 
-  private def retrieve(mode: Mode, index: Int)(f: (String, Seq[Address]) => Future[Result])
-                      (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    retrieveCompanyName(index){ companyName =>
-      request.userAnswers.get(CompanyPostCodeLookupId(index)).map { addresses =>
-        f(companyName, addresses)
-      } getOrElse {
-        Future.successful(Redirect(controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, index)))
+      viewmodel(mode, index).right.map {
+        vm =>
+          post(vm, CompanyAddressListId(index), CompanyAddressId(index), mode)
       }
     }
 
+  private def viewmodel(mode: Mode, index: Index)
+                       (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+
+    (CompanyDetailsId(index) and CompanyPostCodeLookupId(index)).retrieve.right.map {
+      case companyDetails ~ addresses =>
+        AddressListViewModel(
+          postCall        = routes.CompanyAddressListController.onSubmit(mode, index),
+          manualInputCall = routes.CompanyAddressController.onPageLoad(mode, index),
+          addresses       = addresses,
+          subHeading      = Some(Message(companyDetails.companyName))
+        )
+    }.left.map(_ => Future.successful(Redirect(CompanyPostCodeLookupController.onPageLoad(mode, index))))
   }
 }

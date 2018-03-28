@@ -22,10 +22,9 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.individual.ContactDetailsFormProvider
+import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.individual.ContactDetailsId
-import models.register.establishers.individual.ContactDetails
-import models.{Index, Mode}
+import models.{ContactDetails, Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}

@@ -18,7 +18,7 @@ package views.register.establishers.individual
 
 import controllers.register.establishers.individual.routes
 import play.api.data.Form
-import forms.register.establishers.individual.AddressListFormProvider
+import forms.address.AddressListFormProvider
 import models.address.Address
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
@@ -49,7 +49,7 @@ class PreviousAddressListViewSpec extends ViewBehaviours {
   def getAddressValue(address: Address): String = s"${address.addressLine1}, ${address.addressLine2}" +
     s"${address.addressLine3.map(town => s", $town").getOrElse("")}" +
     s"${address.addressLine4.map(county => s", $county").getOrElse("")}, " +
-    s"${address.postcode.map(postcode => s"$postcode").getOrElse("")}"
+    s"${address.postCode.map(postCode => s"$postCode").getOrElse("")}"
 
 
   "AddressResults view" must {

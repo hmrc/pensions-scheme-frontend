@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.individual.PostCodeLookupFormProvider
+import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.individual.PreviousPostCodeLookupId
 import models.{Index, Mode}
 import play.api.data.Form
@@ -89,5 +89,4 @@ class PreviousAddressPostCodeLookupController @Inject()(
           )
       }
   }
-
 }

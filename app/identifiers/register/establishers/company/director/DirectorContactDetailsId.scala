@@ -18,11 +18,11 @@ package identifiers.register.establishers.company.director
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import models.register.establishers.company.director.DirectorContactDetails
+import models.ContactDetails
 import play.api.libs.json.JsPath
 
 
-case class DirectorContactDetailsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[DirectorContactDetails] {
+case class DirectorContactDetailsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[ContactDetails] {
   override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \ DirectorContactDetailsId.toString
 }
 
