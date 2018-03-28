@@ -169,31 +169,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
       case _=> Seq.empty
   }
 
-  def companyDetails(index: Int): Seq[AnswerRow] =
-    userAnswers.get(CompanyDetailsId(index)) match {
-
-      case Some(CompanyDetails(x, Some(y), Some(z))) => Seq(AnswerRow("messages__common__cya__name", Seq(s"$x"), false,
-        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url),
-        AnswerRow("messages__company__cya__vat", Seq(s"$y"), false,
-          controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url),
-        AnswerRow("messages__company__cya__paye_ern", Seq(s"$z"), false,
-          controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url))
-
-      case Some(CompanyDetails(x, None, Some(z))) => Seq(AnswerRow("messages__common__cya__name", Seq(s"$x"), false,
-        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url),
-        AnswerRow("messages__company__cya__paye_ern", Seq(s"$z"), false,
-          controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url))
-
-      case Some(CompanyDetails(x, Some(y), None)) => Seq(AnswerRow("messages__common__cya__name", Seq(s"$x"), false,
-        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url),
-        AnswerRow("messages__company__cya__vat", Seq(s"$y"), false,
-          controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url))
-
-      case Some(CompanyDetails(x, None, None)) => Seq(AnswerRow("messages__common__cya__name", Seq(s"$x"), false,
-        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url))
-      case _ => Seq.empty
-    }
-
   def companyContactDetails(index: Int): Seq[AnswerRow] = userAnswers.get(CompanyContactDetailsId(index)) match {
     case Some(x) => Seq(AnswerRow("messages__common__email", Seq(s"${x.emailAddress}"), false,
       controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(CheckMode, Index(index)).url),

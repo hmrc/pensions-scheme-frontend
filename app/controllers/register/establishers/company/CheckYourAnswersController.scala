@@ -23,13 +23,14 @@ import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
-import models.{Index, NormalMode}
+import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswersFactory
 import viewmodels.AnswerSection
 import views.html.check_your_answers
+import utils.CheckYourAnswers.Ops._
 
 import scala.concurrent.Future
 
@@ -48,7 +49,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
         val companyDetails = AnswerSection(
           Some("messages__common__company_details__title"),
-          checkYourAnswersHelper.companyDetails(index.id) ++
+          CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url) ++
             checkYourAnswersHelper.companyRegistrationNumber(index.id) ++
             checkYourAnswersHelper.companyUniqueTaxReference(index.id)
         )
