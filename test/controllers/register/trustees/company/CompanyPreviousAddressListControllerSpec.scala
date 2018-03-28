@@ -21,7 +21,7 @@ import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, PreviousAddressPostcodeLookupId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
 import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
 import play.api.inject.bind
@@ -60,7 +60,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
   private val data =
     UserAnswers(Json.obj())
       .set(CompanyDetailsId(0))(companyDetails)
-      .flatMap(_.set(PreviousAddressPostcodeLookupId(0))(addresses))
+      .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(addresses))
       .asOpt.map(_.json)
 
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
@@ -98,7 +98,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0)).url)
       }
 
     }
@@ -177,7 +177,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.PreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0)).url)
       }
 
     }
@@ -187,7 +187,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
   private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
     AddressListViewModel(
       routes.CompanyPreviousAddressListController.onSubmit(NormalMode, Index(0)),
-      routes.PreviousAddressController.onPageLoad(NormalMode, Index(0)),
+      routes.CompanyPreviousAddressController.onPageLoad(NormalMode, Index(0)),
       addresses,
       subHeading = Some(Message(companyDetails.companyName))
     )

@@ -24,7 +24,7 @@ import controllers.actions._
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.company.{CompanyDetailsId, PreviousAddressId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId}
 import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
 import org.scalatest.OptionValues
@@ -43,7 +43,7 @@ import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
 
-class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
+class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
@@ -74,7 +74,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
       )) {
         implicit app =>
 
-          val controller = app.injector.instanceOf[PreviousAddressController]
+          val controller = app.injector.instanceOf[CompanyPreviousAddressController]
 
           val viewmodel = ManualAddressViewModel(
             controller.postCall(NormalMode, firstIndex),
@@ -88,7 +88,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
           def viewAsString(form: Form[_] = form) = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
 
           val request = addToken(
-            FakeRequest(PreviousAddressController.onPageLoad(NormalMode, firstIndex))
+            FakeRequest(CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex))
             .withHeaders("Csrf-Token" -> "nocheck")
           )
 
@@ -131,7 +131,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
         )) {
           implicit app =>
 
-            val fakeRequest = addToken(FakeRequest(PreviousAddressController.onSubmit(NormalMode, firstIndex))
+            val fakeRequest = addToken(FakeRequest(CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex))
               .withHeaders("Csrf-Token" -> "nocheck")
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
@@ -144,7 +144,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeDataCacheConnector.verify(PreviousAddressId(firstIndex), address)
+            FakeDataCacheConnector.verify(CompanyPreviousAddressId(firstIndex), address)
         }
       }
     }

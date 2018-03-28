@@ -44,7 +44,7 @@ import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 
-class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures  {
+class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures  {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
@@ -80,7 +80,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       )) {
         implicit app =>
 
-          val controller = app.injector.instanceOf[PreviousAddressPostcodeLookupController]
+          val controller = app.injector.instanceOf[CompanyPreviousAddressPostcodeLookupController]
 
           lazy val viewModel = PostcodeLookupViewModel(
             postCall = controller.postCall(NormalMode, firstIndex),
@@ -92,7 +92,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
 
           def viewAsString(form: Form[_] = form) = postcodeLookup(frontendAppConfig, form, viewModel)(fakeRequest, messages).toString
 
-          val request = addToken(FakeRequest(routes.PreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex))
+          val request = addToken(FakeRequest(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex))
             .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
@@ -110,7 +110,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
 
-        val call: Call = routes.PreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex)
+        val call: Call = routes.CompanyPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex)
 
         val validPostcode = "ZZ1 1ZZ"
 

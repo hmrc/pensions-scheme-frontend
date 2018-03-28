@@ -69,6 +69,10 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           routes.CompanyAddressYearsController.onPageLoad(CheckMode, index).url
         )
 
+        val companyPreviousAddress = CompanyPreviousAddressId(index).row(
+          routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url
+        )
+
         val contactDetailsSection = AnswerSection(
           Some("messages__checkYourAnswers__section__contact_details"),
           companyAddress ++ companyAddressYears
