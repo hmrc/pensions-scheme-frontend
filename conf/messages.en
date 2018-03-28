@@ -397,8 +397,8 @@ messages__director_has_sautr__title = Does the director have a Self Assessment U
 messages__director_sautr = Unique Taxpayer Reference number
 messages__director_no_sautr = Tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
 messages__company__director_has_sautr_establisher = Select yes if the director has a Self Assessment Unique Taxpayer Reference number
-messages__company__sautr_hint_what = This is issued by HMRC when you register a business or for Self Assessment.
-messages__director_sautr_hint_format = A Unique Taxpayer Reference number is 10 numbers. You will find it on any letters you have from HMRC.
+messages__company__sautr_hint_what = This is issued by HMRC for Self Assessment.
+messages__director_sautr_hint_format = A Unique Taxpayer Reference number is 10 numbers.
 messages__error__has_sautr_director = Select yes if the director has a Unique Taxpayer Reference number
 messages__error__no_sautr_director = You need to tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
 
