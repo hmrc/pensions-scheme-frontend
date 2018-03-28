@@ -298,13 +298,13 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
         testIdentifier[ContactDetails].row(onwardUrl) must equal(Seq(
           AnswerRow(
-            "messages__establisher_individual_email_cya_label",
+            "messages__common__email",
             Seq(s"${contactDetails.emailAddress}"),
             false,
             onwardUrl
           ),
           AnswerRow(
-            "messages__establisher_individual_phone_cya_label",
+            "messages__common__phone",
             Seq(s"${contactDetails.phoneNumber}"),
             false,
             onwardUrl
