@@ -16,7 +16,7 @@
 
 package identifiers.register.establishers.trustees.company
 
-import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressYearsId, PreviousAddressId, PreviousAddressPostcodeLookupId}
+import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyPreviousAddressId, CompanyPreviousAddressPostcodeLookupId}
 import models.AddressYears
 import models.address.Address
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -29,8 +29,8 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
 
     val answers = UserAnswers(Json.obj())
       .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear)
-      .flatMap(_.set(PreviousAddressPostcodeLookupId(0))(Seq.empty))
-      .flatMap(_.set(PreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
+      .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
+      .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .asOpt.value
 
     "`AddressYears` is set to `OverAYear`" when {
@@ -38,11 +38,11 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       val result: UserAnswers = answers.set(CompanyAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
 
       "remove the data for `PreviousPostCodeLookup`" in {
-        result.get(PreviousAddressPostcodeLookupId(0)) mustNot be(defined)
+        result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustNot be(defined)
       }
 
       "remove the data for `PreviousAddress`" in {
-        result.get(PreviousAddressId(0)) mustNot be(defined)
+        result.get(CompanyPreviousAddressId(0)) mustNot be(defined)
       }
     }
 
@@ -51,11 +51,11 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       val result: UserAnswers = answers.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
       "not remove the data for `PreviousPostCodeLookup`" in {
-        result.get(PreviousAddressPostcodeLookupId(0)) mustBe defined
+        result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustBe defined
       }
 
       "not remove the data for `PreviousAddress`" in {
-        result.get(PreviousAddressId(0)) mustBe defined
+        result.get(CompanyPreviousAddressId(0)) mustBe defined
       }
     }
 
@@ -64,11 +64,11 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       val result: UserAnswers = answers.remove(CompanyAddressYearsId(0)).asOpt.value
 
       "not remove the data for `PreviousPostCodeLookup`" in {
-        result.get(PreviousAddressPostcodeLookupId(0)) mustBe defined
+        result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustBe defined
       }
 
       "not remove the data for `PreviousAddress`" in {
-        result.get(PreviousAddressId(0)) mustBe defined
+        result.get(CompanyPreviousAddressId(0)) mustBe defined
       }
     }
   }

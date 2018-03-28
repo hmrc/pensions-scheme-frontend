@@ -86,61 +86,6 @@ class CheckYourAnswerHelperSpec extends SpecBase {
       checkYourAnswerHelper(userAnswers).previousAddress(firstIndex) mustEqual expectedOutput
     }
 
-
-    "return the AnswerRows for uniqueTaxReference when answered Yes" in {
-      val userAnswers = new UserAnswers(
-        Json.obj(SchemeDetailsId.toString -> Json.toJson(
-          SchemeDetails("value 1", SchemeType.SingleTrust)),
-          "establishers" -> Json.arr(
-            Json.obj(
-              EstablisherDetailsId.toString -> establisherDetails,
-              UniqueTaxReferenceId.toString -> Yes("1115676787"))
-          ))
-      )
-      val expectedOutput = Seq(
-        AnswerRow(
-          "messages__establisher_individual_utr_question_cya_label",
-          Seq("Yes"),
-          false,
-          UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url
-        ),
-        AnswerRow(
-          "messages__establisher_individual_utr_cya_label",
-          Seq("1115676787"),
-          false,
-          UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url
-        )
-      )
-      checkYourAnswerHelper(userAnswers).uniqueTaxReference(firstIndex) mustEqual expectedOutput
-    }
-
-    "return the AnswerRows for uniqueTaxReference when answered No" in {
-      val userAnswers = new UserAnswers(
-        Json.obj(SchemeDetailsId.toString -> Json.toJson(
-          SchemeDetails("value 1", SchemeType.SingleTrust)),
-          "establishers" -> Json.arr(
-            Json.obj(
-              EstablisherDetailsId.toString -> establisherDetails,
-              UniqueTaxReferenceId.toString -> No("No utr"))
-          ))
-      )
-      val expectedOutput = Seq(
-        AnswerRow(
-          "messages__establisher_individual_utr_question_cya_label",
-          Seq("No"),
-          false,
-          UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url
-        ),
-        AnswerRow(
-          "messages__establisher_individual_utr_reason_cya_label",
-          Seq("No utr"),
-          false,
-          UniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url
-        )
-      )
-      checkYourAnswerHelper(userAnswers).uniqueTaxReference(firstIndex) mustEqual expectedOutput
-    }
-
     "return the AnswerRows for establisher Nino when answered Yes" in {
       val userAnswers = new UserAnswers(
         Json.obj(SchemeDetailsId.toString -> Json.toJson(

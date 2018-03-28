@@ -21,13 +21,16 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import models.{Index, NormalMode}
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyRegistrationNumberId}
+import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswersFactory
 import viewmodels.AnswerSection
 import views.html.check_your_answers
+import utils.CheckYourAnswers.Ops._
 
 import scala.concurrent.Future
 
@@ -41,13 +44,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName { schemeName =>
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
         val checkYourAnswersHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
 
         val companyDetails = AnswerSection(
           Some("messages__common__company_details__title"),
-          checkYourAnswersHelper.companyDetails(index.id) ++
-            checkYourAnswersHelper.companyRegistrationNumber(index.id) ++
+          CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url) ++
+            CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url) ++
             checkYourAnswersHelper.companyUniqueTaxReference(index.id)
         )
 
@@ -62,7 +65,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(check_your_answers(
           appConfig,
           Seq(companyDetails,companyContactDetails),
-          Some(schemeName),
+          Some(schemeDetails.schemeName),
           routes.CheckYourAnswersController.onSubmit(index)))
         )
       }

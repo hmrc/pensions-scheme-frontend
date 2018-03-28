@@ -4,20 +4,20 @@ POST       /:index/company/companyDetails                       controllers.regi
 GET        /:index/company/changeCompanyDetails                       controllers.register.trustees.company.CompanyDetailsController.onPageLoad(mode: Mode = CheckMode,index:Index)
 POST       /:index/company/changeCompanyDetails                       controllers.register.trustees.company.CompanyDetailsController.onSubmit(mode: Mode = CheckMode,index:Index)
 
-GET        /:index/company/previousAddress                       controllers.register.trustees.company.PreviousAddressController.onPageLoad(mode: Mode = NormalMode, index:Index)
-POST       /:index/company/previousAddress                       controllers.register.trustees.company.PreviousAddressController.onSubmit(mode: Mode = NormalMode, index:Index)
-GET        /:index/company/changePreviousAddress                 controllers.register.trustees.company.PreviousAddressController.onPageLoad(mode: Mode = CheckMode, index:Index)
-POST       /:index/company/changePreviousAddress                 controllers.register.trustees.company.PreviousAddressController.onSubmit(mode: Mode = CheckMode, index:Index)
+GET        /:index/company/companyPreviousAddress                       controllers.register.trustees.company.CompanyPreviousAddressController.onPageLoad(mode: Mode = NormalMode, index:Index)
+POST       /:index/company/companyPreviousAddress                       controllers.register.trustees.company.CompanyPreviousAddressController.onSubmit(mode: Mode = NormalMode, index:Index)
+GET        /:index/company/changeCompanyPreviousAddress                 controllers.register.trustees.company.CompanyPreviousAddressController.onPageLoad(mode: Mode = CheckMode, index:Index)
+POST       /:index/company/changeCompanyPreviousAddress                 controllers.register.trustees.company.CompanyPreviousAddressController.onSubmit(mode: Mode = CheckMode, index:Index)
 
 GET        /:index/company/companyAddress                       controllers.register.trustees.company.CompanyAddressController.onPageLoad(mode: Mode = NormalMode, index:Index)
 POST       /:index/company/companyAddress                       controllers.register.trustees.company.CompanyAddressController.onSubmit(mode: Mode = NormalMode, index:Index)
 GET        /:index/company/changeCompanyAddress                 controllers.register.trustees.company.CompanyAddressController.onPageLoad(mode: Mode = CheckMode, index:Index)
 POST       /:index/company/changeCompanyAddress                 controllers.register.trustees.company.CompanyAddressController.onSubmit(mode: Mode = CheckMode, index:Index)
 
-GET        /:index/company/previousAddressPostcodeLookup                       controllers.register.trustees.company.PreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index:Index)
-POST       /:index/company/previousAddressPostcodeLookup                       controllers.register.trustees.company.PreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index:Index)
-GET        /:index/company/changePreviousAddressPostcodeLookup                       controllers.register.trustees.company.PreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index:Index)
-POST       /:index/company/changePreviousAddressPostcodeLookup                       controllers.register.trustees.company.PreviousAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index:Index)
+GET        /:index/company/companyPreviousAddressPostcodeLookup                       controllers.register.trustees.company.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index:Index)
+POST       /:index/company/companyPreviousAddressPostcodeLookup                       controllers.register.trustees.company.CompanyPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index:Index)
+GET        /:index/company/changeCompanyPreviousAddressPostcodeLookup                       controllers.register.trustees.company.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index:Index)
+POST       /:index/company/changeCompanyPreviousAddressPostcodeLookup                       controllers.register.trustees.company.CompanyPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index:Index)
 
 GET        /:index/company/companyPreviousAddressList               controllers.register.trustees.company.CompanyPreviousAddressListController.onPageLoad(mode: Mode = NormalMode, index:Index)
 POST       /:index/company/companyPreviousAddressList               controllers.register.trustees.company.CompanyPreviousAddressListController.onSubmit(mode: Mode = NormalMode, index:Index)
@@ -48,3 +48,6 @@ GET        /:index/company/companyRegistrationNumber               controllers.r
 POST       /:index/company/companyRegistrationNumber               controllers.register.trustees.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = NormalMode, index:Index)
 GET        /:index/company/changeCompanyRegistrationNumber               controllers.register.trustees.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = CheckMode, index:Index)
 POST       /:index/company/changeCompanyRegistrationNumber               controllers.register.trustees.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = CheckMode, index:Index)
+
+GET        /:index/company/checkYourAnswers                       controllers.register.trustees.company.CheckYourAnswersController.onPageLoad(index: Index)
+POST       /:index/company/checkYourAnswers                       controllers.register.trustees.company.CheckYourAnswersController.onSubmit(index: Index)

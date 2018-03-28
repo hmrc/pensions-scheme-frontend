@@ -24,14 +24,12 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
 import identifiers.register.establishers.company.{CompanyPreviousAddressId, CompanyPreviousAddressListId}
-import identifiers.register.trustees.company.CompanyDetailsId
-import identifiers.register.trustees.company.{PreviousAddressId, PreviousAddressPostcodeLookupId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
 import models.requests.DataRequest
 import models.{Index, Mode}
-import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
-import utils.{Navigator, UserAnswers}
+import utils.Navigator
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.Future
@@ -56,14 +54,14 @@ class CompanyPreviousAddressListController @Inject() (
   }
 
   private def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
-    (CompanyDetailsId(index) and PreviousAddressPostcodeLookupId(index)).retrieve.right.map{
+    (CompanyDetailsId(index) and CompanyPreviousAddressPostcodeLookupId(index)).retrieve.right.map{
       case companyDetails ~ addresses =>
         AddressListViewModel(
           postCall = routes.CompanyPreviousAddressListController.onSubmit(mode, index),
-          manualInputCall = routes.PreviousAddressController.onPageLoad(mode, index),
+          manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(mode, index),
           addresses = addresses,
           subHeading = Some(companyDetails.companyName)
         )
-    }.left.map(_ => Future.successful(Redirect(routes.PreviousAddressPostcodeLookupController.onPageLoad(mode, index))))
+    }.left.map(_ => Future.successful(Redirect(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index))))
   }
 }

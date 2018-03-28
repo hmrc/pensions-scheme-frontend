@@ -33,7 +33,7 @@ object CompanyAddressYearsId {
     Cleanup[AddressYears, CompanyAddressYearsId] {
       case (CompanyAddressYearsId(id), Some(AddressYears.OverAYear), answers) =>
         answers
-          .remove(PreviousAddressPostcodeLookupId(id))
-          .flatMap(_.remove(PreviousAddressId(id)))
+          .remove(CompanyPreviousAddressPostcodeLookupId(id))
+          .flatMap(_.remove(CompanyPreviousAddressId(id)))
     }
 }

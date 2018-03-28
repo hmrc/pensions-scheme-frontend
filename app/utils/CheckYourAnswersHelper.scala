@@ -156,44 +156,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     case _ => Seq.empty
   }
 
-  def companyRegistrationNumber(index: Int): Seq[AnswerRow] =
-    userAnswers.get(CompanyRegistrationNumberId(index)) match {
-      case Some(CompanyRegistrationNumber.Yes(crn)) => Seq(AnswerRow("messages__company__cya__crn_yes_no", Seq(s"${CompanyRegistrationNumber.Yes}"), true,
-        controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url),
-        AnswerRow("messages__common__crn", Seq(s"$crn"), true,
-          controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url))
-      case Some(CompanyRegistrationNumber.No(reason)) => Seq(AnswerRow("messages__company__cya__crn_yes_no", Seq(s"${CompanyRegistrationNumber.No}"), true,
-        controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url),
-        AnswerRow("messages__company__cya__crn_no_reason", Seq(s"$reason"), true,
-          controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url))
-      case _=> Seq.empty
-  }
-
-  def companyDetails(index: Int): Seq[AnswerRow] =
-    userAnswers.get(CompanyDetailsId(index)) match {
-
-      case Some(CompanyDetails(x, Some(y), Some(z))) => Seq(AnswerRow("messages__common__cya__name", Seq(s"$x"), false,
-        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url),
-        AnswerRow("messages__company__cya__vat", Seq(s"$y"), false,
-          controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url),
-        AnswerRow("messages__company__cya__paye_ern", Seq(s"$z"), false,
-          controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url))
-
-      case Some(CompanyDetails(x, None, Some(z))) => Seq(AnswerRow("messages__common__cya__name", Seq(s"$x"), false,
-        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url),
-        AnswerRow("messages__company__cya__paye_ern", Seq(s"$z"), false,
-          controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url))
-
-      case Some(CompanyDetails(x, Some(y), None)) => Seq(AnswerRow("messages__common__cya__name", Seq(s"$x"), false,
-        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url),
-        AnswerRow("messages__company__cya__vat", Seq(s"$y"), false,
-          controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url))
-
-      case Some(CompanyDetails(x, None, None)) => Seq(AnswerRow("messages__common__cya__name", Seq(s"$x"), false,
-        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, Index(0)).url))
-      case _ => Seq.empty
-    }
-
   def companyContactDetails(index: Int): Seq[AnswerRow] = userAnswers.get(CompanyContactDetailsId(index)) match {
     case Some(x) => Seq(AnswerRow("messages__common__email", Seq(s"${x.emailAddress}"), false,
       controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(CheckMode, Index(index)).url),
@@ -203,25 +165,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     case _ => Seq.empty
   }
 
-  def uniqueTaxReference(index: Int): Seq[AnswerRow] = userAnswers.get(UniqueTaxReferenceId(index)) match {
-    case Some(UniqueTaxReference.Yes(utr)) =>
-      Seq(
-        AnswerRow("messages__establisher_individual_utr_question_cya_label", Seq(s"${UniqueTaxReference.Yes}"), false,
-          controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url),
-        AnswerRow("messages__establisher_individual_utr_cya_label", Seq(utr), false,
-          controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url)
-      )
-    case Some(UniqueTaxReference.No(reason)) =>
-      Seq(
-        AnswerRow("messages__establisher_individual_utr_question_cya_label", Seq(s"${UniqueTaxReference.No}"), false,
-          controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url),
-        AnswerRow("messages__establisher_individual_utr_reason_cya_label", Seq(reason), false,
-          controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url)
-      )
-    case _ => Nil
-  }
-
-  def establisherNino(index: Int): Seq[AnswerRow] = userAnswers.get(EstablisherNinoId(index)) match {
+    def establisherNino(index: Int): Seq[AnswerRow] = userAnswers.get(EstablisherNinoId(index)) match {
     case Some(Yes(nino)) =>
       Seq(
         AnswerRow("messages__establisher_individual_nino_question_cya_label", Seq(s"${Nino.Yes}"), false,

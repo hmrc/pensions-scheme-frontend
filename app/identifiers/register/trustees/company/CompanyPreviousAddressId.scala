@@ -21,10 +21,10 @@ import identifiers.register.trustees.TrusteesId
 import models.address.Address
 import play.api.libs.json._
 
-case class PreviousAddressPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[Address]] {
-  override def path: JsPath = __ \ TrusteesId.toString \ index \ PreviousAddressPostcodeLookupId.toString
+case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address] {
+  override def path: JsPath = TrusteesId.path \ index \ CompanyPreviousAddressId.toString
 }
 
-object PreviousAddressPostcodeLookupId {
-  override def toString: String = "previousAddressPostcodeLookup"
+object CompanyPreviousAddressId {
+  override def toString: String = "companyPreviousAddress"
 }
