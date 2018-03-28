@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package forms
 
-import forms.FormSpec
-import forms.behaviours.CrnBehaviour
+import javax.inject.Inject
 
-class CompanyRegistrationNumberFormProviderSpec extends FormSpec with CrnBehaviour {
+import forms.mappings.CrnMapping
+import play.api.data.Form
+import models.CompanyRegistrationNumber
 
-  val formProvider = new CompanyRegistrationNumberFormProvider()()
+class CompanyRegistrationNumberFormProvider @Inject() extends CrnMapping {
 
-  "CompanyRegistrationNumber form" must {
-
-    behave like formWithCrn(formProvider)
-
-  }
+  def apply(): Form[CompanyRegistrationNumber] =
+    Form(
+      "companyRegistrationNumber" -> companyRegistrationNumberMapping()
+    )
 }

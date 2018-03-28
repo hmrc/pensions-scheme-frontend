@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package identifiers.register.trustees.company
 
-import javax.inject.Inject
-
-import forms.mappings.CrnMapping
-import play.api.data.Form
+import identifiers._
+import identifiers.register.trustees.TrusteesId
 import models.CompanyRegistrationNumber
+import play.api.libs.json.JsPath
 
-class CompanyRegistrationNumberFormProvider @Inject() extends CrnMapping {
+case class CompanyRegistrationNumberId(index: Int) extends TypedIdentifier[CompanyRegistrationNumber] {
+  override def path: JsPath = TrusteesId.path \ index \ CompanyRegistrationNumberId.toString
+}
 
-  def apply(): Form[CompanyRegistrationNumber] =
-    Form(
-      "companyRegistrationNumber" -> companyRegistrationNumberMapping()
-    )
+object CompanyRegistrationNumberId {
+  override def toString: String = "companyRegistrationNumber"
 }
