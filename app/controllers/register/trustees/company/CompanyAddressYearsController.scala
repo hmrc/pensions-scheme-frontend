@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.address.AddressYearsFormProvider
-import identifiers.register.trustees.company.{AddressYearsId, CompanyDetailsId}
+import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
 import models.{AddressYears, Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -31,7 +31,7 @@ import utils.Navigator
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
-class AddressYearsController @Inject()(
+class CompanyAddressYearsController @Inject()(
                                         override val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         override val navigator: Navigator,
@@ -49,7 +49,7 @@ class AddressYearsController @Inject()(
           details =>
             val questionText = "messages__company_address_years__title"
             AddressYearsViewModel(
-              postCall = routes.AddressYearsController.onSubmit(mode, index),
+              postCall = routes.CompanyAddressYearsController.onSubmit(mode, index),
               title = Message(questionText),
               heading = Message(questionText),
               legend = Message(questionText),
@@ -65,7 +65,7 @@ class AddressYearsController @Inject()(
       implicit request =>
         viewmodel(index, mode).retrieve.right.map {
           vm =>
-            get(AddressYearsId(index), form, vm)
+            get(CompanyAddressYearsId(index), form, vm)
         }
     }
 
@@ -74,7 +74,7 @@ class AddressYearsController @Inject()(
       implicit request =>
         viewmodel(index, mode).retrieve.right.map {
           vm =>
-            post(AddressYearsId(index), mode, form, vm)
+            post(CompanyAddressYearsId(index), mode, form, vm)
         }
     }
 }

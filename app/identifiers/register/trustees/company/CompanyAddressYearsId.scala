@@ -22,11 +22,11 @@ import models.AddressYears
 import play.api.libs.json.JsPath
 import utils.Cleanup
 
-case class AddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
-  override def path: JsPath = TrusteesId.path \ index \ AddressYearsId.toString
+case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
+  override def path: JsPath = TrusteesId.path \ index \ CompanyAddressYearsId.toString
 }
 
-object AddressYearsId {
+object CompanyAddressYearsId {
 
   override lazy val toString: String =
     "addressYears"

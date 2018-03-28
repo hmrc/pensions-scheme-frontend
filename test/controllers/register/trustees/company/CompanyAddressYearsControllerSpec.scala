@@ -21,7 +21,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.company.{AddressYearsId, CompanyDetailsId}
+import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
 import models.{AddressYears, CompanyDetails, Index, NormalMode}
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -31,7 +31,7 @@ import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
-class AddressYearsControllerSpec extends ControllerSpecBase {
+class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
@@ -46,15 +46,15 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
   )))
 
   val viewmodel = AddressYearsViewModel(
-    postCall = routes.AddressYearsController.onSubmit(NormalMode, firstIndex),
+    postCall = routes.CompanyAddressYearsController.onSubmit(NormalMode, firstIndex),
     title = Message(questionText),
     heading = Message(questionText),
     legend = Message(questionText),
     Some(companyDetails.companyName)
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddressYearsController =
-    new AddressYearsController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeDataCacheConnector, FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyAddressYearsController =
+    new CompanyAddressYearsController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeDataCacheConnector, FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form) = addressYears(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
@@ -73,7 +73,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val getData = new FakeDataRetrievalAction(Some(validData.flatMap(_.set(AddressYearsId(0))(AddressYears.values.head)).get.json))
+      val getData = new FakeDataRetrievalAction(Some(validData.flatMap(_.set(CompanyAddressYearsId(0))(AddressYears.values.head)).get.json))
       val result = controller(getData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
       contentAsString(result) mustBe viewAsString(form.fill(AddressYears.values.head))
     }
