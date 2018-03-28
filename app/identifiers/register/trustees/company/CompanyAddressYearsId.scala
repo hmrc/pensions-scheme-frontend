@@ -27,7 +27,7 @@ case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
 }
 
 object CompanyAddressYearsId {
-  override lazy val toString: String = "companyAddressYears"
+  override lazy val toString: String = "trusteesCompanyAddressYears"
 
   implicit lazy val addressYears: Cleanup[CompanyAddressYearsId] =
     Cleanup[AddressYears, CompanyAddressYearsId] {
