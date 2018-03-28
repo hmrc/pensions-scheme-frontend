@@ -24,6 +24,7 @@ import forms.address.AddressListFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
 import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
+import org.scalatest.OptionValues
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -33,7 +34,7 @@ import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
-class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
+class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFRequest with OptionValues {
 
   private val companyDetails = CompanyDetails("test company name", None, None)
 
@@ -134,7 +135,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+        redirectLocation(result).value mustBe controllers.register.establishers.company.routes.CompanyAddressController.onPageLoad(NormalMode,0).url
       }
 
     }

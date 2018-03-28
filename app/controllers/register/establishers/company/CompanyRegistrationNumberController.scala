@@ -29,6 +29,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersCompany
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyRegistrationNumber
 
@@ -37,22 +38,22 @@ import scala.concurrent.Future
 
 class CompanyRegistrationNumberController @Inject()(
                                                      appConfig: FrontendAppConfig,
-                                                    override val messagesApi: MessagesApi,
-                                                    dataCacheConnector: DataCacheConnector,
-                                                    navigator: Navigator,
-                                                    authenticate: AuthAction,
-                                                    getData: DataRetrievalAction,
-                                                    requireData: DataRequiredAction,
-                                                    formProvider: CompanyRegistrationNumberFormProvider
+                                                     override val messagesApi: MessagesApi,
+                                                     dataCacheConnector: DataCacheConnector,
+                                                     @EstablishersCompany navigator: Navigator,
+                                                     authenticate: AuthAction,
+                                                     getData: DataRetrievalAction,
+                                                     requireData: DataRequiredAction,
+                                                     formProvider: CompanyRegistrationNumberFormProvider
                                                    ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode,index:Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
-        schemeName=>
-            val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
+        schemeName =>
+          val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
             case None =>
               Ok(companyRegistrationNumber(appConfig, form, mode, index, schemeName))
             case Some(value) =>

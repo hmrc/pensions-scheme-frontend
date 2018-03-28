@@ -150,6 +150,7 @@ object AddressListControllerSpec {
       post(
         viewModel,
         fakeId,
+        fakeId,
         NormalMode
       )(DataRequest(request, "cacheId", UserAnswers()))
 

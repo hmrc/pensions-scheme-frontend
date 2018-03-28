@@ -29,19 +29,21 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import utils.Navigator
+import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
 class CompanyPostCodeLookupController @Inject() (
-                                          override val appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          override val cacheConnector: DataCacheConnector,
-                                          override val addressLookupConnector: AddressLookupConnector,
-                                          override val navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          requireData: DataRequiredAction,
-                                          formProvider: PostCodeLookupFormProvider
+                                                  override val appConfig: FrontendAppConfig,
+                                                  override val messagesApi: MessagesApi,
+                                                  override val cacheConnector: DataCacheConnector,
+                                                  override val addressLookupConnector: AddressLookupConnector,
+                                                  @EstablishersCompany
+                                                  override val  navigator: Navigator,
+                                                  authenticate: AuthAction,
+                                                  getData: DataRetrievalAction,
+                                                  requireData: DataRequiredAction,
+                                                  formProvider: PostCodeLookupFormProvider
                                         ) extends PostcodeLookupController {
 
   private val title: Message = "messages__companyAddress__title"

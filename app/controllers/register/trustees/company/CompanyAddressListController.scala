@@ -23,7 +23,7 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
-import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId, CompanyPostcodeLookupId}
+import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostcodeLookupId}
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
@@ -51,7 +51,7 @@ class CompanyAddressListController @Inject()( override val appConfig: FrontendAp
     implicit request =>
       viewmodel(mode, index).right.map{
       vm =>
-        post(vm, CompanyAddressId(index), mode)
+        post(vm, CompanyAddressListId(index), CompanyAddressId(index), mode)
     }
   }
 

@@ -19,7 +19,7 @@ package controllers.address
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import forms.address.AddressListFormProvider
-import identifiers.TypedIdentifier
+import identifiers.{Identifier, TypedIdentifier}
 import models.Mode
 import models.address.Address
 import models.requests.DataRequest
@@ -46,15 +46,15 @@ trait AddressListController extends FrontendController with I18nSupport {
     Future.successful(Ok(addressList(appConfig, form, viewModel)))
   }
 
-  protected def post(viewModel: AddressListViewModel, id: TypedIdentifier[Address], mode: Mode)
+  protected def post(viewModel: AddressListViewModel, navigatorId: Identifier, dataId: TypedIdentifier[Address], mode: Mode)
                     (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     formProvider(viewModel.addresses).bindFromRequest().fold(
       formWithErrors =>
         Future.successful(BadRequest(addressList(appConfig, formWithErrors, viewModel))),
       addressIndex =>
-        cacheConnector.save(request.externalId, id, viewModel.addresses(addressIndex)).map(
-          json => Redirect(navigator.nextPage(id, mode)(UserAnswers(json)))
+        cacheConnector.save(request.externalId, dataId, viewModel.addresses(addressIndex)).map(
+          json => Redirect(navigator.nextPage(navigatorId, mode)(UserAnswers(json)))
         )
     )
   }
