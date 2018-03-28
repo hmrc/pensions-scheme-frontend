@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import com.typesafe.config.ConfigException
 import connectors.{DataCacheConnector, MicroserviceCacheConnector, MongoCacheConnector}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.{Configuration, Environment}
