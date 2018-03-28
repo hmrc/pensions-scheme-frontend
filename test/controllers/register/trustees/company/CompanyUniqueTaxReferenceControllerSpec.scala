@@ -37,6 +37,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val firstIndex = Index(0)
+  val invalidIndex = Index(12)
   val formProvider = new CompanyUniqueTaxReferenceFormProvider()
   val form: Form[UniqueTaxReference] = formProvider()
   val companyName = "test company name"
@@ -58,7 +59,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     )
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyUniqueTaxReferenceController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): CompanyUniqueTaxReferenceController =
     new CompanyUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -83,7 +84,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired page when the index is not valid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, Index(2))(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }

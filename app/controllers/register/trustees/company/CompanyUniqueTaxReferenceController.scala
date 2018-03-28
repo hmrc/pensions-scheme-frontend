@@ -18,21 +18,19 @@ package controllers.register.trustees.company
 
 import javax.inject.Inject
 
+import config.FrontendAppConfig
+import connectors.DataCacheConnector
+import controllers.Retrievals
+import controllers.actions._
+import forms.register.trustees.company.CompanyUniqueTaxReferenceFormProvider
+import identifiers.register.trustees.company._
+import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import controllers.Retrievals
-import connectors.DataCacheConnector
-import controllers.actions._
-import config.FrontendAppConfig
-import forms.register.trustees.company.CompanyUniqueTaxReferenceFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyUniqueTaxReferenceId}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.company.companyUniqueTaxReference
-import models.Mode
-import models.register.trustees.company.CompanyDetails
-import models.{Index, Mode}
-import play.api.mvc.{Action, AnyContent}
 
 import scala.concurrent.Future
 
@@ -51,20 +49,22 @@ class CompanyUniqueTaxReferenceController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      CompanyDetailsId(index).retrieve.right.map { value =>
-        Future.successful(Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, companyName)))
-      }.left.map { _ =>
-        Future.successful(Ok(companyUniqueTaxReference(appConfig, form, mode, index, companyName)))
+      CompanyDetailsId(index).retrieve.right.flatMap { companyDetails =>
+        CompanyUniqueTaxReferenceId(index).retrieve.right.map { value =>
+          Future.successful(Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, companyDetails.companyName)))
+        }.left.map { _ =>
+          Future.successful(Ok(companyUniqueTaxReference(appConfig, form, mode, index, companyDetails.companyName)))
+        }
       }
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveCompanyName(index) {
-        companyName =>
+      CompanyDetailsId(index).retrieve.right.map {
+        companyDetails =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, companyName))),
+              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, companyDetails.companyName))),
             (value) =>
               dataCacheConnector.save(
                 request.externalId,
