@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees
+package models.person
 
-import identifiers.Identifier
+import org.joda.time.LocalDate
 import play.api.libs.json._
 
-case object TrusteesId extends Identifier {
-  override def toString: String = "trustees"
-  override def path: JsPath = __ \ toString
+case class PersonDetails (firstName: String,middleName:Option[String],lastName: String,date:LocalDate){
 
+  def fullName: String = middleName match {
+    case Some(middle) => s"$firstName $middle $lastName"
+    case _ => s"$firstName $lastName"
+  }
+
+}
+
+object PersonDetails {
+  implicit val format: OFormat[PersonDetails] = Json.format[PersonDetails]
 }

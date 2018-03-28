@@ -20,6 +20,9 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import models.person.PersonDetails
 import models.register.establishers.individual.EstablisherDetails
 import models.{CompanyDetails, NormalMode}
 import play.api.libs.json._
@@ -105,5 +108,30 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             e
         }.reduceLeft(JsError.merge)
     }
+  }
+
+  def allTrustees: Seq[(String, String)] = {
+
+    val nameReads: Reads[String] =  {
+
+      val individualName: Reads[String] =
+        (__ \ TrusteeDetailsId.toString).read[PersonDetails]
+          .map(_.fullName)
+
+
+      val companyName: Reads[String] =
+        (__ \ identifiers.register.trustees.company.CompanyDetailsId.toString).read[CompanyDetails]
+          .map(_.companyName)
+
+      individualName orElse companyName
+    }
+
+    getAll[String](TrusteesId.path)(nameReads).map(
+      _.map {
+        name =>
+          name ->
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url
+      }
+    ).getOrElse(Seq.empty)
   }
 }
