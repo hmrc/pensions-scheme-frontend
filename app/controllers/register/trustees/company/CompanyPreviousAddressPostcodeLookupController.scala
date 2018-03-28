@@ -21,7 +21,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, PreviousAddressPostcodeLookupId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
@@ -31,7 +31,7 @@ import utils.Navigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
-class PreviousAddressPostcodeLookupController @Inject() (
+class CompanyPreviousAddressPostcodeLookupController @Inject()(
                                         val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         val cacheConnector: DataCacheConnector,
@@ -43,8 +43,8 @@ class PreviousAddressPostcodeLookupController @Inject() (
                                         val addressLookupConnector: AddressLookupConnector
                                       ) extends PostcodeLookupController with I18nSupport {
 
-  private[controllers] val manualAddressCall = routes.PreviousAddressController.onPageLoad _
-  private[controllers] val postCall = routes.PreviousAddressPostcodeLookupController.onSubmit _
+  private[controllers] val manualAddressCall = routes.CompanyPreviousAddressController.onPageLoad _
+  private[controllers] val postCall = routes.CompanyPreviousAddressPostcodeLookupController.onSubmit _
 
   private[controllers] val title: Message = "messages__companyPreviousAddressPostcodeLookup__title"
   private[controllers] val heading: Message = "messages__companyPreviousAddressPostcodeLookup__heading"
@@ -76,7 +76,7 @@ class PreviousAddressPostcodeLookupController @Inject() (
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         viewmodel(index, mode).retrieve.right.map{ vm =>
-          post(PreviousAddressPostcodeLookupId(index), vm, mode)
+          post(CompanyPreviousAddressPostcodeLookupId(index), vm, mode)
         }
     }
 }

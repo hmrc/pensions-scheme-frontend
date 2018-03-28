@@ -21,7 +21,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, PreviousAddressPostcodeLookupId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
@@ -43,7 +43,7 @@ class CompanyPostCodeLookupController @Inject() (
                                         val addressLookupConnector: AddressLookupConnector
                                       ) extends PostcodeLookupController with I18nSupport {
 
-  private[controllers] val manualAddressCall = routes.PreviousAddressController.onPageLoad _
+  private[controllers] val manualAddressCall = routes.CompanyPreviousAddressController.onPageLoad _
   private[controllers] val postCall = routes.CompanyPostCodeLookupController.onSubmit _
 
   private[controllers] val title: Message = "messages__companyAddress__title"
@@ -76,7 +76,7 @@ class CompanyPostCodeLookupController @Inject() (
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         viewmodel(index, mode).retrieve.right.map{ vm =>
-          post(PreviousAddressPostcodeLookupId(index), vm, mode)
+          post(CompanyPreviousAddressPostcodeLookupId(index), vm, mode)
         }
     }
 }

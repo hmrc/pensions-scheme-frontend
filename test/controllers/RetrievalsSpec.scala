@@ -53,6 +53,12 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
     override def toString: String = "second"
   }
 
+  "static" must {
+    "return a retrieval which always successfully returns the argument" in {
+      Retrieval.static("foobar").retrieve(dataRequest(Json.obj())).right.value mustEqual "foobar"
+    }
+  }
+
   "retrieveCompanyName" must {
     "reach the intended result when companyName is found" in {
 
@@ -123,6 +129,5 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
     }
-
   }
 }

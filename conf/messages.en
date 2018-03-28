@@ -424,6 +424,7 @@ messages__previousAddressPostcodeLookup__field2 = Field 2
 messages__previousAddressPostcodeLookup__checkYourAnswersLabel = previousAddressPostcodeLookup
 messages__previousAddressPostcodeLookup__error__field1_required = Please give an answer for field1
 messages__previousAddressPostcodeLookup__error__field2_required = Please give an answer for field2
+
 messages__companyPreviousAddressList__title = companyPreviousAddressList
 messages__companyPreviousAddressList__heading = companyPreviousAddressList
 messages__companyPreviousAddressList__checkYourAnswersLabel = companyPreviousAddressList
@@ -436,19 +437,11 @@ messages__companyReview__company__editLink = Edit company details
 messages__companyReview__directors__heading = Company directors
 messages__companyReview__directors__editLink = Add, delete or edit company directors
 
-messages__companyPostcodeLookup__title = companyPostcodeLookup
-messages__companyPostcodeLookup__heading = companyPostcodeLookup
-messages__companyPostcodeLookup__field1 = Field 1
-messages__companyPostcodeLookup__field2 = Field 2
-messages__companyPostcodeLookup__checkYourAnswersLabel = companyPostcodeLookup
-messages__companyPostcodeLookup__error__field1_required = Please give an answer for field1
-messages__companyPostcodeLookup__error__field2_required = Please give an answer for field2
-
-addressList.title = addressList
-addressList.heading = addressList
-
 messages__trustee_company_contact_details__title = Company contact details
 
 messages__companyRegistrationNumber__title = Does the trustee have a Company Registration number?
 messages__companyRegistrationNumber__heading = Does the trustee have a Company Registration number?
 messages__companyRegistrationNumber__error__required = Please give an answer for companyRegistrationNumber
+
+messages__checkYourAnswers__section__contact_details = Contact details
+messages__checkYourAnswers__section__company_details = Company details
