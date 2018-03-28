@@ -340,6 +340,9 @@ companyAddressYears.under_a_year = Less than 12 months
 companyAddressYears.over_a_year = More than 12 months
 companyContactDetails.checkYourAnswersLabel = companyContactDetails
 
+messages__companyDirectorAddress__title = Director’s previous address
+messages__companyDirectorAddress__heading = Director’s previous address
+
 messages__companyAddress__title = Company address
 messages__companyAddress__heading = Company address
 messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.

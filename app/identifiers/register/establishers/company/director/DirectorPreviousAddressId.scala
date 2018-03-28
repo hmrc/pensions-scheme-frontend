@@ -19,12 +19,12 @@ package identifiers.register.establishers.company.director
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.address.Address
-import play.api.libs.json.JsPath
+import play.api.libs.json._
 
-case class DirectorPreviousAddressId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Address] {
+case class DirectorPreviousAddressId(establisherIndex:Int, directorIndex:Int) extends TypedIdentifier[Address] {
   override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \ DirectorPreviousAddressId.toString
 }
 
 object DirectorPreviousAddressId {
-  override def toString: String = "directorPreviousAddressId"
+  override def toString: String = "previousAddress"
 }
