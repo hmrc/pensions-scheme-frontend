@@ -44,7 +44,7 @@ import scala.concurrent.Future
 
 class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
-  def onwardRoute: Call = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex)
+  def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, firstIndex)
   def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex)
 
   private def fakeAddress(postCode: String) = Address(
@@ -72,7 +72,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   val company = CompanyDetails(companyName, None, None)
 
   lazy val viewModel = PostcodeLookupViewModel(
-    postCall = onwardRoute,
+    postCall = routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex),
     manualInputCall = manualInputCall,
     title = Message("messages__companyAddress__title"),
     heading = Message("messages__companyAddress__heading"),
@@ -88,7 +88,6 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[Navigator].toInstance(FakeNavigator),
         bind[DataCacheConnector].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
@@ -127,7 +126,6 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[MessagesApi].to(messagesApi),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-        bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),

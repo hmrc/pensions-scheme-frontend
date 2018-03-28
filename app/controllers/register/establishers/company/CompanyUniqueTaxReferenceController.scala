@@ -30,20 +30,21 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersCompany
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyUniqueTaxReference
 
 import scala.concurrent.Future
 
 class CompanyUniqueTaxReferenceController @Inject()(
-                                                    appConfig: FrontendAppConfig,
-                                                    override val messagesApi: MessagesApi,
-                                                    dataCacheConnector: DataCacheConnector,
-                                                    navigator: Navigator,
-                                                    authenticate: AuthAction,
-                                                    getData: DataRetrievalAction,
-                                                    requireData: DataRequiredAction,
-                                                    formProvider: CompanyUniqueTaxReferenceFormProvider
+                                                     appConfig: FrontendAppConfig,
+                                                     override val messagesApi: MessagesApi,
+                                                     dataCacheConnector: DataCacheConnector,
+                                                     @EstablishersCompany navigator: Navigator,
+                                                     authenticate: AuthAction,
+                                                     getData: DataRetrievalAction,
+                                                     requireData: DataRequiredAction,
+                                                     formProvider: CompanyUniqueTaxReferenceFormProvider
                                                   ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()

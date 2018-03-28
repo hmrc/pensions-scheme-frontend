@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-import com.google.inject.AbstractModule
-import navigators._
-import utils.annotations._
-import utils.Navigator
+package viewmodels.address
 
-class PODSModule extends AbstractModule {
+import models.AddressYears
+import play.api.mvc.Call
+import utils.InputOption
+import viewmodels.Message
 
-  override def configure(): Unit = {
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[EstablishersIndividual])
-      .to(classOf[EstablishersIndividualNavigator])
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[Register])
-      .to(classOf[RegisterNavigator])
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[EstablishersCompany])
-        .to(classOf[EstablishersCompanyNavigator])
-  }
-}
+case class AddressYearsViewModel(
+                                  postCall: Call,
+                                  title: Message,
+                                  heading: Message,
+                                  legend: Message,
+                                  subHeading: Option[Message] = None,
+                                  inputs: Seq[InputOption] = AddressYears.options
+                                )

@@ -23,6 +23,7 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
+import identifiers.register.establishers.company.{CompanyPreviousAddressId, CompanyPreviousAddressListId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.company.{PreviousAddressId, PreviousAddressPostcodeLookupId}
 import models.requests.DataRequest
@@ -51,7 +52,7 @@ class CompanyPreviousAddressListController @Inject() (
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode, index).right.map(vm => post(vm,PreviousAddressId(index),mode))
+      viewmodel(mode, index).right.map(vm => post(vm,CompanyPreviousAddressListId(index),CompanyPreviousAddressId(index),mode))
   }
 
   private def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {

@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-import com.google.inject.AbstractModule
-import navigators._
-import utils.annotations._
-import utils.Navigator
+package identifiers.register.trustees.company
 
-class PODSModule extends AbstractModule {
+import identifiers.TypedIdentifier
+import identifiers.register.trustees.TrusteesId
+import models.AddressYears
+import play.api.libs.json.JsPath
+import utils.Cleanup
 
-  override def configure(): Unit = {
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[EstablishersIndividual])
-      .to(classOf[EstablishersIndividualNavigator])
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[Register])
-      .to(classOf[RegisterNavigator])
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[EstablishersCompany])
-        .to(classOf[EstablishersCompanyNavigator])
-  }
+case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
+  override def path: JsPath = TrusteesId.path \ index \ CompanyAddressYearsId.toString
 }
+
+object CompanyAddressYearsId {
+
+  override lazy val toString: String =
+    "addressYears"
+}
+

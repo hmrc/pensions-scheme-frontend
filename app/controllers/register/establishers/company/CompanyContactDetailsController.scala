@@ -29,6 +29,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersCompany
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyContactDetails
 
@@ -37,7 +38,7 @@ import scala.concurrent.Future
 class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
                                                   dataCacheConnector: DataCacheConnector,
-                                                  navigator: Navigator,
+                                                  @EstablishersCompany navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,

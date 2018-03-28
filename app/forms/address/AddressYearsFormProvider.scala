@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-import com.google.inject.AbstractModule
-import navigators._
-import utils.annotations._
-import utils.Navigator
+package forms.address
 
-class PODSModule extends AbstractModule {
+import com.google.inject.Inject
+import forms.mappings.Mappings
+import models.AddressYears
+import play.api.data.Form
+import play.api.i18n.Messages
+import viewmodels.Message
 
-  override def configure(): Unit = {
+class AddressYearsFormProvider @Inject() extends Mappings {
 
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[EstablishersIndividual])
-      .to(classOf[EstablishersIndividualNavigator])
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[Register])
-      .to(classOf[RegisterNavigator])
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[EstablishersCompany])
-        .to(classOf[EstablishersCompanyNavigator])
-  }
+  def apply(requiredError: Message)(implicit messages: Messages): Form[AddressYears] =
+    Form(
+      "value" -> enumerable[AddressYears](requiredError)
+    )
 }
+

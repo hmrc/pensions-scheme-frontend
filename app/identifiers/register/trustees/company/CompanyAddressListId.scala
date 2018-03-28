@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-import com.google.inject.AbstractModule
-import navigators._
-import utils.annotations._
-import utils.Navigator
+package identifiers.register.trustees.company
 
-class PODSModule extends AbstractModule {
+import identifiers._
 
-  override def configure(): Unit = {
+case class CompanyAddressListId(index: Int) extends Identifier
 
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[EstablishersIndividual])
-      .to(classOf[EstablishersIndividualNavigator])
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[Register])
-      .to(classOf[RegisterNavigator])
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[EstablishersCompany])
-        .to(classOf[EstablishersCompanyNavigator])
-  }
+object CompanyAddressListId {
+  override def toString: String = "companyAddressList"
 }

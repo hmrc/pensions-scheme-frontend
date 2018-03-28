@@ -22,7 +22,7 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
-import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorAddressPostcodeLookupId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorAddressListId, DirectorAddressPostcodeLookupId, DirectorDetailsId}
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
@@ -51,7 +51,7 @@ class DirectorAddressListController @Inject()(
     (authenticate andThen getData andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, directorIndex).right.map {
         vm =>
-          post(vm, DirectorAddressId(establisherIndex, directorIndex), mode)
+          post(vm, DirectorAddressListId(establisherIndex, directorIndex), DirectorAddressId(establisherIndex, directorIndex), mode)
       }
     }
 
