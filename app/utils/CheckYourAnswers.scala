@@ -17,6 +17,7 @@
 package utils
 
 import identifiers.TypedIdentifier
+import models.address.Address
 import models.register.establishers.individual.UniqueTaxReference
 import models.requests.DataRequest
 import models.{CompanyDetails, CompanyRegistrationNumber}
@@ -158,6 +159,32 @@ object CheckYourAnswers {
             ))
           case _ => Seq.empty[AnswerRow]
         }
+      }
+    }
+
+  implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = {
+
+        def addressAnswer(address: Address): Seq[String] = {
+          val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
+          Seq(
+            Some(s"${address.addressLine1},"),
+            Some(s"${address.addressLine2},"),
+            address.addressLine3.map(line3 => s"$line3,"),
+            address.addressLine4.map(line4 => s"$line4,"),
+            address.postCode.map(postCode => s"$postCode,"),
+            Some(country)
+          ).flatten
+        }
+
+        userAnswers.get(id).map{ address =>
+          Seq(AnswerRow(
+            "messages__establisher_individual_address_cya_label",
+            addressAnswer(address),
+            false,changeUrl
+          ))
+        }.getOrElse(Seq.empty[AnswerRow])
       }
     }
 

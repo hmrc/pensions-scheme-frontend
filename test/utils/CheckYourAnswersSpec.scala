@@ -17,9 +17,10 @@
 package utils
 
 import identifiers.TypedIdentifier
+import models.address.Address
 import models.register.establishers.individual.UniqueTaxReference
 import models.requests.DataRequest
-import models.{CheckMode, CompanyDetails, CompanyRegistrationNumber, Index}
+import models.{CompanyDetails, CompanyRegistrationNumber}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
@@ -27,6 +28,8 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import utils.CheckYourAnswers.Ops._
 import viewmodels.AnswerRow
+
+import scala.language.implicitConversions
 
 class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues {
 
@@ -236,6 +239,39 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             )))
 
         }
+
+      }
+
+      "address" in {
+
+        implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
+
+        val address = Address(
+          "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
+        )
+
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> address)))
+
+        def addressAnswer(address: Address): Seq[String] = {
+          val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
+
+          Seq(
+            Some(s"${address.addressLine1},"),
+            Some(s"${address.addressLine2},"),
+            address.addressLine3.map(line3 => s"$line3,"),
+            address.addressLine4.map(line4 => s"$line4,"),
+            address.postCode.map(postCode => s"$postCode,"),
+            Some(country)
+          ).flatten
+        }
+
+        testIdentifier[Address].row(onwardUrl) must equal(Seq(
+          AnswerRow(
+            "messages__establisher_individual_address_cya_label",
+            addressAnswer(address),
+            false,
+            onwardUrl
+          )))
 
       }
 

@@ -165,25 +165,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     case _ => Seq.empty
   }
 
-  def uniqueTaxReference(index: Int): Seq[AnswerRow] = userAnswers.get(UniqueTaxReferenceId(index)) match {
-    case Some(UniqueTaxReference.Yes(utr)) =>
-      Seq(
-        AnswerRow("messages__establisher_individual_utr_question_cya_label", Seq(s"${UniqueTaxReference.Yes}"), false,
-          controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url),
-        AnswerRow("messages__establisher_individual_utr_cya_label", Seq(utr), false,
-          controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url)
-      )
-    case Some(UniqueTaxReference.No(reason)) =>
-      Seq(
-        AnswerRow("messages__establisher_individual_utr_question_cya_label", Seq(s"${UniqueTaxReference.No}"), false,
-          controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url),
-        AnswerRow("messages__establisher_individual_utr_reason_cya_label", Seq(reason), false,
-          controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url)
-      )
-    case _ => Nil
-  }
-
-  def establisherNino(index: Int): Seq[AnswerRow] = userAnswers.get(EstablisherNinoId(index)) match {
+    def establisherNino(index: Int): Seq[AnswerRow] = userAnswers.get(EstablisherNinoId(index)) match {
     case Some(Yes(nino)) =>
       Seq(
         AnswerRow("messages__establisher_individual_nino_question_cya_label", Seq(s"${Nino.Yes}"), false,

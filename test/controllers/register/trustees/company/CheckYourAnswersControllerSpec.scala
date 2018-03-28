@@ -20,7 +20,7 @@ import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import models.{CheckMode, Index}
 import play.api.test.Helpers._
-import utils.{CheckYourAnswersFactory, CountryOptions, InputOption}
+import utils.{CheckYourAnswersFactory, CountryOptions, FakeCountryOptions, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -57,7 +57,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      new CheckYourAnswersFactory(countryOptions)
+      new CheckYourAnswersFactory(countryOptions),
+      new FakeCountryOptions
     )
 
   lazy val viewAsString = check_your_answers(
