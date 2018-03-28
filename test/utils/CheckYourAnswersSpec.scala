@@ -17,8 +17,9 @@
 package utils
 
 import identifiers.TypedIdentifier
+import models.register.establishers.individual.UniqueTaxReference
 import models.requests.DataRequest
-import models.{CompanyDetails, CompanyRegistrationNumber}
+import models.{CheckMode, CompanyDetails, CompanyRegistrationNumber, Index}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
@@ -187,6 +188,55 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
           ))
 
         }
+      }
+
+      "UTR" when {
+
+        "yes" in {
+
+          val utr = UniqueTaxReference.Yes("7654321244")
+
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)))
+
+          testIdentifier[UniqueTaxReference].row(onwardUrl) must equal(Seq(
+            AnswerRow(
+              "messages__establisher_individual_utr_question_cya_label",
+              Seq(s"${UniqueTaxReference.Yes}"),
+              false,
+              onwardUrl
+            ),
+            AnswerRow(
+              "messages__establisher_individual_utr_cya_label",
+              Seq({utr.utr}),
+              false,
+              onwardUrl
+            )
+          ))
+
+        }
+
+        "no" in {
+
+          val utr = UniqueTaxReference.No("Not sure")
+
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)))
+
+          testIdentifier[UniqueTaxReference].row(onwardUrl) must equal(Seq(
+            AnswerRow(
+              "messages__establisher_individual_utr_question_cya_label",
+              Seq(s"${UniqueTaxReference.No}"),
+              false,
+              onwardUrl
+            ),
+            AnswerRow(
+              "messages__establisher_individual_utr_reason_cya_label",
+              Seq(utr.reason),
+              false,
+              onwardUrl
+            )))
+
+        }
+
       }
 
     }

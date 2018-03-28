@@ -17,12 +17,12 @@
 package utils
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.company.CompanyRegistrationNumberId
-import models.{CheckMode, CompanyDetails, CompanyRegistrationNumber, Index}
+import models.register.establishers.individual.UniqueTaxReference
 import models.requests.DataRequest
+import models.{CompanyDetails, CompanyRegistrationNumber}
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
-import viewmodels.{AnswerRow, Message}
+import viewmodels.AnswerRow
 
 import scala.language.implicitConversions
 
@@ -116,6 +116,44 @@ object CheckYourAnswers {
               "messages__company__cya__crn_no_reason",
               Seq(s"$reason"),
               true,
+              changeUrl
+            ))
+          case _ => Seq.empty[AnswerRow]
+        }
+      }
+    }
+
+  implicit def uniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] =
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = {
+
+        val utrLabel = "messages__establisher_individual_utr_question_cya_label"
+
+        userAnswers.get(id) match {
+          case Some(UniqueTaxReference.Yes(utr)) => Seq(
+            AnswerRow(
+              utrLabel,
+              Seq(s"${UniqueTaxReference.Yes}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__establisher_individual_utr_cya_label",
+              Seq(utr),
+              false,
+              changeUrl
+            )
+          )
+          case Some(UniqueTaxReference.No(reason)) => Seq(
+            AnswerRow(
+              utrLabel,
+              Seq(s"${UniqueTaxReference.No}"),
+              false,changeUrl
+            ),
+            AnswerRow(
+              "messages__establisher_individual_utr_reason_cya_label",
+              Seq(reason),
+              false,
               changeUrl
             ))
           case _ => Seq.empty[AnswerRow]

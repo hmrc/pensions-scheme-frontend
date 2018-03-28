@@ -21,13 +21,15 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import models.{Index, NormalMode}
+import identifiers.register.establishers.individual.UniqueTaxReferenceId
+import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswersFactory
 import viewmodels.AnswerSection
 import views.html.check_your_answers
+import utils.CheckYourAnswers.Ops._
 
 import scala.concurrent.Future
 
@@ -45,7 +47,9 @@ class CheckYourAnswersController @Inject() (appConfig: FrontendAppConfig,
         val checkYourAnswerHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
         val sections = Seq(
           AnswerSection(None, checkYourAnswerHelper.establisherDetails(index.id) ++
-          checkYourAnswerHelper.establisherNino(index.id) ++ checkYourAnswerHelper.uniqueTaxReference(index.id) ++
+          checkYourAnswerHelper.establisherNino(index.id) ++ UniqueTaxReferenceId(index).row(
+            routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url
+          ) ++
           checkYourAnswerHelper.address(index) ++ checkYourAnswerHelper.addressYears(index) ++
           checkYourAnswerHelper.previousAddress(index) ++
           checkYourAnswerHelper.contactDetails(index))
