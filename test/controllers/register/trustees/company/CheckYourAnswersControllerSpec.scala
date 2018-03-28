@@ -18,8 +18,7 @@ package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
-import models.Index
-import play.api.mvc.Call
+import models.{CheckMode, Index}
 import play.api.test.Helpers._
 import utils.{CheckYourAnswersFactory, CountryOptions, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
@@ -33,12 +32,20 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   val answers: Seq[AnswerRow] = Seq.empty
 
-  val companyDetailsSection = AnswerSection(
+  lazy val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, firstIndex).url
+
+  lazy val postUrl = routes.CheckYourAnswersController.onSubmit(firstIndex)
+
+  lazy val companyDetailsSection = AnswerSection(
     Some("messages__checkYourAnswers__section__company_details"),
-    Seq.empty[AnswerRow]
+    Seq(
+      AnswerRow("messages__common__cya__name", Seq(companyName), false, companyDetailsRoute),
+      AnswerRow("messages__company__cya__vat", Seq("123456"), false, companyDetailsRoute),
+      AnswerRow("messages__company__cya__paye_ern", Seq("abcd"), false, companyDetailsRoute)
+    )
   )
 
-  val contactDetailsSection = AnswerSection(
+  lazy val contactDetailsSection = AnswerSection(
     Some("messages__checkYourAnswers__section__contact_details"),
     Seq.empty[AnswerRow]
   )
@@ -53,14 +60,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new CheckYourAnswersFactory(countryOptions)
     )
 
-  def viewAsString() = check_your_answers(
+  lazy val viewAsString = check_your_answers(
     frontendAppConfig,
     Seq(
       companyDetailsSection,
       contactDetailsSection
     ),
     Some(companyName),
-    routes.CheckYourAnswersController.onSubmit(firstIndex)
+    postUrl
   )(fakeRequest, messages).toString
 
   "Check Your Answers Controller" must {
@@ -68,7 +75,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       val result = controller(getMandatoryTrusteeCompany).onPageLoad(firstIndex)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result) mustBe viewAsString
     }
 
     "redirect to Session Expired page" when {

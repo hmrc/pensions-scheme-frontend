@@ -22,13 +22,14 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees.company.CompanyDetailsId
-import models.Index
+import models.{CheckMode, Index}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswersFactory
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
+import utils.CheckYourAnswers.Ops._
 
 import scala.concurrent.Future
 
@@ -42,11 +43,16 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      CompanyDetailsId(index).retrieve.right.map{ companyDetails =>
+
+      val companyDetailsId = CompanyDetailsId(index)
+
+      companyDetailsId.retrieve.right.map{ companyDetails =>
+
+        val companyDetailsRow = companyDetailsId.row(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url)
 
         val companyDetailsSection = AnswerSection(
           Some("messages__checkYourAnswers__section__company_details"),
-          Seq.empty[AnswerRow]
+          companyDetailsRow
         )
 
         val contactDetailsSection = AnswerSection(
