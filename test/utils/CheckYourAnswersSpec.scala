@@ -17,8 +17,8 @@
 package utils
 
 import identifiers.TypedIdentifier
-import models.{CheckMode, CompanyDetails, Index}
 import models.requests.DataRequest
+import models.{CompanyDetails, CompanyRegistrationNumber}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
@@ -31,6 +31,10 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
   val onwardUrl = "onwardUrl"
 
+  def testIdentifier[A]: TypedIdentifier[A] = new TypedIdentifier[A] {
+    override def toString = "testId"
+  }
+
   "CheckYourAnswers" must {
 
     "produce row of answers" when {
@@ -39,15 +43,12 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> "value")))
 
-        val testIdentifier = new TypedIdentifier[String] {
-          override def toString = "testId"
-        }
-
-        testIdentifier.row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("value"), false, onwardUrl)))
+        testIdentifier[String].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("value"), false, onwardUrl)))
 
       }
 
       "companyDetails" when {
+
         "only name exists" in {
 
           val companyDetails = CompanyDetails("Company Name", None, None)
@@ -56,11 +57,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             "testId" -> companyDetails
           )))
 
-          val testIdentifier = new TypedIdentifier[CompanyDetails] {
-            override def toString = "testId"
-          }
-
-          testIdentifier.row("onwardUrl") must equal(Seq(AnswerRow(
+          testIdentifier[CompanyDetails].row("onwardUrl") must equal(Seq(AnswerRow(
             "messages__common__cya__name",
             Seq(companyDetails.companyName),
             false,
@@ -76,11 +73,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             "testId" -> companyDetails
           )))
 
-          val testIdentifier = new TypedIdentifier[CompanyDetails] {
-            override def toString = "testId"
-          }
-
-          testIdentifier.row(onwardUrl) must equal(Seq(
+          testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
             AnswerRow(
               "messages__common__cya__name",
               Seq(s"${companyDetails.companyName}"),
@@ -103,11 +96,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             "testId" -> companyDetails
           )))
 
-          val testIdentifier = new TypedIdentifier[CompanyDetails] {
-            override def toString = "testId"
-          }
-
-          testIdentifier.row(onwardUrl) must equal(Seq(
+          testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
             AnswerRow(
               "messages__common__cya__name",
               Seq(s"${companyDetails.companyName}"),
@@ -131,11 +120,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             "testId" -> companyDetails
           )))
 
-          val testIdentifier = new TypedIdentifier[CompanyDetails] {
-            override def toString = "testId"
-          }
-
-          testIdentifier.row(onwardUrl) must equal(Seq(
+          testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
             AnswerRow(
               "messages__common__cya__name",
               Seq(s"${companyDetails.companyName}"),
@@ -155,6 +140,51 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               onwardUrl
             )))
 
+        }
+      }
+
+      "CRN" when {
+
+        "yes" in {
+
+          val crn = CompanyRegistrationNumber.Yes("0987654")
+
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> crn)))
+
+          testIdentifier[CompanyRegistrationNumber].row(onwardUrl) must equal(Seq(
+            AnswerRow(
+              "messages__company__cya__crn_yes_no",
+              Seq(s"${CompanyRegistrationNumber.Yes}"),
+              true,
+              onwardUrl
+            ),
+            AnswerRow(
+              "messages__common__crn",
+              Seq(s"${crn.crn}"),
+              true,
+              onwardUrl
+            )))
+        }
+        "no" in {
+
+          val crn = CompanyRegistrationNumber.No("Not sure")
+
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> crn)))
+
+          testIdentifier[CompanyRegistrationNumber].row(onwardUrl) must equal(Seq(
+            AnswerRow(
+              "messages__company__cya__crn_yes_no",
+              Seq(s"${CompanyRegistrationNumber.No}"),
+              true,
+              onwardUrl
+            ),
+            AnswerRow(
+              "messages__company__cya__crn_no_reason",
+              Seq(s"${crn.reason}"),
+              true,
+              onwardUrl
+            )
+          ))
 
         }
       }

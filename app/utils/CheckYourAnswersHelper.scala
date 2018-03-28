@@ -156,19 +156,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     case _ => Seq.empty
   }
 
-  def companyRegistrationNumber(index: Int): Seq[AnswerRow] =
-    userAnswers.get(CompanyRegistrationNumberId(index)) match {
-      case Some(CompanyRegistrationNumber.Yes(crn)) => Seq(AnswerRow("messages__company__cya__crn_yes_no", Seq(s"${CompanyRegistrationNumber.Yes}"), true,
-        controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url),
-        AnswerRow("messages__common__crn", Seq(s"$crn"), true,
-          controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url))
-      case Some(CompanyRegistrationNumber.No(reason)) => Seq(AnswerRow("messages__company__cya__crn_yes_no", Seq(s"${CompanyRegistrationNumber.No}"), true,
-        controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url),
-        AnswerRow("messages__company__cya__crn_no_reason", Seq(s"$reason"), true,
-          controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url))
-      case _=> Seq.empty
-  }
-
   def companyContactDetails(index: Int): Seq[AnswerRow] = userAnswers.get(CompanyContactDetailsId(index)) match {
     case Some(x) => Seq(AnswerRow("messages__common__email", Seq(s"${x.emailAddress}"), false,
       controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(CheckMode, Index(index)).url),

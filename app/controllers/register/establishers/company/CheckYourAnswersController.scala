@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyRegistrationNumberId}
 import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -50,7 +50,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         val companyDetails = AnswerSection(
           Some("messages__common__company_details__title"),
           CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url) ++
-            checkYourAnswersHelper.companyRegistrationNumber(index.id) ++
+            CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url) ++
             checkYourAnswersHelper.companyUniqueTaxReference(index.id)
         )
 

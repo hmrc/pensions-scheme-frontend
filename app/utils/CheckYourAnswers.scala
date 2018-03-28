@@ -17,7 +17,8 @@
 package utils
 
 import identifiers.TypedIdentifier
-import models.{CheckMode, CompanyDetails, Index}
+import identifiers.register.establishers.company.CompanyRegistrationNumberId
+import models.{CheckMode, CompanyDetails, CompanyRegistrationNumber, Index}
 import models.requests.DataRequest
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
@@ -82,6 +83,43 @@ object CheckYourAnswers {
             }
 
         }.getOrElse(Seq.empty[AnswerRow])
+      }
+    }
+
+  implicit def companyRegistrationNumber[I <: TypedIdentifier[CompanyRegistrationNumber]](implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] =
+    new CheckYourAnswers[I]{
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = {
+
+        val crnLabel = "messages__company__cya__crn_yes_no"
+
+        userAnswers.get(id) match {
+          case Some(CompanyRegistrationNumber.Yes(crn)) => Seq(
+            AnswerRow(
+              crnLabel,
+              Seq(s"${CompanyRegistrationNumber.Yes}"),
+              true,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__common__crn",
+              Seq(s"$crn"),
+              true,
+              changeUrl
+            ))
+          case Some(CompanyRegistrationNumber.No(reason)) => Seq(
+            AnswerRow(
+              crnLabel,
+              Seq(s"${CompanyRegistrationNumber.No}"),
+              true,
+              changeUrl),
+            AnswerRow(
+              "messages__company__cya__crn_no_reason",
+              Seq(s"$reason"),
+              true,
+              changeUrl
+            ))
+          case _ => Seq.empty[AnswerRow]
+        }
       }
     }
 
