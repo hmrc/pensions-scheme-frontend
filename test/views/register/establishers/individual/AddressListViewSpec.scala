@@ -18,8 +18,8 @@ package views.register.establishers.individual
 
 import controllers.register.establishers.individual.routes
 import play.api.data.Form
-import forms.register.establishers.individual.AddressListFormProvider
-import models.addresslookup.Address
+import forms.address.AddressListFormProvider
+import models.address.Address
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat

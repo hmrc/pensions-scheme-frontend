@@ -37,12 +37,24 @@ messages__common__phone = Phone number
 messages__common__enter_postcode = Enter the postcode below, or
 messages__common__select_address_link = enter the address manually
 messages__common__address_postcode = Postal code
+messages__common__manual__address__title = Address
+messages__common__manual__address__heading = Address
+messages__common__address_lede = This is usually the registered business address but you can enter any address you have for this company.
 messages__common__address1 = Address line 1
 messages__common__address2 = Address line 2
 messages__common__address3 = Address line 3 (optional)
 messages__common__address4 = Address line 4 (optional)
 messages__common__address_postcode_hint = For example NE12 8ER
 messages__common__country = Country
+
+messages__common__postcode_lookup__enter_postcode = Enter the postcode below, or {0} enter the address manually {1}
+messages__common__postcode_lookup__address_postcode = Postal code
+messages__common__postcode_lookup__address_postcode_hint = For example NE12 8ER
+messages__error__postcode = Enter the postal code
+messages__error__postcode_length = The postal code cannot be more than 8 characters
+messages__error__postcode_invalid = Enter a valid postal code
+messages__error__postcode_no_results = No results for that postcode
+
 messages__error__first_name = Enter the first name
 messages__error__last_name = Enter the last name
 messages__error__date = Enter a valid date
@@ -54,13 +66,18 @@ messages__error__no_sautr_establisher = You need to tell us why the establisher 
 messages__error__no_sautr_length = The reason cannot be more than 150 characters
 messages__error__email = Enter an email address
 messages__error__phone = Enter a phone number
-messages__error__addr1 = Enter the first line of address
-messages__error__addr2 = Enter the second line of address
-messages__error__addr1_length = The first line of address cannot be more than 35 characters
-messages__error__addr2_length = The second line of address cannot be more than 35 characters
-messages__error__addr3_length = The third line of address cannot be more than 35 characters
-messages__error__addr4_length = The fourth line of address cannot be more than 35 characters
-messages__error__country = Enter a country
+messages__error__address_line_1_required = Enter the first line of address
+messages__error__address_line_2_required = Enter the second line of address
+messages__error__address_line_1_length = The first line of address cannot be more than 35 characters
+messages__error__address_line_2_length = The second line of address cannot be more than 35 characters
+messages__error__address_line_3_length = The third line of address cannot be more than 35 characters
+messages__error__address_line_4_length = The fourth line of address cannot be more than 35 characters
+messages__error__address_line_1_invalid = The first line of the address contains invalid characters
+messages__error__address_line_2_invalid = The second line of the address contains invalid characters
+messages__error__address_line_3_invalid = The third line of the address contains invalid characters
+messages__error__address_line_4_invalid = The fourth line of the address contains invalid characters
+messages__error_country_required = Enter a country
+messages__error_country_invalid = Enter a valid country
 
 messages__common__cya__name = Name
 messages__common__cya__address = Address
@@ -154,6 +171,8 @@ messages__benefits_insurance__title = Benefits insurer
 messages__benefits_insurance__name = Name of insurance company
 messages__benefits_insurance__policy = Policy number
 messages__error__company_name = Enter the company name
+messages__error__company_name_invalid = The name contains invalid characters
+
 messages__error__benefits_insurance__policy = Enter the policy number
 messages__error__company_name_length = The company name cannot be more than 255 characters
 messages__error__benefits_insurance__policy_length = The policy number cannot be more than 255 characters
@@ -330,12 +349,13 @@ companyAddressYears.under_a_year = Less than 12 months
 companyAddressYears.over_a_year = More than 12 months
 companyContactDetails.checkYourAnswersLabel = companyContactDetails
 
-messages__establisher_company_postcode__title = Company address
-messages__establisher_company_postcode_hint = This is usually the registered business address but you can enter any address you have for this company.
+messages__companyDirectorAddress__title = Director’s previous address
+messages__companyDirectorAddress__heading = Director’s previous address
 
 messages__companyAddress__title = Company address
 messages__companyAddress__heading = Company address
 messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.
+messages__companyAddress__trustee__lede = This is usually the registered business address of the trustee but you can enter any address you have for this company.
 
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
@@ -355,6 +375,8 @@ messages__company__cya__crn_no_reason = Why the scheme establisher does not have
 messages__company__cya__utr_yes_no = Does the scheme establisher have a Unique Taxpayer Reference number?
 messages__company__cya__utr = UTR
 messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number
+messages__company__paye_error_length = The PAYE number cannot be more than 13 characters
+messages__company__paye_error_invalid = Enter a valid PAYE number
 
 messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
 
@@ -384,18 +406,50 @@ messages__director_has_sautr__title = Does the director have a Self Assessment U
 messages__director_sautr = Unique Taxpayer Reference number
 messages__director_no_sautr = Tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
 messages__company__director_has_sautr_establisher = Select yes if the director has a Self Assessment Unique Taxpayer Reference number
-messages__company__sautr_hint_what = This is issued by HMRC when you register a business or for Self Assessment.
-messages__director_sautr_hint_format = A Unique Taxpayer Reference number is 10 numbers. You will find it on any letters you have from HMRC.
+messages__company__sautr_hint_what = This is issued by HMRC for Self Assessment.
+messages__director_sautr_hint_format = A Unique Taxpayer Reference number is 10 numbers.
 messages__error__has_sautr_director = Select yes if the director has a Unique Taxpayer Reference number
 messages__error__no_sautr_director = You need to tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
 
 messages__confirmDeleteDirector__title = Confirm deletion
 messages__confirmDeleteDirector__heading = Are you sure you want to delete %s?
 
-messages__companyDetails__title = companyDetails
-messages__companyDetails__heading = companyDetails
-messages__companyDetails__field1 = Field 1
-messages__companyDetails__field2 = Field 2
-messages__companyDetails__checkYourAnswersLabel = companyDetails
-messages__companyDetails__error__field1_required = Please give an answer for field1
-messages__companyDetails__error__field2_required = Please give an answer for field2
+messages__directorAddressPostcodeLookup__title = Director’s address
+messages__directorAddressPostcodeLookup__heading = Director’s address
+messages__directorAddressPostcodeLookup__lede = This is usually the director’s residential address.
+
+messages__previousAddressPostcodeLookup__title = previousAddressPostcodeLookup
+messages__previousAddressPostcodeLookup__heading = previousAddressPostcodeLookup
+messages__previousAddressPostcodeLookup__field1 = Field 1
+messages__previousAddressPostcodeLookup__field2 = Field 2
+messages__previousAddressPostcodeLookup__checkYourAnswersLabel = previousAddressPostcodeLookup
+messages__previousAddressPostcodeLookup__error__field1_required = Please give an answer for field1
+messages__previousAddressPostcodeLookup__error__field2_required = Please give an answer for field2
+messages__companyPreviousAddressList__title = companyPreviousAddressList
+messages__companyPreviousAddressList__heading = companyPreviousAddressList
+messages__companyPreviousAddressList__checkYourAnswersLabel = companyPreviousAddressList
+messages__companyPreviousAddressList__error__required = Please give an answer for companyPreviousAddressList
+
+messages__companyReview__title = Review the company details
+messages__companyReview__heading = Review the company details
+messages__companyReview__secondaryHeading__partial = Establishers for
+messages__companyReview__company__editLink = Edit company details
+messages__companyReview__directors__heading = Company directors
+messages__companyReview__directors__editLink = Add, delete or edit company directors
+
+messages__companyPostcodeLookup__title = companyPostcodeLookup
+messages__companyPostcodeLookup__heading = companyPostcodeLookup
+messages__companyPostcodeLookup__field1 = Field 1
+messages__companyPostcodeLookup__field2 = Field 2
+messages__companyPostcodeLookup__checkYourAnswersLabel = companyPostcodeLookup
+messages__companyPostcodeLookup__error__field1_required = Please give an answer for field1
+messages__companyPostcodeLookup__error__field2_required = Please give an answer for field2
+
+addressList.title = addressList
+addressList.heading = addressList
+
+messages__trustee_company_contact_details__title = Company contact details
+
+messages__companyRegistrationNumber__title = Does the trustee have a Company Registration number?
+messages__companyRegistrationNumber__heading = Does the trustee have a Company Registration number?
+messages__companyRegistrationNumber__error__required = Please give an answer for companyRegistrationNumber

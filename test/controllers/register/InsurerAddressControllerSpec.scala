@@ -19,11 +19,13 @@ package controllers.register
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.AddressFormProvider
+import forms.address.AddressFormProvider
 import identifiers.register._
-import models.addresslookup.Address
+import models.address.Address
 import models.register._
 import models.NormalMode
+import models.register._
+import models.address.Address
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -35,7 +37,7 @@ class InsurerAddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new AddressFormProvider()
+  val formProvider = new AddressFormProvider(FakeCountryOptions())
   val form: Form[Address] = formProvider()
   val schemeName: String = "Test Scheme Name"
 
@@ -83,7 +85,7 @@ class InsurerAddressControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("addressLine1", "value 1"),
-        ("addressLine2", "value 2"), ("postCode.postCode", "AB1 1AB"), "country" -> "GB")
+        ("addressLine2", "value 2"), ("postCode", "AB1 1AB"), "country" -> "GB")
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 

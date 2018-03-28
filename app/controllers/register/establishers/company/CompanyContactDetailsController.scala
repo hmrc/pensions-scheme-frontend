@@ -22,13 +22,14 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.company.CompanyContactDetailsFormProvider
+import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.company.CompanyContactDetailsId
-import models.{CompanyContactDetails, Index, Mode}
+import models.{ContactDetails, Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersCompany
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyContactDetails
 
@@ -37,14 +38,14 @@ import scala.concurrent.Future
 class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
                                                   dataCacheConnector: DataCacheConnector,
-                                                  navigator: Navigator,
+                                                  @EstablishersCompany navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
-                                                  formProvider: CompanyContactDetailsFormProvider
+                                                  formProvider: ContactDetailsFormProvider
                                                ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
 
-  val form: Form[CompanyContactDetails] = formProvider()
+  val form: Form[ContactDetails] = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

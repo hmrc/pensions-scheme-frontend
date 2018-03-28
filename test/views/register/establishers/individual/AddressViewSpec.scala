@@ -18,12 +18,11 @@ package views.register.establishers.individual
 
 import play.api.data.Form
 import controllers.register.establishers.individual.routes
-import forms.register.establishers.individual.AddressFormProvider
-import models.addresslookup.Address
-import models.register.CountryOptions
+import forms.address.AddressFormProvider
+import models.address.Address
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
-import utils.InputOption
+import utils.{CountryOptions, InputOption}
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.individual.address
 
@@ -35,9 +34,9 @@ class AddressViewSpec extends QuestionViewBehaviours[Address] {
   val countryOptions: CountryOptions = new CountryOptions(validData)
   val establisherName: String = "test first name test last name"
 
-  override val form = new AddressFormProvider()()
+  override val form = new AddressFormProvider(countryOptions)()
 
-  def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable = () => address(frontendAppConfig, new AddressFormProvider().apply(),
+  def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable = () => address(frontendAppConfig, new AddressFormProvider(countryOptions).apply(),
     NormalMode, firstIndex, validData, establisherName)(fakeRequest, messages)
 
   def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[_]) => address(frontendAppConfig, form, NormalMode,

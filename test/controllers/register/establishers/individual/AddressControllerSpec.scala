@@ -19,26 +19,26 @@ package controllers.register.establishers.individual
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.AddressFormProvider
+import forms.address.AddressFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId}
-import models.addresslookup.Address
+import models.address.Address
 import models.register.establishers.individual.EstablisherDetails
-import models.register.{CountryOptions, SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption}
 import views.html.register.establishers.individual.address
 
 class AddressControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new AddressFormProvider()
+  val formProvider = new AddressFormProvider(FakeCountryOptions())
   val form: Form[Address] = formProvider()
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
@@ -101,7 +101,7 @@ class AddressControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("addressLine1", "value 1"),
-        ("addressLine2", "value 2"), ("postCode.postCode", "AB1 1AB"), "country" -> "GB")
+        ("addressLine2", "value 2"), ("postCode", "AB1 1AB"), "country" -> "GB")
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 

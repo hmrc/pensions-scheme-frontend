@@ -18,13 +18,13 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.individual.routes._
 @import controllers.register.establishers.individual._
-@import models.EstablisherNino._
+@import models.Nino._
 @import models.Mode
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, establisherName: String)(implicit request: Request[_], messages: Messages)
 
 @_options = @{
-        EstablisherNino.options
+        Nino.options
 }
 
 @main_template(
@@ -41,33 +41,33 @@
         @components.heading(headingKey = "messages__establisherNino__title", secondaryHeaderKey = Some(establisherName))
 
         @components.fieldSet(
-            field = form("establisherNino.hasNino"),
+            field = form("nino.hasNino"),
             legend = "messages__establisherNino__title",
             hiddenLegend = true
         ) {
             @components.radio(
-                field = form("establisherNino.hasNino"),
+                field = form("nino.hasNino"),
                 label = _options.head.label,
                 value = options.head.value,
                 dataTarget = options.head.dataTarget
             )
 
             @components.input_text(
-                field = form("establisherNino.nino"),
+                field = form("nino.nino"),
                 label = messages("messages__common__nino"),
                 groupClass = Some("js-hidden panel panel-border-narrow"),
                 hint = Some(messages("messages__common__nino_hint"))
             )
 
             @components.radio(
-                field = form("establisherNino.hasNino"),
+                field = form("nino.hasNino"),
                 label = _options(1).label,
                 value = options(1).value,
                 dataTarget = options(1).dataTarget
             )
 
             @components.input_text(
-                field = form("establisherNino.reason"),
+                field = form("nino.reason"),
                 label = messages("messages__establisher__no_nino"),
                 groupClass = Some("js-hidden panel panel-border-narrow")
             )

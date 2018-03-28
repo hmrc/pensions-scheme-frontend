@@ -21,11 +21,11 @@ import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.actions._
 import play.api.test.Helpers._
-import forms.register.establishers.individual.PostCodeLookupFormProvider
 import models.{Index, NormalMode}
 import views.html.register.establishers.individual.postCodeLookup
 import controllers.ControllerSpecBase
-import models.addresslookup.{Address, AddressRecord}
+import forms.address.PostCodeLookupFormProvider
+import models.address.{Address, AddressRecord}
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._
@@ -62,12 +62,14 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect a Bad Request when post code is not valid" in {
+    "return a Bad Request when post code is not valid" in {
       val invalidPostCode = "invalid"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", invalidPostCode))
-      val boundForm = form.withError(FormError("value", "messages__error__postcode_invalid"))
 
-      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(invalidPostCode))(Matchers.any(), Matchers.any())).thenReturn(Future.successful(None))
+      val boundForm = form.bindFromRequest()(postRequest)
+
+      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(invalidPostCode))(Matchers.any(), Matchers.any())).thenReturn(
+        Future.successful(Some(Seq(AddressRecord(Address("address line 1", "address line 2", None, None, Some(invalidPostCode), "GB"))))))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
@@ -75,8 +77,8 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
-    "redirect a Bad Request when no results found for the input post code" in {
-      val notFoundPostCode = "noResult"
+    "return a Bad Request when no results found for the input post code" in {
+      val notFoundPostCode = "ZZ1 1ZZ"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", notFoundPostCode))
       val boundForm = form.withError(FormError("value", "messages__error__postcode_no_results"))
 
@@ -90,7 +92,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val validPostCode = "valid"
+      val validPostCode = "ZZ1 1ZZ"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", validPostCode))
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostCode))(Matchers.any(), Matchers.any())).thenReturn(
         Future.successful(Some(Seq(AddressRecord(Address("address line 1", "address line 2", None, None, Some(validPostCode), "GB"))))))

@@ -26,9 +26,11 @@ import controllers.actions._
 import config.FrontendAppConfig
 import controllers.Retrievals
 import forms.register.establishers.company.director.DirectorDetailsFormProvider
+import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.register.establishers.company.director.DirectorDetails
 import models.{Index, Mode}
+import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.company.director.directorDetails
 
@@ -47,30 +49,31 @@ class DirectorDetailsController @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode,establisherIndex:Index, directorIndex:Index) = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      retrieveCompanyName(establisherIndex) { companyName =>
-        val preparedForm = request.userAnswers.get[DirectorDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
-          case None => form
-          case Some(value) => form.fill(value)
+  def onPageLoad(mode: Mode,establisherIndex:Index, directorIndex:Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
+          val preparedForm = request.userAnswers.get[DirectorDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          Future.successful(Ok(directorDetails(appConfig, preparedForm, mode, establisherIndex, directorIndex, companyDetails.companyName)))
         }
+    }
 
-        Future.successful(Ok(directorDetails(appConfig, preparedForm, mode, establisherIndex, directorIndex, companyName)))
-      }
-  }
-
-  def onSubmit(mode: Mode,establisherIndex:Index,directorIndex:Index) = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      retrieveCompanyName(establisherIndex) { companyName =>
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex,companyName)))
-          ,
-          (value) =>
-            dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
-              Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode)(new UserAnswers(cacheMap))))
-        )
-      }
-  }
+  def onSubmit(mode: Mode,establisherIndex:Index,directorIndex:Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex,companyDetails.companyName)))
+            ,
+            (value) =>
+              dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
+                Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode)(new UserAnswers(cacheMap))))
+          )
+        }
+    }
 }
 

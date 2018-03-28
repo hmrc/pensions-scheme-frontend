@@ -18,7 +18,7 @@ package views.register.establishers.company
 
 import play.api.data.Form
 import controllers.register.establishers.company.routes
-import forms.register.establishers.individual.PostCodeLookupFormProvider
+import forms.address.PostCodeLookupFormProvider
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat

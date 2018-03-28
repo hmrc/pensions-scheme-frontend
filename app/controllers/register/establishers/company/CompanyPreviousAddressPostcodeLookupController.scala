@@ -22,13 +22,14 @@ import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.individual.PostCodeLookupFormProvider
+import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.company.CompanyPreviousAddressPostcodeLookupId
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersCompany
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.company.companyPreviousAddressPostcodeLookup
 
@@ -39,7 +40,7 @@ class CompanyPreviousAddressPostcodeLookupController @Inject() (
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
                                         addressLookupConnector: AddressLookupConnector,
-                                        navigator: Navigator,
+                                        @EstablishersCompany navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,

@@ -18,7 +18,8 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.routes._
 @import models.Mode
-@import models.addresslookup._
+@import models.address.Address
+@import models.address._
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, addresses: Seq[Address])(implicit request: Request[_], messages: Messages)
 

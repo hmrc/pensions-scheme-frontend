@@ -16,120 +16,181 @@
 
 package controllers.register.establishers.company
 
-import connectors.FakeDataCacheConnector
+import base.CSRFRequest
+import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
-import controllers.actions._
-import forms.register.establishers.individual.AddressListFormProvider
+import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import forms.address.AddressListFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
-import models.addresslookup.Address
-import models.{CompanyDetails, NormalMode}
+import models.address.Address
+import models.{CompanyDetails, Index, NormalMode}
 import org.scalatest.OptionValues
-import play.api.data.Form
-import play.api.libs.json._
+import play.api.inject.bind
+import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeNavigator, UserAnswers}
-import views.html.register.establishers.company.companyAddressList
+import utils.UserAnswers
+import viewmodels.Message
+import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
-class CompanyAddressListControllerSpec extends ControllerSpecBase with OptionValues {
+class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFRequest with OptionValues {
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private val companyDetails = CompanyDetails("test company name", None, None)
 
-  val formProvider = new AddressListFormProvider()
-  val form = formProvider(Seq(0, 1))
-  val addresses = Seq(
-    address("test post code 1"),
-    address("test post code 2")
-  )
-
-  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyAddressListController =
-    new CompanyAddressListController(
-      frontendAppConfig,
-      messagesApi,
-      FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction,
-      dataRetrievalAction,
-      new DataRequiredActionImpl,
-      formProvider
+  private val addresses = Seq(
+    Address(
+      "Address 1 Line 1",
+      "Address 1 Line 2",
+      Some("Address 1 Line 3"),
+      Some("Address 1 Line 4"),
+      Some("A1 1PC"),
+      "GB"
+    ),
+    Address(
+      "Address 2 Line 1",
+      "Address 2 Line 2",
+      Some("Address 2 Line 3"),
+      Some("Address 2 Line 4"),
+      Some("123"),
+      "FR"
     )
-
-  def viewAsString(form: Form[_] = form): String = companyAddressList(
-    frontendAppConfig,
-    form,
-    NormalMode,
-    0,
-    addresses,
-    "Company Name"
-  )(fakeRequest, messages).toString
-
-  val validData = UserAnswers(Json.obj())
-    .set(CompanyDetailsId(0))(CompanyDetails("Company Name", None, None))
-    .flatMap(_.set(CompanyPostCodeLookupId(0))(addresses))
-
-  val getValidData = new FakeDataRetrievalAction(validData.asOpt.map(_.json))
-
-  val getDataWithoutName = new FakeDataRetrievalAction(
-    validData
-      .flatMap(_.remove(CompanyDetailsId(0)))
-      .asOpt.map(_.json)
   )
 
-  val getDataWithNoAddresses = new FakeDataRetrievalAction(
-    validData
-      .flatMap(_.remove(CompanyPostCodeLookupId(0)))
+  private val data =
+    UserAnswers(Json.obj())
+      .set(CompanyDetailsId(0))(companyDetails)
+      .flatMap(_.set(CompanyPostCodeLookupId(0))(addresses))
       .asOpt.map(_.json)
-  )
 
-  "CompanyAddressList Controller" must {
+  private val dataRetrievalAction = new FakeDataRetrievalAction(data)
 
-    "return OK and the correct view for a GET" in {
-      val result = controller(getValidData).onPageLoad(NormalMode, 0)(fakeRequest)
-      status(result) mustEqual OK
-      contentAsString(result) mustEqual viewAsString()
+  "Company Address List Controller" must {
+
+    "return Ok and the correct view on a GET request" in {
+
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+      )) { implicit app =>
+        val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))))
+        val result = route(app, request).value
+
+        status(result) mustBe OK
+
+        val viewModel: AddressListViewModel = addressListViewModel(addresses)
+        val form = new AddressListFormProvider()(viewModel.addresses)
+
+        contentAsString(result) mustBe addressList(frontendAppConfig, form, viewModel)(request, messages).toString
+      }
+
     }
 
-    "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
-      val result = controller(getValidData).onSubmit(NormalMode, 0)(postRequest)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
+    "redirect to Company Address Post Code Lookup if no address data on a GET request" in {
+
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[DataRetrievalAction].toInstance(getEmptyData)
+      )) { implicit app =>
+        val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))))
+        val result = route(app, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+      }
+
     }
 
-    "redirect to postcode lookup when no address results exist (get)" in {
-      val result = controller(getDataWithNoAddresses).onPageLoad(NormalMode, 0)(fakeRequest)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, 0).url
+    "redirect to Session Expired controller when no session data exists on a GET request" in {
+
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[DataRetrievalAction].toInstance(dontGetAnyData)
+      )) { implicit app =>
+        val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))))
+        val result = route(app, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      }
+
     }
 
-    "redirect to postcode lookup when no address results exist (post)" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
-      val result = controller(getDataWithNoAddresses).onSubmit(NormalMode, 0)(postRequest)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.register.establishers.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, 0).url
+    "redirect to the next page on POST of valid data" in {
+
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+      )) { implicit app =>
+        val request =
+          addToken(
+            FakeRequest(routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)))
+              .withFormUrlEncodedBody(("value", "0"))
+          )
+
+        val result = route(app, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe controllers.register.establishers.company.routes.CompanyAddressController.onPageLoad(NormalMode,0).url
+      }
+
     }
 
-    "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
-      val result = controller(getValidData).onSubmit(NormalMode, 0)(postRequest)
-      status(result) mustEqual BAD_REQUEST
-      contentAsString(result) mustEqual viewAsString(boundForm)
+    "redirect to Session Expired controller when no session data exists on a POST request" in {
+
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[DataRetrievalAction].toInstance(dontGetAnyData)
+      )) { implicit app =>
+        val request =
+          addToken(
+            FakeRequest(routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)))
+              .withFormUrlEncodedBody(("value", "0"))
+          )
+
+        val result = route(app, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      }
+
     }
 
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, 0)(fakeRequest)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+    "redirect to Company Address Post Code Lookup if no address data on a POST request" in {
+
+      running(_.overrides(
+        bind[AuthAction].to(FakeAuthAction),
+        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[DataRetrievalAction].toInstance(getEmptyData)
+      )) { implicit app =>
+        val request =
+          addToken(
+            FakeRequest(routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)))
+              .withFormUrlEncodedBody(("value", "0"))
+          )
+
+        val result = route(app, request).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+      }
+
     }
 
-    "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode, 0)(postRequest)
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
-    }
   }
+
+  private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
+    AddressListViewModel(
+      routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)),
+      routes.CompanyAddressController.onPageLoad(NormalMode, Index(0)),
+      addresses,
+      subHeading = Some(Message(companyDetails.companyName))
+    )
+  }
+
 }

@@ -92,7 +92,6 @@ trait ViewBehaviours extends ViewSpecBase {
     "behave like a page with a secondary header" in {
       Jsoup.parse(view().toString()).getElementsByClass("heading-secondary").text() must include(heading)
     }
-
   }
 
   def pageWithSubmitButton(view: () => HtmlFormat.Appendable): Unit = {
@@ -101,5 +100,4 @@ trait ViewBehaviours extends ViewSpecBase {
       assertRenderedById(doc, "submit")
     }
   }
-
 }

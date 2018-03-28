@@ -57,6 +57,10 @@
       scriptElem = scriptElem,
       gaCalls = None)
       <script src='@routes.Assets.versioned("javascripts/pensionsschemefrontend-app.min.js")'> </script>
+      <!--[if gt IE 8]><!-->
+      <script src='@routes.Assets.versioned("javascripts/autocomplete/location-autocomplete.min.js")'> </script>
+      <!--<![endif]-->
+
 }
 
 @footerTop = {}

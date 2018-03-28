@@ -16,7 +16,7 @@
 
 package models.register.establishers.individual
 
-import models.addresslookup.Address
+import models.address.Address
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 import play.api.libs.json.Json
 
@@ -33,7 +33,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           |                ],
           |                "town" : "Anytown",
           |                "county" : "Somerset",
-          |                "postcode" : "ZZ1 1ZZ",
+          |                "postCode" : "ZZ1 1ZZ",
           |                "country" : {
           |                    "name" : "United Kingdom"
           |                }
@@ -43,7 +43,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
 
       Json.fromJson[Address](json).asOpt.value mustEqual
         Address(addressLine1 = "10 Other Place", addressLine2 = "Some District", addressLine3 = Some("Anytown"),
-          addressLine4 = Some("Somerset"), postcode = Some("ZZ1 1ZZ"), country = "United Kingdom")
+          addressLine4 = Some("Somerset"), postCode = Some("ZZ1 1ZZ"), country = "United Kingdom")
     }
 
     "successfully read address without county" in {
@@ -55,7 +55,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           |                    "Some District"
           |                ],
           |                "town" : "Anytown",
-          |                "postcode" : "ZZ1 1ZZ",
+          |                "postCode" : "ZZ1 1ZZ",
           |                "country" : {
           |                    "name" : "United Kingdom"
           |                }
@@ -65,7 +65,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
 
       Json.fromJson[Address](json).asOpt.value mustEqual
         Address(addressLine1 = "10 Other Place", addressLine2 = "Some District", addressLine3 = Some("Anytown"),
-          addressLine4 = None, postcode = Some("ZZ1 1ZZ"), country = "United Kingdom")
+          addressLine4 = None, postCode = Some("ZZ1 1ZZ"), country = "United Kingdom")
     }
 
     "successfully read address without town" in {
@@ -77,7 +77,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           |                    "Some District"
           |                ],
           |                "county" : "Somerset",
-          |                "postcode" : "ZZ1 1ZZ",
+          |                "postCode" : "ZZ1 1ZZ",
           |                "country" : {
           |                    "name" : "United Kingdom"
           |                }
@@ -87,7 +87,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
 
       Json.fromJson[Address](json).asOpt.value mustEqual
         Address(addressLine1 = "10 Other Place", addressLine2 = "Some District", addressLine3 = None,
-          addressLine4 = Some("Somerset"), postcode = Some("ZZ1 1ZZ"), country = "United Kingdom")
+          addressLine4 = Some("Somerset"), postCode = Some("ZZ1 1ZZ"), country = "United Kingdom")
     }
 
     "successfully read address without town and county" in {
@@ -98,7 +98,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           |                    "10 Other Place",
           |                    "Some District"
           |                ],
-          |                "postcode" : "ZZ1 1ZZ",
+          |                "postCode" : "ZZ1 1ZZ",
           |                "country" : {
           |                    "name" : "United Kingdom"
           |                }
@@ -108,7 +108,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
 
       Json.fromJson[Address](json).asOpt.value mustEqual
         Address(addressLine1 = "10 Other Place", addressLine2 = "Some District", addressLine3 = None,
-          addressLine4 = None, postcode = Some("ZZ1 1ZZ"), country = "United Kingdom")
+          addressLine4 = None, postCode = Some("ZZ1 1ZZ"), country = "United Kingdom")
     }
   }
 
@@ -116,7 +116,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
 
     "successfully write ManualAddress with town and county" in {
       val manualAddress = Address(addressLine1 = "10 Other Place", addressLine2 = "Some District", addressLine3 = Some("Anytown"),
-        addressLine4 = Some("Somerset"), postcode = Some("ZZ1 1ZZ"), country = "United Kingdom")
+        addressLine4 = Some("Somerset"), postCode = Some("ZZ1 1ZZ"), country = "United Kingdom")
 
       val resultJson = Json.parse(
         """{
@@ -126,7 +126,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           |                ],
           |                "town" : "Anytown",
           |                "county" : "Somerset",
-          |                "postcode" : "ZZ1 1ZZ",
+          |                "postCode" : "ZZ1 1ZZ",
           |                "country" : {
           |                    "name" : "United Kingdom"
           |                }
@@ -139,7 +139,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
 
     "successfully write ManualAddress without town and county" in {
       val manualAddress = Address(addressLine1 = "10 Other Place", addressLine2 = "Some District", addressLine3 = None,
-        addressLine4 = None, postcode = Some("ZZ1 1ZZ"), country = "United Kingdom")
+        addressLine4 = None, postCode = Some("ZZ1 1ZZ"), country = "United Kingdom")
 
       val resultJson = Json.parse(
         """{
@@ -147,7 +147,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           |                    "10 Other Place",
           |                    "Some District"
           |                ],
-          |                "postcode" : "ZZ1 1ZZ",
+          |                "postCode" : "ZZ1 1ZZ",
           |                "country" : {
           |                    "name" : "United Kingdom"
           |                }
