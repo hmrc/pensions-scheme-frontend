@@ -19,7 +19,7 @@ package controllers.register.establishers.company
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.company.CompanyRegistrationNumberFormProvider
+import forms.CompanyRegistrationNumberFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyRegistrationNumberId

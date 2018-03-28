@@ -47,8 +47,10 @@ class PreviousAddressController @Inject() (
                                         val countryOptions: CountryOptions
                                       ) extends ManualAddressController with I18nSupport with Retrievals {
 
-  private val title: Message = "messages__companyAddress__title"
+  private[controllers] val postCall = PreviousAddressController.onSubmit _
+  private[controllers] val title: Message = "messages__companyAddress__title"
   private[controllers] val heading: Message = "messages__companyAddress__heading"
+  private[controllers] val hint: Message = "messages__companyAddress__trustee__lede"
 
   protected val form: Form[Address] = formProvider()
 
@@ -58,10 +60,11 @@ class PreviousAddressController @Inject() (
         CompanyDetailsId(index).retrieve.right.map {
           details =>
             ManualAddressViewModel(
-              PreviousAddressController.onSubmit(mode, Index(index)),
+              postCall(mode, Index(index)),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
+              hint = Message(hint),
               secondaryHeader = Some(details.companyName)
             )
         }

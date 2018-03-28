@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package models.register.establishers.individual
+package identifiers.register.trustees.company
 
+import identifiers._
+import identifiers.register.trustees.TrusteesId
+import models.address.Address
 import play.api.libs.json._
 
-case class ContactDetails (emailAddress: String, phoneNumber: String)
+case class CompanyPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[Address]] {
+  override def path: JsPath = __ \ TrusteesId.toString \ index \ CompanyPostcodeLookupId.toString
+}
 
-object ContactDetails {
-  implicit val format = Json.format[ContactDetails]
+object CompanyPostcodeLookupId {
+  override def toString: String = "companyPostcodeLookup"
 }

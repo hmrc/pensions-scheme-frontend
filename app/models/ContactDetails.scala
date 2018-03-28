@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package models
 
-import javax.inject.Inject
+import play.api.libs.json._
 
-import forms.mappings.CrnMapping
-import play.api.data.Form
-import models.CompanyRegistrationNumber
+case class ContactDetails (emailAddress: String, phoneNumber: String)
 
-class CompanyRegistrationNumberFormProvider @Inject() extends CrnMapping {
-
-  def apply(): Form[CompanyRegistrationNumber] =
-    Form(
-      "companyRegistrationNumber" -> companyRegistrationNumberMapping()
-    )
+object ContactDetails {
+  implicit val format = Json.format[ContactDetails]
 }

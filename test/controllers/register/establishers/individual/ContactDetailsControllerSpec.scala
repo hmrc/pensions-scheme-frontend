@@ -30,7 +30,7 @@ import controllers.ControllerSpecBase
 import forms.ContactDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import models.register.{SchemeDetails, SchemeType}
-import models.register.establishers.individual.{ContactDetails, EstablisherDetails, EstablishersIndividualMap}
+import models.register.establishers.individual.{EstablisherDetails, EstablishersIndividualMap}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 

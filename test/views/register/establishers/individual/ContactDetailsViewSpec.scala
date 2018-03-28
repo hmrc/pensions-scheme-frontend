@@ -19,8 +19,7 @@ package views.register.establishers.individual
 import play.api.data.Form
 import controllers.register.establishers.individual.routes
 import forms.ContactDetailsFormProvider
-import models.register.establishers.individual.ContactDetails
-import models.{Index, NormalMode}
+import models.{ContactDetails, Index, NormalMode}
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.individual.contactDetails

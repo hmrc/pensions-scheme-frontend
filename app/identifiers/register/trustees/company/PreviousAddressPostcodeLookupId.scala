@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.company
+package identifiers.register.trustees.company
 
-import forms.FormSpec
-import forms.behaviours.CrnBehaviour
+import identifiers._
+import identifiers.register.trustees.TrusteesId
+import models.address.Address
+import play.api.libs.json._
 
-class CompanyRegistrationNumberFormProviderSpec extends FormSpec with CrnBehaviour {
+case class PreviousAddressPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[Address]] {
+  override def path: JsPath = __ \ TrusteesId.toString \ index \ PreviousAddressPostcodeLookupId.toString
+}
 
-  val formProvider = new CompanyRegistrationNumberFormProvider()()
-
-  "CompanyRegistrationNumber form" must {
-
-    behave like formWithCrn(formProvider)
-
-  }
+object PreviousAddressPostcodeLookupId {
+  override def toString: String = "previousAddressPostcodeLookup"
 }
