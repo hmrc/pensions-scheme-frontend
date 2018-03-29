@@ -22,7 +22,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConn
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
-import models.addresslookup.{Address, AddressRecord}
+import models.address.{Address, AddressRecord}
 import models.register.establishers.company.director.DirectorDetails
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
@@ -45,7 +45,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
 
   def onwardRoute = routes.DirectorPreviousAddressPostcodeLookupController.onSubmit(NormalMode, establisherIndex, directorIndex)
 
-  def manualInputCall = routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex, directorIndex)
+  def manualInputCall = routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex)
 
   val formProvider = new PostCodeLookupFormProvider()
 
@@ -72,7 +72,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
 
     "return OK and the correct view for a GET" in {
 
-      val call: Call = routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex, directorIndex)
+      val call: Call = routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex, directorIndex)
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
@@ -83,7 +83,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
       )) {
         implicit app =>
 
-          val request = addToken(FakeRequest(manualInputCall)
+          val request = addToken(FakeRequest(call)
             .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).get
@@ -99,7 +99,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
 
     "redirect to the next page on POST request" in {
 
-      val validPostcode = "ZZ11ZZ"
+      val validPostcode = "ZZ1 1ZZ"
 
       val fakeRequest = addToken(FakeRequest(onwardRoute)
         .withFormUrlEncodedBody("value" -> validPostcode))

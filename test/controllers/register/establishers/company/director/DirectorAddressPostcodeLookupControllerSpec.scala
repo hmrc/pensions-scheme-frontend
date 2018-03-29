@@ -46,7 +46,7 @@ import scala.concurrent.Future
 class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with CSRFRequest {
 
   def onwardRoute = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex)
-  def manualInputCall = routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, estIndex, dirIndex)
+  def manualInputCall = routes.DirectorAddressController.onPageLoad(NormalMode, estIndex, dirIndex)
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
@@ -95,7 +95,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
       )){ implicit app =>
 
-        val request = addToken(FakeRequest(manualInputCall)
+        val request = addToken(FakeRequest(call)
           .withHeaders("Csrf-Token" -> "nocheck"))
         val result = route(app, request).get
 

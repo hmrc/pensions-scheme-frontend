@@ -44,9 +44,6 @@ class DirectorPreviousAddressPostcodeLookupController @Inject() (
                                         formProvider: PostCodeLookupFormProvider
                                       ) extends PostcodeLookupController {
 
-  private val invalidPostcode: Message = "messages__error__postcode_invalid"
-  private val noResults: Message = "messages__error__postcode_no_results"
-
   protected val form: Form[String] = formProvider()
 
   private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index) = Retrieval {
@@ -54,7 +51,7 @@ class DirectorPreviousAddressPostcodeLookupController @Inject() (
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map(
         details => PostcodeLookupViewModel(
           routes.DirectorPreviousAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex),
-          routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex),
+          routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex),
           Message("messages__directorPreviousAddressPostcodeLookup__title"),
           Message("messages__directorPreviousAddressPostcodeLookup__heading"),
           Some(details.directorName)
@@ -66,7 +63,7 @@ class DirectorPreviousAddressPostcodeLookupController @Inject() (
     implicit request =>
       viewmodel(mode,establisherIndex, directorIndex).retrieve.right.map(
           vm =>
-            get(DirectorPreviousAddressPostcodeLookupId(directorIndex, establisherIndex), vm)
+            get(vm)
       )
   }
 
@@ -74,7 +71,7 @@ class DirectorPreviousAddressPostcodeLookupController @Inject() (
     implicit request =>
       viewmodel(mode, establisherIndex, directorIndex).retrieve.right.map(
         vm =>
-          post(DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex), vm, invalidPostcode, noResults, mode)
+          post(DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex), vm, mode)
       )
   }
 }
