@@ -22,13 +22,13 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees.company._
-import models.{CheckMode, Index}
+import models.{CheckMode, CompanyDetails, Index}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswers.Ops._
 import utils.{CheckYourAnswersFactory, CountryOptions}
-import viewmodels.AnswerSection
+import viewmodels.{AnswerSection, iMessage}
 import views.html.check_your_answers
 
 import scala.concurrent.Future
@@ -47,6 +47,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
 
       val companyDetailsId = CompanyDetailsId(index)
+
+      implicit val msg: Option[iMessage[CompanyDetails]] = Some(iMessage[CompanyDetails]("abc"))
 
       companyDetailsId.retrieve.right.map{ companyDetails =>
 

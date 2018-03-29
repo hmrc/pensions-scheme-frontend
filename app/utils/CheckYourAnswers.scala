@@ -23,7 +23,7 @@ import models.requests.DataRequest
 import models.{AddressYears, CompanyDetails, CompanyRegistrationNumber, ContactDetails}
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, iMessage}
 
 import scala.language.implicitConversions
 
@@ -47,11 +47,12 @@ object CheckYourAnswers {
         }.getOrElse(Seq.empty)
     }
 
-  implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]](implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] =
+  implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]]
+  (implicit rds: Reads[CompanyDetails], msg: Option[iMessage[CompanyDetails]] = None): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
 
-        val nameLabel = "messages__common__cya__name"
+        val nameLabel = msg.map(_.msgKey).getOrElse("messages__common__cya__name")
         val vatLabel = "messages__company__cya__vat"
         val payeLabel = "messages__company__cya__paye_ern"
 
