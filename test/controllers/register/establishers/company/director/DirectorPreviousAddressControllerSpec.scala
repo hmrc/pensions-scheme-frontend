@@ -138,7 +138,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
                 ("addressLine2", address.addressLine2),
-                ("postCode", address.postCode.get),
+                ("postCode", address.postcode.get),
                 "country" -> address.country))
 
             val result = route(app, fakeRequest).value
