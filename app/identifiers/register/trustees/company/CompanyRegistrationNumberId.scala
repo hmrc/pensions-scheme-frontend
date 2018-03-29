@@ -20,6 +20,7 @@ import identifiers._
 import identifiers.register.trustees.TrusteesId
 import models.CompanyRegistrationNumber
 import play.api.libs.json.JsPath
+import utils.CheckYourAnswers
 
 case class CompanyRegistrationNumberId(index: Int) extends TypedIdentifier[CompanyRegistrationNumber] {
   override def path: JsPath = TrusteesId.path \ index \ CompanyRegistrationNumberId.toString
@@ -27,4 +28,7 @@ case class CompanyRegistrationNumberId(index: Int) extends TypedIdentifier[Compa
 
 object CompanyRegistrationNumberId {
   override def toString: String = "companyRegistrationNumber"
+
+  implicit val cya: CheckYourAnswers[CompanyRegistrationNumberId] =
+    CheckYourAnswers.companyRegistrationNumber("messages__checkYourAnswers__trustees__company__crn")
 }

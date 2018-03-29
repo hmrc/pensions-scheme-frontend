@@ -57,5 +57,3 @@ object Message {
   implicit def resolveOption(message: Option[Message])(implicit messages: Messages): Option[String] =
     message.map(_.resolve)
 }
-
-case class iMessage[A](msgKey: String)

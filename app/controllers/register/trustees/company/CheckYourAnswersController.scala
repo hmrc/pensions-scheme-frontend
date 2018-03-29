@@ -22,13 +22,13 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees.company._
-import models.{CheckMode, CompanyDetails, Index}
+import models.{CheckMode, Index}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswers.Ops._
 import utils.{CheckYourAnswersFactory, CountryOptions}
-import viewmodels.{AnswerSection, iMessage}
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 import scala.concurrent.Future
@@ -47,8 +47,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
 
       val companyDetailsId = CompanyDetailsId(index)
-
-      implicit val msg: Option[iMessage[CompanyDetails]] = Some(iMessage[CompanyDetails]("abc"))
 
       companyDetailsId.retrieve.right.map{ companyDetails =>
 
@@ -75,9 +73,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url
         )
 
+        val companyContactDetails = CompanyContactDetailsId(index).row(
+          routes.CompanyContactDetailsController.onPageLoad(CheckMode, index).url
+        )
+
         val contactDetailsSection = AnswerSection(
           Some("messages__checkYourAnswers__section__contact_details"),
-          companyAddress ++ companyAddressYears ++ companyPreviousAddress
+          companyAddress ++ companyAddressYears ++ companyPreviousAddress ++ companyContactDetails
         )
 
         Future.successful(Ok(check_your_answers(

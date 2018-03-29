@@ -82,6 +82,8 @@ messages__error_country_invalid = Enter a valid country
 messages__common__cya__name = Name
 messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
+messages__common__cya__vat = VAT registration number
+messages__common__cya__paye = Previous Address
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -429,3 +431,7 @@ messages__companyRegistrationNumber__error__required = Please give an answer for
 
 messages__checkYourAnswers__section__contact_details = Contact details
 messages__checkYourAnswers__section__company_details = Company details
+
+messages__checkYourAnswers__trustees__company__crn = Does the trustee have a Company Registration number (CRN)?
+messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Unique Taxpayer Reference number (UTR)?
+messages__checkYourAnswers__trustees__company__address_years = How long has the company been at this address?
