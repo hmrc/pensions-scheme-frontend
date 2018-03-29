@@ -24,23 +24,41 @@ import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers.{contentAsString, _}
 import forms.register.trustees.AddTrusteeFormProvider
-import identifiers.register.trustees.AddTrusteeId
-import models.NormalMode
+import identifiers.register.trustees.{AddTrusteeId, TrusteesId}
+import models.{CompanyDetails, NormalMode}
 import views.html.register.trustees.addTrustee
 import play.api.libs.json._
 import controllers.ControllerSpecBase
+import identifiers.register.SchemeDetailsId
+import identifiers.register.trustees.company.CompanyDetailsId
+import models.register.{SchemeDetails, SchemeType}
 
 class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  val onwardUrl = routes.AddTrusteeController.onPageLoad(NormalMode).url
+  def onwardUrl = routes.AddTrusteeController.onPageLoad(NormalMode).url
   val formProvider = new AddTrusteeFormProvider()
   val schemeName = "Test Scheme Name"
   private val maxTrustees = frontendAppConfig.maxTrustees
-  val trusteeCompany = ("Trustee Company" -> onwardUrl)
+  val trusteeCompanyA = ("Trustee Company A" -> onwardUrl)
+  val trusteeCompanyB = ("Trustee Company B" -> onwardUrl)
   val trusteeIndividual = ("Trustee Individual" -> onwardUrl)
-  val allTrustees = Seq(trusteeCompany, trusteeIndividual)
+  val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB)
+
+  private def validData = {
+    Json.obj(SchemeDetailsId.toString ->
+      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+        TrusteesId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString -> CompanyDetails("Trustee Company A", None, None)
+        ),
+        Json.obj(
+          CompanyDetailsId.toString -> CompanyDetails("Trustee Company B", None, None)
+        )
+      )
+    )
+  }
 
   val form = formProvider()
 
@@ -71,14 +89,14 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData(johnDoe)))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
 
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
       val result = controller(getRelevantData).onSubmit(NormalMode)(postRequest)
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm, Seq(johnDoe))
+      contentAsString(result) mustBe viewAsString(boundForm, allTrustees)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
