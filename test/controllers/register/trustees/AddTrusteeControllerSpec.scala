@@ -31,7 +31,10 @@ import play.api.libs.json._
 import controllers.ControllerSpecBase
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.company.CompanyDetailsId
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
+import org.joda.time.LocalDate
 
 class AddTrusteeControllerSpec extends ControllerSpecBase {
 
@@ -44,7 +47,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   val trusteeCompanyA = ("Trustee Company A" -> onwardUrl)
   val trusteeCompanyB = ("Trustee Company B" -> onwardUrl)
   val trusteeIndividual = ("Trustee Individual" -> onwardUrl)
-  val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB)
+  val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
 
   private def validData = {
     Json.obj(SchemeDetailsId.toString ->
@@ -55,6 +58,9 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
         ),
         Json.obj(
           CompanyDetailsId.toString -> CompanyDetails("Trustee Company B", None, None)
+        ),
+        Json.obj(
+          TrusteeDetailsId.toString -> PersonDetails("Trustee", None, "Individual", LocalDate.now())
         )
       )
     )
