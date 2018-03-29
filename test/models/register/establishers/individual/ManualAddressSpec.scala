@@ -20,7 +20,7 @@ import models.address.Address
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 import play.api.libs.json.Json
 
-class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
+class ManualAddressSpec extends WordSpecLike with MustMatchers with OptionValues {
 
   "Reads" must {
     "successfully read address with town and county" in {
@@ -33,7 +33,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           |                ],
           |                "town" : "Anytown",
           |                "county" : "Somerset",
-          |                "postCode" : "ZZ1 1ZZ",
+          |                "postcode" : "ZZ1 1ZZ",
           |                "country" : {
           |                    "name" : "United Kingdom"
           |                }
@@ -46,6 +46,8 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           addressLine4 = Some("Somerset"), postcode = Some("ZZ1 1ZZ"), country = "United Kingdom")
     }
 
+
+
     "successfully read address without county" in {
 
       val json = Json.parse(
@@ -55,7 +57,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           |                    "Some District"
           |                ],
           |                "town" : "Anytown",
-          |                "postCode" : "ZZ1 1ZZ",
+          |                "postcode" : "ZZ1 1ZZ",
           |                "country" : {
           |                    "name" : "United Kingdom"
           |                }
@@ -77,7 +79,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           |                    "Some District"
           |                ],
           |                "county" : "Somerset",
-          |                "postCode" : "ZZ1 1ZZ",
+          |                "postcode" : "ZZ1 1ZZ",
           |                "country" : {
           |                    "name" : "United Kingdom"
           |                }
@@ -98,7 +100,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           |                    "10 Other Place",
           |                    "Some District"
           |                ],
-          |                "postCode" : "ZZ1 1ZZ",
+          |                "postcode" : "ZZ1 1ZZ",
           |                "country" : {
           |                    "name" : "United Kingdom"
           |                }
@@ -126,7 +128,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           |                ],
           |                "town" : "Anytown",
           |                "county" : "Somerset",
-          |                "postCode" : "ZZ1 1ZZ",
+          |                "postcode" : "ZZ1 1ZZ",
           |                "country" : {
           |                    "name" : "United Kingdom"
           |                }
@@ -147,7 +149,7 @@ class AddressSpec extends WordSpecLike with MustMatchers with OptionValues {
           |                    "10 Other Place",
           |                    "Some District"
           |                ],
-          |                "postCode" : "ZZ1 1ZZ",
+          |                "postcode" : "ZZ1 1ZZ",
           |                "country" : {
           |                    "name" : "United Kingdom"
           |                }
