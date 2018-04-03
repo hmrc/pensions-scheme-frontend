@@ -74,7 +74,7 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
     "address line 2",
     Some("test town"),
     Some("test county"),
-    postCode = Some(postCode),
+    postcode = Some(postCode),
     country = "United Kingdom"
   )
 

@@ -49,7 +49,7 @@ class PreviousAddressListViewSpec extends ViewBehaviours {
   def getAddressValue(address: Address): String = s"${address.addressLine1}, ${address.addressLine2}" +
     s"${address.addressLine3.map(town => s", $town").getOrElse("")}" +
     s"${address.addressLine4.map(county => s", $county").getOrElse("")}, " +
-    s"${address.postCode.map(postCode => s"$postCode").getOrElse("")}"
+    s"${address.postcode.map(postCode => s"$postCode").getOrElse("")}"
 
 
   "AddressResults view" must {

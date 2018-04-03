@@ -40,7 +40,7 @@ class CompanyPreviousAddressListViewSpec extends ViewBehaviours {
   )
 
   def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), postCode = Some(postCode), country = "United Kingdom")
+    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
 
 
 
