@@ -43,7 +43,7 @@ class EstablishersCompanyNavigator @Inject() extends Navigator {
     case CompanyAddressId(index) =>
       _ => controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, index)
     case CompanyAddressYearsId(index) =>
-      addressYearsRoutes(index)
+     addressYearsRoutes(index)
     case CompanyPreviousAddressPostcodeLookupId(index) =>
       _ => controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, index)
     case CompanyPreviousAddressListId(index) =>
