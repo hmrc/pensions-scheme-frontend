@@ -452,5 +452,5 @@ messages__addTrustee__title = Trustees
 messages__addTrustee__heading = Trustees
 messages__addTrustee__lede = You must tell us about all your trustees. You can add up to 10 using the digital service.
 messages__addTrustee__text = Do you want to add another trustee?
-messages__addTrustees_at_maximum =
-messages__addTrustees_tell_us_if_you_have_more =
+messages__addTrustees_at_maximum = You have added the maximum number of trustees.
+messages__addTrustees_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
