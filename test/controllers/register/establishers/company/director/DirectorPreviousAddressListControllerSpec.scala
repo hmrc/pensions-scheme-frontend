@@ -99,7 +99,7 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(Index(0), Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0)).url)
       }
 
     }
@@ -178,7 +178,7 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(Index(0), Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, Index(0), Index(0)).url)
       }
 
     }

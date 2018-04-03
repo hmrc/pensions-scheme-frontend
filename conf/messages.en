@@ -429,3 +429,6 @@ messages__companyRegistrationNumber__error__required = Please give an answer for
 
 messages__checkYourAnswers__section__contact_details = Contact details
 messages__checkYourAnswers__section__company_details = Company details
+
+messages__directorPreviousAddressPostcodeLookup__title = Director’s previous address
+messages__directorPreviousAddressPostcodeLookup__heading = Director’s previous address

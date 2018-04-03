@@ -29,13 +29,11 @@ import org.joda.time.LocalDate
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
-import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, Navigator}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -43,104 +41,91 @@ import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 
-class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with CSRFRequest {
+class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with CSRFRequest {
 
-  def onwardRoute = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex)
-  def manualInputCall = routes.DirectorAddressController.onPageLoad(NormalMode, estIndex, dirIndex)
+  def onwardRoute = routes.DirectorPreviousAddressPostcodeLookupController.onSubmit(NormalMode, establisherIndex, directorIndex)
+
+  def manualInputCall = routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex)
 
   val formProvider = new PostCodeLookupFormProvider()
-  val form = formProvider()
 
-  val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
+  val establisherIndex = Index(0)
+  val directorIndex = Index(0)
 
-  implicit val hc: HeaderCarrier = mock[HeaderCarrier]
-
-  val estIndex = Index(0)
-  val dirIndex = Index(0)
   val companyName: String = "test company name"
-
-  private def fakeAddress(postCode: String) = Address(
-    "Address Line 1",
-    "Address Line 2",
-    Some("Address Line 3"),
-    Some("Address Line 4"),
-    Some(postCode),
-    "GB"
-  )
-
   val company = CompanyDetails(companyName, None, None)
   val director = DirectorDetails("test first name", Some("test middle name"), "test last name", LocalDate.now())
+
+  val form = formProvider()
+  val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
+  val fakeCacheConnector: DataCacheConnector = mock[DataCacheConnector]
+
 
   lazy val viewmodel = PostcodeLookupViewModel(
     onwardRoute,
     manualInputCall,
-    Message("messages__directorAddressPostcodeLookup__title"),
-    Message("messages__directorAddressPostcodeLookup__heading"),
+    Message("messages__directorPreviousAddressPostcodeLookup__title"),
+    Message("messages__directorPreviousAddressPostcodeLookup__heading"),
     Some(director.directorName))
 
-  "DirectorAddressPostcodeLookup Controller" must {
+  "DirectorPreviousAddressPostcodeLookup Controller" must {
 
-    "render postcodeLookup from GET request" in {
-      val call: Call = routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, estIndex, dirIndex)
+    "return OK and the correct view for a GET" in {
 
-      val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
-      val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
-
+      val call: Call = routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex, directorIndex)
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[DataCacheConnector].toInstance(cacheConnector),
-        bind[AddressLookupConnector].toInstance(addressConnector),
+        bind[DataCacheConnector].toInstance(fakeCacheConnector),
+        bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
-      )){ implicit app =>
+      )) {
+        implicit app =>
 
-        val request = addToken(FakeRequest(call)
-          .withHeaders("Csrf-Token" -> "nocheck"))
-        val result = route(app, request).get
+          val request = addToken(FakeRequest(call)
+            .withHeaders("Csrf-Token" -> "nocheck"))
 
-        status(result) must be(OK)
+          val result = route(app, request).get
+          status(result) mustBe OK
 
-        contentAsString(result) mustEqual postcodeLookup(
-          frontendAppConfig,
-          form,
-          viewmodel
-        )(request, messages).toString
-
+          contentAsString(result) mustEqual postcodeLookup(
+            frontendAppConfig,
+            form,
+            viewmodel
+          )(request, messages).toString
       }
     }
 
-    "redirect to next page on POST request" in {
-
-      val call: Call = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex)
+    "redirect to the next page on POST request" in {
 
       val validPostcode = "ZZ1 1ZZ"
 
-      val fakeRequest = addToken(FakeRequest(call)
+      val fakeRequest = addToken(FakeRequest(onwardRoute)
         .withFormUrlEncodedBody("value" -> validPostcode))
+        .withHeaders("Csrf-Token" -> "nocheck")
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(
-          Some(Seq(AddressRecord(fakeAddress(validPostcode)))))
-        )
+          Some(Seq(AddressRecord(Address("address line 1", "address line 2", None, None, Some(validPostcode), "GB"))))
+        ))
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[MessagesApi].to(messagesApi),
+        bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-        bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
         bind[PostCodeLookupFormProvider].to(formProvider)
-      )){ app =>
+      )) {
+        app =>
+          val result = route(app, fakeRequest).get
 
-        val result = route(app, fakeRequest).get
-
-        status(result) must be(SEE_OTHER)
-        redirectLocation(result) mustEqual Some(onwardRoute.url)
-
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(onwardRoute.url)
       }
     }
 

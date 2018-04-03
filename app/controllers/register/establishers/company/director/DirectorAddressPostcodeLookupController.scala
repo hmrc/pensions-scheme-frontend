@@ -53,7 +53,7 @@ class DirectorAddressPostcodeLookupController @Inject() (
           details =>
             PostcodeLookupViewModel(
               routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex),
-              routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex),
+              routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex),
               Message("messages__directorAddressPostcodeLookup__title"),
               Message("messages__directorAddressPostcodeLookup__heading"),
               Some(details.directorName)

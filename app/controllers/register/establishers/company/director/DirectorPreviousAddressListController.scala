@@ -67,6 +67,6 @@ class DirectorPreviousAddressListController @Inject()(
             addresses = addresses,
             subHeading = Some(Message(directorDetails.directorName))
           )
-      }.left.map(_ => Future.successful(Redirect(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(establisherIndex, directorIndex))))
+      }.left.map(_ => Future.successful(Redirect(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex))))
   }
 }
