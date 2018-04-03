@@ -18,9 +18,11 @@ package controllers.register.establishers.company.director
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import models.Index
+import controllers.register.establishers.company._
+import models.{CheckMode, Index}
+import org.joda.time.LocalDate
 import play.api.test.Helpers._
-import utils.{CheckYourAnswersFactory, CountryOptions, InputOption}
+import utils.{CheckYourAnswersFactory, CountryOptions, DateHelper, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -32,25 +34,26 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val testSchemeName = "Test Scheme Name"
 
   val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
-  def postUrl = controllers.register.establishers.company.director.routes.CheckYourAnswersController.onSubmit(establisherIndex, directorIndex)
 
-  val answersDirectorDetails: Seq[AnswerRow] =
-      Seq(AnswerRow("messages__common__cya__name", Seq("test director name"), false,
-        "/pensions-scheme/register/establishers/1/company/1/changeDirectorDetails"),
-      AnswerRow("messages__company__cya__vat", Seq("123456"), false,
-        "/pensions-scheme/register/establishers/1/company/1/changeCompanyDetails"),
-      AnswerRow("messages__company__cya__paye_ern", Seq("abcd"), false,
-        "/pensions-scheme/register/establishers/1/company/changeCompanyDetails"))
+  def postUrl = director.routes.CheckYourAnswersController.onSubmit(establisherIndex)
 
+  lazy val answersDirectorDetails: Seq[AnswerRow] =
+    Seq(
+      AnswerRow("messages__common__cya__name", Seq("first middle last"), false,
+        director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url
+      ),
+      AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(new LocalDate(1990, 2, 2))), false,
+        director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url
+      )
+    )
 
-
-  val answers = Seq(AnswerSection(Some("messages__common__company_details__title"), answersDirectorDetails),
-    AnswerSection(Some("messages__establisher_company_contact_details__title"), Seq.empty))
-
-
+  lazy val answers = Seq(
+    AnswerSection(Some("messages__director__cya__details_heading"), answersDirectorDetails),
+    AnswerSection(Some("messages__director__cya__contact__details_heading"), Seq.empty[AnswerRow])
+  )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
-    new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction,
+    new director.CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, checkYourAnswersFactory)
 
   def viewAsString() = check_your_answers(frontendAppConfig, answers, Some(testSchemeName), postUrl)(fakeRequest, messages).toString
@@ -58,29 +61,23 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   "CheckYourAnswers Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(establisherIndex. directorIndex)(fakeRequest)
+      val result = controller(getMandatoryEstablisherCompanyDirector).onPageLoad(establisherIndex, directorIndex)(fakeRequest)
 
       status(result) mustBe OK
-      println(postUrl)
       contentAsString(result) mustBe viewAsString()
     }
 
     "redirect to Session Expired page for a GET when establisher name is not present" in {
-      val result = controller(getEmptyData).onPageLoad(index)(fakeRequest)
+      val result = controller(getEmptyData).onPageLoad(establisherIndex, directorIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(index)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(establisherIndex, directorIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
-
 }
-
-
-
-

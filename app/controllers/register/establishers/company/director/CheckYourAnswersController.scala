@@ -19,6 +19,7 @@ package controllers.register.establishers.company.director
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import controllers.register.establishers.company
 import javax.inject.Inject
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -44,14 +45,14 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         val checkYourAnswersHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
 
         val companyDirectorDetails = AnswerSection(
-          Some("messages__common__company_details__title"),
+          Some("messages__director__cya__details_heading"),
           checkYourAnswersHelper.directorDetails(companyIndex.id, directorIndex.id) ++
             checkYourAnswersHelper.directorNino(companyIndex.id, directorIndex.id) ++
             checkYourAnswersHelper.directorUniqueTaxReference(companyIndex.id, directorIndex.id)
         )
 
         val companyDirectorContactDetails = AnswerSection(
-          Some("messages__establisher_company_contact_details__title"),
+          Some("messages__director__cya__contact__details_heading"),
           checkYourAnswersHelper.directorAddress(companyIndex.id, directorIndex.id) ++
             checkYourAnswersHelper.directorAddressYears(companyIndex.id, directorIndex.id) ++
             checkYourAnswersHelper.directorPreviousAddress(companyIndex.id, directorIndex.id) ++
@@ -62,13 +63,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           appConfig,
           Seq(companyDirectorDetails,companyDirectorContactDetails),
           Some(schemeName),
-          routes.CheckYourAnswersController.onSubmit(directorIndex)))
+          company.director.routes.CheckYourAnswersController.onSubmit(companyIndex)))
         )
       }
   }
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Redirect(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index))
+      Redirect(company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index))
   }
 }
