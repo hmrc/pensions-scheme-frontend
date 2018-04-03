@@ -16,37 +16,36 @@
 
 package controllers.register.trustees
 
-import play.api.data.Form
-import play.api.libs.json.JsString
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers.{contentAsString, _}
-import forms.register.trustees.AddTrusteeFormProvider
-import identifiers.register.trustees.{AddTrusteeId, TrusteesId}
-import models.{CompanyDetails, NormalMode}
-import views.html.register.trustees.addTrustee
-import play.api.libs.json._
 import controllers.ControllerSpecBase
+import controllers.actions._
+import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.SchemeDetailsId
+import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
+import models.{CheckMode, CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
+import play.api.data.Form
+import play.api.libs.json._
+import play.api.test.Helpers.{contentAsString, _}
+import utils.FakeNavigator
+import views.html.register.trustees.addTrustee
 
 class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  def onwardUrl = routes.AddTrusteeController.onPageLoad(NormalMode).url
+  def editTrusteeCompanyRoute(id: Int): String = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, id).url
+  def editTrusteeIndividualRoute(id: Int) = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, id).url
   val formProvider = new AddTrusteeFormProvider()
   val schemeName = "Test Scheme Name"
   private val maxTrustees = frontendAppConfig.maxTrustees
-  val trusteeCompanyA = ("Trustee Company A" -> onwardUrl)
-  val trusteeCompanyB = ("Trustee Company B" -> onwardUrl)
-  val trusteeIndividual = ("Trustee Individual" -> onwardUrl)
+  val trusteeCompanyA = ("Trustee Company A" -> editTrusteeCompanyRoute(0))
+  val trusteeCompanyB = ("Trustee Company B" -> editTrusteeCompanyRoute(1))
+  val trusteeIndividual = ("Trustee Individual" -> editTrusteeIndividualRoute(2))
   val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
 
   private def validData = {
