@@ -60,7 +60,7 @@ class CompanyAddressListController @Inject()(override val appConfig: FrontendApp
     (CompanyDetailsId(index) and CompanyPostcodeLookupId(index)).retrieve.right.map{
       case companyDetails ~ addresses => AddressListViewModel(
         postCall = routes.CompanyAddressListController.onSubmit(mode, index),
-        manualInputCall = routes.CompanyAddressListController.onPageLoad(mode, index),
+        manualInputCall = routes.CompanyAddressController.onPageLoad(mode, index),
         addresses = addresses,
         subHeading = Some(Message(companyDetails.companyName))
       )

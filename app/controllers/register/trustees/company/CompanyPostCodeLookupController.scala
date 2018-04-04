@@ -44,7 +44,7 @@ class CompanyPostCodeLookupController @Inject() (
                                                   val addressLookupConnector: AddressLookupConnector
                                       ) extends PostcodeLookupController with I18nSupport {
 
-  private[controllers] val manualAddressCall = routes.CompanyPreviousAddressController.onPageLoad _
+  private[controllers] val manualAddressCall = routes.CompanyAddressController.onPageLoad _
   private[controllers] val postCall = routes.CompanyPostCodeLookupController.onSubmit _
 
   private[controllers] val title: Message = "messages__companyAddress__title"
