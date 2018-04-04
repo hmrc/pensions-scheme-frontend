@@ -360,7 +360,6 @@ messages__companyAddress__checkYourAnswersLabel = Address
 
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
-messages__directorDetails__name__cya =
 
 messages__companyPreviousAddressPostcodeLookup__title = Previous address of the company
 messages__companyPreviousAddressPostcodeLookup__heading = Previous address of the company
