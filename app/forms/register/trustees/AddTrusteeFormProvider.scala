@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees
+package forms.register.trustees
 
-import identifiers.Identifier
-import play.api.libs.json._
+import javax.inject.Inject
 
-case object TrusteesId extends Identifier {
-  override def toString: String = "trustees"
-  override def path: JsPath = __ \ toString
+import forms.mappings.Mappings
+import play.api.data.Form
 
+class AddTrusteeFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__error__selection")
+    )
 }

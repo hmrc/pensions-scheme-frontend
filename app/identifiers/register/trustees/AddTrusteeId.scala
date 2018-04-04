@@ -16,11 +16,8 @@
 
 package identifiers.register.trustees
 
-import identifiers.Identifier
-import play.api.libs.json._
+import identifiers._
 
-case object TrusteesId extends Identifier {
-  override def toString: String = "trustees"
-  override def path: JsPath = __ \ toString
-
+case object AddTrusteeId extends TypedIdentifier[Boolean] {
+  override def toString: String = "addTrustee"
 }
