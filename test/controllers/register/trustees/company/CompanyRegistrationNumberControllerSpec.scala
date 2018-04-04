@@ -26,15 +26,16 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyRegistrationNumberId
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, CompanyRegistrationNumber, Index, NormalMode}
+import navigators.TrusteesCompanyNavigator
 import play.api.data.Form
-import play.api.libs.json.{JsString, _}
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
 import views.html.register.trustees.company.companyRegistrationNumber
 
 class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(NormalMode, Index(0))
 
   val formProvider = new CompanyRegistrationNumberFormProvider()
   val index = Index(0)
@@ -54,7 +55,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     ))
   )
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
       SchemeDetailsId.toString ->
         SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
       TrusteesId.toString -> Json.arr(
@@ -67,11 +68,12 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       )
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getCompanyDetails) =
-    new CompanyRegistrationNumberController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  def controller(dataRetrievalAction: DataRetrievalAction = getCompanyDetails): CompanyRegistrationNumberController  =
+    new CompanyRegistrationNumberController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new TrusteesCompanyNavigator,
+      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = companyRegistrationNumber(frontendAppConfig, form, NormalMode,
+    index, companyName)(fakeRequest, messages).toString
 
   "CompanyRegistrationNumber Controller" must {
 
@@ -91,7 +93,8 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber.hasCrn","true"),("companyRegistrationNumber.crn","1234567"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber.hasCrn","true"),("companyRegistrationNumber.crn",
+        "1234567"))
 
       val result = controller().onSubmit(NormalMode, index)(postRequest)
 
