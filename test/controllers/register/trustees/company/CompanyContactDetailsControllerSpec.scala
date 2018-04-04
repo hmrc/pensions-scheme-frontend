@@ -31,12 +31,10 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.trustees.TrusteesId
 import models.register.{SchemeDetails, SchemeType}
-import navigators.TrusteesCompanyNavigator
-import play.api.mvc.Call
 
 class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(Index(0))
+  def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new ContactDetailsFormProvider()
   val form = formProvider()
@@ -44,11 +42,11 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(10)
   val companyName = "test company name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany) : CompanyContactDetailsController  = new CompanyContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new TrusteesCompanyNavigator, FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany) :
+  CompanyContactDetailsController  = new CompanyContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = companyContactDetails(frontendAppConfig, form, NormalMode,
-    firstIndex, companyName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = companyContactDetails(frontendAppConfig, form, NormalMode, firstIndex, companyName)(fakeRequest, messages).toString
 
   val validData = Json.obj(
     SchemeDetailsId.toString->

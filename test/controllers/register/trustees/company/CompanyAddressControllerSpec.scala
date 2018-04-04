@@ -34,6 +34,7 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
@@ -83,6 +84,8 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
             Message(controller.hint)
           )
 
+          def viewAsString(form: Form[_] = form) = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
+
           val request = addToken(
             FakeRequest(CompanyAddressController.onPageLoad(NormalMode, firstIndex))
             .withHeaders("Csrf-Token" -> "nocheck")
@@ -105,7 +108,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
     "redirect to next page on POST request" which {
       "save address" in {
 
-        val onwardCall = controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, Index(0))
+        val onwardCall = controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode,Index(0))
 
         val address = Address(
           addressLine1 = "value 1",

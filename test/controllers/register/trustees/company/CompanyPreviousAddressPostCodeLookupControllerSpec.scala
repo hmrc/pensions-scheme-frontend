@@ -46,11 +46,11 @@ import scala.concurrent.Future
 
 class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures  {
 
-  def onwardRoute: Call =
-    controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0))
+  def onwardRoute = controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(NormalMode,Index(0))
+
 
   val formProvider = new PostCodeLookupFormProvider()
-  val form: Form[String] = formProvider()
+  val form = formProvider()
 
   val firstIndex = Index(0)
 
@@ -90,6 +90,8 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
             heading = Message(controller.heading),
             subHeading = Some(company.companyName)
           )
+
+          def viewAsString(form: Form[_] = form) = postcodeLookup(frontendAppConfig, form, viewModel)(fakeRequest, messages).toString
 
           val request = addToken(FakeRequest(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex))
             .withHeaders("Csrf-Token" -> "nocheck"))

@@ -25,16 +25,16 @@ import identifiers.register.trustees.company.{CompanyDetailsId, CompanyUniqueTax
 import models._
 import models.register.establishers.individual.UniqueTaxReference
 import models.register.{SchemeDetails, SchemeType}
-import navigators.TrusteesCompanyNavigator
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import utils.FakeNavigator
 import views.html.register.trustees.company.companyUniqueTaxReference
 
 class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0))
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val firstIndex = Index(0)
   val invalidIndex = Index(12)
@@ -60,7 +60,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): CompanyUniqueTaxReferenceController =
-    new CompanyUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new TrusteesCompanyNavigator,
+    new CompanyUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = companyUniqueTaxReference(frontendAppConfig, form, NormalMode, firstIndex,

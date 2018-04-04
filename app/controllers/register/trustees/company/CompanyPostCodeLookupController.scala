@@ -36,7 +36,7 @@ class CompanyPostCodeLookupController @Inject() (
                                                   val appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
                                                   val cacheConnector: DataCacheConnector,
-                                                  @TrusteesCompany val navigator: Navigator,
+                                                  @TrusteesCompany override val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,

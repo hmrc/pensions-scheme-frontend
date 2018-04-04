@@ -34,7 +34,6 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils._
@@ -85,8 +84,6 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
             Message(controller.hint)
           )
 
-          def viewAsString(form: Form[_] = form) = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
-
           val request = addToken(
             FakeRequest(CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex))
             .withHeaders("Csrf-Token" -> "nocheck")
@@ -123,13 +120,13 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
           bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-          bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
           bind[AddressFormProvider].to(formProvider)
         )) {
           implicit app =>
+
 
             val fakeRequest = addToken(FakeRequest(CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex))
               .withHeaders("Csrf-Token" -> "nocheck")
@@ -148,6 +145,5 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
         }
       }
     }
-
   }
 }
