@@ -118,7 +118,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
     }
 
-    "redirect to the next page on POST of valid data" ignore {
+    "redirect to the next page on POST of valid data" in {
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),

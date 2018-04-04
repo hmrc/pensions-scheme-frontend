@@ -25,12 +25,13 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.company.{CompanyPreviousAddressId, CompanyDetailsId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId}
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import utils.annotations.TrusteesCompany
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -39,7 +40,7 @@ class CompanyPreviousAddressController @Inject()(
                                         val appConfig: FrontendAppConfig,
                                         val messagesApi: MessagesApi,
                                         val dataCacheConnector: DataCacheConnector,
-                                        val navigator: Navigator,
+                                        @TrusteesCompany val navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,

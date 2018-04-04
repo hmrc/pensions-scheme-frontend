@@ -28,13 +28,14 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import utils.Navigator
+import utils.annotations.TrusteesCompany
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
 class CompanyAddressYearsController @Inject()(
                                         override val appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
-                                        override val navigator: Navigator,
+                                        @TrusteesCompany override val navigator: Navigator,
                                         override val cacheConnector: DataCacheConnector,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,

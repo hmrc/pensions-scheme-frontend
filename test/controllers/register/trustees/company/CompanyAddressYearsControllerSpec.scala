@@ -23,10 +23,11 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
 import models.{AddressYears, CompanyDetails, Index, NormalMode}
+import navigators.TrusteesCompanyNavigator
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
@@ -53,8 +54,8 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
     Some(companyDetails.companyName)
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyAddressYearsController =
-    new CompanyAddressYearsController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeDataCacheConnector, FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, nav: Navigator=new FakeNavigator(desiredRoute = onwardRoute)): CompanyAddressYearsController =
+    new CompanyAddressYearsController(frontendAppConfig, messagesApi, nav, FakeDataCacheConnector, FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form) = addressYears(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
@@ -86,7 +87,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", AddressYears.options.head.value))
-      val result = controller(getRelevantData).onSubmit(NormalMode, firstIndex)(postRequest)
+      val result = controller(getRelevantData,new TrusteesCompanyNavigator).onSubmit(NormalMode, firstIndex)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
