@@ -75,3 +75,4 @@ GET        /insurerPostCodeLookup                        controllers.register.In
 POST       /insurerPostCodeLookup                        controllers.register.InsurerPostCodeLookupController.onSubmit(mode: Mode = NormalMode)
 GET        /changeInsurerPostCodeLookup                  controllers.register.InsurerPostCodeLookupController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeInsurerPostCodeLookup                  controllers.register.InsurerPostCodeLookupController.onSubmit(mode: Mode = CheckMode)
+GET        /checkYourAnswers                       controllers.register.CheckYourAnswersController.onPageLoad()
