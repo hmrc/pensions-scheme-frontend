@@ -477,6 +477,7 @@ checkYourAnswers.heading = checkYourAnswers
 
 messages__schemeBenefits_section=Scheme benefits
 membership.checkYourAnswersLabel = Current membership
+membershipFuture.checkYourAnswersLabel = Membership within 12 months
 schemeEstablishedCountry.checkYourAnswersLabel = Where was the scheme established?
 investmentRegulated.checkYourAnswersLabel = Is the scheme investment regulated?
 occupationalPensionScheme.checkYourAnswersLabel = Is the scheme an occupational pension scheme?

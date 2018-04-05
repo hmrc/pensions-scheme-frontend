@@ -17,6 +17,7 @@
 package utils
 
 import identifiers.TypedIdentifier
+import identifiers.register.SchemeEstablishedCountryId
 import models.address.Address
 import models.register._
 import models.register.establishers.individual.UniqueTaxReference
@@ -34,18 +35,23 @@ trait CheckYourAnswers[I <: TypedIdentifier.PathDependent] {
 
 object CheckYourAnswers {
 
-  implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String]): CheckYourAnswers[I] =
+  implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map {
+        userAnswers.get(id).map{
           string =>
+            val answer = id match {
+              case SchemeEstablishedCountryId =>
+                countryOptions.options.find(_.value == string).map(_.label).getOrElse(string)
+              case _ => string
+            }
             Seq(AnswerRow(
               s"${id.toString}.checkYourAnswersLabel",
-              Seq(string),
+              Seq(answer),
               answerIsMessageKey = false,
               changeUrl
             ))
-        }.getOrElse(Seq.empty)
+        }.getOrElse(Seq.empty[AnswerRow])
     }
 
   implicit def boolean[I <: TypedIdentifier[Boolean]](implicit rds: Reads[Boolean]): CheckYourAnswers[I] =
@@ -285,7 +291,7 @@ object CheckYourAnswers {
         membership =>
           Seq(
             AnswerRow(
-              "membership.checkYourAnswersLabel",
+              s"${id.toString}.checkYourAnswersLabel",
               Seq(s"messages__membership__$membership"),
               true,
               changeUrl

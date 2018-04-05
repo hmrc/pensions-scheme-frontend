@@ -44,8 +44,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       val schemeDetailsSection = AnswerSection(
         Some("messages__scheme_details__title"),
         SchemeDetailsId.row(controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url) ++
-        SchemeEstablishedCountryId.row(controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url) ++
+        SchemeEstablishedCountryId.row(controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url) ++
         MembershipId.row(controllers.register.routes.MembershipController.onPageLoad(CheckMode).url) ++
+        MembershipFutureId.row(controllers.register.routes.MembershipFutureController.onPageLoad(CheckMode).url) ++
         InvestmentRegulatedId.row(controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url) ++
         OccupationalPensionSchemeId.row(controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url)
       )
