@@ -83,7 +83,7 @@ messages__common__cya__name = Name
 messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
 messages__common__cya__vat = VAT registration number
-messages__common__cya__paye = Previous Address
+messages__common__cya__paye = PAYE employer reference number
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -119,6 +119,15 @@ messages__what_you_will_need__item_3 = the telephone numbers and email addresses
 messages__what_you_will_need__item_4 = the name, contact details and address of the establisher
 messages__what_you_will_need__item_5 = PAYE, Company Registration and VAT Registration numbers
 messages__common__start = Start
+
+messages__trustee__has_ct_utr__title = Does the trustee have a Corporation Tax Unique Taxpayer Reference number?
+messages__trustee__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
+messages__trustee__ct_utr = Corporation Tax Unique Taxpayer Reference number
+messages__trustee__ct_utr_hint_format = A CTUTR is 10 or 13 digits, if it is 13 digits only enter the last 10.
+messages__trustee__no_ct_utr = Tell us why the trustee does not have a CTUTR
+messages__error__ct_utr = Enter the Corporation Tax Unique Tax Reference number
+messages__error__no_ct_utr_trustee = You need to tell us why the trustee does not have a CTUTR
+messages__error__has_ct_utr_trustee = Select yes if the trustee has a CTUTR
 
 messages__scheme_details__title = Scheme details
 messages__scheme_details__name_label = Name of the scheme
@@ -218,7 +227,7 @@ messages__uk_bank_account__title = Does the scheme have a UK bank account?
 
 messages__establishers__add__title = Establishers
 messages__establishers__add_legend_more = Do you want to add another establisher?
-messages__establishers__add_hint = You must add at least one establisher. You can add up to 10.
+messages__establishers__add_hint = You must tell us about all your scheme establishers.
 messages__establishers__add_limit = You have added the maximum number of establishers
 
 messages__establisher_individual__title = Establisher details
@@ -259,7 +268,6 @@ messages__establisher__ct_utr_hint_what = A CTUTR is issued by HMRC when you reg
 messages__establisher__ct_utr = Corporation Tax Unique Taxpayer Reference number
 messages__establisher__ct_utr_hint_format = A CTUTR is 10 or 13 digits, if it is 13 digits only enter the last 10.
 messages__establisher__no_ct_utr = Tell us why the establisher does not have a CTUTR
-messages__error__ct_utr = Enter the Corporation Tax Unique Tax Reference number
 messages__error__no_ct_utr_establisher = You need to tell us why the establisher does not have a CTUTR
 messages__error__has_ct_utr_establisher = Select yes if the establisher has a CTUTR
 messages__error__ct_utr_invalid = Enter a valid 10 digit Corporation Tax Unique Taxpayer Reference number
@@ -349,10 +357,11 @@ messages__companyAddress__title = Company address
 messages__companyAddress__heading = Company address
 messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.
 messages__companyAddress__trustee__lede = This is usually the registered business address of the trustee but you can enter any address you have for this company.
+messages__companyAddress__checkYourAnswersLabel = Address
+
 
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
-messages__directorDetails__checkYourAnswersLabel = directorDetails
 
 messages__companyPreviousAddressPostcodeLookup__title = Previous address of the company
 messages__companyPreviousAddressPostcodeLookup__heading = Previous address of the company
@@ -378,6 +387,7 @@ messages__company_director_contact__heading = Contact details for director
 
 messages__director_nino_question_cya_label = Does the director have a National Insurance number?
 messages__director_nino_cya_label = National Insurance number
+messages__director_nino_reason_cya_label = Reason the director does not have a National Insurance number
 messages__director_nino__title = Does the director have a National Insurance number?
 messages__director_no_nino = Tell us why the director does not have a National Insurance number
 messages__error__has_nino_director = Select yes if the director has a National Insurance number
@@ -394,6 +404,7 @@ messages__addCompanyDirectors_tell_us_if_you_have_more = You can tell us on the 
 
 messages__director_address_years__title = How long has the director lived at this address?
 messages__director_address_years__heading = How long has the director lived at this address?
+messages__director_address_years__cya = How long has the director lived at this address?
 
 messages__director_has_sautr__title = Does the director have a Self Assessment Unique Taxpayer Reference number?
 messages__director_sautr = Unique Taxpayer Reference number
@@ -404,12 +415,27 @@ messages__director_sautr_hint_format = A Unique Taxpayer Reference number is 10 
 messages__error__has_sautr_director = Select yes if the director has a Unique Taxpayer Reference number
 messages__error__no_sautr_director = You need to tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
 
+messages__director__cya__details_heading = Company director details
+messages__director__cya__contact__details_heading = Contact details for director
+
+messages__director__cya__utr_yes_no = Does the director have a Self Assessment Unique Taxpayer Reference number?
+messages__director__cya__utr = Unique Taxpayer Reference number
+messages__director__cya__utr_no_reason = Why the director does not have a Self Assessment Unique Taxpayer Reference number
+
 messages__confirmDeleteDirector__title = Confirm deletion
 messages__confirmDeleteDirector__heading = Are you sure you want to delete %s?
 
 messages__directorAddressPostcodeLookup__title = Director’s address
 messages__directorAddressPostcodeLookup__heading = Director’s address
 messages__directorAddressPostcodeLookup__lede = This is usually the director’s residential address.
+
+messages__previousAddressPostcodeLookup__title = previousAddressPostcodeLookup
+messages__previousAddressPostcodeLookup__heading = previousAddressPostcodeLookup
+messages__previousAddressPostcodeLookup__field1 = Field 1
+messages__previousAddressPostcodeLookup__field2 = Field 2
+messages__previousAddressPostcodeLookup__checkYourAnswersLabel = previousAddressPostcodeLookup
+messages__previousAddressPostcodeLookup__error__field1_required = Please give an answer for field1
+messages__previousAddressPostcodeLookup__error__field2_required = Please give an answer for field2
 
 messages__companyPreviousAddressList__title = companyPreviousAddressList
 messages__companyPreviousAddressList__heading = companyPreviousAddressList
@@ -435,3 +461,13 @@ messages__checkYourAnswers__section__company_details = Company details
 messages__checkYourAnswers__trustees__company__crn = Does the trustee have a Company Registration number (CRN)?
 messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Unique Taxpayer Reference number (UTR)?
 messages__checkYourAnswers__trustees__company__address_years = How long has the company been at this address?
+
+
+messages__directorPreviousAddressPostcodeLookup__title = Director’s previous address
+messages__directorPreviousAddressPostcodeLookup__heading = Director’s previous address
+messages__addTrustee__title = Trustees
+messages__addTrustee__heading = Trustees
+messages__addTrustee__lede = You must tell us about all your trustees. You can add up to 10 using the digital service.
+messages__addTrustee__text = Do you want to add another trustee?
+messages__addTrustees_at_maximum = You have added the maximum number of trustees.
+messages__addTrustees_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.

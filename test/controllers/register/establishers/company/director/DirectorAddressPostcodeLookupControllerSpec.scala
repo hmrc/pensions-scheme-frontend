@@ -37,6 +37,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, Navigator}
+import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
@@ -44,7 +45,8 @@ import scala.concurrent.Future
 
 class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with CSRFRequest {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex)
+  def manualInputCall = routes.DirectorAddressController.onPageLoad(NormalMode, estIndex, dirIndex)
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
@@ -67,14 +69,14 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
   )
 
   val company = CompanyDetails(companyName, None, None)
-  val director = DirectorDetails("test first name", Some("test middle name"), "test last name", LocalDate.now())
+  val director = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
 
-  def viewAsString(form: Form[_] = form): String = postcodeLookup(
-    frontendAppConfig,
-    form,
-    PostcodeLookupViewModel(onwardRoute,
-      routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex),
-      subHeading = Some(director.directorName)))(fakeRequest, messages).toString
+  lazy val viewmodel = PostcodeLookupViewModel(
+    onwardRoute,
+    manualInputCall,
+    Message("messages__directorAddressPostcodeLookup__title"),
+    Message("messages__directorAddressPostcodeLookup__heading"),
+    Some(director.directorName))
 
   "DirectorAddressPostcodeLookup Controller" must {
 
@@ -91,11 +93,19 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
-      )){ app =>
+      )){ implicit app =>
 
-        val result = route(app, FakeRequest("GET", call.url)).get
+        val request = addToken(FakeRequest(call)
+          .withHeaders("Csrf-Token" -> "nocheck"))
+        val result = route(app, request).get
 
         status(result) must be(OK)
+
+        contentAsString(result) mustEqual postcodeLookup(
+          frontendAppConfig,
+          form,
+          viewmodel
+        )(request, messages).toString
 
       }
     }

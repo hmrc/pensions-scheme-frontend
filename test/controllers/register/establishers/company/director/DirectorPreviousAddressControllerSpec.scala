@@ -47,7 +47,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
 
-  val directorDetails = DirectorDetails("first", None, "last", LocalDate.now())
+  val directorDetails = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
@@ -138,7 +138,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
                 ("addressLine2", address.addressLine2),
-                ("postCode", address.postCode.get),
+                ("postCode", address.postcode.get),
                 "country" -> address.country))
 
             val result = route(app, fakeRequest).value

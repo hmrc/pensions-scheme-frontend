@@ -20,8 +20,12 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import models.person.PersonDetails
+import models.register._
 import models.register.establishers.individual.EstablisherDetails
-import models.{CompanyDetails, NormalMode}
+import models.{CheckMode, CompanyDetails, NormalMode}
 import play.api.libs.json._
 
 import scala.language.implicitConversions
@@ -65,27 +69,23 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
   def allEstablishers: Seq[(String, String)] = {
 
-    val nameReads: Reads[String] =  {
+    val nameReads: Reads[EntityDetails] =  {
 
-      val individualName: Reads[String] =
+      val individualName: Reads[EntityDetails] =
         (__ \ EstablisherDetailsId.toString).read[EstablisherDetails]
-          .map {
-            details =>
-              s"${details.firstName} ${details.lastName}"
-          }
+          .map(details => EstablisherIndividualName(s"${details.firstName} ${details.lastName}"))
 
-      val companyName: Reads[String] =
+      val companyName: Reads[EntityDetails] =
         (__ \ CompanyDetailsId.toString).read[CompanyDetails]
-          .map(_.companyName)
+          .map(details => EstablisherCompanyName(details.companyName))
 
       individualName orElse companyName
     }
 
-    getAll[String](EstablishersId.path)(nameReads).map(
-      _.map {
-        name =>
-          name ->
-            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url
+    getAll[EntityDetails](EstablishersId.path)(nameReads).map(
+      _.zipWithIndex.map {
+        case (name, id) =>
+          name.route(id, None)
       }
     ).getOrElse(Seq.empty)
   }
@@ -105,5 +105,28 @@ case class UserAnswers(json: JsValue = Json.obj()) {
             e
         }.reduceLeft(JsError.merge)
     }
+  }
+
+  def allTrustees: Seq[(String, String)] = {
+
+    val nameReads: Reads[EntityDetails] =  {
+
+      val individualName: Reads[EntityDetails] =
+        (__ \ TrusteeDetailsId.toString).read[PersonDetails]
+          .map(details => TrusteeIndividualName(details.fullName))
+
+      val companyName: Reads[EntityDetails] =
+        (__ \ identifiers.register.trustees.company.CompanyDetailsId.toString).read[CompanyDetails]
+          .map(details => TrusteeCompanyName(details.companyName))
+
+      individualName orElse companyName
+    }
+
+    getAll[EntityDetails](TrusteesId.path)(nameReads).map {
+      _.zipWithIndex.map {
+        case (name, id) =>
+          name.route(id, None)
+      }
+    }.getOrElse(Seq.empty)
   }
 }

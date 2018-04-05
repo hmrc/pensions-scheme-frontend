@@ -19,8 +19,10 @@ package utils
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import models.person.PersonDetails
 import models.register.establishers.individual.EstablisherDetails
-import models.{CompanyDetails, NormalMode}
+import models.{CheckMode, CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
@@ -58,10 +60,25 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
 
       userAnswers.allEstablishers mustEqual Seq(
         "my company" ->
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url,
+          controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, 0).url,
         "my name" ->
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, 1).url
       )
+    }
+  }
+
+  ".allTrustees" must {
+
+    "return the expected results" in {
+
+      val userAnswers = UserAnswers()
+        .set(TrusteeDetailsId(0))(PersonDetails("First", None, "Last", LocalDate.now))
+        .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company", None, None))).get
+
+      val result = userAnswers.allTrustees
+
+      result must contain("First Last" -> controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, 0).url)
+      result must contain("My Company" -> controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, 1).url)
     }
   }
 

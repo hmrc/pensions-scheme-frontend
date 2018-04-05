@@ -53,7 +53,7 @@ trait AddressListController extends FrontendController with I18nSupport {
       formWithErrors =>
         Future.successful(BadRequest(addressList(appConfig, formWithErrors, viewModel))),
       addressIndex =>
-        cacheConnector.save(request.externalId, dataId, viewModel.addresses(addressIndex)).map(
+        cacheConnector.save(request.externalId, dataId, viewModel.addresses(addressIndex).copy(country = "GB")).map(
           json => Redirect(navigator.nextPage(navigatorId, mode)(UserAnswers(json)))
         )
     )

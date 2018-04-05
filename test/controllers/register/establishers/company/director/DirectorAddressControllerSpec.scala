@@ -132,7 +132,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
           addressLine1 = "value 1",
           addressLine2 = "value 2",
           None, None,
-          postCode = Some("AB1 1AB"),
+          postcode = Some("AB1 1AB"),
           country = "GB"
         )
 
@@ -153,7 +153,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
                 ("addressLine2", address.addressLine2),
-                ("postCode", address.postCode.get),
+                ("postCode", address.postcode.get),
                 "country" -> address.country))
 
             val result = route(app, fakeRequest).value

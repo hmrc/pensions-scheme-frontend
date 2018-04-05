@@ -186,7 +186,7 @@ object CheckYourAnswers {
             Some(s"${address.addressLine2},"),
             address.addressLine3.map(line3 => s"$line3,"),
             address.addressLine4.map(line4 => s"$line4,"),
-            address.postCode.map(postCode => s"$postCode,"),
+            address.postcode.map(postCode => s"$postCode,"),
             Some(country)
           ).flatten
         }
@@ -216,6 +216,9 @@ object CheckYourAnswers {
         changeUrl
       ))).getOrElse(Seq.empty[AnswerRow])
     }
+
+  implicit def defaultAddressYears[I <: TypedIdentifier[AddressYears]](implicit rds: Reads[AddressYears]): CheckYourAnswers[I] =
+    addressYears("messages__establisher_address_years__title")
 
   implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {

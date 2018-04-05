@@ -1,31 +1,29 @@
 #!/bin/bash
 
-echo "Applying migration CompanyRegistrationNumber"
+echo "Applying migration AddTrustee"
 
-echo "Adding routes to conf/register.trustees.company.routes"
+echo "Adding routes to register.trustees.routes"
 
-echo "" >> ../conf/app.routes
-echo "GET        /companyRegistrationNumber               controllers.register.trustees.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.company.routes
-echo "POST       /companyRegistrationNumber               controllers.register.trustees.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.company.routes
+echo "" >> ../conf/register.trustees.routes
+echo "GET        /addTrustee               controllers.register.trustees.AddTrusteeController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.routes
+echo "POST       /addTrustee               controllers.register.trustees.AddTrusteeController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.routes
 
-echo "GET        /changeCompanyRegistrationNumber               controllers.register.trustees.company.CompanyRegistrationNumberController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.company.routes
-echo "POST       /changeCompanyRegistrationNumber               controllers.register.trustees.company.CompanyRegistrationNumberController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.company.routes
+echo "GET        /changeAddTrustee                        controllers.register.trustees.AddTrusteeController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.routes
+echo "POST       /changeAddTrustee                        controllers.register.trustees.AddTrusteeController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "messages__companyRegistrationNumber__title = companyRegistrationNumber" >> ../conf/messages.en
-echo "messages__companyRegistrationNumber__heading = companyRegistrationNumber" >> ../conf/messages.en
-echo "messages__companyRegistrationNumber__option1 = companyRegistrationNumber" Option 1 >> ../conf/messages.en
-echo "messages__companyRegistrationNumber__option2 = companyRegistrationNumber" Option 2 >> ../conf/messages.en
-echo "messages__companyRegistrationNumber__checkYourAnswersLabel = companyRegistrationNumber" >> ../conf/messages.en
-echo "messages__companyRegistrationNumber__error__required = Please give an answer for companyRegistrationNumber" >> ../conf/messages.en
+echo "messages__addTrustee__title = addTrustee" >> ../conf/messages.en
+echo "messages__addTrustee__heading = addTrustee" >> ../conf/messages.en
+echo "messages__addTrustee__checkYourAnswersLabel = addTrustee" >> ../conf/messages.en
+echo "messages__addTrustee__error__required = Please give an answer for addTrustee" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def companyRegistrationNumber: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.company.CompanyRegistrationNumberId) map {";\
-     print "    x => AnswerRow(\"messages__companyRegistrationNumber__checkYourAnswersLabel\", Seq(s\"companyRegistrationNumber.$x\"), true, controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode).url)";\
+     print "  def addTrustee: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.AddTrusteeId) map {";\
+     print "    x => AnswerRow(\"addTrustee.checkYourAnswersLabel\", Seq(s\"$x\"), false, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -33,4 +31,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration CompanyRegistrationNumber completed"
+echo "Migration AddTrustee completed"

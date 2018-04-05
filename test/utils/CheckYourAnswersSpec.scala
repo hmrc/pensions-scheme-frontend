@@ -77,6 +77,9 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             "testId" -> companyDetails
           )))
 
+          //List(AnswerRow(messages__common__cya__name,List(Company Name),false,onwardUrl), AnswerRow(messages__common__cya__vat,List(VAT123),false,onwardUrl))
+          //List(AnswerRow(messages__common__cya__name,List(Company Name),false,onwardUrl), AnswerRow(messages__company__cya__vat,List(VAT123),false,onwardUrl))
+
           testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
             AnswerRow(
               "messages__common__cya__name",
@@ -85,7 +88,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               onwardUrl
             ),
             AnswerRow(
-              "messages__company__cya__vat",
+              "messages__common__cya__vat",
               Seq(s"${companyDetails.vatNumber.get}"),
               false,
               onwardUrl
@@ -108,7 +111,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               onwardUrl
             ),
             AnswerRow(
-              "messages__company__cya__paye_ern",
+              "messages__common__cya__paye",
               Seq(s"${companyDetails.payeNumber.get}"),
               false,
               onwardUrl
@@ -132,13 +135,13 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               onwardUrl
             ),
             AnswerRow(
-              "messages__company__cya__vat",
+              "messages__common__cya__vat",
               Seq(s"${companyDetails.vatNumber.get}"),
               false,
               onwardUrl
             ),
             AnswerRow(
-              "messages__company__cya__paye_ern",
+              "messages__common__cya__paye",
               Seq(s"${companyDetails.payeNumber.get}"),
               false,
               onwardUrl
@@ -260,14 +263,14 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             Some(s"${address.addressLine2},"),
             address.addressLine3.map(line3 => s"$line3,"),
             address.addressLine4.map(line4 => s"$line4,"),
-            address.postCode.map(postCode => s"$postCode,"),
+            address.postcode.map(postCode => s"$postCode,"),
             Some(country)
           ).flatten
         }
 
         testIdentifier[Address].row(onwardUrl) must equal(Seq(
           AnswerRow(
-            "messages__establisher_individual_address_cya_label",
+            "messages__common__cya__address",
             addressAnswer(address),
             false,
             onwardUrl
@@ -282,7 +285,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)))
 
         testIdentifier[AddressYears].row(onwardUrl) must equal(Seq(AnswerRow(
-          "messages__establisher_individual_address_years_cya_label",
+          "messages__establisher_address_years__title",
           Seq(s"messages__common__$addressYears"),
           true,
           onwardUrl
