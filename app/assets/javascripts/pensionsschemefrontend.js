@@ -22,7 +22,7 @@ $(document).ready(function() {
 
 
     if(document.querySelectorAll('select').length > 0){
-        var graphUrl = '/pensions-scheme/assets/javascripts/autocomplete/location-autocomplete-graph.json'
+        var graphUrl = '/assets/javascripts/autocomplete/location-autocomplete-graph.json'
 
         openregisterLocationPicker({
             defaultValue: '',
