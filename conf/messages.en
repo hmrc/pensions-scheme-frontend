@@ -468,6 +468,9 @@ messages__addTrustees_tell_us_if_you_have_more = You can tell us on the next pag
 checkYourAnswers.title = checkYourAnswers
 checkYourAnswers.heading = checkYourAnswers
 
+messages__schemeBenefits_section=Scheme benefits
+membership.checkYourAnswersLabel = Current membership
 schemeEstablishedCountry.checkYourAnswersLabel = Where was the scheme established?
 investmentRegulated.checkYourAnswersLabel = Is the scheme investment regulated?
 occupationalPensionScheme.checkYourAnswersLabel = Is the scheme an occupational pension scheme?
+securedBenefits.checkYourAnswersLabel=Are any of the scheme benefits secured by a contract?

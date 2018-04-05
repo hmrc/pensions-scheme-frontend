@@ -16,9 +16,11 @@
 
 package utils
 
+import java.util.zip.CheckedOutputStream
+
 import identifiers.TypedIdentifier
 import models.address.Address
-import models.register.{Membership, SchemeDetails}
+import models.register.{Benefits, BenefitsInsurer, Membership, SchemeDetails}
 import models.register.establishers.individual.UniqueTaxReference
 import models.requests.DataRequest
 import models.{AddressYears, CompanyDetails, CompanyRegistrationNumber, ContactDetails}
@@ -258,6 +260,56 @@ object CheckYourAnswers {
       }.getOrElse(Seq.empty[AnswerRow])
     }
 
+  implicit def membership[I <: TypedIdentifier[Membership]](implicit rds: Reads[Membership]): CheckYourAnswers[I]=
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+        membership =>
+          Seq(
+            AnswerRow(
+              "membership.checkYourAnswersLabel",
+              Seq(s"messages__membership__$membership"),
+              true,
+              changeUrl
+            )
+          )
+      }.getOrElse(Seq.empty[AnswerRow])
+    }
+
+  implicit def schemeBenefits[I <: TypedIdentifier[Benefits]](implicit rds:Reads[Benefits]):CheckYourAnswers[I]=
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map{
+        benefits=>
+          Seq(
+            AnswerRow(
+              "messages__benefits__title",
+              Seq(s"messages__benefits__$benefits"),
+              true,
+              changeUrl
+            )
+          )
+      }.getOrElse(Seq.empty[AnswerRow])
+    }
+
+  implicit def benefitsInsurer[I <: TypedIdentifier[BenefitsInsurer]](implicit rds:Reads[BenefitsInsurer]):CheckYourAnswers[I]=
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map{
+        benefitsInsurer=>
+          Seq(
+            AnswerRow(
+              "messages__benefits_insurance__name",
+              Seq(s"${benefitsInsurer.companyName}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__benefits_insurance__policy",
+              Seq(s"${benefitsInsurer.policyNumber}"),
+              false,
+              changeUrl
+            )
+          )
+      }.getOrElse(Seq.empty[AnswerRow])
+    }
   trait Ops[A] {
     def row(changeUrl: String)(implicit request: DataRequest[AnyContent], reads: Reads[A]): Seq[AnswerRow]
   }
