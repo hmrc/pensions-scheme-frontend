@@ -1,29 +1,29 @@
 #!/bin/bash
 
-echo "Applying migration DirectorPreviousAddressPostcodeLookup"
+echo "Applying migration AddTrustee"
 
-echo "Adding routes to register.establishers.company.director.routes"
+echo "Adding routes to register.trustees.routes"
 
-echo "" >> ../conf/register.establishers.company.director.routes
-echo "GET        /directorPreviousAddressPostcodeLookup               controllers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
-echo "POST       /directorPreviousAddressPostcodeLookup               controllers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.establishers.company.director.routes
+echo "" >> ../conf/register.trustees.routes
+echo "GET        /addTrustee               controllers.register.trustees.AddTrusteeController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.routes
+echo "POST       /addTrustee               controllers.register.trustees.AddTrusteeController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.routes
 
-echo "GET        /changeDirectorPreviousAddressPostcodeLookup                        controllers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
-echo "POST       /changeDirectorPreviousAddressPostcodeLookup                        controllers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.establishers.company.director.routes
+echo "GET        /changeAddTrustee                        controllers.register.trustees.AddTrusteeController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.routes
+echo "POST       /changeAddTrustee                        controllers.register.trustees.AddTrusteeController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "messages__directorPreviousAddressPostcodeLookup__title = directorPreviousAddressPostcodeLookup" >> ../conf/messages.en
-echo "messages__directorPreviousAddressPostcodeLookup__heading = directorPreviousAddressPostcodeLookup" >> ../conf/messages.en
-echo "messages__directorPreviousAddressPostcodeLookup__checkYourAnswersLabel = directorPreviousAddressPostcodeLookup" >> ../conf/messages.en
-echo "messages__directorPreviousAddressPostcodeLookup__error__required = Please give an answer for directorPreviousAddressPostcodeLookup" >> ../conf/messages.en
+echo "messages__addTrustee__title = addTrustee" >> ../conf/messages.en
+echo "messages__addTrustee__heading = addTrustee" >> ../conf/messages.en
+echo "messages__addTrustee__checkYourAnswersLabel = addTrustee" >> ../conf/messages.en
+echo "messages__addTrustee__error__required = Please give an answer for addTrustee" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def directorPreviousAddressPostcodeLookup: Option[AnswerRow] = userAnswers.get(identifiers.register.establishers.company.director.DirectorPreviousAddressPostcodeLookupId) map {";\
-     print "    x => AnswerRow(\"directorPreviousAddressPostcodeLookup.checkYourAnswersLabel\", Seq(s\"$x\"), false, controllers.register.establishers.company.director.routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(CheckMode).url)";\
+     print "  def addTrustee: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.AddTrusteeId) map {";\
+     print "    x => AnswerRow(\"addTrustee.checkYourAnswersLabel\", Seq(s\"$x\"), false, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -31,4 +31,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration DirectorPreviousAddressPostcodeLookup completed"
+echo "Migration AddTrustee completed"

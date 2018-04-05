@@ -54,7 +54,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
 
   val companyName: String = "test company name"
   val company = CompanyDetails(companyName, None, None)
-  val director = DirectorDetails("test first name", Some("test middle name"), "test last name", LocalDate.now())
+  val director = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
 
   val form = formProvider()
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]

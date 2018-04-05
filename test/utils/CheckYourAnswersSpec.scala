@@ -85,7 +85,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               onwardUrl
             ),
             AnswerRow(
-              "messages__company__cya__vat",
+              "messages__common__cya__vat",
               Seq(s"${companyDetails.vatNumber.get}"),
               false,
               onwardUrl
@@ -108,7 +108,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               onwardUrl
             ),
             AnswerRow(
-              "messages__company__cya__paye_ern",
+              "messages__common__cya__paye",
               Seq(s"${companyDetails.payeNumber.get}"),
               false,
               onwardUrl
@@ -132,13 +132,13 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               onwardUrl
             ),
             AnswerRow(
-              "messages__company__cya__vat",
+              "messages__common__cya__vat",
               Seq(s"${companyDetails.vatNumber.get}"),
               false,
               onwardUrl
             ),
             AnswerRow(
-              "messages__company__cya__paye_ern",
+              "messages__common__cya__paye",
               Seq(s"${companyDetails.payeNumber.get}"),
               false,
               onwardUrl
@@ -267,7 +267,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
         testIdentifier[Address].row(onwardUrl) must equal(Seq(
           AnswerRow(
-            "messages__establisher_individual_address_cya_label",
+            "messages__common__cya__address",
             addressAnswer(address),
             false,
             onwardUrl
@@ -282,7 +282,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)))
 
         testIdentifier[AddressYears].row(onwardUrl) must equal(Seq(AnswerRow(
-          "messages__establisher_individual_address_years_cya_label",
+          "messages__establisher_address_years__title",
           Seq(s"messages__common__$addressYears"),
           true,
           onwardUrl

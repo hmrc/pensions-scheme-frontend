@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.company
+package filters
 
-import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
-import models.CompanyDetails
-import play.api.libs.json.JsPath
+import com.google.inject.Inject
+import play.api.http.DefaultHttpFilters
+import uk.gov.hmrc.play.bootstrap.filters.FrontendFilters
 
-case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] {
-  override def path: JsPath = TrusteesId.path \ index \ CompanyDetailsId.toString
-}
-
-object CompanyDetailsId {
-
-  override lazy val toString: String = "companyDetails"
-
-}
+class FiltersWithWhitelist @Inject() (
+                                       whitelistFilter: WhitelistFilter,
+                                       sessionIdFilter: SessionIdFilter,
+                                       frontendFilters: FrontendFilters
+                                     ) extends DefaultHttpFilters(frontendFilters.filters :+ sessionIdFilter :+ whitelistFilter: _*)

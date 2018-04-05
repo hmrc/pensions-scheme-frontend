@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.company
+package models.person
 
-import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
-import models.CompanyDetails
-import play.api.libs.json.JsPath
+import org.joda.time.LocalDate
+import play.api.libs.json._
 
-case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] {
-  override def path: JsPath = TrusteesId.path \ index \ CompanyDetailsId.toString
+case class PersonDetails (firstName: String,middleName:Option[String],lastName: String,date:LocalDate){
+
+  def fullName: String = middleName match {
+    case Some(middle) => s"$firstName $middle $lastName"
+    case _ => s"$firstName $lastName"
+  }
+
 }
 
-object CompanyDetailsId {
-
-  override lazy val toString: String = "companyDetails"
-
+object PersonDetails {
+  implicit val format: OFormat[PersonDetails] = Json.format[PersonDetails]
 }
