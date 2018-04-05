@@ -47,7 +47,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
 
-  val directorDetails = DirectorDetails("first", None, "last", LocalDate.now())
+  val directorDetails = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
