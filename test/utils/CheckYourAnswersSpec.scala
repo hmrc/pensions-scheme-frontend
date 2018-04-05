@@ -77,9 +77,6 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             "testId" -> companyDetails
           )))
 
-          //List(AnswerRow(messages__common__cya__name,List(Company Name),false,onwardUrl), AnswerRow(messages__common__cya__vat,List(VAT123),false,onwardUrl))
-          //List(AnswerRow(messages__common__cya__name,List(Company Name),false,onwardUrl), AnswerRow(messages__company__cya__vat,List(VAT123),false,onwardUrl))
-
           testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
             AnswerRow(
               "messages__common__cya__name",
