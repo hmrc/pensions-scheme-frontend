@@ -86,7 +86,6 @@ object CheckYourAnswers {
       }
     }
 
-  implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]](implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] =
   def companyDetails[I <: TypedIdentifier[CompanyDetails]](
                                                             nameLabel: String,
                                                             vatLabel: String,
@@ -174,7 +173,7 @@ object CheckYourAnswers {
   implicit def defaultCompanyRegistrationNumber[I <: TypedIdentifier[CompanyRegistrationNumber]](implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] =
     companyRegistrationNumber("messages__company__cya__crn_yes_no")
 
-  implicit def uniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](
+  def uniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](
                                                                            label: String
                                                                            )(implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {
