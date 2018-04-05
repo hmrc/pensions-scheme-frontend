@@ -58,9 +58,15 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         InsurerAddressId.row(controllers.register.routes.InsurerAddressController.onPageLoad(CheckMode).url)
       )
 
+      val bankAccountSection = AnswerSection(
+        Some("messages__uk_bank_account_details__title"),
+        UKBankAccountId.row(controllers.register.routes.UKBankAccountController.onPageLoad(CheckMode).url) ++
+        UKBankDetailsId.row(controllers.register.routes.UKBankDetailsController.onPageLoad(CheckMode).url)
+      )
+
       Ok(check_your_answers(
         appConfig,
-        Seq(schemeDetailsSection,schemeBenefitsSection),
+        Seq(schemeDetailsSection,schemeBenefitsSection, bankAccountSection),
         None,
         controllers.register.routes.CheckYourAnswersController.onPageLoad())
       )

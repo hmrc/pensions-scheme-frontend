@@ -20,7 +20,7 @@ import java.util.zip.CheckedOutputStream
 
 import identifiers.TypedIdentifier
 import models.address.Address
-import models.register.{Benefits, BenefitsInsurer, Membership, SchemeDetails}
+import models.register._
 import models.register.establishers.individual.UniqueTaxReference
 import models.requests.DataRequest
 import models.{AddressYears, CompanyDetails, CompanyRegistrationNumber, ContactDetails}
@@ -260,7 +260,7 @@ object CheckYourAnswers {
       }.getOrElse(Seq.empty[AnswerRow])
     }
 
-  implicit def membership[I <: TypedIdentifier[Membership]](implicit rds: Reads[Membership]): CheckYourAnswers[I]=
+  implicit def membership[I <: TypedIdentifier[Membership]](implicit rds: Reads[Membership]): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
         membership =>
@@ -275,10 +275,49 @@ object CheckYourAnswers {
       }.getOrElse(Seq.empty[AnswerRow])
     }
 
-  implicit def schemeBenefits[I <: TypedIdentifier[Benefits]](implicit rds:Reads[Benefits]):CheckYourAnswers[I]=
+  implicit def bankDetails[I <: TypedIdentifier[UKBankDetails]](implicit rds: Reads[UKBankDetails]): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map{
-        benefits=>
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+        bankDetails =>
+          Seq(
+            AnswerRow(
+              "messages__uk_bank_account_details__bank_name",
+              Seq(s"${bankDetails.bankName}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__uk_bank_account_details__account_name",
+              Seq(s"${bankDetails.accountName}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__uk_bank_account_details__sort_code",
+              Seq(s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__uk_bank_account_details__account_number",
+              Seq(s"${bankDetails.accountNumber}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__uk_bank_account_details__date_bank_account",
+              Seq(s"${DateHelper.formatDate(bankDetails.date)}"),
+              false,
+              changeUrl
+            )
+          )
+      }.getOrElse(Seq.empty[AnswerRow])
+    }
+
+  implicit def schemeBenefits[I <: TypedIdentifier[Benefits]](implicit rds: Reads[Benefits]): CheckYourAnswers[I] =
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+        benefits =>
           Seq(
             AnswerRow(
               "messages__benefits__title",
@@ -290,10 +329,10 @@ object CheckYourAnswers {
       }.getOrElse(Seq.empty[AnswerRow])
     }
 
-  implicit def benefitsInsurer[I <: TypedIdentifier[BenefitsInsurer]](implicit rds:Reads[BenefitsInsurer]):CheckYourAnswers[I]=
+  implicit def benefitsInsurer[I <: TypedIdentifier[BenefitsInsurer]](implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map{
-        benefitsInsurer=>
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+        benefitsInsurer =>
           Seq(
             AnswerRow(
               "messages__benefits_insurance__name",
@@ -310,6 +349,7 @@ object CheckYourAnswers {
           )
       }.getOrElse(Seq.empty[AnswerRow])
     }
+
   trait Ops[A] {
     def row(changeUrl: String)(implicit request: DataRequest[AnyContent], reads: Reads[A]): Seq[AnswerRow]
   }

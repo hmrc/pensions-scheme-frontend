@@ -474,3 +474,4 @@ schemeEstablishedCountry.checkYourAnswersLabel = Where was the scheme establishe
 investmentRegulated.checkYourAnswersLabel = Is the scheme investment regulated?
 occupationalPensionScheme.checkYourAnswersLabel = Is the scheme an occupational pension scheme?
 securedBenefits.checkYourAnswersLabel=Are any of the scheme benefits secured by a contract?
+uKBankAccount.checkYourAnswersLabel = Does the scheme have a UK bank account?
