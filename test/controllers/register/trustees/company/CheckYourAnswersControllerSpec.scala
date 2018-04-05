@@ -40,8 +40,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
     Some("messages__checkYourAnswers__section__company_details"),
     Seq(
       AnswerRow("messages__common__cya__name", Seq(companyName), false, companyDetailsRoute),
-      AnswerRow("messages__company__cya__vat", Seq("123456"), false, companyDetailsRoute),
-      AnswerRow("messages__company__cya__paye_ern", Seq("abcd"), false, companyDetailsRoute)
+      AnswerRow("messages__common__cya__vat", Seq("123456"), false, companyDetailsRoute),
+      AnswerRow("messages__common__cya__paye", Seq("abcd"), false, companyDetailsRoute)
     )
   )
 
