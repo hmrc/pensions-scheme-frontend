@@ -33,18 +33,31 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
   def postUrl = routes.CheckYourAnswersController.onSubmit(index)
 
-  val answersCD: Seq[AnswerRow] =
-      Seq(AnswerRow("messages__common__cya__name", Seq("test company name"), false,
-        "/pensions-scheme/register/establishers/1/company/changeCompanyDetails"),
-      AnswerRow("messages__company__cya__vat", Seq("123456"), false,
-        "/pensions-scheme/register/establishers/1/company/changeCompanyDetails"),
-      AnswerRow("messages__company__cya__paye_ern", Seq("abcd"), false,
-        "/pensions-scheme/register/establishers/1/company/changeCompanyDetails"))
+  val answersCD: Seq[AnswerRow] = Seq(
+    AnswerRow(
+      "messages__common__cya__name",
+      Seq("test company name"),
+      false,
+      "/pensions-scheme/register/establishers/1/company/changeCompanyDetails"
+    ),
+    AnswerRow(
+      "messages__common__cya__vat",
+      Seq("123456"),
+      false,
+      "/pensions-scheme/register/establishers/1/company/changeCompanyDetails"
+    ),
+    AnswerRow(
+      "messages__company__cya__paye_ern",
+      Seq("abcd"),
+      false,
+      "/pensions-scheme/register/establishers/1/company/changeCompanyDetails"
+    )
+  )
 
-
-
-  val answers = Seq(AnswerSection(Some("messages__common__company_details__title"), answersCD),
-    AnswerSection(Some("messages__establisher_company_contact_details__title"), Seq.empty))
+  val answers = Seq(
+    AnswerSection(Some("messages__common__company_details__title"), answersCD),
+    AnswerSection(Some("messages__establisher_company_contact_details__title"), Seq.empty
+    ))
 
 
 

@@ -20,7 +20,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
 import models.AddressYears
 import play.api.libs.json.JsPath
-import utils.Cleanup
+import utils.{CheckYourAnswers, Cleanup}
 
 case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
   override def path: JsPath = TrusteesId.path \ index \ CompanyAddressYearsId.toString
@@ -36,4 +36,7 @@ object CompanyAddressYearsId {
           .remove(CompanyPreviousAddressPostcodeLookupId(id))
           .flatMap(_.remove(CompanyPreviousAddressId(id)))
     }
+
+  implicit val cya: CheckYourAnswers[CompanyAddressYearsId] =
+    CheckYourAnswers.addressYears("messages__checkYourAnswers__trustees__company__address_years")
 }

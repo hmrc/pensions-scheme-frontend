@@ -16,8 +16,6 @@
 
 package utils
 
-import java.util.zip.CheckedOutputStream
-
 import identifiers.TypedIdentifier
 import models.address.Address
 import models.register._
@@ -89,13 +87,13 @@ object CheckYourAnswers {
     }
 
   implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]](implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] =
+  def companyDetails[I <: TypedIdentifier[CompanyDetails]](
+                                                            nameLabel: String,
+                                                            vatLabel: String,
+                                                            payeLabel: String
+                                                          )(implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-
-        val nameLabel = "messages__common__cya__name"
-        val vatLabel = "messages__company__cya__vat"
-        val payeLabel = "messages__company__cya__paye_ern"
-
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id).map {
           companyDetails =>
 
@@ -106,7 +104,7 @@ object CheckYourAnswers {
               changeUrl
             )
 
-            val withVat = companyDetails.vatNumber.fold(Seq(nameRow)) { vat =>
+            val withVat = companyDetails.vatNumber.fold(Seq(nameRow)){ vat =>
               Seq(nameRow, AnswerRow(
                 vatLabel,
                 Seq(s"$vat"),
@@ -115,7 +113,7 @@ object CheckYourAnswers {
               ))
             }
 
-            companyDetails.payeNumber.fold(withVat) { paye =>
+            companyDetails.payeNumber.fold(withVat){ paye =>
               withVat :+ AnswerRow(
                 payeLabel,
                 Seq(s"$paye"),
@@ -125,19 +123,27 @@ object CheckYourAnswers {
             }
 
         }.getOrElse(Seq.empty[AnswerRow])
-      }
     }
 
-  implicit def companyRegistrationNumber[I <: TypedIdentifier[CompanyRegistrationNumber]](implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] =
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = {
+  implicit def defaultCompanyDetails[I <: TypedIdentifier[CompanyDetails]](implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = {
 
-        val crnLabel = "messages__company__cya__crn_yes_no"
+    val nameLabel ="messages__common__cya__name"
+    val vatLabel = "messages__common__cya__vat"
+    val payeLabel = "messages__common__cya__paye"
+
+    companyDetails(nameLabel, vatLabel, payeLabel)
+  }
+
+  def companyRegistrationNumber[I <: TypedIdentifier[CompanyRegistrationNumber]](
+                                                                                  label: String
+                                                                                )(implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] =
+    new CheckYourAnswers[I]{
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = {
 
         userAnswers.get(id) match {
           case Some(CompanyRegistrationNumber.Yes(crn)) => Seq(
             AnswerRow(
-              crnLabel,
+              label,
               Seq(s"${CompanyRegistrationNumber.Yes}"),
               true,
               changeUrl
@@ -150,7 +156,7 @@ object CheckYourAnswers {
             ))
           case Some(CompanyRegistrationNumber.No(reason)) => Seq(
             AnswerRow(
-              crnLabel,
+              label,
               Seq(s"${CompanyRegistrationNumber.No}"),
               true,
               changeUrl),
@@ -165,16 +171,18 @@ object CheckYourAnswers {
       }
     }
 
-  implicit def uniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] =
+  implicit def defaultCompanyRegistrationNumber[I <: TypedIdentifier[CompanyRegistrationNumber]](implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] =
+    companyRegistrationNumber("messages__company__cya__crn_yes_no")
+
+  implicit def uniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](
+                                                                           label: String
+                                                                           )(implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = {
-
-        val utrLabel = "messages__establisher_individual_utr_question_cya_label"
-
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) =
         userAnswers.get(id) match {
           case Some(UniqueTaxReference.Yes(utr)) => Seq(
             AnswerRow(
-              utrLabel,
+              label,
               Seq(s"${UniqueTaxReference.Yes}"),
               false,
               changeUrl
@@ -188,9 +196,9 @@ object CheckYourAnswers {
           )
           case Some(UniqueTaxReference.No(reason)) => Seq(
             AnswerRow(
-              utrLabel,
+              label,
               Seq(s"${UniqueTaxReference.No}"),
-              false, changeUrl
+              false,changeUrl
             ),
             AnswerRow(
               "messages__establisher_individual_utr_reason_cya_label",
@@ -201,9 +209,13 @@ object CheckYourAnswers {
           case _ => Seq.empty[AnswerRow]
         }
       }
-    }
 
-  implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
+  implicit def defaultUniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] =
+    uniqueTaxReference("messages__establisher_individual_utr_question_cya_label")
+
+  def address[I <: TypedIdentifier[Address]](
+                                            label: String
+                                            )(implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = {
 
@@ -221,7 +233,7 @@ object CheckYourAnswers {
 
         userAnswers.get(id).map { address =>
           Seq(AnswerRow(
-            "messages__establisher_individual_address_cya_label",
+            label,
             addressAnswer(address),
             false, changeUrl
           ))
@@ -229,16 +241,24 @@ object CheckYourAnswers {
       }
     }
 
-  implicit def addressYears[I <: TypedIdentifier[AddressYears]](implicit rds: Reads[AddressYears]): CheckYourAnswers[I] =
+  implicit def defaultAddress[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
+    address("messages__common__cya__address")
+
+  implicit def addressYears[I <: TypedIdentifier[AddressYears]](
+                                                               label: String
+                                                               )(implicit rds: Reads[AddressYears]): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map(addressYears =>
         Seq(AnswerRow(
-          "messages__establisher_individual_address_years_cya_label",
-          Seq(s"messages__common__$addressYears"),
-          true,
-          changeUrl
-        ))).getOrElse(Seq.empty[AnswerRow])
+        label,
+        Seq(s"messages__common__$addressYears"),
+        true,
+        changeUrl
+      ))).getOrElse(Seq.empty[AnswerRow])
     }
+
+  implicit def defaultAddressYears[I <: TypedIdentifier[AddressYears]](implicit rds: Reads[AddressYears]): CheckYourAnswers[I] =
+    addressYears("messages__establisher_address_years__title")
 
   implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {
