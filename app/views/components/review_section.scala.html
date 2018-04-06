@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package identifiers.register
+@(
+    heading: String,
+    linkMessage: String,
+    linkId: String,
+    link: Call,
+    list: Option[Seq[String]] = None
+    )(implicit messages: Messages)
 
-import identifiers.TypedIdentifier
-import models.register.{Membership}
+    <h2>@messages(heading)</h2>
+    <p>
+        <a id="@linkId" href="@link">
+            @messages(linkMessage)
+        </a>
+    </p>
 
-case object MembershipFutureId extends TypedIdentifier[Membership] {
-  override def toString: String = "membershipFuture"
-}
+    @list.map { list =>
+        @for(listItem <- list){
+            <li>@listItem</li>
+        }
+
+    }
+
+
+

@@ -29,24 +29,20 @@
 
     @components.heading("messages__companyReview__heading", secondaryHeaderKey = Some("messages__companyReview__secondaryHeading__partial"), subSecHeader = Some(schemeName))
 
-    <h2>@companyName</h2>
+    @components.review_section(
+        heading = companyName,
+        linkMessage = "messages__companyReview__company__editLink",
+        linkId = "edit-company-details",
+        link = routes.CompanyDetailsController.onPageLoad(CheckMode, index)
+    )
 
-    <p>
-        <a id="edit-company-details" href="@routes.CompanyDetailsController.onPageLoad(CheckMode, index)">
-            @messages("messages__companyReview__company__editLink")
-        </a>
-    </p>
-
-    <h2>@messages("messages__companyReview__directors__heading")</h2>
-    <p>
-        <a id="edit-director-details" href="@routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index)">
-            @messages("messages__companyReview__directors__editLink")
-        </a>
-    </p>
-
-    @for(director <- directors) {
-       <li>@director</li>
-    }
+    @components.review_section(
+        heading = messages("messages__companyReview__directors__heading"),
+        linkMessage = "messages__companyReview__directors__editLink",
+        linkId = "edit-director-details",
+        link = routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index),
+        list = Some(directors)
+    )
 
     @components.submit_button("site.confirm")
 

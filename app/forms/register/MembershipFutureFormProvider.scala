@@ -19,13 +19,13 @@ package forms.register
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import models.register.MembershipFuture
+import models.register.Membership
 import play.api.data.Form
 
 class MembershipFutureFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[MembershipFuture] =
+  def apply(): Form[Membership] =
     Form(
-      "value" -> enumerable[MembershipFuture]("messages__error__selection")
+      "value" -> enumerable[Membership]("messages__error__selection")
     )
 }

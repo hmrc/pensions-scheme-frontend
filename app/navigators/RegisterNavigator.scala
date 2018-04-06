@@ -51,8 +51,6 @@ class RegisterNavigator @Inject() extends Navigator {
     case InsurerAddressId =>
       _ => controllers.register.routes.UKBankAccountController.onPageLoad(NormalMode)
     case UKBankAccountId => UKBankAccountRoutes()
-
-
   }
 
   private def securedBenefitsRoutes()(answers: UserAnswers): Call = {
