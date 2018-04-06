@@ -472,8 +472,14 @@ messages__addTrustee__text = Do you want to add another trustee?
 messages__addTrustees_at_maximum = You have added the maximum number of trustees.
 messages__addTrustees_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
 
-checkYourAnswers.title = checkYourAnswers
-checkYourAnswers.heading = checkYourAnswers
+messages__schemeReview__title = Review
+messages__schemeReview__heading = Review
+messages__schemeReview__lede = Check the information before continuing
+messages__schemeReview__scheme__editLink = Edit scheme details
+messages__schemeReview__establishers__heading = Scheme establishers
+messages__schemeReview__establishers__editLink = Add, delete or edit scheme establishers
+messages__schemeReview__trustees__heading = Trustees
+messages__schemeReview__trustees__editLink = Add, delete or edit trustees
 
 messages_cya_secondary_header = Register a new pension scheme
 messages__scheme_benefits_section=Scheme benefits

@@ -1,18 +1,18 @@
 #!/bin/bash
 
-echo "Applying migration CheckYourAnswers"
+echo "Applying migration SchemeReview"
 
 echo "Adding routes to register.routes"
 echo "" >> ../conf/register.routes
-echo "GET        /checkYourAnswers                       controllers.register.CheckYourAnswersController.onPageLoad()" >> ../conf/register.routes
+echo "GET        /schemeReview                       controllers.register.SchemeReviewController.onPageLoad()" >> ../conf/register.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "checkYourAnswers.title = checkYourAnswers" >> ../conf/messages.en
-echo "checkYourAnswers.heading = checkYourAnswers" >> ../conf/messages.en
+echo "schemeReview.title = schemeReview" >> ../conf/messages.en
+echo "schemeReview.heading = schemeReview" >> ../conf/messages.en
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration CheckYourAnswers completed"
+echo "Migration SchemeReview completed"
