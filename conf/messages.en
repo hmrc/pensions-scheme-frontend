@@ -82,6 +82,8 @@ messages__error_country_invalid = Enter a valid country
 messages__common__cya__name = Name
 messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
+messages__common__cya__vat = VAT registration number
+messages__common__cya__paye = PAYE employer reference number
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -178,7 +180,7 @@ messages__error__company_name_length = The company name cannot be more than 255 
 messages__error__benefits_insurance__policy_length = The policy number cannot be more than 255 characters
 
 messages__establisher_address_years__title = How long has the establisher been at this address?
-messages__common__under_a_year = Less than 12 months
+messages__common__under_a_year = 12 months or less
 messages__common__over_a_year = More than 12 months
 messages__common_error__current_address_years = Select how long they have been at the current address
 
@@ -225,7 +227,7 @@ messages__uk_bank_account__title = Does the scheme have a UK bank account?
 
 messages__establishers__add__title = Establishers
 messages__establishers__add_legend_more = Do you want to add another establisher?
-messages__establishers__add_hint = You must add at least one establisher. You can add up to 10.
+messages__establishers__add_hint = You must tell us about all your scheme establishers.
 messages__establishers__add_limit = You have added the maximum number of establishers
 
 messages__establisher_individual__title = Establisher details
@@ -355,10 +357,11 @@ messages__companyAddress__title = Company address
 messages__companyAddress__heading = Company address
 messages__companyAddress__lede = This is usually the registered business address of the scheme establisher but you can enter any address you have for this company.
 messages__companyAddress__trustee__lede = This is usually the registered business address of the trustee but you can enter any address you have for this company.
+messages__companyAddress__checkYourAnswersLabel = Address
+
 
 messages__directorDetails__title = Company director
 messages__directorDetails__heading = Company director
-messages__directorDetails__checkYourAnswersLabel = directorDetails
 
 messages__companyPreviousAddressPostcodeLookup__title = Previous address of the company
 messages__companyPreviousAddressPostcodeLookup__heading = Previous address of the company
@@ -384,6 +387,7 @@ messages__company_director_contact__heading = Contact details for director
 
 messages__director_nino_question_cya_label = Does the director have a National Insurance number?
 messages__director_nino_cya_label = National Insurance number
+messages__director_nino_reason_cya_label = Reason the director does not have a National Insurance number
 messages__director_nino__title = Does the director have a National Insurance number?
 messages__director_no_nino = Tell us why the director does not have a National Insurance number
 messages__error__has_nino_director = Select yes if the director has a National Insurance number
@@ -400,6 +404,7 @@ messages__addCompanyDirectors_tell_us_if_you_have_more = You can tell us on the 
 
 messages__director_address_years__title = How long has the director lived at this address?
 messages__director_address_years__heading = How long has the director lived at this address?
+messages__director_address_years__cya = How long has the director lived at this address?
 
 messages__director_has_sautr__title = Does the director have a Self Assessment Unique Taxpayer Reference number?
 messages__director_sautr = Unique Taxpayer Reference number
@@ -409,6 +414,13 @@ messages__company__sautr_hint_what = This is issued by HMRC for Self Assessment.
 messages__director_sautr_hint_format = A Unique Taxpayer Reference number is 10 numbers.
 messages__error__has_sautr_director = Select yes if the director has a Unique Taxpayer Reference number
 messages__error__no_sautr_director = You need to tell us why the director does not have a Self Assessment Unique Taxpayer Reference number
+
+messages__director__cya__details_heading = Company director details
+messages__director__cya__contact__details_heading = Contact details for director
+
+messages__director__cya__utr_yes_no = Does the director have a Self Assessment Unique Taxpayer Reference number?
+messages__director__cya__utr = Unique Taxpayer Reference number
+messages__director__cya__utr_no_reason = Why the director does not have a Self Assessment Unique Taxpayer Reference number
 
 messages__confirmDeleteDirector__title = Confirm deletion
 messages__confirmDeleteDirector__heading = Are you sure you want to delete %s?
@@ -446,5 +458,36 @@ messages__companyRegistrationNumber__error__required = Please give an answer for
 messages__checkYourAnswers__section__contact_details = Contact details
 messages__checkYourAnswers__section__company_details = Company details
 
+messages__checkYourAnswers__trustees__company__crn = Does the trustee have a Company Registration number?
+messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Unique Taxpayer Reference number?
+messages__checkYourAnswers__trustees__company__address_years = How long has the company been at this address?
+
+
 messages__directorPreviousAddressPostcodeLookup__title = Director’s previous address
 messages__directorPreviousAddressPostcodeLookup__heading = Director’s previous address
+messages__addTrustee__title = Trustees
+messages__addTrustee__heading = Trustees
+messages__addTrustee__lede = You must tell us about all your trustees. You can add up to 10 using the digital service.
+messages__addTrustee__text = Do you want to add another trustee?
+messages__addTrustees_at_maximum = You have added the maximum number of trustees.
+messages__addTrustees_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.
+
+messages__schemeReview__title = Review
+messages__schemeReview__heading = Review
+messages__schemeReview__lede = Check the information before continuing
+messages__schemeReview__scheme__editLink = Edit scheme details
+messages__schemeReview__establishers__heading = Scheme establishers
+messages__schemeReview__establishers__editLink = Add, delete or edit scheme establishers
+messages__schemeReview__trustees__heading = Trustees
+messages__schemeReview__trustees__editLink = Add, delete or edit trustees
+
+messages_cya_secondary_header = Register a new pension scheme
+messages__scheme_benefits_section=Scheme benefits
+membership.checkYourAnswersLabel = Current membership
+membershipFuture.checkYourAnswersLabel = Membership within 12 months
+schemeEstablishedCountry.checkYourAnswersLabel = Where was the scheme established?
+investmentRegulated.checkYourAnswersLabel = Is the scheme investment regulated?
+occupationalPensionScheme.checkYourAnswersLabel = Is the scheme an occupational pension scheme?
+securedBenefits.checkYourAnswersLabel=Are any of the scheme benefits secured by a contract of insurance or annuity?
+uKBankAccount.checkYourAnswersLabel = Does the scheme have a UK bank account?
+bankAccountDate.checkYourAnswersLabel = Approximate date the account was opened

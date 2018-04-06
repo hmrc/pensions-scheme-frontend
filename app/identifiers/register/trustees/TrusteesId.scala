@@ -22,4 +22,5 @@ import play.api.libs.json._
 case object TrusteesId extends Identifier {
   override def toString: String = "trustees"
   override def path: JsPath = __ \ toString
+
 }

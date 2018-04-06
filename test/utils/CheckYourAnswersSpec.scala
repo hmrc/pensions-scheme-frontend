@@ -17,10 +17,13 @@
 package utils
 
 import identifiers.TypedIdentifier
+import identifiers.register.SchemeEstablishedCountryId
 import models.address.Address
+import models.register._
 import models.register.establishers.individual.UniqueTaxReference
 import models.requests.DataRequest
 import models.{AddressYears, CompanyDetails, CompanyRegistrationNumber, ContactDetails}
+import org.joda.time.LocalDate
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
@@ -31,7 +34,7 @@ import viewmodels.AnswerRow
 
 import scala.language.implicitConversions
 
-class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues {
+class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues with Enumerable.Implicits {
 
   val onwardUrl = "onwardUrl"
 
@@ -43,12 +46,80 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
     "produce row of answers" when {
 
-      "string" in {
+      "string" when {
 
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> "value")))
+        "id is schemeEstablishedCountryId" in {
+          implicit val countryOptions = new CountryOptions(Seq(InputOption("AU", "Australia"),
+            InputOption("GB", "United Kingdom")))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(SchemeEstablishedCountryId.toString -> "AU")))
 
-        testIdentifier[String].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("value"), false, onwardUrl)))
+          SchemeEstablishedCountryId.row(onwardUrl) must equal(Seq(
+            AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", Seq("Australia"), false, onwardUrl)))
+        }
 
+        "any id other than schemeEstablishedCountryId" in {
+          implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> "value")))
+
+          testIdentifier[String].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("value"), false, onwardUrl)))
+        }
+      }
+
+      "boolean" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)))
+
+        testIdentifier[Boolean].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("site.yes"), true, onwardUrl)))
+      }
+
+      "schemeDetails" in {
+        val schemeType = SchemeType.SingleTrust
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(
+          Json.obj("testId" -> SchemeDetails("test name", schemeType))))
+
+        testIdentifier[SchemeDetails].row(onwardUrl) must equal(Seq(
+          AnswerRow("messages__scheme_details__name_label", Seq("test name"), false, onwardUrl),
+          AnswerRow("messages__scheme_details__type_legend_short", Seq(s"messages__scheme_details__type_$schemeType"), true, onwardUrl)
+        ))
+      }
+
+      "membership" in {
+        val membershipVal = Membership.options.head.value
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)))
+
+        testIdentifier[Membership].row(onwardUrl) must equal(Seq(AnswerRow(
+          "testId.checkYourAnswersLabel", Seq(s"messages__membership__$membershipVal"), true, onwardUrl)))
+      }
+
+      "bankDetails" in {
+        val date = LocalDate.now()
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(
+          Json.obj("testId" -> UKBankDetails("test bank name", "test account name", SortCode("12", "23", "45"), "test account number", date))))
+
+        testIdentifier[UKBankDetails].row(onwardUrl) must equal(Seq(
+          AnswerRow("messages__uk_bank_account_details__bank_name", Seq("test bank name"), false, onwardUrl),
+          AnswerRow("messages__uk_bank_account_details__account_name", Seq("test account name"), false, onwardUrl),
+          AnswerRow("messages__uk_bank_account_details__sort_code", Seq("12-23-45"), false, onwardUrl),
+          AnswerRow("messages__uk_bank_account_details__account_number", Seq("test account number"), false, onwardUrl),
+          AnswerRow("bankAccountDate.checkYourAnswersLabel", Seq(s"${DateHelper.formatDate(date)}"), false, onwardUrl)
+        ))
+      }
+
+      "schemeBenefits" in {
+        val benefitsVal = Benefits.options.head.value
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> benefitsVal)))
+
+        testIdentifier[Benefits].row(onwardUrl) must equal(Seq(AnswerRow(
+          "messages__benefits__title", Seq(s"messages__benefits__$benefitsVal"), true, onwardUrl)))
+      }
+
+      "benefitsInsurer" in {
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(
+          Json.obj("testId" -> BenefitsInsurer("test name", "test policy"))))
+
+        testIdentifier[BenefitsInsurer].row(onwardUrl) must equal(Seq(
+          AnswerRow("messages__benefits_insurance__name", Seq("test name"), false, onwardUrl),
+          AnswerRow("messages__benefits_insurance__policy", Seq("test policy"), false, onwardUrl)
+        ))
       }
 
       "companyDetails" when {
@@ -85,7 +156,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               onwardUrl
             ),
             AnswerRow(
-              "messages__company__cya__vat",
+              "messages__common__cya__vat",
               Seq(s"${companyDetails.vatNumber.get}"),
               false,
               onwardUrl
@@ -108,7 +179,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               onwardUrl
             ),
             AnswerRow(
-              "messages__company__cya__paye_ern",
+              "messages__common__cya__paye",
               Seq(s"${companyDetails.payeNumber.get}"),
               false,
               onwardUrl
@@ -132,13 +203,13 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               onwardUrl
             ),
             AnswerRow(
-              "messages__company__cya__vat",
+              "messages__common__cya__vat",
               Seq(s"${companyDetails.vatNumber.get}"),
               false,
               onwardUrl
             ),
             AnswerRow(
-              "messages__company__cya__paye_ern",
+              "messages__common__cya__paye",
               Seq(s"${companyDetails.payeNumber.get}"),
               false,
               onwardUrl
@@ -210,7 +281,9 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             ),
             AnswerRow(
               "messages__establisher_individual_utr_cya_label",
-              Seq({utr.utr}),
+              Seq({
+                utr.utr
+              }),
               false,
               onwardUrl
             )
@@ -267,7 +340,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
         testIdentifier[Address].row(onwardUrl) must equal(Seq(
           AnswerRow(
-            "messages__establisher_individual_address_cya_label",
+            "messages__common__cya__address",
             addressAnswer(address),
             false,
             onwardUrl
@@ -282,7 +355,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)))
 
         testIdentifier[AddressYears].row(onwardUrl) must equal(Seq(AnswerRow(
-          "messages__establisher_individual_address_years_cya_label",
+          "messages__establisher_address_years__title",
           Seq(s"messages__common__$addressYears"),
           true,
           onwardUrl

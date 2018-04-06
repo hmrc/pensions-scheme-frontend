@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.company
+package forms.register.trustees
 
-import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
-import models.CompanyDetails
-import play.api.libs.json.JsPath
+import javax.inject.Inject
 
-case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] {
-  override def path: JsPath = TrusteesId.path \ index \ CompanyDetailsId.toString
-}
+import forms.mappings.Mappings
+import play.api.data.Form
 
-object CompanyDetailsId {
+class AddTrusteeFormProvider @Inject() extends Mappings {
 
-  override lazy val toString: String = "companyDetails"
-
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__error__selection")
+    )
 }

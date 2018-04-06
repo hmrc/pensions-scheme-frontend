@@ -1,0 +1,65 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.play.views.html._
+@import controllers.register.trustees.routes._
+@import models.Mode
+
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, trustees: Seq[(String, String)])(implicit request: Request[_], messages: Messages)
+
+@main_template(
+    title = messages("messages__addTrustee__title"),
+    appConfig = appConfig,
+    bodyClasses = None) {
+
+    @helpers.form(action = controllers.register.trustees.routes.AddTrusteeController.onSubmit(mode), 'autoComplete -> "off") {
+
+        @components.back_link()
+
+        @components.error_summary(form.errors)
+
+        @components.heading("messages__addTrustee__heading", secondaryHeaderKey = Some(schemeName))
+
+        @if(trustees.isEmpty) {
+
+            @components.paragraph_text(messages("messages__addTrustee__lede"))
+
+        } else {
+
+            @components.details_list(trustees)
+
+            @if(trustees.size < appConfig.maxTrustees) {
+                @components.input_yes_no(
+                    field = form("value"),
+                    label = messages("messages__addTrustee__text"),
+                    labelClass = Some("visually-hidden"),
+                    hint = Some(messages("messages__addTrustee__lede"))
+                )
+
+            } else {
+
+                @components.paragraph_text(messages("messages__addTrustees_at_maximum"))
+                @components.paragraph_text(messages("messages__addTrustees_tell_us_if_you_have_more"))
+
+            }
+
+        }
+
+        @components.submit_button("site.continue")
+
+    }
+}

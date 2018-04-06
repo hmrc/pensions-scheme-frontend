@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.company
+package identifiers.register.trustees.individual
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
-import models.CompanyDetails
+import models.person.PersonDetails
 import play.api.libs.json.JsPath
 
-case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] {
-  override def path: JsPath = TrusteesId.path \ index \ CompanyDetailsId.toString
+case class TrusteeDetailsId(index: Int) extends TypedIdentifier[PersonDetails] {
+  override def path: JsPath = TrusteesId.path \ index \ TrusteeDetailsId.toString
 }
 
-object CompanyDetailsId {
-
-  override lazy val toString: String = "companyDetails"
-
+object TrusteeDetailsId {
+  override lazy val toString: String = "trusteeDetails"
 }

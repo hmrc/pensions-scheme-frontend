@@ -19,7 +19,7 @@ package views.register
 import play.api.data.Form
 import forms.register.MembershipFutureFormProvider
 import models.NormalMode
-import models.register.MembershipFuture
+import models.register.Membership
 import views.behaviours.ViewBehaviours
 import views.html.register.membershipFuture
 
@@ -43,19 +43,19 @@ class MembershipFutureViewSpec extends ViewBehaviours {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- MembershipFuture.options) {
+        for (option <- Membership.options) {
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, false)
         }
       }
     }
 
-    for(option <- MembershipFuture.options) {
+    for(option <- Membership.options) {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
 
-          for(unselectedOption <- MembershipFuture.options.filterNot(o => o == option)) {
+          for(unselectedOption <- Membership.options.filterNot(o => o == option)) {
             assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
           }
         }

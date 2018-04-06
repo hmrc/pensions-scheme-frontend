@@ -54,4 +54,5 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val locationCanonicalList = loadConfig("location.canonical.list")
   lazy val addressLookUp = baseUrl("address-lookup")
   lazy val maxDirectors: Int = loadConfig("company.maxDirectors").toInt
+  lazy val maxTrustees: Int = loadConfig("maxTrustees").toInt
 }

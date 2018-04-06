@@ -30,7 +30,7 @@ import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
-import utils.{Enumerable, MapFormats}
+import utils.{DateHelper, Enumerable, MapFormats}
 
 trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapFormats{
 
@@ -90,7 +90,8 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
             CompanyDetails("test company name", Some("123456"), Some("abcd")),
           "director" -> Json.arr(
             Json.obj(
-              DirectorDetailsId.toString -> DirectorDetails("test first name", Some("test middle name"), "test last name", LocalDate.now())
+              DirectorDetailsId.toString -> DirectorDetails("first", Some("middle"), "last",
+                new LocalDate(1990, 2, 2))
             )
           )
         )
