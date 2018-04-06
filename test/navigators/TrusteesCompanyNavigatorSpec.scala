@@ -27,7 +27,7 @@ import utils.UserAnswers
 class TrusteesCompanyNavigatorSpec extends WordSpec with MustMatchers with PropertyChecks {
 
   val navigator = new TrusteesCompanyNavigator()
-  val emptyAnswers = new UserAnswers(Json.obj())
+  val emptyAnswers = UserAnswers(Json.obj())
 
   "Normal Mode" when {
     ".nextPage(CompanyDetails)" must {
@@ -90,7 +90,7 @@ class TrusteesCompanyNavigatorSpec extends WordSpec with MustMatchers with Prope
 
     ".nextPage(CompanyAddressYears)" must {
       "return a 'Call' to 'Previous Address Postcode' page when 'CompanyAddressYears' is 'LessThanOneYear'" in {
-        val answers = new UserAnswers(Json.obj(
+        val answers = UserAnswers(Json.obj(
           TrusteesId.toString -> Json.arr(
             Json.obj(
               CompanyAddressYearsId.toString ->
@@ -103,7 +103,7 @@ class TrusteesCompanyNavigatorSpec extends WordSpec with MustMatchers with Prope
       }
 
       "return a 'Call' to 'Company Contact Details' page when 'AddressYears' is 'MoreThanOneYear'" in {
-        val answers = new UserAnswers(Json.obj(
+        val answers = UserAnswers(Json.obj(
           TrusteesId.toString -> Json.arr(
             Json.obj(
               CompanyAddressYearsId.toString ->
@@ -220,7 +220,7 @@ class TrusteesCompanyNavigatorSpec extends WordSpec with MustMatchers with Prope
     ".nextPage(CompanyAddressYears)" must {
 
       "return a `Call` to `CompanyPreviousPostCodeLookup` page when `CompanyAddressYears` is `UnderAYear`" in {
-        val answers = new UserAnswers(Json.obj(
+        val answers = UserAnswers(Json.obj(
           TrusteesId.toString -> Json.arr(
             Json.obj(
               CompanyAddressYearsId.toString ->
@@ -233,7 +233,7 @@ class TrusteesCompanyNavigatorSpec extends WordSpec with MustMatchers with Prope
       }
 
       "return a `Call` to `CheckYourAnswersPage` page when `CompanyAddressYears` is `OverAYear`" in {
-        val answers = new UserAnswers(Json.obj(
+        val answers = UserAnswers(Json.obj(
           TrusteesId.toString -> Json.arr(
             Json.obj(
               CompanyAddressYearsId.toString ->
