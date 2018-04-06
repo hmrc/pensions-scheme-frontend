@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
-import identifiers.register.{BenefitsId, SchemeDetailsId, UKBankAccountId}
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
@@ -27,7 +27,7 @@ import identifiers.register.trustees.TrusteesId
 import models.CompanyDetails
 import models.register.establishers.company.director.DirectorDetails
 import models.register.establishers.individual.EstablisherDetails
-import models.register.{Benefits, SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
 import utils.{DateHelper, Enumerable, MapFormats}
