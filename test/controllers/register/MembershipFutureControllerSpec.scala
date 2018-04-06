@@ -17,8 +17,7 @@
 package controllers.register
 
 import play.api.data.Form
-import play.api.libs.json.{JsString, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
+import play.api.libs.json.Json
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.actions._
@@ -28,7 +27,7 @@ import identifiers.register.MembershipFutureId
 import models.NormalMode
 import views.html.register.membershipFuture
 import controllers.ControllerSpecBase
-import models.register.MembershipFuture
+import models.register.Membership
 
 class MembershipFutureControllerSpec extends ControllerSpecBase {
 
@@ -53,16 +52,16 @@ class MembershipFutureControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(MembershipFutureId.toString -> MembershipFuture.values.head.toString)
+      val validData = Json.obj(MembershipFutureId.toString -> Membership.values.head.toString)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(MembershipFuture.values.head))
+      contentAsString(result) mustBe viewAsString(form.fill(Membership.values.head))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", MembershipFuture.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", Membership.options.head.value))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -88,7 +87,7 @@ class MembershipFutureControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", MembershipFuture.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", Membership.options.head.value))
       val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER
