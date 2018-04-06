@@ -108,7 +108,7 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
     "redirect to next page on POST request" which {
       "save address" in {
 
-        val onwardCall = controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode,Index(0))
+        val onwardCall = routes.CompanyAddressYearsController.onPageLoad(NormalMode,Index(0))
 
         val address = Address(
           addressLine1 = "value 1",

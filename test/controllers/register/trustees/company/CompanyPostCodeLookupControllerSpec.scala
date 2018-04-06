@@ -26,7 +26,6 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import models.address.{Address, AddressRecord}
 import models.{CompanyDetails, Index, NormalMode}
-import navigators.{EstablishersIndividualNavigator, TrusteesCompanyNavigator}
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -47,7 +46,7 @@ import scala.concurrent.Future
 
 class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures  {
 
-  def onwardRoute = controllers.register.trustees.company.routes.CompanyAddressListController.onPageLoad(NormalMode,Index(0))
+  def onwardRoute = routes.CompanyAddressListController.onPageLoad(NormalMode,Index(0))
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()

@@ -106,7 +106,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
     "redirect to next page on POST request" which {
       "saves address" in {
 
-        val onwardCall = controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode,Index(0))
+        val onwardCall = routes.CompanyContactDetailsController.onPageLoad(NormalMode,Index(0))
 
         val address = Address(
           addressLine1 = "value 1",
