@@ -22,9 +22,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import controllers.actions._
 import config.FrontendAppConfig
-import controllers.Retrievals
 import identifiers.register.{InsurerAddressId, _}
-import models.CheckMode
+import models.{CheckMode, NormalMode}
 import play.api.mvc.{Action, AnyContent}
 import views.html.check_your_answers
 import utils.CheckYourAnswers.Ops._
@@ -32,10 +31,10 @@ import utils.{CountryOptions, Enumerable}
 import viewmodels.AnswerSection
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
+                                           override val messagesApi: MessagesApi,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
                                            implicit val countryOptions: CountryOptions) extends FrontendController with Enumerable.Implicits with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
@@ -43,33 +42,38 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val schemeDetailsSection = AnswerSection(
         Some("messages__scheme_details__title"),
-        SchemeDetailsId.row(controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url) ++
-        SchemeEstablishedCountryId.row(controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url) ++
-        MembershipId.row(controllers.register.routes.MembershipController.onPageLoad(CheckMode).url) ++
-        MembershipFutureId.row(controllers.register.routes.MembershipFutureController.onPageLoad(CheckMode).url) ++
-        InvestmentRegulatedId.row(controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url) ++
-        OccupationalPensionSchemeId.row(controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url)
+          SchemeDetailsId.row(routes.SchemeDetailsController.onPageLoad(CheckMode).url) ++
+          SchemeEstablishedCountryId.row(routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url) ++
+          MembershipId.row(routes.MembershipController.onPageLoad(CheckMode).url) ++
+          MembershipFutureId.row(routes.MembershipFutureController.onPageLoad(CheckMode).url) ++
+          InvestmentRegulatedId.row(routes.InvestmentRegulatedController.onPageLoad(CheckMode).url) ++
+          OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url)
       )
 
-      val schemeBenefitsSection=AnswerSection(
-        Some("messages__schemeBenefits_section"),
-        BenefitsId.row(controllers.register.routes.BenefitsController.onPageLoad(CheckMode).url) ++
-        SecuredBenefitsId.row(controllers.register.routes.SecuredBenefitsController.onPageLoad(CheckMode).url)++
-        BenefitsInsurerId.row(controllers.register.routes.BenefitsInsurerController.onPageLoad(CheckMode).url)++
-        InsurerAddressId.row(controllers.register.routes.InsurerAddressController.onPageLoad(CheckMode).url)
+      val schemeBenefitsSection = AnswerSection(
+        Some("messages__scheme_benefits_section"),
+          BenefitsId.row(routes.BenefitsController.onPageLoad(CheckMode).url) ++
+          SecuredBenefitsId.row(routes.SecuredBenefitsController.onPageLoad(CheckMode).url) ++
+          BenefitsInsurerId.row(routes.BenefitsInsurerController.onPageLoad(CheckMode).url) ++
+          InsurerAddressId.row(routes.InsurerAddressController.onPageLoad(CheckMode).url)
       )
 
       val bankAccountSection = AnswerSection(
         Some("messages__uk_bank_account_details__title"),
-        UKBankAccountId.row(controllers.register.routes.UKBankAccountController.onPageLoad(CheckMode).url) ++
-        UKBankDetailsId.row(controllers.register.routes.UKBankDetailsController.onPageLoad(CheckMode).url)
+          UKBankAccountId.row(routes.UKBankAccountController.onPageLoad(CheckMode).url) ++
+          UKBankDetailsId.row(routes.UKBankDetailsController.onPageLoad(CheckMode).url)
       )
 
       Ok(check_your_answers(
         appConfig,
-        Seq(schemeDetailsSection,schemeBenefitsSection, bankAccountSection),
-        None,
-        controllers.register.routes.CheckYourAnswersController.onPageLoad())
+        Seq(schemeDetailsSection, schemeBenefitsSection, bankAccountSection),
+        Some("messages_cya_secondary_header"),
+        routes.CheckYourAnswersController.onSubmit)
       )
+  }
+
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+    implicit request =>
+      Redirect(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
   }
 }
