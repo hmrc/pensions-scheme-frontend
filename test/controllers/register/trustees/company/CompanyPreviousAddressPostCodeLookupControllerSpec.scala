@@ -46,7 +46,8 @@ import scala.concurrent.Future
 
 class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures  {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode,Index(0))
+
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
@@ -124,7 +125,6 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
           bind[MessagesApi].to(messagesApi),
           bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
           bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-          bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),

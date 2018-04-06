@@ -27,7 +27,9 @@ import identifiers.register.trustees.company.{CompanyDetailsId, CompanyRegistrat
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.TrusteesCompany
 import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.company.companyRegistrationNumber
 
@@ -37,7 +39,7 @@ class CompanyRegistrationNumberController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        dataCacheConnector: DataCacheConnector,
-                                       navigator: Navigator,
+                                       @TrusteesCompany navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
@@ -46,7 +48,7 @@ class CompanyRegistrationNumberController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
         val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
@@ -57,7 +59,7 @@ class CompanyRegistrationNumberController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
         form.bindFromRequest().fold(
@@ -65,7 +67,7 @@ class CompanyRegistrationNumberController @Inject()(
             Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, companyDetails.companyName))),
           (value) =>
             dataCacheConnector.save(request.externalId, CompanyRegistrationNumberId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode)(new UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode)(UserAnswers(cacheMap))))
         )
       }
   }

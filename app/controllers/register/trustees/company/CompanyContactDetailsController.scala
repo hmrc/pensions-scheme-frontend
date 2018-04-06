@@ -29,6 +29,7 @@ import forms.ContactDetailsFormProvider
 import identifiers.register.trustees.company.{CompanyContactDetailsId, CompanyDetailsId}
 import models.{ContactDetails, Index, Mode}
 import play.api.mvc.{Action, AnyContent}
+import utils.annotations.TrusteesCompany
 import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
 import views.html.register.trustees.company.companyContactDetails
 
@@ -38,7 +39,7 @@ class CompanyContactDetailsController @Inject() (
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
+                                        @TrusteesCompany navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,

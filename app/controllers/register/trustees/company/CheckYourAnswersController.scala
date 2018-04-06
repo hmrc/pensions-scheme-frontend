@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees.company._
-import models.{CheckMode, Index}
+import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -91,9 +91,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData) {
     implicit request =>
-      ???
+      Redirect(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
   }
 
 }

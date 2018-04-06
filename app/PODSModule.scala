@@ -34,5 +34,10 @@ class PODSModule extends AbstractModule {
     bind(classOf[Navigator])
       .annotatedWith(classOf[EstablishersCompany])
         .to(classOf[EstablishersCompanyNavigator])
+
+
+    bind(classOf[Navigator])
+      .annotatedWith(classOf[TrusteesCompany])
+      .to(classOf[TrusteesCompanyNavigator])
   }
 }

@@ -23,25 +23,25 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
-import identifiers.register.establishers.company.{CompanyPreviousAddressId, CompanyPreviousAddressListId}
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.Navigator
+import utils.annotations.TrusteesCompany
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.Future
 
 class CompanyPreviousAddressListController @Inject() (
-                                        override val appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        override val cacheConnector: DataCacheConnector,
-                                        override val navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction) extends AddressListController with Retrievals {
+                                                       override val appConfig: FrontendAppConfig,
+                                                       override val messagesApi: MessagesApi,
+                                                       override val cacheConnector: DataCacheConnector,
+                                                       @TrusteesCompany override val navigator: Navigator,
+                                                       authenticate: AuthAction,
+                                                       getData: DataRetrievalAction,
+                                                       requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

@@ -135,7 +135,8 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+        redirectLocation(result) mustBe
+          Some(routes.CompanyPreviousAddressController.onPageLoad(NormalMode,Index(0)).url)
       }
 
     }

@@ -18,7 +18,7 @@ package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
-import models.{CheckMode, Index}
+import models.{CheckMode, Index, NormalMode}
 import play.api.test.Helpers._
 import utils.{CheckYourAnswersFactory, CountryOptions, FakeCountryOptions, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
@@ -86,6 +86,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
         }
+      }
+    }
+
+    "redirect to Add Trustee page" when {
+      "POST is called" in {
+        val result=controller().onSubmit(firstIndex)(fakeRequest)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url)
       }
     }
 

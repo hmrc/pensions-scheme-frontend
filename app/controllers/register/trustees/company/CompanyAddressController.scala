@@ -30,20 +30,21 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import utils.annotations.TrusteesCompany
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
 class CompanyAddressController @Inject()(
-                                        val appConfig: FrontendAppConfig,
-                                        val messagesApi: MessagesApi,
-                                        val dataCacheConnector: DataCacheConnector,
-                                        val navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        val formProvider: AddressFormProvider,
-                                        val countryOptions: CountryOptions
+                                          val appConfig: FrontendAppConfig,
+                                          val messagesApi: MessagesApi,
+                                          val dataCacheConnector: DataCacheConnector,
+                                          @TrusteesCompany val navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          val formProvider: AddressFormProvider,
+                                          val countryOptions: CountryOptions
                                       ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = CompanyAddressController.onSubmit _

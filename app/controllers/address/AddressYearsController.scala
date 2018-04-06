@@ -26,7 +26,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.{Cleanup, Navigator}
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
@@ -47,12 +47,12 @@ trait AddressYearsController extends FrontendController with Retrievals with I18
     Future.successful(Ok(addressYears(appConfig, filledForm, viewmodel)))
   }
 
-  protected def post(
-                      id: TypedIdentifier[AddressYears],
+  protected def post[I <: TypedIdentifier[AddressYears]](
+                      id: I,
                       mode: Mode,
                       form: Form[AddressYears],
                       viewmodel: AddressYearsViewModel
-                    )(implicit request: DataRequest[AnyContent]): Future[Result] = {
+                    )(implicit request: DataRequest[AnyContent],cleanUp:Cleanup[I]): Future[Result] = {
     form.bindFromRequest().fold(
       formWithErrors =>
         Future.successful(BadRequest(addressYears(appConfig, formWithErrors, viewmodel))),
