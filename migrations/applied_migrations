@@ -1,18 +1,36 @@
 #!/bin/bash
 
-echo "Applying migration SchemeReview"
+echo "Applying migration TrusteeKind"
 
-echo "Adding routes to register.routes"
-echo "" >> ../conf/register.routes
-echo "GET        /schemeReview                       controllers.register.SchemeReviewController.onPageLoad()" >> ../conf/register.routes
+echo "Adding routes to conf/register.trustees.routes"
+
+echo "" >> ../conf/app.routes
+echo "GET        /trusteeKind               controllers.register.trustees.TrusteeKindController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.routes
+echo "POST       /trusteeKind               controllers.register.trustees.TrusteeKindController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.routes
+
+echo "GET        /changeTrusteeKind               controllers.register.trustees.TrusteeKindController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.routes
+echo "POST       /changeTrusteeKind               controllers.register.trustees.TrusteeKindController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "schemeReview.title = schemeReview" >> ../conf/messages.en
-echo "schemeReview.heading = schemeReview" >> ../conf/messages.en
+echo "messages__trusteeKind__title = trusteeKind" >> ../conf/messages.en
+echo "messages__trusteeKind__heading = trusteeKind" >> ../conf/messages.en
+echo "messages__trusteeKind__option1 = trusteeKind" Option 1 >> ../conf/messages.en
+echo "messages__trusteeKind__option2 = trusteeKind" Option 2 >> ../conf/messages.en
+echo "messages__trusteeKind__checkYourAnswersLabel = trusteeKind" >> ../conf/messages.en
+echo "messages__trusteeKind__error__required = Please give an answer for trusteeKind" >> ../conf/messages.en
+
+echo "Adding helper method to CheckYourAnswersHelper"
+awk '/class/ {\
+     print;\
+     print "";\
+     print "  def trusteeKind: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.TrusteeKindId) map {";\
+     print "    x => AnswerRow(\"messages__trusteeKind__checkYourAnswersLabel\", Seq(s\"trusteeKind.$x\"), true, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(CheckMode).url)";\
+     print "  }";\
+     next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration SchemeReview completed"
+echo "Migration TrusteeKind completed"

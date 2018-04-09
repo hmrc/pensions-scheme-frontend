@@ -31,6 +31,10 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
+  def trusteeKind(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.TrusteeKindId(index)) map {
+    x => AnswerRow("messages__trusteeKind__checkYourAnswersLabel", Seq(s"trusteeKind.$x"), true, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(CheckMode, index).url)
+  }
+
   def companyRegistrationNumberTrustee(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.company.CompanyRegistrationNumberId(index)) map {
     x => AnswerRow("messages__companyRegistrationNumber__checkYourAnswersLabel", Seq(s"companyRegistrationNumber.$x"), true, controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index).url)
   }

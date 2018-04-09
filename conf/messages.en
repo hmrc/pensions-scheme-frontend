@@ -491,3 +491,11 @@ occupationalPensionScheme.checkYourAnswersLabel = Is the scheme an occupational 
 securedBenefits.checkYourAnswersLabel=Are any of the scheme benefits secured by a contract of insurance or annuity?
 uKBankAccount.checkYourAnswersLabel = Does the scheme have a UK bank account?
 bankAccountDate.checkYourAnswersLabel = Approximate date the account was opened
+
+messages__trusteeKind__title = Trustees
+messages__trusteeKind__heading = Trustees
+messages__trusteeKind__company = Company
+messages__trusteeKind__individual = Individual
+messages__trusteeKind__partnership = Partnership
+messages__trusteeKind__legend = What kind of trustee are you adding?
+messages__trusteeKind__hint = You must tell us about all your trustees. You can add up to 10 using the digital service.
