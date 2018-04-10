@@ -498,3 +498,11 @@ messages__trusteeKind__individual = Individual
 messages__trusteeKind__partnership = Partnership
 messages__trusteeKind__legend = What kind of trustee are you adding?
 messages__trusteeKind__hint = You must tell us about all your trustees. You can add up to 10 using the digital service.
+
+messages__trusteeDetails__title = trusteeDetails
+messages__trusteeDetails__heading = trusteeDetails
+messages__trusteeDetails__field1 = Field 1
+messages__trusteeDetails__field2 = Field 2
+messages__trusteeDetails__checkYourAnswersLabel = trusteeDetails
+messages__trusteeDetails__error__field1_required = Please give an answer for field1
+messages__trusteeDetails__error__field2_required = Please give an answer for field2
