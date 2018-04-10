@@ -498,3 +498,14 @@ messages__trusteeKind__individual = Individual
 messages__trusteeKind__partnership = Partnership
 messages__trusteeKind__legend = What kind of trustee are you adding?
 messages__trusteeKind__hint = You must tell us about all your trustees. You can add up to 10 using the digital service.
+
+messages__declarationDuties__heading = Declaration
+messages__declarationDuties__title = Declaration
+messages__declarationDuties__legend = I declare/understand that:
+messages__declarationDuties__working_knowledge = I have working knowledge of pensions and the duties of an administrator
+messages__declarationDuties__appointed_advisor = I have appointed an advisor
+messages__declarationDuties__working_knowledge_hint = I am a fit and proper person to be the scheme administrator, with a working knowledge of pensions and the scheme administrator duties and liabilities. I understand that where HMRC believes that any of the persons who are the scheme administrator is not a fit and proper person, HMRC may refuse to register the scheme or, if the scheme is already registered, HMRC may de-register the scheme
+messages__declarationDuties__appointed_advisor_hint1 = I do not have a working knowledge of pensions and the scheme administrator duties and liabilities but I am otherwise a fit and proper person.
+messages__declarationDuties__appointed_advisor_hint2 = I have appointed an adviser to the pension scheme, who does have that knowledge.
+messages__declarationDuties__appointed_advisor_hint3 = Where HMRC believes that any of the persons who are the scheme administrator is not a fit and proper person, HMRC may refuse to register the scheme or, if the scheme is already registered, HMRC may de-register the scheme
+messages__error_declaration_duties_required = Tell us if you have the appropriate knowledge to admnister a pension scheme

@@ -18,7 +18,8 @@
  field: Field,
  label: String,
  value: String,
- dataTarget: Option[String] = None
+ dataTarget: Option[String] = None,
+ hint: Set[String] = Set.empty
 )(implicit messages: Messages)
 
 <div class="multiple-choice" @dataTarget.map { dataTarget => data-target="@dataTarget" }>
@@ -26,4 +27,13 @@
   <label class="block-label" for="@field.id-@value">
     @messages(label)
   </label>
+
+ @if(hint.nonEmpty) {
+  <div class="panel panel-border-narrow" id="@field.id-hint">
+   @hint.map { hintText =>
+    <p>@messages(hintText)</p>
+   }
+  </div>
+ }
+
 </div>

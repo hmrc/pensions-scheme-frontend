@@ -80,3 +80,6 @@ GET        /schemeReview                       controllers.register.SchemeReview
 
 GET        /checkYourAnswers                            controllers.register.CheckYourAnswersController.onPageLoad()
 POST        /checkYourAnswers                           controllers.register.CheckYourAnswersController.onSubmit()
+
+GET        /declarationDuties                        controllers.register.DeclarationDutiesController.onPageLoad
+POST       /declarationDuties                        controllers.register.DeclarationDutiesController.onSubmit
