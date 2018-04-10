@@ -18,13 +18,8 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.routes._
 @import models.Mode
-@import models.register.DeclarationDuties
 
 @(appConfig: FrontendAppConfig, form: Form[_], schemeName: String)(implicit request: Request[_], messages: Messages)
-
-@options = @{
-    DeclarationDuties.options
-}
 
 @main_template(
     title = messages("messages__declarationDuties__title"),
@@ -45,21 +40,21 @@
         ) {
             @components.radio(
                 field = form("value"),
-                label = options.head.label,
-                value = options.head.value,
-                hint  = Set("messages__declarationDuties__working_knowledge_hint")
+                label = "messages__declarationDuties__yes",
+                value = "true",
+                hint  = Set("messages__declarationDuties__yes_hint")
             )
 
             <p>or</p>
 
             @components.radio(
                 field = form("value"),
-                label = options(1).label,
-                value = options(1).value,
+                label = "messages__declarationDuties__no",
+                value = "false",
                 hint  = Set(
-                               "messages__declarationDuties__appointed_advisor_hint1",
-                               "messages__declarationDuties__appointed_advisor_hint2",
-                               "messages__declarationDuties__appointed_advisor_hint3"
+                               "messages__declarationDuties__no_hint1",
+                               "messages__declarationDuties__no_hint2",
+                               "messages__declarationDuties__no_hint3"
                 )
             )
         }

@@ -52,8 +52,8 @@ class DeclarationDutiesController @Inject()(
       retrieveSchemeName {
         schemeName =>
           val result = request.userAnswers.get(DeclarationDutiesId) match {
-            case None => Ok(declarationDuties(appConfig, form, schemeName))
             case Some(value) => Ok(declarationDuties(appConfig, form.fill(value), schemeName))
+            case None => Ok(declarationDuties(appConfig, form, schemeName))
           }
           Future.successful(result)
       }

@@ -18,7 +18,6 @@ package views.register
 
 import play.api.data.Form
 import forms.register.DeclarationDutiesFormProvider
-import models.register.DeclarationDuties
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.declarationDuties
@@ -27,7 +26,7 @@ class DeclarationDutiesViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "declarationDuties"
   val testSchemeName = "test scheme name"
-  val appointedAdvisor: String = DeclarationDuties.options(1).value
+  val declarationOptions = Seq("true", "false")
 
   val form = new DeclarationDutiesFormProvider()()
 
@@ -38,8 +37,7 @@ class DeclarationDutiesViewSpec extends ViewBehaviours {
 
   "DeclarationDuties view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "_legend",
-      s"_${DeclarationDuties.options.head.value}_hint", s"_${appointedAdvisor}_hint1", s"_${appointedAdvisor}_hint2",
-      s"_${appointedAdvisor}_hint3")
+      s"_yes_hint", s"_no_hint1", s"_no_hint2", s"_no_hint3")
 
     behave like pageWithBackLink(createView)
 
@@ -52,20 +50,20 @@ class DeclarationDutiesViewSpec extends ViewBehaviours {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- DeclarationDuties.options) {
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, false)
+        for (option <- declarationOptions) {
+          assertContainsRadioButton(doc, s"value-$option", "value", option, false)
         }
       }
     }
 
-    for (option <- DeclarationDuties.options) {
-      s"rendered with a value of '${option.value}'" must {
-        s"have the '${option.value}' radio button selected" in {
-          val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
+    for (option <- declarationOptions) {
+      s"rendered with a value of '${option}'" must {
+        s"have the '${option}' radio button selected" in {
+          val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option}"))))
+          assertContainsRadioButton(doc, s"value-${option}", "value", option, true)
 
-          for (unselectedOption <- DeclarationDuties.options.filterNot(o => o == option)) {
-            assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
+          for (unselectedOption <- declarationOptions.filterNot(o => o == option)) {
+            assertContainsRadioButton(doc, s"value-${unselectedOption}", "value", unselectedOption, false)
           }
         }
       }

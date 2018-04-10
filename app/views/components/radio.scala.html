@@ -29,7 +29,7 @@
   </label>
 
  @if(hint.nonEmpty) {
-  <div class="panel panel-border-narrow" id="@field.id-hint">
+  <div class="panel panel-border-narrow">
    @hint.map { hintText =>
     <p>@messages(hintText)</p>
    }

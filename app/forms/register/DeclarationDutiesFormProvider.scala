@@ -19,12 +19,11 @@ package forms.register
 import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
-import models.register.DeclarationDuties
 
 class DeclarationDutiesFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[DeclarationDuties] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[DeclarationDuties]("messages__error_declaration_duties_required")
+      "value" -> boolean("messages__error_declaration_duties_required")
     )
 }

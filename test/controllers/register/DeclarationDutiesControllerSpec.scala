@@ -17,7 +17,6 @@
 package controllers.register
 
 import play.api.data.Form
-import play.api.libs.json.JsString
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.actions._
@@ -25,7 +24,7 @@ import play.api.test.Helpers._
 import play.api.libs.json._
 import forms.register.DeclarationDutiesFormProvider
 import identifiers.register.{DeclarationDutiesId, SchemeDetailsId}
-import models.register.{DeclarationDuties, SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeType}
 import views.html.register.declarationDuties
 import controllers.ControllerSpecBase
 import play.api.mvc.Call
@@ -55,17 +54,17 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val validData = Json.obj(
         SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-        DeclarationDutiesId.toString -> JsString(DeclarationDuties.values.head.toString)
+        DeclarationDutiesId.toString -> true
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(DeclarationDuties.values.head))
+      contentAsString(result) mustBe viewAsString(form.fill(true))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDuties.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
       val result = controller().onSubmit(postRequest)
 
@@ -91,7 +90,7 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDuties.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
       val result = controller(dontGetAnyData).onSubmit(postRequest)
 
       status(result) mustBe SEE_OTHER

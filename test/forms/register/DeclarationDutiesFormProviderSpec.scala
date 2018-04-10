@@ -16,27 +16,30 @@
 
 package forms.register
 
-import forms.behaviours.FormBehaviours
-import models.{Field, Invalid, Required}
-import models.register.DeclarationDuties
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-class DeclarationDutiesFormProviderSpec extends FormBehaviours {
+class DeclarationDutiesFormProviderSpec extends BooleanFieldBehaviours {
 
-  val validData: Map[String, String] = Map(
-    "value" -> DeclarationDuties.options.head.value
-  )
+  val requiredKey = "messages__error_declaration_duties_required"
+  val invalidKey = "error.boolean"
 
   val form = new DeclarationDutiesFormProvider()()
 
-  "DeclarationDuties form" must {
+  ".value" must {
 
-    behave like questionForm[DeclarationDuties](DeclarationDuties.values.head)
+    val fieldName = "value"
 
-    behave like formWithOptionField(
-      Field(
-        "value",
-        Required -> "messages__error_declaration_duties_required",
-        Invalid -> "error.invalid"),
-      DeclarationDuties.options.map(_.value): _*)
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
   }
 }

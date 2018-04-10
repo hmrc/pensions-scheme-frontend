@@ -17,8 +17,7 @@
 package identifiers.register
 
 import identifiers._
-import models.register.DeclarationDuties
 
-case object DeclarationDutiesId extends TypedIdentifier[DeclarationDuties] {
+case object DeclarationDutiesId extends TypedIdentifier[Boolean] {
   override def toString: String = "declarationDuties"
 }
