@@ -16,21 +16,21 @@
 
 package views.register.establishers.individual
 
-import play.api.data.{Form, FormError}
 import controllers.register.establishers.individual.routes
-import forms.register.establishers.individual.EstablisherDetailsFormProvider
-import models.register.establishers.individual.EstablisherDetails
+import forms.register.IndividualDetailsFormProvider
+import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.individual.establisherDetails
 
-class EstablisherDetailsViewSpec extends QuestionViewBehaviours[EstablisherDetails] {
+class EstablisherDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   val messageKeyPrefix = "establisher_individual"
 
-  override val form = new EstablisherDetailsFormProvider()()
+  override val form = new IndividualDetailsFormProvider()()
 
   val schemeName = "test scheme name"
 

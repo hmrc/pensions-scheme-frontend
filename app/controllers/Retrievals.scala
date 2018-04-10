@@ -19,12 +19,10 @@ package controllers
 import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models.CompanyDetails
+import models.person.PersonDetails
 import models.register.SchemeDetails
-import models.register.establishers.company.director.DirectorDetails
-import models.register.establishers.individual.EstablisherDetails
 import models.requests.DataRequest
 import play.api.libs.json.Reads
 import play.api.mvc.{AnyContent, Result}
@@ -55,8 +53,8 @@ trait Retrievals {
   private[controllers] def retrieveEstablisherName(index: Int)
                                                   (f: String => Future[Result])
                                                   (implicit request: DataRequest[AnyContent]): Future[Result] = {
-    retrieve[EstablisherDetails](EstablisherDetailsId(index)) { establisherDetails =>
-      f(establisherDetails.establisherName)
+    retrieve[PersonDetails](EstablisherDetailsId(index)) { establisherDetails =>
+      f(establisherDetails.fullName)
     }
   }
 
