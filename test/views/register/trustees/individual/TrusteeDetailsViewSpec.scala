@@ -43,6 +43,14 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, TrusteeDetailsController.onSubmit(NormalMode, firstIndex).url, "field1", "field2")
+    behave like pageWithTextFields(
+      createViewUsingForm,
+      messageKeyPrefix,
+      TrusteeDetailsController.onSubmit(NormalMode, firstIndex).url,
+      "firstName", "middleName", "lastName"
+    )
+
+    behave like pageWithDateFields(createViewUsingForm, form)
+
   }
 }

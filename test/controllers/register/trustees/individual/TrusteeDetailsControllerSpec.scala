@@ -43,7 +43,7 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
   val formProvider = new IndividualDetailsFormProvider()
   val form = formProvider()
 
-  val personDetails = PersonDetails("value 1", Some("value 2"), "", LocalDate.now())
+  val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): TrusteeDetailsController =
     new TrusteeDetailsController(
@@ -69,7 +69,13 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(TrusteeDetailsId.toString -> personDetails)
+      val validData = Json.obj(
+        "trustees" -> Json.arr(
+          Json.obj(
+            TrusteeDetailsId.toString -> personDetails
+          )
+        )
+      )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)

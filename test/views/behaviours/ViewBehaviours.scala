@@ -16,7 +16,9 @@
 
 package views.behaviours
 
+import org.joda.time.LocalDate
 import org.jsoup.Jsoup
+import play.api.data.{Form, FormError}
 import play.twirl.api.HtmlFormat
 import views.ViewSpecBase
 
@@ -99,5 +101,80 @@ trait ViewBehaviours extends ViewSpecBase {
       val doc = asDocument(view())
       assertRenderedById(doc, "submit")
     }
+  }
+
+  def pageWithDateFields(view: Form[_] => HtmlFormat.Appendable, form: Form[_]): Unit = {
+
+    val day = LocalDate.now().getDayOfMonth
+    val year = LocalDate.now().getYear
+    val month = LocalDate.now().getMonthOfYear
+
+
+    val validData: Map[String, String] = Map(
+      "date.day" -> s"$day",
+      "date.month" -> s"$month",
+      "date.year" -> s"$year"
+    )
+
+    "display an input text box with the correct label and value for day" in {
+
+      val v = view(form.bind(validData))
+
+      val doc = asDocument(v)
+      doc must haveLabelAndValue("date_day", messages("messages__common__day"), s"$day")
+    }
+
+    "display an input text box with the correct label and value for month" in {
+      val doc = asDocument(view(form.bind(validData)))
+      doc must haveLabelAndValue("date_month", messages("messages__common__month"), s"$month")
+    }
+
+    "display an input text box with the correct label and value for year" in {
+      val doc = asDocument(view(form.bind(validData)))
+      doc must haveLabelAndValue("date_year", messages("messages__common__year"), s"$year")
+    }
+
+    "display error for day field on error summary" in {
+      val error = "error"
+      val doc = asDocument(view(form.withError(FormError("date.day", error))))
+      doc must haveErrorOnSummary("date_day", error)
+    }
+
+    "display error for month field on error summary" in {
+      val error = "error"
+      val doc = asDocument(view(form.withError(FormError("date.month", error))))
+      doc must haveErrorOnSummary("date_month", error)
+    }
+
+    "display error for year field on error summary" in {
+      val error = "error"
+      val doc = asDocument(view(form.withError(FormError("date.year", error))))
+      doc must haveErrorOnSummary("date_year", error)
+    }
+
+    "display only one date error when all the date fields are missing" in {
+      val expectedError = messages("messages__error__date")
+      val invalidData: Map[String, String] = Map(
+        "firstName" -> "testFirstName",
+        "lastName" -> "testLastName"
+      )
+      val doc = asDocument(view(form.bind(invalidData)))
+      doc.select("span.error-notification").text() mustEqual expectedError
+    }
+
+    "display future date error when date is in future" in {
+      val tomorrow = LocalDate.now.plusDays(1)
+      val expectedError = messages("messages__error__date_future")
+      val invalidData: Map[String, String] = Map(
+        "firstName" -> "testFirstName",
+        "lastName" -> "testLastName",
+        "date.day" -> s"${tomorrow.getDayOfMonth}",
+        "date.month" -> s"${tomorrow.getMonthOfYear}",
+        "date.year" -> s"${tomorrow.getYear}"
+      )
+      val doc = asDocument(view(form.bind(invalidData)))
+      doc.select("span.error-notification").text() mustEqual expectedError
+    }
+
   }
 }

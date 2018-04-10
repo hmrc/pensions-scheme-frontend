@@ -35,15 +35,7 @@
 
         @components.heading("messages__trusteeDetails__heading")
 
-        @components.input_text(
-            field = form("field1"),
-            label = messages("messages__trusteeDetails__field1")
-        )
-
-        @components.input_text(
-            field = form("field2"),
-            label = messages("messages__trusteeDetails__field2")
-        )
+        @components.person_details(form)
 
         @components.submit_button()
     }
