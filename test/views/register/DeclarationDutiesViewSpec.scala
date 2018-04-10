@@ -27,6 +27,7 @@ class DeclarationDutiesViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "declarationDuties"
   val testSchemeName = "test scheme name"
+  val appointedAdvisor: String = DeclarationDuties.options(1).value
 
   val form = new DeclarationDutiesFormProvider()()
 
@@ -36,9 +37,15 @@ class DeclarationDutiesViewSpec extends ViewBehaviours {
     frontendAppConfig, form, testSchemeName)(fakeRequest, messages)
 
   "DeclarationDuties view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "_legend",
+      s"_${DeclarationDuties.options.head.value}_hint", s"_${appointedAdvisor}_hint1", s"_${appointedAdvisor}_hint2",
+      s"_${appointedAdvisor}_hint3")
 
     behave like pageWithBackLink(createView)
+
+    behave like pageWithSecondaryHeader(createView, testSchemeName)
+
+    behave like pageWithSubmitButton(createView)
   }
 
   "DeclarationDuties view" when {
