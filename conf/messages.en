@@ -516,3 +516,8 @@ messages__error_declaration_duties_required = Tell us if you have the appropriat
 messages__trustee__individual__address__title = Trustee’s address
 messages__trustee__individual__address__heading = Trustee’s address
 messages__trustee__individual__address__lede = This is usually the registered business address but you can enter any address you have for this trustee.
+
+messages__individualPostCodeLookup__title = Trustee’s address
+messages__individualPostCodeLookup__heading = Trustee’s address
+messages__individualPostCodeLookup__lede = This is usually the residential address for this person.
+messages__individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
