@@ -52,7 +52,7 @@ class IndividualPostCodeLookupController @Inject()(
           details =>
             PostcodeLookupViewModel(
               routes.IndividualPostCodeLookupController.onSubmit(mode, index),
-              routes.IndividualPostCodeLookupController.onPageLoad(mode, index),
+              routes.IndividualPostCodeLookupController.onPageLoad(mode, index),//TODO: Change manual entry link to Manual address entry page
               title = Message("messages__individualPostCodeLookup__title"),
               heading = Message("messages__individualPostCodeLookup__heading"),
               subHeading = Some(details.fullName),
