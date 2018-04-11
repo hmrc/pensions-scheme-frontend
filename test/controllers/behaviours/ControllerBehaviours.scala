@@ -69,8 +69,6 @@ trait ControllerBehaviours extends ControllerSpecBase
       running(_ => builder) {
         implicit app =>
 
-          def viewAsString(form: Form[_] = form) = manualAddressView(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
-
           val request = addToken(FakeRequest(get).withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
