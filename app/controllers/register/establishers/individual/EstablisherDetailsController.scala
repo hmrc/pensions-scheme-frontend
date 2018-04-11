@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.individual.EstablisherDetailsFormProvider
+import forms.register.IndividualDetailsFormProvider
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models.{Index, Mode}
 import play.api.data.Form
@@ -43,7 +43,7 @@ class EstablisherDetailsController @Inject() (
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
-                                               formProvider: EstablisherDetailsFormProvider
+                                               formProvider: IndividualDetailsFormProvider
                                             ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()

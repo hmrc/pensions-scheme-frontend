@@ -66,3 +66,8 @@ GET        /:index/trusteeKind               controllers.register.trustees.Trust
 POST       /:index/trusteeKind               controllers.register.trustees.TrusteeKindController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/changeTrusteeKind               controllers.register.trustees.TrusteeKindController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/changeTrusteeKind               controllers.register.trustees.TrusteeKindController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/individual/trusteeDetails                       controllers.register.trustees.individual.TrusteeDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/trusteeDetails                       controllers.register.trustees.individual.TrusteeDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeTrusteeDetails                       controllers.register.trustees.individual.TrusteeDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeTrusteeDetails                       controllers.register.trustees.individual.TrusteeDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
