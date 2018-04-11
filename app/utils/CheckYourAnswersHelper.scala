@@ -23,6 +23,7 @@ import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherKindId, company}
+import identifiers.register.trustees.individual.TrusteeAddressYearsId
 import models.Nino.{No, Yes}
 import models._
 import models.address.Address
@@ -30,6 +31,13 @@ import models.register.establishers.individual.UniqueTaxReference
 import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
+
+  def trusteeIndividualAddressYears(index: Int): Seq[AnswerRow] =
+    userAnswers.get(TrusteeAddressYearsId(index)) match {
+      case Some(x) => Seq(AnswerRow("messages__trusteeAddressYears__cya_label", Seq(s"messages__common__$x"), true,
+        controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onPageLoad(CheckMode, Index(index)).url))
+      case _ => Seq.empty
+    }
 
   def individualPostCodeLookup(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.IndividualPostCodeLookupId(index)) map {
     x => AnswerRow("individualPostCodeLookup.checkYourAnswersLabel", Seq(s"$x"), false, controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(CheckMode, index).url)
