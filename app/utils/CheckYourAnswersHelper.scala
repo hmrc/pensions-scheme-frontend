@@ -31,6 +31,14 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
+  def individualPostCodeLookup(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.IndividualPostCodeLookupId(index)) map {
+    x => AnswerRow("individualPostCodeLookup.checkYourAnswersLabel", Seq(s"$x"), false, controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(CheckMode, index).url)
+  }
+
+  def declarationDuties: Option[AnswerRow] = userAnswers.get(identifiers.register.DeclarationDutiesId) map {
+    x => AnswerRow("messages__declarationDuties__checkYourAnswersLabel", Seq(s"declarationDuties.$x"), true, controllers.register.routes.DeclarationDutiesController.onPageLoad.url)
+  }
+
   def trusteeKind(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.TrusteeKindId(index)) map {
     x => AnswerRow("messages__trusteeKind__checkYourAnswersLabel", Seq(s"trusteeKind.$x"), true, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(CheckMode, index).url)
   }
