@@ -17,14 +17,17 @@
 package controllers.behaviours
 
 import base.CSRFRequest
+import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import forms.address.AddressFormProvider
+import identifiers.TypedIdentifier
 import models.address.Address
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.Application
 import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -36,12 +39,13 @@ trait ControllerBehaviours extends ControllerSpecBase
   with MockitoSugar
   with ScalaFutures
   with CSRFRequest
-  with OptionValues { GuiceOneAppPerSuite =>
+  with OptionValues {
 
   def manualAddress(get: Call,
                     post: Call,
+                    id: TypedIdentifier[Address],
                     viewmodel: ManualAddressViewModel
-                    )(implicit app: Application): Unit = {
+                   )(implicit builder: GuiceApplicationBuilder): Unit = {
 
     val countryOptions = new CountryOptions(
       Seq(InputOption("GB", "GB"))
@@ -52,63 +56,67 @@ trait ControllerBehaviours extends ControllerSpecBase
 
     "CompanyAddress Controller" must {
 
-        testTheGet(get, form, viewmodel)
+      testTheGet(get, form, viewmodel)
 
-        testThePost(post, form, viewmodel)
+      testThePost(post, id)
 
     }
 
   }
 
-  private def testTheGet(get: Call, form: Form[Address], viewmodel: ManualAddressViewModel)(implicit app: Application): Unit =
+  private def testTheGet(get: Call, form: Form[Address], viewmodel: ManualAddressViewModel)(implicit builder: GuiceApplicationBuilder): Unit =
     "render manualAddress from GET request" in {
+      running(_ => builder) {
+        implicit app =>
 
-        def viewAsString(form: Form[_] = form) = manualAddressView(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
+          def viewAsString(form: Form[_] = form) = manualAddressView(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
 
-        val request = addToken(FakeRequest(get).withHeaders("Csrf-Token" -> "nocheck"))
+          val request = addToken(FakeRequest(get).withHeaders("Csrf-Token" -> "nocheck"))
 
-        val result = route(app, request).value
+          val result = route(app, request).value
 
-        status(result) must be(OK)
+          status(result) must be(OK)
 
-        contentAsString(result) mustEqual manualAddressView(
-          frontendAppConfig,
-          form,
-          viewmodel
-        )(request, messages).toString
-
-
+          contentAsString(result) mustEqual manualAddressView(
+            frontendAppConfig,
+            form,
+            viewmodel
+          )(request, messages).toString
+      }
     }
 
-  private def testThePost(post: Call, form: Form[Address], viewmodel: ManualAddressViewModel)(implicit app: Application): Unit =
+  private def testThePost(post: Call, id: TypedIdentifier[Address])(implicit builder: GuiceApplicationBuilder): Unit =
     "redirect to next page on POST request" which {
       "save address" in {
+        running(_ => builder) {
+          implicit app =>
 
-        val onwardCall = Call("GET", "/")
+            val onwardCall = Call("GET", "www.example.com")
 
-        val address = Address(
-          addressLine1 = "value 1",
-          addressLine2 = "value 2",
-          None, None,
-          postcode = Some("AB1 1AB"),
-          country = "GB"
-        )
+            val address = Address(
+              addressLine1 = "value 1",
+              addressLine2 = "value 2",
+              None, None,
+              postcode = Some("AB1 1AB"),
+              country = "GB"
+            )
 
-        val fakeRequest = addToken(FakeRequest(post)
-          .withHeaders("Csrf-Token" -> "nocheck")
-          .withFormUrlEncodedBody(
-            ("addressLine1", address.addressLine1),
-            ("addressLine2", address.addressLine2),
-            ("postCode", address.postcode.get),
-            "country" -> address.country))
+            val fakeRequest = addToken(FakeRequest(post)
+              .withHeaders("Csrf-Token" -> "nocheck")
+              .withFormUrlEncodedBody(
+                ("addressLine1", address.addressLine1),
+                ("addressLine2", address.addressLine2),
+                ("postCode", address.postcode.get),
+                "country" -> address.country))
 
-        val result = route(app, fakeRequest).value
+            val result = route(app, fakeRequest).value
 
-        status(result) must be(SEE_OTHER)
-        redirectLocation(result).value mustEqual onwardCall.url
+            status(result) must be(SEE_OTHER)
+            redirectLocation(result).value mustEqual onwardCall.url
 
-        //              FakeDataCacheConnector.verify(CompanyAddressId(firstIndex), address)
+            FakeDataCacheConnector.verify(id, address)
 
+        }
       }
     }
 
