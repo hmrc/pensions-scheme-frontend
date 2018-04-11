@@ -23,12 +23,12 @@ import forms.address.AddressListFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
 import models.address.Address
-import models.register.establishers.individual.{EstablisherDetails, UniqueTaxReference}
+import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, UniqueTaxReference}
 import org.joda.time.LocalDate
-import org.mockito.Matchers.any
 import org.mockito.Matchers
+import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form

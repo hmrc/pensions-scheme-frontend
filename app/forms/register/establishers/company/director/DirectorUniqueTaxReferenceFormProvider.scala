@@ -19,7 +19,7 @@ package forms.register.establishers.company.director
 import javax.inject.Inject
 
 import forms.mappings.UtrMapping
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import play.api.data.Form
 
 class DirectorUniqueTaxReferenceFormProvider @Inject() extends UtrMapping {

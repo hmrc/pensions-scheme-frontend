@@ -16,32 +16,33 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.trustees.company.routes._
-@import models.Mode
-@import models.UniqueTaxReference
+@import controllers.register.trustees.individual.routes._
+@import models.{Mode, UniqueTaxReference}
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, companyName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, trusteeName: String)(implicit request: Request[_], messages: Messages)
 
-    @options = @{
-        UniqueTaxReference.options
-    }
+@options = @{
+    UniqueTaxReference.options
+}
 
-    @main_template(
-        title = messages("messages__trustee__has_ct_utr__title"),
-        appConfig = appConfig,
-        bodyClasses = None) {
+@main_template(
+    title = messages("messages__trustee__uniqueTaxReference__title"),
+    appConfig = appConfig,
+    bodyClasses = None) {
 
-        @helpers.form(action = CompanyUniqueTaxReferenceController.onSubmit(mode, index), 'autoComplete -> "off") {
+    @helpers.form(action = UniqueTaxReferenceController.onSubmit(mode, index), 'autoComplete -> "off") {
 
-            @components.error_summary(form.errors)
+        @components.back_link()
 
-            @components.heading(headingKey = "messages__trustee__has_ct_utr__title", secondaryHeaderKey = Some(companyName))
+        @components.error_summary(form.errors)
 
-            @components.fieldSet(
-                field = form("companyUniqueTaxReference.hasUtr"),
-                legend = "messages__trustee__has_ct_utr__title",
-                hint = Some("messages__trustee__ct_utr_hint_what"),
-                hiddenLegend = true
+        @components.heading("messages__trustee__uniqueTaxReference__heading", secondaryHeaderKey = Some(trusteeName))
+
+        @components.fieldSet(
+            field = form("uniqueTaxReference.hasUtr"),
+            legend = "messages__trustee__uniqueTaxReference__title",
+            hint = Some("messages__trustee__uniqueTaxReference__hint"),
+            hiddenLegend = true
             ){
                 @components.radio(
                     field = form("uniqueTaxReference.hasUtr"),
@@ -52,9 +53,9 @@
 
                 @components.input_text(
                     field = form("uniqueTaxReference.utr"),
-                    label = messages("messages__trustee__ct_utr"),
+                    label = messages("messages__common__utr"),
                     groupClass = Some("js-hidden panel panel-border-narrow"),
-                    hint = Some(messages("messages__trustee__ct_utr_hint_format"))
+                    hint = Some(messages("messages__common__utr_hint_format"))
                 )
 
                 @components.radio(
@@ -66,13 +67,11 @@
 
                 @components.input_text(
                     field = form("uniqueTaxReference.reason"),
-                    label = messages("messages__trustee__no_ct_utr"),
+                    label = messages("messages__trustee__uniqueTaxReference__reason__no_utr"),
                     groupClass = Some("js-hidden panel panel-border-narrow")
                 )
-            }
-
-            @components.submit_button()
-
         }
-    }
 
+        @components.submit_button()
+    }
+}
