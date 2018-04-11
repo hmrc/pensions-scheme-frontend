@@ -16,7 +16,6 @@
 
 package utils
 
-import controllers.register.establishers.company.director._
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.company._
