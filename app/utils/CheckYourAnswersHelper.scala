@@ -33,6 +33,10 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
+  def trusteePreviousAddress(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.TrusteePreviousAddressId(index)) map {
+    x => AnswerRow("trusteePreviousAddress.checkYourAnswersLabel", addressAnswer(x), false, controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(CheckMode, index).url)
+  }
+
   def trusteeNino(index: Int): Seq[AnswerRow] = userAnswers.get(TrusteeNinoId(index)) match {
     case Some(Yes(nino)) =>
       Seq(
@@ -49,6 +53,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
           controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url)
       )
     case _ => Nil
+  }
+
   def trusteeIndividualAddressYears(index: Int): Seq[AnswerRow] =
     userAnswers.get(TrusteeAddressYearsId(index)) match {
       case Some(x) => Seq(AnswerRow("messages__trusteeAddressYears__cya_label", Seq(s"messages__common__$x"), true,
