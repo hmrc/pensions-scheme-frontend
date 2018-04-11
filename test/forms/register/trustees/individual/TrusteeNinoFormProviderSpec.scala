@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package forms.register.trustees.individual
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import models.UniqueTaxReference
-import play.api.libs.json.JsPath
+import forms.behaviours.NinoBehaviours
 
-case class CompanyUniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
-  override def path: JsPath = EstablishersId.path \ index \ CompanyUniqueTaxReferenceId.toString
-}
+class TrusteeNinoFormProviderSpec extends NinoBehaviours {
 
-object CompanyUniqueTaxReferenceId {
-  override def toString: String = "companyUniqueTaxReference"
+  import TrusteeNinoFormProvider._
+
+  val testForm = new TrusteeNinoFormProvider().apply()
+
+  "TrusteeNinoFormProvider" must {
+    behave like formWithNino(testForm,
+      requiredKey,
+      requiredNinoKey,
+      requiredReasonKey,
+      reasonLengthKey,
+      invalidNinoKey
+    )
+  }
+
 }

@@ -25,7 +25,7 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorUniqueTaxReferenceId}
 import models._
 import models.register.establishers.company.director.DirectorDetails
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json

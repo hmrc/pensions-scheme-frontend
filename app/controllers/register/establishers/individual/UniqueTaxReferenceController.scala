@@ -24,7 +24,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.UniqueTaxReferenceFormProvider
 import identifiers.register.establishers.individual.UniqueTaxReferenceId
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

@@ -18,7 +18,7 @@ package forms.behaviours
 
 import forms.FormSpec
 import forms.mappings.UtrMapping
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import org.apache.commons.lang3.RandomStringUtils
 import play.api.data.{Form, FormError}
 
