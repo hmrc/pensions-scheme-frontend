@@ -2,6 +2,19 @@
 
 echo "Applying migration UniqueTaxReference"
 
+echo "Applying migration TrusteeNino"
+
+echo "Adding routes to register.trustees.individual.routes"
+echo "" >> ../conf/register.trustees.individual.routes
+echo "GET        /trusteeNino                       controllers.register.trustees.individual.TrusteeNinoController.onPageLoad()" >> ../conf/register.trustees.individual.routes
+
+echo "Adding messages to conf.messages"
+echo "" >> ../conf/messages.en
+echo "trusteeNino.title = trusteeNino" >> ../conf/messages.en
+echo "trusteeNino.heading = trusteeNino" >> ../conf/messages.en
+
+echo "Applying migration IndividualPostCodeLookup"
+
 echo "Adding routes to conf/register.trustees.individual.routes"
 
 echo "" >> ../conf/app.routes
@@ -34,3 +47,7 @@ rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
 echo "Migration UniqueTaxReference completed"
+
+echo "Migration TrusteeNino completed"
+
+echo "Migration IndividualPostCodeLookup completed"
