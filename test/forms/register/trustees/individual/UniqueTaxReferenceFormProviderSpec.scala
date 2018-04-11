@@ -14,36 +14,31 @@
  * limitations under the License.
  */
 
-package forms.mappings
+package forms.register.trustees.individual
 
-import forms.behaviours.UtrBehaviour
+import forms.behaviours.{FormBehaviours, UtrBehaviour}
+import models.{Field, Invalid, Required}
 import models.UniqueTaxReference
-import play.api.data.Form
 
-class UtrMappingSpec extends UtrBehaviour {
+class UniqueTaxReferenceFormProviderSpec extends UtrBehaviour {
 
-  private val requiredKey = "error.required"
-  private val requiredUtrKey = "error.utr.required"
-  private val requiredReasonKey = "error.reason"
-  private val invalidUtrKey = "error.invalid.utr"
-  private val maxLengthReasonKey = "error.reason.length"
+  val requiredKey = "messages__trustee__uniqueTaxReference__error__required"
+  val requiredUtrKey = "messages__error__sautr"
+  val requiredReasonKey = "messages__trustee__uniqueTaxReference__error__reason_required"
+  val invalidUtrKey = "messages__error__sautr_invalid"
+  val maxLengthReasonKey = "messages__error__no_sautr_length"
 
+  val formProvider = new UniqueTaxReferenceFormProvider()
 
-  "UtrMapping" should {
-    val testForm: Form[UniqueTaxReference] = Form("uniqueTaxReference" -> uniqueTaxReferenceMapping(
+  "UniqueTaxReference Form Provider" must {
+
+    behave like formWithUtr(
+      formProvider(),
       requiredKey,
       requiredUtrKey,
       requiredReasonKey,
       invalidUtrKey,
       maxLengthReasonKey
-    ))
-
-    behave like formWithUtr(testForm,
-      requiredKey,
-      requiredUtrKey,
-      requiredReasonKey,
-      invalidUtrKey,
-      maxLengthReasonKey)
-
+    )
   }
 }
