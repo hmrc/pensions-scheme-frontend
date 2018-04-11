@@ -547,3 +547,8 @@ messages__trusteeAddressYears__heading = How long has the trustee been at this a
 messages__trusteeAddressYears__error_required = Select how long they have been at the current address
 messages__trusteeAddressYears__cya_label = How long has the trustee been at this address?
 
+messages__trusteePreviousAddress__title = Trustee’s address
+messages__trusteePreviousAddress__heading = Trustee’s address
+messages__trusteePreviousAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
+
+
