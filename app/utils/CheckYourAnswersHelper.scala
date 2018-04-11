@@ -49,6 +49,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
           controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url)
       )
     case _ => Nil
+  }
+
   def trusteeIndividualAddressYears(index: Int): Seq[AnswerRow] =
     userAnswers.get(TrusteeAddressYearsId(index)) match {
       case Some(x) => Seq(AnswerRow("messages__trusteeAddressYears__cya_label", Seq(s"messages__common__$x"), true,
