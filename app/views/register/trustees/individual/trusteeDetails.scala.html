@@ -16,23 +16,24 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.establishers.individual.routes._
+@import controllers.register.trustees.individual.routes._
 @import models.Mode
+@import models.person.PersonDetails
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__establisher_individual__title"),
+    title = messages("messages__trusteeDetails__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @components.back_link()
+    @helpers.form(action = TrusteeDetailsController.onSubmit(mode, index), 'autoComplete -> "off") {
 
-    @helpers.form(action = EstablisherDetailsController.onSubmit(mode, index), 'autoComplete -> "off") {
+        @components.back_link()
 
         @components.error_summary(form.errors)
 
-        @components.heading(headingKey = "messages__establisher_individual__title", secondaryHeaderKey = Some(schemeName))
+        @components.heading("messages__trusteeDetails__heading")
 
         @components.person_details(form)
 

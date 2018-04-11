@@ -16,21 +16,21 @@
 
 package views.register.establishers.individual
 
-import play.api.data.{Form, FormError}
 import controllers.register.establishers.individual.routes
-import forms.register.establishers.individual.EstablisherDetailsFormProvider
-import models.register.establishers.individual.EstablisherDetails
+import forms.register.IndividualDetailsFormProvider
+import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.individual.establisherDetails
 
-class EstablisherDetailsViewSpec extends QuestionViewBehaviours[EstablisherDetails] {
+class EstablisherDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   val messageKeyPrefix = "establisher_individual"
 
-  override val form = new EstablisherDetailsFormProvider()()
+  override val form = new IndividualDetailsFormProvider()()
 
   val schemeName = "test scheme name"
 
@@ -59,64 +59,14 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[EstablisherDetai
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.EstablisherDetailsController.onSubmit(NormalMode, Index(0)).url, "firstName", "middleName", "lastName")
+    behave like pageWithTextFields(
+      createViewUsingForm,
+      messageKeyPrefix,
+      routes.EstablisherDetailsController.onSubmit(NormalMode, Index(0)).url,
+      "firstName", "middleName", "lastName"
+    )
 
-    "display an input text box with the correct label and value for day" in {
-      val doc = asDocument(createViewUsingForm(form.bind(validData)))
-      doc must haveLabelAndValue("date_day", messages("messages__common__day"), s"$day")
-    }
+    behave like pageWithDateFields(createViewUsingForm, form)
 
-    "display an input text box with the correct label and value for month" in {
-      val doc = asDocument(createViewUsingForm(form.bind(validData)))
-      doc must haveLabelAndValue("date_month", messages("messages__common__month"), s"$month")
-    }
-
-    "display an input text box with the correct label and value for year" in {
-      val doc = asDocument(createViewUsingForm(form.bind(validData)))
-      doc must haveLabelAndValue("date_year", messages("messages__common__year"), s"$year")
-    }
-
-    "display error for day field on error summary" in {
-      val error = "error"
-      val doc = asDocument(createViewUsingForm(form.withError(FormError("date.day", error))))
-      doc must haveErrorOnSummary("date_day", error)
-    }
-
-    "display error for month field on error summary" in {
-      val error = "error"
-      val doc = asDocument(createViewUsingForm(form.withError(FormError("date.month", error))))
-      doc must haveErrorOnSummary("date_month", error)
-    }
-
-    "display error for year field on error summary" in {
-      val error = "error"
-      val doc = asDocument(createViewUsingForm(form.withError(FormError("date.year", error))))
-      doc must haveErrorOnSummary("date_year", error)
-    }
-
-    "display only one date error when all the date fields are missing" in {
-      val expectedError = messages("messages__error__date")
-      val invalidData: Map[String, String] = Map(
-        "firstName" -> "testFirstName",
-        "lastName" -> "testLastName"
-      )
-      val doc = asDocument(createViewUsingForm(form.bind(invalidData)))
-      doc.select("span.error-notification").text() mustEqual expectedError
-    }
-
-    "display future date error when date is in future" in {
-      val tomorrow = LocalDate.now.plusDays(1)
-      val expectedError = messages("messages__error__date_future")
-      val invalidData: Map[String, String] = Map(
-        "firstName" -> "testFirstName",
-        "lastName" -> "testLastName",
-        "date.day" -> s"${tomorrow.getDayOfMonth}",
-        "date.month" -> s"${tomorrow.getMonthOfYear}",
-        "date.year" -> s"${tomorrow.getYear}"
-      )
-      val doc = asDocument(createViewUsingForm(form.bind(invalidData)))
-      doc.select("span.error-notification").text() mustEqual expectedError
-    }
   }
 }

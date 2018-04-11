@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package identifiers.register.establishers.individual
+@import uk.gov.hmrc.play.views.html._
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import models.person.PersonDetails
-import play.api.libs.json.JsPath
+@(form: Form[_])(implicit messages: Messages)
 
-case class EstablisherDetailsId(index: Int) extends TypedIdentifier[PersonDetails] {
-  override def path: JsPath = EstablishersId.path \ index \ EstablisherDetailsId.toString
-}
+@components.input_text(
+    field = form("firstName"),
+    label = messages("messages__common__firstname")
+)
 
-object EstablisherDetailsId {
-  override lazy val toString: String = "establisherDetails"
-}
+@components.input_text(
+    field = form("middleName"),
+    label = messages("messages__common__middlename")
+)
+
+@components.input_text(
+    field = form("lastName"),
+    label = messages("messages__common__lastname")
+)
+
+@components.input_date(
+    field = form("date"),
+    label = messages("messages__common__dob"),
+    hint = Some(messages("messages__common__dob__hint"))
+)

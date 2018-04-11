@@ -499,6 +499,9 @@ messages__trusteeKind__partnership = Partnership
 messages__trusteeKind__legend = What kind of trustee are you adding?
 messages__trusteeKind__hint = You must tell us about all your trustees. You can add up to 10 using the digital service.
 
+messages__trusteeDetails__title = Trustee details
+messages__trusteeDetails__heading = Trustee details
+messages__trusteeDetails__checkYourAnswersLabel = Trustee details
 messages__declarationDuties__heading = Declaration
 messages__declarationDuties__title = Declaration
 messages__declarationDuties__legend = I declare/understand that:

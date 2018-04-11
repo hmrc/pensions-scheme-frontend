@@ -16,11 +16,9 @@
 
 package identifiers
 
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, _}
 
 import scala.language.implicitConversions
-import play.api.libs.json._
-import utils.{Cleanup, JsLens}
 
 trait Identifier {
 

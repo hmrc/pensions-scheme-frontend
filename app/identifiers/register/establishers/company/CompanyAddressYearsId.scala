@@ -30,10 +30,10 @@ object CompanyAddressYearsId {
   override lazy val toString: String = "companyAddressYears"
 
   implicit lazy val addressYears: Cleanup[CompanyAddressYearsId] =
-        Cleanup[AddressYears, CompanyAddressYearsId] {
-            case (CompanyAddressYearsId(id), Some(AddressYears.OverAYear), answers) =>
-                answers
-                .remove(CompanyPreviousAddressPostcodeLookupId(id))
-                .flatMap(_.remove(CompanyPreviousAddressId(id)))
-        }
+    Cleanup[AddressYears, CompanyAddressYearsId] {
+      case (CompanyAddressYearsId(id), Some(AddressYears.OverAYear), answers) =>
+        answers
+          .remove(CompanyPreviousAddressPostcodeLookupId(id))
+          .flatMap(_.remove(CompanyPreviousAddressId(id)))
+    }
 }
