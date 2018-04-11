@@ -23,6 +23,7 @@ import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherKindId, company}
+import identifiers.register.trustees.individual.TrusteeNinoId
 import models.Nino.{No, Yes}
 import models._
 import models.address.Address
@@ -30,6 +31,24 @@ import models.register.establishers.individual.UniqueTaxReference
 import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
+
+  def trusteeNino(index: Int): Seq[AnswerRow] = userAnswers.get(TrusteeNinoId(index)) match {
+    case Some(Yes(nino)) =>
+      Seq(
+        AnswerRow("messages__trusteeNino__nino_question_cya_label", Seq(s"${Nino.Yes}"), false,
+          controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url),
+        AnswerRow("messages__trusteeNino__nino_cya_label", Seq(nino), false,
+          controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url)
+      )
+    case Some(No(reason)) =>
+      Seq(
+        AnswerRow("messages__trusteeNino__nino_question_cya_label", Seq(s"${Nino.No}"), false,
+          controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url),
+        AnswerRow("messages__trusteeNino__nino_reason_cya_label", Seq(reason), false,
+          controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url)
+      )
+    case _ => Nil
+  }
 
   def trusteeKind(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.TrusteeKindId(index)) map {
     x => AnswerRow("messages__trusteeKind__checkYourAnswersLabel", Seq(s"trusteeKind.$x"), true, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(CheckMode, index).url)

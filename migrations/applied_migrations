@@ -1,37 +1,18 @@
 #!/bin/bash
 
-echo "Applying migration TrusteeDetails"
+echo "Applying migration TrusteeNino"
 
-echo "Adding routes to trustees.routes"
-
-echo "" >> ../conf/trustees.routes
-echo "GET        /trusteeDetails                       controllers.register.trustees.individual.TrusteeDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/trustees.routes
-echo "POST       /trusteeDetails                       controllers.register.trustees.individual.TrusteeDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/trustees.routes
-
-echo "GET        /changeTrusteeDetails                       controllers.register.trustees.individual.TrusteeDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/trustees.routes
-echo "POST       /changeTrusteeDetails                       controllers.register.trustees.individual.TrusteeDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/trustees.routes
+echo "Adding routes to register.trustees.individual.routes"
+echo "" >> ../conf/register.trustees.individual.routes
+echo "GET        /trusteeNino                       controllers.register.trustees.individual.TrusteeNinoController.onPageLoad()" >> ../conf/register.trustees.individual.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo messages__"trusteeDetails__title = trusteeDetails" >> ../conf/messages.en
-echo messages__"trusteeDetails__heading = trusteeDetails" >> ../conf/messages.en
-echo messages__"trusteeDetails__field1 = Field 1" >> ../conf/messages.en
-echo messages__"trusteeDetails__field2 = Field 2" >> ../conf/messages.en
-echo messages__"trusteeDetails__checkYourAnswersLabel = trusteeDetails" >> ../conf/messages.en
-echo messages__"trusteeDetails__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
-echo messages__"trusteeDetails__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
-
-echo "Adding helper method to CheckYourAnswersHelper"
-awk '/class/ {\
-     print;\
-     print "";\
-     print "  def trusteeDetails: Option[AnswerRow] = userAnswers.get(identifiers.trustees.TrusteeDetailsId) map {";\
-     print "    x => AnswerRow(\"trusteeDetails.checkYourAnswersLabel\", Seq(s\"${x.field1} ${x.field2}\"), false, controllers.trustees.routes.TrusteeDetailsController.onPageLoad(CheckMode).url)";\
-     print "  }";\
-     next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
+echo "trusteeNino.title = trusteeNino" >> ../conf/messages.en
+echo "trusteeNino.heading = trusteeNino" >> ../conf/messages.en
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration TrusteeDetails completed"
+echo "Migration TrusteeNino completed"
