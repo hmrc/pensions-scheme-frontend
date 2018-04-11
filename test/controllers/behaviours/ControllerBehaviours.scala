@@ -52,13 +52,9 @@ trait ControllerBehaviours extends ControllerSpecBase
 
     "CompanyAddress Controller" must {
 
-
-
         testTheGet(get, form, viewmodel)
 
         testThePost(post, form, viewmodel)
-
-
 
     }
 
@@ -66,7 +62,6 @@ trait ControllerBehaviours extends ControllerSpecBase
 
   private def testTheGet(get: Call, form: Form[Address], viewmodel: ManualAddressViewModel)(implicit app: Application): Unit =
     "render manualAddress from GET request" in {
-
 
         def viewAsString(form: Form[_] = form) = manualAddressView(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
 
