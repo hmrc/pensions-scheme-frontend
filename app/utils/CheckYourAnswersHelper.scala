@@ -36,6 +36,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     x => AnswerRow("trusteePreviousAddress.checkYourAnswersLabel", addressAnswer(x), false, controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(CheckMode, index).url)
   }
 
+  def trusteeContactDetails(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.TrusteeContactDetailsId(index)) map {
+    x => AnswerRow("messages__trusteeContactDetails__checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false, controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(CheckMode, index).url)
+  }
+
   def trusteeNino(index: Int): Seq[AnswerRow] = userAnswers.get(TrusteeNinoId(index)) match {
     case Some(Yes(nino)) =>
       Seq(
