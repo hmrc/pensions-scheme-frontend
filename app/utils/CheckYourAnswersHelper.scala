@@ -33,6 +33,10 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
+  def trusteePreviousAddress(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.TrusteePreviousAddressId(index)) map {
+    x => AnswerRow("trusteePreviousAddress.checkYourAnswersLabel", addressAnswer(x), false, controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(CheckMode, index).url)
+  }
+
   def trusteeNino(index: Int): Seq[AnswerRow] = userAnswers.get(TrusteeNinoId(index)) match {
     case Some(Yes(nino)) =>
       Seq(
