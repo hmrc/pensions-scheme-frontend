@@ -80,8 +80,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
             countryOptions.options,
             Message(controller.title),
             Message(controller.heading),
-            secondaryHeader = Some(trusteeDetails.fullName),
-            Message(controller.hint)
+            secondaryHeader = Some(trusteeDetails.fullName)
           )
 
           val request = addToken(
