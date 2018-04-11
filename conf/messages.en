@@ -528,6 +528,16 @@ messages__individualPostCodeLookup__heading = Trustee’s address
 messages__individualPostCodeLookup__lede = This is usually the residential address for this person.
 messages__individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 
+messages__trustee__uniqueTaxReference__title = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
+messages__trustee__uniqueTaxReference__heading = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
+messages__trustee__uniqueTaxReference__hint = An SAUTR is issued by HMRC for Self assessment.
+messages__trustee__uniqueTaxReference__reason__no_utr = Tell us why the trustee does not have a UTR
+messages__trustee__uniqueTaxReference__checkYourAnswersLabel = Unique Tax Reference
+messages__trustee__uniqueTaxReference__error__required = Select yes if the trustee has a SAUTR
+messages__trustee__uniqueTaxReference__error__utr_required = Enter the Unique Tax Reference number
+messages__trustee__uniqueTaxReference__error__reason_required = You need to tell us why the trustee does not have a UTR
+messages__trustee__uniqueTaxReference__error__utr_invalid = Please give an answer for uniqueTaxReference
+
 messages__trusteeAddressYears__title = How long has the trustee been at this address?
 messages__trusteeAddressYears__heading = How long has the trustee been at this address?
 messages__trusteeAddressYears__error_required = Select how long they have been at the current address

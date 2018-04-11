@@ -17,7 +17,7 @@
 package forms.register.trustees.company
 
 import forms.FormSpec
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 
 
 class CompanyUniqueTaxReferenceFormProviderSpec extends FormSpec {

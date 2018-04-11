@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.register.establishers.individual
+package models
 
 import play.api.libs.json._
 import utils.InputOption
@@ -58,6 +58,3 @@ object UniqueTaxReference {
     }
   }
 }
-
-
-

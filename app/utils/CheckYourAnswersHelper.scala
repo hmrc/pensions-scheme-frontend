@@ -28,7 +28,7 @@ import identifiers.register.trustees.individual.TrusteeAddressYearsId
 import models.Nino.{No, Yes}
 import models._
 import models.address.Address
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
@@ -58,6 +58,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
 
   def individualPostCodeLookup(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.IndividualPostCodeLookupId(index)) map {
     x => AnswerRow("individualPostCodeLookup.checkYourAnswersLabel", Seq(s"$x"), false, controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(CheckMode, index).url)
+  }
+
+  def uniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.UniqueTaxReferenceId(index)) map {
+    x => AnswerRow("messages__uniqueTaxReference__checkYourAnswersLabel", Seq(s"uniqueTaxReference.$x"), true, controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, index).url)
   }
 
   def trusteeKind(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.TrusteeKindId(index)) map {

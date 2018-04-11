@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Applying migration UniqueTaxReference"
+
 echo "Applying migration TrusteeNino"
 
 echo "Adding routes to register.trustees.individual.routes"
@@ -13,34 +15,38 @@ echo "trusteeNino.heading = trusteeNino" >> ../conf/messages.en
 
 echo "Applying migration IndividualPostCodeLookup"
 
-echo "Adding routes to register.trustees.individual.routes"
+echo "Adding routes to conf/register.trustees.individual.routes"
 
-echo "" >> ../conf/register.trustees.individual.routes
-echo "GET        /individualPostCodeLookup               controllers.register.trustees.individual.IndividualPostCodeLookupController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.individual.routes
-echo "POST       /individualPostCodeLookup               controllers.register.trustees.individual.IndividualPostCodeLookupController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.individual.routes
+echo "" >> ../conf/app.routes
+echo "GET        /uniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.individual.routes
+echo "POST       /uniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.individual.routes
 
-echo "GET        /changeIndividualPostCodeLookup                        controllers.register.trustees.individual.IndividualPostCodeLookupController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.individual.routes
-echo "POST       /changeIndividualPostCodeLookup                        controllers.register.trustees.individual.IndividualPostCodeLookupController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.individual.routes
+echo "GET        /changeUniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.individual.routes
+echo "POST       /changeUniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.individual.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "messages__individualPostCodeLookup__title = individualPostCodeLookup" >> ../conf/messages.en
-echo "messages__individualPostCodeLookup__heading = individualPostCodeLookup" >> ../conf/messages.en
-echo "messages__individualPostCodeLookup__checkYourAnswersLabel = individualPostCodeLookup" >> ../conf/messages.en
-echo "messages__individualPostCodeLookup__error__required = Please give an answer for individualPostCodeLookup" >> ../conf/messages.en
+echo "messages__uniqueTaxReference__title = uniqueTaxReference" >> ../conf/messages.en
+echo "messages__uniqueTaxReference__heading = uniqueTaxReference" >> ../conf/messages.en
+echo "messages__uniqueTaxReference__option1 = uniqueTaxReference" Option 1 >> ../conf/messages.en
+echo "messages__uniqueTaxReference__option2 = uniqueTaxReference" Option 2 >> ../conf/messages.en
+echo "messages__uniqueTaxReference__checkYourAnswersLabel = uniqueTaxReference" >> ../conf/messages.en
+echo "messages__uniqueTaxReference__error__required = Please give an answer for uniqueTaxReference" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def individualPostCodeLookup: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.IndividualPostCodeLookupId) map {";\
-     print "    x => AnswerRow(\"individualPostCodeLookup.checkYourAnswersLabel\", Seq(s\"$x\"), false, controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(CheckMode).url)";\
+     print "  def uniqueTaxReference: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.UniqueTaxReferenceId) map {";\
+     print "    x => AnswerRow(\"messages__uniqueTaxReference__checkYourAnswersLabel\", Seq(s\"uniqueTaxReference.$x\"), true, controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
+
+echo "Migration UniqueTaxReference completed"
 
 echo "Migration TrusteeNino completed"
 

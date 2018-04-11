@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package forms.register.trustees.individual
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import javax.inject.Inject
+
+import forms.mappings.UtrMapping
 import models.UniqueTaxReference
-import play.api.libs.json.JsPath
+import play.api.data.Form
 
-case class CompanyUniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
-  override def path: JsPath = EstablishersId.path \ index \ CompanyUniqueTaxReferenceId.toString
-}
+class UniqueTaxReferenceFormProvider @Inject() extends UtrMapping {
 
-object CompanyUniqueTaxReferenceId {
-  override def toString: String = "companyUniqueTaxReference"
+  def apply(): Form[UniqueTaxReference] = Form(
+    "uniqueTaxReference" -> uniqueTaxReferenceMapping(
+      requiredKey = "messages__trustee__uniqueTaxReference__error__required",
+      requiredReasonKey = "messages__trustee__uniqueTaxReference__error__reason_required"
+    )
+  )
 }

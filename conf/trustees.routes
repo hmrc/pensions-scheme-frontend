@@ -82,6 +82,11 @@ POST       /:index/individual/individualPostCodeLookup               controllers
 GET        /:index/individual/changeIndividualPostCodeLookup                        controllers.register.trustees.individual.IndividualPostCodeLookupController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeIndividualPostCodeLookup                        controllers.register.trustees.individual.IndividualPostCodeLookupController.onSubmit(mode: Mode = CheckMode, index: Index)
 
+GET        /:index/individual/uniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/uniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeUniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeUniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode, index: Index)
+
 GET        /:index/individual/trusteeAddressYears                       controllers.register.trustees.individual.TrusteeAddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Index)
 POST       /:index/individual/trusteeAddressYears                       controllers.register.trustees.individual.TrusteeAddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/individual/changeTrusteeAddressYears                 controllers.register.trustees.individual.TrusteeAddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Index)

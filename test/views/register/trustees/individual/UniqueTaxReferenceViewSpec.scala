@@ -14,32 +14,30 @@
  * limitations under the License.
  */
 
-package views.register.establishers.individual
+package views.register.trustees.individual
 
-import forms.register.trustees.individual.UniqueTaxReferenceFormProvider
 import play.api.data.Form
+import forms.register.trustees.individual.UniqueTaxReferenceFormProvider
+import models.{Index, NormalMode, UniqueTaxReference}
 import views.behaviours.ViewBehaviours
-import models.{Index, NormalMode}
-import play.twirl.api.HtmlFormat
-import views.html.register.establishers.individual.uniqueTaxReference
+import views.html.register.trustees.individual.uniqueTaxReference
 
 class UniqueTaxReferenceViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "establisher__has_sautr"
+  val messageKeyPrefix = "trustee__uniqueTaxReference"
+  val trustee = "Test Trustee Name"
+  val index = Index(0)
 
   val form = new UniqueTaxReferenceFormProvider()()
 
-  val index = Index(1)
-    val establisherName = "test name"
+  def createView = () => uniqueTaxReference(frontendAppConfig, form, NormalMode, index, trustee)(fakeRequest, messages)
 
-  def createView: () => HtmlFormat.Appendable = () => uniqueTaxReference(frontendAppConfig, form, NormalMode, index, establisherName)(fakeRequest, messages)
-
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => uniqueTaxReference(frontendAppConfig, form, NormalMode,
-    index, establisherName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => uniqueTaxReference(frontendAppConfig, form, NormalMode, index, trustee)(fakeRequest, messages)
 
   "UniqueTaxReference view" must {
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__establisher__has_sautr__title"))
+    behave like pageWithSecondaryHeader(createView, trustee)
 
     behave like pageWithBackLink(createView)
   }
@@ -78,7 +76,7 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
       "display an input text box with the value when no is selected" in {
         val expectedValue = "don't have utr"
         val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" -> expectedValue))))
-        doc must haveLabelAndValue("uniqueTaxReference_reason", messages("messages__establisher__no_sautr"), expectedValue)
+        doc must haveLabelAndValue("uniqueTaxReference_reason", messages("messages__trustee__uniqueTaxReference__reason__no_utr"), expectedValue)
       }
     }
   }

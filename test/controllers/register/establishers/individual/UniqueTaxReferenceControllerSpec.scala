@@ -16,22 +16,20 @@
 
 package controllers.register.establishers.individual
 
-import play.api.data.Form
-import play.api.libs.json.{JsBoolean, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
 import forms.register.establishers.individual.UniqueTaxReferenceFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{EstablisherDetailsId, UniqueTaxReferenceId}
 import models._
+import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
-import models.register.establishers.individual.{EstablisherDetails, EstablishersIndividualMap, UniqueTaxReference}
 import org.joda.time.LocalDate
+import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator
 import views.html.register.establishers.individual.uniqueTaxReference
 
 class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
