@@ -517,3 +517,8 @@ messages__individualPostCodeLookup__title = Trustee’s address
 messages__individualPostCodeLookup__heading = Trustee’s address
 messages__individualPostCodeLookup__lede = This is usually the residential address for this person.
 messages__individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
+
+messages__trusteeAddressYears__title = How long has the trustee been at this address?
+messages__trusteeAddressYears__heading = How long has the trustee been at this address?
+messages__trusteeAddressYears__error_required = Select how long they have been at the current address
+messages__trusteeAddressYears__cya_label = How long has the trustee been at this address?
