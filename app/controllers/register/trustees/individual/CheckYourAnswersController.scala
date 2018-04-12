@@ -62,10 +62,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           routes.TrusteeAddressYearsController.onPageLoad(CheckMode, index).url)
         val trusteePreviousAddressRow = TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(CheckMode,
           index).url)
+        val trusteeContactDetails = TrusteeContactDetailsId(index).row(routes.TrusteeContactDetailsController.onPageLoad(CheckMode, index).url)
 
         val contactDetailsSection = AnswerSection(
           Some("messages__checkYourAnswers__section__contact_details"),
-          trusteeAddressRow ++ trusteeAddressYearsRow ++ trusteePreviousAddressRow
+          trusteeAddressRow ++ trusteeAddressYearsRow ++ trusteePreviousAddressRow ++ trusteeContactDetails
         )
 
         Future.successful(Ok(check_your_answers(
