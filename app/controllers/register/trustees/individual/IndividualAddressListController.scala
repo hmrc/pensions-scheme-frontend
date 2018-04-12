@@ -58,14 +58,12 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
   private def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
     (TrusteeDetailsId(index) and IndividualPostCodeLookupId(index)).retrieve.right.map{
       case trusteeDetails ~ addresses => AddressListViewModel(
-        postCall = routes.IndividualAddressListController.onSubmit(mode,index),
-        manualInputCall = controllers.routes.IndexController.onPageLoad(),
+        postCall = routes.IndividualAddressListController.onSubmit(mode, index),
+        manualInputCall = routes.TrusteeAddressController.onPageLoad(mode, index),
         addresses = addresses,
         subHeading = Some(Message(trusteeDetails.fullName))
       )
-    }.left.map(_ =>{
-      Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
-    }
-    )
+    }.left.map(_ =>
+      Future.successful(Redirect(routes.IndividualPostCodeLookupController.onPageLoad(mode,index))))
   }
 }

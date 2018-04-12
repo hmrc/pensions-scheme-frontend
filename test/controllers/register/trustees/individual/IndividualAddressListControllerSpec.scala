@@ -28,6 +28,7 @@ import models.person.PersonDetails
 import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, route, running, status}
 import utils.UserAnswers
@@ -37,6 +38,9 @@ import play.api.test.Helpers._
 import views.html.address.addressList
 
 class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
+
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
   private val trusteeDetails=PersonDetails("First Name",Some("Second Name"),"Last Name",LocalDate.now())
 
   private val addresses = Seq(
@@ -100,8 +104,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        //TODO
-        //redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
       }
 
     }
@@ -138,8 +141,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        //TODO
-       // redirectLocation(result) mustBe Some(controllers.register.trustees.company.routes.IndividualAddressController.onPageLoad(NormalMode, 0).url)
+        redirectLocation(result) mustBe Some(onwardRoute.url)
+        //TODO//redirectLocation(result) mustBe Some(routes.TrusteeAddressController.onPageLoad(NormalMode, 0).url)
       }
 
     }
@@ -181,8 +184,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        //TODO
-       // redirectLocation(result) mustBe Some(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
+        redirectLocation(result) mustBe Some(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, Index(0)).url)
       }
 
     }
@@ -191,7 +193,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
   private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
     AddressListViewModel(
       routes.IndividualAddressListController.onSubmit(NormalMode, Index(0)),
-      controllers.routes.IndexController.onPageLoad(),
+      routes.TrusteeAddressController.onPageLoad(NormalMode,Index(0)),
       addresses,
       subHeading = Some(Message(trusteeDetails.fullName))
     )
