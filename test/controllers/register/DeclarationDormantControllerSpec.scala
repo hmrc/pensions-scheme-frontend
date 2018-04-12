@@ -55,7 +55,7 @@ class DeclarationDormantControllerSpec extends ControllerSpecBase {
     DeclarationDormant.toString -> DeclarationDormant.values.head.toString
   )
 
-  def viewAsString(form: Form[_] = form) = declarationDormant(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages).toString
 
   "DeclarationDormant Controller" must {
 

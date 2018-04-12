@@ -24,7 +24,7 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationDormantFormProvider
 import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
-import models.Mode
+import models.{Mode, NormalMode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -47,27 +47,27 @@ class DeclarationDormantController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       SchemeDetailsId.retrieve.right.map{ schemeDetails =>
         val preparedForm = request.userAnswers.get(DeclarationDormantId) match {
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(declarationDormant(appConfig, preparedForm, mode, schemeDetails.schemeName)))
+        Future.successful(Ok(declarationDormant(appConfig, preparedForm, schemeDetails.schemeName)))
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
-            Future.successful(BadRequest(declarationDormant(appConfig, formWithErrors, mode, schemeDetails.schemeName)))
+            Future.successful(BadRequest(declarationDormant(appConfig, formWithErrors, schemeDetails.schemeName)))
           },
         (value) =>
           dataCacheConnector.save(request.externalId, DeclarationDormantId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(DeclarationDormantId, mode)(new UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(DeclarationDormantId, NormalMode)(new UserAnswers(cacheMap))))
       )
   }
 }

@@ -31,9 +31,9 @@ class DeclarationDormantViewSpec extends ViewBehaviours {
 
   val form = new DeclarationDormantFormProvider()()
 
-  def createView = () => declarationDormant(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+  def createView = () => declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => declarationDormant(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages)
 
   "DeclarationDormant view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
