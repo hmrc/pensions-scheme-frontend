@@ -1,37 +1,18 @@
 #!/bin/bash
 
-echo "Applying migration TrusteePreviousAddress"
+echo "Applying migration TrusteePreviousAddressList"
 
 echo "Adding routes to register.trustees.individual.routes"
-
 echo "" >> ../conf/register.trustees.individual.routes
-echo "GET        /trusteePreviousAddress                       controllers.register.trustees.individual.TrusteePreviousAddressController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.individual.routes
-echo "POST       /trusteePreviousAddress                       controllers.register.trustees.individual.TrusteePreviousAddressController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.individual.routes
-
-echo "GET        /changeTrusteePreviousAddress                       controllers.register.trustees.individual.TrusteePreviousAddressController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.individual.routes
-echo "POST       /changeTrusteePreviousAddress                       controllers.register.trustees.individual.TrusteePreviousAddressController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.individual.routes
+echo "GET        /trusteePreviousAddressList                       controllers.register.trustees.individual.TrusteePreviousAddressListController.onPageLoad()" >> ../conf/register.trustees.individual.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo messages__"trusteePreviousAddress__title = trusteePreviousAddress" >> ../conf/messages.en
-echo messages__"trusteePreviousAddress__heading = trusteePreviousAddress" >> ../conf/messages.en
-echo messages__"trusteePreviousAddress__field1 = Field 1" >> ../conf/messages.en
-echo messages__"trusteePreviousAddress__field2 = Field 2" >> ../conf/messages.en
-echo messages__"trusteePreviousAddress__checkYourAnswersLabel = trusteePreviousAddress" >> ../conf/messages.en
-echo messages__"trusteePreviousAddress__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
-echo messages__"trusteePreviousAddress__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
-
-echo "Adding helper method to CheckYourAnswersHelper"
-awk '/class/ {\
-     print;\
-     print "";\
-     print "  def trusteePreviousAddress: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.TrusteePreviousAddressId) map {";\
-     print "    x => AnswerRow(\"trusteePreviousAddress.checkYourAnswersLabel\", Seq(s\"${x.field1} ${x.field2}\"), false, controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(CheckMode).url)";\
-     print "  }";\
-     next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
+echo "trusteePreviousAddressList.title = trusteePreviousAddressList" >> ../conf/messages.en
+echo "trusteePreviousAddressList.heading = trusteePreviousAddressList" >> ../conf/messages.en
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration TrusteePreviousAddress completed"
+echo "Migration TrusteePreviousAddressList completed"
