@@ -89,7 +89,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       trusteeDetailsSection,
       contactDetailsSection
     ),
-    Some("Test Scheme Name"),
+    Some("Trustees for Test Scheme Name"),
     postUrl
   )(fakeRequest, messages).toString
 }
