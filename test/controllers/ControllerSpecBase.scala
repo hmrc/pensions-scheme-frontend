@@ -24,8 +24,8 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.individual.{TrusteeDetailsId, UniqueTaxReferenceId}
-import models.{CompanyDetails, UniqueTaxReference}
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import models.CompanyDetails
 import models.person.PersonDetails
 import models.register.establishers.company.director.DirectorDetails
 import models.register.establishers.individual.EstablisherDetails
