@@ -16,33 +16,23 @@
 
 package controllers.register.trustees.company
 
-import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
-import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.trustees.company.routes._
-import forms.address.AddressFormProvider
+import controllers.behaviours.ControllerBehaviours
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId}
-import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
-import org.scalatest.OptionValues
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
-import play.api.data.Form
-import play.api.i18n.MessagesApi
+import navigators.TrusteesCompanyNavigator
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.mvc.Call
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import utils.annotations.TrusteesCompany
 import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
-import views.html.address.manualAddress
 
-class CompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
+class CompanyAddressControllerSpec extends ControllerBehaviours {
 
   val firstIndex = Index(0)
 
@@ -52,100 +42,37 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
     Seq(InputOption("GB", "GB"))
   )
 
-  val formProvider = new AddressFormProvider(countryOptions)
-  val form: Form[Address] = formProvider()
-
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
     TrusteesId.toString -> Json.arr(Json.obj(CompanyDetailsId.toString -> companyDetails))
   )))
 
-  "CompanyAddress Controller" must {
+  implicit val builder = new GuiceApplicationBuilder()
+    .overrides(
+      bind[FrontendAppConfig].to(frontendAppConfig),
+      bind[Navigator].qualifiedWith(classOf[TrusteesCompany]).toInstance(FakeNavigator),
+      bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+      bind[AuthAction].to(FakeAuthAction),
+      bind[DataRetrievalAction].to(retrieval),
+      bind[CountryOptions].to(countryOptions)
+    )
 
-    "render manualAddress from GET request" in {
+  val controller = builder.build().injector.instanceOf[CompanyAddressController]
 
-      running(_.overrides(
-        bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[Navigator].toInstance(FakeNavigator),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(retrieval),
-        bind[CountryOptions].to(countryOptions)
-      )) {
-        implicit app =>
+  val viewmodel = ManualAddressViewModel(
+    controller.postCall(NormalMode, firstIndex),
+    countryOptions.options,
+    Message(controller.title),
+    Message(controller.heading),
+    secondaryHeader = Some(companyDetails.companyName),
+    Message(controller.hint)
+  )
 
-          val controller = app.injector.instanceOf[CompanyAddressController]
+  behave like manualAddress(
+    routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex),
+    routes.CompanyAddressController.onSubmit(NormalMode, firstIndex),
+    CompanyAddressId(firstIndex),
+    viewmodel
+  )
 
-          val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, firstIndex),
-            countryOptions.options,
-            Message(controller.title),
-            Message(controller.heading),
-            secondaryHeader = Some(companyDetails.companyName),
-            Message(controller.hint)
-          )
 
-          def viewAsString(form: Form[_] = form) = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
-
-          val request = addToken(
-            FakeRequest(CompanyAddressController.onPageLoad(NormalMode, firstIndex))
-            .withHeaders("Csrf-Token" -> "nocheck")
-          )
-
-          val result = route(app, request).value
-
-          status(result) must be(OK)
-
-          contentAsString(result) mustEqual manualAddress(
-            frontendAppConfig,
-            form,
-            viewmodel
-          )(request, messages).toString
-
-      }
-
-    }
-
-    "redirect to next page on POST request" which {
-      "save address" in {
-
-        val onwardCall = routes.CompanyAddressYearsController.onPageLoad(NormalMode,Index(0))
-
-        val address = Address(
-          addressLine1 = "value 1",
-          addressLine2 = "value 2",
-          None, None,
-          postcode = Some("AB1 1AB"),
-          country = "GB"
-        )
-
-        running(_.overrides(
-          bind[FrontendAppConfig].to(frontendAppConfig),
-          bind[MessagesApi].to(messagesApi),
-          bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-          bind[AuthAction].to(FakeAuthAction),
-          bind[DataRetrievalAction].to(retrieval),
-          bind[DataRequiredAction].to(new DataRequiredActionImpl),
-          bind[AddressFormProvider].to(formProvider)
-        )) {
-          implicit app =>
-
-            val fakeRequest = addToken(FakeRequest(CompanyAddressController.onSubmit(NormalMode, firstIndex))
-              .withHeaders("Csrf-Token" -> "nocheck")
-              .withFormUrlEncodedBody(
-                ("addressLine1", address.addressLine1),
-                ("addressLine2", address.addressLine2),
-                ("postCode", address.postcode.get),
-                "country" -> address.country))
-
-            val result = route(app, fakeRequest).value
-
-            status(result) must be(SEE_OTHER)
-            redirectLocation(result).value mustEqual onwardCall.url
-
-            FakeDataCacheConnector.verify(CompanyAddressId(firstIndex), address)
-        }
-      }
-    }
-
-  }
 }
