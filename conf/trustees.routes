@@ -116,3 +116,8 @@ GET        /:index/individual/trusteePreviousAddressList                       c
 POST       /:index/individual/trusteePreviousAddressList                       controllers.register.trustees.individual.TrusteePreviousAddressListController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/individual/changeTrusteePreviousAddressList                       controllers.register.trustees.individual.TrusteePreviousAddressListController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeTrusteePreviousAddressList                       controllers.register.trustees.individual.TrusteePreviousAddressListController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/individual/individualAddressList                      controllers.register.trustees.individual.IndividualAddressListController.onPageLoad(mode:Mode = NormalMode, index:Index)
+POST       /:index/individual/individualAddressList                      controllers.register.trustees.individual.IndividualAddressListController.onSubmit(mode:Mode=NormalMode, index:Index)
+GET        /:index/individual/changeIndividualAddressList                      controllers.register.trustees.individual.IndividualAddressListController.onPageLoad(mode:Mode = CheckMode, index:Index)
+POST       /:index/individual/changeIndividualAddressList                      controllers.register.trustees.individual.IndividualAddressListController.onSubmit(mode:Mode=CheckMode, index:Index)
