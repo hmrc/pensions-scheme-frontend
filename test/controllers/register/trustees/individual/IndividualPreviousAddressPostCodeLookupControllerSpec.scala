@@ -44,14 +44,14 @@ import views.html.address.postcodeLookup
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with ScalaFutures {
+class IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with ScalaFutures {
 
-  import IndividualPostCodeLookupControllerSpec._
+  import IndividualPreviousAddressPostCodeLookupControllerSpec._
 
-  "IndividualPostCodeLookup Controller" must {
+  "IndividualPreviousAddressPostCodeLookup Controller" must {
     "render postCodeLookup from a GET request" in {
       requestResult(
-        implicit app => addToken(FakeRequest(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, firstIndex))),
+        implicit app => addToken(FakeRequest(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex))),
         (request, result) => {
           status(result) mustBe OK
           contentAsString(result) mustBe postcodeLookup(frontendAppConfig, form, viewModel)(request, messages).toString()
@@ -62,7 +62,7 @@ class IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with CSR
     "redirect to next page on POST request" which {
       "returns a list of addresses from addressLookup given a postcode" in {
         requestResult(
-          implicit app => addToken(FakeRequest(routes.IndividualPostCodeLookupController.onSubmit(NormalMode, firstIndex))
+          implicit app => addToken(FakeRequest(routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex))
             .withFormUrlEncodedBody("value" -> validPostcode)),
           (_, result) => {
             status(result) mustBe SEE_OTHER
@@ -74,7 +74,7 @@ class IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with CSR
   }
 }
 
-object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
+object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -87,10 +87,10 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
   val address = Address("address line 1", "address line 2", None, None, Some(validPostcode), "GB")
 
   lazy val viewModel = PostcodeLookupViewModel(
-    postCall = routes.IndividualPostCodeLookupController.onSubmit(NormalMode, firstIndex),
-    manualInputCall = routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, firstIndex),
-    title = Message("messages__individualPostCodeLookup__title"),
-    heading = Message("messages__individualPostCodeLookup__heading"),
+    postCall = routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex),
+    manualInputCall = routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex),
+    title = Message("messages__trusteeIndividualPreviousAddressPostCodeLookup__title"),
+    heading = Message("messages__trusteeIndividualPreviousAddressPostCodeLookup__heading"),
     subHeading = Some(personDetails.fullName),
     hint = Message("messages__common_individual_postCode_lookup__lede"),
     enterPostcode = Message("messages__trustee_individualPostCodeLookup__enter_postcode")
@@ -105,10 +105,12 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
     )
   ))
   private val fakeAddressLookupConnector = new AddressLookupConnector {
-    override def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Seq[AddressRecord]]] = {
+    override def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext):
+    Future[Option[Seq[AddressRecord]]] = {
       Future.successful(Some(Seq(AddressRecord(address))))
     }
   }
+
   private def requestResult[T](request: (Application) => Request[T], test: (Request[_], Future[Result]) => Unit)(implicit writeable: Writeable[T]): Unit = {
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),

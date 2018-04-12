@@ -92,6 +92,11 @@ POST       /:index/individual/trusteePreviousAddress                       contr
 GET        /:index/individual/changeTrusteePreviousAddress                       controllers.register.trustees.individual.TrusteePreviousAddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeTrusteePreviousAddress                       controllers.register.trustees.individual.TrusteePreviousAddressController.onSubmit(mode: Mode = CheckMode, index: Index)
 
+GET        /:index/individual/individualPreviousAddressPostcodeLookup                       controllers.register.trustees.individual.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index:Index)
+POST       /:index/individual/individualPreviousAddressPostcodeLookup                       controllers.register.trustees.individual.IndividualPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index:Index)
+GET        /:index/individual/changeIndividualPreviousAddressPostcodeLookup                       controllers.register.trustees.individual.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index:Index)
+POST       /:index/individual/changeIndividualPreviousAddressPostcodeLookup                       controllers.register.trustees.individual.IndividualPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index:Index)
+
 GET        /:index/individual/uniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode, index: Index)
 POST       /:index/individual/uniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/individual/changeUniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode, index: Index)

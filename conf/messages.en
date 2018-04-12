@@ -50,6 +50,7 @@ messages__common__country = Country
 messages__common__postcode_lookup__enter_postcode = Enter the postcode below, or {0} enter the address manually {1}
 messages__common__postcode_lookup__address_postcode = Postal code
 messages__common__postcode_lookup__address_postcode_hint = For example NE12 8ER
+messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
 messages__error__postcode = Enter the postal code
 messages__error__postcode_length = The postal code cannot be more than 8 characters
 messages__error__postcode_invalid = Enter a valid postal code
@@ -529,8 +530,10 @@ messages__trusteeNino__nino_reason_cya_label = Reason
 
 messages__individualPostCodeLookup__title = Trustee’s address
 messages__individualPostCodeLookup__heading = Trustee’s address
-messages__individualPostCodeLookup__lede = This is usually the residential address for this person.
-messages__individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
+messages__trustee_individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
+
+messages__trusteeIndividualPreviousAddressPostCodeLookup__title = Previous address
+messages__trusteeIndividualPreviousAddressPostCodeLookup__heading = Previous address
 
 messages__trustee__uniqueTaxReference__title = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__trustee__uniqueTaxReference__heading = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
