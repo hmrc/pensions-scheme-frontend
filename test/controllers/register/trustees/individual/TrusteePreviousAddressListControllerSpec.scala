@@ -191,6 +191,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
       routes.TrusteePreviousAddressListController.onSubmit(NormalMode, Index(0)),
       routes.TrusteePreviousAddressController.onPageLoad(NormalMode, Index(0)),
       addresses,
+      heading = "messages__select_the_previous_address__title",
       subHeading = Some(Message(trusteeDetails.fullName))
     )
   }
