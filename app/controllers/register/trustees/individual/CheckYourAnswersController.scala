@@ -52,11 +52,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, index).url)
         val trusteeNinoRow = TrusteeNinoId(index).row(routes.TrusteeNinoController.onPageLoad(CheckMode, index).url)
         val trusteeUtrRow = UniqueTaxReferenceId(index).row(routes.UniqueTaxReferenceController.onPageLoad(CheckMode, index).url)
-
-        val trsuteeDetailsSection = AnswerSection(None,
-          trusteeDetailsRow ++ trusteeNinoRow ++ trusteeUtrRow
-        )
-
         val trusteeAddressRow = TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(CheckMode, index).url)
         val trusteeAddressYearsRow = TrusteeAddressYearsId(index).row(
           routes.TrusteeAddressYearsController.onPageLoad(CheckMode, index).url)
@@ -64,6 +59,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           index).url)
         val trusteeContactDetails = TrusteeContactDetailsId(index).row(routes.TrusteeContactDetailsController.onPageLoad(CheckMode, index).url)
 
+        val trusteeDetailsSection = AnswerSection(None,
+          trusteeDetailsRow ++ trusteeNinoRow ++ trusteeUtrRow
+        )
         val contactDetailsSection = AnswerSection(
           Some("messages__checkYourAnswers__section__contact_details"),
           trusteeAddressRow ++ trusteeAddressYearsRow ++ trusteePreviousAddressRow ++ trusteeContactDetails
@@ -71,7 +69,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
         Future.successful(Ok(check_your_answers(
           appConfig,
-          Seq(trsuteeDetailsSection, contactDetailsSection),
+          Seq(trusteeDetailsSection, contactDetailsSection),
           Some(schemeDetails.schemeName),
           routes.CheckYourAnswersController.onSubmit(index)
         )))

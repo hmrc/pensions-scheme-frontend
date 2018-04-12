@@ -40,7 +40,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired page" when {
       "GET" when {
-        "trustee trustee name is not present" in {
+        "trustee name is not present" in {
           val result = controller(getEmptyData).onPageLoad(firstIndex)(fakeRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

@@ -423,13 +423,13 @@ object CheckYourAnswers {
           Seq(
             AnswerRow(
               "messages__common__cya__name",
-              Seq(s"${personDetails.fullName}"),
+              Seq(personDetails.fullName),
               false,
               changeUrl
             ),
             AnswerRow(
               "messages__common__dob",
-              Seq(s"${DateHelper.formatDate(personDetails.date)}"),
+              Seq(DateHelper.formatDate(personDetails.date)),
               false,
               changeUrl
             ))
@@ -463,7 +463,7 @@ object CheckYourAnswers {
               false, changeUrl
             ),
             AnswerRow(
-              "messages__trusteeNino_nino_reason_cya_label",
+              "messages__trusteeNino_reason_cya_label",
               Seq(reason),
               false,
               changeUrl

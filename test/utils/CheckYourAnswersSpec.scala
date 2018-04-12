@@ -436,7 +436,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               onwardUrl
             ),
             AnswerRow(
-              "messages__trusteeNino_nino_reason_cya_label",
+              "messages__trusteeNino_reason_cya_label",
               Seq(nino.reason),
               false,
               onwardUrl
