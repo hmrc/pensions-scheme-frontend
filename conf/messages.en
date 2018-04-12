@@ -559,3 +559,8 @@ messages__trusteePreviousAddress__lede = This is usually the registered business
 messages__trusteeIndividualPreviousAddressPostCodeLookup__title = Previous address
 messages__trusteeIndividualPreviousAddressPostCodeLookup__heading = Previous address
 
+messages__trusteeContactDetails__title = Trustee’s contact details
+messages__trusteeContactDetails__heading = Trustee’s contact details
+messages__trusteeContactDetails__emailAddress = Email address
+messages__trusteeContactDetails__phoneNumber = Phone number
+messages__trusteeContactDetails__checkYourAnswersLabel = Trustee’s contact details
