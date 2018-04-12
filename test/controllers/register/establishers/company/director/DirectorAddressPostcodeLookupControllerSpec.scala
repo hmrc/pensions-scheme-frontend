@@ -112,7 +112,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
 
     "redirect to next page on POST request" in {
 
-      val call: Call = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex)
+      val call: Call = routes.DirectorAddressListController.onSubmit(NormalMode, estIndex, dirIndex)
 
       val validPostcode = "ZZ1 1ZZ"
 
