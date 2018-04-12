@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import play.api.data.Forms.tuple
 import play.api.data.Mapping
 import uk.gov.voa.play.form.ConditionalMappings.{mandatoryIfFalse, mandatoryIfTrue}

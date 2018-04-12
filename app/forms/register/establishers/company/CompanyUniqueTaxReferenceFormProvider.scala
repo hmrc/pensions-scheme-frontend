@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 import forms.mappings.UtrMapping
 import play.api.data.Form
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 
 
 class CompanyUniqueTaxReferenceFormProvider @Inject()() extends UtrMapping {

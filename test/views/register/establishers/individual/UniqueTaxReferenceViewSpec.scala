@@ -16,8 +16,8 @@
 
 package views.register.establishers.individual
 
+import forms.register.trustees.individual.UniqueTaxReferenceFormProvider
 import play.api.data.Form
-import forms.register.establishers.individual.UniqueTaxReferenceFormProvider
 import views.behaviours.ViewBehaviours
 import models.{Index, NormalMode}
 import play.twirl.api.HtmlFormat

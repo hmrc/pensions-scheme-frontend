@@ -16,15 +16,15 @@
 
 package identifiers.register.trustees.individual
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import identifiers._
+import identifiers.register.trustees.TrusteesId
 import models.address.Address
-import play.api.libs.json.JsPath
+import play.api.libs.json._
 
-case class IndividualPostCodeLookupId(index: Int) extends TypedIdentifier[Seq[Address]]  {
-  override def path: JsPath = EstablishersId.path \ index \ IndividualPostCodeLookupId.toString
+case class IndividualPostCodeLookupId(index: Int) extends TypedIdentifier[Seq[Address]] {
+  override def path: JsPath = __ \ TrusteesId.toString \ index \ IndividualPostCodeLookupId.toString
 }
 
-object CompanyPostCodeLookupId {
-  override def toString: String = "individualAddresses"
+object IndividualPostCodeLookupId {
+  override def toString: String = "individualPostCodeLookup"
 }
