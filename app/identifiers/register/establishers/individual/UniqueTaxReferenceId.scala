@@ -17,7 +17,7 @@
 package identifiers.register.establishers.individual
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import play.api.libs.json.JsPath
 
 case class UniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {

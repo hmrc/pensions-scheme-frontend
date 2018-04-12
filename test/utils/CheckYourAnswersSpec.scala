@@ -20,7 +20,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.SchemeEstablishedCountryId
 import models.address.Address
 import models.register._
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import models.requests.DataRequest
 import models.{AddressYears, CompanyDetails, CompanyRegistrationNumber, ContactDetails}
 import org.joda.time.LocalDate

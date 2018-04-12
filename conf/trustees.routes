@@ -77,7 +77,27 @@ POST       /:index/individual/trusteeAddress                       controllers.r
 GET        /:index/individual/changeTrusteeAddress                       controllers.register.trustees.individual.TrusteeAddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeTrusteeAddress                       controllers.register.trustees.individual.TrusteeAddressController.onSubmit(mode: Mode = CheckMode, index: Index)
 
+GET        /:index/individual/trusteeNino                       controllers.register.trustees.individual.TrusteeNinoController.onPageLoad(mode: Mode = NormalMode, index:Index)
+POST       /:index/individual/trusteeNino                       controllers.register.trustees.individual.TrusteeNinoController.onSubmit(mode: Mode = NormalMode, index:Index)
+GET        /:index/individual/changeTrusteeNino                       controllers.register.trustees.individual.TrusteeNinoController.onPageLoad(mode: Mode = CheckMode, index:Index)
+POST       /:index/individual/changeTrusteeNino                       controllers.register.trustees.individual.TrusteeNinoController.onSubmit(mode: Mode = CheckMode, index:Index)
+
 GET        /:index/individual/individualPostCodeLookup               controllers.register.trustees.individual.IndividualPostCodeLookupController.onPageLoad(mode: Mode = NormalMode, index: Index)
 POST       /:index/individual/individualPostCodeLookup               controllers.register.trustees.individual.IndividualPostCodeLookupController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/individual/changeIndividualPostCodeLookup                        controllers.register.trustees.individual.IndividualPostCodeLookupController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeIndividualPostCodeLookup                        controllers.register.trustees.individual.IndividualPostCodeLookupController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/individual/individualPreviousAddressPostcodeLookup                       controllers.register.trustees.individual.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index:Index)
+POST       /:index/individual/individualPreviousAddressPostcodeLookup                       controllers.register.trustees.individual.IndividualPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index:Index)
+GET        /:index/individual/changeIndividualPreviousAddressPostcodeLookup                       controllers.register.trustees.individual.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index:Index)
+POST       /:index/individual/changeIndividualPreviousAddressPostcodeLookup                       controllers.register.trustees.individual.IndividualPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index:Index)
+
+GET        /:index/individual/uniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/uniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeUniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeUniqueTaxReference               controllers.register.trustees.individual.UniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/individual/trusteeAddressYears                       controllers.register.trustees.individual.TrusteeAddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/individual/trusteeAddressYears                       controllers.register.trustees.individual.TrusteeAddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/individual/changeTrusteeAddressYears                 controllers.register.trustees.individual.TrusteeAddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/individual/changeTrusteeAddressYears                 controllers.register.trustees.individual.TrusteeAddressYearsController.onSubmit(mode: Mode = CheckMode, index: Index)

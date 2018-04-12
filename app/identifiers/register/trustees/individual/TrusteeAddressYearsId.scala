@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package identifiers.register.trustees.individual
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import models.UniqueTaxReference
+import identifiers.register.trustees.TrusteesId
+import models.AddressYears
 import play.api.libs.json.JsPath
 
-case class CompanyUniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
-  override def path: JsPath = EstablishersId.path \ index \ CompanyUniqueTaxReferenceId.toString
+case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYears]{
+  override def path: JsPath = TrusteesId.path \ index \ TrusteeAddressYearsId.toString
 }
 
-object CompanyUniqueTaxReferenceId {
-  override def toString: String = "companyUniqueTaxReference"
+object TrusteeAddressYearsId {
+  override def toString: String = "trusteeAddressYears"
 }

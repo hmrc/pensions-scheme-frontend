@@ -18,7 +18,7 @@ package identifiers.register.trustees.company
 
 import identifiers._
 import identifiers.register.trustees.TrusteesId
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import play.api.libs.json.JsPath
 
 case class CompanyUniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
