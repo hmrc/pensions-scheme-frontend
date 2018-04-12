@@ -20,9 +20,9 @@ import identifiers.TypedIdentifier
 import identifiers.register.SchemeEstablishedCountryId
 import models.address.Address
 import models.register._
-import models.UniqueTaxReference
+import models._
+import models.person.PersonDetails
 import models.requests.DataRequest
-import models.{AddressYears, CompanyDetails, CompanyRegistrationNumber, ContactDetails}
 import org.joda.time.LocalDate
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -384,8 +384,65 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
           )))
 
       }
+
+      "personDetails" in {
+        val personDetails = PersonDetails("firstName", None, "last", LocalDate.now)
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> personDetails)))
+
+        testIdentifier[PersonDetails].row(onwardUrl) must equal(Seq(
+          AnswerRow(
+            "messages__common__cya__name",
+            Seq(s"${personDetails.fullName}"),
+            false,
+            onwardUrl
+          ),
+          AnswerRow(
+            "messages__common__dob",
+            Seq(s"${DateHelper.formatDate(personDetails.date)}"),
+            false,
+            onwardUrl
+          )))
+      }
+
+      "Nino" when {
+        "yes" in {
+          val nino = Nino.Yes("AB700100A")
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> nino)))
+
+          testIdentifier[Nino].row(onwardUrl) must equal(Seq(
+            AnswerRow(
+              "messages__trusteeNino_question_cya_label",
+              Seq(s"${Nino.Yes}"),
+              false,
+              onwardUrl
+            ),
+            AnswerRow(
+              "messages__trusteeNino_nino_cya_label",
+              Seq(nino.nino),
+              false,
+              onwardUrl
+            )))
+        }
+
+        "no" in {
+          val nino = Nino.No("Not sure")
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> nino)))
+
+          testIdentifier[Nino].row(onwardUrl) must equal(Seq(
+            AnswerRow(
+              "messages__trusteeNino_question_cya_label",
+              Seq(s"${Nino.No}"),
+              false,
+              onwardUrl
+            ),
+            AnswerRow(
+              "messages__trusteeNino_nino_reason_cya_label",
+              Seq(nino.reason),
+              false,
+              onwardUrl
+            )))
+        }
+      }
     }
-
   }
-
 }

@@ -106,3 +106,6 @@ GET        /:index/individual/trusteeAddressYears                       controll
 POST       /:index/individual/trusteeAddressYears                       controllers.register.trustees.individual.TrusteeAddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/individual/changeTrusteeAddressYears                 controllers.register.trustees.individual.TrusteeAddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/individual/changeTrusteeAddressYears                 controllers.register.trustees.individual.TrusteeAddressYearsController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/individual/check-your-answers                          controllers.register.trustees.individual.CheckYourAnswersController.onPageLoad(index: Index)
+POST       /:index/individual/check-your-answers                          controllers.register.trustees.individual.CheckYourAnswersController.onSubmit(index: Index)

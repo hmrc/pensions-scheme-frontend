@@ -20,9 +20,9 @@ import identifiers.TypedIdentifier
 import identifiers.register.SchemeEstablishedCountryId
 import models.address.Address
 import models.register._
-import models.UniqueTaxReference
+import models._
+import models.person.PersonDetails
 import models.requests.DataRequest
-import models.{AddressYears, CompanyDetails, CompanyRegistrationNumber, ContactDetails}
 import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
 import viewmodels.AnswerRow
@@ -415,6 +415,65 @@ object CheckYourAnswers {
             ))
       }.getOrElse(Seq.empty[AnswerRow])
     }
+
+  implicit def personDetails[I <: TypedIdentifier[PersonDetails]](implicit rds: Reads[PersonDetails]): CheckYourAnswers[I] =
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+        personDetails =>
+          Seq(
+            AnswerRow(
+              "messages__common__cya__name",
+              Seq(s"${personDetails.fullName}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__common__dob",
+              Seq(s"${DateHelper.formatDate(personDetails.date)}"),
+              false,
+              changeUrl
+            ))
+      }.getOrElse(Seq.empty[AnswerRow])
+    }
+
+  def nino[I <: TypedIdentifier[Nino]](
+                                                                    label: String
+                                                                  )(implicit rds: Reads[Nino]): CheckYourAnswers[I] =
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) =
+        userAnswers.get(id) match {
+          case Some(Nino.Yes(nino)) => Seq(
+            AnswerRow(
+              label,
+              Seq(s"${Nino.Yes}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__trusteeNino_nino_cya_label",
+              Seq(nino),
+              false,
+              changeUrl
+            )
+          )
+          case Some(Nino.No(reason)) => Seq(
+            AnswerRow(
+              label,
+              Seq(s"${Nino.No}"),
+              false, changeUrl
+            ),
+            AnswerRow(
+              "messages__trusteeNino_nino_reason_cya_label",
+              Seq(reason),
+              false,
+              changeUrl
+            ))
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+
+  implicit def defaultNino[I <: TypedIdentifier[Nino]](implicit rds: Reads[Nino]): CheckYourAnswers[I] =
+    nino("messages__trusteeNino_question_cya_label")
 
   trait Ops[A] {
     def row(changeUrl: String)(implicit request: DataRequest[AnyContent], reads: Reads[A]): Seq[AnswerRow]
