@@ -1,32 +1,31 @@
 #!/bin/bash
 
-echo "Applying migration TrusteeContactDetails"
+echo "Applying migration DeclarationDormant"
 
-echo "Adding routes to register.trustees.individual.routes"
+echo "Adding routes to conf/register.routes"
 
-echo "" >> ../conf/register.trustees.individual.routes
-echo "GET        /trusteeContactDetails                       controllers.register.trustees.individual.TrusteeContactDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.individual.routes
-echo "POST       /trusteeContactDetails                       controllers.register.trustees.individual.TrusteeContactDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.individual.routes
+echo "" >> ../conf/app.routes
+echo "GET        /declarationDormant               controllers.register.DeclarationDormantController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "POST       /declarationDormant               controllers.register.DeclarationDormantController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
 
-echo "GET        /changeTrusteeContactDetails                       controllers.register.trustees.individual.TrusteeContactDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.individual.routes
-echo "POST       /changeTrusteeContactDetails                       controllers.register.trustees.individual.TrusteeContactDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.individual.routes
+echo "GET        /changeDeclarationDormant               controllers.register.DeclarationDormantController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "POST       /changeDeclarationDormant               controllers.register.DeclarationDormantController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo messages__"trusteeContactDetails__title = trusteeContactDetails" >> ../conf/messages.en
-echo messages__"trusteeContactDetails__heading = trusteeContactDetails" >> ../conf/messages.en
-echo messages__"trusteeContactDetails__field1 = Field 1" >> ../conf/messages.en
-echo messages__"trusteeContactDetails__field2 = Field 2" >> ../conf/messages.en
-echo messages__"trusteeContactDetails__checkYourAnswersLabel = trusteeContactDetails" >> ../conf/messages.en
-echo messages__"trusteeContactDetails__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
-echo messages__"trusteeContactDetails__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
+echo "messages__declarationDormant__title = declarationDormant" >> ../conf/messages.en
+echo "messages__declarationDormant__heading = declarationDormant" >> ../conf/messages.en
+echo "messages__declarationDormant__option1 = declarationDormant" Option 1 >> ../conf/messages.en
+echo "messages__declarationDormant__option2 = declarationDormant" Option 2 >> ../conf/messages.en
+echo "messages__declarationDormant__checkYourAnswersLabel = declarationDormant" >> ../conf/messages.en
+echo "messages__declarationDormant__error__required = Please give an answer for declarationDormant" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def trusteeContactDetails: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.TrusteeContactDetailsId) map {";\
-     print "    x => AnswerRow(\"trusteeContactDetails.checkYourAnswersLabel\", Seq(s\"${x.field1} ${x.field2}\"), false, controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(CheckMode).url)";\
+     print "  def declarationDormant: Option[AnswerRow] = userAnswers.get(identifiers.register.DeclarationDormantId) map {";\
+     print "    x => AnswerRow(\"messages__declarationDormant__checkYourAnswersLabel\", Seq(s\"declarationDormant.$x\"), true, controllers.register.routes.DeclarationDormantController.onPageLoad(CheckMode).url)";\
      print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
@@ -34,4 +33,4 @@ echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration TrusteeContactDetails completed"
+echo "Migration DeclarationDormant completed"
