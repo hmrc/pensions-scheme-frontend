@@ -23,9 +23,11 @@ import controllers.behaviours.ControllerBehaviours
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId}
 import models.{CompanyDetails, Index, NormalMode}
+import navigators.TrusteesCompanyNavigator
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import utils.annotations.TrusteesCompany
 import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -47,7 +49,7 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
   implicit val builder = new GuiceApplicationBuilder()
     .overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
-      bind[Navigator].toInstance(FakeNavigator),
+      bind[Navigator].qualifiedWith(classOf[TrusteesCompany]).toInstance(FakeNavigator),
       bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),

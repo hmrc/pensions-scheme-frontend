@@ -54,7 +54,7 @@ trait ControllerBehaviours extends ControllerSpecBase
     val formProvider = new AddressFormProvider(countryOptions)
     val form: Form[Address] = formProvider()
 
-    "CompanyAddress Controller" must {
+    "ManualAddressController" must {
 
       testTheGet(get, form, viewmodel)
 
