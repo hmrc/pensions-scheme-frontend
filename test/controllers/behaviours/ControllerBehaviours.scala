@@ -54,7 +54,7 @@ trait ControllerBehaviours extends ControllerSpecBase
     val formProvider = new AddressFormProvider(countryOptions)
     val form: Form[Address] = formProvider()
 
-    "CompanyAddress Controller" must {
+    "ManualAddressController" must {
 
       testTheGet(get, form, viewmodel)
 
@@ -68,8 +68,6 @@ trait ControllerBehaviours extends ControllerSpecBase
     "render manualAddress from GET request" in {
       running(_ => builder) {
         implicit app =>
-
-          def viewAsString(form: Form[_] = form) = manualAddressView(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
 
           val request = addToken(FakeRequest(get).withHeaders("Csrf-Token" -> "nocheck"))
 
