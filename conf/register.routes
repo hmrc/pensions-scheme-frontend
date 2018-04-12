@@ -84,5 +84,5 @@ POST        /checkYourAnswers                           controllers.register.Che
 GET        /declarationDuties                        controllers.register.DeclarationDutiesController.onPageLoad
 POST       /declarationDuties                        controllers.register.DeclarationDutiesController.onSubmit
 
-GET        /declarationDormant               controllers.register.DeclarationDormantController.onPageLoad()
-POST       /declarationDormant               controllers.register.DeclarationDormantController.onSubmit()
+GET        /declarationDormant               controllers.register.DeclarationDormantController.onPageLoad
+POST       /declarationDormant               controllers.register.DeclarationDormantController.onSubmit

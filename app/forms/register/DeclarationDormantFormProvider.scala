@@ -25,6 +25,6 @@ class DeclarationDormantFormProvider @Inject() extends Mappings {
 
   def apply(): Form[DeclarationDormant] =
     Form(
-      "value" -> enumerable[DeclarationDormant]("declarationDormant.error.required")
+      "value" -> enumerable[DeclarationDormant]("messages__declarationDormant__error__required")
     )
 }

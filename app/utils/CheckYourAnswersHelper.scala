@@ -32,10 +32,6 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
-  def declarationDormant: Option[AnswerRow] = userAnswers.get(identifiers.register.DeclarationDormantId) map {
-    x => AnswerRow("messages__declarationDormant__checkYourAnswersLabel", Seq(s"declarationDormant.$x"), true, controllers.register.routes.DeclarationDormantController.onPageLoad(CheckMode).url)
-  }
-
   def trusteePreviousAddress(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.TrusteePreviousAddressId(index)) map {
     x => AnswerRow("trusteePreviousAddress.checkYourAnswersLabel", addressAnswer(x), false, controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(CheckMode, index).url)
   }

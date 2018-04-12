@@ -31,7 +31,7 @@ object DeclarationDormant {
 
   val options: Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"myOptionsPage.${value.toString}")
+      InputOption(value.toString, s"messages__declarationDormant__${value.toString}")
   }
 
   implicit val enumerable: Enumerable[DeclarationDormant] =
