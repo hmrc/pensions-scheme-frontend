@@ -31,10 +31,11 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, route, running, status}
-import utils.UserAnswers
+import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import play.api.test.Helpers._
+import utils.annotations.TrusteesIndividual
 import views.html.address.addressList
 
 class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
@@ -130,6 +131,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(new FakeNavigator(onwardRoute)),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request =
@@ -142,9 +144,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
-        //TODO//redirectLocation(result) mustBe Some(routes.TrusteeAddressController.onPageLoad(NormalMode, 0).url)
       }
-
     }
 
     "redirect to Session Expired controller when no session data exists on a POST request" in {

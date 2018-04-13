@@ -39,10 +39,12 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 import controllers.register.trustees.individual.routes._
+import play.api.mvc.Call
+import utils.annotations.TrusteesIndividual
 
 class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFRequest {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
@@ -117,6 +119,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
           bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(new FakeNavigator(onwardRoute)),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),

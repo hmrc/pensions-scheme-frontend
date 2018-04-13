@@ -28,6 +28,7 @@ import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import utils.Navigator
+import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
@@ -35,7 +36,7 @@ import viewmodels.address.AddressYearsViewModel
 class TrusteeAddressYearsController @Inject()(
   override val appConfig: FrontendAppConfig,
   override val cacheConnector: DataCacheConnector,
-  override val navigator: Navigator,
+  @TrusteesIndividual override val navigator: Navigator,
   override val messagesApi: MessagesApi,
   authenticate: AuthAction,
   getData: DataRetrievalAction,

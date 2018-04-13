@@ -27,22 +27,23 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import forms.register.trustees.individual.UniqueTaxReferenceFormProvider
 import identifiers.register.trustees.individual.{TrusteeDetailsId, UniqueTaxReferenceId}
-import models.{Index, Mode, UniqueTaxReference}
+import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
+import utils.annotations.TrusteesIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.individual.uniqueTaxReference
 
 import scala.concurrent.Future
 
 class UniqueTaxReferenceController @Inject()(
-                                       appConfig: FrontendAppConfig,
-                                       override val messagesApi: MessagesApi,
-                                       dataCacheConnector: DataCacheConnector,
-                                       navigator: Navigator,
-                                       authenticate: AuthAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: UniqueTaxReferenceFormProvider
+                                              appConfig: FrontendAppConfig,
+                                              override val messagesApi: MessagesApi,
+                                              dataCacheConnector: DataCacheConnector,
+                                              @TrusteesIndividual navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction,
+                                              formProvider: UniqueTaxReferenceFormProvider
                                      ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()

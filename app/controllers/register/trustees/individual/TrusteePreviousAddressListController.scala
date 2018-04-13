@@ -29,17 +29,18 @@ import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{AnyContent, Call}
 import utils.Navigator
+import utils.annotations.TrusteesIndividual
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.Future
 
 class TrusteePreviousAddressListController @Inject()(override val appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         override val navigator: Navigator,
-                                         override val cacheConnector: DataCacheConnector,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction) extends AddressListController with Retrievals with I18nSupport {
+                                                     override val messagesApi: MessagesApi,
+                                                     @TrusteesIndividual override val navigator: Navigator,
+                                                     override val cacheConnector: DataCacheConnector,
+                                                     authenticate: AuthAction,
+                                                     getData: DataRetrievalAction,
+                                                     requireData: DataRequiredAction) extends AddressListController with Retrievals with I18nSupport {
 
   def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]) = {
     (TrusteeDetailsId(index) and IndividualPreviousAddressPostCodeLookupId(index)).retrieve.right.map {

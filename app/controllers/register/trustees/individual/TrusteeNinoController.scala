@@ -30,17 +30,18 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
+import utils.annotations.TrusteesIndividual
 import views.html.register.trustees.individual.trusteeNino
 
 import scala.concurrent.Future
 
 class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         navigator: Navigator,
-                                         dataCacheConnector: DataCacheConnector) extends FrontendController with I18nSupport with Retrievals {
+                                      override val messagesApi: MessagesApi,
+                                      authenticate: AuthAction,
+                                      getData: DataRetrievalAction,
+                                      requireData: DataRequiredAction,
+                                      @TrusteesIndividual navigator: Navigator,
+                                      dataCacheConnector: DataCacheConnector) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Nino] = new TrusteeNinoFormProvider()()
 
