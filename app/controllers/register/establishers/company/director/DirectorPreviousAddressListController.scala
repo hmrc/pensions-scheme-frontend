@@ -28,6 +28,7 @@ import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.Navigator
+import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
@@ -36,7 +37,7 @@ import scala.concurrent.Future
 class DirectorPreviousAddressListController @Inject()(
         override val appConfig: FrontendAppConfig,
         override val cacheConnector: DataCacheConnector,
-        override val navigator: Navigator,
+        @EstablishersCompanyDirector override val navigator: Navigator,
         override val messagesApi: MessagesApi,
         authenticate: AuthAction,
         getData: DataRetrievalAction,
