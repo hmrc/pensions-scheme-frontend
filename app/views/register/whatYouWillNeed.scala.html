@@ -16,7 +16,7 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.routes
+@import controllers.register.routes._
 @import models.Mode
 
 @(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
@@ -26,16 +26,18 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @components.heading("messages__what_you_will_need__title")
+    @helpers.form(action = WhatYouWillNeedController.onSubmit, 'autoComplete -> "off") {
 
-    <p>@messages("messages__what_you_will_need__lede")</p>
-    <ul class="list list-bullet">
-        <li>@messages("messages__what_you_will_need__item_1")</li>
-        <li>@messages("messages__what_you_will_need__item_2")</li>
-        <li>@messages("messages__what_you_will_need__item_3")</li>
-        <li>@messages("messages__what_you_will_need__item_4")</li>
-        <li>@messages("messages__what_you_will_need__item_5")</li>
-    </ul>
+        @components.heading(headingKey = "messages__what_you_will_need__title", secondaryHeaderKey = Some("messages_cya_secondary_header"))
 
-    @components.button_link("messages__common__start", routes.SchemeDetailsController.onPageLoad(NormalMode).url)
+        <p>@messages("messages__what_you_will_need__lede")</p>
+        <ul class="list list-bullet">
+            <li>@messages("messages__what_you_will_need__item_1")</li>
+            <li>@messages("messages__what_you_will_need__item_2")</li>
+            <li>@messages("messages__what_you_will_need__item_3")</li>
+            <li>@messages("messages__what_you_will_need__item_4")</li>
+        </ul>
+
+        @components.submit_button("messages__common__continue")
+    }
 }

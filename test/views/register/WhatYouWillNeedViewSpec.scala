@@ -16,25 +16,23 @@
 
 package views.register
 
-import controllers.register.routes
-import models.NormalMode
+import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import org.jsoup.Jsoup
 import views.html.register.whatYouWillNeed
 
 class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "what_you_will_need"
 
-  def createView = () => whatYouWillNeed(frontendAppConfig)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeed(frontendAppConfig)(fakeRequest, messages)
 
   "WhatYouWillNeed view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title") ,
-      "_lede", "_item_1", "_item_2", "_item_3", "_item_4", "_item_5")
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"),
+      "_lede", "_item_1", "_item_2", "_item_3", "_item_4")
 
-    "have link" in {
-      Jsoup.parse(createView().toString()).select("a.button") must haveLink(routes.SchemeDetailsController.onPageLoad(NormalMode).url)
-    }
+    behave like pageWithSecondaryHeader(createView, messages("messages_cya_secondary_header"))
+
+    behave like pageWithSubmitButton(createView)
   }
 }

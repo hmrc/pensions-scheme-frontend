@@ -4,6 +4,7 @@
 ->         /trustees                                    trustees.Routes
 
 GET        /whatYouWillNeed                             controllers.register.WhatYouWillNeedController.onPageLoad()
+POST       /whatYouWillNeed                             controllers.register.WhatYouWillNeedController.onSubmit()
 GET        /schemeDetails                               controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = NormalMode)
 POST       /schemeDetails                               controllers.register.SchemeDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /changeSchemeDetails                         controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = CheckMode)
