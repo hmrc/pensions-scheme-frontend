@@ -20,25 +20,41 @@ import play.api.data.Form
 import controllers.register.establishers.company.routes
 import forms.register.establishers.company.OtherDirectorsFormProvider
 import views.behaviours.YesNoViewBehaviours
-import models.NormalMode
+import models.{Index, NormalMode}
 import views.html.register.establishers.company.otherDirectors
 
 class OtherDirectorsViewSpec extends YesNoViewBehaviours {
 
+  val index = Index(1)
+
   val messageKeyPrefix = "otherDirectors"
+
+  val companyName = "test company name"
 
   val form = new OtherDirectorsFormProvider()()
 
-  def createView = () => otherDirectors(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView = () => otherDirectors(frontendAppConfig, form, NormalMode, index,companyName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => otherDirectors(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => otherDirectors(frontendAppConfig, form, NormalMode, index,companyName)(fakeRequest, messages)
 
   "OtherDirectors view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__otherDirectors__heading"))
+    behave like normalPage(
+      createView,
+      messageKeyPrefix,
+      messages("messages__otherDirectors__heading")
+    )
+
+    behave like pageWithSecondaryHeader(createView, companyName)
 
     behave like pageWithBackLink(createView)
 
-    behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.OtherDirectorsController.onSubmit(NormalMode).url)
+    behave like yesNoPage(createViewUsingForm,
+      messageKeyPrefix,
+      routes.OtherDirectorsController.onSubmit(NormalMode,index).url,
+      expectedHintKey = Some("_lede")
+    )
+
+    behave like pageWithSubmitButton(createView)
   }
 }

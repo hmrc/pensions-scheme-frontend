@@ -17,54 +17,77 @@
 package controllers.register.establishers.company
 
 import play.api.data.Form
-import play.api.libs.json.JsBoolean
-import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
+import play.api.test.Helpers.{contentAsString, _}
 import play.api.libs.json._
 import forms.register.establishers.company.OtherDirectorsFormProvider
-import identifiers.register.establishers.company.OtherDirectorsId
-import models.NormalMode
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.company.{CompanyDetailsId, OtherDirectorsId}
+import models.register.{SchemeDetails, SchemeType}
+import models.{CompanyDetails, Index, NormalMode}
 import views.html.register.establishers.company.otherDirectors
 
 class OtherDirectorsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  val schemeName = "Test Scheme Name"
+
+  val index = Index(0)
+  val invalidIndex=Index(10)
 
   val formProvider = new OtherDirectorsFormProvider()
   val form = formProvider()
+  val companyName = "test company name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
+  val validData = Json.obj(
+    SchemeDetailsId.toString ->
+      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    EstablishersId.toString -> Json.arr(
+      Json.obj(
+        CompanyDetailsId.toString -> CompanyDetails("test company name", Some("123456"), Some("abcd")),
+        OtherDirectorsId.toString -> true
+      )
+    )
+  )
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
     new OtherDirectorsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = otherDirectors(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = otherDirectors(frontendAppConfig, form, NormalMode,index,companyName)(fakeRequest, messages).toString
 
   "OtherDirectors Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode,index)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(OtherDirectorsId.toString -> true)
+
+
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
-
+      val result = controller(getRelevantData).onPageLoad(NormalMode,index)(fakeRequest)
       contentAsString(result) mustBe viewAsString(form.fill(true))
     }
 
+    "redirect to session expired page on a GET when the index is not valid" ignore {
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode,index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -74,14 +97,14 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+      val result = controller().onSubmit(NormalMode,index)(postRequest)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode,index)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -89,7 +112,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode,index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)

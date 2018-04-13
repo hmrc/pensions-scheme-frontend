@@ -24,6 +24,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
+import controllers.Retrievals
 import forms.register.establishers.company.OtherDirectorsFormProvider
 import identifiers.register.establishers.company.OtherDirectorsId
 import models.{Index, Mode}
@@ -32,36 +33,42 @@ import views.html.register.establishers.company.otherDirectors
 
 import scala.concurrent.Future
 
-class OtherDirectorsController @Inject() (
-                                                     appConfig: FrontendAppConfig,
-                                                     override val messagesApi: MessagesApi,
-                                                     dataCacheConnector: DataCacheConnector,
-                                                     navigator: Navigator,
-                                                     authenticate: AuthAction,
-                                                     getData: DataRetrievalAction,
-                                                     requireData: DataRequiredAction,
-                                                     formProvider: OtherDirectorsFormProvider
-                                                   ) extends FrontendController with I18nSupport {
+class OtherDirectorsController @Inject()(
+                                          appConfig: FrontendAppConfig,
+                                          override val messagesApi: MessagesApi,
+                                          dataCacheConnector: DataCacheConnector,
+                                          navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          formProvider: OtherDirectorsFormProvider
+                                        ) extends FrontendController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, establisherIndex: Index) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, establisherIndex: Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(OtherDirectorsId) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      retrieveCompanyName(establisherIndex) { companyName =>
+        val redirectResult = request.userAnswers.get(OtherDirectorsId(establisherIndex)) match {
+          case None => Ok(otherDirectors(appConfig, form, mode, establisherIndex, companyName))
+          case Some(value) => Ok(otherDirectors(appConfig, form.fill(value), mode, establisherIndex, companyName))
+        }
+        Future.successful(redirectResult)
       }
-      Ok(otherDirectors(appConfig, preparedForm, mode,establisherIndex))
+
   }
 
   def onSubmit(mode: Mode, establisherIndex: Index) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(otherDirectors(appConfig, formWithErrors, mode,establisherIndex))),
-        (value) =>
-          dataCacheConnector.save(request.externalId, OtherDirectorsId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(OtherDirectorsId, mode)(new UserAnswers(cacheMap))))
-      )
+      retrieveCompanyName(establisherIndex) {
+        companyName =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(otherDirectors(appConfig, formWithErrors, mode, establisherIndex, companyName))),
+            (value) =>
+              dataCacheConnector.save(request.externalId, OtherDirectorsId(establisherIndex), value).map(cacheMap =>
+                Redirect(navigator.nextPage(OtherDirectorsId(establisherIndex), mode)(new UserAnswers(cacheMap))))
+          )
+      }
   }
 }

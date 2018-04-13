@@ -16,7 +16,13 @@
 
 package identifiers.register.establishers.company
 import identifiers._
+import identifiers.register.establishers.EstablishersId
+import play.api.libs.json.JsPath
 
-case object OtherDirectorsId extends TypedIdentifier[Boolean] {
-  override def toString: String = "otherDirectors"
+case class OtherDirectorsId(index:Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = EstablishersId.path \ index \ OtherDirectorsId.toString
+}
+
+object OtherDirectorsId{
+  override lazy val toString: String = "otherDirectors"
 }

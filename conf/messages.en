@@ -481,6 +481,12 @@ messages__schemeReview__establishers__editLink = Add, delete or edit scheme esta
 messages__schemeReview__trustees__heading = Trustees
 messages__schemeReview__trustees__editLink = Add, delete or edit trustees
 
+messages__otherDirectors__title=Do you need to tell us about other directors?
+messages__otherDirectors__heading=Do you need to tell us about other directors?
+messages__otherDirectors__lede=You don't have to add them now. We may contact you if we need this information.
+messages__otherDirectors__error__required=You must make a selection
+
+
 messages_cya_secondary_header = Register a new pension scheme
 messages__scheme_benefits_section=Scheme benefits
 membership.checkYourAnswersLabel = Current membership
