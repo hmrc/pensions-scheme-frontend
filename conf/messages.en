@@ -119,8 +119,6 @@ messages__what_you_will_need__item_1 = the names, addresses, previous addresses 
 messages__what_you_will_need__item_2 = the telephone numbers, email addresses and Self Assessment Unique Taxpayer Reference numbers of any directors, trustees and partners associated with the pension scheme
 messages__what_you_will_need__item_3 = the name, contact details, Corporation Tax Unique Taxpayer Reference number and address of the scheme establisher
 messages__what_you_will_need__item_4 = PAYE, Company Registration and VAT registration numbers
-messages__what_you_will_need__item_5 = PAYE, Company Registration and VAT Registration numbers
-messages__common__start = Start
 
 messages__trustee__has_ct_utr__title = Does the trustee have a Corporation Tax Unique Taxpayer Reference number?
 messages__trustee__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
