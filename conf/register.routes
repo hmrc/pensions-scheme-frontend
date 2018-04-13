@@ -83,3 +83,8 @@ POST        /checkYourAnswers                           controllers.register.Che
 
 GET        /declarationDuties                        controllers.register.DeclarationDutiesController.onPageLoad
 POST       /declarationDuties                        controllers.register.DeclarationDutiesController.onSubmit
+
+GET        /declaration               controllers.register.DeclarationController.onPageLoad
+POST       /declaration               controllers.register.DeclarationController.onSubmit
+GET        /changeDeclaration                        controllers.register.DeclarationController.onPageLoad
+POST       /changeDeclaration                        controllers.register.DeclarationController.onSubmit

@@ -68,6 +68,17 @@ trait ViewSpecBase extends SpecBase {
       )
   }
 
+  def haveCheckBox(id: String, value: String): Matcher[Document] = Matcher[Document] {
+    document =>
+      val checkbox = document.select(s"input[id=$id][type=checkbox][value=$value]")
+
+      MatchResult(
+        checkbox.size == 1,
+        s"Checkbox with Id $id and value $value not rendered on page",
+        s"Checkbox with Id $id and value $value rendered on page"
+      )
+  }
+
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())
 
   def assertEqualsMessage(doc: Document, cssSelector: String, expectedMessageKey: String): Assertion =
