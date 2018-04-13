@@ -20,6 +20,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
 import models.AddressYears
 import play.api.libs.json.JsPath
+import utils.CheckYourAnswers
 
 case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYears]{
   override def path: JsPath = TrusteesId.path \ index \ TrusteeAddressYearsId.toString
@@ -27,4 +28,7 @@ case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
 
 object TrusteeAddressYearsId {
   override def toString: String = "trusteeAddressYears"
+
+  implicit val cya: CheckYourAnswers[TrusteeAddressYearsId] =
+    CheckYourAnswers.addressYears("messages__trusteeAddressYears_cya_label")
 }

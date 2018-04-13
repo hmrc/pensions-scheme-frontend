@@ -534,8 +534,8 @@ messages__individualPostCodeLookup__heading = Trustee’s address
 messages__individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__trustee_individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 
-messages__trusteeIndividualPreviousAddressPostCodeLookup__title = Previous address
-messages__trusteeIndividualPreviousAddressPostCodeLookup__heading = Previous address
+messages__trustee_individual_previous_address__title = Previous address
+messages__trustee_individual_previous_address__heading = Previous address
 
 messages__trustee__uniqueTaxReference__title = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__trustee__uniqueTaxReference__heading = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
@@ -550,14 +550,16 @@ messages__trustee__uniqueTaxReference__error__utr_invalid = Please give an answe
 messages__trusteeAddressYears__title = How long has the trustee been at this address?
 messages__trusteeAddressYears__heading = How long has the trustee been at this address?
 messages__trusteeAddressYears__error_required = Select how long they have been at the current address
-messages__trusteeAddressYears__cya_label = How long has the trustee been at this address?
+
+messages__trusteeAddressYears_cya_label = How long has the trustee been at this address?
+messages__trusteeNino_question_cya_label = Does the trustee have a National Insurance number?
+messages__trusteeNino_nino_cya_label = National Insurance number
+messages__trusteeNino_reason_cya_label = Reason
+messages__trusteeUtr_question_cya_label = Does the trustee have a Unique Taxpayer Reference number?
 
 messages__trusteePreviousAddress__title = Trustee’s address
 messages__trusteePreviousAddress__heading = Trustee’s address
 messages__trusteePreviousAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
-
-messages__trusteeIndividualPreviousAddressPostCodeLookup__title = Previous address
-messages__trusteeIndividualPreviousAddressPostCodeLookup__heading = Previous address
 
 messages__trusteeContactDetails__title = Trustee’s contact details
 messages__trusteeContactDetails__heading = Trustee’s contact details

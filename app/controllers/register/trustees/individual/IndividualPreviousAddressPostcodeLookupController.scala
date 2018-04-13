@@ -52,9 +52,9 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(
           details =>
             PostcodeLookupViewModel(
               routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(mode, index),
-              routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index), //TODO: Change manual entry link to Manual address entry page
-              title = Message("messages__trusteeIndividualPreviousAddressPostCodeLookup__title"),
-              heading = Message("messages__trusteeIndividualPreviousAddressPostCodeLookup__heading"),
+              routes.TrusteePreviousAddressController.onPageLoad(mode, index),
+              title = Message("messages__trustee_individual_previous_address__title"),
+              heading = Message("messages__trustee_individual_previous_address__heading"),
               subHeading = Some(details.fullName),
               hint = Message("messages__common_individual_postCode_lookup__lede"),
               enterPostcode = Message("messages__trustee_individualPostCodeLookup__enter_postcode")
