@@ -111,7 +111,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
     "redirect to next page on POST request" which {
       "saves director address" in {
 
-        val onwardCall = Call("GET", "/")
+        val onwardCall = routes.DirectorContactDetailsController.onPageLoad(NormalMode, establisherIndex, directorIndex)
 
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),

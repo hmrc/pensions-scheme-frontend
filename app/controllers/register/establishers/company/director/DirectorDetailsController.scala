@@ -31,6 +31,7 @@ import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.register.establishers.company.director.DirectorDetails
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
+import utils.annotations.EstablishersCompanyDirector
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.company.director.directorDetails
 
@@ -40,7 +41,7 @@ class DirectorDetailsController @Inject() (
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
+                                        @EstablishersCompanyDirector navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,

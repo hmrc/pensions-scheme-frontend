@@ -100,6 +100,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
     "redirect to the next page on POST request" in {
 
       val validPostcode = "ZZ1 1ZZ"
+      val onwardUrl = routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, establisherIndex, directorIndex)
 
       val fakeRequest = addToken(FakeRequest(onwardRoute)
         .withFormUrlEncodedBody("value" -> validPostcode))
@@ -125,7 +126,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
           val result = route(app, fakeRequest).get
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(onwardRoute.url)
+          redirectLocation(result) mustBe Some(onwardUrl.url)
       }
     }
 

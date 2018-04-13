@@ -19,10 +19,22 @@ package identifiers.register.establishers.company.director
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.AddressYears
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 
 case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[AddressYears] {
+
   override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \ DirectorAddressYearsId.toString
+
+  override def cleanup(value: Option[AddressYears], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(AddressYears.OverAYear) =>
+        userAnswers.remove(DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex))
+          .flatMap(_.remove(DirectorPreviousAddressId(establisherIndex, directorIndex)))
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
+
 }
 
 object DirectorAddressYearsId {
