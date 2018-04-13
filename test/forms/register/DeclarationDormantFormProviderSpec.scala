@@ -35,7 +35,7 @@ class DeclarationDormantFormProviderSpec extends FormBehaviours {
     behave like formWithOptionField(
       Field(
         "value",
-        Required -> "declarationDormant.error.required",
+        Required -> "messages__declarationDormant__error__required",
         Invalid -> "error.invalid"),
       DeclarationDormant.options.map(_.value): _*)
   }
