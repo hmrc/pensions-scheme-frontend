@@ -21,7 +21,7 @@ import models.requests.DataRequest
 import play.api.libs.json._
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{Cleanup, UserAnswers}
+import utils.UserAnswers
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,7 +31,6 @@ trait DataCacheConnector {
                                       (implicit
                                        request: DataRequest[AnyContent],
                                        wrts: Format[A],
-                                       cleanup: Cleanup[I],
                                        ec: ExecutionContext,
                                        hc: HeaderCarrier
                                       ): Future[UserAnswers] = {
@@ -41,14 +40,12 @@ trait DataCacheConnector {
   def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
                                       (implicit
                                        fmt: Format[A],
-                                       cleanup: Cleanup[I],
                                        ec: ExecutionContext,
                                        hc: HeaderCarrier
                                       ): Future[JsValue]
 
   def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
                                      (implicit
-                                      cleanup: Cleanup[I],
                                       ec: ExecutionContext,
                                       hc: HeaderCarrier
                                      ): Future[JsValue]
