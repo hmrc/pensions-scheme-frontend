@@ -17,8 +17,14 @@
 package identifiers.register.trustees.individual
 
 import identifiers._
+import identifiers.register.trustees.TrusteesId
 import models.ContactDetails
+import play.api.libs.json._
 
 case class TrusteeContactDetailsId(index: Int) extends TypedIdentifier[ContactDetails] {
-  override def toString: String = "trusteeContactDetails"
+  override def path: JsPath = TrusteesId.path \ index \ TrusteeContactDetailsId.toString
+}
+
+object TrusteeContactDetailsId {
+  override lazy val toString: String = "trusteeContactDetails"
 }

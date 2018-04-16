@@ -20,8 +20,10 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.IndividualDetailsFormProvider
+import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.{Index, Mode}
 import play.api.data.Form
@@ -43,27 +45,33 @@ class TrusteeDetailsController @Inject() (
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: IndividualDetailsFormProvider
-                                      ) extends FrontendController with I18nSupport {
+                                      ) extends FrontendController with Retrievals with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(TrusteeDetailsId(index)) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      SchemeDetailsId.retrieve.right.map {
+        schemeDetails =>
+          val redirectResult = request.userAnswers.get(TrusteeDetailsId(index)) match {
+            case None => Ok(trusteeDetails(appConfig, form, mode, index, schemeDetails.schemeName))
+            case Some(value) => Ok(trusteeDetails(appConfig, form.fill(value), mode, index, schemeDetails.schemeName))
+          }
+          Future.successful(redirectResult)
       }
-      Ok(trusteeDetails(appConfig, preparedForm, mode, index))
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(trusteeDetails(appConfig, formWithErrors, mode, index))),
-        (value) =>
-          dataCacheConnector.save(request.externalId, TrusteeDetailsId(index), value).map(cacheMap =>
-            Redirect(navigator.nextPage(TrusteeDetailsId(index), mode)(new UserAnswers(cacheMap))))
-      )
+      SchemeDetailsId.retrieve.right.map {
+        schemeDetails =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(trusteeDetails(appConfig, formWithErrors, mode, index, schemeDetails.schemeName))),
+            (value) =>
+              dataCacheConnector.save(request.externalId, TrusteeDetailsId(index), value).map(cacheMap =>
+                Redirect(navigator.nextPage(TrusteeDetailsId(index), mode)(new UserAnswers(cacheMap))))
+          )
+      }
   }
 }

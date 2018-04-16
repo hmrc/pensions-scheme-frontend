@@ -25,7 +25,7 @@ sealed trait EntityDetails {
   case class TrusteeIndividualName(name: String) extends EntityDetails {
     override def route(id: Int, id2: Option[Int]): (String, String) =
       name ->
-        controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, id).url
+        controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(CheckMode, id).url
   }
 
   case class TrusteeCompanyName(name: String) extends EntityDetails {

@@ -23,33 +23,34 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-title = messages("messages__common__company_details__title"),
-appConfig = appConfig,
-bodyClasses = None) {
+   title = messages("messages__common__company_details__title"),
+   appConfig = appConfig,
+   bodyClasses = None) {
 
-@helpers.form(action = CompanyDetailsController.onSubmit(mode, index), 'autoComplete -> "off") {
+   @helpers.form(action = CompanyDetailsController.onSubmit(mode, index), 'autoComplete -> "off") {
 
-@components.back_link()
+       @components.back_link()
 
-@components.error_summary(form.errors)
+       @components.error_summary(form.errors)
 
-@components.heading(headingKey = "messages__common__company_details__title", secondaryHeaderKey = Some(schemeName))
+       @components.heading(headingKey = "messages__common__company_details__title",
+            secondaryHeaderKey = Some(messages("messages__common__trustee_secondary_header", schemeName)))
 
-@components.input_text(
-field = form("companyName"),
-label = messages("messages__common__company_name")
-)
+       @components.input_text(
+           field = form("companyName"),
+           label = messages("messages__common__company_name")
+       )
 
-@components.input_text(
-field = form("vatNumber"),
-label = messages("messages__common__vat")
-)
+       @components.input_text(
+           field = form("vatNumber"),
+           label = messages("messages__common__vat")
+       )
 
-@components.input_text(
-field = form("payeNumber"),
-label = messages("messages__common__paye")
-)
+       @components.input_text(
+           field = form("payeNumber"),
+           label = messages("messages__common__paye")
+       )
 
-@components.submit_button()
-}
+       @components.submit_button()
+   }
 }

@@ -28,9 +28,10 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswers.Ops._
-import utils.{CheckYourAnswersFactory, CountryOptions}
-import viewmodels.AnswerSection
+import utils.CountryOptions
+import viewmodels.{AnswerSection, Message}
 import views.html.check_your_answers
+
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
@@ -45,9 +46,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
 
-      val schemeDetailsId = SchemeDetailsId
-
-      schemeDetailsId.retrieve.right.map { schemeDetails =>
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
 
         val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, index).url)
         val trusteeNinoRow = TrusteeNinoId(index).row(routes.TrusteeNinoController.onPageLoad(CheckMode, index).url)
@@ -70,7 +69,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(check_your_answers(
           appConfig,
           Seq(trusteeDetailsSection, contactDetailsSection),
-          Some(s"Trustees for ${schemeDetails.schemeName}"),
+          Some(Message("messages__common__trustee_secondary_header", schemeDetails.schemeName)),
           routes.CheckYourAnswersController.onSubmit(index)
         )))
       }

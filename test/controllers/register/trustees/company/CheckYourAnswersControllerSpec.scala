@@ -28,7 +28,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   val countryOptions: CountryOptions = new CountryOptions(Seq(InputOption("GB", "United Kingdom")))
   val firstIndex = Index(0)
-  val companyName = "test company name"
+  val schemeName = "Test Scheme Name"
 
   val answers: Seq[AnswerRow] = Seq.empty
 
@@ -39,7 +39,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   lazy val companyDetailsSection = AnswerSection(
     Some("messages__checkYourAnswers__section__company_details"),
     Seq(
-      AnswerRow("messages__common__cya__name", Seq(companyName), false, companyDetailsRoute),
+      AnswerRow("messages__common__cya__name", Seq("test company name"), false, companyDetailsRoute),
       AnswerRow("messages__common__cya__vat", Seq("123456"), false, companyDetailsRoute),
       AnswerRow("messages__common__cya__paye", Seq("abcd"), false, companyDetailsRoute)
     )
@@ -67,7 +67,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       companyDetailsSection,
       contactDetailsSection
     ),
-    Some(companyName),
+    Some(messages("messages__common__trustee_secondary_header", schemeName)),
     postUrl
   )(fakeRequest, messages).toString
 

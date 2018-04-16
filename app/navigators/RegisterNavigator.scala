@@ -19,12 +19,14 @@ package navigators
 import com.google.inject.{Inject, Singleton}
 import identifiers.Identifier
 import identifiers.register._
+import identifiers.register.trustees.{AddTrusteeId, TrusteeKindId}
+import models.register.trustees.TrusteeKind
 import models.NormalMode
 import play.api.mvc.Call
-import utils.{Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 
 @Singleton
-class RegisterNavigator @Inject() extends Navigator {
+class RegisterNavigator @Inject() extends Navigator with Enumerable.Implicits {
 
   override protected val routeMap: PartialFunction[Identifier, UserAnswers => Call] = {
     case SchemeDetailsId =>
@@ -50,7 +52,12 @@ class RegisterNavigator @Inject() extends Navigator {
       _ => controllers.register.routes.InsurerAddressController.onPageLoad(NormalMode)
     case InsurerAddressId =>
       _ => controllers.register.routes.UKBankAccountController.onPageLoad(NormalMode)
-    case UKBankAccountId => UKBankAccountRoutes()
+    case UKBankAccountId =>
+      ukBankAccountRoutes()
+    case AddTrusteeId =>
+      addTrusteeRoutes()
+    case TrusteeKindId(index) =>
+      trusteeKindRoutes(index)
   }
 
   private def securedBenefitsRoutes()(answers: UserAnswers): Call = {
@@ -64,13 +71,33 @@ class RegisterNavigator @Inject() extends Navigator {
     }
   }
 
-  private def UKBankAccountRoutes()(answers: UserAnswers): Call = {
+  private def ukBankAccountRoutes()(answers: UserAnswers): Call = {
     answers.get(UKBankAccountId) match {
       case Some(true) =>
         controllers.register.routes.UKBankDetailsController.onPageLoad(NormalMode)
       case Some(false) =>
         controllers.register.routes.UKBankAccountController.onPageLoad(NormalMode)
       case None =>
+        controllers.routes.SessionExpiredController.onPageLoad()
+    }
+  }
+
+  private def addTrusteeRoutes()(answers: UserAnswers): Call = {
+    answers.get(AddTrusteeId) match {
+      case Some(false) =>
+        controllers.register.routes.SchemeReviewController.onPageLoad()
+      case Some(true) | None =>
+        controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.length)
+    }
+  }
+
+  private def trusteeKindRoutes(index: Int)(answers: UserAnswers): Call = {
+    answers.get(TrusteeKindId(index)) match {
+      case Some(TrusteeKind.Company) =>
+        controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index)
+      case Some(TrusteeKind.Individual) =>
+        controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, index)
+      case _ =>
         controllers.routes.SessionExpiredController.onPageLoad()
     }
   }
