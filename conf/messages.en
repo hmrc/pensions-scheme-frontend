@@ -578,3 +578,6 @@ messages__declaration__statement6 = that I may be liable to a penalty and the pe
 messages__declaration__statement7 = to the best of my knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete. I understand that I am responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
 messages__declaration__agree = I agree
 messages__declaration__invalid = You need to agree to all the declarations before you can continue
+
+messages__confirmDeleteTrustee__title = Confirm deletion
+messages__confirmDeleteTrustee__heading = Are you sure you want to delete {0}?

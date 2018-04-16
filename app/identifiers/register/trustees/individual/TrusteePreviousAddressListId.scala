@@ -22,7 +22,7 @@ import models.address.Address
 import play.api.libs.json.JsPath
 
 case class TrusteePreviousAddressListId(index: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = TrusteesId.path \ index \ TrusteePreviousAddressListId.toString
+  override def path: JsPath = TrusteesId(index).path \ TrusteePreviousAddressListId.toString
 }
 
 object TrusteePreviousAddressListId {

@@ -22,7 +22,7 @@ import models.Nino
 import play.api.libs.json.JsPath
 
 case class TrusteeNinoId(index: Int) extends TypedIdentifier[Nino] {
-  override def path: JsPath = TrusteesId.path \ index \ TrusteeNinoId.toString
+  override def path: JsPath = TrusteesId(index).path \ TrusteeNinoId.toString
 }
 
 object TrusteeNinoId {
