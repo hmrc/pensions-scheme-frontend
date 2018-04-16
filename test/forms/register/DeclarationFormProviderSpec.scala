@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.company
+package forms.register
 
-import identifiers._
-import identifiers.register.trustees.TrusteesId
-import models.UniqueTaxReference
-import play.api.libs.json.JsPath
+import forms.behaviours.CheckboxBehaviour
+import play.api.data.Form
 
-case class CompanyUniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
-  override def path: JsPath = TrusteesId(index).path \ CompanyUniqueTaxReferenceId.toString
-}
+class DeclarationFormProviderSpec extends CheckboxBehaviour {
 
-object CompanyUniqueTaxReferenceId {
-  override def toString: String = "companyUniqueTaxReference"
+  private val form: Form[Boolean] = new DeclarationFormProvider()()
+  private val fieldName = "agree"
+  private val trueValue = "agreed"
+  private val invalidKey = "messages__declaration__invalid"
+
+  "DeclarationFormProvider" should {
+    behave like formWithCheckbox(form, fieldName, trueValue, acceptTrueOnly = true, invalidKey)
+  }
+
 }

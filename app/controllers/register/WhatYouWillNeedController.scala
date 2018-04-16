@@ -20,6 +20,7 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -33,5 +34,10 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
       Ok(whatYouWillNeed(appConfig))
+  }
+
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData) {
+    implicit request =>
+      Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
   }
 }

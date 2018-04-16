@@ -4,6 +4,12 @@ POST       /addTrustee               controllers.register.trustees.AddTrusteeCon
 GET        /changeAddTrustee                        controllers.register.trustees.AddTrusteeController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeAddTrustee                        controllers.register.trustees.AddTrusteeController.onSubmit(mode: Mode = CheckMode)
 
+GET        /:index/company/confirmDeleteTrustee                       controllers.register.trustees.ConfirmDeleteTrusteeController.onPageLoad(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Company)
+POST       /:index/company/confirmDeleteTrustee                       controllers.register.trustees.ConfirmDeleteTrusteeController.onSubmit(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Company)
+
+GET        /:index/individual/confirmDeleteTrustee                       controllers.register.trustees.ConfirmDeleteTrusteeController.onPageLoad(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Individual)
+POST       /:index/individual/confirmDeleteTrustee                       controllers.register.trustees.ConfirmDeleteTrusteeController.onSubmit(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Individual)
+
 GET         /:index/company/companyUniqueTaxReference              controllers.register.trustees.company.CompanyUniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode,index:Index)
 POST        /:index/company/companyUniqueTaxReference              controllers.register.trustees.company.CompanyUniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode,index:Index)
 GET         /:index/company/changeCompanyUniqueTaxReference        controllers.register.trustees.company.CompanyUniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode,index:Index)

@@ -21,7 +21,7 @@ import models.register.trustees.TrusteeKind
 import play.api.libs.json.JsPath
 
 case class TrusteeKindId(index: Int) extends TypedIdentifier[TrusteeKind] {
-  override def path: JsPath = TrusteesId.path \ index \ TrusteeKindId.toString
+  override def path: JsPath = TrusteesId(index).path \ TrusteeKindId.toString
 }
 
 object TrusteeKindId {

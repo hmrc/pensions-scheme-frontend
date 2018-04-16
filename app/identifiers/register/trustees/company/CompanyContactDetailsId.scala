@@ -23,7 +23,7 @@ import models.ContactDetails
 
 
 case class CompanyContactDetailsId(index: Int) extends TypedIdentifier[ContactDetails] {
-  override def path: JsPath = TrusteesId.path \ index \ CompanyContactDetailsId.toString
+  override def path: JsPath = TrusteesId(index).path \ CompanyContactDetailsId.toString
 }
 
  object CompanyContactDetailsId {
