@@ -20,6 +20,7 @@ import base.CSRFRequest
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
+import controllers.register.trustees.individual.IndividualPostCodeLookupControllerSpec.onwardRoute
 import forms.address.AddressListFormProvider
 import identifiers.register.trustees.individual._
 import models.{Index, NormalMode}
@@ -71,6 +72,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
 
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
+  val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
 
 
   "Individual Address List Controller" must {
@@ -131,7 +133,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(new FakeNavigator(onwardRoute)),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request =

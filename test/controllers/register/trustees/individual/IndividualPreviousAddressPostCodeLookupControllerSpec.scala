@@ -118,7 +118,7 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
       bind[DataRetrievalAction].toInstance(retrieval),
       bind[DataRequiredAction].to(new DataRequiredActionImpl),
       bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(new FakeNavigator(onwardRoute)),
+      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
       bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
       bind[PostCodeLookupFormProvider].to(formProvider)
     )) {
