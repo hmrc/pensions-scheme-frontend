@@ -582,3 +582,7 @@ messages__declaration__invalid = You need to agree to all the declarations befor
 
 messages__confirmDeleteTrustee__title = Confirm deletion
 messages__confirmDeleteTrustee__heading = Are you sure you want to delete {0}?
+
+messages__moreThanTenTrustees__title = Do you need to tell us about other trustees?
+messages__moreThanTenTrustees__heading = Do you need to tell us about other trustees?
+messages__moreThanTenTrustees__hint = You don't have to add them now. We may contact you if we need this information.
