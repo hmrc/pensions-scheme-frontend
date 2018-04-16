@@ -23,7 +23,7 @@ import play.api.libs.json.{JsPath, JsResult}
 import utils.{CheckYourAnswers, UserAnswers}
 
 case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
-  override def path: JsPath = TrusteesId.path \ index \ TrusteeAddressYearsId.toString
+  override def path: JsPath = TrusteesId(index).path \ index \ TrusteeAddressYearsId.toString
 
   override def cleanup(value: Option[AddressYears], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
