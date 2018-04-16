@@ -33,45 +33,24 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
   def createViewUsingForm = (form: Form[_]) => declaration(frontendAppConfig, form, schemeName)(fakeRequest, messages)
 
   "Declaration view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(
+      createView,
+      messageKeyPrefix,
+      messages(s"messages__${messageKeyPrefix}__title"),
+        "_declare",
+        "_statement1",
+        "_statement2",
+        "_statement3",
+        "_statement4",
+        "_statement5",
+        "_statement6",
+        "_statement7")
 
     behave like pageWithSecondaryHeader(createView, schemeName)
 
     "show an error summary when rendered with an error" in {
       val doc = asDocument(createViewUsingForm(form.withError(error)))
       assertRenderedById(doc, "error-summary-heading")
-    }
-
-    "display the declaration" in {
-      Jsoup.parse(createView().toString) must haveDynamicText("messages__declaration__declare")
-    }
-
-    "display the first statement" in {
-      Jsoup.parse(createView().toString) must haveDynamicText("messages__declaration__statement1")
-    }
-
-    "display the second statement" in {
-      Jsoup.parse(createView().toString) must haveDynamicText("messages__declaration__statement2")
-    }
-
-    "display the third statement" in {
-      Jsoup.parse(createView().toString) must haveDynamicText("messages__declaration__statement3")
-    }
-
-    "display the fourth statement" in {
-      Jsoup.parse(createView().toString) must haveDynamicText("messages__declaration__statement4")
-    }
-
-    "display the fifth statement" in {
-      Jsoup.parse(createView().toString) must haveDynamicText("messages__declaration__statement5")
-    }
-
-    "display the sixth statement" in {
-      Jsoup.parse(createView().toString) must haveDynamicText("messages__declaration__statement6")
-    }
-
-    "display the seventh statement" in {
-      Jsoup.parse(createView().toString) must haveDynamicText("messages__declaration__statement7")
     }
 
     "have an I Agree checkbox" in {
