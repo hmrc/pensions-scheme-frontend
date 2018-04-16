@@ -18,9 +18,17 @@ package identifiers.register.trustees
 
 import identifiers.TypedIdentifier
 import play.api.libs.json._
+import utils.UserAnswers
 
 case class TrusteesId(index: Int) extends TypedIdentifier[Nothing] {
   override def path: JsPath = __ \ TrusteesId.toString \ index
+
+  override def cleanup(value: Option[Nothing], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    userAnswers.allTrustees.lengthCompare(10) match {
+      case x if x<=0 => userAnswers.remove(MoreThanTenTrusteesId)
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 object TrusteesId {
