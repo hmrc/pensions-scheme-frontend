@@ -115,13 +115,11 @@ messages__unauthorised__title = You can’t access this service with this accoun
 messages__pension_scheme_registration__title = Pension Scheme Registration - GOV.UK
 
 messages__what_you_will_need__title = What you’ll need
-messages__what_you_will_need__lede = To register a pension scheme you will need:
-messages__what_you_will_need__item_1 = a Self Assessment, Partnership or Corporation Tax Unique Taxpayer Reference number
-messages__what_you_will_need__item_2 = the names, addresses, previous address and National Insurance numbers of any directors, trustees and partners associated with the pension scheme
-messages__what_you_will_need__item_3 = the telephone numbers and email addresses of any directors, trustees and partners associated with the pension scheme
-messages__what_you_will_need__item_4 = the name, contact details and address of the establisher
-messages__what_you_will_need__item_5 = PAYE, Company Registration and VAT Registration numbers
-messages__common__start = Start
+messages__what_you_will_need__lede = To register a pension scheme with HMRC you will need:
+messages__what_you_will_need__item_1 = the names, addresses, previous addresses and National Insurance numbers of any directors, trustees and partners associated with the pension scheme
+messages__what_you_will_need__item_2 = the telephone numbers, email addresses and Self Assessment Unique Taxpayer Reference numbers of any directors, trustees and partners associated with the pension scheme
+messages__what_you_will_need__item_3 = the name, contact details, Corporation Tax Unique Taxpayer Reference number and address of the scheme establisher
+messages__what_you_will_need__item_4 = PAYE, Company Registration and VAT registration numbers
 
 messages__trustee__has_ct_utr__title = Does the trustee have a Corporation Tax Unique Taxpayer Reference number?
 messages__trustee__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
