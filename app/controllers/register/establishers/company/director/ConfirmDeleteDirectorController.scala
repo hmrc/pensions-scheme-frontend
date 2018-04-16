@@ -26,7 +26,7 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId, DirectorId}
 import models.{Index, NormalMode}
 import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
@@ -64,7 +64,7 @@ class ConfirmDeleteDirectorController @Inject()(
 
   def onSubmit(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      dataCacheConnector.remove(request.externalId, DirectorDetailsId(establisherIndex, directorIndex)).map {
+      dataCacheConnector.remove(request.externalId, DirectorId(establisherIndex, directorIndex)).map {
         json =>
           Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode)(UserAnswers(json)))
       }
