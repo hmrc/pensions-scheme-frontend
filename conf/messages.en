@@ -586,3 +586,10 @@ messages__confirmDeleteTrustee__heading = Are you sure you want to delete {0}?
 messages__moreThanTenTrustees__title = Do you need to tell us about other trustees?
 messages__moreThanTenTrustees__heading = Do you need to tell us about other trustees?
 messages__moreThanTenTrustees__hint = You don't have to add them now. We may contact you if we need this information.
+
+messages__declarationDormant__title = Have any of the scheme establishers been dormant in the last 12 months?
+messages__declarationDormant__heading = Have any of the scheme establishers been dormant in the last 12 months?
+messages__declarationDormant__no = No, none were dormant
+messages__declarationDormant__yes = Yes, some or all were dormant
+messages__declarationDormant__checkYourAnswersLabel = Have any of the scheme establishers been dormant in the last 12 months?
+messages__declarationDormant__error__required = You need to tell us if you have appointed an adviser
