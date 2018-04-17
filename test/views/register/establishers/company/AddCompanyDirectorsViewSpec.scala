@@ -102,7 +102,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with PeopleListBeh
       val doc = asDocument(createViewUsingForm(Seq(johnDoe))(form))
       val submit = doc.select("button#submit")
       submit.size() mustBe 1
-      submit.first().text() mustBe messages("site.continue")
+      submit.first().text() mustBe messages("site.save_and_continue")
     }
 
     "not show the yes no inputs if there are 10 or more directors" in {
