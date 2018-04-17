@@ -216,17 +216,10 @@ class RegisterNavigatorSpec extends SpecBase with MockitoSugar {
     }
 
     ".nextPage(MoreThanTenTrusteesId)" must {
-      Seq(true, false).foreach { flag =>
-        s"return a `call` to `SchemeReviewController` page if 'MoreThanTenTrustees' is $flag" in {
-          val answers = new UserAnswers(
-            Json.obj(
-              MoreThanTenTrusteesId.toString -> flag
-            )
-          )
-          val result = navigator.nextPage(MoreThanTenTrusteesId, NormalMode)(answers)
+        s"return a `call` to `SchemeReviewController` page" in {
+          val result = navigator.nextPage(MoreThanTenTrusteesId, NormalMode)(emptyAnswers)
           result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
         }
-      }
     }
 
     ".nextPage(TrusteeKindId)" must {
@@ -262,6 +255,13 @@ class RegisterNavigatorSpec extends SpecBase with MockitoSugar {
       "return a `call` to `SessionExpired` page if TrusteeKind is undefined" in {
         val result = navigator.nextPage(TrusteeKindId(0), NormalMode)(emptyAnswers)
         result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
+      }
+    }
+
+    ".nextPage(SchemeReviewId)" must {
+      "return a 'call' to 'SchemeEstablishedCountryController' page" in {
+        val result = navigator.nextPage(SchemeReviewId, NormalMode)(emptyAnswers)
+        result mustEqual controllers.register.routes.DeclarationDormantController.onPageLoad()
       }
     }
   }

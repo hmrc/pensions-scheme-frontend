@@ -61,6 +61,8 @@ class RegisterNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigato
       _ => controllers.register.routes.SchemeReviewController.onPageLoad()
     case TrusteeKindId(index) =>
       trusteeKindRoutes(index)
+    case SchemeReviewId =>
+      _ => controllers.register.routes.DeclarationDormantController.onPageLoad()
   }
 
   private def securedBenefitsRoutes()(answers: UserAnswers): Call = {
