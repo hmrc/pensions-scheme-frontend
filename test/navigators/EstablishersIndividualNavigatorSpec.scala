@@ -27,7 +27,7 @@ import utils.UserAnswers
 class EstablishersIndividualNavigatorSpec extends WordSpec with MustMatchers with PropertyChecks {
 
   val navigator = new EstablishersIndividualNavigator()
-  val emptyAnswers = new UserAnswers(Json.obj())
+  val emptyAnswers = UserAnswers(Json.obj())
 
   "NormalMode" when {
 
@@ -94,7 +94,7 @@ class EstablishersIndividualNavigatorSpec extends WordSpec with MustMatchers wit
     ".nextPage(AddressYears)" must {
 
       "return a `Call` to `ContactDetails` page when `AddressYears` is `OverAYear`" in {
-        val answers = new UserAnswers(Json.obj(
+        val answers = UserAnswers(Json.obj(
           EstablishersId.toString -> Json.arr(
             Json.obj(
               AddressYearsId.toString ->
@@ -107,7 +107,7 @@ class EstablishersIndividualNavigatorSpec extends WordSpec with MustMatchers wit
       }
 
       "return a `Call` to `PreviousPostCodeLookup` page when `AddressYears` is `UnderAYear`" in {
-        val answers = new UserAnswers(Json.obj(
+        val answers = UserAnswers(Json.obj(
           EstablishersId.toString -> Json.arr(
             Json.obj(
               AddressYearsId.toString ->
@@ -162,6 +162,13 @@ class EstablishersIndividualNavigatorSpec extends WordSpec with MustMatchers wit
             val result = navigator.nextPage(ContactDetailsId(index), NormalMode)(emptyAnswers)
             result mustEqual controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index)
         }
+      }
+    }
+
+    ".nextPage(CheckYourAnswers)" must {
+      "return a `Call` to `AddTrusteeController`" in {
+        val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(emptyAnswers)
+        result mustEqual controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
       }
     }
   }
@@ -231,7 +238,7 @@ class EstablishersIndividualNavigatorSpec extends WordSpec with MustMatchers wit
     ".nextPage(AddressYears)" must {
 
       "return a `Call` to `CheckYourAnswersPage` page when `AddressYears` is `OverAYear`" in {
-        val answers = new UserAnswers(Json.obj(
+        val answers = UserAnswers(Json.obj(
           EstablishersId.toString -> Json.arr(
             Json.obj(
               AddressYearsId.toString ->
@@ -244,7 +251,7 @@ class EstablishersIndividualNavigatorSpec extends WordSpec with MustMatchers wit
       }
 
       "return a `Call` to `PreviousPostCodeLookup` page when `AddressYears` is `UnderAYear`" in {
-        val answers = new UserAnswers(Json.obj(
+        val answers = UserAnswers(Json.obj(
           EstablishersId.toString -> Json.arr(
             Json.obj(
               AddressYearsId.toString ->

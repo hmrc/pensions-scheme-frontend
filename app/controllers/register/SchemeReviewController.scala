@@ -52,4 +52,5 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       Redirect(navigator.nextPage(SchemeReviewId, NormalMode)(request.userAnswers))
   }
+
 }

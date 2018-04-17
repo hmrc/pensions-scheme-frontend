@@ -21,7 +21,7 @@ import controllers.ControllerSpecBase
 import models.Index
 import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
-import utils.{CheckYourAnswersFactory, CountryOptions, DateHelper, InputOption}
+import utils._
 import viewmodels.{AnswerRow, AnswerSection}
 import play.api.test.Helpers._
 import views.html.check_your_answers
@@ -49,11 +49,21 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
     )
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersController =
-    new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction, dataRetrievalAction,
-      new DataRequiredActionImpl, checkYourAnswersFactory)
+  private val onwardRoute = controllers.routes.IndexController.onPageLoad()
+
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersController =
+    new CheckYourAnswersController(
+      frontendAppConfig,
+      messagesApi,
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      checkYourAnswersFactory,
+      new FakeNavigator(onwardRoute)
+    )
 
   "Check Your Answers Controller" must {
+
     "return 200 and the correct view for a GET" in {
       val postUrl = routes.CheckYourAnswersController.onSubmit(firstIndex)
       val result = controller().onPageLoad(firstIndex)(fakeRequest)
@@ -74,6 +84,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
+
+    "redirect to the next page on a POST request" in {
+      val result = controller().onSubmit(firstIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
   }
 
 }

@@ -23,11 +23,16 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import controllers.actions._
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.{Retrievals}
-import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
+import controllers.Retrievals
+import identifiers.register.{SchemeDetailsId, SchemeSuccessId, SubmissionReferenceNumberId}
+import models.NormalMode
 import org.joda.time.LocalDate
+import org.joda.time.format.DateTimeFormat
 import play.api.mvc.{Action, AnyContent}
+import utils.Navigator
+import utils.annotations.Register
 import views.html.register.schemeSuccess
+
 import scala.concurrent.Future
 
 
@@ -36,7 +41,8 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         cacheConnector: DataCacheConnector,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction) extends FrontendController with I18nSupport with Retrievals {
+                                        requireData: DataRequiredAction,
+                                        @Register navigator: Navigator) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async{
     implicit request =>
@@ -51,4 +57,10 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
           )
       }
   }
+
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+    implicit request =>
+      Redirect(navigator.nextPage(SchemeSuccessId, NormalMode)(request.userAnswers))
+  }
+
 }

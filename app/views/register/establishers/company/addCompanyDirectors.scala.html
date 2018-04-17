@@ -51,8 +51,8 @@
             @if(directors.size < appConfig.maxDirectors) {
                 @components.input_yes_no(
                     field = form("value"),
-                    label = messages("messages__addCompanyDirectors__heading"),
-                    labelClass = Some("visually-hidden"),
+                    label = messages("messages__addCompanyDirectors_add_more"),
+                    labelClass = Some("bold-small"),
                     hint = Some(messages("messages__addCompanyDirectors_lede"))
                 )
             } else {

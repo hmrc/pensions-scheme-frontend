@@ -14,27 +14,10 @@
  * limitations under the License.
  */
 
-package models.register
+package identifiers.register.establishers.individual
 
-import utils.{Enumerable, InputOption, WithName}
+import identifiers.Identifier
 
-sealed trait DeclarationDormant
-
-object DeclarationDormant {
-
-  case object No extends WithName("no") with DeclarationDormant
-  case object Yes extends WithName("yes") with DeclarationDormant
-
-  val values: Seq[DeclarationDormant] = Seq(
-    No, Yes
-  )
-
-  val options: Seq[InputOption] = values.map {
-    value =>
-      InputOption(value.toString, s"messages__declarationDormant__${value.toString}")
-  }
-
-  implicit val enumerable: Enumerable[DeclarationDormant] =
-    Enumerable(values.map(v => v.toString -> v): _*)
-
+case object CheckYourAnswersId extends Identifier {
+  override def toString: String = "checkYourAnswers"
 }

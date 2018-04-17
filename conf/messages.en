@@ -397,6 +397,7 @@ messages__addCompanyDirectors__title = Company directors
 messages__addCompanyDirectors__heading = Company directors
 messages__addCompanyDirectors__checkYourAnswersLabel = Company directors
 messages__addCompanyDirectors__error__required = You must make a selection
+messages__addCompanyDirectors_add_more = Do you want to add another director?
 messages__addCompanyDirectors_lede = You must tell us about all your directors. You can add up to 10 using the digital service.
 messages__addCompanyDirectors_add_director = Add a director
 messages__addCompanyDirectors_at_maximum = You have added the maximum number of directors.

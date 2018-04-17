@@ -22,12 +22,13 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import controllers.actions._
 import config.FrontendAppConfig
-import identifiers.register.{InsurerAddressId, _}
+import identifiers.register._
 import models.{CheckMode, NormalMode}
 import play.api.mvc.{Action, AnyContent}
 import views.html.check_your_answers
 import utils.CheckYourAnswers.Ops._
-import utils.{CountryOptions, Enumerable}
+import utils.annotations.Register
+import utils.{CountryOptions, Enumerable, Navigator}
 import viewmodels.AnswerSection
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
@@ -35,7 +36,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
-                                           implicit val countryOptions: CountryOptions) extends FrontendController with Enumerable.Implicits with I18nSupport {
+                                           implicit val countryOptions: CountryOptions,
+                                           @Register navigator: Navigator) extends FrontendController with Enumerable.Implicits with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -68,12 +70,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         appConfig,
         Seq(schemeDetailsSection, schemeBenefitsSection, bankAccountSection),
         Some("messages_cya_secondary_header"),
-        routes.CheckYourAnswersController.onSubmit)
+        routes.CheckYourAnswersController.onSubmit())
       )
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Redirect(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
+      Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode)(request.userAnswers))
   }
+
 }

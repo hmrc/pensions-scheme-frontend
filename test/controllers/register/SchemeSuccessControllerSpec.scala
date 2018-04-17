@@ -25,9 +25,11 @@ import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
-
+import utils.FakeNavigator
 
 class SchemeSuccessControllerSpec extends ControllerSpecBase {
+
+  private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val submissionReferenceNumber="XX123456789132"
 
@@ -36,13 +38,25 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase {
     SubmissionReferenceNumberId.toString->submissionReferenceNumber
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction =
+  private def controller(dataRetrievalAction: DataRetrievalAction =
                  new FakeDataRetrievalAction(Some(validData))):SchemeSuccessController =
-    new SchemeSuccessController(frontendAppConfig, messagesApi, FakeDataCacheConnector, FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl)
+    new SchemeSuccessController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      new FakeNavigator(onwardRoute)
+    )
 
-  def viewAsString(): String = schemeSuccess(frontendAppConfig, Some("test scheme name"),
-    LocalDate.now(), submissionReferenceNumber)(fakeRequest, messages).toString
+  def viewAsString(): String =
+    schemeSuccess(
+      frontendAppConfig,
+      Some("test scheme name"),
+      LocalDate.now(),
+      submissionReferenceNumber
+    )(fakeRequest, messages).toString
 
   "SchemeSuccess Controller" must {
 
@@ -63,5 +77,12 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase {
 }
 
 
+    "redirect to the next page for a POST" in {
+      val result = controller().onSubmit(fakeRequest)
 
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+  }
 
+}

@@ -74,6 +74,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemL
       createViewUsingForm(Seq(johnDoe)),
       messageKeyPrefix,
       routes.AddCompanyDirectorsController.onSubmit(NormalMode, 0).url,
+      legendKey = "add_more",
       expectedHintKey = Some("lede")
     )
 

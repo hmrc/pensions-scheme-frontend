@@ -31,6 +31,7 @@ import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declarationDuties
 import models.{Mode, NormalMode}
 import play.api.mvc.{Action, AnyContent}
+import utils.annotations.Register
 
 import scala.concurrent.Future
 
@@ -38,7 +39,7 @@ class DeclarationDutiesController @Inject()(
                                              appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
                                              dataCacheConnector: DataCacheConnector,
-                                             navigator: Navigator,
+                                             @Register navigator: Navigator,
                                              authenticate: AuthAction,
                                              getData: DataRetrievalAction,
                                              requireData: DataRequiredAction,

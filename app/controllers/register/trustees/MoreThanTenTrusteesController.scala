@@ -29,22 +29,22 @@ import forms.register.trustees.MoreThanTenTrusteesFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import models.Mode
-import utils.annotations.Register
 import play.api.mvc.{Action, AnyContent}
+import utils.annotations.Trustees
 import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.moreThanTenTrustees
 
 import scala.concurrent.Future
 
 class MoreThanTenTrusteesController @Inject() (
-                                                     appConfig: FrontendAppConfig,
-                                                     override val messagesApi: MessagesApi,
-                                                     dataCacheConnector: DataCacheConnector,
-                                                     @Register navigator: Navigator,
-                                                     authenticate: AuthAction,
-                                                     getData: DataRetrievalAction,
-                                                     requireData: DataRequiredAction,
-                                                     formProvider: MoreThanTenTrusteesFormProvider
+                                                appConfig: FrontendAppConfig,
+                                                override val messagesApi: MessagesApi,
+                                                dataCacheConnector: DataCacheConnector,
+                                                @Trustees navigator: Navigator,
+                                                authenticate: AuthAction,
+                                                getData: DataRetrievalAction,
+                                                requireData: DataRequiredAction,
+                                                formProvider: MoreThanTenTrusteesFormProvider
                                                    ) extends FrontendController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
@@ -68,7 +68,7 @@ class MoreThanTenTrusteesController @Inject() (
             Future.successful(BadRequest(moreThanTenTrustees(appConfig, formWithErrors, mode, details.schemeName))),
           (value) =>
             dataCacheConnector.save(request.externalId, MoreThanTenTrusteesId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(MoreThanTenTrusteesId, mode)(new UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(MoreThanTenTrusteesId, mode)(UserAnswers(cacheMap))))
         )
       }
   }

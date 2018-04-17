@@ -46,6 +46,7 @@ GET        /changeBenefits                              controllers.register.Ben
 POST       /changeBenefits                              controllers.register.BenefitsController.onSubmit(mode: Mode = CheckMode)
 
 GET        /schemeSuccess                               controllers.register.SchemeSuccessController.onPageLoad()
+POST       /schemeSuccess                               controllers.register.SchemeSuccessController.onSubmit()
 
 GET        /schemeEstablishedCountry                    controllers.register.SchemeEstablishedCountryController.onPageLoad(mode: Mode = NormalMode)
 POST       /schemeEstablishedCountry                    controllers.register.SchemeEstablishedCountryController.onSubmit(mode: Mode = NormalMode)

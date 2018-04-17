@@ -52,6 +52,8 @@ class EstablishersIndividualNavigator @Inject() extends Navigator {
       _ => controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, index)
     case ContactDetailsId(index) =>
       checkYourAnswers(index)
+    case CheckYourAnswersId =>
+      _ => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
   }
 
   override protected val editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
