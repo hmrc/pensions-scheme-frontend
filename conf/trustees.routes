@@ -135,3 +135,8 @@ POST       /:index/individual/changeTrusteeContactDetails                       
 
 GET        /:index/individual/check-your-answers                          controllers.register.trustees.individual.CheckYourAnswersController.onPageLoad(index: Index)
 POST       /:index/individual/check-your-answers                          controllers.register.trustees.individual.CheckYourAnswersController.onSubmit(index: Index)
+
+GET        /moreThanTenTrustees                       controllers.register.trustees.MoreThanTenTrusteesController.onPageLoad(mode: Mode = NormalMode)
+POST       /moreThanTenTrustees                       controllers.register.trustees.MoreThanTenTrusteesController.onSubmit(mode: Mode = NormalMode)
+GET        /changeMoreThanTenTrustees                       controllers.register.trustees.MoreThanTenTrusteesController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeMoreThanTenTrustees                       controllers.register.trustees.MoreThanTenTrusteesController.onSubmit(mode: Mode = CheckMode)
