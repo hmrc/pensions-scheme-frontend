@@ -21,22 +21,22 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationDormantFormProvider
 import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
-import models.NormalMode
 import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json._
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.register.declarationDormant
 
 class DeclarationDormantControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new DeclarationDormantFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): DeclarationDormantController =
     new DeclarationDormantController(
       frontendAppConfig,
       messagesApi,
@@ -50,12 +50,12 @@ class DeclarationDormantControllerSpec extends ControllerSpecBase {
 
   val schemeName = "Test Scheme Name"
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     SchemeDetailsId.toString -> SchemeDetails(schemeName, SchemeType.SingleTrust),
     DeclarationDormant.toString -> DeclarationDormant.values.head.toString
   )
 
-  def viewAsString(form: Form[_] = form) = declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages).toString
 
   "DeclarationDormant Controller" must {
 

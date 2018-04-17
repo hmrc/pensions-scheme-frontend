@@ -18,8 +18,8 @@ package views.register
 
 import play.api.data.Form
 import forms.register.DeclarationDormantFormProvider
-import models.NormalMode
 import models.register.DeclarationDormant
+import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.declarationDormant
 
@@ -31,9 +31,9 @@ class DeclarationDormantViewSpec extends ViewBehaviours {
 
   val form = new DeclarationDormantFormProvider()()
 
-  def createView = () => declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages)
 
   "DeclarationDormant view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))

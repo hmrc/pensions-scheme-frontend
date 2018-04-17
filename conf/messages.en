@@ -588,7 +588,7 @@ messages__moreThanTenTrustees__hint = You don't have to add them now. We may con
 
 messages__declarationDormant__title = Have any of the scheme establishers been dormant in the last 12 months?
 messages__declarationDormant__heading = Have any of the scheme establishers been dormant in the last 12 months?
-messages__declarationDormant__option1 = No, none were dormant
-messages__declarationDormant__option2 = Yes, some or all were dormant
+messages__declarationDormant__no = No, none were dormant
+messages__declarationDormant__yes = Yes, some or all were dormant
 messages__declarationDormant__checkYourAnswersLabel = Have any of the scheme establishers been dormant in the last 12 months?
-messages__declarationDormant__error__required = Please give an answer for declarationDormant
+messages__declarationDormant__error__required = You need to tell us if you have appointed an adviser

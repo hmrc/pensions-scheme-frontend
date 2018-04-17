@@ -22,11 +22,11 @@ sealed trait DeclarationDormant
 
 object DeclarationDormant {
 
-  case object Option1 extends WithName("option1") with DeclarationDormant
-  case object Option2 extends WithName("option2") with DeclarationDormant
+  case object No extends WithName("no") with DeclarationDormant
+  case object Yes extends WithName("yes") with DeclarationDormant
 
   val values: Seq[DeclarationDormant] = Seq(
-    Option1, Option2
+    No, Yes
   )
 
   val options: Seq[InputOption] = values.map {
