@@ -28,6 +28,7 @@ import controllers.Retrievals
 import forms.register.establishers.company.OtherDirectorsFormProvider
 import identifiers.register.establishers.company.OtherDirectorsId
 import models.{Index, Mode}
+import utils.annotations.EstablishersCompany
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.company.otherDirectors
 
@@ -37,7 +38,7 @@ class OtherDirectorsController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           dataCacheConnector: DataCacheConnector,
-                                          navigator: Navigator,
+                                          @EstablishersCompany navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,

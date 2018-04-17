@@ -47,7 +47,7 @@ class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) exten
     case CompanyAddressId(index) =>
       _ => controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, index)
     case CompanyAddressYearsId(index) =>
-     addressYearsRoutes(index)
+      addressYearsRoutes(index)
     case CompanyPreviousAddressPostcodeLookupId(index) =>
       _ => controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, index)
     case CompanyPreviousAddressListId(index) =>
@@ -56,7 +56,9 @@ class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) exten
       _ => controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index)
     case CompanyContactDetailsId(index) =>
       _ => controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
-    case AddCompanyDirectorsId(index)=> addDirectors(index)
+    case AddCompanyDirectorsId(index) => addDirectors(index)
+    case OtherDirectorsId(index)=>
+      _ => controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index)
 
   }
 
@@ -76,6 +78,7 @@ class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) exten
       _ => controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index)
     case CompanyPreviousAddressId(index) => checkYourAnswers(index)
     case CompanyContactDetailsId(index) => checkYourAnswers(index)
+    case AddCompanyDirectorsId(index) => addDirectors(index)
   }
 
   private def addressYearsRoutes(index: Int)(answers: UserAnswers): Call = {
@@ -100,20 +103,14 @@ class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) exten
     }
   }
 
-  private def addDirectors(index:Int)(answers:UserAnswers): Call={
-//    answers.get(AddCompanyDirectorsId(index)) match {
-//      case Some(true)=>routes.IndexController.onPageLoad()   //add directors
-//      case Some(false)=>routes.IndexController.onPageLoad() //end of journey
-//      case None=> {
-        val directors = answers.getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
-          .getOrElse(Nil)
-        if (directors.lengthCompare(appConfig.maxDirectors) == 0) {
-          controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(NormalMode, index)
-        }
-        else {
-          routes.IndexController.onPageLoad()
-        }
-      }
- //   }
-  //}
+  private def addDirectors(index: Int)(answers: UserAnswers): Call = {
+    val directors = answers.getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
+      .getOrElse(Nil)
+    if (directors.lengthCompare(appConfig.maxDirectors) == 0) {
+      controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(NormalMode, index)
+    }
+    else {
+      routes.IndexController.onPageLoad()
+    }
+  }
 }
