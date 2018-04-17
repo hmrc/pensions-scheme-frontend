@@ -16,29 +16,28 @@
 
 package controllers.register.establishers.individual
 
-import play.api.data.Form
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
-import forms.register.establishers.individual.EstablisherDetailsFormProvider
+import forms.register.IndividualDetailsFormProvider
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models._
-import views.html.register.establishers.individual.establisherDetails
-import controllers.ControllerSpecBase
-import identifiers.register.SchemeDetailsId
-import models.register.establishers.individual.EstablisherDetails
+import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
+import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator
+import views.html.register.establishers.individual.establisherDetails
 
 class EstablisherDetailsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new EstablisherDetailsFormProvider()
+  val formProvider = new IndividualDetailsFormProvider()
 
   val form = formProvider()
   val schemeName = "Test Scheme Name"
@@ -50,7 +49,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
   val month = LocalDate.now().getMonthOfYear
   val year = LocalDate.now().getYear - 20
 
-  val establisherDetailsObj = EstablisherDetails("firstName", None, "lastName", new LocalDate(year, month, day))
+  val establisherDetailsObj = PersonDetails("firstName", None, "lastName", new LocalDate(year, month, day))
 
   val minimalDataCacheMap = new FakeDataRetrievalAction(Some(Json.obj(
     SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)))))
@@ -106,8 +105,14 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"),
-        ("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(
+        ("firstName", "testFirstName"),
+        ("lastName", "testLastName"),
+        ("date.day", day.toString),
+        ("date.month", month.toString),
+        ("date.year", year.toString)
+      )
+
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)

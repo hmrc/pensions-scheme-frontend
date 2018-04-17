@@ -23,7 +23,7 @@ import play.api.libs.json._
 import utils.{CheckYourAnswers, CountryOptions}
 
 case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = TrusteesId.path \ index \ CompanyPreviousAddressId.toString
+  override def path: JsPath = TrusteesId(index).path \ CompanyPreviousAddressId.toString
 }
 
 object CompanyPreviousAddressId {

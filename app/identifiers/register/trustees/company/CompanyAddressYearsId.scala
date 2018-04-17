@@ -19,23 +19,26 @@ package identifiers.register.trustees.company
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
 import models.AddressYears
-import play.api.libs.json.JsPath
-import utils.{CheckYourAnswers, Cleanup}
+import play.api.libs.json.{JsPath, JsResult}
+import utils.{CheckYourAnswers, UserAnswers}
 
 case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
-  override def path: JsPath = TrusteesId.path \ index \ CompanyAddressYearsId.toString
+  override def path: JsPath = TrusteesId(index).path \ CompanyAddressYearsId.toString
+
+  override def cleanup(value: Option[AddressYears], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(AddressYears.OverAYear) =>
+        userAnswers
+          .remove(CompanyPreviousAddressPostcodeLookupId(this.index))
+          .flatMap(_.remove(CompanyPreviousAddressId(this.index)))
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
+
 }
 
 object CompanyAddressYearsId {
   override lazy val toString: String = "trusteesCompanyAddressYears"
-
-  implicit lazy val addressYears: Cleanup[CompanyAddressYearsId] =
-    Cleanup[AddressYears, CompanyAddressYearsId] {
-      case (CompanyAddressYearsId(id), Some(AddressYears.OverAYear), answers) =>
-        answers
-          .remove(CompanyPreviousAddressPostcodeLookupId(id))
-          .flatMap(_.remove(CompanyPreviousAddressId(id)))
-    }
 
   implicit val cya: CheckYourAnswers[CompanyAddressYearsId] =
     CheckYourAnswers.addressYears("messages__checkYourAnswers__trustees__company__address_years")

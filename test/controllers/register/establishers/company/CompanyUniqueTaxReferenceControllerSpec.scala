@@ -23,7 +23,7 @@ import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyUniqueTaxReferenceId}
 import models._
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json.Json

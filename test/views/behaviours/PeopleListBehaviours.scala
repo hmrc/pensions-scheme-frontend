@@ -16,14 +16,11 @@
 
 package views.behaviours
 
-import play.twirl.api.HtmlFormat
 import viewmodels.Person
 import views.ViewSpecBase
 
 trait PeopleListBehaviours {
   this: ViewSpecBase =>
-
-  type View = () => HtmlFormat.Appendable
 
   // scalastyle:off method.length
   def peopleList(emptyView: View, nonEmptyView: View, people: Seq[Person]): Unit = {

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.trustees.company
+package identifiers.register.trustees.company
 
-import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyPreviousAddressId, CompanyPreviousAddressPostcodeLookupId}
 import models.AddressYears
 import models.address.Address
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}

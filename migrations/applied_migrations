@@ -1,18 +1,33 @@
 #!/bin/bash
 
-echo "Applying migration SchemeReview"
+echo "Applying migration MoreThanTenTrustees"
 
-echo "Adding routes to register.routes"
-echo "" >> ../conf/register.routes
-echo "GET        /schemeReview                       controllers.register.SchemeReviewController.onPageLoad()" >> ../conf/register.routes
+echo "Adding routes to register.trustees.routes"
+
+echo "" >> ../conf/register.trustees.routes
+echo "GET        /moreThanTenTrustees                       controllers.register.trustees.MoreThanTenTrusteesController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.routes
+echo "POST       /moreThanTenTrustees                       controllers.register.trustees.MoreThanTenTrusteesController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.routes
+
+echo "GET        /changeMoreThanTenTrustees                       controllers.register.trustees.MoreThanTenTrusteesController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.routes
+echo "POST       /changeMoreThanTenTrustees                       controllers.register.trustees.MoreThanTenTrusteesController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "schemeReview.title = schemeReview" >> ../conf/messages.en
-echo "schemeReview.heading = schemeReview" >> ../conf/messages.en
+echo "messages__moreThanTenTrustees__title = moreThanTenTrustees" >> ../conf/messages.en
+echo "messages__moreThanTenTrustees__heading = moreThanTenTrustees" >> ../conf/messages.en
+echo "messages__moreThanTenTrustees__checkYourAnswersLabel = moreThanTenTrustees" >> ../conf/messages.en
+echo "messages__moreThanTenTrustees__error__required = Please give an answer for moreThanTenTrustees" >> ../conf/messages.en
+
+echo "Adding helper method to CheckYourAnswersHelper"
+awk '/class/ {\
+     print;\
+     print "";\
+     print "  def moreThanTenTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.MoreThanTenTrusteesId) map {";\
+     print "    x => AnswerRow(\"moreThanTenTrustees.checkYourAnswersLabel\", Seq(if(x) \"site.yes\" else \"site.no\"), true, controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(CheckMode).url)"; print "  }";\
+     next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration SchemeReview completed"
+echo "Migration MoreThanTenTrustees completed"

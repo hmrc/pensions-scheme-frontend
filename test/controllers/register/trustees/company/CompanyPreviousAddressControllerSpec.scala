@@ -37,6 +37,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils._
+import utils.annotations.TrusteesCompany
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -65,7 +66,6 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[Navigator].toInstance(FakeNavigator),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
@@ -106,7 +106,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
     "redirect to next page on POST request" which {
       "saves address" in {
 
-        val onwardCall = routes.CompanyContactDetailsController.onPageLoad(NormalMode,Index(0))
+        val onwardCall = controllers.routes.IndexController.onPageLoad
 
         val address = Address(
           addressLine1 = "value 1",
@@ -117,6 +117,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
         )
 
         running(_.overrides(
+          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator(onwardCall)),
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
           bind[DataCacheConnector].toInstance(FakeDataCacheConnector),

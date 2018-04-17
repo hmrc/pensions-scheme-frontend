@@ -22,20 +22,18 @@ import views.html.register.whatYouWillNeed
 import controllers.ControllerSpecBase
 import models.NormalMode
 import play.api.mvc.Call
-import utils.FakeNavigator
-import utils.annotations.Register
 
 class WhatYouWillNeedControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedController =
     new WhatYouWillNeedController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction)
 
-  def viewAsString() = whatYouWillNeed(frontendAppConfig)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeed(frontendAppConfig)(fakeRequest, messages).toString
 
   "WhatYouWillNeed Controller" must {
 
@@ -44,6 +42,13 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+    }
+
+    "redirect to Scheme details page on a POST" in {
+      val result = controller().onSubmit(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
     }
   }
 }

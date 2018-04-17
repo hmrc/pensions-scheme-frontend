@@ -17,7 +17,7 @@
 package forms.mappings
 
 import forms.behaviours.UtrBehaviour
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import play.api.data.Form
 
 class UtrMappingSpec extends UtrBehaviour {

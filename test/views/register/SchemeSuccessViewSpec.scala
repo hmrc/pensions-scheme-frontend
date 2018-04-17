@@ -35,7 +35,7 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
   "SchemeSuccess view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", testScheme),
-      "_email", "_copy_1", "_copy_2", "_copy_3", "_register_pensions_regulator", "_register_vat")
+      "_copy_1", "_copy_2", "_copy_3", "_register_pensions_regulator", "_register_vat")
 
     "have dynamic text for application number" in {
       Jsoup.parse(createView().toString()) must haveDynamicText("messages__complete__application_number_is", "1234")

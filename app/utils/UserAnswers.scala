@@ -22,10 +22,10 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
+import models.CompanyDetails
 import models.person.PersonDetails
 import models.register._
 import models.register.establishers.individual.EstablisherDetails
-import models.{CheckMode, CompanyDetails, NormalMode}
 import play.api.libs.json._
 
 import scala.language.implicitConversions
@@ -51,20 +51,20 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       .flatMap(a => traverse(a.map(Json.fromJson[A]))).asOpt
   }
 
-  def set[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data], cleanup: Cleanup[I]): JsResult[UserAnswers] = {
+  def set[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data]): JsResult[UserAnswers] = {
 
     val jsValue = Json.toJson(value)
 
     JsLens.fromPath(id.path)
       .set(jsValue, json)
-      .flatMap(json => cleanup(id)(Some(value), UserAnswers(json)))
+      .flatMap(json => id.cleanup(Some(value), UserAnswers(json)))
   }
 
-  def remove[I <: TypedIdentifier.PathDependent](id: I)(implicit cleanup: Cleanup[I]): JsResult[UserAnswers] = {
+  def remove[I <: TypedIdentifier.PathDependent](id: I): JsResult[UserAnswers] = {
 
     JsLens.fromPath(id.path)
       .remove(json)
-      .flatMap(json => cleanup(id)(None, UserAnswers(json)))
+      .flatMap(json => id.cleanup(None, UserAnswers(json)))
   }
 
   def allEstablishers: Seq[(String, String)] = {
@@ -122,11 +122,12 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       individualName orElse companyName
     }
 
-    getAll[EntityDetails](TrusteesId.path)(nameReads).map {
+    getAll[EntityDetails](JsPath \ TrusteesId.toString)(nameReads).map {
       _.zipWithIndex.map {
         case (name, id) =>
           name.route(id, None)
       }
     }.getOrElse(Seq.empty)
   }
+
 }

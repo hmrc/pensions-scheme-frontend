@@ -45,7 +45,7 @@ class CompanyAddressController @Inject()(
                                           requireData: DataRequiredAction,
                                           val formProvider: AddressFormProvider,
                                           val countryOptions: CountryOptions
-                                      ) extends ManualAddressController with I18nSupport {
+                                        ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = CompanyAddressController.onSubmit _
   private[controllers] val title: Message = "messages__companyAddress__title"

@@ -21,7 +21,7 @@ import controllers.register.establishers.individual.routes._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
 import models.address.Address
-import models.register.establishers.individual.UniqueTaxReference.{No, Yes}
+import models.UniqueTaxReference.{No, Yes}
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import models._

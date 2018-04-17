@@ -24,12 +24,13 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorUniqueTaxReferenceId}
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablishersCompanyDirector
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.director.directorUniqueTaxReference
 
@@ -39,7 +40,7 @@ class DirectorUniqueTaxReferenceController @Inject()(
                                                              appConfig: FrontendAppConfig,
                                                              override val messagesApi: MessagesApi,
                                                              dataCacheConnector: DataCacheConnector,
-                                                             navigator: Navigator,
+                                                             @EstablishersCompanyDirector navigator: Navigator,
                                                              authenticate: AuthAction,
                                                              getData: DataRetrievalAction,
                                                              requireData: DataRequiredAction,

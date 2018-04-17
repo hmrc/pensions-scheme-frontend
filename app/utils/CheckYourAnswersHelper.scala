@@ -16,20 +16,74 @@
 
 package utils
 
-import controllers.register.establishers.company.director._
 import controllers.register.routes
 import identifiers.register._
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director._
 import identifiers.register.establishers.individual._
 import identifiers.register.establishers.{EstablisherKindId, company}
+import identifiers.register.trustees.individual.TrusteeNinoId
+import identifiers.register.trustees.individual.TrusteeAddressYearsId
 import models.Nino.{No, Yes}
 import models._
 import models.address.Address
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
+
+  def declaration: Option[AnswerRow] = userAnswers.get(identifiers.register.DeclarationId) map {
+    x => AnswerRow("messages__declaration__checkYourAnswersLabel", Seq(s"$x"), false, controllers.register.routes.DeclarationController.onPageLoad.url)
+  }
+
+  def moreThanTenTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.MoreThanTenTrusteesId) map {
+    x => AnswerRow("moreThanTenTrustees.checkYourAnswersLabel", Seq(if(x) "site.yes" else "site.no"), true, controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(CheckMode).url)
+  }
+
+  def trusteePreviousAddress(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.TrusteePreviousAddressId(index)) map {
+    x => AnswerRow("trusteePreviousAddress.checkYourAnswersLabel", addressAnswer(x), false, controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(CheckMode, index).url)
+  }
+
+  def trusteeContactDetails(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.TrusteeContactDetailsId(index)) map {
+    x => AnswerRow("messages__trusteeContactDetails__checkYourAnswersLabel", Seq(s"${x.emailAddress} ${x.phoneNumber}"), false, controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(CheckMode, index).url)
+  }
+
+  def trusteeNino(index: Int): Seq[AnswerRow] = userAnswers.get(TrusteeNinoId(index)) match {
+    case Some(Yes(nino)) =>
+      Seq(
+        AnswerRow("messages__trusteeNino__nino_question_cya_label", Seq(s"${Nino.Yes}"), false,
+          controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url),
+        AnswerRow("messages__trusteeNino__nino_cya_label", Seq(nino), false,
+          controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url)
+      )
+    case Some(No(reason)) =>
+      Seq(
+        AnswerRow("messages__trusteeNino__nino_question_cya_label", Seq(s"${Nino.No}"), false,
+          controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url),
+        AnswerRow("messages__trusteeNino__nino_reason_cya_label", Seq(reason), false,
+          controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(CheckMode, Index(index)).url)
+      )
+    case _ => Nil
+  }
+
+  def trusteeIndividualAddressYears(index: Int): Seq[AnswerRow] =
+    userAnswers.get(TrusteeAddressYearsId(index)) match {
+      case Some(x) => Seq(AnswerRow("messages__trusteeAddressYears__cya_label", Seq(s"messages__common__$x"), true,
+        controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onPageLoad(CheckMode, Index(index)).url))
+      case _ => Seq.empty
+    }
+
+  def individualPostCodeLookup(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.IndividualPostCodeLookupId(index)) map {
+    x => AnswerRow("individualPostCodeLookup.checkYourAnswersLabel", Seq(s"$x"), false, controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(CheckMode, index).url)
+  }
+
+  def uniqueTaxReference(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.UniqueTaxReferenceId(index)) map {
+    x => AnswerRow("messages__uniqueTaxReference__checkYourAnswersLabel", Seq(s"uniqueTaxReference.$x"), true, controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onPageLoad(CheckMode, index).url)
+  }
+
+  def trusteeKind(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.TrusteeKindId(index)) map {
+    x => AnswerRow("messages__trusteeKind__checkYourAnswersLabel", Seq(s"trusteeKind.$x"), true, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(CheckMode, index).url)
+  }
 
   def companyRegistrationNumberTrustee(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.company.CompanyRegistrationNumberId(index)) map {
     x => AnswerRow("messages__companyRegistrationNumber__checkYourAnswersLabel", Seq(s"companyRegistrationNumber.$x"), true, controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index).url)

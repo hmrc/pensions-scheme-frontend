@@ -46,10 +46,12 @@ messages__common__address3 = Address line 3 (optional)
 messages__common__address4 = Address line 4 (optional)
 messages__common__address_postcode_hint = For example NE12 8ER
 messages__common__country = Country
+messages__common__previous_address = Previous Address
 
 messages__common__postcode_lookup__enter_postcode = Enter the postcode below, or {0} enter the address manually {1}
 messages__common__postcode_lookup__address_postcode = Postal code
 messages__common__postcode_lookup__address_postcode_hint = For example NE12 8ER
+messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
 messages__error__postcode = Enter the postal code
 messages__error__postcode_length = The postal code cannot be more than 8 characters
 messages__error__postcode_invalid = Enter a valid postal code
@@ -106,19 +108,18 @@ site.service_name = Pension Scheme Registrations
 site.textarea.char_limit = (Limit is {0} characters)
 site.confirm = Confirm
 site.cancel = Cancel
+site.agree_and_continue = Agree and continue
 
 messages__unauthorised__title = You can’t access this service with this account
 
 messages__pension_scheme_registration__title = Pension Scheme Registration - GOV.UK
 
 messages__what_you_will_need__title = What you’ll need
-messages__what_you_will_need__lede = To register a pension scheme you will need:
-messages__what_you_will_need__item_1 = a Self Assessment, Partnership or Corporation Tax Unique Taxpayer Reference number
-messages__what_you_will_need__item_2 = the names, addresses, previous address and National Insurance numbers of any directors, trustees and partners associated with the pension scheme
-messages__what_you_will_need__item_3 = the telephone numbers and email addresses of any directors, trustees and partners associated with the pension scheme
-messages__what_you_will_need__item_4 = the name, contact details and address of the establisher
-messages__what_you_will_need__item_5 = PAYE, Company Registration and VAT Registration numbers
-messages__common__start = Start
+messages__what_you_will_need__lede = To register a pension scheme with HMRC you will need:
+messages__what_you_will_need__item_1 = the names, addresses, previous addresses and National Insurance numbers of any directors, trustees and partners associated with the pension scheme
+messages__what_you_will_need__item_2 = the telephone numbers, email addresses and Self Assessment Unique Taxpayer Reference numbers of any directors, trustees and partners associated with the pension scheme
+messages__what_you_will_need__item_3 = the name, contact details, Corporation Tax Unique Taxpayer Reference number and address of the scheme establisher
+messages__what_you_will_need__item_4 = PAYE, Company Registration and VAT registration numbers
 
 messages__trustee__has_ct_utr__title = Does the trustee have a Corporation Tax Unique Taxpayer Reference number?
 messages__trustee__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
@@ -187,7 +188,6 @@ messages__common_error__current_address_years = Select how long they have been a
 messages__common__what_you_need_to_know = What you need to know
 messages__complete__title = Your application has been successfully submitted
 messages__complete__heading = Your application to register {0} has been successfully submitted
-messages__complete__email = You will receive an email confirmation
 messages__complete__application_number_is = Your application reference number is {0}
 messages__complete__copy_1 = Your scheme is not yet registered. HMRC will consider your application and make a decision.
 messages__complete__copy_2 = We may contact you and request further information to support your application.
@@ -497,3 +497,97 @@ occupationalPensionScheme.checkYourAnswersLabel = Is the scheme an occupational 
 securedBenefits.checkYourAnswersLabel=Are any of the scheme benefits secured by a contract of insurance or annuity?
 uKBankAccount.checkYourAnswersLabel = Does the scheme have a UK bank account?
 bankAccountDate.checkYourAnswersLabel = Approximate date the account was opened
+
+messages__trusteeKind__title = Trustees
+messages__trusteeKind__heading = Trustees
+messages__trusteeKind__company = Company
+messages__trusteeKind__individual = Individual
+messages__trusteeKind__partnership = Partnership
+messages__trusteeKind__legend = What kind of trustee are you adding?
+messages__trusteeKind__hint = You must tell us about all your trustees. You can add up to 10 using the digital service.
+
+messages__trusteeDetails__title = Trustee details
+messages__trusteeDetails__heading = Trustee details
+messages__trusteeDetails__checkYourAnswersLabel = Trustee details
+
+messages__declarationDuties__heading = Declaration
+messages__declarationDuties__title = Declaration
+messages__declarationDuties__legend = I declare/understand that:
+messages__declarationDuties__yes = I have working knowledge of pensions and the duties of an administrator
+messages__declarationDuties__no = I have appointed an advisor
+messages__declarationDuties__yes_hint = I am a fit and proper person to be the scheme administrator, with a working knowledge of pensions and the scheme administrator duties and liabilities. I understand that where HMRC believes that any of the persons who are the scheme administrator is not a fit and proper person, HMRC may refuse to register the scheme or, if the scheme is already registered, HMRC may de-register the scheme
+messages__declarationDuties__no_hint1 = I do not have a working knowledge of pensions and the scheme administrator duties and liabilities but I am otherwise a fit and proper person.
+messages__declarationDuties__no_hint2 = I have appointed an adviser to the pension scheme, who does have that knowledge.
+messages__declarationDuties__no_hint3 = Where HMRC believes that any of the persons who are the scheme administrator is not a fit and proper person, HMRC may refuse to register the scheme or, if the scheme is already registered, HMRC may de-register the scheme
+messages__error_declaration_duties_required = Tell us if you have the appropriate knowledge to admnister a pension scheme
+
+messages__trustee__individual__address__title = Trustee’s address
+messages__trustee__individual__address__heading = Trustee’s address
+messages__trustee__individual__address__lede = This is usually the registered business address but you can enter any address you have for this trustee.
+
+messages__trusteeNino__title = Does the trustee have a National Insurance number?
+messages__trusteeNino__heading = Does the trustee have a National Insurance number?
+messages__trusteeNino__error__required = Select yes if the trustee has a National Insurance number
+messages__trusteeNino__error__nino_reason_required = You need to tell us why the trustee does not have a National Insurance number
+messages__trusteeNino__no_nino = Tell us why the trustee does not have a National Insurance number
+messages__trusteeNino__nino_question_cya_label = Does the establisher have a National Insurance number?
+messages__trusteeNino__nino_cya_label = National Insurance number
+messages__trusteeNino__nino_reason_cya_label = Reason
+
+messages__individualPostCodeLookup__title = Trustee’s address
+messages__individualPostCodeLookup__heading = Trustee’s address
+messages__individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
+messages__trustee_individualPostCodeLookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
+
+messages__trustee_individual_previous_address__title = Previous address
+messages__trustee_individual_previous_address__heading = Previous address
+
+messages__trustee__uniqueTaxReference__title = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
+messages__trustee__uniqueTaxReference__heading = Does the trustee have a Self-Assessment Unique Taxpayer Reference number (SAUTR)?
+messages__trustee__uniqueTaxReference__hint = An SAUTR is issued by HMRC for Self assessment.
+messages__trustee__uniqueTaxReference__reason__no_utr = Tell us why the trustee does not have a UTR
+messages__trustee__uniqueTaxReference__checkYourAnswersLabel = Unique Tax Reference
+messages__trustee__uniqueTaxReference__error__required = Select yes if the trustee has a SAUTR
+messages__trustee__uniqueTaxReference__error__utr_required = Enter the Unique Tax Reference number
+messages__trustee__uniqueTaxReference__error__reason_required = You need to tell us why the trustee does not have a UTR
+messages__trustee__uniqueTaxReference__error__utr_invalid = Please give an answer for uniqueTaxReference
+
+messages__trusteeAddressYears__title = How long has the trustee been at this address?
+messages__trusteeAddressYears__heading = How long has the trustee been at this address?
+messages__trusteeAddressYears__error_required = Select how long they have been at the current address
+
+messages__trusteeAddressYears_cya_label = How long has the trustee been at this address?
+messages__trusteeNino_question_cya_label = Does the trustee have a National Insurance number?
+messages__trusteeNino_nino_cya_label = National Insurance number
+messages__trusteeNino_reason_cya_label = Reason
+messages__trusteeUtr_question_cya_label = Does the trustee have a Unique Taxpayer Reference number?
+
+messages__trusteePreviousAddress__title = Trustee’s address
+messages__trusteePreviousAddress__heading = Trustee’s address
+messages__trusteePreviousAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
+
+messages__trusteeContactDetails__title = Trustee’s contact details
+messages__trusteeContactDetails__heading = Trustee’s contact details
+messages__trusteeContactDetails__emailAddress = Email address
+messages__trusteeContactDetails__phoneNumber = Phone number
+messages__trusteeContactDetails__checkYourAnswersLabel = Trustee’s contact details
+
+messages__declaration__title = Declaration
+messages__declaration__heading = Declaration
+messages__declaration__declare = I declare/understand:
+messages__declaration__statement1 = to the best of my knowledge and belief, the sponsoring employer(s) in relation to the scheme have not been dormant during the last 12 months
+messages__declaration__statement2 = that this scheme meets all the criteria to be registered as a pension scheme under the Finance Act 2004 and in particular, is established and will be maintained wholly or mainly for the purpose of making authorised payments of pensions and lumps sums as falling within section 164(1)(a) or (b) of the Finance Act 2004
+messages__declaration__statement3 = that the instruments or agreements by which this pension scheme is constituted do not directly or indirectly entitle any person to unauthorised payments. And the way in which the pension scheme is to be administered will not knowingly entitle any person to unauthorised payments
+messages__declaration__statement4 = that as scheme administrator I am responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by Finance Act 12004 and I intend to discharge those functions at all times, whether resident in the United Kingdom or another EU member state or non-member EEA state
+messages__declaration__statement5 = that I will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. I may be liable to a penalty and the pension scheme may be de-registered if I fail to properly discharge those functions
+messages__declaration__statement6 = that I may be liable to a penalty and the pension scheme may be de-registered if a false statement is made on this application, or in any information I provide in connection with this application, and that false statements may also lead to prosecution
+messages__declaration__statement7 = to the best of my knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete. I understand that I am responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
+messages__declaration__agree = I agree
+messages__declaration__invalid = You need to agree to all the declarations before you can continue
+
+messages__confirmDeleteTrustee__title = Confirm deletion
+messages__confirmDeleteTrustee__heading = Are you sure you want to delete {0}?
+
+messages__moreThanTenTrustees__title = Do you need to tell us about other trustees?
+messages__moreThanTenTrustees__heading = Do you need to tell us about other trustees?
+messages__moreThanTenTrustees__hint = You don't have to add them now. We may contact you if we need this information.

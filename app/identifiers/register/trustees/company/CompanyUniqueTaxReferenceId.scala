@@ -18,11 +18,11 @@ package identifiers.register.trustees.company
 
 import identifiers._
 import identifiers.register.trustees.TrusteesId
-import models.register.establishers.individual.UniqueTaxReference
+import models.UniqueTaxReference
 import play.api.libs.json.JsPath
 
 case class CompanyUniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
-  override def path: JsPath = TrusteesId.path \ index \ CompanyUniqueTaxReferenceId.toString
+  override def path: JsPath = TrusteesId(index).path \ CompanyUniqueTaxReferenceId.toString
 }
 
 object CompanyUniqueTaxReferenceId {

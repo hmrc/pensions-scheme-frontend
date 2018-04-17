@@ -18,7 +18,6 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.individual.routes._
 @import models.Mode
-@import models.register.establishers.individual.EstablisherDetails
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: String)(implicit request: Request[_], messages: Messages)
 
@@ -35,26 +34,7 @@
 
         @components.heading(headingKey = "messages__establisher_individual__title", secondaryHeaderKey = Some(schemeName))
 
-        @components.input_text(
-            field = form("firstName"),
-            label = messages("messages__common__firstname")
-        )
-
-        @components.input_text(
-            field = form("middleName"),
-            label = messages("messages__common__middlename")
-        )
-
-        @components.input_text(
-            field = form("lastName"),
-            label = messages("messages__common__lastname")
-        )
-
-        @components.input_date(
-            field = form("date"),
-            label = messages("messages__common__dob"),
-            hint = Some(messages("messages__common__dob__hint"))
-        )
+        @components.person_details(form)
 
         @components.submit_button()
     }

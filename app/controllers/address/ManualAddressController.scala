@@ -65,7 +65,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
           request.externalId,
           id,
           value
-        ).map {
+        ) map {
           cacheMap =>
             Redirect(navigator.nextPage(id, mode)(new UserAnswers(cacheMap)))
         }

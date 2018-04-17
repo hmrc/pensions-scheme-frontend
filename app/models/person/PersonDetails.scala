@@ -19,7 +19,7 @@ package models.person
 import org.joda.time.LocalDate
 import play.api.libs.json._
 
-case class PersonDetails (firstName: String,middleName:Option[String],lastName: String,date:LocalDate){
+case class PersonDetails (firstName: String, middleName:Option[String], lastName: String, date:LocalDate){
 
   def fullName: String = middleName match {
     case Some(middle) => s"$firstName $middle $lastName"

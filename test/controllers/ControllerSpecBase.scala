@@ -24,7 +24,9 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.CompanyDetails
+import models.person.PersonDetails
 import models.register.establishers.company.director.DirectorDetails
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
@@ -53,6 +55,18 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         )
       )
     )))
+
+  def getMandatoryTrustee: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
+    Json.obj(
+    SchemeDetailsId.toString ->
+      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    "trustees" -> Json.arr(
+      Json.obj(
+        TrusteeDetailsId.toString ->
+          PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
+      )
+    )
+  )))
 
   def getMandatoryTrusteeCompany: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(

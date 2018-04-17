@@ -4,6 +4,7 @@
 ->         /trustees                                    trustees.Routes
 
 GET        /whatYouWillNeed                             controllers.register.WhatYouWillNeedController.onPageLoad()
+POST       /whatYouWillNeed                             controllers.register.WhatYouWillNeedController.onSubmit()
 GET        /schemeDetails                               controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = NormalMode)
 POST       /schemeDetails                               controllers.register.SchemeDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /changeSchemeDetails                         controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = CheckMode)
@@ -80,3 +81,11 @@ GET        /schemeReview                       controllers.register.SchemeReview
 
 GET        /checkYourAnswers                            controllers.register.CheckYourAnswersController.onPageLoad()
 POST        /checkYourAnswers                           controllers.register.CheckYourAnswersController.onSubmit()
+
+GET        /declarationDuties                        controllers.register.DeclarationDutiesController.onPageLoad
+POST       /declarationDuties                        controllers.register.DeclarationDutiesController.onSubmit
+
+GET        /declaration               controllers.register.DeclarationController.onPageLoad
+POST       /declaration               controllers.register.DeclarationController.onSubmit
+GET        /changeDeclaration                        controllers.register.DeclarationController.onPageLoad
+POST       /changeDeclaration                        controllers.register.DeclarationController.onSubmit
