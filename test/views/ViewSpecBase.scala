@@ -18,13 +18,15 @@ package views
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
 import base.SpecBase
 import org.jsoup.select.Elements
 import org.scalatest.Assertion
 import org.scalatest.matchers.{MatchResult, Matcher}
 
 trait ViewSpecBase extends SpecBase {
+
+  type View = () => HtmlFormat.Appendable
 
   def haveLink(url: String): Matcher[Elements] = Matcher[Elements] {
     elements =>
@@ -60,11 +62,22 @@ trait ViewSpecBase extends SpecBase {
 
   def haveErrorOnSummary(id: String, expectedErrorMessage: String): Matcher[Document] = Matcher[Document] {
     document =>
-      val href = document.select(s"a[href='#${id}']").text()
+      val href = document.select(s"a[href='#$id']").text()
       MatchResult(
-        (document.select("#error-summary-heading").size() != 0 && href == expectedErrorMessage),
+        document.select("#error-summary-heading").size() != 0 && href == expectedErrorMessage,
         s"Error $expectedErrorMessage for field with id $id is not displayed on error summary",
         s"Error $expectedErrorMessage for field with id $id is displayed on error summary"
+      )
+  }
+
+  def haveCheckBox(id: String, value: String): Matcher[Document] = Matcher[Document] {
+    document =>
+      val checkbox = document.select(s"input[id=$id][type=checkbox][value=$value]")
+
+      MatchResult(
+        checkbox.size == 1,
+        s"Checkbox with Id $id and value $value not rendered on page",
+        s"Checkbox with Id $id and value $value rendered on page"
       )
   }
 
@@ -138,9 +151,10 @@ trait ViewSpecBase extends SpecBase {
 
     assert(radio.attr("name") == name, s"\n\nElement $id does not have name $name")
     assert(radio.attr("value") == value, s"\n\nElement $id does not have value $value")
-    isChecked match {
-      case true => assert(radio.attr("checked") == "checked", s"\n\nElement $id is not checked")
-      case _ => assert(!radio.hasAttr("checked") && radio.attr("checked") != "checked", s"\n\nElement $id is checked")
+    if (isChecked) {
+      assert(radio.attr("checked") == "checked", s"\n\nElement $id is not checked")
+    } else {
+      assert(!radio.hasAttr("checked") && radio.attr("checked") != "checked", s"\n\nElement $id is checked")
     }
   }
 
@@ -150,9 +164,10 @@ trait ViewSpecBase extends SpecBase {
 
     assert(select.text == label, s"\n\nElement $id does not have label $label")
     assert(select.attr("value") == value, s"\n\nElement $id does not have value $value")
-    isChecked match {
-      case true => assert(select.hasAttr("selected"), s"\n\nElement $id is not selected")
-      case _ => assert(!select.hasAttr("selected"), s"\n\nElement $id is selected")
+    if (isChecked) {
+      assert(select.hasAttr("selected"), s"\n\nElement $id is not selected")
+    } else {
+      assert(!select.hasAttr("selected"), s"\n\nElement $id is selected")
     }
   }
 
@@ -161,6 +176,17 @@ trait ViewSpecBase extends SpecBase {
     assert(link.size() == 1, s"\n\nLink $linkId is not displayed")
     val href = link.attr("href")
     assert(href == url, s"\n\nLink $linkId has href $href no $url")
+  }
+
+  def haveLink(url: String, linkId: String): Matcher[View] = Matcher[View] {
+    view =>
+      val link = Jsoup.parse(view().toString()).select(s"a[id=$linkId]")
+      val href = link.attr("href")
+      MatchResult(
+        href == url,
+        s"link $linkId href $href is not equal to the url $url",
+        s"link $linkId href $href is equal to the url $url"
+      )
   }
 
 }

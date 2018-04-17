@@ -17,6 +17,7 @@
 package identifiers
 
 import play.api.libs.json.{JsPath, _}
+import utils.UserAnswers
 
 import scala.language.implicitConversions
 
@@ -33,11 +34,13 @@ object Identifier {
 
 trait TypedIdentifier[A] extends TypedIdentifier.PathDependent {
   type Data = A
+
 }
 
 object TypedIdentifier {
 
   trait PathDependent extends Identifier {
     type Data
+    def cleanup(value: Option[Data], userAnswers: UserAnswers): JsResult[UserAnswers] = JsSuccess(userAnswers)
   }
 }

@@ -16,6 +16,7 @@
 
 package models.register.trustees
 
+import play.api.mvc.JavascriptLiteral
 import utils.{Enumerable, InputOption, WithName}
 
 sealed trait TrusteeKind
@@ -37,4 +38,14 @@ object TrusteeKind {
 
   implicit val enumerable: Enumerable[TrusteeKind] =
     Enumerable(values.map(v => v.toString -> v): _*)
+
+  //noinspection ConvertExpressionToSAM
+  implicit val jsLiteral: JavascriptLiteral[TrusteeKind] = new JavascriptLiteral[TrusteeKind] {
+    override def to(value: TrusteeKind): String = value match {
+      case Company => "Company"
+      case Individual => "Individual"
+      case Partnership => "Partnership"
+    }
+  }
+
 }

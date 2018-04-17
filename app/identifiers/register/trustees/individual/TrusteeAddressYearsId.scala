@@ -19,12 +19,27 @@ package identifiers.register.trustees.individual
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
 import models.AddressYears
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
+import utils.{CheckYourAnswers, UserAnswers}
 
-case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYears]{
-  override def path: JsPath = TrusteesId.path \ index \ TrusteeAddressYearsId.toString
+case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
+  override def path: JsPath = TrusteesId(index).path \ TrusteeAddressYearsId.toString
+
+  override def cleanup(value: Option[AddressYears], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(AddressYears.OverAYear) =>
+        userAnswers.remove(
+          IndividualPreviousAddressPostCodeLookupId(this.index)).flatMap(_.remove(
+          TrusteePreviousAddressId(this.index))
+        )
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 object TrusteeAddressYearsId {
   override def toString: String = "trusteeAddressYears"
+
+  implicit val cya: CheckYourAnswers[TrusteeAddressYearsId] =
+    CheckYourAnswers.addressYears("messages__trusteeAddressYears_cya_label")
 }

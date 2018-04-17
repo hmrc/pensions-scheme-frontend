@@ -23,7 +23,7 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
-import identifiers.register.trustees.individual.{IndividualAddressId, IndividualAddressListId, IndividualPostCodeLookupId, TrusteeDetailsId}
+import identifiers.register.trustees.individual._
 import models.{Index, Mode}
 import models.requests.DataRequest
 import play.api.i18n.MessagesApi
@@ -51,7 +51,7 @@ class IndividualAddressListController @Inject()(override val appConfig: Frontend
     implicit request =>
       viewmodel(mode, index).right.map{
         vm =>
-          post(vm, IndividualAddressListId(index), IndividualAddressId(index), mode)
+          post(vm, IndividualAddressListId(index), TrusteeAddressId(index), mode)
       }
   }
 

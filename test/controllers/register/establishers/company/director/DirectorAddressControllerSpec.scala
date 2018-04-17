@@ -126,7 +126,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
     "redirect to next page on POST request" which {
       "save address" in {
 
-        val onwardCall = Call("GET", "/")
+        val onwardCall = routes.DirectorAddressYearsController.onPageLoad(NormalMode, establisherIndex, directorIndex)
 
         val address = Address(
           addressLine1 = "value 1",

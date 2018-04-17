@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.individual
+package identifiers.register
 
-import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
-import models.address.Address
-import play.api.libs.json.JsPath
+import identifiers._
 
-
-case class IndividualAddressId(index: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = TrusteesId.path \ index \ IndividualAddressId.toString
-}
-
-object IndividualAddressId {
-  override def toString:String="individualAddress"
+case object DeclarationId extends TypedIdentifier[Boolean] {
+  override def toString: String = "declaration"
 }
