@@ -89,3 +89,6 @@ GET        /declaration               controllers.register.DeclarationController
 POST       /declaration               controllers.register.DeclarationController.onSubmit
 GET        /changeDeclaration                        controllers.register.DeclarationController.onPageLoad
 POST       /changeDeclaration                        controllers.register.DeclarationController.onSubmit
+
+GET        /declarationDormant               controllers.register.DeclarationDormantController.onPageLoad
+POST       /declarationDormant               controllers.register.DeclarationDormantController.onSubmit
