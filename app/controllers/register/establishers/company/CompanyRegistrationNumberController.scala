@@ -51,13 +51,13 @@ class CompanyRegistrationNumberController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
+      retrieveCompanyName(index) {
+        companyName =>
           val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
             case None =>
-              Ok(companyRegistrationNumber(appConfig, form, mode, index, schemeName))
+              Ok(companyRegistrationNumber(appConfig, form, mode, index, companyName))
             case Some(value) =>
-              Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, schemeName))
+              Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, companyName))
           }
 
           Future.successful(redirectResult)
@@ -67,11 +67,11 @@ class CompanyRegistrationNumberController @Inject()(
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
+      retrieveCompanyName(index) {
+        companyName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, schemeName))),
+              Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, companyName))),
             (value) =>
               dataCacheConnector.save(request.externalId, CompanyRegistrationNumberId(index), value).map(cacheMap =>
                 Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode)(new UserAnswers(cacheMap))))

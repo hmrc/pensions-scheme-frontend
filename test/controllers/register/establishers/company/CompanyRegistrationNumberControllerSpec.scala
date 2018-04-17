@@ -22,9 +22,9 @@ import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.CompanyRegistrationNumberId
+import identifiers.register.establishers.company.{CompanyContactDetailsId, CompanyDetailsId, CompanyRegistrationNumberId}
 import models.register.{SchemeDetails, SchemeType}
-import models.{CompanyRegistrationNumber, Index, NormalMode}
+import models._
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -39,25 +39,26 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val firstIndex = Index(0)
   val invalidIndex = Index(3)
-  val schemeName = "Test Scheme Name"
+  val companyName = "test company name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
     new CompanyRegistrationNumberController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = companyRegistrationNumber(frontendAppConfig, form, NormalMode, firstIndex,schemeName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = companyRegistrationNumber(frontendAppConfig, form, NormalMode, firstIndex,companyName)(fakeRequest, messages).toString
 
   val validData = Json.obj(
     SchemeDetailsId.toString ->
-      SchemeDetails(schemeName, SchemeType.SingleTrust),
+      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
+        CompanyDetailsId.toString ->
+          CompanyDetails("test company name", Some("123456"), Some("abcd")),
         CompanyRegistrationNumberId.toString ->
-          CompanyRegistrationNumber.Yes("1234567")
+                 CompanyRegistrationNumber.Yes("1234567")
       )
     )
   )
-
   "CompanyRegistrationNumber Controller" must {
 
     "return OK and the correct view for a GET" in {
