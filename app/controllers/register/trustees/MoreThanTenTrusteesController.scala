@@ -29,6 +29,8 @@ import forms.register.trustees.MoreThanTenTrusteesFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import models.Mode
+import play.api.mvc.{Action, AnyContent}
+import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.moreThanTenTrustees
 
@@ -38,7 +40,7 @@ class MoreThanTenTrusteesController @Inject() (
                                                      appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      dataCacheConnector: DataCacheConnector,
-                                                     navigator: Navigator,
+                                                     @Register navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
@@ -47,7 +49,7 @@ class MoreThanTenTrusteesController @Inject() (
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       SchemeDetailsId.retrieve.right.map { details =>
         val preparedForm = request.userAnswers.get(MoreThanTenTrusteesId) match {
@@ -58,7 +60,7 @@ class MoreThanTenTrusteesController @Inject() (
       }
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       SchemeDetailsId.retrieve.right.map { details =>
         form.bindFromRequest().fold(

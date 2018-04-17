@@ -16,6 +16,7 @@
 
 package navigators
 
+import base.SpecBase
 import models.NormalMode
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, WordSpec}
@@ -23,15 +24,17 @@ import play.api.libs.json.Json
 import utils.UserAnswers
 import identifiers.register._
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.{AddTrusteeId, TrusteeKindId, TrusteesId}
+import identifiers.register.trustees.{AddTrusteeId, MoreThanTenTrusteesId, TrusteeKindId, TrusteesId}
 import models.person.PersonDetails
 import models.register.SchemeType
 import models.register.trustees.TrusteeKind
 import org.joda.time.LocalDate
+import org.scalatest.mockito.MockitoSugar
+import org.mockito.Mockito._
 
-class RegisterNavigatorSpec extends WordSpec with MustMatchers with PropertyChecks {
+class RegisterNavigatorSpec extends SpecBase with MockitoSugar {
 
-  val navigator = new RegisterNavigator()
+  val navigator = new RegisterNavigator(frontendAppConfig)
   val emptyAnswers = new UserAnswers(Json.obj())
 
   "Pages should post to the correct next page" when {
@@ -189,6 +192,18 @@ class RegisterNavigatorSpec extends WordSpec with MustMatchers with PropertyChec
         result mustEqual controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 1)
       }
 
+      "return a `call` to `MoreThanTenTrusteesController` page if 10 trustees has already been added" in {
+        val tenTrustees = (0 to 9).map(index => Json.obj(
+          TrusteeDetailsId.toString -> PersonDetails(s"testFirstName$index", None, s"testLastName$index", LocalDate.now))
+        ).toArray
+
+        val answers = new UserAnswers(Json.obj(
+          TrusteesId.toString -> tenTrustees
+        ))
+        val result = navigator.nextPage(AddTrusteeId, NormalMode)(answers)
+        result mustEqual controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(NormalMode)
+      }
+
       "return a `call` to `SchemeReviewController` page if 'AddTrustee' is false" in {
         val answers = new UserAnswers(
           Json.obj(
@@ -197,6 +212,20 @@ class RegisterNavigatorSpec extends WordSpec with MustMatchers with PropertyChec
         )
         val result = navigator.nextPage(AddTrusteeId, NormalMode)(answers)
         result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
+      }
+    }
+
+    ".nextPage(MoreThanTenTrusteesId)" must {
+      Seq(true, false).foreach { flag =>
+        s"return a `call` to `SchemeReviewController` page if 'MoreThanTenTrustees' is $flag" in {
+          val answers = new UserAnswers(
+            Json.obj(
+              MoreThanTenTrusteesId.toString -> flag
+            )
+          )
+          val result = navigator.nextPage(MoreThanTenTrusteesId, NormalMode)(answers)
+          result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
+        }
       }
     }
 

@@ -17,16 +17,17 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
+import config.FrontendAppConfig
 import identifiers.Identifier
 import identifiers.register._
-import identifiers.register.trustees.{AddTrusteeId, TrusteeKindId}
+import identifiers.register.trustees.{AddTrusteeId, MoreThanTenTrusteesId, TrusteeKindId}
 import models.register.trustees.TrusteeKind
 import models.NormalMode
 import play.api.mvc.Call
 import utils.{Enumerable, Navigator, UserAnswers}
 
 @Singleton
-class RegisterNavigator @Inject() extends Navigator with Enumerable.Implicits {
+class RegisterNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigator with Enumerable.Implicits {
 
   override protected val routeMap: PartialFunction[Identifier, UserAnswers => Call] = {
     case SchemeDetailsId =>
@@ -56,6 +57,8 @@ class RegisterNavigator @Inject() extends Navigator with Enumerable.Implicits {
       ukBankAccountRoutes()
     case AddTrusteeId =>
       addTrusteeRoutes()
+    case MoreThanTenTrusteesId =>
+      _ => controllers.register.routes.SchemeReviewController.onPageLoad()
     case TrusteeKindId(index) =>
       trusteeKindRoutes(index)
   }
@@ -83,11 +86,18 @@ class RegisterNavigator @Inject() extends Navigator with Enumerable.Implicits {
   }
 
   private def addTrusteeRoutes()(answers: UserAnswers): Call = {
+    import controllers.register.trustees.routes._
+    val trusteesLengthCompare = answers.allTrustees.lengthCompare(appConfig.maxTrustees)
+
     answers.get(AddTrusteeId) match {
       case Some(false) =>
         controllers.register.routes.SchemeReviewController.onPageLoad()
-      case Some(true) | None =>
-        controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.length)
+      case Some(true) =>
+        TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.length)
+      case None if (trusteesLengthCompare >= 0) =>
+        MoreThanTenTrusteesController.onPageLoad(NormalMode)
+      case None =>
+        TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.length)
     }
   }
 
