@@ -25,13 +25,59 @@ import controllers.ControllerSpecBase
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorId}
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import utils.FakeNavigator
 
 class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
+
+  import ConfirmDeleteDirectorControllerSpec._
+
+  "ConfirmDeleteDirector Controller" must {
+    "return OK and the correct view for a GET" in {
+      val data = new FakeDataRetrievalAction(Some(testData))
+      val result = controller(data).onPageLoad(establisherIndex, directorIndex)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
+    }
+
+    "delete the director on a POST" in {
+      val data = new FakeDataRetrievalAction(Some(testData))
+      val result = controller(data).onSubmit(establisherIndex, directorIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      FakeDataCacheConnector.verifyRemoved(DirectorId(establisherIndex, directorIndex))
+    }
+
+    "redirect to the next page on a successful POST" in {
+      val data = new FakeDataRetrievalAction(Some(testData))
+      val result = controller(data).onSubmit(establisherIndex, directorIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "redirect to Session Expired for a GET if no existing data is found" in {
+      val result = controller(dontGetAnyData).onPageLoad(establisherIndex, directorIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "redirect to Session Expired for a POST if no existing data is found" in {
+      val result = controller(dontGetAnyData).onSubmit(establisherIndex, directorIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+  }
+
+}
+
+object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
 
   private val establisherIndex = Index(0)
   private val directorIndex = Index(0)
@@ -74,45 +120,5 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
     postCall,
     cancelCall
   )(fakeRequest, messages).toString
-
-  "ConfirmDeleteDirector Controller" must {
-    "return OK and the correct view for a GET" in {
-      val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onPageLoad(establisherIndex, directorIndex)(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
-    }
-
-    "delete the director on a POST" in {
-      val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(establisherIndex, directorIndex)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verifyRemoved(DirectorDetailsId(establisherIndex, directorIndex))
-    }
-
-    "redirect to the next page on a successful POST" in {
-      val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(establisherIndex, directorIndex)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-    }
-
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(establisherIndex, directorIndex)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(establisherIndex, directorIndex)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-  }
 
 }
