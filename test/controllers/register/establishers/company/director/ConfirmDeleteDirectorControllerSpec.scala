@@ -24,8 +24,9 @@ import views.html.register.establishers.company.director.confirmDeleteDirector
 import controllers.ControllerSpecBase
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.{CompanyDetailsId, OtherDirectorsId}
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorId}
+import identifiers.register.establishers.company.OtherDirectorsId
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import play.api.libs.json._
@@ -50,6 +51,14 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       FakeDataCacheConnector.verifyRemoved(DirectorId(establisherIndex, directorIndex))
+    }
+
+    "delete the director on a POST and the OtherDirectors flag" in {
+      val data = new FakeDataRetrievalAction(Some(testDataWithMoreThan10Flag))
+      val result = controller(data).onSubmit(establisherIndex, directorIndex)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      FakeDataCacheConnector.verifyRemoved(DirectorId(establisherIndex, directorIndex))
+      FakeDataCacheConnector.verifyRemoved(OtherDirectorsId(establisherIndex))
     }
 
     "redirect to the next page on a successful POST" in {
@@ -96,6 +105,22 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
               DirectorDetails("John", None, "Doe", LocalDate.now())
           )
         )
+      )
+    )
+  )
+
+  private val testDataWithMoreThan10Flag = Json.obj(
+    EstablishersId.toString -> Json.arr(
+      Json.obj(
+        CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
+        "director" -> Json.arr(
+          Json.obj(
+            DirectorDetailsId.toString ->
+              DirectorDetails("John", None, "Doe", LocalDate.now())
+          )
+        ),
+        OtherDirectorsId.toString->true
+
       )
     )
   )
