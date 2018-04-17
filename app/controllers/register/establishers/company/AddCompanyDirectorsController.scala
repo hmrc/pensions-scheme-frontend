@@ -34,6 +34,7 @@ import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
+import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.addCompanyDirectors
 
 import scala.concurrent.Future
@@ -42,7 +43,7 @@ class AddCompanyDirectorsController @Inject() (
                                                      appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      dataCacheConnector: DataCacheConnector,
-                                                     navigator: Navigator,
+                                                     @EstablishersCompany navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
@@ -71,9 +72,10 @@ class AddCompanyDirectorsController @Inject() (
         .getOrElse(Nil)
 
       if (directors.isEmpty || directors.lengthCompare(appConfig.maxDirectors) >= 0) {
-        Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId, mode)(request.userAnswers)))
+        Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode)(request.userAnswers)))
       }
       else {
+
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             retrieveCompanyName(index) {
@@ -92,13 +94,14 @@ class AddCompanyDirectorsController @Inject() (
                 )
             },
           (value) =>
-            request.userAnswers.set(AddCompanyDirectorsId)(value).fold(
+            request.userAnswers.set(AddCompanyDirectorsId(index))(value).fold(
               errors => {
                 Logger.error("Unable to set user answer", JsResultException(errors))
                 Future.successful(InternalServerError)
               },
-              userAnswers =>
-                Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId, mode)(userAnswers)))
+              userAnswers => {
+                Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode)(userAnswers)))
+              }
             )
         )
       }

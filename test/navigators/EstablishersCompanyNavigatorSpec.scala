@@ -18,17 +18,45 @@ package navigators
 
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.individual.AddressYearsId
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, CompanyDetails, NormalMode}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{FunSuite, MustMatchers, WordSpec}
 import play.api.libs.json.Json
 import utils.UserAnswers
+import config.FrontendAppConfig
+import identifiers.register.establishers.company.director.DirectorDetailsId
+import models.register.establishers.company.director.DirectorDetails
+import org.joda.time.LocalDate
+import org.scalatestplus.play.guice._
+import play.api.inject.Injector
 
-class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with PropertyChecks {
+class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with PropertyChecks with GuiceOneAppPerSuite {
 
-  val navigator = new EstablishersCompanyNavigator()
+  def injector: Injector = app.injector
+
+  def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+
+  val navigator = new EstablishersCompanyNavigator(frontendAppConfig)
   val emptyAnswers = new UserAnswers(Json.obj())
+
+  private val companyName = "MyCo Ltd"
+
+  private val johnDoe = DirectorDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
+
+
+  private val maxNoOfDirectors = frontendAppConfig.maxDirectors
+
+  private def validData(directors: DirectorDetails*) = {
+    Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
+          "director" -> directors.map(d => Json.obj(DirectorDetailsId.toString -> Json.toJson(d)))
+        )
+      )
+    )
+  }
+
 
   "NormalMode" when {
 
@@ -99,6 +127,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         val result = navigator.nextPage(CompanyAddressYearsId(0), NormalMode)(answers)
         result mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0)
       }
+
       "return a 'Call' to 'Company Contact Details' page when 'AddressYears' is 'MoreThanOneYear'" in {
         val answers = new UserAnswers(Json.obj(
           EstablishersId.toString -> Json.arr(
@@ -114,7 +143,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
     }
     ".nextPage(CompanyPreviousAddressPostCode" must {
       "return a 'Call' to 'Previous Address Picker' page" in {
-        (0 to 10).foreach {
+        (1 to 10).foreach {
           index =>
             val result = navigator.nextPage(CompanyPreviousAddressPostcodeLookupId(index), NormalMode)(emptyAnswers)
             result mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, index)
@@ -148,7 +177,53 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
           result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
       }
     }
-  }
+
+    //    ".nextPage(AddCompanyDirectors" must {
+    //      "return a call to DEFAULT PAGE when no directors" in {
+    //        val result = navigator.nextPage(AddCompanyDirectorsId(0), NormalMode)(emptyAnswers)
+    //        result mustEqual controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(NormalMode, 0)
+    //      }
+    //
+    //      "return a call to DEFAULT PAGE when user selects Yes and less than Max directors" in {
+    //        val answers = new UserAnswers(Json.obj(
+    //          EstablishersId.toString -> Json.arr(
+    //            Json.obj(
+    //              CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
+    //              AddCompanyDirectorsId.toString -> true,
+    //              "director" -> Json.obj(DirectorDetailsId.toString -> Json.toJson(johnDoe))
+    //            )
+    //          )
+    //        )
+    //        )
+    //        val result = navigator.nextPage(AddCompanyDirectorsId(0), NormalMode)(emptyAnswers)
+    //        result mustEqual controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(NormalMode, 0)
+    //      }
+    //
+    //      "return a call to DEFAULT PAGE when user selects No and less than Max directors" in {
+    //
+    //        val answers = new UserAnswers(Json.obj(
+    //          EstablishersId.toString -> Json.arr(
+    //            Json.obj(
+    //              CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
+    //              AddCompanyDirectorsId.toString -> false,
+    //              "director" -> Json.obj(DirectorDetailsId.toString -> Json.toJson(johnDoe))
+    //            )
+    //          )
+    //        )
+    //        )
+    //        val directors = Seq.fill(1)(johnDoe)
+    //        val result = navigator.nextPage(AddCompanyDirectorsId(0), NormalMode)(UserAnswers(validData(directors: _*)))
+    //        result mustEqual controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(NormalMode, 0)
+    //      }
+
+    "return a call to Other Directors when no of Directors at Max" in {
+      val directors = Seq.fill(maxNoOfDirectors)(johnDoe)
+      val result = navigator.nextPage(AddCompanyDirectorsId(0), NormalMode)(UserAnswers(validData(directors: _*)))
+      result mustEqual controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(NormalMode, 0)
+    }
+
+}
+
 
   "CheckMode" when {
 

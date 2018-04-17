@@ -21,10 +21,14 @@ import models.{AddressYears, CheckMode, NormalMode}
 import play.api.mvc.Call
 import utils.{Navigator, UserAnswers}
 import com.google.inject.{Inject, Singleton}
-import identifiers.register.establishers.company._
+import config.FrontendAppConfig
+import controllers.routes
+import identifiers.register.establishers.company.{AddCompanyDirectorsId, _}
+import identifiers.register.establishers.company.director.DirectorDetailsId
+import models.register.establishers.company.director.DirectorDetails
 
 @Singleton
-class EstablishersCompanyNavigator @Inject() extends Navigator {
+class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers(index: Int)(answers: UserAnswers): Call =
     controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
@@ -52,6 +56,8 @@ class EstablishersCompanyNavigator @Inject() extends Navigator {
       _ => controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index)
     case CompanyContactDetailsId(index) =>
       _ => controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
+    case AddCompanyDirectorsId(index)=> addDirectors(index)
+
   }
 
   override protected val editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
@@ -93,4 +99,21 @@ class EstablishersCompanyNavigator @Inject() extends Navigator {
         controllers.routes.SessionExpiredController.onPageLoad()
     }
   }
+
+  private def addDirectors(index:Int)(answers:UserAnswers): Call={
+//    answers.get(AddCompanyDirectorsId(index)) match {
+//      case Some(true)=>routes.IndexController.onPageLoad()   //add directors
+//      case Some(false)=>routes.IndexController.onPageLoad() //end of journey
+//      case None=> {
+        val directors = answers.getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
+          .getOrElse(Nil)
+        if (directors.lengthCompare(appConfig.maxDirectors) == 0) {
+          controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(NormalMode, index)
+        }
+        else {
+          routes.IndexController.onPageLoad()
+        }
+      }
+ //   }
+  //}
 }
