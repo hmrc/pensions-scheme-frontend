@@ -28,11 +28,11 @@ import controllers.Retrievals
 import forms.register.trustees.TrusteeKindFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteeKindId
-import models.register.trustees.TrusteeKind
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.trusteeKind
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
+import utils.annotations.Register
 
 import scala.concurrent.Future
 
@@ -40,7 +40,7 @@ class TrusteeKindController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        dataCacheConnector: DataCacheConnector,
-                                       navigator: Navigator,
+                                       @Register navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,

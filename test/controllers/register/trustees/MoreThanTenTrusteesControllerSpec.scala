@@ -30,26 +30,27 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import models.NormalMode
 import models.register.{SchemeDetails, SchemeType}
+import play.api.mvc.Call
 import views.html.register.trustees.moreThanTenTrustees
 
 class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new MoreThanTenTrusteesFormProvider()
   val form = formProvider()
   val schemeName = "Test Scheme Name"
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
       SchemeDetailsId.toString ->
         SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
         MoreThanTenTrusteesId.toString -> false
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): MoreThanTenTrusteesController =
     new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = moreThanTenTrustees(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = moreThanTenTrustees(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   "MoreThanTenTrustees Controller" must {
 

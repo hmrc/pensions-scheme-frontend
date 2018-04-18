@@ -17,7 +17,7 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import models.Mode
-@import controllers.register.routes
+@import controllers.register.routes._
 
 @(appConfig: FrontendAppConfig, schemeName: String, establishers: Seq[String], trustees: Seq[String])(implicit request: Request[_], messages: Messages)
 
@@ -28,32 +28,35 @@
 
     @components.back_link()
 
-    @components.heading("messages__schemeReview__heading", secondaryHeaderKey = Some(schemeName))
+    @helpers.form(action = SchemeReviewController.onSubmit(), 'autoComplete -> "off") {
 
-    @components.paragraph_text(messages("messages__schemeReview__lede"))
+        @components.heading("messages__schemeReview__heading", secondaryHeaderKey = Some(schemeName))
 
-    @components.review_section(
-        heading = schemeName,
-        linkMessage = "messages__schemeReview__scheme__editLink",
-        linkId = "edit-scheme-details",
-        link = routes.SchemeDetailsController.onPageLoad(CheckMode)
-    )
+        @components.paragraph_text(messages("messages__schemeReview__lede"))
 
-    @components.review_section(
-        heading = messages("messages__schemeReview__establishers__heading"),
-        linkMessage = "messages__schemeReview__establishers__editLink",
-        linkId = "edit-establishers",
-        link = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(CheckMode),
-        list = Some(establishers)
-    )
+        @components.review_section(
+            heading = schemeName,
+            linkMessage = "messages__schemeReview__scheme__editLink",
+            linkId = "edit-scheme-details",
+            link = SchemeDetailsController.onPageLoad(CheckMode)
+        )
 
-    @components.review_section(
-        heading = messages("messages__schemeReview__trustees__heading"),
-        linkMessage = "messages__schemeReview__trustees__editLink",
-        linkId = "edit-trustees",
-        link = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode),
-        list = Some(trustees)
-    )
+        @components.review_section(
+            heading = messages("messages__schemeReview__establishers__heading"),
+            linkMessage = "messages__schemeReview__establishers__editLink",
+            linkId = "edit-establishers",
+            link = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(CheckMode),
+            list = Some(establishers)
+        )
 
-    @components.submit_button("site.confirm")
+        @components.review_section(
+            heading = messages("messages__schemeReview__trustees__heading"),
+            linkMessage = "messages__schemeReview__trustees__editLink",
+            linkId = "edit-trustees",
+            link = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode),
+            list = Some(trustees)
+        )
+
+        @components.submit_button("site.confirm")
+    }
 }

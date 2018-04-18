@@ -27,18 +27,19 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
+import utils.annotations.Register
 import views.html.register.schemeReview
 
 import scala.concurrent.Future
 
 class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
-                                         navigator: Navigator,
+                                         @Register navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       SchemeDetailsId.retrieve.right.map { schemeDetails =>
         val establishers = request.userAnswers.allEstablishers.map(_._1)

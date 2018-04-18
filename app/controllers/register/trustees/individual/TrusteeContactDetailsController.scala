@@ -29,6 +29,7 @@ import forms.ContactDetailsFormProvider
 import identifiers.register.trustees.individual.{TrusteeContactDetailsId, TrusteeDetailsId}
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
+import utils.annotations.TrusteesIndividual
 import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.individual.trusteeContactDetails
 
@@ -38,7 +39,7 @@ class TrusteeContactDetailsController @Inject() (
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
-                                        navigator: Navigator,
+                                        @TrusteesIndividual navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,

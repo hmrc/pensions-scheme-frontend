@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.trustees.individual.IndividualPreviousAddressPostCodeLookupControllerSpec.onwardRoute
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteePreviousAddressId}
@@ -39,10 +40,12 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 import controllers.register.trustees.individual.routes._
+import play.api.mvc.Call
+import utils.annotations.TrusteesIndividual
 
 class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFRequest {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
@@ -52,7 +55,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
 
   val formProvider = new AddressFormProvider(FakeCountryOptions())
   val trusteeDetails = PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
-
+  val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
   val form: Form[Address] = formProvider()
 
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
@@ -117,6 +120,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
           bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),

@@ -77,7 +77,7 @@ POST       /insurerPostCodeLookup                        controllers.register.In
 GET        /changeInsurerPostCodeLookup                  controllers.register.InsurerPostCodeLookupController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeInsurerPostCodeLookup                  controllers.register.InsurerPostCodeLookupController.onSubmit(mode: Mode = CheckMode)
 GET        /schemeReview                       controllers.register.SchemeReviewController.onPageLoad()
-
+POST       /schemeReview                       controllers.register.SchemeReviewController.onSubmit()
 
 GET        /checkYourAnswers                            controllers.register.CheckYourAnswersController.onPageLoad()
 POST        /checkYourAnswers                           controllers.register.CheckYourAnswersController.onSubmit()

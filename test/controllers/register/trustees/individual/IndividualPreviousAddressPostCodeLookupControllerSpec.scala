@@ -37,6 +37,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.annotations.TrusteesIndividual
 import utils.{FakeNavigator, Navigator}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -117,7 +118,7 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
       bind[DataRetrievalAction].toInstance(retrieval),
       bind[DataRequiredAction].to(new DataRequiredActionImpl),
       bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-      bind[Navigator].toInstance(fakeNavigator),
+      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
       bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
       bind[PostCodeLookupFormProvider].to(formProvider)
     )) {

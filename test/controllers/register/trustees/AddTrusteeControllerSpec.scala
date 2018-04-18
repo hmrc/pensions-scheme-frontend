@@ -30,22 +30,26 @@ import models.{CheckMode, CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
 import utils.FakeNavigator
 import views.html.register.trustees.addTrustee
 
 class AddTrusteeControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  def editTrusteeCompanyRoute(id: Int): String = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, id).url
-  def editTrusteeIndividualRoute(id: Int) = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, id).url
+  def editTrusteeCompanyRoute(id: Int): String =
+    controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, id).url
+  def editTrusteeIndividualRoute(id: Int): String =
+    controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(CheckMode, id).url
+
   val formProvider = new AddTrusteeFormProvider()
   val schemeName = "Test Scheme Name"
   private val maxTrustees = frontendAppConfig.maxTrustees
-  val trusteeCompanyA = ("Trustee Company A" -> editTrusteeCompanyRoute(0))
-  val trusteeCompanyB = ("Trustee Company B" -> editTrusteeCompanyRoute(1))
-  val trusteeIndividual = ("Trustee Individual" -> editTrusteeIndividualRoute(2))
+  val trusteeCompanyA: (String, String) = ("Trustee Company A" -> editTrusteeCompanyRoute(0))
+  val trusteeCompanyB: (String, String) = ("Trustee Company B" -> editTrusteeCompanyRoute(1))
+  val trusteeIndividual: (String, String) = ("Trustee Individual" -> editTrusteeIndividualRoute(2))
   val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
 
   private def validData = {
@@ -67,11 +71,12 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddTrusteeController=
     new AddTrusteeController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form, trustees: Seq[(String, String)] = Seq.empty) = addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form, trustees: Seq[(String, String)] = Seq.empty): String =
+    addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages).toString
 
   val testAnswer = "answer"
 
