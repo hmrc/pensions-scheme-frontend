@@ -29,6 +29,7 @@ import forms.register.trustees.MoreThanTenTrusteesFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import models.Mode
+import utils.annotations.Register
 import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.moreThanTenTrustees
@@ -39,7 +40,7 @@ class MoreThanTenTrusteesController @Inject() (
                                                      appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      dataCacheConnector: DataCacheConnector,
-                                                     navigator: Navigator,
+                                                     @Register navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,

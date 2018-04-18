@@ -22,6 +22,7 @@ import models.person.PersonDetails
 import play.api.data.Form
 import views.behaviours.QuestionViewBehaviours
 import controllers.register.trustees.individual.routes._
+import play.twirl.api.HtmlFormat
 import views.html.register.trustees.individual.trusteeDetails
 
 class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
@@ -32,9 +33,10 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   override val form = new IndividualDetailsFormProvider()()
 
-  def createView = () => trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, "Test Scheme Name")(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, "Test Scheme Name")  (fakeRequest, messages)
 
 
   "TrusteeDetails view" must {

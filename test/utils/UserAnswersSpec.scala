@@ -77,8 +77,10 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
 
       val result = userAnswers.allTrustees
 
-      result must contain("First Last" -> controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, 0).url)
-      result must contain("My Company" -> controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, 1).url)
+      result must contain("First Last" -> controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(
+        CheckMode, 0).url)
+      result must contain("My Company" -> controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(
+        CheckMode, 1).url)
     }
   }
 

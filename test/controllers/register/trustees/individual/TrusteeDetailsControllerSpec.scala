@@ -20,32 +20,35 @@ import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.IndividualDetailsFormProvider
+import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
+import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.register.trustees.individual.trusteeDetails
 
 class TrusteeDetailsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val firstIndex = Index(0)
 
-  val day = LocalDate.now().getDayOfMonth
-  val month = LocalDate.now().getMonthOfYear
-  val year = LocalDate.now().getYear - 20
+  val day: Int = LocalDate.now().getDayOfMonth
+  val month: Int = LocalDate.now().getMonthOfYear
+  val year: Int = LocalDate.now().getYear - 20
 
   val formProvider = new IndividualDetailsFormProvider()
   val form = formProvider()
 
   val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): TrusteeDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): TrusteeDetailsController =
     new TrusteeDetailsController(
       frontendAppConfig,
       messagesApi,
@@ -57,7 +60,8 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  def viewAsString(form: Form[_] = form) = trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = trusteeDetails(frontendAppConfig, form,
+    NormalMode, firstIndex, "Test Scheme Name")(fakeRequest, messages).toString
 
   "TrusteeDetails Controller" must {
 
@@ -70,6 +74,7 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val validData = Json.obj(
+        SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
         "trustees" -> Json.arr(
           Json.obj(
             TrusteeDetailsId.toString -> personDetails

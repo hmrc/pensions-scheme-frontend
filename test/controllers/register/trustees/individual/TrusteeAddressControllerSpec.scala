@@ -28,7 +28,7 @@ import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import utils.annotations.TrusteesCompany
+import utils.annotations.{TrusteesCompany, TrusteesIndividual}
 import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -50,7 +50,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
   implicit val builder = new GuiceApplicationBuilder()
     .overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
-      bind[Navigator].qualifiedWith(classOf[TrusteesCompany]).toInstance(FakeNavigator),
+      bind[Navigator].qualifiedWith(classOf[TrusteesIndividual]).toInstance(FakeNavigator),
       bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),
