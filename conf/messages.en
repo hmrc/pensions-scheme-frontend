@@ -580,9 +580,8 @@ messages__declarationDormant__yes = Yes, some or all were dormant
 messages__declarationDormant__checkYourAnswersLabel = Have any of the scheme establishers been dormant in the last 12 months?
 messages__declarationDormant__error__required = You need to tell us if you have appointed an adviser
 
-messages__haveAnyTrustees__title = Trustees
+messages__haveAnyTrustees__title = Do you have any trustees?
 messages__haveAnyTrustees__heading = Trustees
 messages__haveAnyTrustees__error__required = Select yes if you have any trustees
-messages__haveAnyTrustees__label = Do you have any trustees?
 
 

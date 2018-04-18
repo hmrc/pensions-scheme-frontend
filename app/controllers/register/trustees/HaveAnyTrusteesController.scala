@@ -29,7 +29,6 @@ import forms.register.trustees.HaveAnyTrusteesFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.HaveAnyTrusteesId
 import models.Mode
-import models.register.SchemeDetails
 import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.haveAnyTrustees
