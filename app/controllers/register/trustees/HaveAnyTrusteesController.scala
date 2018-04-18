@@ -24,44 +24,52 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
+import controllers.Retrievals
 import forms.register.trustees.HaveAnyTrusteesFormProvider
+import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.HaveAnyTrusteesId
 import models.Mode
+import models.register.SchemeDetails
+import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.haveAnyTrustees
 
 import scala.concurrent.Future
 
-class HaveAnyTrusteesController @Inject() (
-                                                     appConfig: FrontendAppConfig,
-                                                     override val messagesApi: MessagesApi,
-                                                     dataCacheConnector: DataCacheConnector,
-                                                     navigator: Navigator,
-                                                     authenticate: AuthAction,
-                                                     getData: DataRetrievalAction,
-                                                     requireData: DataRequiredAction,
-                                                     formProvider: HaveAnyTrusteesFormProvider
-                                                   ) extends FrontendController with I18nSupport {
+class HaveAnyTrusteesController @Inject()(
+                                           appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           dataCacheConnector: DataCacheConnector,
+                                           navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           formProvider: HaveAnyTrusteesFormProvider
+                                         ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(HaveAnyTrusteesId) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+        val preparedForm = request.userAnswers.get(HaveAnyTrusteesId) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode, schemeDetails.schemeName)))
       }
-      Ok(haveAnyTrustees(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode))),
-        (value) =>
-          dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(HaveAnyTrusteesId, mode)(new UserAnswers(cacheMap))))
-      )
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+        form.bindFromRequest().fold(
+          (formWithErrors: Form[_]) =>
+            Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode, schemeDetails.schemeName))),
+          (value) =>
+            dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>
+              Redirect(navigator.nextPage(HaveAnyTrusteesId, mode)(new UserAnswers(cacheMap))))
+        )
+      }
   }
 }
