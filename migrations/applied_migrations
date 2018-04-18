@@ -1,36 +1,33 @@
 #!/bin/bash
 
-echo "Applying migration DeclarationDormant"
+echo "Applying migration HaveAnyTrustees"
 
-echo "Adding routes to conf/register.routes"
+echo "Adding routes to register.trustees.routes"
 
-echo "" >> ../conf/app.routes
-echo "GET        /declarationDormant               controllers.register.DeclarationDormantController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
-echo "POST       /declarationDormant               controllers.register.DeclarationDormantController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "" >> ../conf/register.trustees.routes
+echo "GET        /haveAnyTrustees                       controllers.register.trustees.HaveAnyTrusteesController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.routes
+echo "POST       /haveAnyTrustees                       controllers.register.trustees.HaveAnyTrusteesController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.routes
 
-echo "GET        /changeDeclarationDormant               controllers.register.DeclarationDormantController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
-echo "POST       /changeDeclarationDormant               controllers.register.DeclarationDormantController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "GET        /changeHaveAnyTrustees                       controllers.register.trustees.HaveAnyTrusteesController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.routes
+echo "POST       /changeHaveAnyTrustees                       controllers.register.trustees.HaveAnyTrusteesController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "messages__declarationDormant__title = declarationDormant" >> ../conf/messages.en
-echo "messages__declarationDormant__heading = declarationDormant" >> ../conf/messages.en
-echo "messages__declarationDormant__option1 = declarationDormant" Option 1 >> ../conf/messages.en
-echo "messages__declarationDormant__option2 = declarationDormant" Option 2 >> ../conf/messages.en
-echo "messages__declarationDormant__checkYourAnswersLabel = declarationDormant" >> ../conf/messages.en
-echo "messages__declarationDormant__error__required = Please give an answer for declarationDormant" >> ../conf/messages.en
+echo "messages__haveAnyTrustees__title = haveAnyTrustees" >> ../conf/messages.en
+echo "messages__haveAnyTrustees__heading = haveAnyTrustees" >> ../conf/messages.en
+echo "messages__haveAnyTrustees__checkYourAnswersLabel = haveAnyTrustees" >> ../conf/messages.en
+echo "messages__haveAnyTrustees__error__required = Please give an answer for haveAnyTrustees" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def declarationDormant: Option[AnswerRow] = userAnswers.get(identifiers.register.DeclarationDormantId) map {";\
-     print "    x => AnswerRow(\"messages__declarationDormant__checkYourAnswersLabel\", Seq(s\"declarationDormant.$x\"), true, controllers.register.routes.DeclarationDormantController.onPageLoad(CheckMode).url)";\
-     print "  }";\
+     print "  def haveAnyTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.HaveAnyTrusteesId) map {";\
+     print "    x => AnswerRow(\"haveAnyTrustees.checkYourAnswersLabel\", Seq(if(x) \"site.yes\" else \"site.no\"), true, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url)"; print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration DeclarationDormant completed"
+echo "Migration HaveAnyTrustees completed"

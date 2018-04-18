@@ -24,18 +24,15 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
-import controllers.Retrievals
-import forms.register.trustees.MoreThanTenTrusteesFormProvider
-import identifiers.register.SchemeDetailsId
-import identifiers.register.trustees.MoreThanTenTrusteesId
+import forms.register.trustees.HaveAnyTrusteesFormProvider
+import identifiers.register.trustees.HaveAnyTrusteesId
 import models.Mode
-import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
-import views.html.register.trustees.moreThanTenTrustees
+import views.html.register.trustees.haveAnyTrustees
 
 import scala.concurrent.Future
 
-class MoreThanTenTrusteesController @Inject() (
+class HaveAnyTrusteesController @Inject() (
                                                      appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      dataCacheConnector: DataCacheConnector,
@@ -43,32 +40,28 @@ class MoreThanTenTrusteesController @Inject() (
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
-                                                     formProvider: MoreThanTenTrusteesFormProvider
-                                                   ) extends FrontendController with Retrievals with I18nSupport {
+                                                     formProvider: HaveAnyTrusteesFormProvider
+                                                   ) extends FrontendController with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode) = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { details =>
-        val preparedForm = request.userAnswers.get(MoreThanTenTrusteesId) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        Future.successful(Ok(moreThanTenTrustees(appConfig, preparedForm, mode, details.schemeName)))
+      val preparedForm = request.userAnswers.get(HaveAnyTrusteesId) match {
+        case None => form
+        case Some(value) => form.fill(value)
       }
+      Ok(haveAnyTrustees(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode) = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { details =>
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(moreThanTenTrustees(appConfig, formWithErrors, mode, details.schemeName))),
-          (value) =>
-            dataCacheConnector.save(request.externalId, MoreThanTenTrusteesId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(MoreThanTenTrusteesId, mode)(new UserAnswers(cacheMap))))
-        )
-      }
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) =>
+          Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode))),
+        (value) =>
+          dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>
+            Redirect(navigator.nextPage(HaveAnyTrusteesId, mode)(new UserAnswers(cacheMap))))
+      )
   }
 }

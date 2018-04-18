@@ -32,12 +32,18 @@ import viewmodels.AnswerRow
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
+  def haveAnyTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.HaveAnyTrusteesId) map {
+    x => AnswerRow("haveAnyTrustees.checkYourAnswersLabel", Seq(if(x) "site.yes" else "site.no"), true,
+      controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url)
+  }
+
   def declaration: Option[AnswerRow] = userAnswers.get(identifiers.register.DeclarationId) map {
     x => AnswerRow("messages__declaration__checkYourAnswersLabel", Seq(s"$x"), false, controllers.register.routes.DeclarationController.onPageLoad.url)
   }
 
   def moreThanTenTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.MoreThanTenTrusteesId) map {
-    x => AnswerRow("moreThanTenTrustees.checkYourAnswersLabel", Seq(if(x) "site.yes" else "site.no"), true, controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(CheckMode).url)
+    x => AnswerRow("moreThanTenTrustees.checkYourAnswersLabel", Seq(if(x) "site.yes" else "site.no"), true,
+      controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(CheckMode).url)
   }
 
   def trusteePreviousAddress(index: Int): Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.individual.TrusteePreviousAddressId(index)) map {

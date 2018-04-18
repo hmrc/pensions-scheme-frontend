@@ -140,3 +140,8 @@ GET        /moreThanTenTrustees                       controllers.register.trust
 POST       /moreThanTenTrustees                       controllers.register.trustees.MoreThanTenTrusteesController.onSubmit(mode: Mode = NormalMode)
 GET        /changeMoreThanTenTrustees                       controllers.register.trustees.MoreThanTenTrusteesController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeMoreThanTenTrustees                       controllers.register.trustees.MoreThanTenTrusteesController.onSubmit(mode: Mode = CheckMode)
+
+GET        /haveAnyTrustees                       controllers.register.trustees.HaveAnyTrusteesController.onPageLoad(mode: Mode = NormalMode)
+POST       /haveAnyTrustees                       controllers.register.trustees.HaveAnyTrusteesController.onSubmit(mode: Mode = NormalMode)
+GET        /changeHaveAnyTrustees                       controllers.register.trustees.HaveAnyTrusteesController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeHaveAnyTrustees                       controllers.register.trustees.HaveAnyTrusteesController.onSubmit(mode: Mode = CheckMode)
