@@ -29,6 +29,7 @@ import identifiers.register.trustees.individual.{IndividualPostCodeLookupId, Tru
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils.Navigator
+import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
@@ -36,7 +37,7 @@ class IndividualPostCodeLookupController @Inject()(
                                                     val appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
                                                     val cacheConnector: DataCacheConnector,
-                                                    override val navigator: Navigator,
+                                                    @TrusteesIndividual override val navigator: Navigator,
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,

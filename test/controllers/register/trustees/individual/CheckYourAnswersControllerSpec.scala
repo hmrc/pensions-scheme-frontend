@@ -23,7 +23,7 @@ import org.joda.time.LocalDate
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils._
-import viewmodels.{AnswerRow, AnswerSection}
+import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
@@ -59,6 +59,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 }
 
 object CheckYourAnswersControllerSpec extends ControllerSpecBase {
+  val schemeName = "Test Scheme Name"
   val firstIndex = Index(0)
   lazy val trusteeDetailsRoute: String = routes.TrusteeDetailsController.onPageLoad(CheckMode, firstIndex).url
   lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit(firstIndex)
@@ -89,7 +90,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       trusteeDetailsSection,
       contactDetailsSection
     ),
-    Some("Trustees for Test Scheme Name"),
+    Some(Message("messages__common__trustee_secondary_header", schemeName)),
     postUrl
   )(fakeRequest, messages).toString
 }

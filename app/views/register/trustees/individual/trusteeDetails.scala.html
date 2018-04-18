@@ -20,7 +20,7 @@
 @import models.Mode
 @import models.person.PersonDetails
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__trusteeDetails__title"),
@@ -33,7 +33,8 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__trusteeDetails__heading")
+        @components.heading(headingKey = "messages__trusteeDetails__heading",
+            secondaryHeaderKey = Some(messages("messages__common__trustee_secondary_header", schemeName)))
 
         @components.person_details(form)
 

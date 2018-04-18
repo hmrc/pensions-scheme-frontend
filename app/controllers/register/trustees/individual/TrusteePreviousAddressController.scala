@@ -30,20 +30,21 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import utils.annotations.TrusteesIndividual
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
 class TrusteePreviousAddressController @Inject() (
-                                        override val appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        override val dataCacheConnector: DataCacheConnector,
-                                        override val navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AddressFormProvider,
-                                        val countryOptions: CountryOptions
+                                                   override val appConfig: FrontendAppConfig,
+                                                   override val messagesApi: MessagesApi,
+                                                   override val dataCacheConnector: DataCacheConnector,
+                                                   @TrusteesIndividual override val navigator: Navigator,
+                                                   authenticate: AuthAction,
+                                                   getData: DataRetrievalAction,
+                                                   requireData: DataRequiredAction,
+                                                   formProvider: AddressFormProvider,
+                                                   val countryOptions: CountryOptions
                                       ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _

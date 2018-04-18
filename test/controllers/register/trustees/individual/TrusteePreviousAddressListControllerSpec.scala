@@ -30,7 +30,8 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.UserAnswers
+import utils.annotations.TrusteesIndividual
+import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -122,24 +123,23 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
 
     "redirect to the next page on POST of valid data" in {
 
+      val onwardRoute = controllers.routes.IndexController.onPageLoad()
+
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(new FakeNavigator(onwardRoute)),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
-        def request =
-          addToken(
-            FakeRequest(routes.TrusteePreviousAddressListController.onSubmit(NormalMode, Index(0)))
-              .withFormUrlEncodedBody(("value", "0"))
-          )
+        val request = addToken(FakeRequest(routes.TrusteePreviousAddressListController.onSubmit(NormalMode, Index(0)))
+          .withFormUrlEncodedBody(("value", "0"))
+        )
 
-        def result = route(app, request).value
+        val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe
-          Some(controllers.routes.IndexController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
-
     }
 
     "redirect to Session Expired controller when no session data exists on a POST request" in {
