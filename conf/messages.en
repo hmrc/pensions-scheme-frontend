@@ -591,4 +591,14 @@ messages__haveAnyTrustees__title = Do you have any trustees?
 messages__haveAnyTrustees__heading = Trustees
 messages__haveAnyTrustees__error__required = Select yes if you have any trustees
 
+messages__adviserDetails__title = Enter the details of your pension adviser
+messages__adviserDetails__heading = Enter the details of your pension adviser
+messages__adviserDetails__name = Name or company
+messages__adviserDetails__email = Email address
+messages__adviserDetails__checkYourAnswersLabel = Enter the details of your pension adviser
+messages__adviserDetails__error__name_required = Enter the name of your adviser
+messages__adviserDetails__error__email_required = Enter an email address
+messages__adviserDetails__error__adviser_name_length = The adviser name cannot be more than 107 characters
+messages__adviserDetails__error__adviser_name_invalid = The adviser name contains invalid characters
+
 
