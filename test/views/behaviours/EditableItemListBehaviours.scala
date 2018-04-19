@@ -16,56 +16,56 @@
 
 package views.behaviours
 
-import viewmodels.Person
+import viewmodels.EditableItem
 import views.ViewSpecBase
 
-trait PeopleListBehaviours {
+trait EditableItemListBehaviours {
   this: ViewSpecBase =>
 
   // scalastyle:off method.length
-  def peopleList(emptyView: View, nonEmptyView: View, people: Seq[Person]): Unit = {
-    "behave like a list of people" must {
-      "not show the list if there are no people" in {
+  def editableItemList(emptyView: View, nonEmptyView: View, items: Seq[EditableItem]): Unit = {
+    "behave like a list of items" must {
+      "not show the list if there are no items" in {
         val doc = asDocument(emptyView())
-        doc.select("ul#people").size() mustBe 0
+        doc.select("ul#items").size() mustBe 0
       }
 
-      "show the list when there are one or more people" in {
+      "show the list when there are one or more items" in {
         val doc = asDocument(nonEmptyView())
-        doc.select("ul#people").size() mustBe 1
+        doc.select("ul#items").size() mustBe 1
       }
 
-      "display the correct number of people in the list" in {
+      "display the correct number of items in the list" in {
         val doc = asDocument(nonEmptyView())
-        doc.select("#people > li").size() mustBe people.size
+        doc.select("#items > li").size() mustBe items.size
       }
 
       "display the correct details for each person" in {
         val doc = asDocument(nonEmptyView())
-        people.foreach { person =>
-          val name = doc.select(s"#${person.id}")
+        items.foreach { item =>
+          val name = doc.select(s"#${item.id}")
           name.size mustBe 1
-          name.first.text mustBe person.name
+          name.first.text mustBe item.name
         }
       }
 
       "display the delete link for each person" in {
         val doc = asDocument(nonEmptyView())
-        people.foreach { person =>
-          val link = doc.select(s"#${person.deleteLinkId}")
+        items.foreach { item =>
+          val link = doc.select(s"#${item.deleteLinkId}")
           link.size mustBe 1
           link.first.text mustBe messages("site.delete")
-          link.first.attr("href") mustBe person.deleteLink
+          link.first.attr("href") mustBe item.deleteLink
         }
       }
 
       "display the edit link for each person" in {
         val doc = asDocument(nonEmptyView())
-        people.foreach { person =>
-          val link = doc.select(s"#${person.editLinkId}")
+        items.foreach { item =>
+          val link = doc.select(s"#${item.editLinkId}")
           link.size mustBe 1
           link.first.text mustBe messages("site.edit")
-          link.first.attr("href") mustBe person.editLink
+          link.first.attr("href") mustBe item.editLink
         }
       }
     }

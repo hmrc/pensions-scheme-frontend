@@ -22,17 +22,17 @@ import models.{Index, NormalMode}
 
 import scala.language.implicitConversions
 
-case class Person(index: Int, name: String, deleteLink: String, editLink: String) {
-  def id: String = s"person-$index"
+case class EditableItem(index: Int, name: String, deleteLink: String, editLink: String) {
+  def id: String = s"item-$index"
   def deleteLinkId: String = s"$id-delete"
   def editLinkId: String = s"$id-edit"
 }
 
-object Person {
+object EditableItem {
 
-  implicit def indexedCompanyDirectors(directors: (Int, Seq[DirectorDetails])): Seq[Person] = {
+  implicit def indexedCompanyDirectors(directors: (Int, Seq[DirectorDetails])): Seq[EditableItem] = {
     directors._2.zipWithIndex.map { case (director, index) =>
-      Person(
+      EditableItem(
         index,
         director.directorName,
         routes.ConfirmDeleteDirectorController.onPageLoad(directors._1, index).url,
