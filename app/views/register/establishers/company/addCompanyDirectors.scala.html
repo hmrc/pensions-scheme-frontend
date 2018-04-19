@@ -46,7 +46,7 @@
             @components.paragraph_text(messages("messages__addCompanyDirectors_lede"))
             @components.submit_button("messages__addCompanyDirectors_add_director")
         } else {
-            @components.person_list((establisherIndex, directors))
+            @components.editable_item_list((establisherIndex, directors))
 
             @if(directors.size < appConfig.maxDirectors) {
                 @components.input_yes_no(

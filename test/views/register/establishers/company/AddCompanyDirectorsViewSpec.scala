@@ -19,13 +19,13 @@ package views.register.establishers.company
 import play.api.data.Form
 import controllers.register.establishers.company.routes
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
-import views.behaviours.{PeopleListBehaviours, YesNoViewBehaviours}
+import views.behaviours.{EditableItemListBehaviours, YesNoViewBehaviours}
 import models.NormalMode
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import views.html.register.establishers.company.addCompanyDirectors
 
-class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with PeopleListBehaviours {
+class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemListBehaviours {
 
   private val establisherIndex = 1
   private val companyName = "MyCo Ltd"
@@ -96,7 +96,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with PeopleListBeh
 
     val directors: Seq[DirectorDetails] = Seq(johnDoe, joeBloggs)
 
-    behave like peopleList(createView(), createView(directors), (establisherIndex, directors))
+    behave like editableItemList(createView(), createView(directors), (establisherIndex, directors))
 
     "show the Continue button when there are directors" in {
       val doc = asDocument(createViewUsingForm(Seq(johnDoe))(form))
