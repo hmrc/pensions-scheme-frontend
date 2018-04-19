@@ -38,7 +38,9 @@ class Navigator @Inject()() {
 
   def nextPage(id: Identifier, mode: Mode): UserAnswers => Call = mode match {
     case NormalMode =>
-      routeMap.lift(id).getOrElse(_ => routes.IndexController.onPageLoad())
+      routeMap.lift(id).getOrElse(_ =>
+        routes.IndexController.onPageLoad()
+      )
     case CheckMode =>
       editRouteMap.lift(id).getOrElse(_ => checkYourAnswersPage)
   }

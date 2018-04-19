@@ -16,62 +16,66 @@
 
 package controllers.register.establishers.company
 
+import play.api.data.Form
+import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.CompanyRegistrationNumberFormProvider
+import play.api.test.Helpers.{contentAsString, _}
+import play.api.libs.json._
+import forms.register.establishers.company.OtherDirectorsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.{CompanyContactDetailsId, CompanyDetailsId, CompanyRegistrationNumberId}
+import identifiers.register.establishers.company.{CompanyDetailsId, OtherDirectorsId}
 import models.register.{SchemeDetails, SchemeType}
-import models._
-import play.api.data.Form
-import play.api.libs.json.Json
-import play.api.test.Helpers._
-import utils.FakeNavigator
-import views.html.register.establishers.company.companyRegistrationNumber
+import models.{CompanyDetails, Index, NormalMode}
+import views.html.register.establishers.company.otherDirectors
 
-class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
+class OtherDirectorsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  val schemeName = "Test Scheme Name"
 
-  val formProvider = new CompanyRegistrationNumberFormProvider()
+  val index = Index(0)
+  val invalidIndex=Index(10)
+
+  val formProvider = new OtherDirectorsFormProvider()
   val form = formProvider()
-  val firstIndex = Index(0)
-  val invalidIndex = Index(3)
   val companyName = "test company name"
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
-    new CompanyRegistrationNumberController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
-
-  def viewAsString(form: Form[_] = form) = companyRegistrationNumber(frontendAppConfig, form, NormalMode, firstIndex,companyName)(fakeRequest, messages).toString
 
   val validData = Json.obj(
     SchemeDetailsId.toString ->
       SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        CompanyDetailsId.toString ->
-          CompanyDetails("test company name", Some("123456"), Some("abcd")),
-        CompanyRegistrationNumberId.toString ->
-                 CompanyRegistrationNumber.Yes("1234567")
+        CompanyDetailsId.toString -> CompanyDetails("test company name", Some("123456"), Some("abcd")),
+        OtherDirectorsId.toString -> true
       )
     )
   )
-  "CompanyRegistrationNumber Controller" must {
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
+    new OtherDirectorsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+
+  def viewAsString(form: Form[_] = form) = otherDirectors(frontendAppConfig, form, NormalMode,index,companyName)(fakeRequest, messages).toString
+
+  "OtherDirectors Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode,firstIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode,index)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
+
+
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode,firstIndex)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form.fill(CompanyRegistrationNumber.Yes("1234567")))
+
+      val result = controller(getRelevantData).onPageLoad(NormalMode,index)(fakeRequest)
+      contentAsString(result) mustBe viewAsString(form.fill(true))
     }
 
     "redirect to session expired page on a GET when the index is not valid" ignore {
@@ -80,10 +84,11 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
-
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber.hasCrn","true"),("companyRegistrationNumber.crn","1234567"))
-      val result = controller().onSubmit(NormalMode,firstIndex)(postRequest)
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+      val result = controller().onSubmit(NormalMode,index)(postRequest)
+
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -91,20 +96,24 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
-      val result = controller().onSubmit(NormalMode,firstIndex)(postRequest)
+
+      val result = controller().onSubmit(NormalMode,index)(postRequest)
+
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode,firstIndex)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode,index)(fakeRequest)
+
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", CompanyRegistrationNumber.options.head.value))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode,firstIndex)(postRequest)
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+      val result = controller(dontGetAnyData).onSubmit(NormalMode,index)(postRequest)
+
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }

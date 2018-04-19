@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
-import identifiers._
+package forms.register.establishers.company
 
-case class AddCompanyDirectorsId(index:Int) extends TypedIdentifier[Boolean] {
-  override def toString: String = "addCompanyDirectors"
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+
+class OtherDirectorsFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__otherDirectors__error__required")
+    )
 }
