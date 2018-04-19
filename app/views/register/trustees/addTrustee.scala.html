@@ -40,7 +40,7 @@
 
         } else {
 
-            @components.details_list(trustees)
+            @components.editable_item_list(trustees)
 
             @if(trustees.size < appConfig.maxTrustees) {
                 @components.input_yes_no(

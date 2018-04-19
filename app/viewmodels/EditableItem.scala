@@ -18,12 +18,14 @@ package viewmodels
 
 import models.register.establishers.company.director.DirectorDetails
 import controllers.register.establishers.company.director.routes
-import models.{Index, NormalMode}
+import models.register.trustees.TrusteeKind
+import models.{CheckMode, Index, NormalMode}
 
 import scala.language.implicitConversions
 
+//noinspection MutatorLikeMethodIsParameterless
 case class EditableItem(index: Int, name: String, deleteLink: String, editLink: String) {
-  def id: String = s"item-$index"
+  def id: String = s"person-$index"
   def deleteLinkId: String = s"$id-delete"
   def editLinkId: String = s"$id-edit"
 }
@@ -37,6 +39,25 @@ object EditableItem {
         director.directorName,
         routes.ConfirmDeleteDirectorController.onPageLoad(directors._1, index).url,
         routes.DirectorDetailsController.onPageLoad(NormalMode, directors._1, Index(index)).url
+      )
+    }
+  }
+
+  implicit def fromTrusteeEntityDetails(trustees: Seq[(String, String)]): Seq[EditableItem] = {
+    trustees.zipWithIndex.map { case (trustee, index) =>
+      val trusteeKind = trustee._2 match {
+        case url if url == controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
+          => TrusteeKind.Company
+        case url if url == controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(CheckMode, index).url
+          => TrusteeKind.Individual
+        case _ => throw new IllegalArgumentException(s"Cannot determine trustee kind: ${trustee._1}")
+      }
+
+      EditableItem(
+        index,
+        trustee._1,
+        controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(index, trusteeKind).url,
+        trustee._2
       )
     }
   }
