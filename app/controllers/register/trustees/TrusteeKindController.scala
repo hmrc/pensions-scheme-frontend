@@ -32,7 +32,7 @@ import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.trusteeKind
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
-import utils.annotations.Register
+import utils.annotations.Trustees
 
 import scala.concurrent.Future
 
@@ -40,7 +40,7 @@ class TrusteeKindController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        dataCacheConnector: DataCacheConnector,
-                                       @Register navigator: Navigator,
+                                       @Trustees navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
@@ -68,7 +68,7 @@ class TrusteeKindController @Inject()(
             Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index, schemeDetails.schemeName))),
           (value) =>
             dataCacheConnector.save(request.externalId, TrusteeKindId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(TrusteeKindId(index), mode)(new UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(TrusteeKindId(index), mode)(UserAnswers(cacheMap))))
         )
       }
   }

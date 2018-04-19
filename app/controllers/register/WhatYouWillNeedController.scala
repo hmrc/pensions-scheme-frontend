@@ -20,16 +20,20 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import controllers.actions._
+import identifiers.register.WhatYouWillNeedId
 import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.{Navigator, UserAnswers}
+import utils.annotations.Register
 import views.html.register.whatYouWillNeed
 
 class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           authenticate: AuthAction,
-                                          getData: DataRetrievalAction) extends FrontendController with I18nSupport {
+                                          getData: DataRetrievalAction,
+                                          @Register navigator: Navigator) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
@@ -38,6 +42,7 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
-      Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
+      Redirect(navigator.nextPage(WhatYouWillNeedId, NormalMode)(UserAnswers()))
   }
+
 }

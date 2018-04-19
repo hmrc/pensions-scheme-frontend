@@ -20,7 +20,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company._
 import models.{CheckMode, CompanyDetails, NormalMode}
 import org.scalatest.prop.PropertyChecks
-import org.scalatest.{FunSuite, MustMatchers, WordSpec}
+import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.UserAnswers
 import config.FrontendAppConfig
@@ -30,14 +30,14 @@ import org.joda.time.LocalDate
 import org.scalatestplus.play.guice._
 import play.api.inject.Injector
 
-class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with PropertyChecks with GuiceOneAppPerSuite {
+class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with PropertyChecks with GuiceOneAppPerSuite with OptionValues {
 
   def injector: Injector = app.injector
 
   def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
 
   val navigator = new EstablishersCompanyNavigator(frontendAppConfig)
-  val emptyAnswers = new UserAnswers(Json.obj())
+  val emptyAnswers = UserAnswers(Json.obj())
 
   private val companyName = "MyCo Ltd"
 
@@ -55,7 +55,6 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
       )
     )
   }
-
 
   "NormalMode" when {
 
@@ -113,9 +112,9 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         }
       }
     }
-    ".nextPage(CompanyAddressYears" must {
+    ".nextPage(CompanyAddressYears)" must {
       "return a 'Call' to 'Previous Address Postcode' page when 'CompanyAddressYears' is 'LessThanOneYear'" in {
-        val answers = new UserAnswers(Json.obj(
+        val answers = UserAnswers(Json.obj(
           EstablishersId.toString -> Json.arr(
             Json.obj(
               CompanyAddressYearsId.toString ->
@@ -128,7 +127,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
       }
 
       "return a 'Call' to 'Company Contact Details' page when 'AddressYears' is 'MoreThanOneYear'" in {
-        val answers = new UserAnswers(Json.obj(
+        val answers = UserAnswers(Json.obj(
           EstablishersId.toString -> Json.arr(
             Json.obj(
               CompanyAddressYearsId.toString ->
@@ -140,7 +139,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         result mustEqual controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, 0)
       }
     }
-    ".nextPage(CompanyPreviousAddressPostCode" must {
+    ".nextPage(CompanyPreviousAddressPostCode)" must {
       "return a 'Call' to 'Previous Address Picker' page" in {
         (0 to 10).foreach {
           index =>
@@ -149,36 +148,66 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         }
       }
     }
-  }
-  ".nextPage(CompanyPreviousAddressPicker" must {
-    "return a 'Call' to 'Previous Address Manual' page" in {
-      (0 to 10).foreach {
-        index =>
-          val result = navigator.nextPage(CompanyPreviousAddressListId(index), NormalMode)(emptyAnswers)
-          result mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(NormalMode, index)
+    ".nextPage(CompanyPreviousAddressPicker)" must {
+      "return a 'Call' to 'Previous Address Manual' page" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyPreviousAddressListId(index), NormalMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(NormalMode, index)
+        }
       }
     }
-  }
-  ".nextPage(CompanyPreviousAddressManual" must {
-    "return a 'Call' to 'Company Contact Details" in {
-      (0 to 10).foreach {
-        index =>
-          val result = navigator.nextPage(CompanyPreviousAddressId(index), NormalMode)(emptyAnswers)
-          result mustEqual controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index)
+    ".nextPage(CompanyPreviousAddressManual)" must {
+      "return a 'Call' to 'Company Contact Details" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyPreviousAddressId(index), NormalMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index)
+        }
       }
     }
-  }
-  ".nextPage(CompanyContactDetails" must {
-    "return a 'Call' to 'Company Check Your Answers" in {
-      (0 to 10).foreach {
-        index =>
-          val result = navigator.nextPage(CompanyContactDetailsId(index), NormalMode)(emptyAnswers)
-          result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
+    ".nextPage(CompanyContactDetails)" must {
+      "return a 'Call' to 'Company Check Your Answers" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(CompanyContactDetailsId(index), NormalMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
+        }
       }
     }
 
+    ".next Page(AddCompanyDirectors)" must {
+      "return a call to Director Details when there are no directors" in {
+        val result = navigator.nextPage(AddCompanyDirectorsId(0), NormalMode)(emptyAnswers)
+        result mustEqual controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, 0, 0)
+      }
 
-    ".next Page(AddCompanyDirectors" must {
+      "return a call to Director Details when no of Directors is less than max and AddCompanyDirectorsId is true" in {
+        val userAnswers = UserAnswers(validData(johnDoe))
+          .set(AddCompanyDirectorsId(0))(true)
+          .asOpt
+          .value
+
+        val result = navigator.nextPage(AddCompanyDirectorsId(0), NormalMode)(userAnswers)
+        result mustEqual controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, 0, 1)
+      }
+
+      "return a call to Company Review when no of Directors is less than max and AddCompanyDirectorsId is false" in {
+        val userAnswers = UserAnswers(validData(johnDoe))
+          .set(AddCompanyDirectorsId(0))(false)
+          .asOpt
+          .value
+
+        val result = navigator.nextPage(AddCompanyDirectorsId(0), NormalMode)(userAnswers)
+        result mustEqual controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
+      }
+
+      "return a call to Session Expired when no of Directors is less than max and no answer to AddCompanyDirectorsId" in {
+        val userAnswers = UserAnswers(validData(johnDoe))
+        val result = navigator.nextPage(AddCompanyDirectorsId(0), NormalMode)(userAnswers)
+        result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
+      }
+
       "return a call to Other Directors when no of Directors at Max" in {
         val directors = Seq.fill(maxNoOfDirectors)(johnDoe)
         val result = navigator.nextPage(AddCompanyDirectorsId(0), NormalMode)(UserAnswers(validData(directors: _*)))
@@ -186,7 +215,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
       }
     }
 
-    ".next Page(OtherCompanyDirectors" must {
+    ".next Page(OtherCompanyDirectors)" must {
       "return a call to Company Review" in {
         (0 to 10).foreach {
           index =>
@@ -195,7 +224,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         }
       }
     }
-}
+  }
 
 
   "CheckMode" when {
@@ -263,7 +292,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
     ".nextPage(CompanyAddressYears)" must {
 
       "return a `Call` to `CompanyPreviousPostCodeLookup` page when `CompanyAddressYears` is `UnderAYear`" in {
-        val answers = new UserAnswers(Json.obj(
+        val answers = UserAnswers(Json.obj(
           EstablishersId.toString -> Json.arr(
             Json.obj(
               CompanyAddressYearsId.toString ->
@@ -276,7 +305,7 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
       }
 
       "return a `Call` to `CheckYourAnswersPage` page when `CompanyAddressYears` is `OverAYear`" in {
-        val answers = new UserAnswers(Json.obj(
+        val answers = UserAnswers(Json.obj(
           EstablishersId.toString -> Json.arr(
             Json.obj(
               CompanyAddressYearsId.toString ->
@@ -333,13 +362,53 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         }
       }
     }
-    ".next Page(AddCompanyDirectors" must {
+
+    ".next Page(AddCompanyDirectors)" must {
+      "return a call to Director Details when there are no directors" in {
+        val result = navigator.nextPage(AddCompanyDirectorsId(0), CheckMode)(emptyAnswers)
+        result mustEqual controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(CheckMode, 0, 0)
+      }
+
+      "return a call to Director Details when no of Directors is less than max and AddCompanyDirectorsId is true" in {
+        val userAnswers = UserAnswers(validData(johnDoe))
+          .set(AddCompanyDirectorsId(0))(true)
+          .asOpt
+          .value
+
+        val result = navigator.nextPage(AddCompanyDirectorsId(0), CheckMode)(userAnswers)
+        result mustEqual controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(CheckMode, 0, 1)
+      }
+
+      "return a call to Company Review when no of Directors is less than max and AddCompanyDirectorsId is false" in {
+        val userAnswers = UserAnswers(validData(johnDoe))
+          .set(AddCompanyDirectorsId(0))(false)
+          .asOpt
+          .value
+
+        val result = navigator.nextPage(AddCompanyDirectorsId(0), CheckMode)(userAnswers)
+        result mustEqual controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
+      }
+
+      "return a call to Session Expired when no of Directors is less than max and no answer to AddCompanyDirectorsId" in {
+        val userAnswers = UserAnswers(validData(johnDoe))
+        val result = navigator.nextPage(AddCompanyDirectorsId(0), CheckMode)(userAnswers)
+        result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
+      }
+
       "return a call to Other Directors when no of Directors at Max" in {
         val directors = Seq.fill(maxNoOfDirectors)(johnDoe)
         val result = navigator.nextPage(AddCompanyDirectorsId(0), CheckMode)(UserAnswers(validData(directors: _*)))
-        result mustEqual controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(NormalMode, 0)
+        result mustEqual controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(CheckMode, 0)
+      }
+    }
+
+    ".nextPage(CompanyReviewId)" must {
+      "return a `Call` to `AddTrusteeController`" in {
+        val result = navigator.nextPage(CompanyReviewId(0), NormalMode)(emptyAnswers)
+        result mustEqual controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
       }
     }
 
   }
+
 }
