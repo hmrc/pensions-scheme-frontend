@@ -22,26 +22,33 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import controllers.actions._
 import config.FrontendAppConfig
-import identifiers.register.SchemeDetailsId
+import connectors.DataCacheConnector
+import controllers.{Retrievals}
+import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
 import org.joda.time.LocalDate
-import org.joda.time.format.DateTimeFormat
 import play.api.mvc.{Action, AnyContent}
 import views.html.register.schemeSuccess
+import scala.concurrent.Future
+
 
 class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
+                                        cacheConnector: DataCacheConnector,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction) extends FrontendController with I18nSupport {
+                                        requireData: DataRequiredAction) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async{
     implicit request =>
 
-      //TODO: Replace the harcoded application number to the actual application number
-      Ok(schemeSuccess(
-        appConfig,
-        request.userAnswers.get(SchemeDetailsId).map(_.schemeName),
-        LocalDate.now(),
-        "XX123456789132"))
+      SubmissionReferenceNumberId.retrieve.right.map {
+        submissionReferenceNumber =>
+          Future.successful(Ok(schemeSuccess(
+            appConfig,
+            request.userAnswers.get(SchemeDetailsId).map(_.schemeName),
+            LocalDate.now(),
+            submissionReferenceNumber))
+          )
+      }
   }
 }

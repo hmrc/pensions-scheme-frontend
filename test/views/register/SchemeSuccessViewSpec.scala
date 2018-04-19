@@ -27,10 +27,12 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "complete"
 
+  val submissionReferenceNumber="XX123456789132"
+
   val testScheme = "test scheme name"
-  //TODO: Replace the harcoded application number to the actual application number
+
   def createView: () => HtmlFormat.Appendable = () => schemeSuccess(frontendAppConfig, Some(testScheme),
-    LocalDate.now(), "1234")(fakeRequest, messages)
+    LocalDate.now(), submissionReferenceNumber)(fakeRequest, messages)
 
   "SchemeSuccess view" must {
 
@@ -38,14 +40,10 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
       "_copy_1", "_copy_2", "_copy_3", "_register_pensions_regulator", "_register_vat")
 
     "have dynamic text for application number" in {
-      Jsoup.parse(createView().toString()) must haveDynamicText("messages__complete__application_number_is", "1234")
+      Jsoup.parse(createView().toString()) must haveDynamicText("messages__complete__application_number_is", submissionReferenceNumber)
     }
 
-    "have link for register pensions regulator" in {
-      Jsoup.parse(createView().toString()).select("a[id=register-pensions-regulator-link]") must haveLink(routes.SchemeSuccessController.onPageLoad().url)
-    }
-
-    "have link for complete register vat link" in {
+     "have link for complete register vat link" in {
       Jsoup.parse(createView().toString()).select("a[id=complete-register-vat-link]") must haveLink(routes.SchemeSuccessController.onPageLoad().url)
     }
     "have button link" in {
