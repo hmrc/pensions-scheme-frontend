@@ -18,22 +18,50 @@ package views.register.trustees
 
 import controllers.register.trustees.routes
 import forms.register.trustees.AddTrusteeFormProvider
-import models.NormalMode
+import identifiers.register.trustees.company.CompanyDetailsId
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import models.person.PersonDetails
+import models.{CheckMode, CompanyDetails, NormalMode}
+import org.joda.time.LocalDate
 import org.jsoup.Jsoup
 import play.api.data.Form
-import views.behaviours.YesNoViewBehaviours
+import utils.UserAnswers
+import views.behaviours.{YesNoViewBehaviours, EditableItemListBehaviours}
 import views.html.register.trustees.addTrustee
 
-class AddTrusteeViewSpec extends YesNoViewBehaviours {
+class AddTrusteeViewSpec extends YesNoViewBehaviours with EditableItemListBehaviours {
 
   val onwardRoute = routes.AddTrusteeController.onPageLoad(NormalMode).url
+  def companyUrl(index: Int) = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
+  def individualUrl(index: Int) = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(CheckMode, 0).url
 
   val messageKeyPrefix = "addTrustee"
   val schemeName = "Test scheme name"
   private val maxTrustees = frontendAppConfig.maxTrustees
-  val trusteeCompany = ("Trustee Company" -> onwardRoute)
-  val trusteeIndividual = ("Trustee Individual" -> onwardRoute)
-  val allTrustees = Seq(trusteeCompany, trusteeIndividual)
+  val trusteeCompany = ("Trustee Company" -> companyUrl(0))
+  val trusteeIndividual = ("John Doe" -> individualUrl(0))
+  val companyDetails = CompanyDetails(
+    "Trustee Company",
+    None,
+    None
+  )
+
+  val trusteeDetails = PersonDetails(
+    "John",
+    None,
+    "Doe",
+    LocalDate.now()
+  )
+
+  val userAnswers =
+    UserAnswers()
+      .set(CompanyDetailsId(0))(companyDetails)
+      .flatMap(_.set(TrusteeDetailsId(1))(trusteeDetails))
+      .asOpt
+      .value
+
+  val trustees = userAnswers.allTrustees
+  val fullTrustees = (0 to 9).map(index => ("trustee name", companyUrl(index)))
 
   val form = new AddTrusteeFormProvider()()
 
@@ -49,7 +77,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours {
     behave like pageWithSecondaryHeader(createView(), schemeName)
 
     behave like yesNoPage(
-      createViewUsingForm(allTrustees),
+      createViewUsingForm(trustees),
       messageKeyPrefix,
       routes.AddTrusteeController.onSubmit(NormalMode).url,
       "_text",
@@ -70,24 +98,20 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours {
 
     "when there are 10 directors" when {
       "not show the yes no inputs" in {
-        val doc = asDocument(createViewUsingForm(Seq.fill(maxTrustees)(trusteeCompany))(form))
+        val doc = asDocument(createViewUsingForm(fullTrustees)(form))
         doc.select("legend > span").size() mustBe 0
       }
 
       "show the maximum number of directors message" in {
-        val doc = asDocument(createView(Seq.fill(maxTrustees)(trusteeIndividual))())
+        val doc = asDocument(createView(fullTrustees)())
         doc must haveDynamicText("messages__addTrustees_at_maximum")
         doc must haveDynamicText("messages__addTrustees_tell_us_if_you_have_more")
       }
     }
 
+    behave like editableItemList(createView(), createView(trustees), trustees)
     "display all the partially added trustee names with yes/No buttons if the maximum trustees are not added yet" in {
-      val doc = asDocument(createView(allTrustees)())
-      allTrustees.foreach { trusteeDetails =>
-        val (trusteeName, url) = trusteeDetails
-        doc must haveDynamicText(trusteeName)
-        doc.select("a[id=edit-link]") must haveLink(url)
-      }
+      val doc = asDocument(createView(trustees)())
       doc.select("#value-yes").size() mustEqual 1
       doc.select("#value-no").size() mustEqual 1
 
