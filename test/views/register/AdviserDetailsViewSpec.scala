@@ -21,6 +21,7 @@ import controllers.register.routes
 import forms.register.AdviserDetailsFormProvider
 import models.NormalMode
 import models.register.AdviserDetails
+import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.adviserDetails
 
@@ -30,9 +31,9 @@ class AdviserDetailsViewSpec extends QuestionViewBehaviours[AdviserDetails] {
 
   override val form = new AdviserDetailsFormProvider()()
 
-  def createView = () => adviserDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => adviserDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => adviserDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => adviserDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
 
   "AdviserDetails view" must {
@@ -41,6 +42,7 @@ class AdviserDetailsViewSpec extends QuestionViewBehaviours[AdviserDetails] {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.register.routes.AdviserDetailsController.onSubmit(NormalMode).url, "field1", "field2")
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.register.routes.AdviserDetailsController.onSubmit(NormalMode).url,
+      "adviserName", "emailAddress")
   }
 }

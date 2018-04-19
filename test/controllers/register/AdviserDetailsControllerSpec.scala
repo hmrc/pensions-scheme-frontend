@@ -65,7 +65,7 @@ class AdviserDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("name", nameOrCompany), ("email", email))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("adviserName", nameOrCompany), ("emailAddress", email))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -91,7 +91,7 @@ class AdviserDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("name", nameOrCompany), ("email", email))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("adviserName", nameOrCompany), ("emailAddress", email))
       val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER

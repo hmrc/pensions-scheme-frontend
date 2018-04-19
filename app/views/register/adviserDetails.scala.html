@@ -33,7 +33,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__adviserDetails__heading")
+        @components.heading("messages__adviserDetails__heading", secondaryHeaderKey = Some("messages__adviserDetails__secondary_heading"))
 
         @components.input_text(
             field = form("adviserName"),

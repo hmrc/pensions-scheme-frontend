@@ -593,6 +593,7 @@ messages__haveAnyTrustees__error__required = Select yes if you have any trustees
 
 messages__adviserDetails__title = Enter the details of your pension adviser
 messages__adviserDetails__heading = Enter the details of your pension adviser
+messages__adviserDetails__secondary_heading = Pension adviser
 messages__adviserDetails__name = Name or company
 messages__adviserDetails__email = Email address
 messages__adviserDetails__checkYourAnswersLabel = Enter the details of your pension adviser
