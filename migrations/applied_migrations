@@ -1,33 +1,37 @@
 #!/bin/bash
 
-echo "Applying migration HaveAnyTrustees"
+echo "Applying migration AdviserDetails"
 
-echo "Adding routes to register.trustees.routes"
+echo "Adding routes to register.routes"
 
-echo "" >> ../conf/register.trustees.routes
-echo "GET        /haveAnyTrustees                       controllers.register.trustees.HaveAnyTrusteesController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.trustees.routes
-echo "POST       /haveAnyTrustees                       controllers.register.trustees.HaveAnyTrusteesController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.trustees.routes
+echo "" >> ../conf/register.routes
+echo "GET        /adviserDetails                       controllers.register.AdviserDetailsController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/register.routes
+echo "POST       /adviserDetails                       controllers.register.AdviserDetailsController.onSubmit(mode: Mode = NormalMode)" >> ../conf/register.routes
 
-echo "GET        /changeHaveAnyTrustees                       controllers.register.trustees.HaveAnyTrusteesController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.trustees.routes
-echo "POST       /changeHaveAnyTrustees                       controllers.register.trustees.HaveAnyTrusteesController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.trustees.routes
+echo "GET        /changeAdviserDetails                       controllers.register.AdviserDetailsController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/register.routes
+echo "POST       /changeAdviserDetails                       controllers.register.AdviserDetailsController.onSubmit(mode: Mode = CheckMode)" >> ../conf/register.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "messages__haveAnyTrustees__title = haveAnyTrustees" >> ../conf/messages.en
-echo "messages__haveAnyTrustees__heading = haveAnyTrustees" >> ../conf/messages.en
-echo "messages__haveAnyTrustees__checkYourAnswersLabel = haveAnyTrustees" >> ../conf/messages.en
-echo "messages__haveAnyTrustees__error__required = Please give an answer for haveAnyTrustees" >> ../conf/messages.en
+echo messages__"adviserDetails__title = adviserDetails" >> ../conf/messages.en
+echo messages__"adviserDetails__heading = adviserDetails" >> ../conf/messages.en
+echo messages__"adviserDetails__field1 = Field 1" >> ../conf/messages.en
+echo messages__"adviserDetails__field2 = Field 2" >> ../conf/messages.en
+echo messages__"adviserDetails__checkYourAnswersLabel = adviserDetails" >> ../conf/messages.en
+echo messages__"adviserDetails__error__field1_required = Please give an answer for field1" >> ../conf/messages.en
+echo messages__"adviserDetails__error__field2_required = Please give an answer for field2" >> ../conf/messages.en
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/class/ {\
      print;\
      print "";\
-     print "  def haveAnyTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.HaveAnyTrusteesId) map {";\
-     print "    x => AnswerRow(\"haveAnyTrustees.checkYourAnswersLabel\", Seq(if(x) \"site.yes\" else \"site.no\"), true, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url)"; print "  }";\
+     print "  def adviserDetails: Option[AnswerRow] = userAnswers.get(identifiers.register.AdviserDetailsId) map {";\
+     print "    x => AnswerRow(\"adviserDetails.checkYourAnswersLabel\", Seq(s\"${x.field1} ${x.field2}\"), false, controllers.register.routes.AdviserDetailsController.onPageLoad(CheckMode).url)";\
+     print "  }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration HaveAnyTrustees completed"
+echo "Migration AdviserDetails completed"
