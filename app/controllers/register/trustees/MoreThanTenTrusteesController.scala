@@ -29,8 +29,8 @@ import forms.register.trustees.MoreThanTenTrusteesFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import models.Mode
-import play.api.mvc.{Action, AnyContent}
 import utils.annotations.Register
+import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.moreThanTenTrustees
 

@@ -49,7 +49,7 @@ class TrusteeKindController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       SchemeDetailsId.retrieve.right.map { schemeDetails =>
         val preparedForm = request.userAnswers.get(TrusteeKindId(index)) match {
