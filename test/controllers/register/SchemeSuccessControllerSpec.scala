@@ -16,30 +16,33 @@
 
 package controllers.register
 
+import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import views.html.register.schemeSuccess
 import controllers.ControllerSpecBase
-import identifiers.register.SchemeDetailsId
+import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
+
 
 class SchemeSuccessControllerSpec extends ControllerSpecBase {
 
+  val submissionReferenceNumber="XX123456789132"
+
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString -> Json.toJson(SchemeDetails("test scheme name", SchemeType.SingleTrust))
+    SchemeDetailsId.toString -> Json.toJson(SchemeDetails("test scheme name", SchemeType.SingleTrust)),
+    SubmissionReferenceNumberId.toString->submissionReferenceNumber
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction =
                  new FakeDataRetrievalAction(Some(validData))):SchemeSuccessController =
-    new SchemeSuccessController(frontendAppConfig, messagesApi, FakeAuthAction,
+    new SchemeSuccessController(frontendAppConfig, messagesApi, FakeDataCacheConnector, FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl)
 
-  //TODO: Change the hardcoded reference number
   def viewAsString(): String = schemeSuccess(frontendAppConfig, Some("test scheme name"),
-    LocalDate.now(), "XX123456789132")(fakeRequest, messages).toString
+    LocalDate.now(), submissionReferenceNumber)(fakeRequest, messages).toString
 
   "SchemeSuccess Controller" must {
 
@@ -48,6 +51,13 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+    }
+
+    "redirect to Session Expired for a GET if no existing data is found" in {
+      val result = controller(dontGetAnyData).onPageLoad(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
 }
