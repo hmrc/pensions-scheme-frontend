@@ -18,23 +18,21 @@ package controllers.register
 
 import javax.inject.Inject
 
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import controllers.actions._
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
+import controllers.actions._
 import identifiers.register.{SchemeDetailsId, SchemeSuccessId, SubmissionReferenceNumberId}
 import models.NormalMode
 import org.joda.time.LocalDate
-import org.joda.time.format.DateTimeFormat
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
 import utils.annotations.Register
 import views.html.register.schemeSuccess
 
 import scala.concurrent.Future
-
 
 class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
