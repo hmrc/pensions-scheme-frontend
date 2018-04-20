@@ -99,7 +99,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
             Message(controller.title),
             Message(controller.heading),
             secondaryHeader = Some(director.directorName),
-            Message(controller.hint)
+            Some(Message(controller.hint))
           )
 
           def viewAsString(form: Form[_] = form): String = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString

@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package viewmodels.address
+package identifiers.register.adviser
 
-import play.api.mvc.Call
-import utils.InputOption
-import viewmodels.Message
+import identifiers.TypedIdentifier
+import models.address.Address
 
-case class ManualAddressViewModel(
-                                   postCall: Call,
-                                   countryOptions: Seq[InputOption],
-                                   title: Message,
-                                   heading: Message,
-                                   secondaryHeader: Option[Message],
-                                   hint: Option[Message] = None
-                                 ) {
-
+case object AdviserAddressId extends TypedIdentifier[Address] {
+  override def toString: String = "adviserDetails"
 }
+
+

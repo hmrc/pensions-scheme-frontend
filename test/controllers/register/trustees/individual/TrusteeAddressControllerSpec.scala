@@ -65,7 +65,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
     Message(controller.title),
     Message(controller.heading),
     secondaryHeader = Some(personDetails.fullName),
-    Message(controller.hint)
+    Some(Message(controller.hint))
   )
 
   behave like manualAddress(
