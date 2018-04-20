@@ -44,8 +44,8 @@ class AdviserPostCodeLookupController @Inject() (
                                                   formProvider: PostCodeLookupFormProvider
                                                 ) extends PostcodeLookupController {
 
-  private val title: Message = "messages__adviserPostcodeLookupAddress__title"
-  private val heading: Message = "messages__adviserPostcodeLookupAddress__heading"
+  private val title: Message = "messages__adviserPostCodeLookupAddress__title"
+  private val heading: Message = "messages__adviserPostCodeLookupAddress__heading"
   private val invalidPostcode: Message = "messages__error__postcode_invalid"
   private val noResults: Message = "messages__error__postcode_no_results"
 
@@ -61,8 +61,8 @@ class AdviserPostCodeLookupController @Inject() (
               routes.AdviserAddressController.onPageLoad(mode),
               title = Message(title),
               heading = Message(heading),
-              subHeading = Some(Message("messages__adviserPostcodeLookupAddress__secondary")),
-              enterPostcode=Message("messages__adviserPostcodeLookupAddress__enterPostcode")
+              subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
+              enterPostcode=Message("messages__adviserPostCodeLookupAddress__enterPostCode")
             )
         }
     }
