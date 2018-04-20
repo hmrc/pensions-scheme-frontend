@@ -94,8 +94,3 @@ POST       /changeDeclaration                        controllers.register.Declar
 
 GET        /declarationDormant               controllers.register.DeclarationDormantController.onPageLoad
 POST       /declarationDormant               controllers.register.DeclarationDormantController.onSubmit
-
-GET        /adviserDetails                       controllers.register.AdviserDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /adviserDetails                       controllers.register.AdviserDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /changeAdviserDetails                       controllers.register.AdviserDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeAdviserDetails                       controllers.register.AdviserDetailsController.onSubmit(mode: Mode = CheckMode)

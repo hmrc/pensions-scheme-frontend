@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package views.register
+package views.register.adviser
 
-import play.api.data.Form
-import controllers.register.routes
 import forms.register.AdviserDetailsFormProvider
 import models.NormalMode
 import models.register.AdviserDetails
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.adviserDetails
+import views.html.register.adviser.adviserDetails
 
 class AdviserDetailsViewSpec extends QuestionViewBehaviours[AdviserDetails] {
 
@@ -42,7 +41,7 @@ class AdviserDetailsViewSpec extends QuestionViewBehaviours[AdviserDetails] {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.register.routes.AdviserDetailsController.onSubmit(NormalMode).url,
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.register.adviser.routes.AdviserDetailsController.onSubmit(NormalMode).url,
       "adviserName", "emailAddress")
   }
 }

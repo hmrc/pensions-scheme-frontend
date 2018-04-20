@@ -16,11 +16,9 @@
 
 package identifiers.register.adviser
 
-import identifiers.TypedIdentifier
+import identifiers._
 import models.address.Address
 
-case object AdviserAddressId extends TypedIdentifier[Address] {
-  override def toString: String = "adviserAddress"
+case object AdviserAddressPostCodeLookupId extends TypedIdentifier[Seq[Address]] {
+  override def toString: String = "adviserAddressPostCodeLookup"
 }
-
-
