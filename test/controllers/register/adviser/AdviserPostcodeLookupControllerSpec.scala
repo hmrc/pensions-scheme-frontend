@@ -16,38 +16,36 @@
 
 package controllers.register.adviser
 
+import scala.concurrent.Future
 import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
+import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.establishers.company.routes
-import controllers.{ControllerSpecBase, routes}
 import forms.address.PostCodeLookupFormProvider
-import models.NormalMode
 import models.address.{Address, AddressRecord}
+import models.NormalMode
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import play.api.i18n.Messages.Message
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, redirectLocation, route, running, status}
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
-
-import scala.concurrent.Future
+import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, redirectLocation, route, running, status}
 
 class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
-  def onwardRoute: Call = routes.IndexController.onPageLoad(NormalMode)
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()//routes.AdviserAddressListController.onPageLoad(NormalMode)
 
-  def manualInputCall: Call = routes.IndexController.onPageLoad(NormalMode)
+  def manualInputCall: Call = routes.AdviserAddressController.onPageLoad(NormalMode)
 
   private def fakeAddress(postCode: String) = Address(
     "Address Line 1",
@@ -67,11 +65,12 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
 
   lazy val viewModel = PostcodeLookupViewModel(
-    postCall = routes.IndexController.onSubmit(NormalMode),
+    postCall = routes.AdviserPostCodeLookupController.onSubmit(NormalMode),
     manualInputCall = manualInputCall,
-    title = Message("messages__adviserAddress__title"),
-    heading = Message("messages__adviserAddress__heading"),
-    subHeading = Some(Message("message__adviserAddress__subheading"))
+    title = Message("messages__adviserPostcodeLookupAddress__title"),
+    heading = Message("messages__adviserPostcodeLookupAddress__heading"),
+    subHeading = Some(Message("messages__adviserPostcodeLookupAddress__secondary")),
+    enterPostcode=Message("messages__adviserPostcodeLookupAddress__enterPostcode")
   )
 
   "Adviser Postcode Controller" must {
@@ -85,7 +84,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[DataCacheConnector].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompany)
+        bind[DataRetrievalAction].to(getMandatoryAdviser)
       )) {
         implicit app =>
 
@@ -106,7 +105,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
     "redirect to next page on POST request" in {
 
-      val call: Call =routes.adviser.AdviserPostCodeLookupController.onSubmit(NormalMode)
+      val call: Call =routes.AdviserPostCodeLookupController.onSubmit(NormalMode)
 
       val validPostcode = "ZZ1 1ZZ"
 
@@ -121,7 +120,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryEstablisherCompany),
+        bind[DataRetrievalAction].to(getMandatoryAdviser),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
         bind[PostCodeLookupFormProvider].to(formProvider)
       )) {

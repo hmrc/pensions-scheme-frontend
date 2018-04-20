@@ -23,8 +23,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.AdviserPostcodeLookupId
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
+import identifiers.register.adviser.{AdviserAddressPostCodeLookupId, AdviserDetailsId}
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -32,7 +31,6 @@ import play.api.mvc.{Action, AnyContent}
 import utils.Navigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
-
 
 class AdviserPostCodeLookupController @Inject() (
                                                   override val appConfig: FrontendAppConfig,
@@ -46,8 +44,8 @@ class AdviserPostCodeLookupController @Inject() (
                                                   formProvider: PostCodeLookupFormProvider
                                                 ) extends PostcodeLookupController {
 
-  private val title: Message = "messages__companyAddress__title"
-  private val heading: Message = "messages__companyAddress__heading"
+  private val title: Message = "messages__adviserPostcodeLookupAddress__title"
+  private val heading: Message = "messages__adviserPostcodeLookupAddress__heading"
   private val invalidPostcode: Message = "messages__error__postcode_invalid"
   private val noResults: Message = "messages__error__postcode_no_results"
 
@@ -56,14 +54,15 @@ class AdviserPostCodeLookupController @Inject() (
   private def viewmodel(mode: Mode): Retrieval[PostcodeLookupViewModel] =
     Retrieval {
       implicit request =>
-        AdviserPostcodeLookupId.retrieve.right.map {
+        AdviserDetailsId.retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
               routes.AdviserPostCodeLookupController.onSubmit(mode),
-              routes.AdviserPostCodeLookupController.onPageLoad(mode),
+              routes.AdviserAddressController.onPageLoad(mode),
               title = Message(title),
               heading = Message(heading),
-              subHeading = Some("TODO!")
+              subHeading = Some(Message("messages__adviserPostcodeLookupAddress__secondary")),
+              enterPostcode=Message("messages__adviserPostcodeLookupAddress__enterPostcode")
             )
         }
     }
@@ -79,7 +78,7 @@ class AdviserPostCodeLookupController @Inject() (
       implicit request =>
         viewmodel(mode).retrieve.right.map {
           vm =>
-            post(AdviserPostcodeLookupId, vm, mode)
+            post(AdviserAddressPostCodeLookupId, vm, mode)
         }
     }
 }

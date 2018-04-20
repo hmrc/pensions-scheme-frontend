@@ -13,3 +13,8 @@ GET        /adviserAddress                      controllers.register.adviser.Adv
 POST       /adviserAddress                      controllers.register.adviser.AdviserAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /changeAdviserAddress                controllers.register.adviser.AdviserAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeAdviserAddress                controllers.register.adviser.AdviserAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /adviserPostCodeLookup                      controllers.register.adviser.AdviserPostCodeLookupController.onPageLoad(mode:Mode=NormalMode)
+POST       /adviserPostCodeLookup                      controllers.register.adviser.AdviserPostCodeLookupController.onSubmit(mode:Mode=NormalMode)
+GET        /changeAdviserPostCodeLookup                controllers.register.adviser.AdviserPostCodeLookupController.onPageLoad(mode:Mode=CheckMode)
+POST       /changeAdviserPostCodeLookup                controllers.register.adviser.AdviserPostCodeLookupController.onSubmit(mode:Mode=CheckMode)
