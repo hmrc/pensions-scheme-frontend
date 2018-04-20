@@ -16,4 +16,4 @@
 
 package utils
 
-case class InputOption(value: String, label: String, dataTarget: Option[String] = None)
+case class InputOption(value: String, label: String, dataTarget: Option[String] = None, hint: Set[String] = Set.empty)
