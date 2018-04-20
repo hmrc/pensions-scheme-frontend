@@ -18,7 +18,6 @@ package controllers.register
 
 import play.api.data.Form
 import play.api.libs.json.{JsString, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.actions._
@@ -30,15 +29,16 @@ import views.html.register.membership
 import controllers.ControllerSpecBase
 import models.register.SchemeType.SingleTrust
 import models.register.{Membership, SchemeDetails}
+import play.api.mvc.Call
 
 class MembershipControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new MembershipFormProvider()
   val form = formProvider()
 
-  val schemeName = "My Test Scheme"
+  val schemeName = "Test Scheme Name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): MembershipController =
     new MembershipController(
@@ -52,7 +52,7 @@ class MembershipControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  def viewAsString(form: Form[_] = form) = membership(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = membership(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   "Membership Controller" must {
 
