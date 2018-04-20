@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers.register.adviser
 
 import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.routes._
+import controllers.register.adviser.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.AdviserAddressId
+import identifiers.register.adviser.AdviserAddressId
+import models.NormalMode
 import models.address.Address
 import models.register.establishers.company.director.DirectorDetails
-import models.NormalMode
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures

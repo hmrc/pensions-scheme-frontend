@@ -1,0 +1,5 @@
+
+GET        /adviserAddress                       controllers.register.adviser.AdviserAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /adviserAddress                       controllers.register.adviser.AdviserAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAdviserAddress                       controllers.register.adviser.AdviserAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAdviserAddress                       controllers.register.adviser.AdviserAddressController.onSubmit(mode: Mode = CheckMode)

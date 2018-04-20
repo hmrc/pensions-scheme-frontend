@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers.register
+package identifiers.register.adviser
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
 import models.address.Address
-import play.api.libs.json.JsPath
 
 case object AdviserAddressId extends TypedIdentifier[Address] {
   override def toString: String = "adviserDetails"

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers.register.adviser
 
 import javax.inject.Inject
 
@@ -23,10 +23,10 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import controllers.register.routes._
-import identifiers.register.AdviserAddressId
-import models.address.Address
+import controllers.register.adviser.routes._
+import identifiers.register.adviser.AdviserAddressId
 import models.Mode
+import models.address.Address
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
