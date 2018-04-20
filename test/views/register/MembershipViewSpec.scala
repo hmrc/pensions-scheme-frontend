@@ -20,6 +20,7 @@ import play.api.data.Form
 import forms.register.MembershipFormProvider
 import models.NormalMode
 import models.register.Membership
+import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.membership
 
@@ -29,12 +30,16 @@ class MembershipViewSpec extends ViewBehaviours {
 
   val form = new MembershipFormProvider()()
 
-  def createView = () => membership(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  val schemeName = "Test Scheme Name"
 
-  def createViewUsingForm = (form: Form[_]) => membership(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => membership(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => membership(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   "Membership view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+    behave like pageWithSecondaryHeader(createView, schemeName)
 
     behave like pageWithBackLink(createView)
   }
