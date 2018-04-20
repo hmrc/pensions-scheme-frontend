@@ -16,19 +16,19 @@
 
 package controllers.register
 
-import play.api.data.Form
-import play.api.libs.json.{JsString, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.{CountryOptions, FakeNavigator, InputOption}
 import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import forms.register.SchemeEstablishedCountryFormProvider
-import identifiers.register.SchemeEstablishedCountryId
-import models.NormalMode
-import views.html.register.schemeEstablishedCountry
 import controllers.ControllerSpecBase
+import controllers.actions._
+import forms.register.SchemeEstablishedCountryFormProvider
+import identifiers.register.{SchemeDetailsId, SchemeEstablishedCountryId}
+import models.NormalMode
+import models.register.{SchemeDetails, SchemeType}
+import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.{CountryOptions, FakeNavigator, InputOption}
+import views.html.register.schemeEstablishedCountry
 
 class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
 
@@ -36,16 +36,27 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
 
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
+  val schemeDetails = SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)
+
   def countryOptions: CountryOptions = new CountryOptions(options)
   val formProvider = new SchemeEstablishedCountryFormProvider(countryOptions)
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeEstablishedCountryController =
-    new SchemeEstablishedCountryController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl,
-      formProvider, countryOptions){}
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): SchemeEstablishedCountryController =
+    new SchemeEstablishedCountryController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider,
+      countryOptions
+    ){}
 
-  def viewAsString(form: Form[_] = form): String = schemeEstablishedCountry(frontendAppConfig, form, NormalMode, options)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, schemeDetails.schemeName, options)(fakeRequest, messages).toString
 
   val testAnswer = "territory:AE-AZ"
 
@@ -59,7 +70,10 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(SchemeEstablishedCountryId.toString -> testAnswer)
+      val validData = Json.obj(
+        SchemeEstablishedCountryId.toString -> testAnswer,
+        SchemeDetailsId.toString -> schemeDetails
+      )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
@@ -86,19 +100,39 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
+    "redirect to Session Expired" when {
+      "no existing data is found" when {
+        "GET" in {
+          val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+        "POST" in {
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
+          val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+      }
+      "no scheme name is retrieved" when {
+        "GET" in {
+          val result = controller(getEmptyData).onPageLoad(NormalMode)(fakeRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+        "POST" in {
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
+
+          val result = controller(getEmptyData).onSubmit(NormalMode)(postRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+      }
     }
 
-    "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
   }
 }
