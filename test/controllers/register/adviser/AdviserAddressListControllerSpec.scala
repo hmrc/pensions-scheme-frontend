@@ -31,7 +31,7 @@ import play.api.test.Helpers.{contentAsString, _}
 import play.api.inject.bind
 import play.api.mvc.{Request, Result}
 import play.api.test.FakeRequest
-import utils.UserAnswers
+import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -80,14 +80,14 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       )
     }
 
-    "redirect to the next page on POST of valid data" ignore {
+    "redirect to the next page on POST of valid data" in {
 
       requestResult(
         implicit app => addToken(FakeRequest(routes.AdviserAddressListController.onSubmit(NormalMode))
           .withFormUrlEncodedBody(("value", "0"))), retrievalAction,
         (_, result) => {
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.AdviserAddressListController.onPageLoad(NormalMode).url)
+          redirectLocation(result) mustBe Some(onwardRoute.url)
         }
       )
     }
@@ -118,6 +118,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
 object AdviserAddressListControllerSpec extends ControllerSpecBase {
 
+  val onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val addresses = Seq(
     Address(
       "Address 1 Line 1",
@@ -147,7 +148,7 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
   private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
     AddressListViewModel(
       routes.AdviserAddressListController.onSubmit(NormalMode),
-      routes.AdviserAddressListController.onPageLoad(NormalMode),
+      routes.AdviserAddressController.onPageLoad(NormalMode),
       addresses,
       subHeading = Some(Message("messages__adviserDetails__secondary_heading"))
     )
@@ -159,7 +160,8 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
       _.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].to(FakeDataCacheConnector),
-        bind[DataRetrievalAction].to(data)
+        bind[DataRetrievalAction].to(data),
+        bind(classOf[Navigator]).to(new FakeNavigator(onwardRoute))
       )
     ) {
       app =>
@@ -168,5 +170,4 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
         test(req, result)
     }
   }
-
 }

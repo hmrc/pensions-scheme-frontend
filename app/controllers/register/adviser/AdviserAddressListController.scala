@@ -61,10 +61,10 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
       addresses =>
         AddressListViewModel(
           postCall = routes.AdviserAddressListController.onSubmit(mode),
-          manualInputCall = routes.AdviserAddressListController.onPageLoad(mode),
+          manualInputCall = routes.AdviserAddressController.onPageLoad(mode),
           addresses = addresses,
           subHeading = Some(Message("messages__adviserDetails__secondary_heading"))
         )
-    }.left.map(_ => Future.successful(Redirect(routes.AdviserAddressListController.onPageLoad(mode))))
+    }.left.map(_ => Future.successful(Redirect(routes.AdviserAddressListController.onPageLoad(mode))))//TODO : Replace this with PostCode lookup page
   }
 }

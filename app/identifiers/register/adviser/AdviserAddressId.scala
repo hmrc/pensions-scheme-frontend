@@ -20,7 +20,7 @@ import identifiers.TypedIdentifier
 import models.address.Address
 
 case object AdviserAddressId extends TypedIdentifier[Address] {
-  override def toString: String = "adviserDetails"
+  override def toString: String = "adviserAddress"
 }
 
 
