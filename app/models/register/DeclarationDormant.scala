@@ -36,4 +36,5 @@ object DeclarationDormant {
 
   implicit val enumerable: Enumerable[DeclarationDormant] =
     Enumerable(values.map(v => v.toString -> v): _*)
+
 }

@@ -46,6 +46,7 @@ GET        /changeBenefits                              controllers.register.Ben
 POST       /changeBenefits                              controllers.register.BenefitsController.onSubmit(mode: Mode = CheckMode)
 
 GET        /schemeSuccess                               controllers.register.SchemeSuccessController.onPageLoad()
+POST       /schemeSuccess                               controllers.register.SchemeSuccessController.onSubmit()
 
 GET        /schemeEstablishedCountry                    controllers.register.SchemeEstablishedCountryController.onPageLoad(mode: Mode = NormalMode)
 POST       /schemeEstablishedCountry                    controllers.register.SchemeEstablishedCountryController.onSubmit(mode: Mode = NormalMode)
@@ -92,3 +93,8 @@ POST       /changeDeclaration                        controllers.register.Declar
 
 GET        /declarationDormant               controllers.register.DeclarationDormantController.onPageLoad
 POST       /declarationDormant               controllers.register.DeclarationDormantController.onSubmit
+
+GET        /adviserDetails                       controllers.register.AdviserDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /adviserDetails                       controllers.register.AdviserDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAdviserDetails                       controllers.register.AdviserDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAdviserDetails                       controllers.register.AdviserDetailsController.onSubmit(mode: Mode = CheckMode)

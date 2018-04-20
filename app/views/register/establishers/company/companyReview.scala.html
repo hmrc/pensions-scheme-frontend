@@ -44,6 +44,8 @@
         list = Some(directors)
     )
 
-    @components.submit_button("site.confirm")
+    @helpers.form(action = routes.CompanyReviewController.onSubmit(index), 'autoComplete -> "off") {
+        @components.submit_button("site.confirm")
+    }
 
 }

@@ -24,12 +24,12 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
 import identifiers.register.establishers.EstablisherKindId
-import models.register.establishers.EstablisherKind
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Establishers
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.establisherKind
 
@@ -39,7 +39,7 @@ class EstablisherKindController @Inject()(
                                            appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            dataCacheConnector: DataCacheConnector,
-                                           navigator: Navigator,
+                                           @Establishers navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
@@ -52,7 +52,7 @@ class EstablisherKindController @Inject()(
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          val redirectResult = request.userAnswers.get[EstablisherKind](EstablisherKindId(index)) match {
+          val redirectResult = request.userAnswers.get(EstablisherKindId(index)) match {
             case None => Ok(establisherKind(appConfig, form, mode, index,schemeName))
             case Some(value) => Ok(establisherKind(appConfig, form.fill(value), mode, index,schemeName))
           }

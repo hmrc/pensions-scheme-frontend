@@ -25,15 +25,22 @@ import views.html.register.trustees.trusteeKind
 
 class TrusteeKindViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "trusteeKind"
+  private val messageKeyPrefix = "trusteeKind"
 
-  val form = new TrusteeKindFormProvider()()
-  val index = Index(0)
-  val schemeName = "Test Scheme Name"
+  private val form = new TrusteeKindFormProvider()()
+  private val index = Index(0)
+  private val schemeName = "Test Scheme Name"
 
-  def createView = () => trusteeKind(frontendAppConfig, form, NormalMode, index, schemeName)(fakeRequest, messages)
+  private def createView = () => trusteeKind(frontendAppConfig, form, NormalMode, index, schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => trusteeKind(frontendAppConfig, form, NormalMode, index, schemeName)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) => trusteeKind(frontendAppConfig, form, NormalMode, index, schemeName)(fakeRequest, messages)
+
+  private def trusteeKindOptions = TrusteeKind.options.filter { option =>
+    option.value match {
+      case TrusteeKind.Partnership.toString => frontendAppConfig.allowPartnerships
+      case _ => true
+    }
+  }
 
   "TrusteeKind view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
@@ -45,23 +52,24 @@ class TrusteeKindViewSpec extends ViewBehaviours {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- TrusteeKind.options) {
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, false)
+        for (option <- trusteeKindOptions) {
+          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, isChecked = false)
         }
       }
     }
 
-    for(option <- TrusteeKind.options) {
+    for(option <- trusteeKindOptions) {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
-          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
+          assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, isChecked = true)
 
-          for(unselectedOption <- TrusteeKind.options.filterNot(o => o == option)) {
-            assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
+          for(unselectedOption <- trusteeKindOptions.filterNot(o => o == option)) {
+            assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, isChecked = false)
           }
         }
       }
     }
   }
+
 }

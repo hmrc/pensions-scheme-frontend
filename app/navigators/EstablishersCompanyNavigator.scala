@@ -17,14 +17,18 @@
 package navigators
 
 import identifiers.Identifier
-import models.{AddressYears, CheckMode, NormalMode}
+import models.{AddressYears, CheckMode, Mode, NormalMode}
 import play.api.mvc.Call
 import utils.{Navigator, UserAnswers}
 import com.google.inject.{Inject, Singleton}
-import identifiers.register.establishers.company._
+import config.FrontendAppConfig
+import controllers.routes
+import identifiers.register.establishers.company.{AddCompanyDirectorsId, _}
+import identifiers.register.establishers.company.director.DirectorDetailsId
+import models.register.establishers.company.director.DirectorDetails
 
 @Singleton
-class EstablishersCompanyNavigator @Inject() extends Navigator {
+class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers(index: Int)(answers: UserAnswers): Call =
     controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
@@ -43,7 +47,7 @@ class EstablishersCompanyNavigator @Inject() extends Navigator {
     case CompanyAddressId(index) =>
       _ => controllers.register.establishers.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, index)
     case CompanyAddressYearsId(index) =>
-     addressYearsRoutes(index)
+      addressYearsRoutes(index)
     case CompanyPreviousAddressPostcodeLookupId(index) =>
       _ => controllers.register.establishers.company.routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, index)
     case CompanyPreviousAddressListId(index) =>
@@ -52,6 +56,11 @@ class EstablishersCompanyNavigator @Inject() extends Navigator {
       _ => controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index)
     case CompanyContactDetailsId(index) =>
       _ => controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index)
+    case AddCompanyDirectorsId(index) => addDirectors(NormalMode, index)
+    case OtherDirectorsId(index)=>
+      _ => controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index)
+    case CompanyReviewId(_) =>
+      _ => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
   }
 
   override protected val editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
@@ -70,6 +79,7 @@ class EstablishersCompanyNavigator @Inject() extends Navigator {
       _ => controllers.register.establishers.company.routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index)
     case CompanyPreviousAddressId(index) => checkYourAnswers(index)
     case CompanyContactDetailsId(index) => checkYourAnswers(index)
+    case AddCompanyDirectorsId(index) => addDirectors(CheckMode, index)
   }
 
   private def addressYearsRoutes(index: Int)(answers: UserAnswers): Call = {
@@ -93,4 +103,27 @@ class EstablishersCompanyNavigator @Inject() extends Navigator {
         controllers.routes.SessionExpiredController.onPageLoad()
     }
   }
+
+  private def addDirectors(mode: Mode, index: Int)(answers: UserAnswers): Call = {
+    val directors = answers
+      .getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
+      .getOrElse(Nil)
+
+    if (directors.isEmpty) {
+      controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(mode, index, 0)
+    }
+    else if (directors.lengthCompare(appConfig.maxDirectors) < 0) {
+      answers.get(AddCompanyDirectorsId(index)) match {
+        case Some(true) =>
+          controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(mode, index, directors.length)
+        case Some(false) =>
+          controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index)
+        case _ => controllers.routes.SessionExpiredController.onPageLoad()
+      }
+    }
+    else {
+      controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode, index)
+    }
+  }
+
 }

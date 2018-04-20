@@ -18,10 +18,22 @@ package identifiers.register.establishers.company.director
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import play.api.libs.json.JsPath
+import identifiers.register.establishers.company.{OtherDirectorsId}
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 
 case class DirectorId(establisherIndex:Int, directorIndex:Int) extends TypedIdentifier[Nothing] {
   override def path: JsPath = EstablishersId.path \ establisherIndex \ DirectorId.toString \ directorIndex
+
+  override def cleanup(value: Option[Nothing], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case None =>
+        userAnswers
+          .remove(OtherDirectorsId(this.establisherIndex))
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
+
 }
 
 object DirectorId {

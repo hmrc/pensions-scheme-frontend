@@ -69,5 +69,4 @@ class ConfirmDeleteDirectorController @Inject()(
           Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode)(UserAnswers(json)))
       }
   }
-
 }

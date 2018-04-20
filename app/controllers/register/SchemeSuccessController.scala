@@ -18,30 +18,47 @@ package controllers.register
 
 import javax.inject.Inject
 
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import controllers.actions._
 import config.FrontendAppConfig
-import identifiers.register.SchemeDetailsId
+import connectors.DataCacheConnector
+import controllers.Retrievals
+import controllers.actions._
+import identifiers.register.{SchemeDetailsId, SchemeSuccessId, SubmissionReferenceNumberId}
+import models.NormalMode
 import org.joda.time.LocalDate
-import org.joda.time.format.DateTimeFormat
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
+import utils.annotations.Register
 import views.html.register.schemeSuccess
+
+import scala.concurrent.Future
 
 class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
+                                        cacheConnector: DataCacheConnector,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction) extends FrontendController with I18nSupport {
+                                        requireData: DataRequiredAction,
+                                        @Register navigator: Navigator) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async{
     implicit request =>
 
-      //TODO: Replace the harcoded application number to the actual application number
-      Ok(schemeSuccess(
-        appConfig,
-        request.userAnswers.get(SchemeDetailsId).map(_.schemeName),
-        LocalDate.now(),
-        "XX123456789132"))
+      SubmissionReferenceNumberId.retrieve.right.map {
+        submissionReferenceNumber =>
+          Future.successful(Ok(schemeSuccess(
+            appConfig,
+            request.userAnswers.get(SchemeDetailsId).map(_.schemeName),
+            LocalDate.now(),
+            submissionReferenceNumber))
+          )
+      }
   }
+
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+    implicit request =>
+      Redirect(navigator.nextPage(SchemeSuccessId, NormalMode)(request.userAnswers))
+  }
+
 }

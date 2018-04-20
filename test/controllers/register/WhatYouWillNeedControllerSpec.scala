@@ -20,8 +20,8 @@ import controllers.actions._
 import play.api.test.Helpers._
 import views.html.register.whatYouWillNeed
 import controllers.ControllerSpecBase
-import models.NormalMode
 import play.api.mvc.Call
+import utils.FakeNavigator
 
 class WhatYouWillNeedControllerSpec extends ControllerSpecBase {
 
@@ -31,7 +31,9 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase {
     new WhatYouWillNeedController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      dataRetrievalAction)
+      dataRetrievalAction,
+      new FakeNavigator(onwardRoute)
+    )
 
   def viewAsString(): String = whatYouWillNeed(frontendAppConfig)(fakeRequest, messages).toString
 
@@ -48,11 +50,8 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase {
       val result = controller().onSubmit(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
+      redirectLocation(result) mustBe Some(onwardRoute.url)
     }
   }
+
 }
-
-
-
-

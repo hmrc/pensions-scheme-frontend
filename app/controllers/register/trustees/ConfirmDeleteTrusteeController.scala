@@ -33,18 +33,19 @@ import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Trustees
 import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.confirmDeleteTrustee
 
 import scala.concurrent.Future
 
 class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         navigator: Navigator,
-                                         dataCacheConnector: DataCacheConnector) extends FrontendController with I18nSupport with Retrievals {
+                                               override val messagesApi: MessagesApi,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               @Trustees navigator: Navigator,
+                                               dataCacheConnector: DataCacheConnector) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

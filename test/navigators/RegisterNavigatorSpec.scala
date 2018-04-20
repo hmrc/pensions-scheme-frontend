@@ -16,253 +16,97 @@
 
 package navigators
 
-import base.SpecBase
-import models.NormalMode
-import org.scalatest.prop.PropertyChecks
-import org.scalatest.{MustMatchers, WordSpec}
-import play.api.libs.json.Json
-import utils.UserAnswers
 import identifiers.register._
-import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.{AddTrusteeId, MoreThanTenTrusteesId, TrusteeKindId, TrusteesId}
-import models.person.PersonDetails
-import models.register.SchemeType
-import models.register.trustees.TrusteeKind
-import org.joda.time.LocalDate
-import org.scalatest.mockito.MockitoSugar
-import org.mockito.Mockito._
+import models.register.DeclarationDormant
+import models.{CheckMode, Mode, NormalMode}
+import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import play.api.libs.json.Json
+import utils.{Enumerable, UserAnswers}
 
-class RegisterNavigatorSpec extends SpecBase with MockitoSugar {
+class RegisterNavigatorSpec extends WordSpec with MustMatchers with NavigatorBehaviour {
 
-  val navigator = new RegisterNavigator(frontendAppConfig)
-  val emptyAnswers = new UserAnswers(Json.obj())
+  import RegisterNavigatorSpec._
 
-  "Pages should post to the correct next page" when {
+  private val routes = Table(
+    ("Id",                          "User Answers",       "Next Page (Normal Mode)",              "Next Page (Check Mode)"),
+    // Start - what you will need
+    (WhatYouWillNeedId,             emptyAnswers,         schemeDetails(NormalMode),              None),
 
-    ".nextPage(SchemeDetailsId)" must {
-      "return a 'call' to 'SchemeEstablishedCountryController' page" in {
-        val result = navigator.nextPage(SchemeDetailsId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(NormalMode)
-      }
-    }
+    // Scheme registration
+    (SchemeDetailsId,               emptyAnswers,         schemeEstablishedCountry(NormalMode),   Some(checkYourAnswers)),
+    (SchemeEstablishedCountryId,    emptyAnswers,         membership(NormalMode),                 Some(checkYourAnswers)),
+    (MembershipId,                  emptyAnswers,         membershipFuture(NormalMode),           Some(checkYourAnswers)),
+    (MembershipFutureId,            emptyAnswers,         investmentRegulated(NormalMode),        Some(checkYourAnswers)),
+    (InvestmentRegulatedId,         emptyAnswers,         occupationalPensionScheme(NormalMode),  Some(checkYourAnswers)),
+    (OccupationalPensionSchemeId,   emptyAnswers,         benefits(NormalMode),                   Some(checkYourAnswers)),
+    (BenefitsId,                    emptyAnswers,         securedBenefits(NormalMode),            Some(checkYourAnswers)),
+    (SecuredBenefitsId,             securedBenefitsTrue,  benefitsInsurer(NormalMode),            Some(benefitsInsurer(CheckMode))),
+    (SecuredBenefitsId,             securedBenefitsFalse, uKBankAccount(NormalMode),              Some(checkYourAnswers)),
+    (SecuredBenefitsId,             emptyAnswers,         expired,                                Some(expired)),
+    (BenefitsInsurerId,             emptyAnswers,         insurerPostCodeLookup(NormalMode),      Some(checkYourAnswers)),
+    (InsurerPostCodeLookupId,       emptyAnswers,         insurerAddressList(NormalMode),         Some(insurerAddressList(CheckMode))),
+    (InsurerAddressListId,          emptyAnswers,         insurerAddress(NormalMode),             Some(insurerAddress(CheckMode))),
+    (InsurerAddressId,              emptyAnswers,         uKBankAccount(NormalMode),              Some(checkYourAnswers)),
+    (UKBankAccountId,               ukBankAccountTrue,    uKBankDetails(NormalMode),              Some(uKBankDetails(CheckMode))),
+    (UKBankAccountId,               ukBankAccountFalse,   checkYourAnswers,                       Some(checkYourAnswers)),
+    (UKBankAccountId,               emptyAnswers,         expired,                                Some(expired)),
+    (UKBankDetailsId,               emptyAnswers,         checkYourAnswers,                       Some(checkYourAnswers)),
 
-    ".nextPage(SchemeEstablishedCountryId)" must {
-      "return a 'call' to 'MembershipController' page" in {
-        val result = navigator.nextPage(SchemeEstablishedCountryId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.MembershipController.onPageLoad(NormalMode)
-      }
-    }
+    //Check your answers - jump off to establishers
+    (CheckYourAnswersId,            emptyAnswers,         establisherKind,                        None),
 
-    ".nextPage(MembershipId)" must {
-      "return a 'call' to 'MembershipFutureController' page" in {
-        val result = navigator.nextPage(MembershipId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.MembershipFutureController.onPageLoad(NormalMode)
-      }
-    }
+    // Review, declarations, success - return from establishers
+    (SchemeReviewId,                emptyAnswers,         declarationDormant,                     None),
+    (DeclarationDormantId,          notDormant,           declarationDuties,                      None),
+    (DeclarationDormantId,          dormant,              index,                                  None),
+    (DeclarationDormantId,          emptyAnswers,         expired,                                None),
+    (DeclarationDutiesId,           acceptDutiesTrue,     schemeSuccess,                          None),
+    (DeclarationDutiesId,           acceptDutiesFalse,    index,                                  None),
+    (DeclarationDutiesId,           emptyAnswers,         expired,                                None),
+    (SchemeSuccessId,               emptyAnswers,         index,                                  None)
+  )
 
-    ".nextPage(MembershipFutureId)" must {
-      "return a 'call' to 'InvestmentRegulatedController' page" in {
-        val result = navigator.nextPage(MembershipFutureId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.InvestmentRegulatedController.onPageLoad(NormalMode)
-      }
-    }
-
-    ".nextPage(InverstmentRegulatedId)" must {
-      "return a 'call' to 'OccupationalController' page" in {
-        val result = navigator.nextPage(InvestmentRegulatedId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.OccupationalPensionSchemeController.onPageLoad(NormalMode)
-      }
-    }
-
-    ".nextPage(InvestmentRegulatedId)" must {
-      "return a 'call' to 'OccupationalPensionSchemeController' page" in {
-        val result = navigator.nextPage(InvestmentRegulatedId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.OccupationalPensionSchemeController.onPageLoad(NormalMode)
-      }
-    }
-
-    ".nextPage(OccupationalPensionSchemeId)" must {
-      "return a 'call' to 'BenefitsController' page" in {
-        val result = navigator.nextPage(OccupationalPensionSchemeId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.BenefitsController.onPageLoad(NormalMode)
-      }
-    }
-
-    ".nextPage(BenefitsId)" must {
-      "return a 'call' to 'SecuredBenefitsController' page" in {
-        val result = navigator.nextPage(BenefitsId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.SecuredBenefitsController.onPageLoad(NormalMode)
-      }
-    }
-
-    ".nextPage(SecuredBenefitsId)" must {
-
-      "return a 'call' to 'BenefitsInsuranceController' page if 'SecuredBenefits' is true" in {
-        val answers = new UserAnswers(Json.obj(
-          SecuredBenefitsId.toString -> true
-        ))
-        val result = navigator.nextPage(SecuredBenefitsId, NormalMode)(answers)
-        result mustEqual controllers.register.routes.BenefitsInsurerController.onPageLoad(NormalMode)
-      }
-
-      "return a 'call' to 'UKBankAccountController' page if 'SecuredBenefits' is false" in {
-        val answers = new UserAnswers(Json.obj(
-          SecuredBenefitsId.toString -> false
-        ))
-        val result = navigator.nextPage(SecuredBenefitsId, NormalMode)(answers)
-        result mustEqual controllers.register.routes.UKBankAccountController.onPageLoad(NormalMode)
-      }
-
-      "return a `Call` to `SessionExpired` page when `SecuredBenefits` is undefined" in {
-        val result = navigator.nextPage(SecuredBenefitsId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
-      }
-    }
-
-    ".nextPage(BenefitsInsuranceId)" must {
-      "return a 'call' to 'InsurerPostCodeLookupController' page" in {
-        val result = navigator.nextPage(BenefitsInsurerId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(NormalMode)
-      }
-    }
-
-    ".nextPage(InsurerPostCodeLookupId)" must {
-      "return a 'call' to 'InsurerAddressListController' page" in {
-        val result = navigator.nextPage(InsurerPostCodeLookupId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.InsurerAddressListController.onPageLoad(NormalMode)
-      }
-    }
-
-    ".nextPage(InsurerAddressListId)" must {
-      "return a 'call' to 'InsurerAddressController' page" in {
-        val result = navigator.nextPage(InsurerAddressListId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.InsurerAddressController.onPageLoad(NormalMode)
-      }
-    }
-
-    ".nextPage(InsurerAddressId)" must {
-      "return a 'call' to 'UKBankAccountController' page" in {
-        val result = navigator.nextPage(InsurerAddressId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.UKBankAccountController.onPageLoad(NormalMode)
-      }
-    }
-
-    ".nextPage(UKBankAccountId)" must {
-
-      "return a 'call' to 'BenefitsInsuranceController' page if 'SecuredBenefits' is true" in {
-        val answers = new UserAnswers(Json.obj(
-          UKBankAccountId.toString -> true
-        ))
-        val result = navigator.nextPage(UKBankAccountId, NormalMode)(answers)
-        result mustEqual controllers.register.routes.UKBankDetailsController.onPageLoad(NormalMode)
-      }
-
-      "return a `Call` to `SessionExpired` page when `SecuredBenefits` is undefined" in {
-        val result = navigator.nextPage(SecuredBenefitsId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
-      }
-    }
-
-    ".nextPage(AddTrusteeId)" must {
-
-      "return a `call` to `TrusteeKindController` page with index 1 if no trustees are added yet and 'AddTrustee' is true" in {
-        val answers = new UserAnswers(Json.obj(
-          AddTrusteeId.toString -> true
-        ))
-        val result = navigator.nextPage(AddTrusteeId, NormalMode)(answers)
-        result mustEqual controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0)
-      }
-
-      "return a `call` to `TrusteeKindController` page with index 1 if no trustees are added yet and" +
-        " 'AddTrustee' is undefined" in {
-        val result = navigator.nextPage(AddTrusteeId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0)
-      }
-
-      "return a `call` to `TrusteeKindController` page with index 2 if one trustee has already been added and 'AddTrustee' is true" in {
-        val answers = new UserAnswers(Json.obj(
-          AddTrusteeId.toString -> true,
-          TrusteesId.toString -> Json.arr(
-            Json.obj(
-              TrusteeDetailsId.toString -> PersonDetails("first", Some("middle"), "last", LocalDate.now)
-            )
-          )
-        ))
-        val result = navigator.nextPage(AddTrusteeId, NormalMode)(answers)
-        result mustEqual controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 1)
-      }
-
-      "return a `call` to `MoreThanTenTrusteesController` page if 10 trustees has already been added" in {
-        val tenTrustees = (0 to 9).map(index => Json.obj(
-          TrusteeDetailsId.toString -> PersonDetails(s"testFirstName$index", None, s"testLastName$index", LocalDate.now))
-        ).toArray
-
-        val answers = new UserAnswers(Json.obj(
-          TrusteesId.toString -> tenTrustees
-        ))
-        val result = navigator.nextPage(AddTrusteeId, NormalMode)(answers)
-        result mustEqual controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(NormalMode)
-      }
-
-      "return a `call` to `SchemeReviewController` page if 'AddTrustee' is false" in {
-        val answers = new UserAnswers(
-          Json.obj(
-            AddTrusteeId.toString -> false
-          )
-        )
-        val result = navigator.nextPage(AddTrusteeId, NormalMode)(answers)
-        result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
-      }
-    }
-
-    ".nextPage(MoreThanTenTrusteesId)" must {
-        s"return a `call` to `SchemeReviewController` page" in {
-          val result = navigator.nextPage(MoreThanTenTrusteesId, NormalMode)(emptyAnswers)
-          result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
-        }
-    }
-
-    ".nextPage(TrusteeKindId)" must {
-
-      "return a `call` to `TrusteeDetailsController` page if 'TrusteeKind' is 'Individual'" in {
-        val answers = new UserAnswers(
-          Json.obj(
-            TrusteesId.toString -> Json.arr(
-              Json.obj(
-                TrusteeKindId.toString -> "individual"
-              )
-            )
-          )
-        )
-        val result = navigator.nextPage(TrusteeKindId(0), NormalMode)(answers)
-        result mustEqual controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0)
-      }
-
-      "return a `call` to `TrusteeDetailsController` page if 'TrusteeKind' is 'Company'" in {
-        val answers = new UserAnswers(
-          Json.obj(
-            TrusteesId.toString -> Json.arr(
-              Json.obj(
-                TrusteeKindId.toString -> "company"
-              )
-            )
-          )
-        )
-        val result = navigator.nextPage(TrusteeKindId(0), NormalMode)(answers)
-        result mustEqual controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0)
-      }
-
-      "return a `call` to `SessionExpired` page if TrusteeKind is undefined" in {
-        val result = navigator.nextPage(TrusteeKindId(0), NormalMode)(emptyAnswers)
-        result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
-      }
-    }
-
-    ".nextPage(SchemeReviewId)" must {
-      "return a 'call' to 'SchemeEstablishedCountryController' page" in {
-        val result = navigator.nextPage(SchemeReviewId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.DeclarationDormantController.onPageLoad()
-      }
-    }
+  navigator.getClass.getSimpleName must {
+    behave like navigatorWithRoutes(navigator, routes)
   }
+
+}
+
+object RegisterNavigatorSpec extends OptionValues with Enumerable.Implicits {
+
+  private val navigator = new RegisterNavigator()
+
+  private val emptyAnswers = UserAnswers(Json.obj())
+  private val securedBenefitsTrue = UserAnswers().set(SecuredBenefitsId)(true).asOpt.value
+  private val securedBenefitsFalse = UserAnswers().set(SecuredBenefitsId)(false).asOpt.value
+  private val ukBankAccountTrue = UserAnswers().set(UKBankAccountId)(true).asOpt.value
+  private val ukBankAccountFalse = UserAnswers().set(UKBankAccountId)(false).asOpt.value
+  private val notDormant = UserAnswers().set(DeclarationDormantId)(DeclarationDormant.No).asOpt.value
+  private val dormant = UserAnswers().set(DeclarationDormantId)(DeclarationDormant.Yes).asOpt.value
+  private val acceptDutiesTrue = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
+  private val acceptDutiesFalse = UserAnswers().set(DeclarationDutiesId)(false).asOpt.value
+
+  private def benefits(mode: Mode) = controllers.register.routes.BenefitsController.onPageLoad(mode)
+  private def benefitsInsurer(mode: Mode) = controllers.register.routes.BenefitsInsurerController.onPageLoad(mode)
+  private def checkYourAnswers = controllers.register.routes.CheckYourAnswersController.onPageLoad()
+  private def declarationDormant = controllers.register.routes.DeclarationDormantController.onPageLoad()
+  private def declarationDuties = controllers.register.routes.DeclarationDutiesController.onPageLoad()
+  private def insurerAddress(mode: Mode) = controllers.register.routes.InsurerAddressController.onPageLoad(mode)
+  private def insurerAddressList(mode: Mode) = controllers.register.routes.InsurerAddressListController.onPageLoad(mode)
+  private def insurerPostCodeLookup(mode: Mode) = controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(mode)
+  private def investmentRegulated(mode: Mode) = controllers.register.routes.InvestmentRegulatedController.onPageLoad(mode)
+  private def membershipFuture(mode: Mode) = controllers.register.routes.MembershipFutureController.onPageLoad(mode)
+  private def membership(mode: Mode) = controllers.register.routes.MembershipController.onPageLoad(mode)
+  private def occupationalPensionScheme(mode: Mode) = controllers.register.routes.OccupationalPensionSchemeController.onPageLoad(mode)
+  private def schemeDetails(mode: Mode) = controllers.register.routes.SchemeDetailsController.onPageLoad(mode)
+  private def schemeEstablishedCountry(mode: Mode) = controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(mode)
+  private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
+  private def securedBenefits(mode: Mode) = controllers.register.routes.SecuredBenefitsController.onPageLoad(mode)
+  private def uKBankAccount(mode: Mode) = controllers.register.routes.UKBankAccountController.onPageLoad(mode)
+  private def uKBankDetails(mode: Mode) = controllers.register.routes.UKBankDetailsController.onPageLoad(mode)
+
+  private def establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
+  private def expired = controllers.routes.SessionExpiredController.onPageLoad()
+  private def index = controllers.routes.IndexController.onPageLoad()
+
 }

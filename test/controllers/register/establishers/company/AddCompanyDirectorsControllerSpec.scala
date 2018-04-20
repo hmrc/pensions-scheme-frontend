@@ -23,7 +23,7 @@ import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{AddCompanyDirectorsId, CompanyDetailsId}
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import models.{CompanyDetails, NormalMode}
+import models.{CompanyDetails, Index, NormalMode}
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -40,6 +40,8 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
   private val form = formProvider()
 
   private def fakeNavigator() = new FakeNavigator(desiredRoute = onwardRoute)
+
+  val firstIndex = Index(0)
 
   private def controller(
     dataRetrievalAction: DataRetrievalAction = getEmptyData,
@@ -99,7 +101,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
     "not populate the view on a GET when the question has previously been answered" in {
       UserAnswers(validData(johnDoe))
-        .set(AddCompanyDirectorsId)(true)
+        .set(AddCompanyDirectorsId(firstIndex))(true)
         .map { userAnswers =>
           val getRelevantData = new FakeDataRetrievalAction(Some(userAnswers.json))
           val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex)(fakeRequest)
@@ -140,7 +142,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(postRequest)
 
-      FakeDataCacheConnector.verifyNot(AddCompanyDirectorsId)
+      FakeDataCacheConnector.verifyNot(AddCompanyDirectorsId(firstIndex))
     }
 
     "set the user answer when directors exist and valid data is submitted" in {
@@ -150,7 +152,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       val result = controller(getRelevantData, navigator).onSubmit(NormalMode, establisherIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
-      navigator.lastUserAnswers.value.get(AddCompanyDirectorsId).value mustBe true
+      navigator.lastUserAnswers.value.get(AddCompanyDirectorsId(firstIndex)).value mustBe true
     }
 
     "redirect to the next page when maximum directors exist and the user submits" in {
