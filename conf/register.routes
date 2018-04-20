@@ -2,6 +2,7 @@
 
 ->         /establishers                                establishers.Routes
 ->         /trustees                                    trustees.Routes
+->         /adviser                                     adviser.Routes
 
 GET        /whatYouWillNeed                             controllers.register.WhatYouWillNeedController.onPageLoad()
 POST       /whatYouWillNeed                             controllers.register.WhatYouWillNeedController.onSubmit()

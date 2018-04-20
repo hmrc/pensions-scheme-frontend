@@ -64,7 +64,7 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
     Message(controller.title),
     Message(controller.heading),
     secondaryHeader = Some(companyDetails.companyName),
-    Message(controller.hint)
+    Some(Message(controller.hint))
   )
 
   behave like manualAddress(

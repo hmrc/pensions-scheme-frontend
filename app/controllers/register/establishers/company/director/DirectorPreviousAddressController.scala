@@ -50,6 +50,7 @@ class DirectorPreviousAddressController @Inject()(
   private[controllers] val postCall = routes.DirectorPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__companyDirectorAddress__title"
   private[controllers] val heading: Message = "messages__companyDirectorAddress__heading"
+  private[controllers] val hint: Message = "messages__common__company_address_hint"
 
   protected val form: Form[Address] = formProvider()
 
@@ -63,6 +64,7 @@ class DirectorPreviousAddressController @Inject()(
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
+              hint = Some(Message(hint)),
               secondaryHeader = Some(director.directorName)
             )
         }

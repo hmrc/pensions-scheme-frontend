@@ -606,4 +606,6 @@ messages__adviserDetails__error__email_required = Enter an email address
 messages__adviserDetails__error__adviser_name_length = The adviser name cannot be more than 107 characters
 messages__adviserDetails__error__adviser_name_invalid = The adviser name contains invalid characters
 
-
+messages__adviserAddress__title = Pension adviser's address
+messages__adviserAddress__heading = Pension adviser's address
+messages__adviserAddress__secondary = Pension adviser
