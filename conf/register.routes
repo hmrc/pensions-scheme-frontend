@@ -93,3 +93,8 @@ POST       /changeDeclaration                        controllers.register.Declar
 
 GET        /declarationDormant               controllers.register.DeclarationDormantController.onPageLoad
 POST       /declarationDormant               controllers.register.DeclarationDormantController.onSubmit
+
+GET        /adviserPostCodeLookup                      controllers.register.adviser.AdviserPostCodeLookupController.onPageLoad(mode:Mode=NormalMode)
+POST       /adviserPostCodeLookup                      controllers.register.adviser.AdviserPostCodeLookupController.onSubmit(mode:Mode=NormalMode)
+GET        /changeAdviserPostCodeLookup                controllers.register.adviser.AdviserPostCodeLookupController.onPageLoad(mode:Mode=CheckMode)
+POST       /changeAdviserPostCodeLookup                controllers.register.adviser.AdviserPostCodeLookupController.onSubmit(mode:Mode=CheckMode)
