@@ -20,15 +20,16 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import controllers.actions._
-import identifiers.register.AdviserDetailsId
-import identifiers.register.adviser.CheckYourAnswersId
-import models.NormalMode
+import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId}
+import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{CheckYourAnswersFactory, Navigator}
 import views.html.check_your_answers
 import utils.CheckYourAnswers.Ops._
 import utils.CountryOptions
+import viewmodels.{AnswerRow, AnswerSection}
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
@@ -38,9 +39,14 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                          navigator: Navigator,
                                          implicit val countryOptions: CountryOptions) extends FrontendController with I18nSupport {
 
-  def onPageLoad = (authenticate andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Ok(check_your_answers(appConfig, Seq.empty, Some("messages__adviser__secondary_heading"), controllers.register.adviser.routes.CheckYourAnswersController.onSubmit()))
+
+      val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
+      val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
+      val sections = Seq(AnswerSection(None, adviserDetailsRow++adviserAddressRow))
+
+      Ok(check_your_answers(appConfig, sections, Some("messages__adviser__secondary_heading"), controllers.register.adviser.routes.CheckYourAnswersController.onSubmit()))
   }
 
   def onSubmit = (authenticate andThen getData andThen requireData) {
