@@ -416,6 +416,26 @@ object CheckYourAnswers {
       }.getOrElse(Seq.empty[AnswerRow])
     }
 
+  implicit def adviserDetails[I <: TypedIdentifier[AdviserDetails]](implicit rds: Reads[AdviserDetails]): CheckYourAnswers[I] =
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+        adviserDetails =>
+          Seq(
+            AnswerRow(
+              "messages__common__cya__name",
+              Seq(s"${adviserDetails.adviserName}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__adviserDetails__email",
+              Seq(s"${adviserDetails.emailAddress}"),
+              false,
+              changeUrl
+            ))
+      }.getOrElse(Seq.empty[AnswerRow])
+    }
+
   implicit def personDetails[I <: TypedIdentifier[PersonDetails]](implicit rds: Reads[PersonDetails]): CheckYourAnswers[I] =
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
