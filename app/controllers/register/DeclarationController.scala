@@ -31,7 +31,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Navigator, UserAnswers}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declaration
 
@@ -51,17 +50,17 @@ class DeclarationController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       SchemeDetailsId.retrieve.right.map { details =>
         journey.withJourneyType {
           case JourneyType.Company =>
             request.userAnswers.get(DeclarationDormantId) match {
-              case Some(Yes) => Future.successful(Ok(declaration(appConfig, form, details.schemeName, true, true)))
-              case Some(No) => Future.successful(Ok(declaration(appConfig, form, details.schemeName, true, false)))
+              case Some(Yes) => Future.successful(Ok(declaration(appConfig, form, details.schemeName, isCompany = true, isDormant = true)))
+              case Some(No) => Future.successful(Ok(declaration(appConfig, form, details.schemeName, isCompany = true, isDormant = false)))
               case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
             }
-          case JourneyType.Individual => Future.successful(Ok(declaration(appConfig, form, details.schemeName, false, false)))
+          case JourneyType.Individual => Future.successful(Ok(declaration(appConfig, form, details.schemeName, isCompany = false, isDormant = false)))
         }
       }
   }
@@ -74,11 +73,11 @@ class DeclarationController @Inject()(
               journey.withJourneyType {
                 case JourneyType.Company =>
                   request.userAnswers.get(DeclarationDormantId) match {
-                    case Some(Yes) => Future.successful(BadRequest(declaration(appConfig, formWithErrors, details.schemeName, true, true)))
-                    case Some(No) => Future.successful(BadRequest(declaration(appConfig, formWithErrors, details.schemeName, true, false)))
+                    case Some(Yes) => Future.successful(BadRequest(declaration(appConfig, formWithErrors, details.schemeName, isCompany = true, isDormant = true)))
+                    case Some(No) => Future.successful(BadRequest(declaration(appConfig, formWithErrors, details.schemeName, isCompany = true, isDormant = false)))
                     case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
                   }
-                case JourneyType.Individual => Future.successful(BadRequest(declaration(appConfig, formWithErrors, details.schemeName, false, false)))
+                case JourneyType.Individual => Future.successful(BadRequest(declaration(appConfig, formWithErrors, details.schemeName, isCompany = false, isDormant = false)))
             },
           (value) =>
             dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
