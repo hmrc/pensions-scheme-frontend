@@ -46,7 +46,7 @@ class SecuredBenefitsIdSpec extends WordSpec with MustMatchers with OptionValues
         result.get(InsurerPostCodeLookupId) mustNot be(defined)
       }
 
-      "remove the data for `PreviousAddress`" in {
+      "remove the data for `InsurerAddress`" in {
         result.get(InsurerAddressId) mustNot be(defined)
       }
     }
@@ -63,7 +63,7 @@ class SecuredBenefitsIdSpec extends WordSpec with MustMatchers with OptionValues
         result.get(InsurerPostCodeLookupId) mustBe defined
       }
 
-      "not remove the data for `PreviousAddress`" in {
+      "not remove the data for `InsurerAddress`" in {
         result.get(InsurerAddressId) mustBe defined
       }
     }
