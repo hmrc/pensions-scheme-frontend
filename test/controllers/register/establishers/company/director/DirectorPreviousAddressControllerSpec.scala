@@ -84,10 +84,12 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
             countryOptions.options,
             controller.title,
             controller.heading,
-            secondaryHeader = Some(directorDetails.directorName)
-          )
+            secondaryHeader = Some(directorDetails.directorName),
+            hint = Some(controller.hint)
 
-          def viewAsString(form: Form[_] = form) = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
+        )
+
+          def viewAsString(form: Form[_] = form): String = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
 
           val request = addToken(
             FakeRequest(routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex))

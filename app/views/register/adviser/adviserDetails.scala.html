@@ -16,33 +16,35 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.routes._
+@import controllers.register.adviser.routes._
 @import models.Mode
-@import utils.InputOption
+@import models.register.AdviserDetails
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, options: Seq[InputOption])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__scheme_country__title"),
+    title = messages("messages__adviserDetails__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = SchemeEstablishedCountryController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = AdviserDetailsController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__scheme_country__title", secondaryHeaderKey = Some(schemeName))
+        @components.heading("messages__adviserDetails__heading", secondaryHeaderKey = Some("messages__adviserDetails__secondary_heading"))
 
-        @components.select(field = form("value"),
-            label = messages("messages__scheme_country__title"),
-            hint = Some(messages("messages__scheme_country__hint")),
-            options = options,
-            placeholder = Some("messages__common__pick_country"),
-            formGroupClasses = Set("autocomplete-wrapper"),
-            labelClasses = Set("visually-hidden")
+        @components.input_text(
+            field = form("adviserName"),
+            label = messages("messages__adviserDetails__name")
         )
+
+        @components.input_text(
+            field = form("emailAddress"),
+            label = messages("messages__adviserDetails__email")
+        )
+
         @components.submit_button()
     }
 }

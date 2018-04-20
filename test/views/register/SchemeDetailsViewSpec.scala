@@ -42,6 +42,8 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
 
     behave like pageWithBackLink(createView)
 
+    behave like pageWithSecondaryHeader(createView, messages("messages_cya_secondary_header"))
+
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.SchemeDetailsController.onSubmit(NormalMode).url,
       "schemeName")
   }

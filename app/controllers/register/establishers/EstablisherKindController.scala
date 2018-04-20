@@ -24,7 +24,6 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
 import identifiers.register.establishers.EstablisherKindId
-import models.register.establishers.EstablisherKind
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -53,7 +52,7 @@ class EstablisherKindController @Inject()(
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          val redirectResult = request.userAnswers.get[EstablisherKind](EstablisherKindId(index)) match {
+          val redirectResult = request.userAnswers.get(EstablisherKindId(index)) match {
             case None => Ok(establisherKind(appConfig, form, mode, index,schemeName))
             case Some(value) => Ok(establisherKind(appConfig, form.fill(value), mode, index,schemeName))
           }

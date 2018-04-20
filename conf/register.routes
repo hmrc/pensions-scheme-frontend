@@ -2,6 +2,7 @@
 
 ->         /establishers                                establishers.Routes
 ->         /trustees                                    trustees.Routes
+->         /adviser                                     adviser.Routes
 
 GET        /whatYouWillNeed                             controllers.register.WhatYouWillNeedController.onPageLoad()
 POST       /whatYouWillNeed                             controllers.register.WhatYouWillNeedController.onSubmit()
@@ -93,6 +94,7 @@ POST       /changeDeclaration                        controllers.register.Declar
 
 GET        /declarationDormant               controllers.register.DeclarationDormantController.onPageLoad
 POST       /declarationDormant               controllers.register.DeclarationDormantController.onSubmit
+
 
 GET        /adviserPostCodeLookup                      controllers.register.adviser.AdviserPostCodeLookupController.onPageLoad(mode:Mode=NormalMode)
 POST       /adviserPostCodeLookup                      controllers.register.adviser.AdviserPostCodeLookupController.onSubmit(mode:Mode=NormalMode)

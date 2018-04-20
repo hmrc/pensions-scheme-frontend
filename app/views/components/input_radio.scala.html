@@ -37,7 +37,7 @@
             }
         </legend>
         @for(input <- inputs) {
-            @components.radio(field, input.label, input.value, input.dataTarget)
+            @components.radio(field, input.label, input.value, input.dataTarget, input.hint)
         }
     </fieldset>
 </div>

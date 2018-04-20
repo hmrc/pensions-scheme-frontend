@@ -24,8 +24,9 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
+import controllers.Retrievals
 import forms.register.SchemeEstablishedCountryFormProvider
-import identifiers.register.SchemeEstablishedCountryId
+import identifiers.register.{SchemeDetailsId, SchemeEstablishedCountryId}
 import models.Mode
 import play.api.mvc.{Action, AnyContent}
 import utils.{CountryOptions, Navigator, UserAnswers}
@@ -43,27 +44,32 @@ class SchemeEstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
                                                    getData: DataRetrievalAction,
                                                    requireData: DataRequiredAction,
                                                    formProvider: SchemeEstablishedCountryFormProvider,
-                                                   countryOptions: CountryOptions) extends FrontendController with I18nSupport {
+                                                   countryOptions: CountryOptions) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(SchemeEstablishedCountryId) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+        val preparedForm = request.userAnswers.get(SchemeEstablishedCountryId) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(schemeEstablishedCountry(appConfig, preparedForm, mode, schemeDetails.schemeName, countryOptions.options)))
       }
-      Ok(schemeEstablishedCountry(appConfig, preparedForm, mode, countryOptions.options))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(schemeEstablishedCountry(appConfig, formWithErrors, mode, countryOptions.options))),
+          SchemeDetailsId.retrieve.right.map { schemeDetails =>
+            Future.successful(BadRequest(schemeEstablishedCountry(appConfig, formWithErrors, mode, schemeDetails.schemeName, countryOptions.options)))
+          },
         (value) =>
           dataCacheConnector.save(request.externalId, SchemeEstablishedCountryId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(SchemeEstablishedCountryId, mode)(new UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(SchemeEstablishedCountryId, mode)(new UserAnswers(cacheMap)))
+          )
       )
   }
 }

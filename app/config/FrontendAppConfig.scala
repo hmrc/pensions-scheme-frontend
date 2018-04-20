@@ -29,6 +29,7 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   override protected def mode = environment.mode
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+  private def loadConfigOrDefault(key: String, default: String) = runModeConfiguration.getString(key).getOrElse(default)
 
   private lazy val contactHost = runModeConfiguration.getString("contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "pensionsschemefrontend"
@@ -55,4 +56,5 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val addressLookUp = baseUrl("address-lookup")
   lazy val maxDirectors: Int = loadConfig("company.maxDirectors").toInt
   lazy val maxTrustees: Int = loadConfig("maxTrustees").toInt
+  lazy val allowPartnerships: Boolean = loadConfigOrDefault("allowPartnerships", "false").toBoolean
 }

@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package models.register
 
-case class InputOption(value: String, label: String, dataTarget: Option[String] = None, hint: Set[String] = Set.empty)
+import play.api.libs.json._
+
+case class AdviserDetails (adviserName: String, emailAddress: String)
+
+object AdviserDetails {
+  implicit val format = Json.format[AdviserDetails]
+}

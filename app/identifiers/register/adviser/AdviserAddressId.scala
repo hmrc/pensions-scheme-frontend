@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
-package utils
+package identifiers.register.adviser
 
-case class InputOption(value: String, label: String, dataTarget: Option[String] = None, hint: Set[String] = Set.empty)
+import identifiers.TypedIdentifier
+import models.address.Address
+
+case object AdviserAddressId extends TypedIdentifier[Address] {
+  override def toString: String = "adviserAddress"
+}
+
+
