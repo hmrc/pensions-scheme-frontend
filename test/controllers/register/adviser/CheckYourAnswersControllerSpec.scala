@@ -18,15 +18,10 @@ package controllers.register.adviser
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import identifiers.register.SchemeDetailsId
-import identifiers.register.adviser.AdviserDetailsId
-import models.register.{AdviserDetails, SchemeDetails, SchemeType}
-import models.{CheckMode, Index}
-import org.joda.time.LocalDate
-import play.api.libs.json.Json
+import models.CheckMode
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{DateHelper, FakeCountryOptions, FakeNavigator}
+import utils.{FakeCountryOptions, FakeNavigator}
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
 
@@ -65,8 +60,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit()
   lazy val adviserSection = AnswerSection(None,
     Seq(
-      AnswerRow("messages__common__cya__name", Seq("Test Adviser Name"), answerIsMessageKey = false, adviserDetailsRoute),
-      AnswerRow("messages__adviserDetails__email", Seq("test@test.com"), answerIsMessageKey = false, adviserDetailsRoute)
+      AnswerRow("messages__common__cya__name", Seq("name"), answerIsMessageKey = false, adviserDetailsRoute),
+      AnswerRow("messages__adviserDetails__email", Seq("email"), answerIsMessageKey = false, adviserDetailsRoute)
       )
   )
 
@@ -89,15 +84,5 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     Some(Message("messages__adviser__secondary_heading")),
     postUrl
   )(fakeRequest, messages).toString
-
-  private def getMandatoryAdviser = new FakeDataRetrievalAction(Some(
-    Json.obj(
-      SchemeDetailsId.toString ->
-        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-        AdviserDetailsId.toString ->
-          AdviserDetails("Test Adviser Name", "test@test.com")
-        )
-      )
-    )
 
 }
