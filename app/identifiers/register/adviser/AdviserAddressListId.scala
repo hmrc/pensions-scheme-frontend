@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package identifiers.register
+package identifiers.register.adviser
 
 import identifiers._
 

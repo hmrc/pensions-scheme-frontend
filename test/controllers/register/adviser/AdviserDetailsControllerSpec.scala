@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers.register.adviser
 
-import play.api.data.Form
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
 import forms.register.AdviserDetailsFormProvider
-import identifiers.register.AdviserDetailsId
+import identifiers.register.adviser.AdviserDetailsId
 import models.NormalMode
 import models.register.AdviserDetails
-import views.html.register.adviserDetails
-import controllers.ControllerSpecBase
+import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator
+import views.html.register.adviser.adviserDetails
 
 class AdviserDetailsControllerSpec extends ControllerSpecBase {
 

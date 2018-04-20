@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers.register.adviser
 
 import javax.inject.Inject
 
@@ -23,9 +23,9 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
-import identifiers.register.{AdviserAddressId, AdviserAddressListId, AdviserAddressPostCodeLookupId}
-import models.requests.DataRequest
+import identifiers.register.adviser._
 import models.Mode
+import models.requests.DataRequest
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.Navigator

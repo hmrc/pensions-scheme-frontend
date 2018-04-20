@@ -16,7 +16,7 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.routes._
+@import controllers.register.adviser.routes._
 @import models.Mode
 @import models.register.AdviserDetails
 
@@ -27,7 +27,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = controllers.register.routes.AdviserDetailsController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = AdviserDetailsController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 

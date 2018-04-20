@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers.register.adviser
 
 import base.CSRFRequest
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
-import identifiers.register.AdviserAddressPostCodeLookupId
+import identifiers.register.adviser.AdviserAddressPostCodeLookupId
 import models.NormalMode
 import models.address.Address
 import play.api.Application
