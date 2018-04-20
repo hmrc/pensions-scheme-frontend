@@ -98,3 +98,8 @@ GET        /adviserDetails                       controllers.register.AdviserDet
 POST       /adviserDetails                       controllers.register.AdviserDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /changeAdviserDetails                       controllers.register.AdviserDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeAdviserDetails                       controllers.register.AdviserDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /adviserAddress                       controllers.register.AdviserAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /adviserAddress                       controllers.register.AdviserAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /changeAdviserAddress                       controllers.register.AdviserAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeAdviserAddress                       controllers.register.AdviserAddressController.onSubmit(mode: Mode = CheckMode)

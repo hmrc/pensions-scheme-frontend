@@ -35,7 +35,9 @@
 
         @components.heading(headingKey = viewmodel.heading, secondaryHeaderKey = viewmodel.secondaryHeader)
 
-        <p>@messages(viewmodel.hint)</p>
+        @viewmodel.hint.map{ hint =>
+            <p>@messages(hint)</p>
+        }
 
         @components.address(form, viewmodel.countryOptions)
 

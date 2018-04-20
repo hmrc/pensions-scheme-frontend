@@ -14,32 +14,31 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.individual
+package controllers.register
 
 import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions._
 import controllers.address.ManualAddressController
-import controllers.register.trustees.individual.routes.TrusteeAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeDetailsId}
+import controllers.register.routes._
+import identifiers.register.AdviserAddressId
 import models.address.Address
-import models.{Index, Mode}
+import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import utils.annotations.TrusteesIndividual
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
-class TrusteeAddressController @Inject()(
+class AdviserAddressController @Inject()(
                                           val appConfig: FrontendAppConfig,
                                           val messagesApi: MessagesApi,
                                           val dataCacheConnector: DataCacheConnector,
-                                          @TrusteesIndividual val navigator: Navigator,
+                                          val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
@@ -47,42 +46,35 @@ class TrusteeAddressController @Inject()(
                                           val countryOptions: CountryOptions
                                         ) extends ManualAddressController with I18nSupport {
 
-  private[controllers] val postCall = TrusteeAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__trustee__individual__address__heading"
-  private[controllers] val heading: Message = "messages__trustee__individual__address__heading"
-  private[controllers] val hint: Message = "messages__trustee__individual__address__lede"
+  private[controllers] val postCall = AdviserAddressController.onSubmit _
+  private[controllers] val title: Message = "messages__adviserAddress__title"
+  private[controllers] val heading: Message = "messages__adviserAddress__heading"
+  private[controllers] val secondary: Message = "messages__adviserAddress__secondary"
+  private[controllers] val hint = None
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(index: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
-    Retrieval {
-      implicit request =>
-        TrusteeDetailsId(index).retrieve.right.map {
-          details =>
-            ManualAddressViewModel(
-              postCall(mode, Index(index)),
-              countryOptions.options,
-              title = Message(title),
-              heading = Message(heading),
-              hint = Some(Message(hint)),
-              secondaryHeader = Some(details.fullName)
-            )
-        }
-    }
+  private def viewmodel(mode: Mode): ManualAddressViewModel =
+        ManualAddressViewModel(
+          postCall(mode),
+          countryOptions.options,
+          title = Message(title),
+          heading = Message(heading),
+          hint = None,
+          secondaryHeader = Some(secondary)
+        )
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map{
-        vm =>
-          get(TrusteeAddressId(index), vm)
+
+          get(AdviserAddressId, viewmodel(mode))
+      }
+
+
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+    implicit request =>
+          post(AdviserAddressId, viewmodel(mode), mode)
       }
   }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      viewmodel(index, mode).retrieve.right.map {
-        vm =>
-          post(TrusteeAddressId(index), vm, mode)
-      }
-  }
-}

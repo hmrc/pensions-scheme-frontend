@@ -14,79 +14,77 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees.company
+package controllers.register
 
 import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.trustees.company.routes._
+import controllers.register.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId}
+import identifiers.register.AdviserAddressId
 import models.address.Address
-import models.{CompanyDetails, Index, NormalMode}
+import models.register.establishers.company.director.DirectorDetails
+import models.NormalMode
+import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils._
-import utils.annotations.TrusteesCompany
+import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
+class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
-class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
+  val day: Int = LocalDate.now().getDayOfMonth
+  val month: Int = LocalDate.now().getMonthOfYear
+  val year: Int = LocalDate.now().getYear
 
-  def countryOptions: CountryOptions = new CountryOptions(options)
+  val date = new LocalDate(year, month, day)
+  val director = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
 
-  val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
+  val countryOptions = new CountryOptions(
+    Seq(InputOption("GB", "GB"))
+  )
 
-  val firstIndex = Index(0)
-
-  val formProvider = new AddressFormProvider(FakeCountryOptions())
-  val companyDetails = CompanyDetails("companyName", None, None)
-
+  val formProvider = new AddressFormProvider(countryOptions)
   val form: Form[Address] = formProvider()
 
-  val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
-    TrusteesId.toString -> Json.arr(Json.obj(CompanyDetailsId.toString -> companyDetails))
-  )))
 
-  "PreviousAddress Controller" must {
+  "AdviserAddress Controller" must {
 
     "render manualAddress from GET request" in {
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
+        bind[Navigator].toInstance(FakeNavigator),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(retrieval),
         bind[CountryOptions].to(countryOptions)
       )) {
         implicit app =>
 
-          val controller = app.injector.instanceOf[CompanyPreviousAddressController]
+          val controller = app.injector.instanceOf[AdviserAddressController]
 
           val viewmodel = ManualAddressViewModel(
-            controller.postCall(NormalMode, firstIndex),
+            controller.postCall(NormalMode),
             countryOptions.options,
             Message(controller.title),
             Message(controller.heading),
-            secondaryHeader = Some(companyDetails.companyName),
-            Some(Message(controller.hint))
-          )
+            secondaryHeader = Some(controller.secondary))
+
+          def viewAsString(form: Form[_] = form): String = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
 
           val request = addToken(
-            FakeRequest(CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex))
-            .withHeaders("Csrf-Token" -> "nocheck")
+            FakeRequest(AdviserAddressController.onPageLoad(NormalMode))
+              .withHeaders("Csrf-Token" -> "nocheck")
           )
 
           val result = route(app, request).value
@@ -103,10 +101,8 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
     }
 
-    "redirect to next page on POST request" which {
-      "saves address" in {
-
-        val onwardCall = controllers.routes.IndexController.onPageLoad
+    "redirect to next page when valid data submitted" which {
+      "save address" in {
 
         val address = Address(
           addressLine1 = "value 1",
@@ -117,19 +113,16 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
         )
 
         running(_.overrides(
-          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator(onwardCall)),
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
           bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
           bind[AuthAction].to(FakeAuthAction),
-          bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
           bind[AddressFormProvider].to(formProvider)
         )) {
           implicit app =>
 
-
-            val fakeRequest = addToken(FakeRequest(CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex))
+            val fakeRequest = addToken(FakeRequest(AdviserAddressController.onSubmit(NormalMode))
               .withHeaders("Csrf-Token" -> "nocheck")
               .withFormUrlEncodedBody(
                 ("addressLine1", address.addressLine1),
@@ -140,11 +133,11 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
             val result = route(app, fakeRequest).value
 
             status(result) must be(SEE_OTHER)
-            redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeDataCacheConnector.verify(CompanyPreviousAddressId(firstIndex), address)
+            FakeDataCacheConnector.verify(AdviserAddressId, address)
         }
       }
     }
+
   }
 }

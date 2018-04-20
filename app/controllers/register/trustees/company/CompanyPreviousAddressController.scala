@@ -65,7 +65,7 @@ class CompanyPreviousAddressController @Inject()(
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
-              hint = Message(hint),
+              hint = Some(Message(hint)),
               secondaryHeader = Some(details.companyName)
             )
         }
