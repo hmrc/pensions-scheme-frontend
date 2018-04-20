@@ -16,41 +16,70 @@
 
 package controllers.register
 
-import controllers.ControllerSpecBase
-import play.api.data.Form
-import play.api.libs.json.JsNumber
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
+import controllers.JourneyType.JourneyType
 import controllers.actions._
-import play.api.test.Helpers._
-import play.api.libs.json._
+import controllers.{ControllerSpecBase, Journey, JourneyType}
 import forms.register.DeclarationFormProvider
-import identifiers.register.DeclarationId
-import models.NormalMode
+import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
+import models.register.DeclarationDormant._
+import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
+import models.requests.DataRequest
+import play.api.data.Form
+import play.api.libs.json.Json
+import play.api.mvc.{Call, Result}
+import play.api.test.Helpers._
+import utils.FakeNavigator
 import views.html.register.declaration
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new DeclarationFormProvider()
   val form = formProvider()
   val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName) =
-    new DeclarationController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  def getValidData: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj(
+    SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    DeclarationDormantId.toString -> DeclarationDormant.No.toString
+  )))
 
-  def viewAsString(form: Form[_] = form) = declaration(frontendAppConfig, form, schemeName)(fakeRequest, messages).toString
+  private val individualJourney = new Journey {
+    override def withJourneyType(f: JourneyType => Future[Result])(implicit request: DataRequest[_], ec: ExecutionContext): Future[Result] = {
+      f(JourneyType.Individual)
+    }
+  }
+
+  private val companyJourney = new Journey {
+    override def withJourneyType(f: JourneyType => Future[Result])(implicit request: DataRequest[_], ec: ExecutionContext): Future[Result] = {
+      f(JourneyType.Company)
+    }
+  }
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getValidData, journey: Journey = individualJourney): DeclarationController =
+    new DeclarationController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider, journey)
+
+  def viewAsString(form: Form[_] = form, isCompany: Boolean = false): String =
+    declaration(frontendAppConfig, form, schemeName, isCompany, isDormant = false)(fakeRequest, messages).toString
 
   "Declaration Controller" must {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET for individual journey" in {
       val result = controller().onPageLoad()(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+    }
+
+    "return OK and the correct view for a GET for company journey" in {
+      val result = controller(journey = companyJourney).onPageLoad()(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(isCompany = true)
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -62,7 +91,7 @@ class DeclarationControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted in individual journey" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
@@ -70,6 +99,16 @@ class DeclarationControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
+    "return a Bad Request and errors when invalid data is submitted in company journey" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+
+      val result = controller(journey = companyJourney).onSubmit()(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm, isCompany = true)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {

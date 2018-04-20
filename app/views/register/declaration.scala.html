@@ -19,7 +19,7 @@
 @import controllers.register.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_], schemeName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], schemeName: String, isCompany: Boolean, isDormant: Boolean)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__declaration__title"),
@@ -35,9 +35,17 @@
         @components.paragraph_text(messages("messages__declaration__declare"))
 
         <ol class="list-number">
-            <li>
-                @components.paragraph_text(messages("messages__declaration__statement1"))
-            </li>
+            @if(isCompany){
+                @if(isDormant){
+                    <li>
+                        @components.paragraph_text(messages("messages__declaration__statement1_dormant"))
+                    </li>
+                } else {
+                    <li>
+                        @components.paragraph_text(messages("messages__declaration__statement1_not_dormant"))
+                    </li>
+                }
+            }
             <li>
                 @components.paragraph_text(messages("messages__declaration__statement2"))
             </li>
