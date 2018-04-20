@@ -18,23 +18,22 @@ package controllers.register
 
 import javax.inject.Inject
 
+import config.FrontendAppConfig
+import connectors.DataCacheConnector
+import controllers.Retrievals
+import controllers.actions._
+import forms.register.MembershipFormProvider
+import identifiers.register.{MembershipId, SchemeDetailsId}
+import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
-import config.FrontendAppConfig
-import forms.register.MembershipFormProvider
-import identifiers.register.MembershipId
-import models.Mode
-import models.register.Membership
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.membership
 
 import scala.concurrent.Future
-import play.api.libs.json._
-import utils.annotations.Register
 
 class MembershipController @Inject()(appConfig: FrontendAppConfig,
                                      override val messagesApi: MessagesApi,
@@ -43,24 +42,29 @@ class MembershipController @Inject()(appConfig: FrontendAppConfig,
                                      authenticate: AuthAction,
                                      getData: DataRetrievalAction,
                                      requireData: DataRequiredAction,
-                                     formProvider: MembershipFormProvider) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                     formProvider: MembershipFormProvider
+                                    ) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(MembershipId) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+        val preparedForm = request.userAnswers.get(MembershipId) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(membership(appConfig, preparedForm, mode, schemeDetails.schemeName)))
       }
-      Ok(membership(appConfig, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(membership(appConfig, formWithErrors, mode))),
+          SchemeDetailsId.retrieve.right.map{ schemeDetails =>
+            Future.successful(BadRequest(membership(appConfig, formWithErrors, mode, schemeDetails.schemeName)))
+          },
         (value) =>
           dataCacheConnector.save(request.externalId, MembershipId, value).map(cacheMap =>
             Redirect(navigator.nextPage(MembershipId, mode)(new UserAnswers(cacheMap))))
