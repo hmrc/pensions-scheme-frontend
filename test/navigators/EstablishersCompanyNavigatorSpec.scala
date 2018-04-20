@@ -24,7 +24,9 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.UserAnswers
 import config.FrontendAppConfig
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
+import models.register.{SchemeDetails, SchemeType}
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import org.scalatestplus.play.guice._
@@ -224,6 +226,15 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         }
       }
     }
+
+    ".nextPage(CompanyReviewId)" must {
+      "return a `Call` to `HaveAnyTrusteesController`" in {
+        val answers = UserAnswers().set(SchemeDetailsId)(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).asOpt.value
+        val result = navigator.nextPage(CompanyReviewId(0), NormalMode)(answers)
+        result mustEqual controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+      }
+    }
+
   }
 
 
@@ -399,13 +410,6 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         val directors = Seq.fill(maxNoOfDirectors)(johnDoe)
         val result = navigator.nextPage(AddCompanyDirectorsId(0), CheckMode)(UserAnswers(validData(directors: _*)))
         result mustEqual controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(CheckMode, 0)
-      }
-    }
-
-    ".nextPage(CompanyReviewId)" must {
-      "return a `Call` to `AddTrusteeController`" in {
-        val result = navigator.nextPage(CompanyReviewId(0), NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
       }
     }
 

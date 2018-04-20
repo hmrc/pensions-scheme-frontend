@@ -17,125 +17,146 @@
 package navigators
 
 import base.SpecBase
+import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees._
 import models.NormalMode
 import models.person.PersonDetails
+import models.register.{SchemeDetails, SchemeType}
+import models.register.trustees.TrusteeKind
 import org.joda.time.LocalDate
-import org.scalatest.mockito.MockitoSugar
-import play.api.libs.json.Json
-import utils.UserAnswers
+import org.scalatest.OptionValues
+import play.api.mvc.Call
+import utils.{Enumerable, UserAnswers}
 
-class TrusteesNavigatorSpec extends SpecBase with MockitoSugar {
+// scalastyle:off magic.number
+class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
-  val navigator = new TrusteesNavigator(frontendAppConfig)
-  val emptyAnswers = UserAnswers(Json.obj())
+  import TrusteesNavigatorSpec._
 
-  "Pages should post to the correct next page" when {
+  private val navigator = new TrusteesNavigator(frontendAppConfig)
 
-    ".nextPage(AddTrusteeId)" must {
+  private val routes = Table(
+    ("Id",                          "User Answers",             "Next Page (Normal Mode)",  "Next Page (Check Mode)"),
+    (HaveAnyTrusteesId,             haveAnyTrusteesTrue,        addTrustee,                 None: Option[Call]),
+    (HaveAnyTrusteesId,             haveAnyTrusteesFalse,       schemeReview,               None),
+    (HaveAnyTrusteesId,             emptyAnswers,               sessionExpired,             None),
+    (AddTrusteeId,                  addTrusteeTrue(0),          trusteeKind(0),             None),
+    (AddTrusteeId,                  addTrusteeTrue(1),          trusteeKind(1),             None),
+    (AddTrusteeId,                  emptyAnswers,               trusteeKind(0),             None),
+    (AddTrusteeId,                  trustees(10),               moreThanTenTrustees,        None),
+    (AddTrusteeId,                  addTrusteeFalse,            schemeReview,               None),
+    (MoreThanTenTrusteesId,         emptyAnswers,               schemeReview,               None),
+    (TrusteeKindId(0),              trusteeKindCompany,         companyDetails,             None),
+    (TrusteeKindId(0),              trusteeKindIndividual,      trusteeDetails,             None),
+    (TrusteeKindId(0),              emptyAnswers,               sessionExpired,             None),
+    (ConfirmDeleteTrusteeId,        emptyAnswers,               addTrustee,                 None)
+  )
 
-      "return a `call` to `TrusteeKindController` page with index 1 if no trustees are added yet and 'AddTrustee' is true" in {
-        val answers = UserAnswers(Json.obj(
-          AddTrusteeId.toString -> true
-        ))
-        val result = navigator.nextPage(AddTrusteeId, NormalMode)(answers)
-        result mustEqual controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0)
+  navigator.getClass.getSimpleName must {
+    behave like navigatorWithRoutes(navigator, routes, dataDescriber)
+  }
+
+  "trusteeEntryRoutes" must {
+    "navigate to HaveAnyTrustees when SchemeType is Group life/death" in {
+      val result = TrusteesNavigator.trusteeEntryRoutes()(emptyAnswers.schemeType(SchemeType.GroupLifeDeath))
+      result mustBe controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+    }
+
+    "navigate to HaveAnyTrustees when SchemeType is Body corporate" in {
+      val result = TrusteesNavigator.trusteeEntryRoutes()(emptyAnswers.schemeType(SchemeType.BodyCorporate))
+      result mustBe controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+    }
+
+    "navigate to HaveAnyTrustees when SchemeType is Other" in {
+      val result = TrusteesNavigator.trusteeEntryRoutes()(emptyAnswers.schemeType(SchemeType.Other("test")))
+      result mustBe controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+    }
+
+    "navigate to AddTrustee when SchemeType is Single trust" in {
+      val result = TrusteesNavigator.trusteeEntryRoutes()(emptyAnswers.schemeType(SchemeType.SingleTrust))
+      result mustBe controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+    }
+
+    "navigate to SessionExpired when there are no SchemeDetails" in {
+      val result = TrusteesNavigator.trusteeEntryRoutes()(emptyAnswers)
+      result mustBe controllers.routes.SessionExpiredController.onPageLoad()
+    }
+  }
+
+}
+
+//noinspection MutatorLikeMethodIsParameterless
+object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
+
+  private val emptyAnswers = UserAnswers()
+  private def addTrusteeFalse = emptyAnswers.addTrustee(false)
+  private def addTrusteeTrue(howMany: Int) = emptyAnswers.addTrustee(true).trustees(howMany)
+  private def haveAnyTrusteesTrue = emptyAnswers.haveAnyTrustees(true)
+  private def haveAnyTrusteesFalse = emptyAnswers.haveAnyTrustees(false)
+  private def trustees(howMany: Int) = emptyAnswers.trustees(howMany)
+  private def trusteeKindCompany = emptyAnswers.trusteeKind(TrusteeKind.Company)
+  private def trusteeKindIndividual = emptyAnswers.trusteeKind(TrusteeKind.Individual)
+
+  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+  private def companyDetails = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0)
+  private def moreThanTenTrustees = controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(NormalMode)
+  private def schemeReview = controllers.register.routes.SchemeReviewController.onPageLoad()
+  private def trusteeDetails = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0)
+  private def trusteeKind(index: Int) = controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, index)
+
+  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+
+  private def dataDescriber(answers: UserAnswers): String = {
+    val haveAnyTrustees = answers.get(HaveAnyTrusteesId) map { value =>
+      s"haveAnyTrustees: $value"
+    }
+
+    val addTrustee = answers.get(AddTrusteeId) map { value =>
+      s"addTrustee: $value"
+    }
+
+    val trusteeKind = answers.get(TrusteeKindId(0)) map { value =>
+      s"trusteeKind: $value"
+    }
+
+    val trustees = answers.allTrustees.length match {
+      case n if n > 0 => Some(s"trustees: $n")
+      case _ => None
+    }
+
+    Seq(haveAnyTrustees, addTrustee, trusteeKind, trustees).flatten.mkString(", ")
+  }
+
+  implicit class TrusteeUserAnswersOps(answers: UserAnswers) {
+
+    def haveAnyTrustees(haveTrustees: Boolean): UserAnswers = {
+      answers.set(HaveAnyTrusteesId)(haveTrustees).asOpt.value
+    }
+
+    def addTrustee(addTrustee: Boolean): UserAnswers = {
+      answers.set(AddTrusteeId)(addTrustee).asOpt.value
+    }
+
+    def trusteeKind(trusteeKind: TrusteeKind): UserAnswers = {
+      answers.set(TrusteeKindId(0))(trusteeKind).asOpt.value
+    }
+
+    def trustees(howMany: Int): UserAnswers = {
+      if (howMany == 0) {
+        answers
       }
-
-      "return a `call` to `TrusteeKindController` page with index 1 if no trustees are added yet and" +
-        " 'AddTrustee' is undefined" in {
-        val result = navigator.nextPage(AddTrusteeId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0)
-      }
-
-      "return a `call` to `TrusteeKindController` page with index 2 if one trustee has already been added and 'AddTrustee' is true" in {
-        val answers = UserAnswers(Json.obj(
-          AddTrusteeId.toString -> true,
-          TrusteesId.toString -> Json.arr(
-            Json.obj(
-              TrusteeDetailsId.toString -> PersonDetails("first", Some("middle"), "last", LocalDate.now)
-            )
-          )
-        ))
-        val result = navigator.nextPage(AddTrusteeId, NormalMode)(answers)
-        result mustEqual controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 1)
-      }
-
-      "return a `call` to `MoreThanTenTrusteesController` page if 10 trustees has already been added" in {
-        val tenTrustees = (0 to 9).map(index => Json.obj(
-          TrusteeDetailsId.toString -> PersonDetails(s"testFirstName$index", None, s"testLastName$index", LocalDate.now))
-        ).toArray
-
-        val answers = UserAnswers(Json.obj(
-          TrusteesId.toString -> tenTrustees
-        ))
-        val result = navigator.nextPage(AddTrusteeId, NormalMode)(answers)
-        result mustEqual controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(NormalMode)
-      }
-
-      "return a `call` to `SchemeReviewController` page if 'AddTrustee' is false" in {
-        val answers = UserAnswers(
-          Json.obj(
-            AddTrusteeId.toString -> false
-          )
-        )
-        val result = navigator.nextPage(AddTrusteeId, NormalMode)(answers)
-        result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
+      else {
+        (0 until howMany).foldLeft(answers) { case (newAnswers, i) =>
+          newAnswers.set(TrusteeDetailsId(i))(PersonDetails("first", None, "last", LocalDate.now)).asOpt.value
+        }
       }
     }
 
-    ".nextPage(MoreThanTenTrusteesId)" must {
-      s"return a `call` to `SchemeReviewController` page" in {
-        val result = navigator.nextPage(MoreThanTenTrusteesId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
-      }
-    }
-
-    ".nextPage(TrusteeKindId)" must {
-
-      "return a `call` to `TrusteeDetailsController` page if 'TrusteeKind' is 'Individual'" in {
-        val answers = UserAnswers(
-          Json.obj(
-            TrusteesId.toString -> Json.arr(
-              Json.obj(
-                TrusteeKindId.toString -> "individual"
-              )
-            )
-          )
-        )
-        val result = navigator.nextPage(TrusteeKindId(0), NormalMode)(answers)
-        result mustEqual controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0)
-      }
-
-      "return a `call` to `TrusteeDetailsController` page if 'TrusteeKind' is 'Company'" in {
-        val answers = UserAnswers(
-          Json.obj(
-            TrusteesId.toString -> Json.arr(
-              Json.obj(
-                TrusteeKindId.toString -> "company"
-              )
-            )
-          )
-        )
-        val result = navigator.nextPage(TrusteeKindId(0), NormalMode)(answers)
-        result mustEqual controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0)
-      }
-
-      "return a `call` to `SessionExpired` page if TrusteeKind is undefined" in {
-        val result = navigator.nextPage(TrusteeKindId(0), NormalMode)(emptyAnswers)
-        result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
-      }
-    }
-
-    ".nextPage(ConfirmDeleteTrusteeId)" must {
-      "return a `call` to `AddTrusteeController` page" in {
-        val result = navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
-      }
+    def schemeType(schemeType: SchemeType): UserAnswers = {
+      answers.set(SchemeDetailsId)(SchemeDetails("test-scheme-name", schemeType)).asOpt.value
     }
 
   }
 
 }
-

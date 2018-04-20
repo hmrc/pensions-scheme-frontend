@@ -17,12 +17,13 @@
 package utils
 
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
 import models.register.establishers.individual.EstablisherDetails
-import models.{CheckMode, CompanyDetails, NormalMode}
+import models.{CheckMode, CompanyDetails}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
@@ -40,13 +41,16 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
     )
   )
 
+  private val company = CompanyDetails("test-company-name", None, None)
+  private val person = PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())
+
   ".allEstablishers" must {
     "return a map of establishers names and edit links" in {
 
       val json = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            CompanyDetailsId.toString ->
+            EstablisherCompanyDetailsId.toString ->
               CompanyDetails("my company", None, None)
           ),
           Json.obj(
@@ -145,4 +149,60 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
       userAnswers.get[String](JsPath \ "establishers" \ 8) mustNot be(defined)
     }
   }
+
+  ".hasCompanies" must {
+    "return true if an establisher is a company" in {
+      val answers =
+        UserAnswers()
+          .set(EstablisherDetailsId(0))(person)
+          .flatMap(_.set(EstablisherCompanyDetailsId(1))(company))
+          .asOpt
+          .value
+
+      answers.hasCompanies mustBe true
+    }
+
+    "return true if a trustee is a company" in {
+      val answers =
+        UserAnswers()
+          .set(TrusteeDetailsId(0))(person)
+          .flatMap(_.set(TrusteeCompanyDetailsId(1))(company))
+          .asOpt
+          .value
+
+      answers.hasCompanies mustBe true
+    }
+
+    "return true if both an establisher and a trustee are companies" in {
+      val answers =
+        UserAnswers()
+          .set(EstablisherDetailsId(0))(person)
+          .flatMap(_.set(EstablisherCompanyDetailsId(1))(company))
+          .flatMap(_.set(TrusteeDetailsId(0))(person))
+          .flatMap(_.set(TrusteeCompanyDetailsId(1))(company))
+          .asOpt
+          .value
+
+      answers.hasCompanies mustBe true
+    }
+
+    "return false if no establishers or trustees are companies" in {
+      val answers =
+        UserAnswers()
+          .set(EstablisherDetailsId(0))(person)
+          .flatMap(_.set(TrusteeDetailsId(0))(person))
+          .asOpt
+          .value
+
+      answers.hasCompanies mustBe false
+    }
+
+    "return false if there are no establishers or trustees" in {
+      val answers =
+        UserAnswers()
+
+      answers.hasCompanies mustBe false
+    }
+  }
+
 }

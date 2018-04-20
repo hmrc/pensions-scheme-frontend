@@ -26,13 +26,13 @@ import utils.{Navigator, UserAnswers}
 trait NavigatorBehaviour extends PropertyChecks with OptionValues {
   this: WordSpec with MustMatchers =>
 
-  def navigatorWithRoutes[A <: Identifier](navigator: Navigator, routes: TableFor4[A, UserAnswers, Call, Option[Call]]): Unit = {
+  def navigatorWithRoutes[A <: Identifier](navigator: Navigator, routes: TableFor4[A, UserAnswers, Call, Option[Call]], describer: (UserAnswers) => String): Unit = {
 
     "behave like a navigator" when {
 
       "navigating in NormalMode" must {
         forAll(routes) { (id: Identifier, userAnswers: UserAnswers, call: Call, _: Option[Call]) =>
-          s"move from $id to $call when data is $userAnswers" in {
+          s"move from $id to $call with data: ${describer(userAnswers)}" in {
             val result = navigator.nextPage(id, NormalMode)(userAnswers)
             result mustBe call
           }
@@ -42,7 +42,7 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
       "navigating in CheckMode" must {
         forAll(routes) { (id: Identifier, userAnswers: UserAnswers, _: Call, editCall: Option[Call]) =>
           if (editCall.isDefined) {
-            s"move from $id to ${editCall.value} when data is $userAnswers" in {
+            s"move from $id to ${editCall.value} with data: ${describer(userAnswers)}" in {
               val result = navigator.nextPage(id, CheckMode)(userAnswers)
               result mustBe editCall.value
             }

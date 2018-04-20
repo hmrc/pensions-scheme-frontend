@@ -130,4 +130,13 @@ case class UserAnswers(json: JsValue = Json.obj()) {
     }.getOrElse(Seq.empty)
   }
 
+  def hasCompanies: Boolean = {
+    val establishers = json \ "establishers" \\ "companyDetails"
+
+    establishers.nonEmpty || {
+      val trustees = json \ "trustees" \\ "companyDetails"
+      trustees.nonEmpty
+    }
+  }
+
 }

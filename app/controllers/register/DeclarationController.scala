@@ -44,8 +44,7 @@ class DeclarationController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: DeclarationFormProvider,
-                                       journey: Journey
+                                       formProvider: DeclarationFormProvider
                                      ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -53,14 +52,11 @@ class DeclarationController @Inject()(
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       SchemeDetailsId.retrieve.right.map { details =>
-        journey.withJourneyType {
-          case JourneyType.Company =>
-            request.userAnswers.get(DeclarationDormantId) match {
-              case Some(Yes) => Future.successful(Ok(declaration(appConfig, form, details.schemeName, isCompany = true, isDormant = true)))
-              case Some(No) => Future.successful(Ok(declaration(appConfig, form, details.schemeName, isCompany = true, isDormant = false)))
-              case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-            }
-          case JourneyType.Individual => Future.successful(Ok(declaration(appConfig, form, details.schemeName, isCompany = false, isDormant = false)))
+        val isCompany = request.userAnswers.hasCompanies
+        request.userAnswers.get(DeclarationDormantId) match {
+          case Some(Yes) => Future.successful(Ok(declaration(appConfig, form, details.schemeName, isCompany, isDormant = true)))
+          case Some(No) => Future.successful(Ok(declaration(appConfig, form, details.schemeName, isCompany, isDormant = false)))
+          case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
         }
       }
   }
@@ -69,16 +65,14 @@ class DeclarationController @Inject()(
     implicit request =>
       SchemeDetailsId.retrieve.right.map { details =>
         form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-              journey.withJourneyType {
-                case JourneyType.Company =>
-                  request.userAnswers.get(DeclarationDormantId) match {
-                    case Some(Yes) => Future.successful(BadRequest(declaration(appConfig, formWithErrors, details.schemeName, isCompany = true, isDormant = true)))
-                    case Some(No) => Future.successful(BadRequest(declaration(appConfig, formWithErrors, details.schemeName, isCompany = true, isDormant = false)))
-                    case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-                  }
-                case JourneyType.Individual => Future.successful(BadRequest(declaration(appConfig, formWithErrors, details.schemeName, isCompany = false, isDormant = false)))
-            },
+          (formWithErrors: Form[_]) => {
+            val isCompany = request.userAnswers.hasCompanies
+            request.userAnswers.get(DeclarationDormantId) match {
+              case Some(Yes) => Future.successful(BadRequest(declaration(appConfig, formWithErrors, details.schemeName, isCompany, isDormant = true)))
+              case Some(No) => Future.successful(BadRequest(declaration(appConfig, formWithErrors, details.schemeName, isCompany, isDormant = false)))
+              case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+            }
+          },
           (value) =>
             dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
               Redirect(navigator.nextPage(DeclarationId, NormalMode)(new UserAnswers(cacheMap))))
