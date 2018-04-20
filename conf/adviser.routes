@@ -14,6 +14,9 @@ POST       /adviserAddress                      controllers.register.adviser.Adv
 GET        /changeAdviserAddress                controllers.register.adviser.AdviserAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeAdviserAddress                controllers.register.adviser.AdviserAddressController.onSubmit(mode: Mode = CheckMode)
 
+GET        /checkYourAnswers                       controllers.register.adviser.CheckYourAnswersController.onPageLoad()
+POST       /checkYourAnswers                       controllers.register.adviser.CheckYourAnswersController.onSubmit()
+
 GET        /adviserPostCodeLookup                      controllers.register.adviser.AdviserPostCodeLookupController.onPageLoad(mode:Mode=NormalMode)
 POST       /adviserPostCodeLookup                      controllers.register.adviser.AdviserPostCodeLookupController.onSubmit(mode:Mode=NormalMode)
 GET        /changeAdviserPostCodeLookup                controllers.register.adviser.AdviserPostCodeLookupController.onPageLoad(mode:Mode=CheckMode)

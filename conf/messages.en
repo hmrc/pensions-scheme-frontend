@@ -611,8 +611,9 @@ messages__adviserAddress__title = Pension adviser's address
 messages__adviserAddress__heading = Pension adviser's address
 messages__adviserAddress__secondary = Pension adviser
 
+messages__adviser__secondary_heading = Pension adviser
+
 messages__adviserPostCodeLookupAddress__title=Pension adviser''s address
 messages__adviserPostCodeLookupAddress__heading=Pension adviser''s address
 messages__adviserPostCodeLookupAddress__secondary=Pension adviser
 messages__adviserPostCodeLookupAddress__enterPostCode= Enter the postcode below, or if you have an overseas address{0} enter the address manually {1}
-
