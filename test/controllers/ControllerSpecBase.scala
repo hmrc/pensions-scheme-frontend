@@ -19,6 +19,7 @@ package controllers
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.SchemeDetailsId
+import identifiers.register.adviser.AdviserDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
@@ -29,7 +30,7 @@ import models.CompanyDetails
 import models.person.PersonDetails
 import models.register.establishers.company.director.DirectorDetails
 import models.register.establishers.individual.EstablisherDetails
-import models.register.{SchemeDetails, SchemeType}
+import models.register.{AdviserDetails, SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
 import utils.{DateHelper, Enumerable, MapFormats}
@@ -110,6 +111,15 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
           )
         )
       )
+    ))
+  )
+
+  def getMandatoryAdviser: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      SchemeDetailsId.toString ->
+        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+      AdviserDetailsId.toString->
+        AdviserDetails("name","email")
     ))
   )
 }
