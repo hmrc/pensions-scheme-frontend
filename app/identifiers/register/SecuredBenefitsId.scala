@@ -15,8 +15,22 @@
  */
 
 package identifiers.register
+
 import identifiers._
+import play.api.libs.json.JsResult
+import utils.UserAnswers
 
 case object SecuredBenefitsId extends TypedIdentifier[Boolean] {
   override def toString: String = "securedBenefits"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(false) => userAnswers.remove(BenefitsInsurerId).flatMap(
+        _.remove(InsurerPostCodeLookupId).flatMap(
+          _.remove(InsurerAddressId)
+        )
+      )
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }
