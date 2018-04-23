@@ -36,7 +36,7 @@ class EstablishersNavigatorSpec extends WordSpec with MustMatchers with Navigato
   )
 
   navigator.getClass.getSimpleName must {
-    behave like navigatorWithRoutes(navigator, routes)
+    behave like navigatorWithRoutes(navigator, routes, dataDescriber)
   }
 
 }
@@ -53,5 +53,7 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
   private def individualDetails = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0)
 
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
+
+  private def dataDescriber(answers: UserAnswers): String = answers.toString
 
 }

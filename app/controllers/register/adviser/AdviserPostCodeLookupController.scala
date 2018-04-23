@@ -16,19 +16,19 @@
 
 package controllers.register.adviser
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.adviser.{AdviserAddressPostCodeLookupId, AdviserDetailsId}
-import models.{Index, Mode}
+import identifiers.register.adviser.AdviserAddressPostCodeLookupId
+import javax.inject.Inject
+import models.Mode
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import utils.Navigator
+import utils.annotations.Adviser
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
@@ -37,7 +37,7 @@ class AdviserPostCodeLookupController @Inject() (
                                                   override val messagesApi: MessagesApi,
                                                   override val cacheConnector: DataCacheConnector,
                                                   override val addressLookupConnector: AddressLookupConnector,
-                                                  override val navigator: Navigator,
+                                                  @Adviser override val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
@@ -46,39 +46,29 @@ class AdviserPostCodeLookupController @Inject() (
 
   private val title: Message = "messages__adviserPostCodeLookupAddress__title"
   private val heading: Message = "messages__adviserPostCodeLookupAddress__heading"
-  private val invalidPostcode: Message = "messages__error__postcode_invalid"
-  private val noResults: Message = "messages__error__postcode_no_results"
 
   protected val form: Form[String] = formProvider()
 
-  private def viewmodel(mode: Mode): Retrieval[PostcodeLookupViewModel] =
-    Retrieval {
-      implicit request =>
-        AdviserDetailsId.retrieve.right.map {
-          details =>
-            PostcodeLookupViewModel(
-              routes.AdviserPostCodeLookupController.onSubmit(mode),
-              routes.AdviserAddressController.onPageLoad(mode),
-              title = Message(title),
-              heading = Message(heading),
-              subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
-              enterPostcode=Message("messages__adviserPostCodeLookupAddress__enterPostCode")
-            )
-        }
-    }
+  private def viewmodel(mode: Mode) =
+      PostcodeLookupViewModel(
+        routes.AdviserPostCodeLookupController.onSubmit(mode),
+        routes.AdviserAddressController.onPageLoad(mode),
+        title = Message(title),
+        heading = Message(heading),
+        subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
+        enterPostcode=Message("messages__adviserPostCodeLookupAddress__enterPostCode")
+      )
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(mode).retrieve.right map get
+        get(viewmodel(mode))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(mode).retrieve.right.map {
-          vm =>
-            post(AdviserAddressPostCodeLookupId, vm, mode)
-        }
+        post(AdviserAddressPostCodeLookupId, viewmodel(mode), mode)
     }
+
 }

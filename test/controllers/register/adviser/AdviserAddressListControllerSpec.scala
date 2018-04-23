@@ -31,6 +31,7 @@ import play.api.test.Helpers.{contentAsString, _}
 import play.api.inject.bind
 import play.api.mvc.{Request, Result}
 import play.api.test.FakeRequest
+import utils.annotations.Adviser
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -161,7 +162,7 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].to(FakeDataCacheConnector),
         bind[DataRetrievalAction].to(data),
-        bind(classOf[Navigator]).to(new FakeNavigator(onwardRoute))
+        bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
       )
     ) {
       app =>
