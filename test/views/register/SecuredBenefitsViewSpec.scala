@@ -30,10 +30,12 @@ class SecuredBenefitsViewSpec extends YesNoViewBehaviours {
 
   val form = new SecuredBenefitsFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => securedBenefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  val schemeName = "myScheme"
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => securedBenefits(
-    frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => securedBenefits(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    securedBenefits(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   "SecuredBenefits view" must {
 
@@ -41,7 +43,12 @@ class SecuredBenefitsViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithBackLink(createView)
 
-    behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = routes.SecuredBenefitsController.onSubmit(NormalMode).url)
+    behave like yesNoPage(
+      createView = createViewUsingForm,
+      messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = routes.SecuredBenefitsController.onSubmit(NormalMode).url
+    )
+
+    behave like pageWithSecondaryHeader(createView, schemeName)
   }
 }
