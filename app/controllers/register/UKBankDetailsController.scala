@@ -20,11 +20,11 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.UKBankDetailsFormProvider
-import identifiers.register.UKBankDetailsId
+import identifiers.register.{SchemeDetailsId, UKBankDetailsId}
 import models.Mode
-import models.register.UKBankDetails
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -42,24 +42,28 @@ class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: UKBankDetailsFormProvider) extends FrontendController with I18nSupport {
+                                        formProvider: UKBankDetailsFormProvider) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(UKBankDetailsId) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+        val preparedForm = request.userAnswers.get(UKBankDetailsId) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(uKBankDetails(appConfig, preparedForm, mode, schemeDetails.schemeName)))
       }
-      Ok(uKBankDetails(appConfig, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(uKBankDetails(appConfig, formWithErrors, mode))),
+          SchemeDetailsId.retrieve.right.map { schemeDetails =>
+            Future.successful(BadRequest(uKBankDetails(appConfig, formWithErrors, mode, schemeDetails.schemeName)))
+          },
         (value) =>
           dataCacheConnector.save(request.externalId, UKBankDetailsId, value).map(cacheMap =>
             Redirect(navigator.nextPage(UKBankDetailsId, mode)(new UserAnswers(cacheMap))))

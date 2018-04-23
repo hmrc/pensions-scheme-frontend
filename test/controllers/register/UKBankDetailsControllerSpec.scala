@@ -24,11 +24,12 @@ import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.UKBankDetailsFormProvider
-import identifiers.register.UKBankDetailsId
+import identifiers.register.{SchemeDetailsId, UKBankDetailsId}
 import models.NormalMode
 import views.html.register.uKBankDetails
 import controllers.ControllerSpecBase
-import models.register.{SortCode, UKBankDetails}
+import models.register.SchemeType.SingleTrust
+import models.register.{SchemeDetails, SortCode, UKBankDetails}
 import org.apache.commons.lang3.RandomUtils
 import org.joda.time.LocalDate
 import play.api.mvc.Call
@@ -40,11 +41,21 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
   val formProvider = new UKBankDetailsFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): UKBankDetailsController =
-    new UKBankDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  val schemeName = "Test Scheme Name"
 
-  def viewAsString(form: Form[_] = form): String = uKBankDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): UKBankDetailsController =
+    new UKBankDetailsController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
+
+  def viewAsString(form: Form[_] = form): String = uKBankDetails(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   val accountNo = RandomUtils.nextInt(10000000, 99999999).toString
   val sortCode = RandomUtils.nextInt(100000, 999999).toString
@@ -63,7 +74,10 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
         SortCode("34", "45", "67"), "test account number", new LocalDate(LocalDate.now().getYear,
           LocalDate.now().getMonthOfYear, LocalDate.now().getDayOfMonth))
 
-      val validData = Json.obj(UKBankDetailsId.toString -> Json.toJson(bankDetails))
+      val validData = Json.obj(
+        UKBankDetailsId.toString -> Json.toJson(bankDetails),
+        SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust)
+      )
 
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
@@ -95,24 +109,44 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
+    "redirect to Session Expired" when {
+      "no existing data is found" when {
+        "GET" in {
+          val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+        "POST" in {
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("bankName", "test bank"),
+            ("accountName", "test account"), ("sortCode", sortCode),
+            ("accountNumber", accountNo),
+            ("date.day", LocalDate.now().getDayOfMonth.toString), ("date.month", LocalDate.now().getMonthOfYear.toString),
+            ("date.year", LocalDate.now().getYear.toString))
+
+          val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+      }
+      "scheme details are not retrieved" when {
+        "GET" in {
+          val result = controller(getEmptyData).onPageLoad(NormalMode)(fakeRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+        "POST" in {
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+
+          val result = controller(getEmptyData).onSubmit(NormalMode)(postRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+      }
     }
 
-    "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("bankName", "test bank"),
-        ("accountName", "test account"), ("sortCode", sortCode),
-        ("accountNumber", accountNo),
-        ("date.day", LocalDate.now().getDayOfMonth.toString), ("date.month", LocalDate.now().getMonthOfYear.toString),
-        ("date.year", LocalDate.now().getYear.toString))
-
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
   }
 }
