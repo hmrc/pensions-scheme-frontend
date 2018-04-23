@@ -16,15 +16,17 @@
 
 package navigators
 
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual._
+import models.register.{SchemeDetails, SchemeType}
 import models.{CheckMode, NormalMode}
 import org.scalatest.prop.PropertyChecks
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.UserAnswers
 
-class EstablishersIndividualNavigatorSpec extends WordSpec with MustMatchers with PropertyChecks {
+class EstablishersIndividualNavigatorSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues {
 
   val navigator = new EstablishersIndividualNavigator()
   val emptyAnswers = UserAnswers(Json.obj())
@@ -166,9 +168,10 @@ class EstablishersIndividualNavigatorSpec extends WordSpec with MustMatchers wit
     }
 
     ".nextPage(CheckYourAnswers)" must {
-      "return a `Call` to `AddTrusteeController`" in {
-        val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+      "return a `Call` to `HaveAnyTrusteesController`" in {
+        val answers = UserAnswers().set(SchemeDetailsId)(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).asOpt.value
+        val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(answers)
+        result mustEqual controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
       }
     }
   }

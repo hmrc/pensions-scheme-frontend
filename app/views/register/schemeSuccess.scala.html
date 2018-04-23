@@ -50,5 +50,8 @@
         </li>
     </ul>
 
-    @components.button_link("messages__complete__finish", routes.SchemeSuccessController.onSubmit.url, None)
+    @helpers.form(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
+        @components.submit_button("messages__complete__finish")
+    }
+
 }

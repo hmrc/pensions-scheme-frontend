@@ -30,6 +30,7 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.HaveAnyTrusteesId
 import models.Mode
 import play.api.mvc.{Action, AnyContent}
+import utils.annotations.Trustees
 import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.haveAnyTrustees
 
@@ -39,7 +40,7 @@ class HaveAnyTrusteesController @Inject()(
                                            appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            dataCacheConnector: DataCacheConnector,
-                                           navigator: Navigator,
+                                           @Trustees navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
@@ -67,7 +68,7 @@ class HaveAnyTrusteesController @Inject()(
             Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode, schemeDetails.schemeName))),
           (value) =>
             dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(HaveAnyTrusteesId, mode)(new UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(HaveAnyTrusteesId, mode)(UserAnswers(cacheMap))))
         )
       }
   }

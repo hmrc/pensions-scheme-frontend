@@ -567,7 +567,7 @@ messages__trusteeContactDetails__checkYourAnswersLabel = Trustee’s contact det
 messages__declaration__title = Declaration
 messages__declaration__heading = Declaration
 messages__declaration__declare = I declare/understand:
-messages__declaration__statement1_dormant = to the best of my knowledge and belief, some or all of the sponsoring employer(s) in relation to the scheme have not been dormant during the last 12 months
+messages__declaration__statement1_dormant = to the best of my knowledge and belief, some or all of the sponsoring employer(s) in relation to the scheme have been dormant during the last 12 months
 messages__declaration__statement1_not_dormant = to the best of my knowledge and belief, the sponsoring employer(s) in relation to the scheme have not been dormant during the last 12 months
 messages__declaration__statement2 = that this scheme meets all the criteria to be registered as a pension scheme under the Finance Act 2004 and in particular, is established and will be maintained wholly or mainly for the purpose of making authorised payments of pensions and lumps sums as falling within section 164(1)(a) or (b) of the Finance Act 2004
 messages__declaration__statement3 = that the instruments or agreements by which this pension scheme is constituted do not directly or indirectly entitle any person to unauthorised payments. And the way in which the pension scheme is to be administered will not knowingly entitle any person to unauthorised payments
@@ -610,3 +610,10 @@ messages__adviserDetails__error__adviser_name_invalid = The adviser name contain
 messages__adviserAddress__title = Pension adviser's address
 messages__adviserAddress__heading = Pension adviser's address
 messages__adviserAddress__secondary = Pension adviser
+
+messages__adviser__secondary_heading = Pension adviser
+
+messages__adviserPostCodeLookupAddress__title=Pension adviser''s address
+messages__adviserPostCodeLookupAddress__heading=Pension adviser''s address
+messages__adviserPostCodeLookupAddress__secondary=Pension adviser
+messages__adviserPostCodeLookupAddress__enterPostCode= Enter the postcode below, or if you have an overseas address{0} enter the address manually {1}
