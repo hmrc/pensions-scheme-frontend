@@ -26,7 +26,7 @@ import utils.{Navigator, UserAnswers}
 trait NavigatorBehaviour extends PropertyChecks with OptionValues {
   this: WordSpec with MustMatchers =>
 
-  def navigatorWithRoutes[A <: Identifier](navigator: Navigator, routes: TableFor4[A, UserAnswers, Call, Option[Call]], describer: (UserAnswers) => String): Unit = {
+  def navigatorWithRoutes[A <: Identifier, B <: Option[Call]](navigator: Navigator, routes: TableFor4[A, UserAnswers, Call, B], describer: (UserAnswers) => String): Unit = {
 
     "behave like a navigator" when {
 

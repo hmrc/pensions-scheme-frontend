@@ -35,7 +35,7 @@ class AdviserNavigatorSpec extends WordSpec with MustMatchers with NavigatorBeha
   )
 
   navigator.getClass.getSimpleName must {
-    behave like navigatorWithRoutes(navigator, routes)
+    behave like navigatorWithRoutes(navigator, routes, dataDescriber)
   }
 
 }
@@ -51,5 +51,7 @@ object AdviserNavigatorSpec {
   private def adviserPostCodeLookup(mode: Mode) = controllers.register.adviser.routes.AdviserPostCodeLookupController.onPageLoad(mode)
   private def checkYourAnswersPage = controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad()
   private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
+
+  private def dataDescriber(answers: UserAnswers): String = answers.toString
 
 }
