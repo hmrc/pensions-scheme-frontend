@@ -40,6 +40,8 @@ import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, redirectLocation, route, running, status}
+import utils.{FakeNavigator, Navigator}
+import utils.annotations.Adviser
 
 class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
@@ -122,7 +124,8 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryAdviser),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
-        bind[PostCodeLookupFormProvider].to(formProvider)
+        bind[PostCodeLookupFormProvider].to(formProvider),
+        bind[Navigator].qualifiedWith(classOf[Adviser]).toInstance(new FakeNavigator(onwardRoute))
       )) {
         implicit app =>
 

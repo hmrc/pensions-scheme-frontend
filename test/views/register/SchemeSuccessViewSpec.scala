@@ -46,8 +46,9 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
      "have link for complete register vat link" in {
       Jsoup.parse(createView().toString()).select("a[id=complete-register-vat-link]") must haveLink(routes.SchemeSuccessController.onPageLoad().url)
     }
-    "have button link" in {
-      Jsoup.parse(createView().toString()).select("a.button") must haveLink(routes.SchemeSuccessController.onPageLoad().url)
-    }
+
+    behave like pageWithSubmitButton(createView)
+
   }
+
 }

@@ -19,7 +19,6 @@ package navigators
 import com.google.inject.Singleton
 import identifiers.Identifier
 import identifiers.register._
-import models.register.DeclarationDormant
 import models.{CheckMode, Index, Mode, NormalMode}
 import play.api.mvc.Call
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -46,7 +45,8 @@ class RegisterNavigator extends Navigator with Enumerable.Implicits {
       _ => controllers.register.routes.BenefitsController.onPageLoad(NormalMode)
     case BenefitsId =>
       _ => controllers.register.routes.SecuredBenefitsController.onPageLoad(NormalMode)
-    case SecuredBenefitsId => securedBenefitsRoutes(NormalMode)
+    case SecuredBenefitsId =>
+      securedBenefitsRoutes(NormalMode)
     case BenefitsInsurerId =>
       _ => controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(NormalMode)
     case InsurerPostCodeLookupId =>
@@ -55,15 +55,20 @@ class RegisterNavigator extends Navigator with Enumerable.Implicits {
       _ => controllers.register.routes.InsurerAddressController.onPageLoad(NormalMode)
     case InsurerAddressId =>
       _ => controllers.register.routes.UKBankAccountController.onPageLoad(NormalMode)
-    case UKBankAccountId => uKBankAccountRoutes(NormalMode)
+    case UKBankAccountId =>
+      uKBankAccountRoutes(NormalMode)
     case UKBankDetailsId =>
       _ => controllers.register.routes.CheckYourAnswersController.onPageLoad()
     case CheckYourAnswersId =>
       _ => controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, Index(0))
     case SchemeReviewId =>
-      _ => controllers.register.routes.DeclarationDormantController.onPageLoad()
-    case DeclarationDormantId => declarationDormantRoutes()
-    case DeclarationDutiesId => declarationDutiesRoutes()
+      schemeReviewRoutes()
+    case DeclarationDormantId =>
+      _ => controllers.register.routes.DeclarationController.onPageLoad()
+    case DeclarationId =>
+      _ => controllers.register.routes.DeclarationDutiesController.onPageLoad()
+    case DeclarationDutiesId =>
+      declarationDutiesRoutes()
     case SchemeSuccessId =>
       _ => controllers.routes.IndexController.onPageLoad()
   }
@@ -101,14 +106,12 @@ class RegisterNavigator extends Navigator with Enumerable.Implicits {
     }
   }
 
-  private def declarationDormantRoutes()(userAnswers: UserAnswers): Call = {
-    userAnswers.get(DeclarationDormantId) match {
-      case Some(DeclarationDormant.No) =>
-        controllers.register.routes.DeclarationDutiesController.onPageLoad()
-      case Some(DeclarationDormant.Yes) =>
-        controllers.routes.IndexController.onPageLoad()
-      case None =>
-        controllers.routes.SessionExpiredController.onPageLoad()
+  private def schemeReviewRoutes()(userAnswers: UserAnswers): Call = {
+    if (userAnswers.hasCompanies) {
+      controllers.register.routes.DeclarationDormantController.onPageLoad()
+    }
+    else {
+      controllers.register.routes.DeclarationController.onPageLoad()
     }
   }
 
@@ -117,7 +120,7 @@ class RegisterNavigator extends Navigator with Enumerable.Implicits {
       case Some(true) =>
         controllers.register.routes.SchemeSuccessController.onPageLoad()
       case Some(false) =>
-        controllers.routes.IndexController.onPageLoad()
+        controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
       case None =>
         controllers.routes.SessionExpiredController.onPageLoad()
     }

@@ -16,27 +16,26 @@
 
 package controllers.register.adviser
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId}
+import javax.inject.Inject
 import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{CheckYourAnswersFactory, Navigator}
-import views.html.check_your_answers
 import utils.CheckYourAnswers.Ops._
-import utils.CountryOptions
-import viewmodels.{AnswerRow, AnswerSection}
+import utils.{CountryOptions, Navigator}
+import utils.annotations.Adviser
+import viewmodels.AnswerSection
+import views.html.check_your_answers
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         navigator: Navigator,
+                                         @Adviser navigator: Navigator,
                                          implicit val countryOptions: CountryOptions) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
@@ -46,11 +45,19 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
       val sections = Seq(AnswerSection(None, adviserDetailsRow++adviserAddressRow))
 
-      Ok(check_your_answers(appConfig, sections, Some("messages__adviser__secondary_heading"), controllers.register.adviser.routes.CheckYourAnswersController.onSubmit()))
+      Ok(
+        check_your_answers(
+          appConfig,
+          sections,
+          Some("messages__adviser__secondary_heading"),
+          controllers.register.adviser.routes.CheckYourAnswersController.onSubmit()
+        )
+      )
   }
 
-  def onSubmit = (authenticate andThen getData andThen requireData) {
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode)(request.userAnswers))
   }
+
 }
