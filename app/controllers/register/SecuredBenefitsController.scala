@@ -18,22 +18,22 @@ package controllers.register
 
 import javax.inject.Inject
 
+import config.FrontendAppConfig
+import connectors.DataCacheConnector
+import controllers.Retrievals
+import controllers.actions._
+import forms.register.SecuredBenefitsFormProvider
+import identifiers.register.{SchemeDetailsId, SecuredBenefitsId}
+import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
-import config.FrontendAppConfig
-import forms.register.SecuredBenefitsFormProvider
-import identifiers.register.SecuredBenefitsId
-import models.Mode
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 import views.html.register.securedBenefits
 
 import scala.concurrent.Future
-import play.api.libs.json._
-import utils.annotations.Register
 
 class SecuredBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
@@ -42,24 +42,29 @@ class SecuredBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
-                                          formProvider: SecuredBenefitsFormProvider) extends FrontendController with I18nSupport {
+                                          formProvider: SecuredBenefitsFormProvider
+                                         ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(SecuredBenefitsId) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+        val preparedForm = request.userAnswers.get(SecuredBenefitsId) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(securedBenefits(appConfig, preparedForm, mode)))
       }
-      Ok(securedBenefits(appConfig, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(securedBenefits(appConfig, formWithErrors, mode))),
+          SchemeDetailsId.retrieve.right.map { schemeDetails =>
+            Future.successful(BadRequest(securedBenefits(appConfig, formWithErrors, mode)))
+          },
         (value) =>
           dataCacheConnector.save(request.externalId, SecuredBenefitsId, value).map(cacheMap =>
             Redirect(navigator.nextPage(SecuredBenefitsId, mode)(new UserAnswers(cacheMap))))
