@@ -30,10 +30,12 @@ class UKBankAccountViewSpec extends YesNoViewBehaviours {
 
   val form = new UKBankAccountFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => uKBankAccount(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  val schemeName = "myScheme"
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => uKBankAccount(
-    frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => uKBankAccount(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    uKBankAccount(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   "UKBankAccount view" must {
 
@@ -43,5 +45,8 @@ class UKBankAccountViewSpec extends YesNoViewBehaviours {
 
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.UKBankAccountController.onSubmit(NormalMode).url)
+
+    behave like pageWithSecondaryHeader(createView, schemeName)
+
   }
 }

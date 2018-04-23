@@ -18,23 +18,22 @@ package controllers.register
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
 import config.FrontendAppConfig
+import connectors.DataCacheConnector
 import controllers.Retrievals
+import controllers.actions._
 import forms.register.UKBankAccountFormProvider
 import identifiers.register.{SchemeDetailsId, UKBankAccountId}
 import models.Mode
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 import views.html.register.uKBankAccount
 
 import scala.concurrent.Future
-import play.api.libs.json._
-import utils.annotations.Register
 
 class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -55,7 +54,7 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(uKBankAccount(appConfig, preparedForm, mode)))
+        Future.successful(Ok(uKBankAccount(appConfig, preparedForm, mode, schemeDetails.schemeName)))
       }
   }
 
@@ -64,7 +63,7 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
-            Future.successful(BadRequest(uKBankAccount(appConfig, formWithErrors, mode)))
+            Future.successful(BadRequest(uKBankAccount(appConfig, formWithErrors, mode, schemeDetails.schemeName)))
           },
         (value) =>
           dataCacheConnector.save(request.externalId, UKBankAccountId, value).map(cacheMap =>
