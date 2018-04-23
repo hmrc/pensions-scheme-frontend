@@ -52,7 +52,7 @@ class OccupationalPensionSchemeControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  def viewAsString(form: Form[_] = form) = occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form) = occupationalPensionScheme(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   "OccupationalPensionScheme Controller" must {
 
