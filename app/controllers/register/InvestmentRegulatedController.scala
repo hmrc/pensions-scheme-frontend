@@ -54,7 +54,7 @@ class InvestmentRegulatedController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(investmentRegulated(appConfig, preparedForm, mode)))
+        Future.successful(Ok(investmentRegulated(appConfig, preparedForm, mode, schemeDetails.schemeName)))
       }
   }
 
@@ -63,7 +63,7 @@ class InvestmentRegulatedController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
-            Future.successful(BadRequest(investmentRegulated(appConfig, formWithErrors, mode)))
+            Future.successful(BadRequest(investmentRegulated(appConfig, formWithErrors, mode, schemeDetails.schemeName)))
           },
         (value) =>
           dataCacheConnector.save(request.externalId, InvestmentRegulatedId, value).map(cacheMap =>

@@ -39,6 +39,8 @@ class InvestmentRegulatedControllerSpec extends ControllerSpecBase {
   val formProvider = new InvestmentRegulatedFormProvider()
   val form = formProvider()
 
+  val schemeName = "Test Scheme Name"
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): InvestmentRegulatedController =
     new InvestmentRegulatedController(
       frontendAppConfig,
@@ -51,7 +53,7 @@ class InvestmentRegulatedControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  def viewAsString(form: Form[_] = form): String = investmentRegulated(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = investmentRegulated(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   "InvestmentRegulated Controller" must {
 
@@ -65,7 +67,7 @@ class InvestmentRegulatedControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val validData = Json.obj(
         InvestmentRegulatedId.toString -> true,
-        SchemeDetailsId.toString -> SchemeDetails("My Test Scheme", SingleTrust)
+        SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust)
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
