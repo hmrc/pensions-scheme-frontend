@@ -293,7 +293,7 @@ messages__establisher_company_contact_details__title = Company contact details
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the registered business address but you can enter any address you have for this company.
-messages__error__postcode = Enter the postal code
+messages__error__postcode = Enter the postcode
 messages__error__postcode_length = The postal code cannot be more than 8 characters
 messages__error__postcode_invalid = Enter a valid postal code
 messages__error__postcode_no_results = No results for that postcode
@@ -315,7 +315,6 @@ messages__common__enter_postcode = Enter the postcode below, or
 messages__common__select_address_link = enter the address manually
 messages__common__address_postcode = Postal code
 messages__common__address_postcode_hint = For example NE12 8ER
-messages__error__postcode = Enter the postal code
 
 messages__select_the_address__title = Select the address
 messages__common__select_address = Select the address from the list below, or
