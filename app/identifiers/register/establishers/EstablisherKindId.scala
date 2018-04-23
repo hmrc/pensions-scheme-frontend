@@ -17,11 +17,54 @@
 package identifiers.register.establishers
 
 import identifiers.TypedIdentifier
+import identifiers.register.establishers.company._
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorId}
+import identifiers.register.establishers.individual._
 import models.register.establishers.EstablisherKind
-import play.api.libs.json.JsPath
+import models.register.establishers.company.director.DirectorDetails
+import play.api.libs.json.{JsPath, JsResult, JsSuccess}
+import utils.UserAnswers
 
 case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind] {
   override def path: JsPath = EstablishersId.path \ index \ EstablisherKindId.toString
+
+  private def removeAllDirectors(userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    userAnswers.getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index)) match {
+      case Some(allDirectors) if (allDirectors.nonEmpty) =>
+        userAnswers.remove(DirectorId(index, 0)).flatMap(removeAllDirectors(_))
+      case _ =>
+        JsSuccess(userAnswers)
+    }
+  }
+
+  override def cleanup(value: Option[EstablisherKind], userAnswers: UserAnswers): JsResult[UserAnswers] =
+    value match {
+      case Some(EstablisherKind.Indivdual) =>
+        userAnswers.remove(CompanyDetailsId(index))
+          .flatMap(_.remove(CompanyRegistrationNumberId(index)))
+          .flatMap(_.remove(CompanyUniqueTaxReferenceId(index)))
+          .flatMap(_.remove(CompanyPostCodeLookupId(index)))
+          .flatMap(_.remove(CompanyAddressId(index)))
+          .flatMap(_.remove(CompanyAddressYearsId(index)))
+          .flatMap(_.remove(CompanyPreviousAddressPostcodeLookupId(index)))
+          .flatMap(_.remove(CompanyPreviousAddressId(index)))
+          .flatMap(_.remove(CompanyContactDetailsId(index)))
+          .flatMap(removeAllDirectors(_))
+
+      case Some(EstablisherKind.Company) =>
+        userAnswers.remove(EstablisherDetailsId(index))
+          .flatMap(_.remove(EstablisherNinoId(index)))
+          .flatMap(_.remove(UniqueTaxReferenceId(index)))
+          .flatMap(_.remove(PostCodeLookupId(index)))
+          .flatMap(_.remove(AddressId(index)))
+          .flatMap(_.remove(AddressYearsId(index)))
+          .flatMap(_.remove(PreviousPostCodeLookupId(index)))
+          .flatMap(_.remove(PreviousAddressId(index)))
+          .flatMap(_.remove(ContactDetailsId(index)))
+
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
 }
 
 object EstablisherKindId {
