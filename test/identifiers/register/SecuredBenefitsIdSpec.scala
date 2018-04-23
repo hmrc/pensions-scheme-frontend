@@ -25,7 +25,7 @@ import utils.{Enumerable, UserAnswers}
 
 class SecuredBenefitsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
-  "Cleanup" must {
+  "Cleanup" when {
 
     val answers = UserAnswers(Json.obj())
       .set(SecuredBenefitsId)(true)
@@ -34,7 +34,7 @@ class SecuredBenefitsIdSpec extends WordSpec with MustMatchers with OptionValues
       .flatMap(_.set(InsurerAddressId)(Address("foo", "bar", None, None, None, "GB")))
       .asOpt.value
 
-    "`SecuredBenefitsId` is set to `false`" when {
+    "`SecuredBenefitsId` is set to `false`" must {
 
       val result: UserAnswers = answers.set(SecuredBenefitsId)(false).asOpt.value
 
@@ -51,7 +51,7 @@ class SecuredBenefitsIdSpec extends WordSpec with MustMatchers with OptionValues
       }
     }
 
-    "`SecuredBenefitsId` is set to `true`" when {
+    "`SecuredBenefitsId` is set to `true`" must {
 
       val result: UserAnswers = answers.set(SecuredBenefitsId)(true).asOpt.value
 

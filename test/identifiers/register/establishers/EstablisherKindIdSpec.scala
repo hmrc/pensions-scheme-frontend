@@ -27,14 +27,15 @@ import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
-import utils.{Enumerable, MapFormats, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 
-class EstablisherKindIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits{
+class EstablisherKindIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+
   import EstablisherKindIdSpec._
 
-  "cleanup" must {
+  "cleanup" when {
 
-    "`EstablisherKind` changed from Company to Individual" when {
+    "`EstablisherKind` changed from Company to Individual" must {
       val result = establisherCompany.set(EstablisherKindId(0))(EstablisherKind.Indivdual).asOpt.value
 
       "remove the data for `CompanyDetails`" in {
@@ -69,7 +70,7 @@ class EstablisherKindIdSpec extends WordSpec with MustMatchers with OptionValues
       }
     }
 
-    "`EstablisherKind` changed from Individual to Company" when {
+    "`EstablisherKind` changed from Individual to Company" must {
       val result = establisherIndividual.set(EstablisherKindId(0))(EstablisherKind.Company).asOpt.value
 
       "remove the data for `EstablisherDetails`" in {
@@ -94,6 +95,37 @@ class EstablisherKindIdSpec extends WordSpec with MustMatchers with OptionValues
       }
       "remove the data for `Contact Details`" in {
         result.get(ContactDetailsId(0)) mustNot be(defined)
+      }
+      "not remove the data for `Company Details`" in {
+        result.get(CompanyDetailsId(0)) mustBe defined
+      }
+    }
+
+    "`EstablisherKind` is removed" must {
+      val result = establisherIndividual.remove(EstablisherKindId(0)).asOpt.value
+
+      "not remove the data for `Establisher Details`" in {
+        result.get(EstablisherDetailsId(0)) mustBe defined
+      }
+      "not remove the data for `EstablisherNino`" in {
+        result.get(EstablisherNinoId(0)) mustBe defined
+      }
+      "not remove the data for `UniqueTaxReference`" in {
+        result.get(UniqueTaxReferenceId(0)) mustBe defined
+      }
+      "not remove the data for `Individual Address`" in {
+        result.get(PostCodeLookupId(0)) mustBe defined
+        result.get(AddressId(0)) mustBe defined
+      }
+      "not remove the data for `AddressYears`" in {
+        result.get(AddressYearsId(0)) mustBe defined
+      }
+      "not remove the data for `Previous Address`" in {
+        result.get(PreviousPostCodeLookupId(0)) mustBe defined
+        result.get(PreviousAddressId(0)) mustBe defined
+      }
+      "not remove the data for `Contact Details`" in {
+        result.get(ContactDetailsId(0)) mustBe defined
       }
       "not remove the data for `Company Details`" in {
         result.get(CompanyDetailsId(0)) mustBe defined

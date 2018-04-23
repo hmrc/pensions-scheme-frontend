@@ -25,15 +25,15 @@ import models.register.trustees.TrusteeKind
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
-import utils.{Enumerable, MapFormats, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 
 class TrusteesKindIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
   import TrusteesKindIdSpec._
 
-  "cleanup" must {
+  "cleanup" when {
 
-    "`TrusteeKind` changed from Company to Individual" when {
+    "`TrusteeKind` changed from Company to Individual" must {
       val result = trusteeCompany.set(TrusteeKindId(0))(TrusteeKind.Individual).asOpt.value
 
       "remove the data for `CompanyDetails`" in {
@@ -64,7 +64,7 @@ class TrusteesKindIdSpec extends WordSpec with MustMatchers with OptionValues wi
       }
     }
 
-    "`TrusteeKind` changed from Individual to Company" when {
+    "`TrusteeKind` changed from Individual to Company" must {
       val result = trusteeIndividual.set(TrusteeKindId(0))(TrusteeKind.Company).asOpt.value
 
       "remove the data for `TrusteeDetails`" in {
@@ -90,14 +90,45 @@ class TrusteesKindIdSpec extends WordSpec with MustMatchers with OptionValues wi
       "remove the data for `Trustee Contact Details`" in {
         result.get(TrusteeContactDetailsId(0)) mustNot be(defined)
       }
-      "remove the data for `Company Details`" in {
+      "not remove the data for `Company Details`" in {
+        result.get(CompanyDetailsId(0)) mustBe defined
+      }
+    }
+
+    "`TrusteeKind` is removed" must {
+      val result = trusteeIndividual.remove(TrusteeKindId(0)).asOpt.value
+
+      "not remove the data for `TrusteeDetails`" in {
+        result.get(TrusteeDetailsId(0)) mustBe defined
+      }
+      "not remove the data for `TrusteeNino`" in {
+        result.get(TrusteeNinoId(0)) mustBe defined
+      }
+      "not remove the data for `UniqueTaxReference`" in {
+        result.get(UniqueTaxReferenceId(0)) mustBe defined
+      }
+      "not remove the data for `Trustee Address`" in {
+        result.get(IndividualPostCodeLookupId(0)) mustBe defined
+        result.get(TrusteeAddressId(0)) mustBe defined
+      }
+      "not remove the data for `TrusteeAddressYears`" in {
+        result.get(TrusteeAddressYearsId(0)) mustBe defined
+      }
+      "not remove the data for `Trustee Previous Address`" in {
+        result.get(IndividualPreviousAddressPostCodeLookupId(0)) mustBe defined
+        result.get(TrusteePreviousAddressId(0)) mustBe defined
+      }
+      "not remove the data for `Trustee Contact Details`" in {
+        result.get(TrusteeContactDetailsId(0)) mustBe defined
+      }
+      "not remove the data for `Company Details`" in {
         result.get(CompanyDetailsId(0)) mustBe defined
       }
     }
   }
 }
 
-object TrusteesKindIdSpec extends OptionValues with Enumerable.Implicits{
+object TrusteesKindIdSpec extends OptionValues with Enumerable.Implicits {
   val trusteeCompany = UserAnswers(Json.obj())
     .set(TrusteeKindId(0))(TrusteeKind.Company)
     .flatMap(_.set(CompanyDetailsId(0))(CompanyDetails("", None, None)))
