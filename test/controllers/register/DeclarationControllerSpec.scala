@@ -140,7 +140,6 @@ object DeclarationControllerSpec extends ControllerSpecBase {
     UserAnswers()
       .schemeDetails()
       .individualEstablisher()
-      .dormant(false)
       .asDataRetrievalAction()
 
   private val nonDormantCompany =
