@@ -93,7 +93,7 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
     title = Message("messages__trustee_individual_previous_address__title"),
     heading = Message("messages__trustee_individual_previous_address__heading"),
     subHeading = Some(personDetails.fullName),
-    hint = Message("messages__common_individual_postCode_lookup__lede"),
+    hint = Some(Message("messages__common_individual_postCode_lookup__lede")),
     enterPostcode = Message("messages__trustee_individualPostCodeLookup__enter_postcode")
   )
   val retrieval = new FakeDataRetrievalAction(Some(

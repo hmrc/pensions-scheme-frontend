@@ -43,7 +43,9 @@
 
         @components.heading(headingKey = viewmodel.heading, secondaryHeaderKey = viewmodel.subHeading)
 
-        <p>@viewmodel.hint.resolve</p>
+        @viewmodel.hint.map{ hint =>
+            <p>hint.resolve</p>
+        }
 
         <p>@Html(viewmodel.enterPostcode.withArgs(openLink, closeLink))</p>
 

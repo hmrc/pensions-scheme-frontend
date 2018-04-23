@@ -49,8 +49,8 @@ messages__common__country = Country
 messages__common__previous_address = Previous Address
 messages__common__trustee_secondary_header = Trustees for {0}
 
-messages__common__postcode_lookup__enter_postcode = Enter the postcode below, or {0} enter the address manually {1}
-messages__common__postcode_lookup__address_postcode = Postal code
+messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
+messages__common__postcode_lookup__address_postcode = Postcode
 messages__common__postcode_lookup__address_postcode_hint = For example NE12 8ER
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
 messages__error__postcode = Enter the postal code

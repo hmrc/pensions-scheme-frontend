@@ -20,72 +20,62 @@ import javax.inject.Inject
 
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
-import controllers.Retrievals
 import controllers.actions._
+import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.InsurerPostCodeLookupId
+import identifiers.register.{InsurerPostCodeLookupId, SchemeDetailsId}
 import models.Mode
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Call}
+import utils.Navigator
 import utils.annotations.Register
-import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.insurerPostCodeLookup
+import viewmodels.address.PostcodeLookupViewModel
 
-import scala.concurrent.Future
-
-class InsurerPostCodeLookupController @Inject()(appConfig: FrontendAppConfig,
+class InsurerPostCodeLookupController @Inject()(val appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
-                                                dataCacheConnector: DataCacheConnector,
-                                                addressLookupConnector: AddressLookupConnector,
-                                                @Register navigator: Navigator,
+                                                val cacheConnector: DataCacheConnector,
+                                                val addressLookupConnector: AddressLookupConnector,
+                                                @Register val navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
                                                 formProvider: PostCodeLookupFormProvider
-                                               ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                               ) extends PostcodeLookupController {
 
-  private val form = formProvider()
+  val postCall: (Mode) => Call = routes.InsurerPostCodeLookupController.onSubmit
+  val manualCall: (Mode) => Call = routes.InsurerAddressController.onPageLoad
+
+  val form: Form[String] = formProvider()
 
   def formWithError(messageKey: String): Form[String] = {
     form.withError("value", s"messages__error__postcode_$messageKey")
   }
 
+  def viewModel(mode: Mode): Retrieval[PostcodeLookupViewModel] =
+  Retrieval {
+    implicit request =>
+    SchemeDetailsId.retrieve.right.map{ schemeDetails =>
+      PostcodeLookupViewModel(
+        postCall(mode),
+        manualCall(mode),
+        Messages("messages__benefits_insurance_addr__title"),
+        "messages__benefits_insurance_addr__title",
+        Some(schemeDetails.schemeName),
+        None
+      )
+    }
+  }
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          Future.successful(Ok(insurerPostCodeLookup(appConfig, form, mode, schemeName)))
-      }
+      viewModel(mode).retrieve.right.map(get)
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(insurerPostCodeLookup(appConfig, formWithErrors, mode, schemeName))),
-            (value) =>
-              addressLookupConnector.addressLookupByPostCode(value).flatMap {
-                case None =>
-                  Future.successful(BadRequest(insurerPostCodeLookup(appConfig, formWithError("invalid"), mode, schemeName)))
-
-                case Some(Nil) =>
-                  Future.successful(BadRequest(insurerPostCodeLookup(appConfig, formWithError("no_results"), mode, schemeName)))
-
-                case Some(addressSeq) =>
-                  dataCacheConnector.save(
-                    request.externalId,
-                    InsurerPostCodeLookupId,
-                    addressSeq.map(_.address)
-                  ).map {
-                    json =>
-                      Redirect(navigator.nextPage(InsurerPostCodeLookupId, mode)(new UserAnswers(json)))
-                  }
-              }
-          )
+      viewModel(mode).retrieve.right.map{ vm =>
+        post(InsurerPostCodeLookupId, vm, mode)
       }
   }
 
