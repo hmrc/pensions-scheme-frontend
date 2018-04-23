@@ -24,11 +24,12 @@ import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.BenefitsInsurerFormProvider
-import identifiers.register.BenefitsInsurerId
+import identifiers.register.{BenefitsInsurerId, SchemeDetailsId}
 import models.NormalMode
 import views.html.register.benefitsInsurer
 import controllers.ControllerSpecBase
-import models.register.BenefitsInsurer
+import models.register.SchemeType.SingleTrust
+import models.register.{BenefitsInsurer, SchemeDetails}
 
 class BenefitsInsurerControllerSpec extends ControllerSpecBase {
 
@@ -37,11 +38,20 @@ class BenefitsInsurerControllerSpec extends ControllerSpecBase {
   val formProvider = new BenefitsInsurerFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
-    new BenefitsInsurerController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  val schemeName = "Test Scheme Name"
 
-  def viewAsString(form: Form[_] = form) = benefitsInsurer(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): BenefitsInsurerController =
+    new BenefitsInsurerController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction, new DataRequiredActionImpl,
+      formProvider
+    )
+
+  def viewAsString(form: Form[_] = form) = benefitsInsurer(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   "BenefitsInsurer Controller" must {
 
@@ -53,7 +63,10 @@ class BenefitsInsurerControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(BenefitsInsurerId.toString -> Json.toJson(BenefitsInsurer("value 1", "value 2")))
+      val validData = Json.obj(
+        BenefitsInsurerId.toString -> Json.toJson(BenefitsInsurer("value 1", "value 2")),
+        SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust)
+      )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
@@ -80,19 +93,39 @@ class BenefitsInsurerControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
+    "redirect to Session Expired" when {
+      "no existing data is found" when {
+        "GET" in {
+          val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+        "POST" in {
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("companyName", "value 1"), ("policyNumber", "value 2"))
+          val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+      }
+      "scheme details are not retrieved" when {
+        "GET" in {
+          val result = controller(getEmptyData).onPageLoad(NormalMode)(fakeRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+        "POST" in {
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+
+          val result = controller(getEmptyData).onSubmit(NormalMode)(postRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+      }
     }
 
-    "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("companyName", "value 1"), ("policyNumber", "value 2"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
   }
 }
