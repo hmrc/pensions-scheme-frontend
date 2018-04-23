@@ -24,8 +24,9 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
+import controllers.Retrievals
 import forms.register.OccupationalPensionSchemeFormProvider
-import identifiers.register.OccupationalPensionSchemeId
+import identifiers.register.{OccupationalPensionSchemeId, SchemeDetailsId}
 import models.Mode
 import play.api.mvc.{Action, AnyContent}
 import utils.{Navigator, UserAnswers}
@@ -42,24 +43,29 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
-                                                    formProvider: OccupationalPensionSchemeFormProvider) extends FrontendController with I18nSupport {
+                                                    formProvider: OccupationalPensionSchemeFormProvider
+                                                   ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(OccupationalPensionSchemeId) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+        val preparedForm = request.userAnswers.get(OccupationalPensionSchemeId) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(occupationalPensionScheme(appConfig, preparedForm, mode)))
       }
-      Ok(occupationalPensionScheme(appConfig, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(occupationalPensionScheme(appConfig, formWithErrors, mode))),
+          SchemeDetailsId.retrieve.right.map { schemeDetails =>
+            Future.successful(BadRequest(occupationalPensionScheme(appConfig, formWithErrors, mode)))
+          },
         (value) =>
           dataCacheConnector.save(request.externalId, OccupationalPensionSchemeId, value).map(cacheMap =>
             Redirect(navigator.nextPage(OccupationalPensionSchemeId, mode)(new UserAnswers(cacheMap))))

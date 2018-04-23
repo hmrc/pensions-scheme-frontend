@@ -168,7 +168,7 @@ messages__investment_regulated__title = Is the scheme investment regulated?
 messages__contractofinsurance_pension_scheme__title = Are any of the scheme benefits secured by a contract?
 messages__contractofinsurance_pension_scheme__copy = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
 
-messages__occupational_pension_scheme__title = Is the scheme an Occupational Pension Scheme?
+messages__occupational_pension_scheme__title = Is the scheme an occupational pension scheme?
 
 messages__benefits__title = How does the scheme provide benefits?
 messages__benefits__opt1 = Money Purchase benefits only (defined contribution)
