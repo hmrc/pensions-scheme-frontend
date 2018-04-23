@@ -61,7 +61,7 @@ class RegisterNavigatorSpec extends WordSpec with MustMatchers with NavigatorBeh
     (DeclarationDormantId,          emptyAnswers,         declaration,                            None),
     (DeclarationId,                 emptyAnswers,         declarationDuties,                      None),
     (DeclarationDutiesId,           dutiesTrue,           schemeSuccess,                          None),
-    (DeclarationDutiesId,           dutiesFalse,          declarationDuties,                      None),
+    (DeclarationDutiesId,           dutiesFalse,          adviserDetails,                         None),
     (DeclarationDutiesId,           emptyAnswers,         expired,                                None),
     (SchemeSuccessId,               emptyAnswers,         index,                                  None)
   )
@@ -105,6 +105,7 @@ object RegisterNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private def uKBankAccount(mode: Mode) = controllers.register.routes.UKBankAccountController.onPageLoad(mode)
   private def uKBankDetails(mode: Mode) = controllers.register.routes.UKBankDetailsController.onPageLoad(mode)
 
+  private def adviserDetails = controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
   private def establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
   private def index = controllers.routes.IndexController.onPageLoad()

@@ -34,16 +34,20 @@ class AdviserNavigator extends Navigator {
     case AdviserAddressListId =>
       _ => controllers.register.adviser.routes.AdviserAddressController.onPageLoad(NormalMode)
     case AdviserAddressId =>
-      _ => checkYourAnswersPage
+      _ => controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad()
     case CheckYourAnswersId =>
       _ => controllers.register.routes.SchemeSuccessController.onPageLoad()
   }
 
   override protected def editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
+    case AdviserDetailsId =>
+      _ => controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad()
     case AdviserAddressPostCodeLookupId =>
       _ => controllers.register.adviser.routes.AdviserAddressListController.onPageLoad(CheckMode)
     case AdviserAddressListId =>
       _ => controllers.register.adviser.routes.AdviserAddressController.onPageLoad(CheckMode)
+    case AdviserAddressId =>
+      _ => controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad()
   }
 
 }

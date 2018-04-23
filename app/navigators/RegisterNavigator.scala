@@ -120,7 +120,7 @@ class RegisterNavigator extends Navigator with Enumerable.Implicits {
       case Some(true) =>
         controllers.register.routes.SchemeSuccessController.onPageLoad()
       case Some(false) =>
-        controllers.register.routes.DeclarationDutiesController.onPageLoad()
+        controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
       case None =>
         controllers.routes.SessionExpiredController.onPageLoad()
     }
