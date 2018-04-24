@@ -19,6 +19,7 @@ package controllers.register
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.{BenefitsId, SchemeDetailsId, UKBankAccountId}
+import models.CheckMode
 import models.register.{Benefits, SchemeDetails, SchemeType}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -88,13 +89,13 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         "messages__scheme_details__name_label",
         Seq("Test Scheme Name"),
         answerIsMessageKey = false,
-        "/pensions-scheme/register/changeSchemeDetails"
+        controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url
       ),
       AnswerRow(
         "messages__scheme_details__type_legend_short",
         Seq(s"messages__scheme_details__type_${SchemeType.SingleTrust}"),
         answerIsMessageKey = true,
-        "/pensions-scheme/register/changeSchemeDetails"
+        controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url
       )
     )
   )
@@ -106,7 +107,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         "messages__benefits__title",
         Seq(s"messages__benefits__${Benefits.options.head.value}"),
         answerIsMessageKey = true,
-        "/pensions-scheme/register/changeBenefits"
+        controllers.register.routes.BenefitsController.onPageLoad(CheckMode).url
       )
     )
   )
@@ -118,7 +119,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         "uKBankAccount.checkYourAnswersLabel",
         Seq("site.no"),
         answerIsMessageKey = true,
-        "/pensions-scheme/register/changeUKBankAccount"
+        controllers.register.routes.UKBankAccountController.onPageLoad(CheckMode).url
       )
     )
   )

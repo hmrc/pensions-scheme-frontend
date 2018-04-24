@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import models.Index
+import models.{CheckMode, Index}
 import play.api.test.Helpers._
 import utils.{CheckYourAnswersFactory, CountryOptions, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
@@ -38,19 +38,19 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       "messages__common__cya__name",
       Seq("test company name"),
       false,
-      "/pensions-scheme/register/establishers/1/company/changeCompanyDetails"
+      routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
     ),
     AnswerRow(
       "messages__common__cya__vat",
       Seq("123456"),
       false,
-      "/pensions-scheme/register/establishers/1/company/changeCompanyDetails"
+      routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
     ),
     AnswerRow(
       "messages__company__cya__paye_ern",
       Seq("abcd"),
       false,
-      "/pensions-scheme/register/establishers/1/company/changeCompanyDetails"
+      routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
     )
   )
 
