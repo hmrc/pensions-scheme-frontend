@@ -208,7 +208,7 @@ messages__uk_bank_account_details__account_name = Account name
 messages__uk_bank_account_details__sort_code = Sort code
 messages__uk_bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
 messages__uk_bank_account_details__account_number = Account number
-messages__uk_bank_account_details__date_bank_account = Date the account was opened
+messages__uk_bank_account_details__date_bank_account = Approximate date the account was opened
 messages__common__dob__hint = Example 30 09 1990
 
 messages__error__bank_name = Enter the bank name
