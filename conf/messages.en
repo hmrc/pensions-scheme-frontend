@@ -133,7 +133,7 @@ messages__error__has_ct_utr_trustee = Select yes if the trustee has a CTUTR
 
 messages__scheme_details__title = Scheme details
 messages__scheme_details__name_label = Name of the scheme
-messages__scheme_details__name_hint = The pension scheme name cannot be the same as the pension scheme administrator or the scheme establisher.
+messages__scheme_details__name_hint = The pension scheme name cannot be the same as the Pension Scheme Administrator name.
 messages__scheme_details__type_legend = What type of scheme is it?
 messages__scheme_details__type_legend_short = Scheme type
 messages__scheme_details__type_single = Single trust
@@ -229,7 +229,7 @@ messages__common__pick_country = Select a country
 
 messages__uk_bank_account__title = Does the scheme have a UK bank account?
 
-messages__establishers__add__title = Establishers
+messages__establishers__add__title = Scheme Establishers
 messages__establishers__add_legend_more = Do you want to add another establisher?
 messages__establishers__add_hint = You must tell us about all your scheme establishers.
 messages__establishers__add_limit = You have added the maximum number of establishers
@@ -255,7 +255,7 @@ messages__error__no_nino_length = The reason cannot be more than 150 characters
 messages__establishers__add__opt__company=Company
 messages__establishers__add__opt__individual=Individual
 messages__establishers__add__opt__partnership=Partnership
-messages__establishers__add_legend = What kind of establisher are you adding?
+messages__establishers__add_legend = What kind of scheme establisher are you adding?
 
 messages__establisher__has_sautr__title = Does the establisher have a Self Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__establisher__no_sautr = Tell us why the establisher does not have a SAUTR
@@ -495,7 +495,7 @@ messages__trusteeKind__company = Company
 messages__trusteeKind__individual = Individual
 messages__trusteeKind__partnership = Partnership
 messages__trusteeKind__legend = What kind of trustee are you adding?
-messages__trusteeKind__hint = You must tell us about all your trustees. You can add up to 10 using the digital service.
+messages__trusteeKind__hint = You must tell us about all your trustees.
 
 messages__trusteeDetails__title = Trustee details
 messages__trusteeDetails__heading = Trustee details
@@ -568,12 +568,13 @@ messages__declaration__heading = Declaration
 messages__declaration__declare = I declare/understand:
 messages__declaration__statement1_dormant = to the best of my knowledge and belief, some or all of the sponsoring employer(s) in relation to the scheme have been dormant during the last 12 months
 messages__declaration__statement1_not_dormant = to the best of my knowledge and belief, the sponsoring employer(s) in relation to the scheme have not been dormant during the last 12 months
-messages__declaration__statement2 = that this scheme meets all the criteria to be registered as a pension scheme under the Finance Act 2004 and in particular, is established and will be maintained wholly or mainly for the purpose of making authorised payments of pensions and lumps sums as falling within section 164(1)(a) or (b) of the Finance Act 2004
-messages__declaration__statement3 = that the instruments or agreements by which this pension scheme is constituted do not directly or indirectly entitle any person to unauthorised payments. And the way in which the pension scheme is to be administered will not knowingly entitle any person to unauthorised payments
-messages__declaration__statement4 = that as scheme administrator I am responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by Finance Act 12004 and I intend to discharge those functions at all times, whether resident in the United Kingdom or another EU member state or non-member EEA state
-messages__declaration__statement5 = that I will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. I may be liable to a penalty and the pension scheme may be de-registered if I fail to properly discharge those functions
-messages__declaration__statement6 = that I may be liable to a penalty and the pension scheme may be de-registered if a false statement is made on this application, or in any information I provide in connection with this application, and that false statements may also lead to prosecution
-messages__declaration__statement7 = to the best of my knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete. I understand that I am responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
+messages__declaration__statement2 = to the best of my knowledge and belief, some or all of the sponsoring employer(s) in relation to the scheme have been dormant during the last 12 months
+messages__declaration__statement3 = that as scheme administrator I am responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by Finance Act 12004 and I intend to discharge those functions at all times, whether resident in the United Kingdom or another EU member state or non-member EEA state
+messages__declaration__statement4 = that I will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. I understand that I may be liable to a penalty and the pension scheme may be de-registered if I fail to properly discharge those functions
+messages__declaration__statement5 = that I may be liable to a penalty and the pension scheme may be de-registered if a false statement is made on this application, or in any information I provide in connection with this application, and that false statements may also lead to prosecution
+messages__declaration__statement6 = to the best of my knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete. I understand that I am responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
+messages__declaration__statement7 = that this scheme meets all the criteria to be registered as a pension scheme under the Finance Act 2004 and in particular, is established and will be maintained wholly or mainly for the purpose of making authorised payments of pensions and lumps sums as falling within section 164(1)(a) or (b) of the Finance Act 2004
+messages__declaration__statement8 = that the instruments or agreements by which this pension scheme is constituted do not directly or indirectly entitle any person to unauthorised payments. And the way in which the pension scheme is to be administered will not knowingly entitle any person to unauthorised payments
 messages__declaration__agree = I agree
 messages__declaration__invalid = You need to agree to all the declarations before you can continue
 
