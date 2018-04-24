@@ -17,11 +17,42 @@
 package identifiers.register.trustees
 
 import identifiers._
+import identifiers.register.trustees.company._
+import identifiers.register.trustees.individual._
 import models.register.trustees.TrusteeKind
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 
 case class TrusteeKindId(index: Int) extends TypedIdentifier[TrusteeKind] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeKindId.toString
+
+  override def cleanup(value: Option[TrusteeKind], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(TrusteeKind.Individual) =>
+        userAnswers.remove(CompanyDetailsId(index)).flatMap(
+          _.remove(CompanyRegistrationNumberId(index))).flatMap(
+          _.remove(CompanyUniqueTaxReferenceId(index))).flatMap(
+          _.remove(CompanyPostcodeLookupId(index))).flatMap(
+          _.remove(CompanyAddressId(index))).flatMap(
+          _.remove(CompanyAddressYearsId(index))).flatMap(
+          _.remove(CompanyPreviousAddressPostcodeLookupId(index))).flatMap(
+          _.remove(CompanyPreviousAddressId(index))).flatMap(
+          _.remove(CompanyContactDetailsId(index))
+        )
+      case Some(TrusteeKind.Company) =>
+        userAnswers.remove(TrusteeDetailsId(index)).flatMap(
+          _.remove(TrusteeNinoId(index))).flatMap(
+          _.remove(UniqueTaxReferenceId(index))).flatMap(
+          _.remove(IndividualPostCodeLookupId(index))).flatMap(
+          _.remove(TrusteeAddressId(index))).flatMap(
+          _.remove(TrusteeAddressYearsId(index))).flatMap(
+          _.remove(IndividualPreviousAddressPostCodeLookupId(index))).flatMap(
+          _.remove(TrusteePreviousAddressId(index))).flatMap(
+          _.remove(TrusteeContactDetailsId(index))
+        )
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 object TrusteeKindId {

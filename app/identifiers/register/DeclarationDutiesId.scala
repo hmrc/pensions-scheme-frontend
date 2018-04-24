@@ -17,7 +17,20 @@
 package identifiers.register
 
 import identifiers._
+import identifiers.register.adviser.{AdviserAddressId, AdviserAddressPostCodeLookupId, AdviserDetailsId}
+import play.api.libs.json.JsResult
+import utils.UserAnswers
 
 case object DeclarationDutiesId extends TypedIdentifier[Boolean] {
   override def toString: String = "declarationDuties"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(true) =>
+        userAnswers.remove(AdviserDetailsId)
+          .flatMap(_.remove(AdviserAddressPostCodeLookupId))
+          .flatMap(_.remove(AdviserAddressId))
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }
