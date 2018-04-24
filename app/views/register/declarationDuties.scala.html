@@ -36,7 +36,8 @@
 
         @components.fieldSet(
             field = form("value"),
-            legend = messages("messages__declarationDuties__legend")
+            legend = messages("messages__declarationDuties__legend"),
+            legendClasses = Set("visually-hidden")
         ) {
             @components.radio(
                 field = form("value"),
@@ -44,8 +45,6 @@
                 value = "true",
                 hint  = Set("messages__declarationDuties__yes_hint")
             )
-
-            <p>or</p>
 
             @components.radio(
                 field = form("value"),

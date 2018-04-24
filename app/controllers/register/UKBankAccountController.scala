@@ -18,22 +18,22 @@ package controllers.register
 
 import javax.inject.Inject
 
+import config.FrontendAppConfig
+import connectors.DataCacheConnector
+import controllers.Retrievals
+import controllers.actions._
+import forms.register.UKBankAccountFormProvider
+import identifiers.register.{SchemeDetailsId, UKBankAccountId}
+import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
-import config.FrontendAppConfig
-import forms.register.UKBankAccountFormProvider
-import identifiers.register.UKBankAccountId
-import models.Mode
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 import views.html.register.uKBankAccount
 
 import scala.concurrent.Future
-import play.api.libs.json._
-import utils.annotations.Register
 
 class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -42,24 +42,29 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: UKBankAccountFormProvider) extends FrontendController with I18nSupport {
+                                        formProvider: UKBankAccountFormProvider
+                                       ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(UKBankAccountId) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+        val preparedForm = request.userAnswers.get(UKBankAccountId) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(uKBankAccount(appConfig, preparedForm, mode, schemeDetails.schemeName)))
       }
-      Ok(uKBankAccount(appConfig, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(uKBankAccount(appConfig, formWithErrors, mode))),
+          SchemeDetailsId.retrieve.right.map { schemeDetails =>
+            Future.successful(BadRequest(uKBankAccount(appConfig, formWithErrors, mode, schemeDetails.schemeName)))
+          },
         (value) =>
           dataCacheConnector.save(request.externalId, UKBankAccountId, value).map(cacheMap =>
             Redirect(navigator.nextPage(UKBankAccountId, mode)(new UserAnswers(cacheMap))))
