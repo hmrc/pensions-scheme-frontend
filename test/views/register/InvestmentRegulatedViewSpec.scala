@@ -29,15 +29,19 @@ class InvestmentRegulatedViewSpec extends YesNoViewBehaviours {
 
   val form = new InvestmentRegulatedFormProvider()()
 
-  def createView = () => investmentRegulated(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  val schemeName = "myScheme"
 
-  def createViewUsingForm = (form: Form[_]) => investmentRegulated(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView = () => investmentRegulated(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+
+  def createViewUsingForm = (form: Form[_]) => investmentRegulated(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   "InvestmentRegulated view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
+
+    behave like pageWithSecondaryHeader(createView, schemeName)
 
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.InvestmentRegulatedController.onSubmit(NormalMode).url)

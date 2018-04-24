@@ -30,9 +30,11 @@ class BenefitsInsurerViewSpec extends QuestionViewBehaviours[BenefitsInsurer] {
 
   override val form = new BenefitsInsurerFormProvider()()
 
-  def createView = () => benefitsInsurer(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  val schemeName = "myScheme"
 
-  def createViewUsingForm = (form: Form[_]) => benefitsInsurer(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView = () => benefitsInsurer(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+
+  def createViewUsingForm = (form: Form[_]) => benefitsInsurer(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
 
   "BenefitsInsurer view" must {
@@ -41,6 +43,14 @@ class BenefitsInsurerViewSpec extends QuestionViewBehaviours[BenefitsInsurer] {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.BenefitsInsurerController.onSubmit(NormalMode).url, "companyName", "policyNumber")
+    behave like pageWithTextFields(
+      createViewUsingForm,
+      messageKeyPrefix,
+      routes.BenefitsInsurerController.onSubmit(NormalMode).url,
+      "companyName", "policyNumber"
+    )
+
+    behave like pageWithSecondaryHeader(createView, schemeName)
+
   }
 }

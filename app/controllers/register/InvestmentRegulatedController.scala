@@ -18,20 +18,20 @@ package controllers.register
 
 import javax.inject.Inject
 
+import config.FrontendAppConfig
+import connectors.DataCacheConnector
+import controllers.Retrievals
+import controllers.actions._
+import forms.register.InvestmentRegulatedFormProvider
+import identifiers.register.{InvestmentRegulatedId, SchemeDetailsId}
+import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
-import config.FrontendAppConfig
-import forms.register.InvestmentRegulatedFormProvider
-import identifiers.register.InvestmentRegulatedId
-import models.Mode
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 import views.html.register.investmentRegulated
-import play.api.libs.json._
-import utils.annotations.Register
 
 import scala.concurrent.Future
 
@@ -42,24 +42,29 @@ class InvestmentRegulatedController @Inject()(appConfig: FrontendAppConfig,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
-                                              formProvider: InvestmentRegulatedFormProvider) extends FrontendController with I18nSupport {
+                                              formProvider: InvestmentRegulatedFormProvider
+                                             ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(InvestmentRegulatedId) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+        val preparedForm = request.userAnswers.get(InvestmentRegulatedId) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(investmentRegulated(appConfig, preparedForm, mode, schemeDetails.schemeName)))
       }
-      Ok(investmentRegulated(appConfig, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(investmentRegulated(appConfig, formWithErrors, mode))),
+          SchemeDetailsId.retrieve.right.map { schemeDetails =>
+            Future.successful(BadRequest(investmentRegulated(appConfig, formWithErrors, mode, schemeDetails.schemeName)))
+          },
         (value) =>
           dataCacheConnector.save(request.externalId, InvestmentRegulatedId, value).map(cacheMap =>
             Redirect(navigator.nextPage(InvestmentRegulatedId, mode)(new UserAnswers(cacheMap))))

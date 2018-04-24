@@ -29,14 +29,19 @@ class BenefitsViewSpec extends ViewBehaviours {
 
   val form = new BenefitsFormProvider()()
 
-  def createView = () => benefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  val schemeName = "myScheme"
 
-  def createViewUsingForm = (form: Form[_]) => benefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView = () => benefits(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+
+  def createViewUsingForm = (form: Form[_]) => benefits(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   "Benefits view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
+
+    behave like pageWithSecondaryHeader(createView, schemeName)
+
   }
 
   "Benefits view" when {
