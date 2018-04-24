@@ -52,6 +52,8 @@ class TrusteesCompanyNavigator @Inject() extends Navigator {
       _ => controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index)
     case CompanyContactDetailsId(index) =>
       _ => controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(index)
+    case CheckYourAnswersId =>
+      _ => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
   }
 
   override protected val editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {

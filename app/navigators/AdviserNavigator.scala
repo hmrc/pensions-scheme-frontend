@@ -24,8 +24,6 @@ import utils.{Navigator, UserAnswers}
 
 class AdviserNavigator extends Navigator {
 
-  override protected val checkYourAnswersPage: Call = controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad()
-
   override protected def routeMap: PartialFunction[Identifier, UserAnswers => Call] = {
     case AdviserDetailsId =>
       _ => controllers.register.adviser.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode)

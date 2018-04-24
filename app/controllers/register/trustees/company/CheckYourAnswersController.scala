@@ -17,7 +17,6 @@
 package controllers.register.trustees.company
 
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
@@ -28,7 +27,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswers.Ops._
-import utils.{CheckYourAnswersFactory, CountryOptions}
+import utils.annotations.TrusteesCompany
+import utils.{CheckYourAnswersFactory, CountryOptions, Navigator}
 import viewmodels.{AnswerSection, Message}
 import views.html.check_your_answers
 
@@ -41,7 +41,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            getData: DataRetrievalAction,
                                            requiredData: DataRequiredAction,
                                            checkYourAnswersFactory: CheckYourAnswersFactory,
-                                           implicit val countryOptions: CountryOptions
+                                           implicit val countryOptions: CountryOptions,
+                                           @TrusteesCompany navigator: Navigator
                                           ) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
@@ -55,9 +56,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index).url
         )
 
+        val companyUtr = CompanyUniqueTaxReferenceId(index).row(
+          routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, index).url
+        )
+
         val companyDetailsSection = AnswerSection(
           Some("messages__checkYourAnswers__section__company_details"),
-          companyDetailsRow ++ companyRegistrationNumber
+          companyDetailsRow ++ companyRegistrationNumber ++ companyUtr
         )
 
         val companyAddress = CompanyAddressId(index).row(
@@ -92,7 +97,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData) {
     implicit request =>
-      Redirect(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
+      Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode)(request.userAnswers))
   }
 
 }

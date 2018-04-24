@@ -26,8 +26,6 @@ import models.{CheckMode, Mode, NormalMode}
 @Singleton
 class Navigator @Inject()() {
 
-  protected val checkYourAnswersPage: Call = routes.CheckYourAnswersController.onPageLoad()
-
   protected def routeMap: PartialFunction[Identifier, UserAnswers => Call] = Map(
 
   )
@@ -42,6 +40,9 @@ class Navigator @Inject()() {
         routes.IndexController.onPageLoad()
       )
     case CheckMode =>
-      editRouteMap.lift(id).getOrElse(_ => checkYourAnswersPage)
+      editRouteMap.lift(id).getOrElse(_ =>
+        routes.IndexController.onPageLoad()
+      )
   }
+
 }

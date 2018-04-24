@@ -18,85 +18,148 @@ package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
-import models.{CheckMode, Index, NormalMode}
+import identifiers.register.trustees.company._
+import models._
+import models.address.Address
+import models.register.{SchemeDetails, SchemeType}
+import models.requests.DataRequest
+import play.api.mvc.AnyContent
 import play.api.test.Helpers._
-import utils.{CheckYourAnswersFactory, CountryOptions, FakeCountryOptions, InputOption}
-import viewmodels.{AnswerRow, AnswerSection}
+import utils._
+import utils.CheckYourAnswers.Ops._
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
-  val countryOptions: CountryOptions = new CountryOptions(Seq(InputOption("GB", "United Kingdom")))
-  val firstIndex = Index(0)
-  val schemeName = "Test Scheme Name"
-
-  val answers: Seq[AnswerRow] = Seq.empty
-
-  lazy val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, firstIndex).url
-
-  lazy val postUrl = routes.CheckYourAnswersController.onSubmit(firstIndex)
-
-  lazy val companyDetailsSection = AnswerSection(
-    Some("messages__checkYourAnswers__section__company_details"),
-    Seq(
-      AnswerRow("messages__common__cya__name", Seq("test company name"), false, companyDetailsRoute),
-      AnswerRow("messages__common__cya__vat", Seq("123456"), false, companyDetailsRoute),
-      AnswerRow("messages__common__cya__paye", Seq("abcd"), false, companyDetailsRoute)
-    )
-  )
-
-  lazy val contactDetailsSection = AnswerSection(
-    Some("messages__checkYourAnswers__section__contact_details"),
-    Seq.empty[AnswerRow]
-  )
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersController =
-    new CheckYourAnswersController(
-      frontendAppConfig,
-      messagesApi,
-      FakeAuthAction,
-      dataRetrievalAction,
-      new DataRequiredActionImpl,
-      new CheckYourAnswersFactory(countryOptions),
-      new FakeCountryOptions
-    )
-
-  lazy val viewAsString = check_your_answers(
-    frontendAppConfig,
-    Seq(
-      companyDetailsSection,
-      contactDetailsSection
-    ),
-    Some(messages("messages__common__trustee_secondary_header", schemeName)),
-    postUrl
-  )(fakeRequest, messages).toString
+  import CheckYourAnswersControllerSpec._
 
   "Check Your Answers Controller" must {
-    "return 200 and the correct view for a GET" in {
-      val result = controller(getMandatoryTrusteeCompany).onPageLoad(firstIndex)(fakeRequest)
+    "return 200 and the correct view for a GET with full answers" in {
+      val request = FakeDataRequest(fullAnswers)
+      val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(index)(request)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString
+      contentAsString(result) mustBe viewAsString(answerSections(request))
+    }
+
+    "return 200 and the correct view for a GET with empty answers" in {
+      val request = FakeDataRequest(emptyAnswers)
+      val result = controller(emptyAnswers.dataRetrievalAction).onPageLoad(index)(request)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(answerSections(request))
     }
 
     "redirect to Session Expired page" when {
       "GET" when {
         "trustee company name is not present" in {
-          val result = controller(getEmptyData).onPageLoad(firstIndex)(fakeRequest)
+          val result = controller(getEmptyData).onPageLoad(index)(fakeRequest)
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
         }
       }
     }
 
-    "redirect to Add Trustee page" when {
+    "redirect to next page" when {
       "POST is called" in {
-        val result=controller().onSubmit(firstIndex)(fakeRequest)
+        val result=controller().onSubmit(index)(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url)
+        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
     }
 
   }
+
+}
+
+object CheckYourAnswersControllerSpec extends ControllerSpecBase {
+
+  private val index = 0
+  private val onwardRoute = controllers.routes.IndexController.onPageLoad()
+
+  private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
+
+  private val schemeName = "test-scheme-name"
+  private val companyDetails = CompanyDetails("test-company-name", Some("test-vat"), Some("test-paye"))
+  private val crn = CompanyRegistrationNumber.Yes("test-crn")
+  private val utr = UniqueTaxReference.Yes("test-utr")
+  private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
+  private val addressYears = AddressYears.UnderAYear
+  private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
+
+  private val emptyAnswers = UserAnswers()
+    .schemeDetails(SchemeDetails(schemeName, SchemeType.BodyCorporate))
+
+  private val fullAnswers = emptyAnswers
+    .trusteesCompanyDetails(index, companyDetails)
+    .trusteesCompanyRegistrationNumber(index, crn)
+    .trusteesUniqueTaxReference(index, utr)
+    .trusteesCompanyAddress(index, address)
+    .trusteesCompanyAddressYears(index, addressYears)
+    .trusteesCompanyPreviousAddress(index, previousAddress)
+
+  private lazy val companyAddressRoute = routes.CompanyAddressController.onPageLoad(CheckMode, index).url
+  private lazy val companyAddressYearsRoute = routes.CompanyAddressYearsController.onPageLoad(CheckMode, index).url
+  private lazy val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
+  private lazy val companyPreviousAddressRoute = routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url
+  private lazy val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index).url
+  private lazy val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, index).url
+
+  private lazy val postUrl = routes.CheckYourAnswersController.onSubmit(index)
+
+  private def answerSections(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
+
+    val crnRows = CheckYourAnswers
+      .companyRegistrationNumber("messages__checkYourAnswers__trustees__company__crn")
+      .row(CompanyRegistrationNumberId(index))(companyRegistrationNumberRoute, request.userAnswers)
+
+    val utrRows = CheckYourAnswers
+      .uniqueTaxReference("messages__checkYourAnswers__trustees__company__utr")
+      .row(CompanyUniqueTaxReferenceId(index))(companyUniqueTaxReferenceRoute, request.userAnswers)
+
+    val companyDetailsSection = AnswerSection(
+      Some("messages__checkYourAnswers__section__company_details"),
+      CompanyDetailsId(index).row(companyDetailsRoute) ++
+      crnRows ++
+      utrRows
+    )
+
+    val addressYearsRows = CheckYourAnswers
+      .addressYears("messages__checkYourAnswers__trustees__company__address_years")
+      .row(CompanyAddressYearsId(index))(companyAddressYearsRoute, request.userAnswers)
+
+    val contactDetailsSection = AnswerSection(
+      Some("messages__checkYourAnswers__section__contact_details"),
+      CompanyAddressId(index).row(companyAddressRoute) ++
+      addressYearsRows ++
+      CompanyPreviousAddressId(index).row(companyPreviousAddressRoute)
+    )
+
+    Seq(
+      companyDetailsSection,
+      contactDetailsSection
+    )
+
+  }
+
+  private def viewAsString(answerSections: Seq[AnswerSection]) = check_your_answers(
+    frontendAppConfig,
+    answerSections,
+    Some(messages("messages__common__trustee_secondary_header", schemeName)),
+    postUrl
+  )(fakeRequest, messages).toString
+
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
+    new CheckYourAnswersController(
+      frontendAppConfig,
+      messagesApi,
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      new CheckYourAnswersFactory(fakeCountryOptions),
+      fakeCountryOptions,
+      new FakeNavigator(onwardRoute)
+    )
 
 }

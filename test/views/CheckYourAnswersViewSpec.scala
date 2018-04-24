@@ -33,7 +33,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
         frontendAppConfig,
         emptyAnswerSections,
         Some(secondaryHeader),
-        routes.CheckYourAnswersController.onSubmit()
+        routes.IndexController.onPageLoad()
       )(fakeRequest, messages)
 
   def createViewWithData: (Seq[Section]) => HtmlFormat.Appendable = (sections) =>
@@ -41,7 +41,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       frontendAppConfig,
       sections,
       Some(secondaryHeader),
-      routes.CheckYourAnswersController.onSubmit()
+      routes.IndexController.onPageLoad()
     )(fakeRequest, messages)
 
   "check_your_answers view" must {
