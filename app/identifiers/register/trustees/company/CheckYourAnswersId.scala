@@ -16,19 +16,8 @@
 
 package identifiers.register.trustees.company
 
-import identifiers._
-import identifiers.register.trustees.TrusteesId
-import models.UniqueTaxReference
-import play.api.libs.json.JsPath
-import utils.CheckYourAnswers
+import identifiers.Identifier
 
-case class CompanyUniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
-  override def path: JsPath = TrusteesId(index).path \ CompanyUniqueTaxReferenceId.toString
-}
-
-object CompanyUniqueTaxReferenceId {
-  override def toString: String = "companyUniqueTaxReference"
-
-  implicit val cya: CheckYourAnswers[CompanyUniqueTaxReferenceId] =
-    CheckYourAnswers.uniqueTaxReference("messages__checkYourAnswers__trustees__company__utr")
+case object CheckYourAnswersId extends Identifier {
+  override def toString: String = "checkYourAnswers"
 }

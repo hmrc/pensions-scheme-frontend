@@ -155,6 +155,12 @@ class TrusteesCompanyNavigatorSpec extends WordSpec with MustMatchers with Prope
       }
     }
 
+    ".nextPage(CheckYourAnswers)" must {
+      "return a 'Call' to 'AddTrustees'" in {
+        val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(emptyAnswers)
+        result mustEqual controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+      }
+    }
   }
 
   "CheckMode" when {

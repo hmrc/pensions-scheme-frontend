@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import identifiers.Identifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees._
-import models.NormalMode
+import models.{Mode, NormalMode}
 import models.register.{SchemeDetails, SchemeType}
 import models.register.trustees.TrusteeKind
 import play.api.mvc.Call
@@ -40,6 +40,11 @@ class TrusteesNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigato
       trusteeKindRoutes(index)
     case ConfirmDeleteTrusteeId =>
       _ => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+  }
+
+  override protected def editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
+    case AddTrusteeId =>
+      addTrusteeRoutes()
   }
 
   private def haveAnyTrusteesRoutes()(answers: UserAnswers): Call = {

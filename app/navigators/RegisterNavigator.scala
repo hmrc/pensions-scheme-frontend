@@ -19,14 +19,13 @@ package navigators
 import com.google.inject.Singleton
 import identifiers.Identifier
 import identifiers.register._
-import models.{CheckMode, Index, Mode, NormalMode}
+import models.register.{SchemeDetails, SchemeType}
+import models.{CheckMode, Mode, NormalMode}
 import play.api.mvc.Call
 import utils.{Enumerable, Navigator, UserAnswers}
 
 @Singleton
 class RegisterNavigator extends Navigator with Enumerable.Implicits {
-
-  override protected val checkYourAnswersPage: Call = controllers.register.routes.CheckYourAnswersController.onPageLoad()
 
   override protected val routeMap: PartialFunction[Identifier, UserAnswers => Call] = {
     case WhatYouWillNeedId =>
@@ -60,7 +59,7 @@ class RegisterNavigator extends Navigator with Enumerable.Implicits {
     case UKBankDetailsId =>
       _ => controllers.register.routes.CheckYourAnswersController.onPageLoad()
     case CheckYourAnswersId =>
-      _ => controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, Index(0))
+      checkYourAnswersRoutes()
     case SchemeReviewId =>
       schemeReviewRoutes()
     case DeclarationDormantId =>
@@ -73,14 +72,40 @@ class RegisterNavigator extends Navigator with Enumerable.Implicits {
       _ => controllers.routes.IndexController.onPageLoad()
   }
 
+  private lazy val checkYourAnswers = controllers.register.routes.CheckYourAnswersController.onPageLoad()
+
+  // scalastyle:off cyclomatic.complexity
   override protected def editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
+    case SchemeDetailsId =>
+      _ => checkYourAnswers
+    case SchemeEstablishedCountryId =>
+      _ => checkYourAnswers
+    case MembershipId =>
+      _ => checkYourAnswers
+    case MembershipFutureId =>
+      _ => checkYourAnswers
+    case InvestmentRegulatedId =>
+      _ => checkYourAnswers
+    case OccupationalPensionSchemeId =>
+      _ => checkYourAnswers
+    case BenefitsId =>
+      _ => checkYourAnswers
     case InsurerPostCodeLookupId =>
       _ => controllers.register.routes.InsurerAddressListController.onPageLoad(CheckMode)
     case InsurerAddressListId =>
       _ => controllers.register.routes.InsurerAddressController.onPageLoad(CheckMode)
-    case SecuredBenefitsId => securedBenefitsRoutes(CheckMode)
-    case UKBankAccountId => uKBankAccountRoutes(CheckMode)
+    case InsurerAddressId =>
+      _ => checkYourAnswers
+    case SecuredBenefitsId =>
+      securedBenefitsRoutes(CheckMode)
+    case BenefitsInsurerId =>
+      _ => checkYourAnswers
+    case UKBankAccountId =>
+      uKBankAccountRoutes(CheckMode)
+    case UKBankDetailsId =>
+      _ => checkYourAnswers
   }
+  // scalastyle:on cyclomatic.complexity
 
   private def securedBenefitsRoutes(mode: Mode)(answers: UserAnswers): Call = {
     (answers.get(SecuredBenefitsId), mode) match {
@@ -123,6 +148,23 @@ class RegisterNavigator extends Navigator with Enumerable.Implicits {
         controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
       case None =>
         controllers.routes.SessionExpiredController.onPageLoad()
+    }
+  }
+
+  private def checkYourAnswersRoutes()(userAnswers: UserAnswers): Call = {
+    if (userAnswers.allEstablishers.isEmpty) {
+      controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
+    }
+    else if (userAnswers.allTrustees.nonEmpty) {
+      controllers.register.routes.SchemeReviewController.onPageLoad()
+    }
+    else {
+      userAnswers.get(SchemeDetailsId) match {
+        case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+        case _ =>
+          controllers.register.routes.SchemeReviewController.onPageLoad()
+      }
     }
   }
 
