@@ -23,24 +23,36 @@ import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import forms.register.MembershipFutureFormProvider
-import identifiers.register.MembershipFutureId
+import identifiers.register.{MembershipFutureId, SchemeDetailsId}
 import models.NormalMode
 import views.html.register.membershipFuture
 import controllers.ControllerSpecBase
-import models.register.Membership
+import models.register.{Membership, SchemeDetails}
+import models.register.SchemeType.SingleTrust
+import play.api.mvc.Call
 
 class MembershipFutureControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new MembershipFutureFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
-    new MembershipFutureController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  val schemeName = "Test Scheme Name"
 
-  def viewAsString(form: Form[_] = form) = membershipFuture(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): MembershipFutureController =
+    new MembershipFutureController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
+
+  def viewAsString(form: Form[_] = form): String = membershipFuture(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   "MembershipFuture Controller" must {
 
@@ -52,7 +64,10 @@ class MembershipFutureControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(MembershipFutureId.toString -> Membership.values.head.toString)
+      val validData = Json.obj(
+        MembershipFutureId.toString -> Membership.values.head.toString,
+        SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust)
+      )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
@@ -92,6 +107,23 @@ class MembershipFutureControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "scheme name cannot be found" when {
+      "GET" in {
+        val result = controller(getEmptyData).onPageLoad(NormalMode)(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      }
+      "POST" in {
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+
+        val result = controller(getEmptyData).onSubmit(NormalMode)(postRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      }
     }
   }
 }

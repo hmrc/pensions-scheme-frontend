@@ -49,8 +49,8 @@ messages__common__country = Country
 messages__common__previous_address = Previous Address
 messages__common__trustee_secondary_header = Trustees for {0}
 
-messages__common__postcode_lookup__enter_postcode = Enter the postcode below, or {0} enter the address manually {1}
-messages__common__postcode_lookup__address_postcode = Postal code
+messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
+messages__common__postcode_lookup__address_postcode = Postcode
 messages__common__postcode_lookup__address_postcode_hint = For example NE12 8ER
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
 messages__error__postcode = Enter the postal code
@@ -133,7 +133,7 @@ messages__error__has_ct_utr_trustee = Select yes if the trustee has a CTUTR
 
 messages__scheme_details__title = Scheme details
 messages__scheme_details__name_label = Name of the scheme
-messages__scheme_details__name_hint = The pension scheme name cannot be the same as the pension scheme administrator or the scheme establisher.
+messages__scheme_details__name_hint = The pension scheme name cannot be the same as the Pension Scheme Administrator name.
 messages__scheme_details__type_legend = What type of scheme is it?
 messages__scheme_details__type_legend_short = Scheme type
 messages__scheme_details__type_single = Single trust
@@ -165,17 +165,17 @@ messages__membership__opt6 = more than 10,000
 
 messages__investment_regulated__title = Is the scheme investment regulated?
 
-messages__contractofinsurance_pension_scheme__title = Are any of the scheme benefits secured by a contract?
+messages__contractofinsurance_pension_scheme__title = Are any of the scheme benefits secured by a contract of insurance or annuity?
 messages__contractofinsurance_pension_scheme__copy = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
 
-messages__occupational_pension_scheme__title = Is the scheme an Occupational Pension Scheme?
+messages__occupational_pension_scheme__title = Is the scheme an occupational pension scheme?
 
 messages__benefits__title = How does the scheme provide benefits?
 messages__benefits__opt1 = Money Purchase benefits only (defined contribution)
 messages__benefits__opt2 = Defined Benefits only
 messages__benefits__opt3 = Mixture of money purchase benefits and defined benefits
 
-messages__benefits_insurance__title = Benefits insurer
+messages__benefits_insurance__title = Benefits secured by a contract of insurance or annuity
 messages__benefits_insurance__name = Name of insurance company
 messages__benefits_insurance__policy = Policy number
 messages__error__company_name = Enter the company name
@@ -208,7 +208,7 @@ messages__uk_bank_account_details__account_name = Account name
 messages__uk_bank_account_details__sort_code = Sort code
 messages__uk_bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
 messages__uk_bank_account_details__account_number = Account number
-messages__uk_bank_account_details__date_bank_account = Date the account was opened
+messages__uk_bank_account_details__date_bank_account = Approximate date the account was opened
 messages__common__dob__hint = Example 30 09 1990
 
 messages__error__bank_name = Enter the bank name
@@ -229,7 +229,7 @@ messages__common__pick_country = Select a country
 
 messages__uk_bank_account__title = Does the scheme have a UK bank account?
 
-messages__establishers__add__title = Establishers
+messages__establishers__add__title = Scheme Establishers
 messages__establishers__add_legend_more = Do you want to add another establisher?
 messages__establishers__add_hint = You must tell us about all your scheme establishers.
 messages__establishers__add_limit = You have added the maximum number of establishers
@@ -255,7 +255,7 @@ messages__error__no_nino_length = The reason cannot be more than 150 characters
 messages__establishers__add__opt__company=Company
 messages__establishers__add__opt__individual=Individual
 messages__establishers__add__opt__partnership=Partnership
-messages__establishers__add_legend = What kind of establisher are you adding?
+messages__establishers__add_legend = What kind of scheme establisher are you adding?
 
 messages__establisher__has_sautr__title = Does the establisher have a Self Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__establisher__no_sautr = Tell us why the establisher does not have a SAUTR
@@ -293,7 +293,7 @@ messages__establisher_company_contact_details__title = Company contact details
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the registered business address but you can enter any address you have for this company.
-messages__error__postcode = Enter the postal code
+messages__error__postcode = Enter the postcode
 messages__error__postcode_length = The postal code cannot be more than 8 characters
 messages__error__postcode_invalid = Enter a valid postal code
 messages__error__postcode_no_results = No results for that postcode
@@ -310,12 +310,12 @@ messages__error__no_crn_length = The reason cannot be more than 150 characters
 messages__error__crn = Enter the Company Registration number
 
 messages__benefits_insurance_addr__title = Insurance company address
+messages__benefits_insurance_addr__cya_label = Insurance company address
 messages__common__company_address_hint = This is usually the registered business address but you can enter any address you have for this company.
 messages__common__enter_postcode = Enter the postcode below, or
 messages__common__select_address_link = enter the address manually
 messages__common__address_postcode = Postal code
 messages__common__address_postcode_hint = For example NE12 8ER
-messages__error__postcode = Enter the postal code
 
 messages__select_the_address__title = Select the address
 messages__common__select_address = Select the address from the list below, or
@@ -496,21 +496,20 @@ messages__trusteeKind__company = Company
 messages__trusteeKind__individual = Individual
 messages__trusteeKind__partnership = Partnership
 messages__trusteeKind__legend = What kind of trustee are you adding?
-messages__trusteeKind__hint = You must tell us about all your trustees. You can add up to 10 using the digital service.
+messages__trusteeKind__hint = You must tell us about all your trustees.
 
 messages__trusteeDetails__title = Trustee details
 messages__trusteeDetails__heading = Trustee details
 messages__trusteeDetails__checkYourAnswersLabel = Trustee details
 
-messages__declarationDuties__heading = Declaration
-messages__declarationDuties__title = Declaration
+messages__declarationDuties__heading = Do you have a working knowledge of pension scheme administrator duties?
+messages__declarationDuties__title = Do you have a working knowledge of pension scheme administrator duties?
 messages__declarationDuties__legend = I declare/understand that:
-messages__declarationDuties__yes = I have working knowledge of pensions and the duties of an administrator
-messages__declarationDuties__no = I have appointed an adviser
+messages__declarationDuties__yes = I declare that I have a working knowledge of pensions and the duties of an administrator.
+messages__declarationDuties__no = I declare that I have appointed an adviser and I do not have a working knowledge of pensions and the scheme administrator duties and liabilities but I am otherwise a fit and proper person.
 messages__declarationDuties__yes_hint = I am a fit and proper person to be the scheme administrator, with a working knowledge of pensions and the scheme administrator duties and liabilities. I understand that where HMRC believes that any of the persons who are the scheme administrator is not a fit and proper person, HMRC may refuse to register the scheme or, if the scheme is already registered, HMRC may de-register the scheme
-messages__declarationDuties__no_hint1 = I do not have a working knowledge of pensions and the scheme administrator duties and liabilities but I am otherwise a fit and proper person.
-messages__declarationDuties__no_hint2 = I have appointed an adviser to the pension scheme, who does have that knowledge.
-messages__declarationDuties__no_hint3 = Where HMRC believes that any of the persons who are the scheme administrator is not a fit and proper person, HMRC may refuse to register the scheme or, if the scheme is already registered, HMRC may de-register the scheme
+messages__declarationDuties__no_hint1 = I have appointed an adviser to the pension scheme, who does have that knowledge.
+messages__declarationDuties__no_hint2 = Where HMRC believes that any of the persons who are the scheme administrator is not a fit and proper person, HMRC may refuse to register the scheme or, if the scheme is already registered, HMRC may de-register the scheme
 messages__error_declaration_duties_required = Tell us if you have the appropriate knowledge to admnister a pension scheme
 
 messages__trustee__individual__address__title = Trustee’s address
@@ -567,13 +566,15 @@ messages__trusteeContactDetails__checkYourAnswersLabel = Trustee’s contact det
 messages__declaration__title = Declaration
 messages__declaration__heading = Declaration
 messages__declaration__declare = I declare/understand:
-messages__declaration__statement1 = to the best of my knowledge and belief, the sponsoring employer(s) in relation to the scheme have not been dormant during the last 12 months
-messages__declaration__statement2 = that this scheme meets all the criteria to be registered as a pension scheme under the Finance Act 2004 and in particular, is established and will be maintained wholly or mainly for the purpose of making authorised payments of pensions and lumps sums as falling within section 164(1)(a) or (b) of the Finance Act 2004
-messages__declaration__statement3 = that the instruments or agreements by which this pension scheme is constituted do not directly or indirectly entitle any person to unauthorised payments. And the way in which the pension scheme is to be administered will not knowingly entitle any person to unauthorised payments
-messages__declaration__statement4 = that as scheme administrator I am responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by Finance Act 12004 and I intend to discharge those functions at all times, whether resident in the United Kingdom or another EU member state or non-member EEA state
-messages__declaration__statement5 = that I will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. I may be liable to a penalty and the pension scheme may be de-registered if I fail to properly discharge those functions
-messages__declaration__statement6 = that I may be liable to a penalty and the pension scheme may be de-registered if a false statement is made on this application, or in any information I provide in connection with this application, and that false statements may also lead to prosecution
-messages__declaration__statement7 = to the best of my knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete. I understand that I am responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
+messages__declaration__statement1_dormant = to the best of my knowledge and belief, some or all of the sponsoring employer(s) in relation to the scheme have been dormant during the last 12 months
+messages__declaration__statement1_not_dormant = to the best of my knowledge and belief, the sponsoring employer(s) in relation to the scheme have not been dormant during the last 12 months
+messages__declaration__statement2 = to the best of my knowledge and belief, some or all of the sponsoring employer(s) in relation to the scheme have been dormant during the last 12 months
+messages__declaration__statement3 = that as scheme administrator I am responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by Finance Act 12004 and I intend to discharge those functions at all times, whether resident in the United Kingdom or another EU member state or non-member EEA state
+messages__declaration__statement4 = that I will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. I understand that I may be liable to a penalty and the pension scheme may be de-registered if I fail to properly discharge those functions
+messages__declaration__statement5 = that I may be liable to a penalty and the pension scheme may be de-registered if a false statement is made on this application, or in any information I provide in connection with this application, and that false statements may also lead to prosecution
+messages__declaration__statement6 = to the best of my knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete. I understand that I am responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
+messages__declaration__statement7 = that this scheme meets all the criteria to be registered as a pension scheme under the Finance Act 2004 and in particular, is established and will be maintained wholly or mainly for the purpose of making authorised payments of pensions and lumps sums as falling within section 164(1)(a) or (b) of the Finance Act 2004
+messages__declaration__statement8 = that the instruments or agreements by which this pension scheme is constituted do not directly or indirectly entitle any person to unauthorised payments. And the way in which the pension scheme is to be administered will not knowingly entitle any person to unauthorised payments
 messages__declaration__agree = I agree
 messages__declaration__invalid = You need to agree to all the declarations before you can continue
 
@@ -606,4 +607,13 @@ messages__adviserDetails__error__email_required = Enter an email address
 messages__adviserDetails__error__adviser_name_length = The adviser name cannot be more than 107 characters
 messages__adviserDetails__error__adviser_name_invalid = The adviser name contains invalid characters
 
+messages__adviserAddress__title = Pension adviser's address
+messages__adviserAddress__heading = Pension adviser's address
+messages__adviserAddress__secondary = Pension adviser
 
+messages__adviser__secondary_heading = Pension adviser
+
+messages__adviserPostCodeLookupAddress__title=Pension adviser''s address
+messages__adviserPostCodeLookupAddress__heading=Pension adviser''s address
+messages__adviserPostCodeLookupAddress__secondary=Pension adviser
+messages__adviserPostCodeLookupAddress__enterPostCode= Enter the postcode below, or if you have an overseas address{0} enter the address manually {1}

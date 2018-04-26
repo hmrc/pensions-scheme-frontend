@@ -81,7 +81,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
             Message(controller.title),
             Message(controller.heading),
             secondaryHeader = Some(companyDetails.companyName),
-            Message(controller.hint)
+            Some(Message(controller.hint))
           )
 
           val request = addToken(

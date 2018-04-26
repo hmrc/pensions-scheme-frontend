@@ -19,49 +19,20 @@ package views.register
 import controllers.register.establishers.{routes => routes1}
 import controllers.register.routes
 import controllers.register.trustees.{routes => routes2}
-import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.person.PersonDetails
-import models.register.establishers.individual.EstablisherDetails
-import models.register.{SchemeDetails, SchemeType}
-import models.{CheckMode, CompanyDetails}
-import org.joda.time.LocalDate
+import models.CheckMode
 import org.jsoup.Jsoup
-import play.api.libs.json.Json
 import views.behaviours.ViewBehaviours
 import views.html.register.schemeReview
 
 class SchemeReviewViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "schemeReview"
+  private val messageKeyPrefix = "schemeReview"
 
-  val validData = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-    "establishers" -> Json.arr(
-      Json.obj(
-        EstablisherDetailsId.toString -> EstablisherDetails("establisher", None, "name", LocalDate.now())
-      ),
-      Json.obj(
-        identifiers.register.establishers.company.CompanyDetailsId.toString -> CompanyDetails("establisher company name", None, None)
-      )
-    ),
-    "trustees" -> Json.arr(
-      Json.obj(
-        TrusteeDetailsId.toString -> PersonDetails("trustee", None, "name", LocalDate.now())
-      ),
-      Json.obj(
-        identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("trustee company name", None, None)
-      )
-    )
-  )
+  private val schemeName = "Test Scheme Name"
+  private val establishers = Seq("establisher name", "establisher company name")
+  private val trustees = Seq("trustee name", "trustee company name")
 
-  val schemeName = "Test Scheme Name"
-  val establishers = Seq("establisher name", "establisher company name")
-  val trustees = Seq("trustee name", "trustee company name")
-
-  def createView = () => schemeReview(frontendAppConfig, schemeName, establishers, trustees)(fakeRequest, messages)
+  private def createView = () => schemeReview(frontendAppConfig, schemeName, establishers, trustees)(fakeRequest, messages)
 
   "SchemeReview view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
@@ -76,7 +47,7 @@ class SchemeReviewViewSpec extends ViewBehaviours {
 
     "have link to edit scheme details" in {
       Jsoup.parse(createView().toString).select("a[id=edit-scheme-details]") must haveLink(
-        routes.SchemeDetailsController.onPageLoad(CheckMode).url
+        routes.CheckYourAnswersController.onPageLoad().url
       )
     }
 

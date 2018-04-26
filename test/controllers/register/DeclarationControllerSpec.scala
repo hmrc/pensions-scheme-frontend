@@ -16,60 +16,77 @@
 
 package controllers.register
 
-import controllers.ControllerSpecBase
-import play.api.data.Form
-import play.api.libs.json.JsNumber
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
-import play.api.libs.json._
 import forms.register.DeclarationFormProvider
-import identifiers.register.DeclarationId
-import models.NormalMode
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
+import models.CompanyDetails
+import models.person.PersonDetails
+import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
+import org.joda.time.LocalDate
+import play.api.data.Form
+import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
 
 class DeclarationControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
-
-  val formProvider = new DeclarationFormProvider()
-  val form = formProvider()
-  val schemeName = "Test Scheme Name"
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName) =
-    new DeclarationController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
-
-  def viewAsString(form: Form[_] = form) = declaration(frontendAppConfig, form, schemeName)(fakeRequest, messages).toString
+  import DeclarationControllerSpec._
 
   "Declaration Controller" must {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad()(fakeRequest)
+    "return OK and the correct view for a GET for individual journey" in {
+      val result = controller(individual).onPageLoad()(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false)
+    }
+
+    "return OK and the correct view for a GET for non-dormant company establisher" in {
+      val result = controller(nonDormantCompany).onPageLoad()(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false)
+    }
+
+    "return OK and the correct view for a GET for dormant company establisher" in {
+      val result = controller(dormantCompany).onPageLoad()(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
     }
 
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody("agree" -> "agreed")
 
-      val result = controller().onSubmit()(postRequest)
+      val result = controller(nonDormantCompany).onSubmit()(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted in individual journey" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit()(postRequest)
+      val result = controller(individual).onSubmit()(postRequest)
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm)
+      contentAsString(result) mustBe viewAsString(boundForm, isCompany = false, isDormant = false)
+    }
+
+    "return a Bad Request and errors when invalid data is submitted in company journey" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+
+      val result = controller(nonDormantCompany).onSubmit()(postRequest)
+
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe viewAsString(boundForm, isCompany = true, isDormant = false)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
@@ -87,4 +104,80 @@ class DeclarationControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
+
+}
+
+object DeclarationControllerSpec extends ControllerSpecBase {
+
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  private val formProvider = new DeclarationFormProvider()
+  private val form = formProvider()
+  private val schemeName = "Test Scheme Name"
+
+  private def controller(dataRetrievalAction: DataRetrievalAction): DeclarationController =
+    new DeclarationController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
+
+  private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean): String =
+    declaration(
+      frontendAppConfig,
+      form,
+      schemeName,
+      isCompany,
+      isDormant
+    )(fakeRequest, messages).toString
+
+  private val individual =
+    UserAnswers()
+      .schemeDetails()
+      .individualEstablisher()
+      .asDataRetrievalAction()
+
+  private val nonDormantCompany =
+    UserAnswers()
+      .schemeDetails()
+      .companyEstablisher()
+      .dormant(false)
+      .asDataRetrievalAction()
+
+  private val dormantCompany =
+    UserAnswers()
+      .schemeDetails()
+      .companyEstablisher()
+      .dormant(true)
+      .asDataRetrievalAction()
+
+  private implicit class UserAnswersOps(answers: UserAnswers) {
+
+    def schemeDetails(): UserAnswers = {
+      answers.set(SchemeDetailsId)(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)).asOpt.value
+    }
+
+    def companyEstablisher(): UserAnswers = {
+      answers.set(CompanyDetailsId(0))(CompanyDetails("test-company-name", None, None)).asOpt.value
+    }
+
+    def individualEstablisher(): UserAnswers = {
+      answers.set(EstablisherDetailsId(0))(PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())).asOpt.value
+    }
+
+    def dormant(dormant: Boolean): UserAnswers = {
+      val declarationDormant = if (dormant) DeclarationDormant.Yes else DeclarationDormant.No
+      answers.set(DeclarationDormantId)(declarationDormant).asOpt.value
+    }
+
+    def asDataRetrievalAction(): DataRetrievalAction = {
+      new FakeDataRetrievalAction(Some(answers.json))
+    }
+  }
+
 }

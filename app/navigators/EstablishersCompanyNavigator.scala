@@ -60,7 +60,7 @@ class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) exten
     case OtherDirectorsId(index)=>
       _ => controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index)
     case CompanyReviewId(_) =>
-      _ => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+      TrusteesNavigator.trusteeEntryRoutes()
   }
 
   override protected val editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {

@@ -18,7 +18,11 @@ package identifiers.register
 
 import identifiers._
 import models.address.Address
+import utils.{CheckYourAnswers, CountryOptions}
 
-case object InsurerAddressId extends TypedIdentifier[Address] {
+case object InsurerAddressId extends TypedIdentifier[Address] { self =>
   override def toString: String = "insurerAddress"
+
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] =
+    CheckYourAnswers.address("messages__benefits_insurance_addr__cya_label")
 }

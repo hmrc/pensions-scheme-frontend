@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers.register
+package identifiers.register.trustees.company
 
-import identifiers._
-import models.register.AdviserDetails
+import identifiers.Identifier
 
-case object AdviserDetailsId extends TypedIdentifier[AdviserDetails] {
-  override def toString: String = "adviserDetails"
+case object CheckYourAnswersId extends Identifier {
+  override def toString: String = "checkYourAnswers"
 }

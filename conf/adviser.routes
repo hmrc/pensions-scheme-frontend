@@ -1,0 +1,23 @@
+
+GET        /advisers-details                    controllers.register.adviser.AdviserDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /advisers-details                    controllers.register.adviser.AdviserDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-advisers-details             controllers.register.adviser.AdviserDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-advisers-details             controllers.register.adviser.AdviserDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /advisers-address-results            controllers.register.adviser.AdviserAddressListController.onPageLoad(mode: Mode = NormalMode)
+POST       /advisers-address-results            controllers.register.adviser.AdviserAddressListController.onSubmit(mode: Mode = NormalMode)
+GET        /change-advisers-address-results     controllers.register.adviser.AdviserAddressListController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-advisers-address-results     controllers.register.adviser.AdviserAddressListController.onSubmit(mode: Mode = CheckMode)
+
+GET        /advisers-address-manual             controllers.register.adviser.AdviserAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /advisers-address-manual             controllers.register.adviser.AdviserAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-advisers-address-manual      controllers.register.adviser.AdviserAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-advisers-address-manual      controllers.register.adviser.AdviserAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /check-your-answers                  controllers.register.adviser.CheckYourAnswersController.onPageLoad()
+POST       /check-your-answers                  controllers.register.adviser.CheckYourAnswersController.onSubmit()
+
+GET        /advisers-address                    controllers.register.adviser.AdviserPostCodeLookupController.onPageLoad(mode:Mode=NormalMode)
+POST       /advisers-address                    controllers.register.adviser.AdviserPostCodeLookupController.onSubmit(mode:Mode=NormalMode)
+GET        /change-advisers-address             controllers.register.adviser.AdviserPostCodeLookupController.onPageLoad(mode:Mode=CheckMode)
+POST       /change-advisers-address             controllers.register.adviser.AdviserPostCodeLookupController.onSubmit(mode:Mode=CheckMode)

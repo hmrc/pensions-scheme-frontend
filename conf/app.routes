@@ -1,7 +1,7 @@
 # microservice specific routes
 ->         /register                                    register.Routes
 
-GET        /                                            controllers.IndexController.onPageLoad
+GET        /index                                       controllers.IndexController.onPageLoad
 
 GET        /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
@@ -9,10 +9,4 @@ GET        /language/:lang                              controllers.LanguageSwit
 
 GET        /this-service-has-been-reset                 controllers.SessionExpiredController.onPageLoad
 
-GET        /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad
-POST       /check-your-answers                          controllers.CheckYourAnswersController.onSubmit
-
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
-
-
-

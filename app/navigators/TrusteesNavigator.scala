@@ -19,8 +19,10 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import identifiers.Identifier
-import identifiers.register.trustees.{AddTrusteeId, ConfirmDeleteTrusteeId, MoreThanTenTrusteesId, TrusteeKindId}
-import models.NormalMode
+import identifiers.register.SchemeDetailsId
+import identifiers.register.trustees._
+import models.{Mode, NormalMode}
+import models.register.{SchemeDetails, SchemeType}
 import models.register.trustees.TrusteeKind
 import play.api.mvc.Call
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -28,6 +30,8 @@ import utils.{Enumerable, Navigator, UserAnswers}
 class TrusteesNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigator with Enumerable.Implicits {
 
   override protected def routeMap: PartialFunction[Identifier, UserAnswers => Call] = {
+    case HaveAnyTrusteesId =>
+      haveAnyTrusteesRoutes()
     case AddTrusteeId =>
       addTrusteeRoutes()
     case MoreThanTenTrusteesId =>
@@ -36,6 +40,22 @@ class TrusteesNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigato
       trusteeKindRoutes(index)
     case ConfirmDeleteTrusteeId =>
       _ => controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+  }
+
+  override protected def editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
+    case AddTrusteeId =>
+      addTrusteeRoutes()
+  }
+
+  private def haveAnyTrusteesRoutes()(answers: UserAnswers): Call = {
+    answers.get(HaveAnyTrusteesId) match {
+      case Some(true) =>
+        controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+      case Some(false) =>
+        controllers.register.routes.SchemeReviewController.onPageLoad()
+      case None =>
+        controllers.routes.SessionExpiredController.onPageLoad()
+    }
   }
 
   private def addTrusteeRoutes()(answers: UserAnswers): Call = {
@@ -61,6 +81,21 @@ class TrusteesNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigato
       case Some(TrusteeKind.Individual) =>
         controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, index)
       case _ =>
+        controllers.routes.SessionExpiredController.onPageLoad()
+    }
+  }
+
+}
+
+object TrusteesNavigator {
+
+  def trusteeEntryRoutes()(answers: UserAnswers): Call = {
+    answers.get(SchemeDetailsId) match {
+      case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
+        controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+      case Some(SchemeDetails(_, _)) =>
+        controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+      case None =>
         controllers.routes.SessionExpiredController.onPageLoad()
     }
   }

@@ -16,21 +16,23 @@
 
 package controllers.register
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationFormProvider
-import identifiers.register.{DeclarationId, SchemeDetailsId}
+import identifiers.register.{DeclarationDormantId, DeclarationId, SchemeDetailsId}
+import javax.inject.Inject
 import models.NormalMode
+import models.register.DeclarationDormant.{No, Yes}
+import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.Future
@@ -44,27 +46,37 @@ class DeclarationController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: DeclarationFormProvider
-                                     ) extends FrontendController with Retrievals with I18nSupport {
+                                     ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
-  def onPageLoad = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { details =>
-        Future.successful(Ok(declaration(appConfig, form, details.schemeName)))
-      }
+      showPage(Ok.apply, form)
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { details =>
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(declaration(appConfig, formWithErrors, details.schemeName))),
-          (value) =>
-            dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(DeclarationId, NormalMode)(new UserAnswers(cacheMap))))
-        )
-      }
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) => {
+          showPage(BadRequest.apply, formWithErrors)
+        },
+        (value) =>
+          dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
+            Redirect(navigator.nextPage(DeclarationId, NormalMode)(UserAnswers(cacheMap))))
+      )
   }
+
+  private def showPage(status: (HtmlFormat.Appendable) => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
+    SchemeDetailsId.retrieve.right.map { details =>
+      val isCompany = request.userAnswers.hasCompanies
+      request.userAnswers.get(DeclarationDormantId) match {
+        case Some(Yes) => Future.successful(status(declaration(appConfig, form, details.schemeName, isCompany, isDormant = true)))
+        case Some(No) => Future.successful(status(declaration(appConfig, form, details.schemeName, isCompany, isDormant = false)))
+        case None if !isCompany => Future.successful(status(declaration(appConfig, form, details.schemeName, isCompany, isDormant = false)))
+        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      }
+    }
+  }
+
 }

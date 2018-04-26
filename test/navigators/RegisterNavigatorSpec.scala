@@ -17,9 +17,9 @@
 package navigators
 
 import identifiers.register._
-import models.register.DeclarationDormant
-import models.{CheckMode, Mode, NormalMode}
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import models.register.{SchemeDetails, SchemeType}
+import models.{CheckMode, CompanyDetails, Mode, NormalMode}
+import org.scalatest.{MustMatchers, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
 
@@ -27,7 +27,7 @@ class RegisterNavigatorSpec extends WordSpec with MustMatchers with NavigatorBeh
 
   import RegisterNavigatorSpec._
 
-  private val routes = Table(
+  private lazy val routes = Table(
     ("Id",                          "User Answers",       "Next Page (Normal Mode)",              "Next Page (Check Mode)"),
     // Start - what you will need
     (WhatYouWillNeedId,             emptyAnswers,         schemeDetails(NormalMode),              None),
@@ -53,42 +53,48 @@ class RegisterNavigatorSpec extends WordSpec with MustMatchers with NavigatorBeh
     (UKBankDetailsId,               emptyAnswers,         checkYourAnswers,                       Some(checkYourAnswers)),
 
     //Check your answers - jump off to establishers
-    (CheckYourAnswersId,            emptyAnswers,         establisherKind,                        None),
+    (CheckYourAnswersId,            noEstablishers,       establisherKind,                        None),
+    (CheckYourAnswersId,            hasEstablishers,      schemeReview,                           None),
+    (CheckYourAnswersId,            needsTrustees,        addTrustee,                             None),
 
     // Review, declarations, success - return from establishers
-    (SchemeReviewId,                emptyAnswers,         declarationDormant,                     None),
-    (DeclarationDormantId,          notDormant,           declarationDuties,                      None),
-    (DeclarationDormantId,          dormant,              index,                                  None),
-    (DeclarationDormantId,          emptyAnswers,         expired,                                None),
-    (DeclarationDutiesId,           acceptDutiesTrue,     schemeSuccess,                          None),
-    (DeclarationDutiesId,           acceptDutiesFalse,    index,                                  None),
+    (SchemeReviewId,                hasCompanies,         declarationDormant,                     None),
+    (SchemeReviewId,                emptyAnswers,         declaration,                            None),
+    (DeclarationDormantId,          emptyAnswers,         declaration,                            None),
+    (DeclarationId,                 emptyAnswers,         declarationDuties,                      None),
+    (DeclarationDutiesId,           dutiesTrue,           schemeSuccess,                          None),
+    (DeclarationDutiesId,           dutiesFalse,          adviserDetails,                         None),
     (DeclarationDutiesId,           emptyAnswers,         expired,                                None),
     (SchemeSuccessId,               emptyAnswers,         index,                                  None)
   )
 
   navigator.getClass.getSimpleName must {
-    behave like navigatorWithRoutes(navigator, routes)
+    behave like navigatorWithRoutes(navigator, routes, dataDescriber)
   }
 
 }
 
-object RegisterNavigatorSpec extends OptionValues with Enumerable.Implicits {
+//noinspection MutatorLikeMethodIsParameterless
+object RegisterNavigatorSpec extends Enumerable.Implicits {
 
   private val navigator = new RegisterNavigator()
 
   private val emptyAnswers = UserAnswers(Json.obj())
-  private val securedBenefitsTrue = UserAnswers().set(SecuredBenefitsId)(true).asOpt.value
-  private val securedBenefitsFalse = UserAnswers().set(SecuredBenefitsId)(false).asOpt.value
-  private val ukBankAccountTrue = UserAnswers().set(UKBankAccountId)(true).asOpt.value
-  private val ukBankAccountFalse = UserAnswers().set(UKBankAccountId)(false).asOpt.value
-  private val notDormant = UserAnswers().set(DeclarationDormantId)(DeclarationDormant.No).asOpt.value
-  private val dormant = UserAnswers().set(DeclarationDormantId)(DeclarationDormant.Yes).asOpt.value
-  private val acceptDutiesTrue = UserAnswers().set(DeclarationDutiesId)(true).asOpt.value
-  private val acceptDutiesFalse = UserAnswers().set(DeclarationDutiesId)(false).asOpt.value
+  private val securedBenefitsTrue = UserAnswers().securedBenefits(true)
+  private val securedBenefitsFalse = UserAnswers().securedBenefits(false)
+  private val ukBankAccountTrue = UserAnswers().ukBankAccount(true)
+  private val ukBankAccountFalse = UserAnswers().ukBankAccount(false)
+  private val dutiesTrue = UserAnswers().declarationDuties(true)
+  private val dutiesFalse = UserAnswers().declarationDuties(false)
+  private val hasCompanies = UserAnswers().establisherCompanyDetails(0, CompanyDetails("test-company-name", None, None))
+  private val noEstablishers = emptyAnswers
+  private val hasEstablishers = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.GroupLifeDeath))
+  private val needsTrustees = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.SingleTrust))
 
   private def benefits(mode: Mode) = controllers.register.routes.BenefitsController.onPageLoad(mode)
   private def benefitsInsurer(mode: Mode) = controllers.register.routes.BenefitsInsurerController.onPageLoad(mode)
   private def checkYourAnswers = controllers.register.routes.CheckYourAnswersController.onPageLoad()
+  private def declaration = controllers.register.routes.DeclarationController.onPageLoad()
   private def declarationDormant = controllers.register.routes.DeclarationDormantController.onPageLoad()
   private def declarationDuties = controllers.register.routes.DeclarationDutiesController.onPageLoad()
   private def insurerAddress(mode: Mode) = controllers.register.routes.InsurerAddressController.onPageLoad(mode)
@@ -100,13 +106,18 @@ object RegisterNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private def occupationalPensionScheme(mode: Mode) = controllers.register.routes.OccupationalPensionSchemeController.onPageLoad(mode)
   private def schemeDetails(mode: Mode) = controllers.register.routes.SchemeDetailsController.onPageLoad(mode)
   private def schemeEstablishedCountry(mode: Mode) = controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(mode)
+  private def schemeReview = controllers.register.routes.SchemeReviewController.onPageLoad()
   private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
   private def securedBenefits(mode: Mode) = controllers.register.routes.SecuredBenefitsController.onPageLoad(mode)
   private def uKBankAccount(mode: Mode) = controllers.register.routes.UKBankAccountController.onPageLoad(mode)
   private def uKBankDetails(mode: Mode) = controllers.register.routes.UKBankDetailsController.onPageLoad(mode)
 
+  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+  private def adviserDetails = controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
   private def establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
   private def index = controllers.routes.IndexController.onPageLoad()
+
+  private def dataDescriber(answers: UserAnswers): String = answers.toString
 
 }

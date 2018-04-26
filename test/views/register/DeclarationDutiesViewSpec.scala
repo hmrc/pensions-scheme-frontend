@@ -36,8 +36,13 @@ class DeclarationDutiesViewSpec extends ViewBehaviours {
     frontendAppConfig, form, testSchemeName)(fakeRequest, messages)
 
   "DeclarationDuties view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "_legend",
-      s"_yes_hint", s"_no_hint1", s"_no_hint2", s"_no_hint3")
+    behave like normalPage(
+      createView,
+      messageKeyPrefix,
+      messages(s"messages__${messageKeyPrefix}__title"),
+      "_legend",
+      s"_yes_hint", s"_no_hint1", s"_no_hint2"
+    )
 
     behave like pageWithBackLink(createView)
 
