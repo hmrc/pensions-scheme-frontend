@@ -16,44 +16,44 @@
 
 package utils
 
-case class BusinessMatching(name1: String, name2: String) {
+case class NameMatching(name1: String, name2: String) {
 
-  val shortenPercentage = 50
+  private val shortenPercentage = 50
 
-  val specialWords = List("AND", "CCC", "CIC", "COMPANIES", "COMPANY", "CORPORATION", "INCORPORATED",
+  private val specialWords = List("AND", "CCC", "CIC", "COMPANIES", "COMPANY", "CORPORATION", "INCORPORATED",
     "CORP", "CO.", "CO", "INC.", "INC", "UNLIMITED", "LIMITED", "LLP", "LP", "ULTD", "UNLTD", "LTD",
     "PARTNERSHIP", "PLC", "THE")
 
-  def convertToUpper: BusinessMatching = BusinessMatching(name1.toUpperCase, name2.toUpperCase)
+  def convertToUpper: NameMatching = NameMatching(name1.toUpperCase, name2.toUpperCase)
 
-  def removeSpaces: BusinessMatching = {
-    BusinessMatching(
+  def removeSpaces: NameMatching = {
+    NameMatching(
       name1.filterNot((x: Char) => x.isWhitespace),
       name2.filterNot((x: Char) => x.isWhitespace)
     )
   }
 
-  def removeSpecialWords: BusinessMatching = {
-    BusinessMatching(f(name1), f(name2))
+  def removeSpecialWords: NameMatching = {
+    NameMatching(f(name1), f(name2))
   }
 
   private def f(word:String) = specialWords.foldLeft[String](word)((z,i) =>(z.replace(i, "")).replaceAll("\\s{2,}", " ").trim())
 
-  def removeSpecialCharacters: BusinessMatching = {
-    BusinessMatching(
+  def removeSpecialCharacters: NameMatching = {
+    NameMatching(
       name1.replaceAll("[&']", "").replaceAll("\\s{2,}", " ").trim(),
       name2.replaceAll("[&']", "").replaceAll("\\s{2,}", " ").trim()
     )
   }
 
-  def removeNonAlphaNumeric: BusinessMatching = {
-    BusinessMatching(
+  def removeNonAlphaNumeric: NameMatching = {
+    NameMatching(
       name1.replaceAll("[^a-zA-Z\\d]", "").replaceAll("\\s{2,}", " ").trim(),
       name2.replaceAll("[^a-zA-Z\\d]", "").replaceAll("\\s{2,}", " ").trim()
     )
   }
 
-  def lengthCheck: BusinessMatching = {
+  def lengthCheck: NameMatching = {
     if(name1.length.equals(0) | name2.length.equals(0)) {
         this.removeSpaces.convertToUpper
     } else {
@@ -62,10 +62,10 @@ case class BusinessMatching(name1: String, name2: String) {
   }
 
 
-  def shortenLongest: BusinessMatching = {
+  def shortenLongest: NameMatching = {
     name1.length < name2.length match {
-      case true => BusinessMatching(name1,shorten(name2, name1, shortenPercentage))
-      case false => BusinessMatching(shorten(name1, name2, shortenPercentage),name2)
+      case true => NameMatching(name1,shorten(name2, name1, shortenPercentage))
+      case false => NameMatching(shorten(name1, name2, shortenPercentage),name2)
     }
   }
 
@@ -81,9 +81,14 @@ case class BusinessMatching(name1: String, name2: String) {
   def isEqual: Boolean = name1.equals(name2)
 
   def isMatch: Boolean = {
-    this.convertToUpper.removeSpaces.removeSpecialWords
-      .lengthCheck.removeSpecialCharacters
-      .removeNonAlphaNumeric.lengthCheck.shortenLongest
+    this.convertToUpper
+      .removeSpaces
+      .removeSpecialWords
+      .lengthCheck
+      .removeSpecialCharacters
+      .removeNonAlphaNumeric
+      .lengthCheck
+      .shortenLongest
       .isEqual
   }
 
