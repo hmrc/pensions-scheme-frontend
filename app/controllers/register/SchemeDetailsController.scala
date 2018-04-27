@@ -18,23 +18,21 @@ package controllers.register
 
 import javax.inject.Inject
 
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
 import config.FrontendAppConfig
+import connectors.{DataCacheConnector, PSANameCacheConnector}
+import controllers.actions._
 import forms.register.SchemeDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import models.Mode
-import models.register.SchemeDetails
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import utils.{Navigator, UserAnswers}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Register
+import utils.{NameMatchingFactory, Navigator, UserAnswers}
 import views.html.register.schemeDetails
 
 import scala.concurrent.Future
-import play.api.libs.json._
-import utils.annotations.Register
 
 class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -42,7 +40,8 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         @Register navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
-                                        formProvider: SchemeDetailsFormProvider) extends FrontendController with I18nSupport {
+                                        formProvider: SchemeDetailsFormProvider,
+                                        nameMatchingFactory: NameMatchingFactory) extends FrontendController with I18nSupport {
 
   private val form = formProvider()
 
@@ -61,8 +60,11 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(SchemeDetailsId, mode)(new UserAnswers(cacheMap))))
+          nameMatchingFactory.nameMatching(value.schemeName) flatMap { x =>
+            dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
+              Redirect(navigator.nextPage(SchemeDetailsId, mode)(UserAnswers(cacheMap)))
+            )
+          }
       )
   }
 }

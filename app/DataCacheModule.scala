@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import connectors.{DataCacheConnector, MicroserviceCacheConnector, MongoCacheConnector}
+import connectors.{DataCacheConnector, MicroserviceCacheConnector, MongoCacheConnector, PSANameCacheConnector}
 import play.api.{Configuration, Environment, Logger}
 import play.api.inject.{Binding, Module}
+import utils.annotations.PSAName
 
 class DataCacheModule extends Module {
 
@@ -26,10 +27,16 @@ class DataCacheModule extends Module {
       case Some("public") =>
         Seq(bind[DataCacheConnector].to[MongoCacheConnector])
       case Some("protected") =>
-        Seq(bind[DataCacheConnector].to[MicroserviceCacheConnector])
+        Seq(
+          bind[DataCacheConnector].to[MicroserviceCacheConnector],
+          bind[DataCacheConnector].qualifiedWith(classOf[PSAName]).to[PSANameCacheConnector]
+        )
       case _ =>
         Logger.warn("No journey-cache set, defaulting to `protected`")
-        Seq(bind[DataCacheConnector].to[MicroserviceCacheConnector])
+        Seq(
+          bind[DataCacheConnector].to[MicroserviceCacheConnector],
+          bind[DataCacheConnector].qualifiedWith(classOf[PSAName]).to[PSANameCacheConnector]
+        )
     }
   }
 }
