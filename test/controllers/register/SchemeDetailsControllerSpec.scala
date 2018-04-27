@@ -19,7 +19,7 @@ package controllers.register
 import play.api.data.Form
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
+import utils.{FakeNavigator, NameMatchingFactory}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
@@ -37,9 +37,17 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
   val formProvider = new SchemeDetailsFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
-    new SchemeDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, formProvider)
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeDetailsController =
+    new SchemeDetailsController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      formProvider,
+      app.injector.instanceOf[NameMatchingFactory]
+    )
 
   def viewAsString(form: Form[_] = form) = schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
 

@@ -17,26 +17,29 @@
 package utils
 
 import base.SpecBase
-import connectors.PSANameCacheConnector
+import connectors.FakeDataCacheConnector
 import models.requests.DataRequest
-import org.mockito.Matchers._
-import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
-import play.api.libs.json.{JsString, Json}
+import play.api.libs.json.{JsString, JsValue, Json}
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
-class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
+class NameMatchingFactorySpec extends SpecBase {
+
+  class FakePSANameCacheConnector(fetchResponse: Option[JsValue]) extends FakeDataCacheConnector {
+    override def fetch(cacheId: String)(implicit
+                                        ec: ExecutionContext,
+                                        hc: HeaderCarrier
+    ): Future[Option[JsValue]] = Future.successful(fetchResponse)
+  }
 
   val schemeName = "My Scheme Reg"
 
-  val nameMatchingFactory = new NameMatchingFactory(
-    mock[PSANameCacheConnector]
-  )
+
+  def nameMatchingFactory(fetchResponse: Option[JsValue]) = new NameMatchingFactory(new FakePSANameCacheConnector(fetchResponse))
 
   implicit val hc = HeaderCarrier()
 
@@ -46,10 +49,7 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
     "return an instance of NameMatching" when {
       "PSA name is retrieved" in {
 
-        when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
-          .thenReturn(Future.successful(Some(JsString("My PSA"))))
-
-        val result = nameMatchingFactory.nameMatching(schemeName)
+        val result = nameMatchingFactory(Some(JsString("My PSA"))).nameMatching(schemeName)
 
         await(result) mustEqual Some(NameMatching("My Scheme Reg", "My PSA"))
 
@@ -60,10 +60,7 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
       "psa name returns None when fetched" in {
 
-        when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
-          .thenReturn(Future.successful(None))
-
-        val result = nameMatchingFactory.nameMatching(schemeName)
+        val result = nameMatchingFactory(None).nameMatching(schemeName)
 
         await(result) mustEqual None
 
@@ -71,10 +68,7 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
       "psa name is not String" in {
 
-        when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
-          .thenReturn(Future.successful(Some(Json.obj())))
-
-        val result = nameMatchingFactory.nameMatching(schemeName)
+        val result = nameMatchingFactory(Some(Json.obj())).nameMatching(schemeName)
 
         await(result) mustEqual None
 

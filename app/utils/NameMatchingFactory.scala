@@ -18,18 +18,17 @@ package utils
 
 import javax.inject.Inject
 
-import connectors.{DataCacheConnector, PSANameCacheConnector}
-import identifiers.register.SchemeDetailsId
-import models.register.SchemeDetails
+import connectors.DataCacheConnector
 import models.requests.DataRequest
 import play.api.libs.json.JsValue
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.annotations.PSAName
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactory @Inject()(
-                                   val pSANameCacheConnector: PSANameCacheConnector
+                                   @PSAName val pSANameCacheConnector: DataCacheConnector
                                    ){
 
   private def retrievePSAName(implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
