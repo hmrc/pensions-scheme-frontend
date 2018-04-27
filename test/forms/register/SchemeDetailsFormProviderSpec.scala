@@ -48,6 +48,16 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
       checkForError(form, data, expectedError)
     }
 
+    "fail to bind when the scheme name matches psa name" in {
+      val testString = "New Scheme Admin Name"
+      val psaName = "New scheme and admin name"
+      val data = Map(
+        "schemeName" -> testString
+        )
+      val expectedError = error("schemeName", "messages__error__scheme_name_psa_name_match", psaName)
+      checkForError(form, data, expectedError)
+    }
+
     "successfully bind when the schemeType is other with schemeTypeDetails and have valid scheme name" in {
       val result = form.bind(validData).get
 
