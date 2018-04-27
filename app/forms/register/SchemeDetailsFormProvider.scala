@@ -18,7 +18,6 @@ package forms.register
 
 import javax.inject.Inject
 
-import connectors.PSANameCacheConnector
 import forms.mappings.{Constraints, SchemeTypeMapping}
 import models.register.SchemeDetails
 import play.api.data.Form
@@ -30,9 +29,7 @@ class SchemeDetailsFormProvider @Inject() extends SchemeTypeMapping with Constra
   def apply(): Form[SchemeDetails] = Form(mapping(
     "schemeName" -> text(
       "messages__error__scheme_name").
-      verifying(firstError(maxLength(schemeNameMaxLength, "messages__error__scheme_name_length"),
-        psaNameMatch("", "messages__error__scheme_name_psa_name_match"))
-      ),
+      verifying(maxLength(schemeNameMaxLength, "messages__error__scheme_name_length")),
     "schemeType" -> schemeTypeMapping()
   )(SchemeDetails.apply)(SchemeDetails.unapply))
 }

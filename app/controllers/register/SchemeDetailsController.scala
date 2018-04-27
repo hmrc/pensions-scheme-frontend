@@ -58,15 +58,29 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
+      nameMatchingFactory.retrievePSAName.flatMap{ psaName =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
         (value) =>
-          nameMatchingFactory.nameMatching(value.schemeName) flatMap { x =>
-            dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(SchemeDetailsId, mode)(UserAnswers(cacheMap)))
-            )
+          nameMatchingFactory.nameMatching(value.schemeName).flatMap {
+            case Some(nameMatching) => {
+              if(nameMatching.isMatch){
+                Future.successful(BadRequest(schemeDetails(appConfig, form.withError(
+                  "schemeName",
+                  "messages__error__scheme_name_psa_name_match"
+                ), mode)))
+              } else {
+                dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
+                  Redirect(navigator.nextPage(SchemeDetailsId, mode)(UserAnswers(cacheMap)))
+                )
+              }
+            }
+            case _ => {
+              Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+            }
           }
       )
+  }
   }
 }
