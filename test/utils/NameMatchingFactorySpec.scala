@@ -35,9 +35,11 @@ import scala.concurrent.Future
 
 class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
+  val schemeName = "My Scheme Reg"
+
   "NameMatchingFactory" must {
     "return an instance of NameMatching" when {
-      "scheme name and PSA name are retrieved" in {
+      "PSA name is retrieved" in {
 
         val nameMatchingFactory = new NameMatchingFactory(
           mock[PSANameCacheConnector]
@@ -45,14 +47,12 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
         implicit val hc = HeaderCarrier()
 
-        implicit val request = FakeDataRequest(UserAnswers(Json.obj(
-          SchemeDetailsId.toString -> SchemeDetails("My Scheme Reg", SingleTrust)
-        )))
+        implicit val request = FakeDataRequest
 
         when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
           .thenReturn(Future.successful(Some(JsString("My PSA"))))
 
-        val result = nameMatchingFactory.nameMatching
+        val result = nameMatchingFactory.nameMatching(schemeName)
 
         await(result) mustEqual Some(NameMatching("My Scheme Reg", "My PSA"))
 
@@ -60,24 +60,6 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
     }
 
     "return None" when {
-      "scheme name is missing" in {
-
-        val nameMatchingFactory = new NameMatchingFactory(
-          mock[PSANameCacheConnector]
-        )
-
-        implicit val hc = HeaderCarrier()
-
-        implicit val request = FakeDataRequest(UserAnswers(Json.obj()))
-
-        when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
-          .thenReturn(Future.successful(Some(JsString("My PSA"))))
-
-        val result = nameMatchingFactory.nameMatching
-
-        await(result) mustEqual None
-
-      }
 
       "psa name returns None when fetched" in {
 
@@ -87,14 +69,12 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
         implicit val hc = HeaderCarrier()
 
-        implicit val request = FakeDataRequest(UserAnswers(Json.obj(
-          SchemeDetailsId.toString -> SchemeDetails("My Scheme Reg", SingleTrust)
-        )))
+        implicit val request = FakeDataRequest
 
         when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
           .thenReturn(Future.successful(None))
 
-        val result = nameMatchingFactory.nameMatching
+        val result = nameMatchingFactory.nameMatching(schemeName)
 
         await(result) mustEqual None
 
@@ -108,14 +88,12 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
         implicit val hc = HeaderCarrier()
 
-        implicit val request = FakeDataRequest(UserAnswers(Json.obj(
-          SchemeDetailsId.toString -> SchemeDetails("My Scheme Reg", SingleTrust)
-        )))
+        implicit val request = FakeDataRequest
 
         when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
           .thenReturn(Future.successful(Some(Json.obj())))
 
-        val result = nameMatchingFactory.nameMatching
+        val result = nameMatchingFactory.nameMatching(schemeName)
 
         await(result) mustEqual None
 

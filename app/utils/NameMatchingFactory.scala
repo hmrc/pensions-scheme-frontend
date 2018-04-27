@@ -18,7 +18,7 @@ package utils
 
 import javax.inject.Inject
 
-import connectors.DataCacheConnector
+import connectors.{DataCacheConnector, PSANameCacheConnector}
 import identifiers.register.SchemeDetailsId
 import models.register.SchemeDetails
 import models.requests.DataRequest
@@ -29,23 +29,19 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactory @Inject()(
-                                   val pSANameCacheConnector: DataCacheConnector
+                                   val pSANameCacheConnector: PSANameCacheConnector
                                    ){
-
-  private def retrieveSchemeName(implicit request: DataRequest[AnyContent]): Option[SchemeDetails] =
-    request.userAnswers.get(SchemeDetailsId)
 
   private def retrievePSAName(implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
     pSANameCacheConnector.fetch(request.externalId)
 
-  def nameMatching(implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[NameMatching]] =
+  def nameMatching(schemeName: String)(implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[NameMatching]] =
     retrievePSAName map { psaOpt =>
       for {
         psaJs <- psaOpt
         psaName <- psaJs.asOpt[String]
-        schemeName <- retrieveSchemeName
       } yield {
-        NameMatching(schemeName.schemeName, psaName)
+        NameMatching(schemeName, psaName)
       }
     }
 
