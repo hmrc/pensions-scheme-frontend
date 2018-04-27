@@ -22,14 +22,13 @@ import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConn
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
-import models.address.{Address, AddressRecord}
+import models.address.TolerantAddress
 import models.register.establishers.company.director.DirectorDetails
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
-import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -45,8 +44,8 @@ import scala.concurrent.Future
 
 class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with CSRFRequest {
 
-  def onwardRoute = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex)
-  def manualInputCall = routes.DirectorAddressController.onPageLoad(NormalMode, estIndex, dirIndex)
+  def onwardRoute: Call = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex)
+  def manualInputCall: Call = routes.DirectorAddressController.onPageLoad(NormalMode, estIndex, dirIndex)
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
@@ -59,13 +58,13 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
   val dirIndex = Index(0)
   val companyName: String = "test company name"
 
-  private def fakeAddress(postCode: String) = Address(
-    "Address Line 1",
-    "Address Line 2",
+  private def fakeAddress(postCode: String) = TolerantAddress(
+    Some("Address Line 1"),
+    Some("Address Line 2"),
     Some("Address Line 3"),
     Some("Address Line 4"),
     Some(postCode),
-    "GB"
+    Some("GB")
   )
 
   val company = CompanyDetails(companyName, None, None)
@@ -120,8 +119,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         .withFormUrlEncodedBody("value" -> validPostcode))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful(
-          Some(Seq(AddressRecord(fakeAddress(validPostcode)))))
+        .thenReturn(Future.successful(Some(Seq(fakeAddress(validPostcode))))
         )
 
       running(_.overrides(

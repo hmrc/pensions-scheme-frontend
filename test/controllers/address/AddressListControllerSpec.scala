@@ -103,7 +103,7 @@ class AddressListControllerSpec extends WordSpec with Matchers {
         val result = controller.onSubmit(viewModel, 0)
 
         status(result) shouldBe SEE_OTHER
-        FakeDataCacheConnector.verify(fakeId, viewModel.addresses.head)
+        FakeDataCacheConnector.verify(fakeId, viewModel.addresses.head.toAddress)
       }
 
     }

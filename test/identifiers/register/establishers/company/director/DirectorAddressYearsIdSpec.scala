@@ -62,7 +62,6 @@ class DirectorAddressYearsIdSpec extends WordSpec with Matchers with OptionValue
         newAnswers.get(previousAddressId) should be(defined)
       }
     }
-
   }
 
 }
@@ -88,7 +87,7 @@ object DirectorAddressYearsIdSpec extends OptionValues {
   private val userAnswers = UserAnswers()
     .set(addressYearsId)(AddressYears.UnderAYear)
     .flatMap(_.set(previousAddressPostcodeLookupId)(Seq(address)))
-    .flatMap(_.set(previousAddressId)(address))
+    .flatMap(_.set(previousAddressId)(address.toAddress))
     .asOpt.value
 
 }
