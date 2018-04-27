@@ -21,30 +21,40 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.{SchemeDetailsId, SchemeReviewId}
 import models.NormalMode
+import models.register.establishers.EstablisherKind.Indivdual
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.{Enumerable, Navigator}
 import utils.annotations.Register
 import views.html.register.schemeReview
 
 import scala.concurrent.Future
 
 class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         @Register navigator: Navigator,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction) extends FrontendController with I18nSupport with Retrievals {
+                                       override val messagesApi: MessagesApi,
+                                       @Register navigator: Navigator,
+                                       authenticate: AuthAction,
+                                       getData: DataRetrievalAction,
+                                       requireData: DataRequiredAction) extends FrontendController with I18nSupport with
+  Enumerable.Implicits with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { schemeDetails =>
-        val establishers = request.userAnswers.allEstablishers.map(_._1)
-        val trustees = request.userAnswers.allTrustees.map(_._1)
-        Future.successful(Ok(schemeReview(appConfig, schemeDetails.schemeName, establishers, trustees)))
+      (SchemeDetailsId and EstablisherKindId(0)).retrieve.right.map {
+        case schemeDetails ~ establisherKind =>
+          val establishers = request.userAnswers.allEstablishers.map(_._1)
+          val trustees = request.userAnswers.allTrustees.map(_._1)
+
+          val establisherEditUrl = if (establisherKind == Indivdual) {
+            controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
+          } else {
+            controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
+          }
+          Future.successful(Ok(schemeReview(appConfig, schemeDetails.schemeName, establishers, trustees, establisherEditUrl)))
       }
   }
 

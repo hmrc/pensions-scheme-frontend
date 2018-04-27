@@ -19,6 +19,7 @@ package controllers.register
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.CompanyDetails
@@ -26,24 +27,23 @@ import models.person.PersonDetails
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
 import utils.FakeNavigator
 import views.html.register.schemeReview
 
 class SchemeReviewControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     SchemeDetailsId.toString ->
       SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     "establishers" -> Json.arr(
       Json.obj(
+        EstablisherKindId.toString -> "individual",
         EstablisherDetailsId.toString -> EstablisherDetails("establisher", None, "name", LocalDate.now())
-      ),
-      Json.obj(
-        identifiers.register.establishers.company.CompanyDetailsId.toString -> CompanyDetails("establisher company name", None, None)
       )
     ),
     "trustees" -> Json.arr(
@@ -57,14 +57,15 @@ class SchemeReviewControllerSpec extends ControllerSpecBase {
   )
 
   val schemeName = "Test Scheme Name"
-  val establishers = Seq("establisher name", "establisher company name")
+  val establishers = Seq("establisher name")
   val trustees = Seq("trustee name", "trustee company name")
+  val cyaEstablisherUrl: Call = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeReviewController =
     new SchemeReviewController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl)
 
-  def viewAsString() = schemeReview(frontendAppConfig, schemeName, establishers, trustees)(fakeRequest, messages).toString
+  def viewAsString(): String = schemeReview(frontendAppConfig, schemeName, establishers, trustees, cyaEstablisherUrl)(fakeRequest, messages).toString
 
   "SchemeReview Controller" must {
 

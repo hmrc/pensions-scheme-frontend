@@ -469,7 +469,7 @@ messages__schemeReview__heading = Review
 messages__schemeReview__lede = Check the information before continuing
 messages__schemeReview__scheme__editLink = Edit scheme details
 messages__schemeReview__establishers__heading = Scheme establishers
-messages__schemeReview__establishers__editLink = Add, delete or edit scheme establishers
+messages__schemeReview__establishers__editLink = Edit scheme establishers
 messages__schemeReview__trustees__heading = Trustees
 messages__schemeReview__trustees__editLink = Add, delete or edit trustees
 
