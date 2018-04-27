@@ -36,6 +36,9 @@ import scala.concurrent.Future
 class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
   val schemeName = "My Scheme Reg"
+  implicit val hc = HeaderCarrier()
+
+  implicit val request = FakeDataRequest(UserAnswers(Json.obj()))
 
   "NameMatchingFactory" must {
     "return an instance of NameMatching" when {
@@ -44,10 +47,6 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
         val nameMatchingFactory = new NameMatchingFactory(
           mock[PSANameCacheConnector]
         )
-
-        implicit val hc = HeaderCarrier()
-
-        implicit val request = FakeDataRequest
 
         when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
           .thenReturn(Future.successful(Some(JsString("My PSA"))))
@@ -67,10 +66,6 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
           mock[PSANameCacheConnector]
         )
 
-        implicit val hc = HeaderCarrier()
-
-        implicit val request = FakeDataRequest
-
         when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
           .thenReturn(Future.successful(None))
 
@@ -85,10 +80,6 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
         val nameMatchingFactory = new NameMatchingFactory(
           mock[PSANameCacheConnector]
         )
-
-        implicit val hc = HeaderCarrier()
-
-        implicit val request = FakeDataRequest
 
         when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
           .thenReturn(Future.successful(Some(Json.obj())))

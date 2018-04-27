@@ -151,6 +151,7 @@ messages__error__scheme_type_information = Enter more information about the sche
 messages__error__scheme_name_length = The scheme name cannot be more than 255 characters
 messages__error__scheme_type_invalid = You must select a valid scheme type
 messages__error__scheme_type_length = The other scheme type cannot be more than 150 characters
+messages__error__scheme_name_psa_name_match = The Pension Scheme name cannot be the same as Pension Scheme Administrator name
 
 messages__membership_current__title = How many scheme members are there?
 
