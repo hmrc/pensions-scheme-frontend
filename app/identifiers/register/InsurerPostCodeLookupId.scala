@@ -17,10 +17,10 @@
 package identifiers.register
 
 import identifiers._
-import models.address.Address
+import models.address.TolerantAddress
 
 
-object InsurerPostCodeLookupId extends TypedIdentifier[Seq[Address]]  {
+object InsurerPostCodeLookupId extends TypedIdentifier[Seq[TolerantAddress]]  {
   override def toString: String = "insurerAddresses"
 }
 

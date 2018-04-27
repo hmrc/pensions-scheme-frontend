@@ -21,7 +21,7 @@
 @import models.address._
 @import models.address.Address
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, addresses: Seq[Address], establisherName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, addresses: Seq[TolerantAddress], establisherName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__select_the_address__title"),
