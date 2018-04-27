@@ -25,7 +25,7 @@ import play.api.mvc.AnyContent
 
 import scala.concurrent.Future
 
-class BusinessMatchingFactory @Inject()(
+class NameMatchingFactory @Inject()(
 
                                        ){
 
