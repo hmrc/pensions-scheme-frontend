@@ -41,10 +41,11 @@ class NameMatchingFactory @Inject()(
   def nameMatching(implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[NameMatching]] =
     retrievePSAName map { psaOpt =>
       for {
-        psaName <- psaOpt
+        psaJs <- psaOpt
+        psaName <- psaJs.asOpt[String]
         schemeName <- retrieveSchemeName
       } yield {
-        ???
+        NameMatching(schemeName.schemeName, psaName)
       }
     }
 

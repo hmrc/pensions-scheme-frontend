@@ -18,11 +18,19 @@ package utils
 
 import base.SpecBase
 import connectors.PSANameCacheConnector
+import identifiers.register.SchemeDetailsId
+import models.register.SchemeDetails
+import models.register.SchemeType.SingleTrust
+import models.requests.DataRequest
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
-import play.api.libs.json.JsString
+import play.api.libs.json.{JsString, Json}
+import play.api.mvc.Request
+import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
@@ -35,8 +43,18 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
           mock[PSANameCacheConnector]
         )
 
+        implicit val hc = HeaderCarrier()
+
+        implicit val request = FakeDataRequest(UserAnswers(Json.obj(
+          SchemeDetailsId.toString -> SchemeDetails("My Scheme Reg", SingleTrust)
+        )))
+
         when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
           .thenReturn(Future.successful(Some(JsString("My PSA"))))
+
+        val result = nameMatchingFactory.nameMatching
+
+        await(result) mustEqual Some(NameMatching("My Scheme Reg", "My PSA"))
 
       }
     }
