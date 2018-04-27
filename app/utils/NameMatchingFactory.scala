@@ -22,10 +22,11 @@ import connectors.PSANameCacheConnector
 import identifiers.register.SchemeDetailsId
 import models.register.SchemeDetails
 import models.requests.DataRequest
+import play.api.libs.json.JsValue
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactory @Inject()(
                                    pSANameCacheConnector: PSANameCacheConnector
@@ -34,7 +35,17 @@ class NameMatchingFactory @Inject()(
   private def retrieveSchemeName(implicit request: DataRequest[AnyContent]): Option[SchemeDetails] =
     request.userAnswers.get(SchemeDetailsId)
 
-  private def retrievePSAName(implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier) =
+  private def retrievePSAName(implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
     pSANameCacheConnector.fetch(request.externalId)
+
+  def nameMatching(implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[NameMatching]] =
+    retrievePSAName map { psaOpt =>
+      for {
+        psaName <- psaOpt
+        schemeName <- retrieveSchemeName
+      } yield {
+        ???
+      }
+    }
 
 }
