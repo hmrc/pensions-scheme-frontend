@@ -23,7 +23,7 @@ import play.api.libs.json._
 
 class TolerantAddressReadsSpec extends WordSpec with MustMatchers with OptionValues {
   "A Postcode Lookup response payload" should {
-    "map correctly to a tolerant addres" when {
+    "map correctly to a tolerant address" when {
       val payload = Json.obj("address" -> Json.obj("lines" -> JsArray(Seq(JsString("line1"), JsString("line2"), JsString("line3"), JsString("line4"))),
       "postcode" -> "ZZ1 1ZZ", "country" -> Json.obj("code"-> "UK")))
 
