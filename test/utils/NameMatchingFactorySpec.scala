@@ -18,15 +18,12 @@ package utils
 
 import base.SpecBase
 import connectors.PSANameCacheConnector
-import identifiers.register.SchemeDetailsId
-import models.register.SchemeDetails
-import models.register.SchemeType.SingleTrust
 import models.requests.DataRequest
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.{JsString, Json}
-import play.api.mvc.Request
+import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -37,17 +34,17 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
   val schemeName = "My Scheme Reg"
 
+  val nameMatchingFactory = new NameMatchingFactory(
+    mock[PSANameCacheConnector]
+  )
+
+  implicit val hc = HeaderCarrier()
+
+  implicit val request: DataRequest[AnyContent] = FakeDataRequest(UserAnswers(Json.obj()))
+
   "NameMatchingFactory" must {
     "return an instance of NameMatching" when {
       "PSA name is retrieved" in {
-
-        val nameMatchingFactory = new NameMatchingFactory(
-          mock[PSANameCacheConnector]
-        )
-
-        implicit val hc = HeaderCarrier()
-
-        implicit val request = FakeDataRequest
 
         when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
           .thenReturn(Future.successful(Some(JsString("My PSA"))))
@@ -63,14 +60,6 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
       "psa name returns None when fetched" in {
 
-        val nameMatchingFactory = new NameMatchingFactory(
-          mock[PSANameCacheConnector]
-        )
-
-        implicit val hc = HeaderCarrier()
-
-        implicit val request = FakeDataRequest
-
         when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
           .thenReturn(Future.successful(None))
 
@@ -81,14 +70,6 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
       }
 
       "psa name is not String" in {
-
-        val nameMatchingFactory = new NameMatchingFactory(
-          mock[PSANameCacheConnector]
-        )
-
-        implicit val hc = HeaderCarrier()
-
-        implicit val request = FakeDataRequest
 
         when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
           .thenReturn(Future.successful(Some(Json.obj())))
