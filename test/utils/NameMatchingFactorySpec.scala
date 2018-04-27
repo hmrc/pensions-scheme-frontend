@@ -58,6 +58,69 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
       }
     }
+
+    "return None" when {
+      "scheme name is missing" in {
+
+        val nameMatchingFactory = new NameMatchingFactory(
+          mock[PSANameCacheConnector]
+        )
+
+        implicit val hc = HeaderCarrier()
+
+        implicit val request = FakeDataRequest(UserAnswers(Json.obj()))
+
+        when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
+          .thenReturn(Future.successful(Some(JsString("My PSA"))))
+
+        val result = nameMatchingFactory.nameMatching
+
+        await(result) mustEqual None
+
+      }
+
+      "psa name returns None when fetched" in {
+
+        val nameMatchingFactory = new NameMatchingFactory(
+          mock[PSANameCacheConnector]
+        )
+
+        implicit val hc = HeaderCarrier()
+
+        implicit val request = FakeDataRequest(UserAnswers(Json.obj(
+          SchemeDetailsId.toString -> SchemeDetails("My Scheme Reg", SingleTrust)
+        )))
+
+        when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
+          .thenReturn(Future.successful(None))
+
+        val result = nameMatchingFactory.nameMatching
+
+        await(result) mustEqual None
+
+      }
+
+      "psa name is not String" in {
+
+        val nameMatchingFactory = new NameMatchingFactory(
+          mock[PSANameCacheConnector]
+        )
+
+        implicit val hc = HeaderCarrier()
+
+        implicit val request = FakeDataRequest(UserAnswers(Json.obj(
+          SchemeDetailsId.toString -> SchemeDetails("My Scheme Reg", SingleTrust)
+        )))
+
+        when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
+          .thenReturn(Future.successful(Some(Json.obj())))
+
+        val result = nameMatchingFactory.nameMatching
+
+        await(result) mustEqual None
+
+      }
+    }
   }
 
 }
