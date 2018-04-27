@@ -18,7 +18,7 @@ package utils
 
 import javax.inject.Inject
 
-import connectors.PSANameCacheConnector
+import connectors.DataCacheConnector
 import identifiers.register.SchemeDetailsId
 import models.register.SchemeDetails
 import models.requests.DataRequest
@@ -29,7 +29,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactory @Inject()(
-                                   pSANameCacheConnector: PSANameCacheConnector
+                                   val pSANameCacheConnector: DataCacheConnector
                                    ){
 
   private def retrieveSchemeName(implicit request: DataRequest[AnyContent]): Option[SchemeDetails] =

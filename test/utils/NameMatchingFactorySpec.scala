@@ -17,40 +17,26 @@
 package utils
 
 import base.SpecBase
-import connectors.{FakeDataCacheConnector, PSANameCacheConnector}
-import identifiers.TypedIdentifier
-import org.scalatest.WordSpec
+import connectors.PSANameCacheConnector
+import org.mockito.Matchers._
+import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
-import play.api.libs.json.JsValue
-import play.api.libs.ws.WSClient
-import uk.gov.hmrc.crypto.ApplicationCrypto
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.json.JsString
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
-  object PSANameCacheConnector extends PSANameCacheConnector (
-    frontendAppConfig,
-    mock[WSClient],
-    injector.instanceOf[ApplicationCrypto]
-  ) with FakeDataCacheConnector {
-    override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
-                                                (implicit
-                                                 ec: ExecutionContext,
-                                                 hc: HeaderCarrier
-                                                ): Future[JsValue] = ???
-  }
-
-  "NameMatchingFactor" must {
+  "NameMatchingFactory" must {
     "return an instance of NameMatching" when {
       "scheme name and PSA name are retrieved" in {
 
-
-
         val nameMatchingFactory = new NameMatchingFactory(
-          PSANameCacheConnector
+          mock[PSANameCacheConnector]
         )
+
+        when(nameMatchingFactory.pSANameCacheConnector.fetch(any())(any(),any()))
+          .thenReturn(Future.successful(Some(JsString("My PSA"))))
 
       }
     }
