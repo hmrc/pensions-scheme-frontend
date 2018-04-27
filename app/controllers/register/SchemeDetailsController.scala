@@ -60,8 +60,11 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
         (value) =>
-          dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(SchemeDetailsId, mode)(new UserAnswers(cacheMap))))
+          nameMatchingFactory.nameMatching(value.schemeName) flatMap { _ =>
+            dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
+              Redirect(navigator.nextPage(SchemeDetailsId, mode)(UserAnswers(cacheMap)))
+            )
+          }
       )
   }
 }

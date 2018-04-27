@@ -19,7 +19,7 @@ package controllers.register
 import play.api.data.Form
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.{FakeNavigator, NameMatchingFactory}
+import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
@@ -29,6 +29,11 @@ import models.NormalMode
 import views.html.register.schemeDetails
 import controllers.ControllerSpecBase
 import models.register.{SchemeDetails, SchemeType}
+import models.requests.OptionalDataRequest
+import play.api.mvc.AnyContent
+import uk.gov.hmrc.http.HeaderCarrier
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeDetailsControllerSpec extends ControllerSpecBase {
 
@@ -36,6 +41,13 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
 
   val formProvider = new SchemeDetailsFormProvider()
   val form = formProvider()
+
+  object FakeNameMatchingFactory extends NameMatchingFactory(FakeDataCacheConnector) {
+    override def nameMatching(schemeName: String)
+                    (implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[NameMatching]] = {
+      Future.successful(Some(NameMatching("value 1", "My PSA")))
+    }
+  }
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeDetailsController =
     new SchemeDetailsController(
@@ -46,7 +58,7 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       formProvider,
-      app.injector.instanceOf[NameMatchingFactory]
+      FakeNameMatchingFactory
     )
 
   def viewAsString(form: Form[_] = form) = schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString

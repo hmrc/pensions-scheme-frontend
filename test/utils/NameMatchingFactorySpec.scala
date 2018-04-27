@@ -18,14 +18,15 @@ package utils
 
 import base.SpecBase
 import connectors.FakeDataCacheConnector
-import models.requests.DataRequest
+import models.requests.OptionalDataRequest
 import play.api.libs.json.{JsString, JsValue, Json}
 import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactorySpec extends SpecBase {
 
@@ -38,12 +39,11 @@ class NameMatchingFactorySpec extends SpecBase {
 
   val schemeName = "My Scheme Reg"
 
+  implicit val request: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest("", ""), "externalId", None)
 
   def nameMatchingFactory(fetchResponse: Option[JsValue]) = new NameMatchingFactory(new FakePSANameCacheConnector(fetchResponse))
 
   implicit val hc = HeaderCarrier()
-
-  implicit val request: DataRequest[AnyContent] = FakeDataRequest(UserAnswers(Json.obj()))
 
   "NameMatchingFactory" must {
     "return an instance of NameMatching" when {
