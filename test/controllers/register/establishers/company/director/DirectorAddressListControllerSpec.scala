@@ -22,9 +22,9 @@ import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
 import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorDetailsId}
-import models.{Index, NormalMode}
-import models.address.Address
+import models.address.TolerantAddress
 import models.register.establishers.company.director.DirectorDetails
+import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -40,24 +40,23 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
   private val directorDetails = DirectorDetails("Joe", None, "Bloggs", LocalDate.now())
 
   private val addresses = Seq(
-    Address(
-      "Address 1 Line 1",
-      "Address 1 Line 2",
+    TolerantAddress(
+      Some("Address 1 Line 1"),
+      Some("Address 1 Line 2"),
       Some("Address 1 Line 3"),
       Some("Address 1 Line 4"),
       Some("A1 1PC"),
-      "GB"
+      Some("GB")
     ),
-    Address(
-      "Address 2 Line 1",
-      "Address 2 Line 2",
+    TolerantAddress(
+      Some("Address 2 Line 1"),
+      Some("Address 2 Line 2"),
       Some("Address 2 Line 3"),
       Some("Address 2 Line 4"),
       Some("123"),
-      "FR"
+      Some("FR")
     )
   )
-
   private val data =
     UserAnswers(Json.obj())
       .set(DirectorDetailsId(0, 0))(directorDetails)
@@ -185,7 +184,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
 
   }
 
-  private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
+  private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
       routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0)),
       routes.DirectorAddressController.onPageLoad(NormalMode, Index(0), Index(0)),

@@ -22,12 +22,12 @@ import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.{InsurerAddressId, InsurerPostCodeLookupId}
 import models.NormalMode
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
+import org.mockito.Matchers
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
-import org.mockito.Matchers
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
@@ -44,12 +44,12 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
 
   val formProvider = new AddressListFormProvider()
   val schemeName = "ThisSchemeName"
-  val schemeDetails = Json.obj("schemeDetails" -> SchemeDetails(schemeName, SingleTrust))
+  val schemeDetails: JsObject = Json.obj("schemeDetails" -> SchemeDetails(schemeName, SingleTrust))
   val addresses = Seq(
     address("test post code 1"),
     address("test post code 2")
   )
-  val addressObject = Json.obj(InsurerPostCodeLookupId.toString -> addresses)
+  val addressObject: JsObject = Json.obj(InsurerPostCodeLookupId.toString -> addresses)
 
   val form = formProvider(Seq(0))
 
@@ -66,16 +66,16 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
       new DataRequiredActionImpl,
       formProvider
     )
-  def viewAsString(form: Form[_] = form, address: Seq[Address] = addresses): String =
+  def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = addresses): String =
     insurerAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages).toString
 
-  def address(postCode: String): Address = Address(
-    "address line 1",
-    "address line 2",
+  def address(postCode: String): TolerantAddress = TolerantAddress(
+    Some("address line 1"),
+    Some("address line 2"),
     Some("test town"),
     Some("test county"),
-    postcode = Some(postCode),
-    country = "United Kingdom"
+    Some(postCode),
+    Some("United Kingdom")
   )
 
   "InsurerAddressList Controller" must {
@@ -138,7 +138,7 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
       status(result) mustEqual SEE_OTHER
 
       verify(dataCacheConnector, times(1))
-        .save[Address, InsurerAddressId.type](any(), Matchers.eq(InsurerAddressId), Matchers.eq(addresses.head.copy(country = "GB")))(any(), any(), any())
+        .save[Address, InsurerAddressId.type](any(), Matchers.eq(InsurerAddressId), Matchers.eq(addresses.head.toAddress.copy(country = "GB")))(any(), any(), any())
 
     }
 
