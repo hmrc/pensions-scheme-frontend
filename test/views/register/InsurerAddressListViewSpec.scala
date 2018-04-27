@@ -18,7 +18,7 @@ package views.register
 
 import forms.address.AddressListFormProvider
 import models.NormalMode
-import models.address.Address
+import models.address.TolerantAddress
 import org.jsoup.Jsoup
 import play.api.data.Form
 import views.behaviours.ViewBehaviours
@@ -34,9 +34,13 @@ class InsurerAddressListViewSpec extends ViewBehaviours {
     address("test post code 2")
   )
 
-  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
-  
+  def address(postCode: String): TolerantAddress = TolerantAddress(
+    Some("address line 1"),
+    Some("address line 2"),
+    Some("test town"),
+    Some("test county"),
+    Some(postCode), Some("GB"))
+
   val form = new AddressListFormProvider()(Seq.empty)
 
   def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable =

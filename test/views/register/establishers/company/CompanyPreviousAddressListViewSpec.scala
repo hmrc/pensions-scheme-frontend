@@ -17,8 +17,7 @@
 package views.register.establishers.company
 
 import forms.address.AddressListFormProvider
-import models.address.Address
-import play.api.data.Form
+import models.address.{Address, TolerantAddress}
 import models.{Index, NormalMode}
 import controllers.register.establishers.company.routes
 import models.address.Address
@@ -39,9 +38,13 @@ class CompanyPreviousAddressListViewSpec extends ViewBehaviours {
     address("test post code 2")
   )
 
-  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
 
+  def address(postCode: String): TolerantAddress = TolerantAddress(
+    Some("address line 1"),
+    Some("address line 2"),
+    Some("test town"),
+    Some("test county"),
+    Some(postCode), Some("GB"))
 
 
   def createView: () => HtmlFormat.Appendable = () => companyPreviousAddressList(frontendAppConfig, form, NormalMode, index, companyName, addresses)(fakeRequest, messages)

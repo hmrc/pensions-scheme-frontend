@@ -17,7 +17,7 @@
 package identifiers.register.establishers.company.director
 
 import models.AddressYears
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import org.scalatest.{Matchers, OptionValues, WordSpec}
 import utils.UserAnswers
 
@@ -76,13 +76,13 @@ object DirectorAddressYearsIdSpec extends OptionValues {
   private val previousAddressId = DirectorPreviousAddressId(establisherIndex, directorIndex)
   private val addressYearsId = DirectorAddressYearsId(establisherIndex, directorIndex)
 
-  private val address = Address(
-    "test-address-line1",
-    "test-address-line2",
+  private val address = TolerantAddress(
+    Some("test-address-line1"),
+    Some("test-address-line2"),
     None,
     None,
     None,
-    "test-country"
+    Some("test-country")
   )
 
   private val userAnswers = UserAnswers()

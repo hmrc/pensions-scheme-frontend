@@ -25,7 +25,7 @@ import models.{Index, NormalMode}
 import views.html.register.establishers.individual.previousPostCodeLookup
 import controllers.ControllerSpecBase
 import forms.address.PostCodeLookupFormProvider
-import models.address.{Address, AddressRecord}
+import models.address.{Address, AddressRecord, TolerantAddress}
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._
@@ -67,7 +67,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       val boundForm = form.bindFromRequest()(postRequest)
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(invalidPostCode))(Matchers.any(), Matchers.any())).thenReturn(
-        Future.successful(Some(Seq(AddressRecord(Address("address line 1", "address line 2", None, None, Some(invalidPostCode), "GB"))))))
+        Future.successful(Some(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(invalidPostCode), Some("GB"))))))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
@@ -93,7 +93,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       val validPostCode = "ZZ1 1ZZ"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", validPostCode))
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostCode))(Matchers.any(), Matchers.any())).thenReturn(
-        Future.successful(Some(Seq(AddressRecord(Address("address line 1", "address line 2", None, None, Some(validPostCode), "GB"))))))
+        Future.successful(Some(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostCode), Some("GB"))))))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
