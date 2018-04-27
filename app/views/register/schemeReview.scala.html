@@ -19,7 +19,7 @@
 @import models.Mode
 @import controllers.register.routes._
 
-@(appConfig: FrontendAppConfig, schemeName: String, establishers: Seq[String], trustees: Seq[String], establisherLinkUrl: Call)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, schemeName: String, establishers: Seq[String], trustees: Seq[String], establisherLink: Call, trusteesLink: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__schemeReview__title"),
@@ -45,7 +45,7 @@
             heading = messages("messages__schemeReview__establishers__heading"),
             linkMessage = "messages__schemeReview__establishers__editLink",
             linkId = "edit-establishers",
-            link = establisherLinkUrl,
+            link = establisherLink,
             list = Some(establishers)
         )
 
@@ -53,7 +53,7 @@
             heading = messages("messages__schemeReview__trustees__heading"),
             linkMessage = "messages__schemeReview__trustees__editLink",
             linkId = "edit-trustees",
-            link = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode),
+            link = trusteesLink,
             list = Some(trustees)
         )
 
