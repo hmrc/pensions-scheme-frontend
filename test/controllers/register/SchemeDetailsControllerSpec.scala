@@ -16,22 +16,21 @@
 
 package controllers.register
 
-import play.api.data.Form
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
 import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
 import forms.register.SchemeDetailsFormProvider
 import identifiers.register.SchemeDetailsId
-import models.NormalMode
-import views.html.register.schemeDetails
-import controllers.ControllerSpecBase
 import models.register.{SchemeDetails, SchemeType}
 import models.requests.OptionalDataRequest
+import models.{NormalMode, PSAName}
+import play.api.data.Form
+import play.api.libs.json.{Json, Reads}
 import play.api.mvc.AnyContent
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
+import views.html.register.schemeDetails
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,7 +43,7 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
 
   object FakeNameMatchingFactory extends NameMatchingFactory(FakeDataCacheConnector) {
     override def nameMatching(schemeName: String)
-                    (implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[NameMatching]] = {
+                    (implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier, r: Reads[PSAName]): Future[Option[NameMatching]] = {
       Future.successful(Some(NameMatching("value 1", "My PSA")))
     }
   }

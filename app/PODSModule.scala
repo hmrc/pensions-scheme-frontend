@@ -25,7 +25,7 @@ class PODSModule extends AbstractModule {
   override def configure(): Unit = {
 
     bind(classOf[DataCacheConnector])
-      .annotatedWith(classOf[PSAName])
+      .annotatedWith(classOf[PSANameCache])
       .to(classOf[PSANameCacheConnector])
 
     bind(classOf[Navigator])

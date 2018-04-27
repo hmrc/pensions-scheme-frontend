@@ -19,6 +19,7 @@ package connectors
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import identifiers.TypedIdentifier
+import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
@@ -96,9 +97,11 @@ class MicroserviceCacheConnector @Inject() (
           response.status match {
             case NOT_FOUND =>
               Future.successful(None)
-            case OK =>
+            case OK => {
               val decrypted = crypto.JsonCrypto.decrypt(Crypted(response.body))
+              Logger.debug(s"connectors.MicroserviceCacheConnector.fetch: Successful response: $decrypted")
               Future.successful(Some(Json.parse(decrypted.value)))
+            }
             case _ =>
               Future.failed(new HttpException(response.body, response.status))
           }
