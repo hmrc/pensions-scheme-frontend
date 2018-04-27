@@ -30,8 +30,11 @@ import utils.WireMockHelper
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class PSANameCacheConnectorSpec extends WordSpec
-  with MustMatchers with WireMockHelper with OptionValues
-  with ScalaFutures with IntegrationPatience {
+  with MustMatchers
+  with WireMockHelper
+  with OptionValues
+  with ScalaFutures
+  with IntegrationPatience {
 
   private object FakeIdentifier extends TypedIdentifier[String] {
     override def toString: String = "fake-identifier"
@@ -40,9 +43,9 @@ class PSANameCacheConnectorSpec extends WordSpec
   override protected def portConfigKey: String = "microservice.services.pensions-scheme.port"
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
-  private def url(id: String): String = s"/pensions-scheme/psa-name/scheme/$id"
+  private def url(id: String): String = s"/pensions-scheme/psa-name/$id"
 
-  private lazy val connector = injector.instanceOf[MicroserviceCacheConnector]
+  private lazy val connector = injector.instanceOf[PSANameCacheConnector]
   private lazy val crypto = injector.instanceOf[ApplicationCrypto].JsonCrypto
 
   ".fetch" must {

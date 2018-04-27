@@ -18,18 +18,23 @@ package utils
 
 import javax.inject.Inject
 
+import connectors.PSANameCacheConnector
 import identifiers.register.SchemeDetailsId
 import models.register.SchemeDetails
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
 class NameMatchingFactory @Inject()(
+                                   pSANameCacheConnector: PSANameCacheConnector
+                                   ){
 
-                                       ){
-
-  def retrieveSchemeName(implicit request: DataRequest[AnyContent]): Option[SchemeDetails] =
+  private def retrieveSchemeName(implicit request: DataRequest[AnyContent]): Option[SchemeDetails] =
     request.userAnswers.get(SchemeDetailsId)
+
+  private def retrievePSAName(implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier) =
+    pSANameCacheConnector.fetch(request.externalId)
 
 }
