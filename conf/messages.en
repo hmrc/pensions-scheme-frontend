@@ -55,7 +55,7 @@ messages__common__postcode_lookup__address_postcode_hint = For example NE12 8ER
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
 messages__error__postcode = Enter the postal code
 messages__error__postcode_length = The postal code cannot be more than 8 characters
-messages__error__postcode_invalid = Enter a valid postal code
+messages__error__postcode_invalid = There is a problem with the postcode address finder. Try again in a few minutes, or enter the address manually.
 messages__error__postcode_no_results = No results for that postcode
 
 messages__error__first_name = Enter the first name
@@ -295,7 +295,6 @@ messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the registered business address but you can enter any address you have for this company.
 messages__error__postcode = Enter the postcode
 messages__error__postcode_length = The postal code cannot be more than 8 characters
-messages__error__postcode_invalid = Enter a valid postal code
 messages__error__postcode_no_results = No results for that postcode
 
 messages__company__crn__title=Does the company have a Company Registration number (CRN)?
