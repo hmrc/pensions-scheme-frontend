@@ -16,19 +16,23 @@
 
 package controllers.register
 
-import play.api.data.Form
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
 import forms.register.SchemeDetailsFormProvider
 import identifiers.register.SchemeDetailsId
-import models.NormalMode
-import views.html.register.schemeDetails
-import controllers.ControllerSpecBase
 import models.register.{SchemeDetails, SchemeType}
+import models.requests.OptionalDataRequest
+import models.{NormalMode, PSAName}
+import play.api.data.Form
+import play.api.libs.json.{Json, Reads}
+import play.api.mvc.AnyContent
+import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
+import views.html.register.schemeDetails
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeDetailsControllerSpec extends ControllerSpecBase {
 
@@ -37,9 +41,26 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
   val formProvider = new SchemeDetailsFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
-    new SchemeDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, formProvider)
+  object FakeNameMatchingFactory extends NameMatchingFactory(FakeDataCacheConnector) {
+    override def nameMatching(schemeName: String)
+                    (implicit request: OptionalDataRequest[AnyContent],
+                     ec: ExecutionContext,
+                     hc: HeaderCarrier, r: Reads[PSAName]): Future[Option[NameMatching]] = {
+      Future.successful(Some(NameMatching("value 1", "My PSA")))
+    }
+  }
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeDetailsController =
+    new SchemeDetailsController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      formProvider,
+      FakeNameMatchingFactory
+    )
 
   def viewAsString(form: Form[_] = form) = schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
 
@@ -70,29 +91,27 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+    "return a Bad Request and errors" when {
+      "invalid data is submitted" in {
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+        val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller().onSubmit(NormalMode)(postRequest)
+        val result = controller().onSubmit(NormalMode)(postRequest)
 
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm)
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm)
+      }
+
+      "scheme name matches psa name" in {
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "My PSA"))
+        val boundForm = form.bind(Map("value" -> "My PSA"))
+
+        val result = controller().onSubmit(NormalMode)(postRequest)
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm)
+      }
     }
 
-    "redirect to Session Expired for a GET if no existing data is found" ignore {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "redirect to Session Expired for a POST if no existing data is found" ignore {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"), ("schemeType.type", "single"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
   }
 }
