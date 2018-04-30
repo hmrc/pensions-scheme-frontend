@@ -43,7 +43,9 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
 
   object FakeNameMatchingFactory extends NameMatchingFactory(FakeDataCacheConnector) {
     override def nameMatching(schemeName: String)
-                    (implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier, r: Reads[PSAName]): Future[Option[NameMatching]] = {
+                    (implicit request: OptionalDataRequest[AnyContent],
+                     ec: ExecutionContext,
+                     hc: HeaderCarrier, r: Reads[PSAName]): Future[Option[NameMatching]] = {
       Future.successful(Some(NameMatching("value 1", "My PSA")))
     }
   }
@@ -111,19 +113,5 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
       }
     }
 
-    "redirect to Session Expired for a GET if no existing data is found" ignore {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "redirect to Session Expired for a POST if no existing data is found" ignore {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"), ("schemeType.type", "single"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
   }
 }

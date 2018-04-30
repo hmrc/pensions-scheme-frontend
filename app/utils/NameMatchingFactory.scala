@@ -35,7 +35,9 @@ class NameMatchingFactory @Inject()(
     pSANameCacheConnector.fetch(request.externalId)
 
   def nameMatching(schemeName: String)
-                  (implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier, r: Reads[PSAName]): Future[Option[NameMatching]] =
+                  (implicit request: OptionalDataRequest[AnyContent],
+                   ec: ExecutionContext,
+                   hc: HeaderCarrier, r: Reads[PSAName]): Future[Option[NameMatching]] =
     retrievePSAName map { psaOpt =>
       for {
         psaJs <- psaOpt
