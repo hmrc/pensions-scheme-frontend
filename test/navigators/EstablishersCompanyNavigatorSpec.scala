@@ -26,6 +26,7 @@ import utils.UserAnswers
 import config.FrontendAppConfig
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.trustees.HaveAnyTrusteesId
 import models.register.{SchemeDetails, SchemeType}
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
@@ -232,6 +233,25 @@ class EstablishersCompanyNavigatorSpec extends WordSpec with MustMatchers with P
         val answers = UserAnswers().set(SchemeDetailsId)(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).asOpt.value
         val result = navigator.nextPage(CompanyReviewId(0), NormalMode)(answers)
         result mustEqual controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+      }
+
+      "return a `Call` to `AddTrusteeController`" in {
+        val answers = UserAnswers().set(SchemeDetailsId)(SchemeDetails("test-scheme-name", SchemeType.SingleTrust)).asOpt.value
+        val result = navigator.nextPage(CompanyReviewId(0), NormalMode)(answers)
+        result mustEqual controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+      }
+
+      "return a `Call` to `SchemeReviewController`" in {
+        val hasTrusteeCompanies = UserAnswers().trusteesCompanyDetails(0, CompanyDetails("test-company-name", None, None))
+        val answers = hasTrusteeCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate))
+        val result = navigator.nextPage(CompanyReviewId(0), NormalMode)(answers)
+        result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
+      }
+
+      "return a `Call` to `SchemeReviewController` if haveAnyTrustee is false" in {
+        val answers = UserAnswers().schemeDetails(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).set(HaveAnyTrusteesId)(false).asOpt.value
+        val result = navigator.nextPage(CompanyReviewId(0), NormalMode)(answers)
+        result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
       }
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers
 
 import javax.inject.Inject
 
@@ -25,9 +25,9 @@ import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
 import utils.annotations.Register
-import views.html.register.whatYouWillNeed
+import utils.{Navigator, UserAnswers}
+import views.html.whatYouWillNeed
 
 class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,

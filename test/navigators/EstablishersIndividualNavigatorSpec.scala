@@ -19,8 +19,9 @@ package navigators
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual._
+import identifiers.register.trustees.HaveAnyTrusteesId
 import models.register.{SchemeDetails, SchemeType}
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, CompanyDetails, NormalMode}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
@@ -172,6 +173,25 @@ class EstablishersIndividualNavigatorSpec extends WordSpec with MustMatchers wit
         val answers = UserAnswers().set(SchemeDetailsId)(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).asOpt.value
         val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(answers)
         result mustEqual controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+      }
+
+      "return a `Call` to `AddTrusteeController`" in {
+        val answers = UserAnswers().set(SchemeDetailsId)(SchemeDetails("test-scheme-name", SchemeType.SingleTrust)).asOpt.value
+        val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(answers)
+        result mustEqual controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+      }
+
+      "return a `Call` to `SchemeReviewController` if trustees are present" in {
+        val hasTrusteeCompanies = UserAnswers().trusteesCompanyDetails(0, CompanyDetails("test-company-name", None, None))
+        val answers = hasTrusteeCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate))
+        val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(answers)
+        result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
+      }
+
+      "return a `Call` to `SchemeReviewController` if haveAnyTrustee is false" in {
+        val answers = UserAnswers().schemeDetails(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).set(HaveAnyTrusteesId)(false).asOpt.value
+        val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(answers)
+        result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
       }
     }
   }

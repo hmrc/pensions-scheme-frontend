@@ -21,31 +21,62 @@ import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.establishers.EstablisherKindId
+import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.{SchemeDetailsId, SchemeReviewId}
-import models.NormalMode
+import models.register.establishers.EstablisherKind
+import models.{CheckMode, NormalMode}
+import models.register.{SchemeDetails, SchemeType}
+import models.register.establishers.EstablisherKind.{Company, Indivdual}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.{Enumerable, Navigator}
 import utils.annotations.Register
 import views.html.register.schemeReview
 
 import scala.concurrent.Future
 
 class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         @Register navigator: Navigator,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction) extends FrontendController with I18nSupport with Retrievals {
+                                       override val messagesApi: MessagesApi,
+                                       @Register navigator: Navigator,
+                                       authenticate: AuthAction,
+                                       getData: DataRetrievalAction,
+                                       requireData: DataRequiredAction) extends FrontendController with I18nSupport with
+  Enumerable.Implicits with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { schemeDetails =>
-        val establishers = request.userAnswers.allEstablishers.map(_._1)
-        val trustees = request.userAnswers.allTrustees.map(_._1)
-        Future.successful(Ok(schemeReview(appConfig, schemeDetails.schemeName, establishers, trustees)))
+      (SchemeDetailsId and EstablisherKindId(0)).retrieve.right.map {
+        case schemeDetails ~ establisherKind =>
+          val establishers = request.userAnswers.allEstablishers.map(_._1)
+          val trustees = request.userAnswers.allTrustees.map(_._1)
+
+          Future.successful(Ok(schemeReview(appConfig, schemeDetails.schemeName, establishers, trustees,
+            establisherEditUrl(establisherKind), trusteeEditUrl(schemeDetails, request.userAnswers.get(HaveAnyTrusteesId)))))
       }
+  }
+
+  private def establisherEditUrl(establisherKind: EstablisherKind) = {
+    establisherKind match {
+      case Indivdual =>
+        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
+      case Company =>
+        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
+      case _ =>
+        controllers.routes.WhatYouWillNeedController.onPageLoad()
+    }
+  }
+
+  private def trusteeEditUrl(schemeDetails: SchemeDetails, haveAnyTrustees: Option[Boolean]) = {
+    (schemeDetails.schemeType, haveAnyTrustees) match {
+      case (SchemeType.SingleTrust, _) =>
+        controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode)
+      case (_, Some(false)) =>
+        controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+      case _ =>
+        controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode)
+    }
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {

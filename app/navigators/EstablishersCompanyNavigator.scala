@@ -22,9 +22,11 @@ import play.api.mvc.Call
 import utils.{Navigator, UserAnswers}
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import controllers.routes
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.{AddCompanyDirectorsId, _}
 import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.trustees.HaveAnyTrusteesId
+import models.register.{SchemeDetails, SchemeType}
 import models.register.establishers.company.director.DirectorDetails
 
 @Singleton
@@ -60,7 +62,7 @@ class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) exten
     case OtherDirectorsId(index)=>
       _ => controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index)
     case CompanyReviewId(_) =>
-      TrusteesNavigator.trusteeEntryRoutes()
+      checkYourAnswerRoutes()
   }
 
   override protected val editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
@@ -126,4 +128,23 @@ class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) exten
     }
   }
 
+  private def checkYourAnswerRoutes()(answers: UserAnswers): Call = {
+    if (answers.allTrustees.nonEmpty) {
+      controllers.register.routes.SchemeReviewController.onPageLoad()
+    } else {
+      answers.get(SchemeDetailsId) match {
+        case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+        case Some(SchemeDetails(_, _)) =>
+          answers.get(HaveAnyTrusteesId) match {
+            case None =>
+              controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+            case _ =>
+              controllers.register.routes.SchemeReviewController.onPageLoad()
+          }
+        case None =>
+          controllers.routes.SessionExpiredController.onPageLoad()
+      }
+    }
+  }
 }
