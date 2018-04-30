@@ -29,6 +29,7 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId, DirectorId}
 import models.{Index, NormalMode}
 import play.api.mvc.{Action, AnyContent}
+import utils.annotations.EstablishersCompanyDirector
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
@@ -38,7 +39,7 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  dataCacheConnector: DataCacheConnector,
-                                                 navigator: Navigator,
+                                                 @EstablishersCompanyDirector navigator: Navigator,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction

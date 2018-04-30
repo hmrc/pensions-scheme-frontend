@@ -181,6 +181,16 @@ class EstablishersCompanyDirectorNavigatorSpec extends WordSpec with MustMatcher
       }
     }
 
+    ".nextPage(ConfirmDeleteDirectorId)" must {
+      "return a `Call` to `AddCompanyDirectors` page" in {
+        (0 to 10).foreach {
+          index =>
+            val result = navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode)(emptyAnswers)
+            result mustEqual controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
+        }
+      }
+    }
+
   }
 
   "CheckMode" when {
