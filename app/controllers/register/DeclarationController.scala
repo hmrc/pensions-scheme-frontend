@@ -16,13 +16,14 @@
 
 package controllers.register
 
+import javax.inject.Inject
+
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.{DataCacheConnector, PensionsSchemeConnector}
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationFormProvider
-import identifiers.register.{DeclarationDormantId, DeclarationId, SchemeDetailsId}
-import javax.inject.Inject
+import identifiers.register.{DeclarationDormantId, DeclarationId, SchemeDetailsId, SubmissionReferenceNumberId}
 import models.NormalMode
 import models.register.DeclarationDormant.{No, Yes}
 import models.requests.DataRequest
@@ -45,7 +46,8 @@ class DeclarationController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: DeclarationFormProvider
+                                       formProvider: DeclarationFormProvider,
+                                       pensionsSchemeConnector: PensionsSchemeConnector
                                      ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -62,8 +64,13 @@ class DeclarationController @Inject()(
           showPage(BadRequest.apply, formWithErrors)
         },
         (value) =>
-          dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(DeclarationId, NormalMode)(UserAnswers(cacheMap))))
+          dataCacheConnector.save(request.externalId, DeclarationId, value).flatMap { cacheMap =>
+            pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap)).flatMap { submissionResponse =>
+              dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).map { cacheMap =>
+                Redirect(navigator.nextPage(DeclarationId, NormalMode)(UserAnswers(cacheMap)))
+              }
+            }
+          }
       )
   }
 

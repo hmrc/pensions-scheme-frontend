@@ -19,7 +19,7 @@ package controllers.register
 import javax.inject.Inject
 
 import config.FrontendAppConfig
-import connectors.{DataCacheConnector, PSANameCacheConnector}
+import connectors.DataCacheConnector
 import controllers.actions._
 import forms.register.SchemeDetailsFormProvider
 import identifiers.register.SchemeDetailsId
