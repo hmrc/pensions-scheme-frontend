@@ -22,7 +22,7 @@ import play.api.test.Helpers._
 import views.html.register.schemeSuccess
 import controllers.ControllerSpecBase
 import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
-import models.register.{SchemeDetails, SchemeType}
+import models.register.{SchemeDetails, SchemeSubmissionResponse, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
 import utils.FakeNavigator
@@ -35,7 +35,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase {
 
   val validData: JsObject = Json.obj(
     SchemeDetailsId.toString -> Json.toJson(SchemeDetails("test scheme name", SchemeType.SingleTrust)),
-    SubmissionReferenceNumberId.toString->submissionReferenceNumber
+    SubmissionReferenceNumberId.toString->SchemeSubmissionResponse(submissionReferenceNumber)
   )
 
   private def controller(dataRetrievalAction: DataRetrievalAction =

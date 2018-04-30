@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import connectors.FakeDataCacheConnector
+import connectors.{FakeDataCacheConnector, PensionsSchemeConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationFormProvider
@@ -25,13 +25,16 @@ import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
 import models.CompanyDetails
 import models.person.PersonDetails
-import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
+import models.register.{DeclarationDormant, SchemeDetails, SchemeSubmissionResponse, SchemeType}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationControllerSpec extends ControllerSpecBase {
 
@@ -115,6 +118,16 @@ object DeclarationControllerSpec extends ControllerSpecBase {
   private val form = formProvider()
   private val schemeName = "Test Scheme Name"
 
+  private val validSchemeSubmissionResponse = SchemeSubmissionResponse("test-scheme-id")
+
+  private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
+    override def registerScheme
+    (answers: UserAnswers)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+      Future.successful(validSchemeSubmissionResponse)
+    }
+  }
+
   private def controller(dataRetrievalAction: DataRetrievalAction): DeclarationController =
     new DeclarationController(
       frontendAppConfig,
@@ -124,7 +137,8 @@ object DeclarationControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      fakePensionsSchemeConnector
     )
 
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean): String =

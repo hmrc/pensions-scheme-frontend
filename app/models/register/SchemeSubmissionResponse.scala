@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package identifiers.register
+package models.register
 
-import identifiers._
-import models.register.SchemeSubmissionResponse
+import play.api.libs.json.{Format, Json}
 
-case object SubmissionReferenceNumberId extends TypedIdentifier[SchemeSubmissionResponse] {
-  override def toString: String = "submissionReferenceNumber"
+case class SchemeSubmissionResponse(schemeId: String)
+
+object SchemeSubmissionResponse {
+  implicit val formatsSchemeSubmissionResponse: Format[SchemeSubmissionResponse] = Json.format[SchemeSubmissionResponse]
 }
