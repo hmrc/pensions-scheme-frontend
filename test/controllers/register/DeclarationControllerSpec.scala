@@ -118,16 +118,6 @@ object DeclarationControllerSpec extends ControllerSpecBase {
   private val form = formProvider()
   private val schemeName = "Test Scheme Name"
 
-  private val validSchemeSubmissionResponse = SchemeSubmissionResponse("test-scheme-id")
-
-  private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
-    override def registerScheme
-    (answers: UserAnswers)
-    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
-      Future.successful(validSchemeSubmissionResponse)
-    }
-  }
-
   private def controller(dataRetrievalAction: DataRetrievalAction): DeclarationController =
     new DeclarationController(
       frontendAppConfig,
@@ -137,8 +127,7 @@ object DeclarationControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider,
-      fakePensionsSchemeConnector
+      formProvider
     )
 
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean): String =

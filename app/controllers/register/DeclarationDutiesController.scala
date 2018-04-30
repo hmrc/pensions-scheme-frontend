@@ -21,12 +21,12 @@ import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
+import connectors.{DataCacheConnector, PensionsSchemeConnector}
 import controllers.actions._
 import config.FrontendAppConfig
 import controllers.Retrievals
 import forms.register.DeclarationDutiesFormProvider
-import identifiers.register.DeclarationDutiesId
+import identifiers.register.{DeclarationDutiesId, SubmissionReferenceNumberId}
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declarationDuties
 import models.{Mode, NormalMode}
@@ -43,7 +43,8 @@ class DeclarationDutiesController @Inject()(
                                              authenticate: AuthAction,
                                              getData: DataRetrievalAction,
                                              requireData: DataRequiredAction,
-                                             formProvider: DeclarationDutiesFormProvider
+                                             formProvider: DeclarationDutiesFormProvider,
+                                             pensionsSchemeConnector: PensionsSchemeConnector
                                            ) extends FrontendController with I18nSupport with Retrievals with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -67,9 +68,19 @@ class DeclarationDutiesController @Inject()(
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(declarationDuties(appConfig, formWithErrors, schemeName))),
-            (value) =>
-              dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
-                Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode)(UserAnswers(cacheMap))))
+            {
+              case true =>
+                dataCacheConnector.save(request.externalId, DeclarationDutiesId, true).flatMap { cacheMap =>
+                  pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap)).flatMap { submissionResponse =>
+                    dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).map { cacheMap =>
+                      Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode)(UserAnswers(cacheMap)))
+                    }
+                  }
+                }
+              case false =>
+                dataCacheConnector.save(request.externalId, DeclarationDutiesId, true).map(cacheMap =>
+                  Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode)(UserAnswers(cacheMap))))
+            }
           )
       }
   }

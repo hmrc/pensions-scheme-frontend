@@ -46,8 +46,7 @@ class DeclarationController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: DeclarationFormProvider,
-                                       pensionsSchemeConnector: PensionsSchemeConnector
+                                       formProvider: DeclarationFormProvider
                                      ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -64,14 +63,8 @@ class DeclarationController @Inject()(
           showPage(BadRequest.apply, formWithErrors)
         },
         (value) =>
-          dataCacheConnector.save(request.externalId, DeclarationId, value).flatMap { cacheMap =>
-            pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap)).flatMap { submissionResponse =>
-              dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).map { cacheMap =>
-                Redirect(navigator.nextPage(DeclarationId, NormalMode)(UserAnswers(cacheMap)))
-              }
-            }
-          }
-      )
+          dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
+            Redirect(navigator.nextPage(DeclarationId, NormalMode)(UserAnswers(cacheMap)))))
   }
 
   private def showPage(status: (HtmlFormat.Appendable) => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {

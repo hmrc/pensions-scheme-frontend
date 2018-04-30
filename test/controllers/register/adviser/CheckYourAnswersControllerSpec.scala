@@ -16,14 +16,19 @@
 
 package controllers.register.adviser
 
+import connectors.{FakeDataCacheConnector, PensionsSchemeConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import models.CheckMode
+import models.register.SchemeSubmissionResponse
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeCountryOptions, FakeNavigator}
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.{FakeCountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
@@ -68,15 +73,27 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
+  private val validSchemeSubmissionResponse = SchemeSubmissionResponse("test-scheme-id")
+
+  private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
+    override def registerScheme
+    (answers: UserAnswers)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+      Future.successful(validSchemeSubmissionResponse)
+    }
+  }
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
+      FakeDataCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
-      new FakeCountryOptions
+      new FakeCountryOptions,
+      fakePensionsSchemeConnector
     )
 
   lazy val viewAsString: String = check_your_answers(

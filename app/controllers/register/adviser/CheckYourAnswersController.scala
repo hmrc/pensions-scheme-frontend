@@ -20,30 +20,35 @@ import config.FrontendAppConfig
 import controllers.actions._
 import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId}
 import javax.inject.Inject
+
+import connectors.{DataCacheConnector, PensionsSchemeConnector}
+import identifiers.register.SubmissionReferenceNumberId
 import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswers.Ops._
-import utils.{CountryOptions, Navigator}
+import utils.{CountryOptions, Navigator, UserAnswers}
 import utils.annotations.Adviser
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
+                                         dataCacheConnector: DataCacheConnector,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          @Adviser navigator: Navigator,
-                                         implicit val countryOptions: CountryOptions) extends FrontendController with I18nSupport {
+                                         implicit val countryOptions: CountryOptions,
+                                         pensionsSchemeConnector: PensionsSchemeConnector) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
 
       val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
       val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
-      val sections = Seq(AnswerSection(None, adviserDetailsRow++adviserAddressRow))
+      val sections = Seq(AnswerSection(None, adviserDetailsRow ++ adviserAddressRow))
 
       Ok(
         check_your_answers(
@@ -55,9 +60,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       )
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode)(request.userAnswers))
-  }
+      pensionsSchemeConnector.registerScheme(request.userAnswers).flatMap(submissionResponse =>
+        dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).map { cacheMap =>
+          Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode)(request.userAnswers))
+        }
+      )
 
+  }
 }
