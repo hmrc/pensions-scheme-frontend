@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NameMatchingFactory @Inject()(
                                    @PSANameCache val pSANameCacheConnector: DataCacheConnector
                                    ){
-  def retrievePSAName(implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
+  private def retrievePSAName(implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
     pSANameCacheConnector.fetch(request.externalId)
 
   def nameMatching(schemeName: String)
