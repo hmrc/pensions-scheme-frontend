@@ -44,9 +44,9 @@ import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 
-class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures  {
+class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures {
 
-  def onwardRoute = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode,Index(0))
+  def onwardRoute = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0))
 
 
   val formProvider = new PostCodeLookupFormProvider()
