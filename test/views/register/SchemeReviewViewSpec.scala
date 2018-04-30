@@ -16,7 +16,7 @@
 
 package views.register
 
-import controllers.register.establishers.{routes => routes1}
+import controllers.register.establishers.individual.{routes => routes1}
 import controllers.register.routes
 import controllers.register.trustees.{routes => routes2}
 import models.CheckMode
@@ -31,8 +31,10 @@ class SchemeReviewViewSpec extends ViewBehaviours {
   private val schemeName = "Test Scheme Name"
   private val establishers = Seq("establisher name", "establisher company name")
   private val trustees = Seq("trustee name", "trustee company name")
+  private val estIndvUrl = routes1.CheckYourAnswersController.onPageLoad(0)
+  private val trusteeAddUrl = routes2.AddTrusteeController.onPageLoad(CheckMode)
 
-  private def createView = () => schemeReview(frontendAppConfig, schemeName, establishers, trustees)(fakeRequest, messages)
+  private def createView = () => schemeReview(frontendAppConfig, schemeName, establishers, trustees, estIndvUrl, trusteeAddUrl)(fakeRequest, messages)
 
   "SchemeReview view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
@@ -57,7 +59,7 @@ class SchemeReviewViewSpec extends ViewBehaviours {
 
     "have link to edit establishers details" in {
       Jsoup.parse(createView().toString).select("a[id=edit-establishers]") must haveLink(
-        routes1.AddEstablisherController.onPageLoad(CheckMode).url
+        estIndvUrl.url
       )
     }
 
@@ -72,7 +74,7 @@ class SchemeReviewViewSpec extends ViewBehaviours {
 
     "have link to edit trustees details" in {
       Jsoup.parse(createView().toString).select("a[id=edit-trustees]") must haveLink(
-        routes2.AddTrusteeController.onPageLoad(CheckMode).url
+        trusteeAddUrl.url
       )
     }
 
