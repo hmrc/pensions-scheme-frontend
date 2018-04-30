@@ -27,7 +27,7 @@ import identifiers.register.{SchemeDetailsId, SchemeReviewId}
 import models.register.establishers.EstablisherKind
 import models.{CheckMode, NormalMode}
 import models.register.{SchemeDetails, SchemeType}
-import models.register.establishers.EstablisherKind.Indivdual
+import models.register.establishers.EstablisherKind.{Company, Indivdual}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -61,8 +61,10 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
     establisherKind match {
       case Indivdual =>
         controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
-      case _ =>
+      case Company =>
         controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
+      case _ =>
+        controllers.routes.WhatYouWillNeedController.onPageLoad()
     }
   }
 

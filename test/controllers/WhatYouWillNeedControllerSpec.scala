@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers
 
 import controllers.actions._
-import play.api.test.Helpers._
-import views.html.register.whatYouWillNeed
-import controllers.ControllerSpecBase
 import play.api.mvc.Call
+import play.api.test.Helpers._
 import utils.FakeNavigator
+import views.html.whatYouWillNeed
 
 class WhatYouWillNeedControllerSpec extends ControllerSpecBase {
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package views.register
+package views
 
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.whatYouWillNeed
+import views.html.whatYouWillNeed
 
 class WhatYouWillNeedViewSpec extends ViewBehaviours {
 
