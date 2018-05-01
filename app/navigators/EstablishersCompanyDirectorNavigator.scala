@@ -53,6 +53,8 @@ class EstablishersCompanyDirectorNavigator @Inject() extends Navigator {
       _ => routes.DirectorContactDetailsController.onPageLoad(NormalMode, establisherIndex, directorIndex)
     case  DirectorContactDetailsId(establisherIndex, directorIndex) =>
       checkYourAnswers(establisherIndex, directorIndex)
+    case ConfirmDeleteDirectorId(establisherIndex) =>
+      _ => controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
   }
     override protected val editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
     case  DirectorDetailsId(establisherIndex, directorIndex) =>

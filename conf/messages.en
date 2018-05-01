@@ -118,7 +118,7 @@ messages__pension_scheme_registration__title = Pension Scheme Registration - GOV
 messages__what_you_will_need__title = What you’ll need
 messages__what_you_will_need__lede = To register a pension scheme with HMRC you will need:
 messages__what_you_will_need__item_1 = the names, addresses, previous addresses and National Insurance numbers of any directors, trustees and partners associated with the pension scheme
-messages__what_you_will_need__item_2 = the telephone numbers, email addresses and Self Assessment Unique Taxpayer Reference numbers of any directors, trustees and partners associated with the pension scheme
+messages__what_you_will_need__item_2 = the telephone numbers, email addresses and Self Assessment Unique Taxpayer Reference numbers of any directors and trustees associated with the pension scheme
 messages__what_you_will_need__item_3 = the name, contact details, Corporation Tax Unique Taxpayer Reference number and address of the scheme establisher
 messages__what_you_will_need__item_4 = PAYE, Company Registration and VAT registration numbers
 
@@ -151,6 +151,7 @@ messages__error__scheme_type_information = Enter more information about the sche
 messages__error__scheme_name_length = The scheme name cannot be more than 255 characters
 messages__error__scheme_type_invalid = You must select a valid scheme type
 messages__error__scheme_type_length = The other scheme type cannot be more than 150 characters
+messages__error__scheme_name_psa_name_match = The Pension Scheme name cannot be the same as Pension Scheme Administrator name
 
 messages__membership_current__title = How many scheme members are there?
 
@@ -301,7 +302,7 @@ messages__company__crn__title=Does the company have a Company Registration numbe
 messages__company__has_crn = Does the company have a Company Registration number (CRN)?
 messages__company__no_crn = Tell us why the company does not have a CRN
 messages__common__crn = Company Registration number
-messages__common__crn_hint = This is issued by Companies House. It is 7 or 8 characters, typically 7 numbers or a combination of 1 or 2 letters followed by 6 digits, for example AB123456.
+messages__common__crn_hint = This is issued by Companies House. It is 8 characters, typically 8 numbers or a combination of 2 letters followed by 6 numbers. For example, AB123456.
 messages__error__has_crn_company = Select yes if the company has a CRN
 messages__error__no_crn_company = You need to tell us why the company does not have a CRN
 messages__error__crn_invalid = Enter a valid 7 or 8 character Company Registration number
@@ -567,13 +568,13 @@ messages__declaration__heading = Declaration
 messages__declaration__declare = I declare/understand:
 messages__declaration__statement1_dormant = to the best of my knowledge and belief, some or all of the sponsoring employer(s) in relation to the scheme have been dormant during the last 12 months
 messages__declaration__statement1_not_dormant = to the best of my knowledge and belief, the sponsoring employer(s) in relation to the scheme have not been dormant during the last 12 months
-messages__declaration__statement2 = to the best of my knowledge and belief, some or all of the sponsoring employer(s) in relation to the scheme have been dormant during the last 12 months
-messages__declaration__statement3 = that as scheme administrator I am responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by Finance Act 12004 and I intend to discharge those functions at all times, whether resident in the United Kingdom or another EU member state or non-member EEA state
-messages__declaration__statement4 = that I will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. I understand that I may be liable to a penalty and the pension scheme may be de-registered if I fail to properly discharge those functions
-messages__declaration__statement5 = that I may be liable to a penalty and the pension scheme may be de-registered if a false statement is made on this application, or in any information I provide in connection with this application, and that false statements may also lead to prosecution
-messages__declaration__statement6 = to the best of my knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete. I understand that I am responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
-messages__declaration__statement7 = that this scheme meets all the criteria to be registered as a pension scheme under the Finance Act 2004 and in particular, is established and will be maintained wholly or mainly for the purpose of making authorised payments of pensions and lumps sums as falling within section 164(1)(a) or (b) of the Finance Act 2004
-messages__declaration__statement8 = that the instruments or agreements by which this pension scheme is constituted do not directly or indirectly entitle any person to unauthorised payments. And the way in which the pension scheme is to be administered will not knowingly entitle any person to unauthorised payments
+messages__declaration__statement2 = that as scheme administrator I am responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by Finance Act 12004 and I intend to discharge those functions at all times, whether resident in the United Kingdom or another EU member state or non-member EEA state
+messages__declaration__statement3 = that I will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. I understand that I may be liable to a penalty and the pension scheme may be de-registered if I fail to properly discharge those functions
+messages__declaration__statement4 = that I may be liable to a penalty and the pension scheme may be de-registered if a false statement is made on this application, or in any information I provide in connection with this application, and that false statements may also lead to prosecution
+messages__declaration__statement5 = to the best of my knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete. I understand that I am responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
+messages__declaration__statement6 = that this scheme meets all the criteria to be registered as a pension scheme under the Finance Act 2004 and in particular, is established and will be maintained wholly or mainly for the purpose of making authorised payments of pensions and lumps sums as falling within section 164(1)(a) or (b) of the Finance Act 2004
+messages__declaration__statement7 = that the instruments or agreements by which this pension scheme is constituted do not directly or indirectly entitle any person to unauthorised payments. And the way in which the pension scheme is to be administered will not knowingly entitle any person to unauthorised payments
+messages__declaration__statement8 =
 messages__declaration__agree = I agree
 messages__declaration__invalid = You need to agree to all the declarations before you can continue
 
@@ -592,7 +593,7 @@ messages__declarationDormant__checkYourAnswersLabel = Have any of the scheme est
 messages__declarationDormant__error__required = You need to tell us if you have appointed an adviser
 
 messages__haveAnyTrustees__title = Do you have any trustees?
-messages__haveAnyTrustees__heading = Trustees
+messages__haveAnyTrustees__heading = Do you have any trustees?
 messages__haveAnyTrustees__error__required = Select yes if you have any trustees
 
 messages__adviserDetails__title = Enter the details of your pension adviser

@@ -55,7 +55,7 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
 
   def controller(
                   dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
-                  dataCacheConnector: DataCacheConnector = new FakeDataCacheConnector()
+                  dataCacheConnector: DataCacheConnector = FakeDataCacheConnector
                 ): InsurerAddressListController =
     new InsurerAddressListController(
       frontendAppConfig, messagesApi,

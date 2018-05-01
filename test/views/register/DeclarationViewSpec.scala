@@ -69,7 +69,7 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
     behave like pageWithSubmitButton(createView)
 
     "have a cancel link" in {
-      Jsoup.parse(createView().toString).select("a[id=cancel]") must haveLink(controllers.routes.IndexController.onPageLoad().url)
+      Jsoup.parse(createView().toString).select("a[id=cancel]") must haveLink(controllers.routes.WhatYouWillNeedController.onPageLoad().url)
     }
   }
 

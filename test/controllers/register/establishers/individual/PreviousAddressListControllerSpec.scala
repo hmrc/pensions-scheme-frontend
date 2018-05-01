@@ -58,7 +58,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
 
    def controller(
                    dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
-                   dataCacheConnector: DataCacheConnector = new FakeDataCacheConnector()
+                   dataCacheConnector: DataCacheConnector = FakeDataCacheConnector
                  ): PreviousAddressListController =
         new PreviousAddressListController(
           frontendAppConfig, messagesApi,

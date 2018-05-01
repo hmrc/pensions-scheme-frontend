@@ -15,6 +15,7 @@
  */
 
 import com.google.inject.AbstractModule
+import connectors.{DataCacheConnector, PSANameCacheConnector}
 import navigators._
 import utils.annotations._
 import utils.Navigator
@@ -22,6 +23,10 @@ import utils.Navigator
 class PODSModule extends AbstractModule {
 
   override def configure(): Unit = {
+
+    bind(classOf[DataCacheConnector])
+      .annotatedWith(classOf[PSANameCache])
+      .to(classOf[PSANameCacheConnector])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[EstablishersIndividual])

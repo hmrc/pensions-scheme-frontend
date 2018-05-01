@@ -39,13 +39,15 @@ class SchemeDetailsFormProviderSpec extends FormBehaviours {
       Field("schemeName", Required -> "messages__error__scheme_name"),
       Field("schemeType.type", Required -> "messages__error__selection"))
 
-    "fail to bind when the scheme name exceeds max length 255" in {
-      val testString = RandomStringUtils.random(invalidLength)
-      val data = Map(
-        "schemeName" -> testString,
-        "schemeType.type" -> "single")
-      val expectedError = error("schemeName", "messages__error__scheme_name_length", validMaxLength)
-      checkForError(form, data, expectedError)
+    "fail to bind" when {
+      "the scheme name exceeds max length 255" in {
+        val testString = RandomStringUtils.random(invalidLength)
+        val data = Map(
+          "schemeName" -> testString,
+          "schemeType.type" -> "single")
+        val expectedError = error("schemeName", "messages__error__scheme_name_length", validMaxLength)
+        checkForError(form, data, expectedError)
+      }
     }
 
     "successfully bind when the schemeType is other with schemeTypeDetails and have valid scheme name" in {

@@ -20,7 +20,7 @@ import models.register.SchemeType
 import org.joda.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.domain.Nino
-import utils.CountryOptions
+import utils.{CountryOptions, NameMatching}
 
 trait Constraints {
 
@@ -88,6 +88,18 @@ trait Constraints {
       case _ =>
         Invalid(errorKey, maximum)
     }
+
+  protected def psaNameMatch(psaName: String, errorKey: String): Constraint[String] = {
+     Constraint {
+       input =>
+
+         if (NameMatching(input, psaName).isMatch) {
+           Invalid(errorKey)
+         } else {
+           Valid
+         }
+    }
+  }
 
   protected def schemeTypeConstraint(invalidKey: String): Constraint[String] = {
 
