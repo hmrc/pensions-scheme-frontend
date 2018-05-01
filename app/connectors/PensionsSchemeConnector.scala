@@ -32,17 +32,17 @@ import scala.util.{Failure, Try}
 @ImplementedBy(classOf[PensionsSchemeConnectorImpl])
 trait PensionsSchemeConnector {
 
-  def registerScheme(answers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse]
+  def registerScheme(answers: UserAnswers, psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse]
 
 }
 
 @Singleton
 class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends PensionsSchemeConnector {
 
-  def registerScheme(answers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+  def registerScheme(answers: UserAnswers, psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
     val url = config.registerSchemeUrl
 
-    http.POST(url, answers.json).map { response =>
+    http.POST(url, answers.json, Seq("psaId" -> psaId)).map { response =>
       require(response.status == Status.OK)
 
       val json = Json.parse(response.body)

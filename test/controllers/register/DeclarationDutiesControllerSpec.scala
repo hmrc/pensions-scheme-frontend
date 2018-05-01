@@ -16,19 +16,19 @@
 
 package controllers.register
 
-import play.api.data.Form
-import utils.{FakeNavigator, UserAnswers}
 import connectors.{FakeDataCacheConnector, PensionsSchemeConnector}
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
-import play.api.libs.json._
 import forms.register.DeclarationDutiesFormProvider
 import identifiers.register.{DeclarationDutiesId, SchemeDetailsId}
 import models.register.{SchemeDetails, SchemeSubmissionResponse, SchemeType}
-import views.html.register.declarationDuties
-import controllers.ControllerSpecBase
+import play.api.data.Form
+import play.api.libs.json._
 import play.api.mvc.Call
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.{FakeNavigator, UserAnswers}
+import views.html.register.declarationDuties
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,7 +44,7 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase {
 
   private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
     override def registerScheme
-    (answers: UserAnswers)
+    (answers: UserAnswers, psaId: String)
     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
       Future.successful(validSchemeSubmissionResponse)
     }

@@ -17,14 +17,14 @@
 package controllers.actions
 
 import com.google.inject.{ImplementedBy, Inject}
-import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
-import play.api.mvc.Results._
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.Retrievals
 import config.FrontendAppConfig
 import controllers.routes
 import models.requests.AuthenticatedRequest
-import uk.gov.hmrc.http.UnauthorizedException
+import play.api.mvc.Results._
+import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
+import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
@@ -36,10 +36,13 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
   override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised().retrieve(Retrievals.externalId) {
-      _.map {
-        externalId => block(AuthenticatedRequest(request, externalId))
-      }.getOrElse(throw new UnauthorizedException("Unable to retrieve external Id"))
+    authorised().retrieve(Retrievals.externalId and
+      Retrievals.allEnrolments) {
+
+        case Some(id) ~ enrolments =>
+            block(AuthenticatedRequest(request, id.toString, PsaId(getPsaId(enrolments))))
+        case _ =>
+          Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
     } recover {
       case ex: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
@@ -53,9 +56,17 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
         Redirect(routes.UnauthorisedController.onPageLoad)
       case ex: UnsupportedCredentialRole =>
         Redirect(routes.UnauthorisedController.onPageLoad)
+      case ex: PsaIdNotFound =>
+        Redirect(routes.UnauthorisedController.onPageLoad)
     }
   }
+
+  private def getPsaId(enrolments: Enrolments) =
+    enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PsaID")).map(_.value).getOrElse(throw new PsaIdNotFound)
+
 }
 
 @ImplementedBy(classOf[AuthActionImpl])
 trait AuthAction extends ActionBuilder[AuthenticatedRequest] with ActionFunction[Request, AuthenticatedRequest]
+
+case class PsaIdNotFound(msg: String = "PsaIdNotFound") extends AuthorisationException(msg)

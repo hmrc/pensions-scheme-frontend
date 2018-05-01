@@ -62,7 +62,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      pensionsSchemeConnector.registerScheme(request.userAnswers).flatMap(submissionResponse =>
+      pensionsSchemeConnector.registerScheme(request.userAnswers, request.psaId.id).flatMap(submissionResponse =>
         dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).map { cacheMap =>
           Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode)(request.userAnswers))
         }

@@ -36,6 +36,7 @@ import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 import org.mockito.Mockito._
 import org.mockito.Matchers.{eq => eqTo, _}
+import uk.gov.hmrc.domain.PsaId
 
 import scala.concurrent.Future
 
@@ -52,11 +53,11 @@ object AddressYearsControllerSpec {
                                  ) extends AddressYearsController {
 
     def onPageLoad(viewmodel: AddressYearsViewModel, answers: UserAnswers): Future[Result] = {
-      get(FakeIdentifier, formProvider("error"), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers))
+      get(FakeIdentifier, formProvider("error"), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
     }
 
     def onSubmit(viewmodel: AddressYearsViewModel, answers: UserAnswers, fakeRequest: Request[AnyContent]): Future[Result] = {
-      post(FakeIdentifier, NormalMode, formProvider("error"), viewmodel)(DataRequest(fakeRequest, "cacheId", answers))
+      post(FakeIdentifier, NormalMode, formProvider("error"), viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
 }

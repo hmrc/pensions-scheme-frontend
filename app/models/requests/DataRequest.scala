@@ -17,8 +17,9 @@
 package models.requests
 
 import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.domain.PsaId
 import utils.UserAnswers
 
-case class OptionalDataRequest[A] (request: Request[A], externalId: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+case class OptionalDataRequest[A] (request: Request[A], externalId: String, userAnswers: Option[UserAnswers], psaId: PsaId) extends WrappedRequest[A](request)
 
-case class DataRequest[A] (request: Request[A], externalId: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)
+case class DataRequest[A] (request: Request[A], externalId: String, userAnswers: UserAnswers, psaId: PsaId) extends WrappedRequest[A](request)
