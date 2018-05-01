@@ -22,6 +22,7 @@ import models.register.SchemeSubmissionResponse
 import org.scalatest.{AsyncFlatSpec, Matchers, OptionValues}
 import play.api.http.Status
 import play.api.libs.json.{JsResultException, Json}
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{UserAnswers, WireMockHelper}
 
@@ -47,7 +48,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    connector.registerScheme(userAnswers).map( subscription =>
+    connector.registerScheme(userAnswers, "test-psa-id").map( subscription =>
       subscription shouldBe schemeSubmissionResponse
     )
 
@@ -68,7 +69,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[IllegalArgumentException] {
-      connector.registerScheme(userAnswers)
+      connector.registerScheme(userAnswers, "test-psa-id")
     }
 
   }
@@ -88,7 +89,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[JsonParseException] {
-      connector.registerScheme(userAnswers)
+      connector.registerScheme(userAnswers, "test-psa-id")
     }
 
   }
@@ -108,7 +109,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[JsResultException] {
-      connector.registerScheme(userAnswers)
+      connector.registerScheme(userAnswers, "test-psa-id")
     }
 
   }
@@ -128,7 +129,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
     recoverToSucceededIf[SchemeSubmissionUnsuccessful] {
-      connector.registerScheme(userAnswers)
+      connector.registerScheme(userAnswers, "test-psa-id")
     }
 
   }

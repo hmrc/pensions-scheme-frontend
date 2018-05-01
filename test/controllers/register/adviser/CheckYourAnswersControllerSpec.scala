@@ -77,7 +77,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
     override def registerScheme
-    (answers: UserAnswers)
+    (answers: UserAnswers, psaId: String)
     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
       Future.successful(validSchemeSubmissionResponse)
     }

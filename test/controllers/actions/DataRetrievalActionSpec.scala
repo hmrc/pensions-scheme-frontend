@@ -24,6 +24,7 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
+import uk.gov.hmrc.domain.PsaId
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,7 +42,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future(None)
         val action = new Harness(dataCacheConnector)
 
-        val futureResult = action.callTransform(AuthenticatedRequest(fakeRequest, "id"))
+        val futureResult = action.callTransform(AuthenticatedRequest(fakeRequest, "id", PsaId("A0000000")))
 
         whenReady(futureResult) { result =>
           result.userAnswers.isEmpty mustBe true
@@ -55,7 +56,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         when(dataCacheConnector.fetch(eqTo("id"))(any(), any())) thenReturn Future.successful(Some(Json.obj()))
         val action = new Harness(dataCacheConnector)
 
-        val futureResult = action.callTransform(AuthenticatedRequest(fakeRequest, "id"))
+        val futureResult = action.callTransform(AuthenticatedRequest(fakeRequest, "id", PsaId("A0000000")))
 
         whenReady(futureResult) { result =>
           result.userAnswers.isDefined mustBe true

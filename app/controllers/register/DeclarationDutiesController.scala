@@ -71,7 +71,7 @@ class DeclarationDutiesController @Inject()(
             {
               case true =>
                 dataCacheConnector.save(request.externalId, DeclarationDutiesId, true).flatMap { cacheMap =>
-                  pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap)).flatMap { submissionResponse =>
+                  pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id).flatMap { submissionResponse =>
                     dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).map { cacheMap =>
                       Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode)(UserAnswers(cacheMap)))
                     }

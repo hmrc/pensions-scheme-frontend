@@ -30,6 +30,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -139,7 +140,7 @@ object AddressListControllerSpec {
 
       get(
         viewModel
-      )(DataRequest(FakeRequest(), "cacheId", UserAnswers()))
+      )(DataRequest(FakeRequest(), "cacheId", UserAnswers(), PsaId("A0000000")))
 
     }
 
@@ -152,7 +153,7 @@ object AddressListControllerSpec {
         fakeId,
         fakeId,
         NormalMode
-      )(DataRequest(request, "cacheId", UserAnswers()))
+      )(DataRequest(request, "cacheId", UserAnswers(), PsaId("A0000000")))
 
     }
 

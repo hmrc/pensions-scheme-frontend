@@ -34,6 +34,7 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.domain.PsaId
 import utils._
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -57,10 +58,10 @@ object ManualAddressControllerSpec {
 
 
     def onPageLoad(viewModel: ManualAddressViewModel, answers: UserAnswers): Future[Result] =
-      get(fakeIdentifier, viewModel)(DataRequest(FakeRequest(), "cacheId", answers))
+      get(fakeIdentifier, viewModel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
 
     def onSubmit(viewModel: ManualAddressViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
-      post(fakeIdentifier, viewModel, NormalMode)(DataRequest(request, "cacheId", answers))
+      post(fakeIdentifier, viewModel, NormalMode)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
 
     override protected val form: Form[Address] = formProvider()
   }
