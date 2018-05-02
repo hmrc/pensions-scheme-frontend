@@ -602,6 +602,7 @@ messages__adviserDetails__heading = Enter the details of your pension adviser
 messages__adviserDetails__secondary_heading = Pension adviser
 messages__adviserDetails__name = Name or company
 messages__adviserDetails__email = Email address
+messages__adviserDetails__phone = Phone Number
 messages__adviserDetails__checkYourAnswersLabel = Enter the details of your pension adviser
 messages__adviserDetails__error__name_required = Enter the name of your adviser
 messages__adviserDetails__error__email_required = Enter an email address
