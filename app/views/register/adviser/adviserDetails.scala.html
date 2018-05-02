@@ -45,6 +45,11 @@
             label = messages("messages__adviserDetails__email")
         )
 
+        @components.input_text(
+            field = form("phoneNumber"),
+            label = messages("messages__adviserDetails__phone")
+        )
+
         @components.submit_button()
     }
 }

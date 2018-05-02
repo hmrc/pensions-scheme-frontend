@@ -34,7 +34,7 @@ import viewmodels.AnswerRow
 class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOptions) extends Enumerable.Implicits {
 
   def adviserDetails: Option[AnswerRow] = userAnswers.get(AdviserDetailsId) map {
-    x => AnswerRow("adviserDetails.checkYourAnswersLabel", Seq(s"${x.adviserName} ${x.emailAddress}"), false, controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(CheckMode).url)
+    x => AnswerRow("adviserDetails.checkYourAnswersLabel", Seq(s"${x.adviserName} ${x.emailAddress} ${x.phoneNumber}"), false, controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(CheckMode).url)
   }
 
   def haveAnyTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.HaveAnyTrusteesId) map {
