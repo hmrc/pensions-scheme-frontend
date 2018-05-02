@@ -21,8 +21,8 @@ import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
-import identifiers.register.establishers.company.director.{DirectorPreviousAddressPostcodeLookupId, DirectorDetailsId}
-import models.address.Address
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressPostcodeLookupId}
+import models.address.TolerantAddress
 import models.register.establishers.company.director.DirectorDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
@@ -40,21 +40,21 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
   private val directorDetails = DirectorDetails("Joe", None, "Bloggs", LocalDate.now())
 
   private val addresses = Seq(
-    Address(
-      "Address 1 Line 1",
-      "Address 1 Line 2",
+    TolerantAddress(
+      Some("Address 1 Line 1"),
+      Some("Address 1 Line 2"),
       Some("Address 1 Line 3"),
       Some("Address 1 Line 4"),
       Some("A1 1PC"),
-      "GB"
+      Some("GB")
     ),
-    Address(
-      "Address 2 Line 1",
-      "Address 2 Line 2",
+    TolerantAddress(
+      Some("Address 2 Line 1"),
+      Some("Address 2 Line 2"),
       Some("Address 2 Line 3"),
       Some("Address 2 Line 4"),
       Some("123"),
-      "FR"
+      Some("FR")
     )
   )
 
@@ -136,7 +136,8 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
         val result = route(app, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.establishers.company.director.routes.DirectorPreviousAddressController.onPageLoad(NormalMode, 0, 0).url)
+        redirectLocation(result) mustBe Some(
+          controllers.register.establishers.company.director.routes.DirectorPreviousAddressController.onPageLoad(NormalMode, 0, 0).url)
       }
 
     }
@@ -185,7 +186,7 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
 
   }
 
-  private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
+  private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
       routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0)),
       routes.DirectorPreviousAddressController.onPageLoad(NormalMode, Index(0), Index(0)),

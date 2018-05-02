@@ -22,7 +22,7 @@ import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
-import models.address.Address
+import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
 import org.scalatest.OptionValues
 import play.api.inject.bind
@@ -39,21 +39,21 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
   private val companyDetails = CompanyDetails("test company name", None, None)
 
   private val addresses = Seq(
-    Address(
-      "Address 1 Line 1",
-      "Address 1 Line 2",
+    TolerantAddress(
+      Some("Address 1 Line 1"),
+      Some("Address 1 Line 2"),
       Some("Address 1 Line 3"),
       Some("Address 1 Line 4"),
       Some("A1 1PC"),
-      "GB"
+      Some("GB")
     ),
-    Address(
-      "Address 2 Line 1",
-      "Address 2 Line 2",
+    TolerantAddress(
+      Some("Address 2 Line 1"),
+      Some("Address 2 Line 2"),
       Some("Address 2 Line 3"),
       Some("Address 2 Line 4"),
       Some("123"),
-      "FR"
+      Some("FR")
     )
   )
 
@@ -184,7 +184,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
   }
 
-  private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
+  private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
       routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)),
       routes.CompanyAddressController.onPageLoad(NormalMode, Index(0)),

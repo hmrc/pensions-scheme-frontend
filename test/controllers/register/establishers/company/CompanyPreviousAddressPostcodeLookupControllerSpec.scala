@@ -16,30 +16,31 @@
 
 package controllers.register.establishers.company
 
-import play.api.data.Form
-import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
-import controllers.actions._
-import play.api.test.Helpers._
-import org.scalatest.mockito.MockitoSugar
-import org.mockito.Mockito._
-import org.mockito._
-import uk.gov.hmrc.http.HeaderCarrier
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
-import models.{CompanyDetails, Index, NormalMode}
-import views.html.register.establishers.company.companyPreviousAddressPostcodeLookup
-import play.api.libs.json._
 import controllers.ControllerSpecBase
+import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
-import models.address.{Address, AddressRecord}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
+import models.address.TolerantAddress
 import models.register.{SchemeDetails, SchemeType}
+import models.{CompanyDetails, Index, NormalMode}
+import org.mockito.Mockito._
+import org.mockito._
+import org.scalatest.mockito.MockitoSugar
+import play.api.data.Form
+import play.api.libs.json._
+import play.api.mvc.Call
+import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.FakeNavigator
+import views.html.register.establishers.company.companyPreviousAddressPostcodeLookup
 
 import scala.concurrent.Future
 
 class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
 
   val formProvider = new PostCodeLookupFormProvider()
@@ -49,13 +50,13 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
   val companyName: String = "test company name"
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
 
-  private def fakeAddress(postCode: String) = Address(
-    "Address Line 1",
-    "Address Line 2",
+  private def fakeAddress(postCode: String) = TolerantAddress(
+    Some("Address Line 1"),
+    Some("Address Line 2"),
     Some("Address Line 3"),
     Some("Address Line 4"),
     Some(postCode),
-    "GB"
+    Some("GB")
   )
 
   private val testAnswer = "AB12 3CD"
@@ -82,7 +83,8 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = companyPreviousAddressPostcodeLookup(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = companyPreviousAddressPostcodeLookup(frontendAppConfig,
+    form, NormalMode, index, companyName)(fakeRequest, messages).toString
 
   "CompanyPreviousAddressPostcodeLookup Controller" must {
 
@@ -104,7 +106,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", testAnswer))
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(testAnswer))(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful(Some(Seq(AddressRecord(fakeAddress(testAnswer))))))
+        .thenReturn(Future.successful(Some(Seq(fakeAddress(testAnswer)))))
       val result = controller().onSubmit(NormalMode, index)(postRequest)
 
       status(result) mustBe SEE_OTHER

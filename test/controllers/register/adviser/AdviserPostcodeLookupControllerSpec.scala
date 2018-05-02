@@ -16,15 +16,14 @@
 
 package controllers.register.adviser
 
-import scala.concurrent.Future
 import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
-import models.address.{Address, AddressRecord}
 import models.NormalMode
+import models.address.TolerantAddress
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
@@ -34,14 +33,15 @@ import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, redirectLocation, route, running, status, _}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.annotations.Adviser
+import utils.{FakeNavigator, Navigator}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
-import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, redirectLocation, route, running, status}
-import utils.{FakeNavigator, Navigator}
-import utils.annotations.Adviser
+
+import scala.concurrent.Future
 
 class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
@@ -49,13 +49,13 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
   def manualInputCall: Call = routes.AdviserAddressController.onPageLoad(NormalMode)
 
-  private def fakeAddress(postCode: String) = Address(
-    "Address Line 1",
-    "Address Line 2",
+  private def fakeAddress(postCode: String) = TolerantAddress(
+    Some("Address Line 1"),
+    Some("Address Line 2"),
     Some("Address Line 3"),
     Some("Address Line 4"),
     Some(postCode),
-    "GB"
+    Some("GB")
   )
 
   private val testAnswer = "AB12 1AB"
@@ -113,7 +113,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(
-          Some(Seq(AddressRecord(fakeAddress(testAnswer)))))
+          Some(Seq(fakeAddress(testAnswer))))
         )
 
       running(_.overrides(

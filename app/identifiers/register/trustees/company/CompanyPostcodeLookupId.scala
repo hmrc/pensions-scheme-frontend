@@ -18,10 +18,10 @@ package identifiers.register.trustees.company
 
 import identifiers._
 import identifiers.register.trustees.TrusteesId
-import models.address.Address
+import models.address.TolerantAddress
 import play.api.libs.json._
 
-case class CompanyPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[Address]] {
+case class CompanyPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[TolerantAddress]] {
   override def path: JsPath = __ \ TrusteesId.toString \ index \ CompanyPostcodeLookupId.toString
 }
 

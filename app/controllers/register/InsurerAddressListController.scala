@@ -25,10 +25,9 @@ import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register._
 import models.Mode
-import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -75,7 +74,7 @@ class InsurerAddressListController @Inject()(appConfig: FrontendAppConfig,
                 dataCacheConnector.save(
                   request.externalId,
                   InsurerAddressId,
-                  addresses(value).copy(country = "GB")
+                  addresses(value).toAddress.copy(country = "GB")
                 ).map(cacheMap =>
                   Redirect(navigator.nextPage(InsurerAddressListId, mode)(new UserAnswers(cacheMap))))
             )

@@ -76,11 +76,11 @@ class PreviousAddressPostCodeLookupController @Inject()(
                 case Some(Nil) =>
                   Future.successful(BadRequest(previousPostCodeLookup(appConfig, formWithError("no_results"), mode, index, establisherName)))
 
-                case Some(addressSeq) =>
+                case Some(addresses) =>
                   dataCacheConnector.save(
                     request.externalId,
                     PreviousPostCodeLookupId(index),
-                    addressSeq.map(_.address)
+                    addresses
                   ).map {
                     json =>
                       Redirect(navigator.nextPage(PreviousPostCodeLookupId(index), mode)(new UserAnswers(json)))

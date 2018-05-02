@@ -24,7 +24,7 @@ import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
-import models.address.{Address, AddressRecord}
+import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -44,9 +44,9 @@ import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 
-class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures  {
+class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures {
 
-  def onwardRoute = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode,Index(0))
+  def onwardRoute = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0))
 
 
   val formProvider = new PostCodeLookupFormProvider()
@@ -117,7 +117,7 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
 
         when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful(
-            Some(Seq(AddressRecord(Address("address line 1", "address line 2", None, None, Some(validPostcode), "GB"))))
+            Some(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))))
           ))
 
         running(_.overrides(

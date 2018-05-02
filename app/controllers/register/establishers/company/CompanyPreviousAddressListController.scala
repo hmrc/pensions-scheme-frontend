@@ -71,7 +71,7 @@ class CompanyPreviousAddressListController @Inject()(
               (formWithErrors: Form[_]) =>
                 Future.successful(BadRequest(companyPreviousAddressList(appConfig, formWithErrors, mode, index, companyName, addresses))),
               (value) =>
-                dataCacheConnector.save(request.externalId, CompanyPreviousAddressId(index), addresses(value).copy(country = "GB")).map(cacheMap =>
+                dataCacheConnector.save(request.externalId, CompanyPreviousAddressId(index), addresses(value).toAddress.copy(country = "GB")).map(cacheMap =>
                   Redirect(navigator.nextPage(CompanyPreviousAddressListId(index), mode)(new UserAnswers(cacheMap))))
             )
         }
