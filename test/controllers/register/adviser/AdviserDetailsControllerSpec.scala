@@ -38,7 +38,6 @@ class AdviserDetailsControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val nameOrCompany = "test name"
   val email = "test@test.com"
-  val phone = "01234567890"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AdviserDetailsController =
     new AdviserDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
@@ -56,16 +55,16 @@ class AdviserDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(AdviserDetailsId.toString -> AdviserDetails(nameOrCompany, email, phone))
+      val validData = Json.obj(AdviserDetailsId.toString -> AdviserDetails(nameOrCompany, email))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(AdviserDetails(nameOrCompany, email, phone)))
+      contentAsString(result) mustBe viewAsString(form.fill(AdviserDetails(nameOrCompany, email)))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("adviserName", nameOrCompany), ("emailAddress", email), ("phoneNumber", phone))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("adviserName", nameOrCompany), ("emailAddress", email))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
@@ -91,7 +90,7 @@ class AdviserDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("adviserName", nameOrCompany), ("emailAddress", email), ("phoneNumber", phone))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("adviserName", nameOrCompany), ("emailAddress", email))
       val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER

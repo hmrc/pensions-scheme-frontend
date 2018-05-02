@@ -119,7 +119,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
       SchemeDetailsId.toString ->
         SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
       AdviserDetailsId.toString->
-        AdviserDetails("name", "email", "phone")
+        AdviserDetails("name","email")
     ))
   )
 }
