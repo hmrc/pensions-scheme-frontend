@@ -18,10 +18,10 @@ package identifiers.register.establishers.company
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import models.address.Address
+import models.address.TolerantAddress
 import play.api.libs.json.JsPath
 
-case class CompanyPreviousAddressPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[Address]] {
+case class CompanyPreviousAddressPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[TolerantAddress]] {
   override def path: JsPath = EstablishersId.path \ index \ CompanyPreviousAddressPostcodeLookupId.toString
 }
 

@@ -23,7 +23,7 @@ import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.SchemeDetailsId
 import models.NormalMode
-import models.address.{Address, AddressRecord}
+import models.address.{Address, AddressRecord, TolerantAddress}
 import models.person.PersonDetails
 import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
@@ -97,15 +97,15 @@ object InsurerPostCodeLookupControllerSpec extends OptionValues {
   val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())
   val validPostcode = "ZZ1 1ZZ"
   val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
-  val address = Address("address line 1", "address line 2", None, None, Some(validPostcode), "GB")
+  val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
   val retrieval = new FakeDataRetrievalAction(Some(
     Json.obj(SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SingleTrust))
   ))
 
   private val fakeAddressLookupConnector = new AddressLookupConnector {
-    override def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Seq[AddressRecord]]] = {
-      Future.successful(Some(Seq(AddressRecord(address))))
+    override def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Seq[TolerantAddress]]] = {
+      Future.successful(Some(Seq(address)))
     }
   }
 

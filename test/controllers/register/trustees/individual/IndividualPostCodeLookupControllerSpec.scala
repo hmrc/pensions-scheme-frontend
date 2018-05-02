@@ -18,15 +18,14 @@ package controllers.register.trustees.individual
 
 import base.CSRFRequest
 import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
-import play.api.test.Helpers._
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.address.{Address, AddressRecord}
-import models.{Index, NormalMode}
+import models.address.TolerantAddress
 import models.person.PersonDetails
+import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -36,6 +35,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.annotations.TrusteesIndividual
 import utils.{FakeNavigator, Navigator}
@@ -85,7 +85,7 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
   val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())
   val validPostcode = "ZZ1 1ZZ"
   val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
-  val address = Address("address line 1", "address line 2", None, None, Some(validPostcode), "GB")
+  val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
   lazy val viewModel = PostcodeLookupViewModel(
     postCall = routes.IndividualPostCodeLookupController.onSubmit(NormalMode, firstIndex),
@@ -106,8 +106,8 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
     )
   ))
   private val fakeAddressLookupConnector = new AddressLookupConnector {
-    override def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Seq[AddressRecord]]] = {
-      Future.successful(Some(Seq(AddressRecord(address))))
+    override def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Seq[TolerantAddress]]] = {
+      Future.successful(Some(Seq(address)))
     }
   }
   private def requestResult[T](request: (Application) => Request[T], test: (Request[_], Future[Result]) => Unit)(implicit writeable: Writeable[T]): Unit = {

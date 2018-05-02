@@ -76,7 +76,7 @@ class AddressListController @Inject()(
                   dataCacheConnector.save(
                     request.externalId,
                     AddressId(index),
-                    addresses(id).copy(country = "GB")
+                    addresses(id).toAddress.copy(country = "GB")
                   ).map {
                     json =>
                       Redirect(navigator.nextPage(AddressListId(index), mode)(new UserAnswers(json)))

@@ -24,7 +24,7 @@ import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.address.{Address, AddressRecord}
+import models.address.{Address, AddressRecord, TolerantAddress}
 import models.{Index, NormalMode}
 import models.person.PersonDetails
 import org.joda.time.LocalDate
@@ -85,7 +85,7 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
   val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())
   val validPostcode = "ZZ1 1ZZ"
   val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
-  val address = Address("address line 1", "address line 2", None, None, Some(validPostcode), "GB")
+  val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
   lazy val viewModel = PostcodeLookupViewModel(
     postCall = routes.IndividualPreviousAddressPostcodeLookupController.onSubmit(NormalMode, firstIndex),
@@ -107,8 +107,8 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
   ))
   private val fakeAddressLookupConnector = new AddressLookupConnector {
     override def addressLookupByPostCode(postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext):
-    Future[Option[Seq[AddressRecord]]] = {
-      Future.successful(Some(Seq(AddressRecord(address))))
+    Future[Option[Seq[TolerantAddress]]] = {
+      Future.successful(Some(Seq(address)))
     }
   }
 

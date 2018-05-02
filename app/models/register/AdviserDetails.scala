@@ -18,7 +18,7 @@ package models.register
 
 import play.api.libs.json._
 
-case class AdviserDetails (adviserName: String, emailAddress: String, phoneNumber: String)
+case class AdviserDetails (adviserName: String, emailAddress: String)
 
 object AdviserDetails {
   implicit val format = Json.format[AdviserDetails]

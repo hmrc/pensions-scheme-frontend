@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, UniqueTaxReference}
@@ -68,11 +68,16 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       formProvider
     )
 
-  def viewAsString(form: Form[_] = form, address: Seq[Address] = addresses): String =
+  def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = addresses): String =
     addressList(frontendAppConfig, form, NormalMode, firstIndex, address, establisherName)(fakeRequest, messages).toString
 
-  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), postcode = Some(postCode), country = "United Kingdom")
+  def address(postCode: String): TolerantAddress = TolerantAddress(
+    Some("address line 1"),
+    Some("address line 2"),
+    Some("test town"),
+    Some("test county"),
+    Some(postCode),
+    Some("United Kingdom"))
 
   val validData = Json.obj(
     SchemeDetailsId.toString -> Json.toJson(
@@ -132,7 +137,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
 
       status(result) mustEqual SEE_OTHER
       verify(dataCacheConnector, times(1))
-        .save[Address, AddressId](any(), Matchers.eq(AddressId(0)), Matchers.eq(addresses.head.copy(country = "GB")))(any(), any(), any())
+        .save[Address, AddressId](any(), Matchers.eq(AddressId(0)), Matchers.eq(addresses.head.toAddress.copy(country = "GB")))(any(), any(), any())
     }
 
     "return a Bad Request and errors when no data is submitted" in {

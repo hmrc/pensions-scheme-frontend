@@ -22,7 +22,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPostcodeLookupId}
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.{CompanyDetails, Index, NormalMode}
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -38,21 +38,21 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
   private val companyDetails = CompanyDetails("Test company name", None, None)
 
   private val addresses = Seq(
-    Address(
-      "Address 1 Line 1",
-      "Address 1 Line 2",
+    TolerantAddress(
+      Some("Address 1 Line 1"),
+      Some("Address 1 Line 2"),
       Some("Address 1 Line 3"),
       Some("Address 1 Line 4"),
       Some("A1 1PC"),
-      "GB"
+      Some("GB")
     ),
-    Address(
-      "Address 2 Line 1",
-      "Address 2 Line 2",
+    TolerantAddress(
+      Some("Address 2 Line 1"),
+      Some("Address 2 Line 2"),
       Some("Address 2 Line 3"),
       Some("Address 2 Line 4"),
       Some("123"),
-      "FR"
+      Some("FR")
     )
   )
 
@@ -183,7 +183,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
   }
 
-  private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
+  private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
       routes.CompanyAddressListController.onSubmit(NormalMode, Index(0)),
       routes.CompanyAddressController.onPageLoad(NormalMode, Index(0)),

@@ -23,14 +23,14 @@ import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.adviser.AdviserAddressPostCodeLookupId
 import models.NormalMode
-import models.address.Address
+import models.address.TolerantAddress
 import play.api.Application
 import play.api.http.Writeable
-import play.api.libs.json.Json
-import play.api.test.Helpers.{contentAsString, _}
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.{Request, Result}
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{contentAsString, _}
 import utils.annotations.Adviser
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
@@ -121,21 +121,21 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
 
   val onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val addresses = Seq(
-    Address(
-      "Address 1 Line 1",
-      "Address 1 Line 2",
+    TolerantAddress(
+      Some("Address 1 Line 1"),
+      Some("Address 1 Line 2"),
       Some("Address 1 Line 3"),
       Some("Address 1 Line 4"),
       Some("A1 1PC"),
-      "GB"
+      Some("GB")
     ),
-    Address(
-      "Address 2 Line 1",
-      "Address 2 Line 2",
+    TolerantAddress(
+      Some("Address 2 Line 1"),
+      Some("Address 2 Line 2"),
       Some("Address 2 Line 3"),
       Some("Address 2 Line 4"),
       Some("123"),
-      "FR"
+      Some("FR")
     )
   )
 
@@ -146,7 +146,7 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
 
   val retrievalAction = new FakeDataRetrievalAction(data)
 
-  private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
+  private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
       routes.AdviserAddressListController.onSubmit(NormalMode),
       routes.AdviserAddressController.onPageLoad(NormalMode),

@@ -22,7 +22,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConn
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
-import models.address.{Address, AddressRecord}
+import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Matchers
 import org.mockito.Mockito.when
@@ -35,7 +35,6 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeNavigator, Navigator}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -47,13 +46,13 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
   def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, firstIndex)
   def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex)
 
-  private def fakeAddress(postCode: String) = Address(
-    "Address Line 1",
-    "Address Line 2",
+  private def fakeAddress(postCode: String) = TolerantAddress(
+    Some("Address Line 1"),
+    Some("Address Line 2"),
     Some("Address Line 3"),
     Some("Address Line 4"),
     Some(postCode),
-    "GB"
+    Some("GB")
   )
 
   private val testAnswer = "AB12 1AB"
@@ -117,8 +116,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
       val validPostcode = "ZZ1 1ZZ"
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful(
-          Some(Seq(AddressRecord(fakeAddress(testAnswer)))))
+        .thenReturn(Future.successful(Some(Seq(fakeAddress(testAnswer))))
         )
 
       running(_.overrides(

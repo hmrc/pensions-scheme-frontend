@@ -20,23 +20,21 @@ import base.CSRFRequest
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
-import controllers.register.trustees.individual.IndividualPostCodeLookupControllerSpec.onwardRoute
 import forms.address.AddressListFormProvider
 import identifiers.register.trustees.individual._
-import models.{Index, NormalMode}
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.person.PersonDetails
+import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, route, running, status}
+import play.api.test.Helpers.{contentAsString, route, running, status, _}
+import utils.annotations.TrusteesIndividual
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
-import play.api.test.Helpers._
-import utils.annotations.TrusteesIndividual
 import views.html.address.addressList
 
 class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
@@ -46,21 +44,21 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
   private val trusteeDetails=PersonDetails("First Name",Some("Second Name"),"Last Name",LocalDate.now())
 
   private val addresses = Seq(
-    Address(
-      "Address 1 Line 1",
-      "Address 1 Line 2",
+    TolerantAddress(
+      Some("Address 1 Line 1"),
+      Some("Address 1 Line 2"),
       Some("Address 1 Line 3"),
       Some("Address 1 Line 4"),
       Some("A1 1PC"),
-      "GB"
+      Some("GB")
     ),
-    Address(
-      "Address 2 Line 1",
-      "Address 2 Line 2",
+    TolerantAddress(
+      Some("Address 2 Line 1"),
+      Some("Address 2 Line 2"),
       Some("Address 2 Line 3"),
       Some("Address 2 Line 4"),
       Some("123"),
-      "FR"
+      Some("FR")
     )
   )
 
@@ -192,7 +190,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
     }
   }
 
-  private def addressListViewModel(addresses: Seq[Address]): AddressListViewModel = {
+  private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
       routes.IndividualAddressListController.onSubmit(NormalMode, Index(0)),
       routes.TrusteeAddressController.onPageLoad(NormalMode,Index(0)),

@@ -19,7 +19,7 @@ package views.register.establishers.individual
 import controllers.register.establishers.individual.routes
 import play.api.data.Form
 import forms.address.AddressListFormProvider
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
@@ -34,8 +34,12 @@ class PreviousAddressListViewSpec extends ViewBehaviours {
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
 
-  def address(postCode: String): Address = Address("address line 1", "address line 2", Some("test town"),
-    Some("test county"), Some(postCode), "GB")
+  def address(postCode: String): TolerantAddress = TolerantAddress(
+    Some("address line 1"),
+    Some("address line 2"),
+    Some("test town"),
+    Some("test county"),
+    Some(postCode), Some("GB"))
 
   val addressSeq = Seq(address("postcode 1"), address("postcode 2"))
   val previousAddressIndexes = Seq.range(0, 2)
