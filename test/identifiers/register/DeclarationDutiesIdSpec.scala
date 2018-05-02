@@ -28,7 +28,7 @@ class DeclarationDutiesIdSpec extends WordSpec with MustMatchers with OptionValu
   "cleanup" when {
     val answers = UserAnswers(Json.obj())
       .set(DeclarationDutiesId)(false)
-      .flatMap(_.set(AdviserDetailsId)(AdviserDetails("name", "email")))
+      .flatMap(_.set(AdviserDetailsId)(AdviserDetails("name", "email", "phone")))
       .flatMap(_.set(AdviserAddressPostCodeLookupId)(Seq.empty))
       .flatMap(_.set(AdviserAddressId)(Address("", "", None, None, None, ""))).asOpt.value
 

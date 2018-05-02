@@ -16,13 +16,13 @@
 
 package forms.register
 
-import forms.behaviours.{EmailBehaviours, StringFieldBehaviours}
+import forms.behaviours.{EmailBehaviours, PhoneNumberBehaviours, StringFieldBehaviours}
 import forms.mappings.Constraints
 import org.scalatest.OptionValues
 import play.api.data.FormError
 import wolfendale.scalacheck.regexp.RegexpGen
 
-class AdviserDetailsFormProviderSpec extends  StringFieldBehaviours with Constraints with OptionValues with EmailBehaviours {
+class AdviserDetailsFormProviderSpec extends  StringFieldBehaviours with Constraints with OptionValues with EmailBehaviours with PhoneNumberBehaviours {
 
 
   val form = new AdviserDetailsFormProvider()()
@@ -76,6 +76,20 @@ class AdviserDetailsFormProviderSpec extends  StringFieldBehaviours with Constra
       keyEmailLength,
       keyEmailInvalid
     )
+  }
 
+  ".phoneNumber" must {
+    val fieldName = "phoneNumber"
+    val keyPhoneNumberRequired = "messages__error__phone"
+    val keyPhoneNumberLength = "messages__error__phone_length"
+    val keyPhoneNumberInvalid = "messages__error__phone_invalid"
+
+    behave like formWithPhoneNumberField(
+      form,
+      fieldName,
+      keyPhoneNumberRequired,
+      keyPhoneNumberLength,
+      keyPhoneNumberInvalid
+    )
   }
 }

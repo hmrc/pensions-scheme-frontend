@@ -432,6 +432,12 @@ object CheckYourAnswers {
               Seq(s"${adviserDetails.emailAddress}"),
               false,
               changeUrl
+            ),
+            AnswerRow(
+              "messages__adviserDetails__phone",
+              Seq(s"${adviserDetails.phoneNumber}"),
+              false,
+              changeUrl
             ))
       }.getOrElse(Seq.empty[AnswerRow])
     }
