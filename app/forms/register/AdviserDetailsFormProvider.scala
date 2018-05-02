@@ -18,12 +18,12 @@ package forms.register
 
 import javax.inject.Inject
 
-import forms.mappings.EmailMapping
+import forms.mappings.{EmailMapping, PhoneNumberMapping}
 import play.api.data.Form
 import play.api.data.Forms._
 import models.register.AdviserDetails
 
-class AdviserDetailsFormProvider @Inject() extends EmailMapping {
+class AdviserDetailsFormProvider @Inject() extends EmailMapping with PhoneNumberMapping {
 
   val nameLength: Int = 107
 
@@ -44,6 +44,11 @@ class AdviserDetailsFormProvider @Inject() extends EmailMapping {
         "messages__error__email",
         "messages__error__email_length",
         "messages__error__email_invalid"
+      ),
+      "phoneNumber" -> phoneNumberMapping(
+        "messages__error__phone",
+        "messages__error__phone_length",
+        "messages__error__phone_invalid"
       )
     )(AdviserDetails.apply)(AdviserDetails.unapply)
   )
