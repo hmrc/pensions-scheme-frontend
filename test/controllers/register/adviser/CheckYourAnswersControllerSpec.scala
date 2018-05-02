@@ -61,7 +61,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   lazy val adviserSection = AnswerSection(None,
     Seq(
       AnswerRow("messages__common__cya__name", Seq("name"), answerIsMessageKey = false, adviserDetailsRoute),
-      AnswerRow("messages__adviserDetails__email", Seq("email"), answerIsMessageKey = false, adviserDetailsRoute)
+      AnswerRow("messages__adviserDetails__email", Seq("email"), answerIsMessageKey = false, adviserDetailsRoute),
+      AnswerRow("messages__adviserDetails__phone", Seq("phone"), answerIsMessageKey = false, adviserDetailsRoute)
       )
   )
 
