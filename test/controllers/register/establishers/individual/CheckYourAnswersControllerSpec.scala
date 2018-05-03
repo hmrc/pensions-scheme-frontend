@@ -34,7 +34,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
 
-  val answers: Seq[AnswerRow] = Seq(
+  lazy val answers: Seq[AnswerRow] = Seq(
     AnswerRow(
       "messages__establisher_individual_name_cya_label",
       Seq("test first name test last name"),
