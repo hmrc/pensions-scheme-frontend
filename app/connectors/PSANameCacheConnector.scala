@@ -28,7 +28,4 @@ class PSANameCacheConnector  @Inject() (
                                        ) extends MicroserviceCacheConnector(config, http, crypto) {
 
   override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/psa-name/$id"
-
-
-
 }

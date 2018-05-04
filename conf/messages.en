@@ -277,6 +277,9 @@ messages__error__no_ct_utr_establisher = You need to tell us why the establisher
 messages__error__has_ct_utr_establisher = Select yes if the establisher has a CTUTR
 messages__error__ct_utr_invalid = Enter a valid 10 digit Corporation Tax Unique Taxpayer Reference number
 
+messages__common__enrol_test__title = Enrol PSA to access Scheme Reg
+messages__common__psa_name = PSA Name
+
 messages__company_address_years__title = How long has the company been at this address?
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
@@ -618,3 +621,5 @@ messages__adviserPostCodeLookupAddress__title=Pension adviser''s address
 messages__adviserPostCodeLookupAddress__heading=Pension adviser''s address
 messages__adviserPostCodeLookupAddress__secondary=Pension adviser
 messages__adviserPostCodeLookupAddress__enterPostCode= Enter the postcode below, or if you have an overseas address{0} enter the address manually {1}
+
+messages__enrolment__error__name_invalid = Enter a PSA Name
