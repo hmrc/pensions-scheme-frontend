@@ -19,11 +19,11 @@ package controllers.register
 import javax.inject.Inject
 
 import config.FrontendAppConfig
-import connectors.{DataCacheConnector, PensionsSchemeConnector}
+import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationFormProvider
-import identifiers.register.{DeclarationDormantId, DeclarationId, SchemeDetailsId, SubmissionReferenceNumberId}
+import identifiers.register.{DeclarationDormantId, DeclarationId, SchemeDetailsId}
 import models.NormalMode
 import models.register.DeclarationDormant.{No, Yes}
 import models.requests.DataRequest
