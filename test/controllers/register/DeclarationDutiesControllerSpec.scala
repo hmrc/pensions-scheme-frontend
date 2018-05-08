@@ -16,18 +16,21 @@
 
 package controllers.register
 
-import play.api.data.Form
-import utils.FakeNavigator
-import connectors.FakeDataCacheConnector
+import connectors.{FakeDataCacheConnector, PensionsSchemeConnector}
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
-import play.api.libs.json._
 import forms.register.DeclarationDutiesFormProvider
 import identifiers.register.{DeclarationDutiesId, SchemeDetailsId}
-import models.register.{SchemeDetails, SchemeType}
-import views.html.register.declarationDuties
-import controllers.ControllerSpecBase
+import models.register.{SchemeDetails, SchemeSubmissionResponse, SchemeType}
+import play.api.data.Form
+import play.api.libs.json._
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.{FakeNavigator, UserAnswers}
+import views.html.register.declarationDuties
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationDutiesControllerSpec extends ControllerSpecBase {
 
@@ -36,9 +39,20 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase {
   val formProvider = new DeclarationDutiesFormProvider()
   val form = formProvider()
 
+
+  private val validSchemeSubmissionResponse = SchemeSubmissionResponse("test-scheme-id")
+
+  private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
+    override def registerScheme
+    (answers: UserAnswers, psaId: String)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+      Future.successful(validSchemeSubmissionResponse)
+    }
+  }
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): DeclarationDutiesController =
     new DeclarationDutiesController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider, fakePensionsSchemeConnector)
 
   def viewAsString(form: Form[_] = form): String = declarationDuties(frontendAppConfig, form, "Test Scheme Name")(fakeRequest, messages).toString
 

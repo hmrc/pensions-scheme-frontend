@@ -16,13 +16,14 @@
 
 package controllers.register
 
+import javax.inject.Inject
+
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationFormProvider
 import identifiers.register.{DeclarationDormantId, DeclarationId, SchemeDetailsId}
-import javax.inject.Inject
 import models.NormalMode
 import models.register.DeclarationDormant.{No, Yes}
 import models.requests.DataRequest
@@ -63,8 +64,7 @@ class DeclarationController @Inject()(
         },
         (value) =>
           dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(DeclarationId, NormalMode)(UserAnswers(cacheMap))))
-      )
+            Redirect(navigator.nextPage(DeclarationId, NormalMode)(UserAnswers(cacheMap)))))
   }
 
   private def showPage(status: (HtmlFormat.Appendable) => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {

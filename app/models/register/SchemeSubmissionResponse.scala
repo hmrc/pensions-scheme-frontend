@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package models.register
 
-import models.requests.DataRequest
-import play.api.mvc.{AnyContent, AnyContentAsEmpty, Request}
-import play.api.test.FakeRequest
-import uk.gov.hmrc.domain.PsaId
+import play.api.libs.json.{Format, Json}
 
-class FakeDataRequest(request: Request[AnyContentAsEmpty.type], externalId: String, answers: UserAnswers, psaId: PsaId)
-  extends DataRequest[AnyContent](request, externalId, answers, psaId)
+case class SchemeSubmissionResponse(schemeId: String)
 
-object FakeDataRequest {
-  def apply(answers: UserAnswers): FakeDataRequest = {
-    new FakeDataRequest(FakeRequest("", ""), "test-external-id", answers, PsaId("A0000000"))
-  }
+object SchemeSubmissionResponse {
+  implicit val formatsSchemeSubmissionResponse: Format[SchemeSubmissionResponse] = Json.format[SchemeSubmissionResponse]
 }

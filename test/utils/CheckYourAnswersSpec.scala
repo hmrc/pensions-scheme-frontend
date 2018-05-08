@@ -29,6 +29,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.PsaId
 import utils.CheckYourAnswers.Ops._
 import viewmodels.AnswerRow
 
@@ -51,7 +52,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
         "id is schemeEstablishedCountryId" in {
           implicit val countryOptions = new CountryOptions(Seq(InputOption("AU", "Australia"),
             InputOption("GB", "United Kingdom")))
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(SchemeEstablishedCountryId.toString -> "AU")))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(SchemeEstablishedCountryId.toString -> "AU")), PsaId("A0000000"))
 
           SchemeEstablishedCountryId.row(onwardUrl) must equal(Seq(
             AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", Seq("Australia"), false, onwardUrl)))
@@ -59,14 +60,14 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
         "any id other than schemeEstablishedCountryId" in {
           implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> "value")))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> "value")), PsaId("A0000000"))
 
           testIdentifier[String].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("value"), false, onwardUrl)))
         }
       }
 
       "boolean" in {
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)), PsaId("A0000000"))
 
         testIdentifier[Boolean].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("site.yes"), true, onwardUrl)))
       }
@@ -74,7 +75,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
       "schemeDetails" in {
         val schemeType = SchemeType.SingleTrust
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(
-          Json.obj("testId" -> SchemeDetails("test name", schemeType))))
+          Json.obj("testId" -> SchemeDetails("test name", schemeType))), PsaId("A0000000"))
 
         testIdentifier[SchemeDetails].row(onwardUrl) must equal(Seq(
           AnswerRow("messages__scheme_details__name_label", Seq("test name"), false, onwardUrl),
@@ -84,7 +85,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
       "membership" in {
         val membershipVal = Membership.options.head.value
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)), PsaId("A0000000"))
 
         testIdentifier[Membership].row(onwardUrl) must equal(Seq(AnswerRow(
           "testId.checkYourAnswersLabel", Seq(s"messages__membership__$membershipVal"), true, onwardUrl)))
@@ -93,7 +94,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
       "bankDetails" in {
         val date = LocalDate.now()
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(
-          Json.obj("testId" -> UKBankDetails("test bank name", "test account name", SortCode("12", "23", "45"), "test account number", date))))
+          Json.obj("testId" -> UKBankDetails("test bank name", "test account name", SortCode("12", "23", "45"), "test account number", date))), PsaId("A0000000"))
 
         testIdentifier[UKBankDetails].row(onwardUrl) must equal(Seq(
           AnswerRow("messages__uk_bank_account_details__bank_name", Seq("test bank name"), false, onwardUrl),
@@ -106,7 +107,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
       "schemeBenefits" in {
         val benefitsVal = Benefits.options.head.value
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> benefitsVal)))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> benefitsVal)), PsaId("A0000000"))
 
         testIdentifier[Benefits].row(onwardUrl) must equal(Seq(AnswerRow(
           "messages__benefits__title", Seq(s"messages__benefits__$benefitsVal"), true, onwardUrl)))
@@ -114,7 +115,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
       "benefitsInsurer" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(
-          Json.obj("testId" -> BenefitsInsurer("test name", "test policy"))))
+          Json.obj("testId" -> BenefitsInsurer("test name", "test policy"))), PsaId("A0000000"))
 
         testIdentifier[BenefitsInsurer].row(onwardUrl) must equal(Seq(
           AnswerRow("messages__benefits_insurance__name", Seq("test name"), false, onwardUrl),
@@ -130,7 +131,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
             "testId" -> companyDetails
-          )))
+          )), PsaId("A0000000"))
 
           testIdentifier[CompanyDetails].row("onwardUrl") must equal(Seq(AnswerRow(
             "messages__common__cya__name",
@@ -146,7 +147,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
             "testId" -> companyDetails
-          )))
+          )), PsaId("A0000000"))
 
           testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
             AnswerRow(
@@ -169,7 +170,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
             "testId" -> companyDetails
-          )))
+          )), PsaId("A0000000"))
 
           testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
             AnswerRow(
@@ -193,7 +194,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(
             "testId" -> companyDetails
-          )))
+          )), PsaId("A0000000"))
 
           testIdentifier[CompanyDetails].row(onwardUrl) must equal(Seq(
             AnswerRow(
@@ -224,7 +225,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
           val crn = CompanyRegistrationNumber.Yes("0987654")
 
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> crn)))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> crn)), PsaId("A0000000"))
 
           testIdentifier[CompanyRegistrationNumber].row(onwardUrl) must equal(Seq(
             AnswerRow(
@@ -244,7 +245,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
           val crn = CompanyRegistrationNumber.No("Not sure")
 
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> crn)))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> crn)), PsaId("A0000000"))
 
           testIdentifier[CompanyRegistrationNumber].row(onwardUrl) must equal(Seq(
             AnswerRow(
@@ -270,7 +271,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
           val utr = UniqueTaxReference.Yes("7654321244")
 
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)), PsaId("A0000000"))
 
           testIdentifier[UniqueTaxReference].row(onwardUrl) must equal(Seq(
             AnswerRow(
@@ -295,7 +296,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
           val utr = UniqueTaxReference.No("Not sure")
 
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> utr)), PsaId("A0000000"))
 
           testIdentifier[UniqueTaxReference].row(onwardUrl) must equal(Seq(
             AnswerRow(
@@ -323,7 +324,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
           "address1", "address2", Some("address3"), Some("address4"), Some("postcode"), "GB"
         )
 
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> address)))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> address)), PsaId("A0000000"))
 
         def addressAnswer(address: Address): Seq[String] = {
           val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
@@ -352,7 +353,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
         val addressYears = AddressYears.values.head
 
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> addressYears)), PsaId("A0000000"))
 
         testIdentifier[AddressYears].row(onwardUrl) must equal(Seq(AnswerRow(
           "messages__establisher_address_years__title",
@@ -367,7 +368,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
         val contactDetails = ContactDetails("e@mail.com", "0987654")
 
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> contactDetails)))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> contactDetails)), PsaId("A0000000"))
 
         testIdentifier[ContactDetails].row(onwardUrl) must equal(Seq(
           AnswerRow(
@@ -387,7 +388,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
       "personDetails" in {
         val personDetails = PersonDetails("firstName", None, "last", LocalDate.now)
-        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> personDetails)))
+        implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> personDetails)), PsaId("A0000000"))
 
         testIdentifier[PersonDetails].row(onwardUrl) must equal(Seq(
           AnswerRow(
@@ -407,7 +408,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
       "Nino" when {
         "yes" in {
           val nino = Nino.Yes("AB700100A")
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> nino)))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> nino)), PsaId("A0000000"))
 
           testIdentifier[Nino].row(onwardUrl) must equal(Seq(
             AnswerRow(
@@ -426,7 +427,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
         "no" in {
           val nino = Nino.No("Not sure")
-          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> nino)))
+          implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> nino)), PsaId("A0000000"))
 
           testIdentifier[Nino].row(onwardUrl) must equal(Seq(
             AnswerRow(

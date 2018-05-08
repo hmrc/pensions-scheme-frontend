@@ -24,6 +24,7 @@ import play.api.libs.json.{JsString, JsValue, Json}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -40,7 +41,7 @@ class NameMatchingFactorySpec extends SpecBase {
 
   val schemeName = "My Scheme Reg"
 
-  implicit val request: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest("", ""), "externalId", None)
+  implicit val request: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest("", ""), "externalId", None, PsaId("A0000000"))
 
   def nameMatchingFactory(fetchResponse: Option[JsValue]) = new NameMatchingFactory(new FakePSANameCacheConnector(fetchResponse))
 

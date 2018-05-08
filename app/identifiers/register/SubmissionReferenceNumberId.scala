@@ -17,7 +17,8 @@
 package identifiers.register
 
 import identifiers._
+import models.register.SchemeSubmissionResponse
 
-case object SubmissionReferenceNumberId extends TypedIdentifier[String] {
+case object SubmissionReferenceNumberId extends TypedIdentifier[SchemeSubmissionResponse] {
   override def toString: String = "submissionReferenceNumber"
 }
