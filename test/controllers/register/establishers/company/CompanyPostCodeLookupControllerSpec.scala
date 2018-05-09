@@ -116,7 +116,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
       val validPostcode = "ZZ1 1ZZ"
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful(Some(Seq(fakeAddress(testAnswer))))
+        .thenReturn(Future.successful(Seq(fakeAddress(testAnswer)))
         )
 
       running(_.overrides(

@@ -69,7 +69,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       val boundForm = form.bindFromRequest()(postRequest)
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(invalidPostCode))(Matchers.any(), Matchers.any())).thenReturn(
-        Future.successful(Some(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(invalidPostCode), Some("GB"))))))
+        Future.successful(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(invalidPostCode), Some("GB")))))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
@@ -83,7 +83,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       val boundForm = form.withError(FormError("value", "messages__error__postcode_no_results"))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(notFoundPostCode))
-      (Matchers.any(), Matchers.any())).thenReturn(Future.successful(Some(Nil)))
+      (Matchers.any(), Matchers.any())).thenReturn(Future.successful((Nil)))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
@@ -95,7 +95,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       val validPostCode = "ZZ1 1ZZ"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", validPostCode))
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostCode))(Matchers.any(), Matchers.any())).thenReturn(
-        Future.successful(Some(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostCode), Some("GB"))))))
+        Future.successful(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostCode), Some("GB")))))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
