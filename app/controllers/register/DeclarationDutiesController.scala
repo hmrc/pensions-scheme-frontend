@@ -78,7 +78,7 @@ class DeclarationDutiesController @Inject()(
                   }
                 }
               case false =>
-                dataCacheConnector.save(request.externalId, DeclarationDutiesId, true).map(cacheMap =>
+                dataCacheConnector.save(request.externalId, DeclarationDutiesId, false).map(cacheMap =>
                   Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode)(UserAnswers(cacheMap))))
             }
           )
