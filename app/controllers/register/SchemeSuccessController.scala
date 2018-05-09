@@ -51,7 +51,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
             appConfig,
             request.userAnswers.get(SchemeDetailsId).map(_.schemeName),
             LocalDate.now(),
-            submissionReferenceNumber.schemeId))
+            submissionReferenceNumber.schemeReferenceNumber))
           )
       }
   }
