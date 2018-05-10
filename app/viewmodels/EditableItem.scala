@@ -46,9 +46,9 @@ object EditableItem {
   implicit def fromTrusteeEntityDetails(trustees: Seq[(String, String)]): Seq[EditableItem] = {
     trustees.zipWithIndex.map { case (trustee, index) =>
       val trusteeKind = trustee._2 match {
-        case url if url == controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
+        case url if url == controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
           => TrusteeKind.Company
-        case url if url == controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(CheckMode, index).url
+        case url if url == controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, index).url
           => TrusteeKind.Individual
         case _ => throw new IllegalArgumentException(s"Cannot determine trustee kind: ${trustee._1}")
       }
