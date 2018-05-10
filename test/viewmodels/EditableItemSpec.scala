@@ -18,7 +18,7 @@ package viewmodels
 
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.{CheckMode, CompanyDetails, NormalMode}
+import models.{CompanyDetails, NormalMode}
 import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
 import org.joda.time.LocalDate

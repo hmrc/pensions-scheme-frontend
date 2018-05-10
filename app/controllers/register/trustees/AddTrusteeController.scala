@@ -54,10 +54,7 @@ class AddTrusteeController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       SchemeDetailsId.retrieve.right.map { schemeDetails =>
-        println("\n\n\n\n all trustees before: ")
         val trustees = request.userAnswers.allTrustees
-        println("\n\n\n\n all trustees : "+trustees)
-        println("mode : "+mode)
         Future.successful(Ok(addTrustee(appConfig, form, mode, schemeDetails.schemeName, trustees)))
       }
   }

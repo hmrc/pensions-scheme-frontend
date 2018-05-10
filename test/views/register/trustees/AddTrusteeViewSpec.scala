@@ -21,9 +21,8 @@ import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
-import models.{CheckMode, CompanyDetails, NormalMode}
+import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
-import org.jsoup.Jsoup
 import play.api.data.Form
 import utils.UserAnswers
 import views.behaviours.{YesNoViewBehaviours, EditableItemListBehaviours}
