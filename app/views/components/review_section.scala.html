@@ -29,12 +29,14 @@
         </a>
     </p>
 
-    @list.map { list =>
-        @for(listItem <- list){
-            <li>@listItem</li>
-        }
+    <ul>
+        @list.map { list =>
+            @for(listItem <- list){
+                <li>@listItem</li>
+            }
 
-    }
+        }
+    </ul>
 
 
 
