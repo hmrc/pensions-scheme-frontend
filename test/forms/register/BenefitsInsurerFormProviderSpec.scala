@@ -16,47 +16,80 @@
 
 package forms.register
 
-import forms.behaviours.FormBehaviours
-import models.register.BenefitsInsurer
-import models.{Field, Required}
-import org.apache.commons.lang3.RandomStringUtils
+import forms.behaviours.StringFieldBehaviours
+import forms.mappings.Constraints
+import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
-class BenefitsInsurerFormProviderSpec extends FormBehaviours {
-
-  val validData: Map[String, String] = Map(
-    "companyName" -> "value 1",
-    "policyNumber" -> "value 2"
-  )
-
-  val validMaxLength = 255
-  val invalidMaxLength = 256
-
+class BenefitsInsurerFormProviderSpec extends StringFieldBehaviours with Constraints {
   val form = new BenefitsInsurerFormProvider()()
 
-  "BenefitsInsurer form" must {
-    behave like questionForm(BenefitsInsurer("value 1", "value 2"))
+  ".companyName" must {
+    val validMaxLength = 160
 
-    behave like formWithMandatoryTextFields(
-      Field("companyName", Required -> "messages__error__company_name"),
-      Field("policyNumber", Required -> "messages__error__benefits_insurance__policy")
+    val fieldName = "companyName"
+    val lengthKey = "messages__error__company_name_length"
+    val requiredErrorKey = "messages__error__company_name"
+    val invalidKey = "messages__error__company_name_invalid"
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      RegexpGen.from(regexSafeText)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredErrorKey)
+    )
+
+    behave like fieldWithMaxLength(
+      form,
+      fieldName,
+      maxLength = validMaxLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(validMaxLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      "[[company Name]]",
+      error = FormError(fieldName, invalidKey, Seq(regexSafeText))
     )
   }
 
-  "fail to bind when the company name exceeds max length 255" in {
-    val testString = RandomStringUtils.random(invalidMaxLength)
-    val data = Map(
-      "companyName" -> testString,
-      "policyNumber" -> "value 2")
-    val expectedError = error("companyName", "messages__error__company_name_length", validMaxLength)
-    checkForError(form, data, expectedError)
-  }
+  ".policyNumber" must {
+    val validMaxLength = 55
+    val fieldName = "policyNumber"
+    val requiredKey = "messages__error__benefits_insurance__policy"
+    val lengthKey = "messages__error__benefits_insurance__policy_length"
+    val invalidKey = "messages__error__benefits_insurance__policy_invalid"
 
-  "fail to bind when the policy number exceeds max length 255" in {
-    val testString = RandomStringUtils.random(invalidMaxLength)
-    val data = Map(
-      "companyName" -> "value 1",
-      "policyNumber" -> testString)
-    val expectedError = error("policyNumber", "messages__error__benefits_insurance__policy_length", validMaxLength)
-    checkForError(form, data, expectedError)
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      RegexpGen.from(regexPolicyNumber)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithMaxLength(
+      form,
+      fieldName,
+      maxLength = validMaxLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(validMaxLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      "[[policy number]]",
+      error = FormError(fieldName, invalidKey, Seq(regexPolicyNumber))
+    )
   }
 }
