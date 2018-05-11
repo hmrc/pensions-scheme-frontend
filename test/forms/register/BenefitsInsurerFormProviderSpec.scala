@@ -69,7 +69,7 @@ class BenefitsInsurerFormProviderSpec extends StringFieldBehaviours with Constra
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(regexPolicyNumber)
+      RegexpGen.from(regexSafeText)
     )
 
     behave like mandatoryField(
@@ -89,7 +89,7 @@ class BenefitsInsurerFormProviderSpec extends StringFieldBehaviours with Constra
       form,
       fieldName,
       "[[policy number]]",
-      error = FormError(fieldName, invalidKey, Seq(regexPolicyNumber))
+      error = FormError(fieldName, invalidKey, Seq(regexSafeText))
     )
   }
 }

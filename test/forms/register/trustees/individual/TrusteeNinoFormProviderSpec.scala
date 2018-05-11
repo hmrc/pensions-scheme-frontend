@@ -30,7 +30,8 @@ class TrusteeNinoFormProviderSpec extends NinoBehaviours {
       requiredNinoKey,
       requiredReasonKey,
       reasonLengthKey,
-      invalidNinoKey
+      invalidNinoKey,
+      invalidReasonKey
     )
   }
 
