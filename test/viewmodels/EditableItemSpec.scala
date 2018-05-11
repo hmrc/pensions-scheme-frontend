@@ -18,7 +18,7 @@ package viewmodels
 
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.{CheckMode, CompanyDetails}
+import models.{CompanyDetails, NormalMode}
 import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
 import org.joda.time.LocalDate
@@ -55,13 +55,13 @@ class EditableItemSpec extends FlatSpec with Matchers with OptionValues {
         0,
         companyDetails.companyName,
         controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(0, TrusteeKind.Company).url,
-        controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, 0).url
+        controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0).url
       ),
       EditableItem(
         1,
         trusteeDetails.fullName,
         controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(1, TrusteeKind.Individual).url,
-        controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(CheckMode, 1).url
+        controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 1).url
       )
     )
 

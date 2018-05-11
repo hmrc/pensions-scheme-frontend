@@ -26,7 +26,7 @@ import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
-import models.{CheckMode, CompanyDetails, NormalMode}
+import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
@@ -40,9 +40,9 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   def editTrusteeCompanyRoute(id: Int): String =
-    controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, id).url
+    controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id).url
   def editTrusteeIndividualRoute(id: Int): String =
-    controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(CheckMode, id).url
+    controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id).url
 
   val formProvider = new AddTrusteeFormProvider()
   val schemeName = "Test Scheme Name"
