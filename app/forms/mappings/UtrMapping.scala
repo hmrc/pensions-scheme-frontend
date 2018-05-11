@@ -27,11 +27,12 @@ trait UtrMapping extends Mappings {
                                           requiredUtrKey: String = "messages__error__sautr",
                                           requiredReasonKey: String = "messages__error__no_sautr_establisher",
                                           invalidUtrKey: String = "messages__error__sautr_invalid",
-                                          maxLengthReasonKey: String = "messages__error__no_sautr_length"
+                                          maxLengthReasonKey: String = "messages__error__no_sautr_length",
+                                          invalidReasonKey: String = "messages__error__no_sautr_invalid"
                                          ):
   Mapping[UniqueTaxReference] = {
 
-    val reasonMaxLength = 150
+    val reasonMaxLength = 160
     def fromUniqueTaxReference(utr: UniqueTaxReference): (Boolean, Option[String], Option[String]) = {
       utr match {
         case UniqueTaxReference.Yes(utrNo) => (true, Some(utrNo), None)
@@ -51,7 +52,8 @@ trait UtrMapping extends Mappings {
     tuple("hasUtr" -> boolean(requiredKey),
       "utr" -> mandatoryIfTrue("uniqueTaxReference.hasUtr", text(requiredUtrKey).verifying(regexp(regexUtr, invalidUtrKey))),
       "reason" -> mandatoryIfFalse("uniqueTaxReference.hasUtr",
-        text(requiredReasonKey).verifying(maxLength(reasonMaxLength, maxLengthReasonKey)))).
+        text(requiredReasonKey).verifying(
+          firstError(maxLength(reasonMaxLength, maxLengthReasonKey), safeText(invalidReasonKey))))).
       transform(toUniqueTaxReference, fromUniqueTaxReference)
   }
 }

@@ -18,49 +18,61 @@ package forms.behaviours
 
 import forms.FormSpec
 import forms.mappings.CrnMapping
-import models.CompanyRegistrationNumber
+import generators.Generators
 import models.CompanyRegistrationNumber
 import models.CompanyRegistrationNumber.Yes
+import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
 
-trait CrnBehaviour extends FormSpec with CrnMapping {
+trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Generators {
 
   def formWithCrn(testForm: Form[CompanyRegistrationNumber]): Unit = {
 
     "behave like form with crn" must {
+      val hasCrn = "companyRegistrationNumber.hasCrn"
+      val crn = "companyRegistrationNumber.crn"
+      val reason = "companyRegistrationNumber.reason"
 
       "bind successfully when CRN is valid" in {
-
-        val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "true", "companyRegistrationNumber.crn" -> "1234567"))
+        val result = testForm.bind(Map(hasCrn -> "true", crn -> "1234567"))
         result.errors.size shouldBe 0
         result.get shouldBe Yes("1234567")
       }
-
-      "fail to bind when yes is selected but Company Registration Number is not provided" in {
-        val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "true"))
-        result.errors shouldBe Seq(FormError("companyRegistrationNumber.crn", "messages__error__crn"))
+      "fail to bind" when {
+        "yes is selected but Company Registration Number is not provided" in {
+          val result = testForm.bind(Map(hasCrn -> "true"))
+          result.errors shouldBe Seq(FormError(crn, "messages__error__crn"))
+        }
+        "no is selected but reason is not provided" in {
+          val result = testForm.bind(Map(hasCrn -> "false"))
+          result.errors shouldBe Seq(FormError(reason, "messages__error__no_crn_company"))
+        }
+        "CRN is invalid" in {
+          val result = testForm.bind(Map(hasCrn -> "true", crn -> "123.456"))
+          result.errors shouldBe Seq(FormError(crn, "messages__error__crn_invalid"))
+        }
+        "reason is invalid" in {
+          val result = testForm.bind(Map(hasCrn -> "false", "companyRegistrationNumber.reason" -> "[[reason]]"))
+          result.errors shouldBe Seq(FormError(reason, "messages__error__no_crn_invalid", Seq(regexSafeText)))
+        }
+        "reason is more than max length" in {
+          val maxLength = 160
+          forAll(stringsLongerThan(maxLength) -> "longString") {
+            string =>
+              val result = testForm.bind(Map(hasCrn -> "false", "companyRegistrationNumber.reason" -> string))
+              result.errors shouldBe Seq(FormError(reason, "messages__error__no_crn_length", Seq(maxLength)))
+          }
+        }
       }
-
-      "fail to bind when no is selected but reason is not provided" in {
-        val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "false"))
-        result.errors shouldBe Seq(FormError("companyRegistrationNumber.reason", "messages__error__no_crn_company"))
-      }
-
-      "fail to bind when CRN is invalid" in {
-        val result = testForm.bind(Map("companyRegistrationNumber.hasCrn" -> "true", "companyRegistrationNumber.crn" -> "123.456"))
-        result.errors shouldBe Seq(FormError("companyRegistrationNumber.crn", "messages__error__crn_invalid"))
-      }
-
       "Successfully unbind 'companyRegistrationNumber.hasCrn'" in {
         val result = testForm.fill(CompanyRegistrationNumber.Yes("crn")).data
-        result should contain("companyRegistrationNumber.hasCrn" -> "true")
-        result should contain("companyRegistrationNumber.crn" -> "crn")
+        result should contain(hasCrn -> "true")
+        result should contain(crn -> "crn")
       }
-
       "Successfully unbind 'companyRegistrationNumber.No'" in {
         val result = testForm.fill(CompanyRegistrationNumber.No("reason")).data
-        result should contain("companyRegistrationNumber.hasCrn" -> "false")
-        result should contain("companyRegistrationNumber.reason" -> "reason")
+        result should contain(hasCrn -> "false")
+        result should contain(reason -> "reason")
       }
     }
   }
