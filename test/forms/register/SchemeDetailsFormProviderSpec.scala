@@ -16,83 +16,66 @@
 
 package forms.register
 
-import forms.behaviours.FormBehaviours
-import models.register.{SchemeDetails, SchemeType}
-import models.{Field, Required}
-import org.apache.commons.lang3.RandomStringUtils
+import forms.behaviours.StringFieldBehaviours
+import forms.mappings.Constraints
+import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
-class SchemeDetailsFormProviderSpec extends FormBehaviours {
-
+class SchemeDetailsFormProviderSpec extends StringFieldBehaviours with Constraints {
   val validData: Map[String, String] = Map(
     "schemeName" -> "scheme Name 1",
     "schemeType.type" -> "other",
     "schemeType.schemeTypeDetails" -> "some value")
-
-  val validMaxLength = 255
-  val invalidLength = 256
-
+  val validMaxLength = 160
   val form = new SchemeDetailsFormProvider()()
 
-  "SchemeDetails form" must {
+  ".schemeName" must {
+    val fieldName = "schemeName"
+    val lengthKey = "messages__error__scheme_name_length"
+    val requiredKey = "messages__error__scheme_name"
+    val invalidKey = "messages__error__scheme_name_invalid"
 
-    behave like formWithMandatoryTextFields(
-      Field("schemeName", Required -> "messages__error__scheme_name"),
-      Field("schemeType.type", Required -> "messages__error__selection"))
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      RegexpGen.from(regexSafeText)
+    )
 
-    "fail to bind" when {
-      "the scheme name exceeds max length 255" in {
-        val testString = RandomStringUtils.random(invalidLength)
-        val data = Map(
-          "schemeName" -> testString,
-          "schemeType.type" -> "single")
-        val expectedError = error("schemeName", "messages__error__scheme_name_length", validMaxLength)
-        checkForError(form, data, expectedError)
-      }
-    }
+    behave like fieldWithMaxLength(
+      form,
+      fieldName,
+      maxLength = validMaxLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(validMaxLength))
+    )
 
-    "successfully bind when the schemeType is other with schemeTypeDetails and have valid scheme name" in {
-      val result = form.bind(validData).get
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
 
-      result shouldEqual SchemeDetails("scheme Name 1", SchemeType.Other("some value"))
-    }
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      "[name]",
+      error = FormError(fieldName, invalidKey, Seq(regexSafeText))
+    )
+  }
 
-    "successfully bind when the schemeType is singleTrust and have valid scheme name" in {
-      val result = form.bind(Map(
-        "schemeName" -> "scheme Name 1",
-        "schemeType.type" -> "single")).get
+  ".schemeType.type" must {
+    val fieldName = "schemeType.type"
+    val requiredKey = "messages__error__selection"
 
-      result shouldEqual SchemeDetails("scheme Name 1", SchemeType.SingleTrust)
-    }
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      "single"
+    )
 
-    "successfully bind when the schemeType is GroupLifeDeath and have valid scheme name" in {
-      val result = form.bind(Map(
-        "schemeName" -> "scheme Name 1",
-        "schemeType.type" -> "group")).get
-
-      result shouldEqual SchemeDetails("scheme Name 1", SchemeType.GroupLifeDeath)
-    }
-
-    "successfully bind when the schemeType is BodyCorporate and have valid scheme name" in {
-      val result = form.bind(Map(
-        "schemeName" -> "scheme Name 1",
-        "schemeType.type" -> "corp")).get
-
-      result shouldEqual SchemeDetails("scheme Name 1", SchemeType.BodyCorporate)
-    }
-
-    "fail to bind when there is no schemeType" in {
-      val data = Map(
-        "schemeName" -> "scheme Name 1")
-      val expectedError = error("schemeType.type", "messages__error__selection")
-      checkForError(form, data, expectedError)
-    }
-
-    "fail to bind when the schemeType is other without any schemeTypeDetails" in {
-      val data = Map(
-        "schemeName" -> "scheme Name 1",
-        "schemeType.type" -> "other")
-      val expectedError = error("schemeType.schemeTypeDetails", "messages__error__scheme_type_information")
-      checkForError(form, data, expectedError)
-    }
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
   }
 }

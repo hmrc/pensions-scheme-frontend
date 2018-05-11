@@ -27,13 +27,15 @@ class SchemeTypeMappingSpec extends SchemeTypeBehaviours {
   private val requiredTypeKey = "messages__error__selection"
   private val invalidTypeKey = "messages__error__scheme_type_invalid"
   private val requiredOtherKey = "messages__error__scheme_type_information"
-  private val invalidOtherKey = "messages__error__scheme_type_length"
+  private val lengthOtherKey = "messages__error__scheme_type_other_length"
+  private val invalidOtherKey = "messages__error__scheme_type_other_invalid"
 
   "A form with a SchemeType" should {
     val mapping = schemeTypeMapping(
       requiredTypeKey,
       invalidTypeKey,
       requiredOtherKey,
+      lengthOtherKey,
       invalidOtherKey
     )
 
@@ -43,6 +45,7 @@ class SchemeTypeMappingSpec extends SchemeTypeBehaviours {
       requiredTypeKey,
       invalidTypeKey,
       requiredOtherKey,
+      lengthOtherKey,
       invalidOtherKey
     )
   }
