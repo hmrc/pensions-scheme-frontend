@@ -31,7 +31,7 @@ trait Constraints {
   val regexName = """^[a-zA-Z\u00C0-\u00FF'‘’\u2014\u2013\u2010\u002d]{1,35}$"""
   val regexAccountNo = "[0-9]*"
   val regexEmail = "^[^@<>‘“]+@[^@<>‘“]+$"
-  val regexEmailRestrictive = "^(?:[a-z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&*+\\/=?^_`{|}~-]+)*)@(?:[a-z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$"
+  val regexEmailRestrictive = "^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$"
   val regexPhoneNumber ="^[0-9 +()-]+$"
   val regexCrn = "^[A-Za-z0-9 -]{7,8}$"
   val regexVat = """^\d{9}$"""
