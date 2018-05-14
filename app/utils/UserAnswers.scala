@@ -26,8 +26,12 @@ import models.CompanyDetails
 import models.person.PersonDetails
 import models.register._
 import models.register.establishers.individual.EstablisherDetails
+import play.api.Logger
 import play.api.libs.json._
+import play.api.mvc.Result
+import play.api.mvc.Results._
 
+import scala.concurrent.Future
 import scala.language.implicitConversions
 
 case class UserAnswers(json: JsValue = Json.obj()) {
@@ -42,12 +46,15 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   def getAll[A](path: JsPath)(implicit rds: Reads[A]): Option[Seq[A]] = {
-    (JsLens.fromPath(path) andThen JsLens.atAllIndices).getAll(json)
-      .flatMap(a => traverse(a.map(Json.fromJson[A]))).asOpt
+    (JsLens.fromPath(path) andThen JsLens.atAllIndices)
+      .getAll(json)
+      .flatMap(a => traverse(a.map(s => Json.fromJson[A](s))))
+      .asOpt
   }
 
   def getAllRecursive[A](path: JsPath)(implicit rds: Reads[A]): Option[Seq[A]] = {
-    JsLens.fromPath(path).getAll(json)
+    JsLens.fromPath(path)
+      .getAll(json)
       .flatMap(a => traverse(a.map(Json.fromJson[A]))).asOpt
   }
 
@@ -111,13 +118,13 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
     val nameReads: Reads[EntityDetails] =  {
 
-      val individualName: Reads[EntityDetails] =
-        (__ \ TrusteeDetailsId.toString).read[PersonDetails]
-          .map(details => TrusteeIndividualName(details.fullName))
+      val individualName: Reads[EntityDetails] = (__ \ TrusteeDetailsId.toString)
+        .read[PersonDetails]
+        .map(details => TrusteeIndividualName(details.fullName))
 
-      val companyName: Reads[EntityDetails] =
-        (__ \ identifiers.register.trustees.company.CompanyDetailsId.toString).read[CompanyDetails]
-          .map(details => TrusteeCompanyName(details.companyName))
+      val companyName: Reads[EntityDetails] = (__ \ identifiers.register.trustees.company.CompanyDetailsId.toString)
+        .read[CompanyDetails]
+        .map(details => TrusteeCompanyName(details.companyName))
 
       individualName orElse companyName
     }
@@ -128,6 +135,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
           name.route(id, None)
       }
     }.getOrElse(Seq.empty)
+
   }
 
   def hasCompanies: Boolean = {
@@ -137,6 +145,20 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       val trustees = json \ "trustees" \\ "companyDetails"
       trustees.nonEmpty
     }
+  }
+
+  def upsert[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)
+                                                        (fn: UserAnswers => Future[Result])
+                                                        (implicit writes: Writes[id.Data]): Future[Result] = {
+    this
+      .set(id)(value)
+      .fold(
+        errors => {
+          Logger.error("Unable to set user answer", JsResultException(errors))
+          Future.successful(InternalServerError)
+        },
+        userAnswers => fn(userAnswers)
+      )
   }
 
 }

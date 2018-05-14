@@ -55,4 +55,6 @@ trait DataCacheConnector {
                              hc: HeaderCarrier
                             ): Future[Option[JsValue]]
 
+  def upsert(cacheId: String, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue]
+
 }
