@@ -24,7 +24,9 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.SchemeDetailsId
+import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.CompanyDetailsId
+import models.register.trustees.TrusteeKind._
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -72,14 +74,14 @@ class CompanyDetailsController @Inject() (
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index,schemeDetails.schemeName))),
             (value) =>
-            dataCacheConnector.save(
-              request.externalId,
-              CompanyDetailsId(index),
-              value
-            ).map{
-              json =>
-                Redirect(navigator.nextPage(CompanyDetailsId(index), mode)(new UserAnswers(json)))
-            }
+              request.userAnswers.upsert(CompanyDetailsId(index))(value){
+                _.upsert(TrusteeKindId(index))(Company){ answers =>
+                  dataCacheConnector.upsert(request.externalId, answers.json).map{
+                    json =>
+                      Redirect(navigator.nextPage(CompanyDetailsId(index), mode)(new UserAnswers(json)))
+                  }
+                }
+              }
           )
       }
   }
