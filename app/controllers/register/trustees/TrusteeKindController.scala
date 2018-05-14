@@ -31,6 +31,8 @@ import identifiers.register.trustees.TrusteeKindId
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.trusteeKind
 import models.{Index, Mode}
+import play.api.Logger
+import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.Trustees
 
@@ -67,8 +69,14 @@ class TrusteeKindController @Inject()(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index, schemeDetails.schemeName))),
           (value) =>
-            dataCacheConnector.save(request.externalId, TrusteeKindId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(TrusteeKindId(index), mode)(UserAnswers(cacheMap))))
+            request.userAnswers.set(TrusteeKindId(index))(value).fold(
+              errors => {
+                Logger.error("Unable to set user answer", JsResultException(errors))
+                Future.successful(InternalServerError)
+              },
+              userAnswers =>
+                Future.successful(Redirect(navigator.nextPage(TrusteeKindId(index), mode)(userAnswers)))
+            )
         )
       }
   }

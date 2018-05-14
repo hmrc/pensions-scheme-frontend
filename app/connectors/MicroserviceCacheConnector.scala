@@ -46,6 +46,9 @@ class MicroserviceCacheConnector @Inject() (
     modify(cacheId, _.set(id)(value))
   }
 
+  override def upsert(cacheId: String, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] =
+    modify(cacheId, _ => JsSuccess(UserAnswers(value)))
+
   def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
                                      (implicit
                                       ec: ExecutionContext,

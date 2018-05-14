@@ -39,6 +39,11 @@ trait FakeDataCacheConnector extends DataCacheConnector with Matchers {
     Future.successful(Json.obj())
   }
 
+  def upsert(cacheId: String, value: JsValue)
+            (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = {
+    Future.successful(value)
+  }
+
   def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
                                      (implicit
                                       ec: ExecutionContext,
