@@ -179,6 +179,27 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
     behave like regexWithValidAndInvalidExamples(emailAddress, validEmail, invalidEmail, invalidMsg, regexEmail)
   }
 
+  "emailAddressRestrictive" must {
+
+    val validEmail = Table(
+      "ema.il@cd.com",
+      "a@email.com",
+      "a@bc",
+      "1.2.3@4.5.6"
+    )
+
+    val invalidEmail = Table(
+      "email@.com",
+      "32..423423432423",
+      "123 2@3",
+      "@@@@@@"
+    )
+
+    val invalidMsg = "contactDetails.error.email.valid"
+
+    behave like regexWithValidAndInvalidExamples(emailAddressRestrictive, validEmail, invalidEmail, invalidMsg, regexEmailRestrictive)
+  }
+
 
   "phoneNumber" must {
 

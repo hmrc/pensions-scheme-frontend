@@ -23,7 +23,7 @@ import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompany
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
 import models.register.establishers.individual.EstablisherDetails
-import models.{CheckMode, CompanyDetails}
+import models.{CheckMode, CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
@@ -82,9 +82,9 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
       val result = userAnswers.allTrustees
 
       result must contain("First Last" -> controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(
-        CheckMode, 0).url)
+        NormalMode, 0).url)
       result must contain("My Company" -> controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(
-        CheckMode, 1).url)
+        NormalMode, 1).url)
     }
   }
 

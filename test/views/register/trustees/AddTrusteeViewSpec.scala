@@ -21,9 +21,8 @@ import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
-import models.{CheckMode, CompanyDetails, NormalMode}
+import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
-import org.jsoup.Jsoup
 import play.api.data.Form
 import utils.UserAnswers
 import views.behaviours.{YesNoViewBehaviours, EditableItemListBehaviours}
@@ -32,8 +31,8 @@ import views.html.register.trustees.addTrustee
 class AddTrusteeViewSpec extends YesNoViewBehaviours with EditableItemListBehaviours {
 
   val onwardRoute = routes.AddTrusteeController.onPageLoad(NormalMode).url
-  def companyUrl(index: Int) = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
-  def individualUrl(index: Int) = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(CheckMode, 0).url
+  def companyUrl(index: Int) = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
+  def individualUrl(index: Int) = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0).url
 
   val messageKeyPrefix = "addTrustee"
   val schemeName = "Test scheme name"
