@@ -43,11 +43,6 @@
         <li>@messages("messages__complete__copy_2")</li>
         <li>@messages("messages__complete__copy_3")</li>
         <li>@messages("messages__complete__register_pensions_regulator")</li>
-        <li>@messages("messages__complete__register_vat")
-            <a id="complete-register-vat-link" href="@routes.SchemeSuccessController.onPageLoad">
-                @messages(s"messages__complete__register_vat_link")
-            </a>
-        </li>
     </ul>
 
     @helpers.form(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
