@@ -70,20 +70,36 @@ class PreviousAddressPostCodeLookupController @Inject()(
               Future.successful(BadRequest(previousPostCodeLookup(appConfig, formWithErrors, mode, index, establisherName))),
             value =>
               addressLookupConnector.addressLookupByPostCode(value).flatMap {
-                case None =>
-                  Future.successful(BadRequest(previousPostCodeLookup(appConfig, formWithError("invalid"), mode, index, establisherName)))
 
-                case Some(Nil) =>
-                  Future.successful(BadRequest(previousPostCodeLookup(appConfig, formWithError("no_results"), mode, index, establisherName)))
+                case Nil => {
+                  Future.successful(
+                    BadRequest(
+                      previousPostCodeLookup(
+                        appConfig, formWithError("no_results"),
+                        mode, index, establisherName)
+                    )
+                  )
+                }
+                case addresses =>
 
-                case Some(addresses) =>
-                  dataCacheConnector.save(
+                  dataCacheConnector
+                    .save(
                     request.externalId,
                     PreviousPostCodeLookupId(index),
                     addresses
-                  ).map {
+                  )
+                  .map {
                     json =>
-                      Redirect(navigator.nextPage(PreviousPostCodeLookupId(index), mode)(new UserAnswers(json)))
+                      Redirect(navigator.nextPage(PreviousPostCodeLookupId(index), mode)(new UserAnswers(json))
+                      )
+                }.recoverWith {
+                    case _ => Future.successful(
+                      BadRequest(
+                        previousPostCodeLookup(
+                          appConfig,
+                          formWithError("invalid"), mode, index, establisherName)
+                      )
+                    )
                   }
               }
           )

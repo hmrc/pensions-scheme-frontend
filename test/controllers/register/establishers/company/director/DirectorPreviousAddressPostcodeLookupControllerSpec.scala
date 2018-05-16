@@ -107,8 +107,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
         .withHeaders("Csrf-Token" -> "nocheck")
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful(
-          Some(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))))
+        .thenReturn(Future.successful((Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))))
         ))
 
       running(_.overrides(
