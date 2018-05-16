@@ -74,7 +74,7 @@ trait UtrBehaviour extends FormSpec with UtrMapping with PropertyChecks with Gen
           }
         }
         "reason is invalid" in {
-          val result = testForm.bind(Map(hasUtr -> "false", reason -> "[[reason]]"))
+          val result = testForm.bind(Map(hasUtr -> "false", reason -> "{reason}]"))
           result.errors shouldBe Seq(FormError(reason, invalidReasonKey, Seq(regexSafeText)))
         }
       }

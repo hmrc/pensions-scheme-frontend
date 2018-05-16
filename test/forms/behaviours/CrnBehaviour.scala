@@ -52,7 +52,7 @@ trait CrnBehaviour extends FormSpec with CrnMapping with PropertyChecks with Gen
           result.errors shouldBe Seq(FormError(crn, "messages__error__crn_invalid"))
         }
         "reason is invalid" in {
-          val result = testForm.bind(Map(hasCrn -> "false", "companyRegistrationNumber.reason" -> "[[reason]]"))
+          val result = testForm.bind(Map(hasCrn -> "false", "companyRegistrationNumber.reason" -> "{reason}"))
           result.errors shouldBe Seq(FormError(reason, "messages__error__no_crn_invalid", Seq(regexSafeText)))
         }
         "reason is more than max length" in {

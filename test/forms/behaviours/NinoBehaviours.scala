@@ -64,7 +64,7 @@ trait NinoBehaviours extends FormSpec with NinoMapping with PropertyChecks with 
       }
 
       "fail to bind when reason is invalid" in {
-        val result = testForm.bind(Map("nino.hasNino" -> "false", "nino.reason" -> "[[reason]]"))
+        val result = testForm.bind(Map("nino.hasNino" -> "false", "nino.reason" -> "{reason}"))
         result.errors shouldBe Seq(FormError("nino.reason", invalidReasonKey, Seq(regexSafeText)))
       }
 

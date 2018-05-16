@@ -54,7 +54,7 @@ class BenefitsInsurerFormProviderSpec extends StringFieldBehaviours with Constra
     behave like fieldWithRegex(
       form,
       fieldName,
-      "[[company Name]]",
+      "{company Name}",
       error = FormError(fieldName, invalidKey, Seq(regexSafeText))
     )
   }
@@ -88,7 +88,7 @@ class BenefitsInsurerFormProviderSpec extends StringFieldBehaviours with Constra
     behave like fieldWithRegex(
       form,
       fieldName,
-      "[[policy number]]",
+      "{policy number}",
       error = FormError(fieldName, invalidKey, Seq(regexSafeText))
     )
   }

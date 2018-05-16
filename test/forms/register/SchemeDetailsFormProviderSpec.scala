@@ -57,7 +57,7 @@ class SchemeDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
     behave like fieldWithRegex(
       form,
       fieldName,
-      "[name]",
+      "{name}",
       error = FormError(fieldName, invalidKey, Seq(regexSafeText))
     )
   }

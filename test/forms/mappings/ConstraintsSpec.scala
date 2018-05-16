@@ -158,33 +158,11 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
     }
   }
 
-  "email" must {
-
-    val validEmail = Table(
-      "email",
-      "a@email.com",
-      "a@bc",
-      "123@456"
-    )
-
-    val invalidEmail = Table(
-      "email",
-      "32423423432423",
-      "12323",
-      "@@@@@@"
-    )
-
-    val invalidMsg = "contactDetails.error.email.valid"
-
-    behave like regexWithValidAndInvalidExamples(emailAddress, validEmail, invalidEmail, invalidMsg, regexEmail)
-  }
-
   "emailAddressRestrictive" must {
 
     val validEmail = Table(
       "ema.il@cd.com",
       "a@email.com",
-      "a@bc",
       "1.2.3@4.5.6"
     )
 
@@ -192,6 +170,7 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
       "email@.com",
       "32..423423432423",
       "123 2@3",
+      "a@bc",
       "@@@@@@"
     )
 
@@ -257,7 +236,7 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
 
     val invalidText = Table(
       "text",
-      "[invalid text]"
+      "{invalid text}"
     )
 
     val invalidMsg = "Invalid text"
@@ -310,28 +289,5 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
     val invalidMsg = "Invalid post code"
 
     behave like regexWithValidAndInvalidExamples(postCode, validPostCode, invalidPostCode, invalidMsg, regexPostcode)
-  }
-
-  "postCodeNonUk" must {
-
-    val validPostCode = Table(
-      "postCode",
-      "1",
-      "1234567890",
-      "1-2-3"
-    )
-
-    val invalidPostCode = Table(
-      "postCode",
-      "-",
-      "-1",
-      "1-"
-    )
-
-    val invalidMsg = "Invalid post code"
-
-    behave like regexWithValidAndInvalidExamples(postCodeNonUk, validPostCode, invalidPostCode, invalidMsg, regexPostCodeNonUk)
-
-
   }
 }
