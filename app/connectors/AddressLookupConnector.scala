@@ -19,7 +19,7 @@ package connectors
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
-import models.address.{AddressRecord, TolerantAddress}
+import models.address.TolerantAddress
 import play.api.Logger
 import play.api.libs.json.Reads
 import uk.gov.hmrc.http._
@@ -40,10 +40,16 @@ class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
     http.GET[HttpResponse](addressLookupUrl)(implicitly, schemeHc, implicitly) flatMap {
       case response if response.status equals OK => Future.successful(response.json.as[Seq[TolerantAddress]])
       case response => {
-        val exception = new HttpException(response.body, response.status)
-        Logger.error(s"Exception in AddressLookup", exception)
-        Future.failed(new HttpException(response.body, response.status))
+        val message=s"Address Lookup failed with status ${response.status} Response body :${response.body}"
+        Future.failed(new HttpException(message, response.status))
       }
+    } recoverWith logExceptions
+  }
+
+  private def logExceptions: PartialFunction[Throwable, Future[Seq[TolerantAddress]]] = {
+    case (t: Throwable) => {
+      Logger.error("Exception in AddressLookup", t)
+      Future.failed(t)
     }
   }
 }
