@@ -16,13 +16,14 @@
 
 package controllers.address
 
+import audit.AuditService
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import forms.address.AddressFormProvider
 import identifiers.TypedIdentifier
 import models.NormalMode
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -47,12 +48,15 @@ object ManualAddressControllerSpec {
     override def toString = "testPath"
   }
 
+  val fakeListIdentifier = new TypedIdentifier[TolerantAddress] {}
+
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
                                   override val dataCacheConnector: DataCacheConnector,
                                   override val navigator: Navigator,
-                                  override val countryOptions: CountryOptions,
+                                  val countryOptions: CountryOptions,
+                                  val auditService: AuditService,
                                   formProvider: AddressFormProvider
                                 ) extends ManualAddressController {
 
@@ -61,7 +65,7 @@ object ManualAddressControllerSpec {
       get(fakeIdentifier, viewModel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
 
     def onSubmit(viewModel: ManualAddressViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
-      post(fakeIdentifier, viewModel, NormalMode)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
+      post(fakeIdentifier, fakeListIdentifier, viewModel, NormalMode)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
 
     override protected val form: Form[Address] = formProvider()
   }

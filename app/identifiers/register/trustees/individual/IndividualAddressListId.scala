@@ -16,10 +16,11 @@
 
 package identifiers.register.trustees.individual
 
-import identifiers.Identifier
+import identifiers.{Identifier, TypedIdentifier}
+import models.address.TolerantAddress
 
-case class IndividualAddressListId(index: Int) extends Identifier
+case class IndividualAddressListId(index: Int) extends TypedIdentifier[TolerantAddress]
 
-object IndividualAddressListId {
+object IndividualAddressListId extends TypedIdentifier[TolerantAddress]{
   override def toString: String = "IndividualAddressList"
 }

@@ -18,7 +18,7 @@ package identifiers.register.trustees.individual
 
 import identifiers._
 import identifiers.register.trustees.TrusteesId
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import play.api.libs.json.JsPath
 import utils.{CheckYourAnswers, CountryOptions}
 
@@ -26,7 +26,7 @@ case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address]
   override def path: JsPath = TrusteesId(index).path \ TrusteePreviousAddressId.toString
 }
 
-object TrusteePreviousAddressId {
+object TrusteePreviousAddressId extends TypedIdentifier[TolerantAddress] {
   override def toString: String = "trusteePreviousAddress"
 
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[TrusteePreviousAddressId] =

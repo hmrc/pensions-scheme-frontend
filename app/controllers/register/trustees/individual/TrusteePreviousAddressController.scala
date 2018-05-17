@@ -16,8 +16,8 @@
 
 package controllers.register.trustees.individual
 
+import audit.AuditService
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
@@ -44,7 +44,8 @@ class TrusteePreviousAddressController @Inject() (
                                                    getData: DataRetrievalAction,
                                                    requireData: DataRequiredAction,
                                                    formProvider: AddressFormProvider,
-                                                   val countryOptions: CountryOptions
+                                                   val countryOptions: CountryOptions,
+                                                   val auditService: AuditService
                                       ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
@@ -80,7 +81,7 @@ class TrusteePreviousAddressController @Inject() (
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(TrusteePreviousAddressId(index), vm, mode)
+          post(TrusteePreviousAddressId(index), TrusteePreviousAddressId, vm, mode)
       }
   }
 }

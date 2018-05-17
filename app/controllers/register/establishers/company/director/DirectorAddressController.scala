@@ -16,15 +16,15 @@
 
 package controllers.register.establishers.company.director
 
+import audit.AuditService
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.establishers.company.director.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorAddressListId, DirectorDetailsId}
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
@@ -44,7 +44,8 @@ class DirectorAddressController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           val formProvider: AddressFormProvider,
-                                          val countryOptions: CountryOptions
+                                          val countryOptions: CountryOptions,
+                                          val auditService: AuditService
                                         ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = DirectorAddressController.onSubmit _
@@ -82,7 +83,7 @@ class DirectorAddressController @Inject()(
     implicit request =>
       viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map {
         vm =>
-          post(DirectorAddressId(establisherIndex, directorIndex), vm, mode)
+          post(DirectorAddressId(establisherIndex, directorIndex), DirectorAddressListId, vm, mode)
       }
   }
 }

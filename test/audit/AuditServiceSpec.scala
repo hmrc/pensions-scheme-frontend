@@ -23,7 +23,6 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.config.AuditingConfig
-import uk.gov.hmrc.play.audit.http.connector.AuditResult.Disabled
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.DataEvent
 
@@ -40,19 +39,15 @@ class AuditServiceSpec extends AsyncFlatSpec with Matchers with Inside {
 
     val event = TestAuditEvent("test-audit-payload")
 
-    val result = auditService().sendEvent(event)
+    auditService().sendEvent(event)
+
     val sentEvent = FakeAuditConnector.lastSentEvent
 
-    result.map {
-      auditResult =>
-        auditResult shouldBe Disabled
-
-        inside(sentEvent) {
-          case DataEvent(auditSource, auditType, _, _, detail, _) =>
-            auditSource shouldBe appName
-            auditType shouldBe "TestAuditEvent"
-            detail should contain("payload" -> "test-audit-payload")
-        }
+    inside(sentEvent) {
+      case DataEvent(auditSource, auditType, _, _, detail, _) =>
+        auditSource shouldBe appName
+        auditType shouldBe "TestAuditEvent"
+        detail should contain("payload" -> "test-audit-payload")
     }
 
   }

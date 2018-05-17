@@ -33,7 +33,7 @@ trait AuditService {
 
   def sendEvent[T <: AuditEvent](event: T)(implicit
                                            rh: RequestHeader,
-                                           ec: ExecutionContext): Future[AuditResult]
+                                           ec: ExecutionContext): Unit
 
 }
 
@@ -47,7 +47,7 @@ class AuditServiceImpl @Inject() (
 
   def sendEvent[T <: AuditEvent](event: T)(implicit
                                            rh: RequestHeader,
-                                           ec: ExecutionContext): Future[AuditResult] = {
+                                           ec: ExecutionContext): Unit = {
 
     val details = rh.toAuditDetails() ++ event.details
 
@@ -75,7 +75,6 @@ class AuditServiceImpl @Inject() (
         Logger.error(s"[AuditService][sendEvent] failed to send event ${event.auditType}", e)
     }
 
-    result
   }
 
 }

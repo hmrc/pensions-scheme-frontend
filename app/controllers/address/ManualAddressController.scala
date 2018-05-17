@@ -16,13 +16,15 @@
 
 package controllers.address
 
+import audit.{AddressEvent, AuditService}
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import identifiers.TypedIdentifier
 import models.Mode
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
+import play.api._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
@@ -38,8 +40,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
   protected def appConfig: FrontendAppConfig
   protected def dataCacheConnector: DataCacheConnector
   protected def navigator: Navigator
-
-  protected val countryOptions: CountryOptions
+  protected def auditService: AuditService
 
   protected val form: Form[Address]
 
@@ -53,21 +54,29 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
     }
     Future.successful(Ok(manualAddress(appConfig, preparedForm, viewModel)))
   }
+
   protected def post(
                       id: TypedIdentifier[Address],
+                      selectedId: TypedIdentifier[TolerantAddress],
                       viewModel: ManualAddressViewModel,
                       mode: Mode
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel))),
-      (value) => {
+      address => {
+        val existingAddress = request.userAnswers.get(id)
+        val selectedAddress = request.userAnswers.get(selectedId)
+
+        val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address, existingAddress, selectedAddress)
+
         dataCacheConnector.save(
           request.externalId,
           id,
-          value
-        ) map {
+          address
+        ).map {
           cacheMap =>
-            Redirect(navigator.nextPage(id, mode)(new UserAnswers(cacheMap)))
+            auditEvent.foreach(auditService.sendEvent(_))
+            Redirect(navigator.nextPage(id, mode)(UserAnswers(cacheMap)))
         }
       }
     )

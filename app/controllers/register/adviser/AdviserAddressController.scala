@@ -16,14 +16,15 @@
 
 package controllers.register.adviser
 
-import javax.inject.Inject
+import audit.AuditService
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
-import forms.address.AddressFormProvider
 import controllers.register.adviser.routes._
-import identifiers.register.adviser.AdviserAddressId
+import forms.address.AddressFormProvider
+import identifiers.register.adviser.{AdviserAddressId, AdviserAddressListId}
+import javax.inject.Inject
 import models.Mode
 import models.address.Address
 import play.api.data.Form
@@ -43,7 +44,8 @@ class AdviserAddressController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           val formProvider: AddressFormProvider,
-                                          val countryOptions: CountryOptions
+                                          val countryOptions: CountryOptions,
+                                          val auditService: AuditService
                                         ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = AdviserAddressController.onSubmit _
@@ -55,26 +57,25 @@ class AdviserAddressController @Inject()(
   protected val form: Form[Address] = formProvider()
 
   private def viewmodel(mode: Mode): ManualAddressViewModel =
-        ManualAddressViewModel(
-          postCall(mode),
-          countryOptions.options,
-          title = Message(title),
-          heading = Message(heading),
-          hint = None,
-          secondaryHeader = Some(secondary)
-        )
+    ManualAddressViewModel(
+      postCall(mode),
+      countryOptions.options,
+      title = Message(title),
+      heading = Message(heading),
+      hint = None,
+      secondaryHeader = Some(secondary)
+    )
 
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
 
-          get(AdviserAddressId, viewmodel(mode))
-      }
+      get(AdviserAddressId, viewmodel(mode))
+  }
 
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-          post(AdviserAddressId, viewmodel(mode), mode)
-      }
+      post(AdviserAddressId, AdviserAddressListId, viewmodel(mode), mode)
   }
-
+}

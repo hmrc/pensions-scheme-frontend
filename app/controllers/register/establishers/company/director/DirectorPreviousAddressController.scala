@@ -16,8 +16,8 @@
 
 package controllers.register.establishers.company.director
 
+import audit.AuditService
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
@@ -44,7 +44,8 @@ class DirectorPreviousAddressController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         val formProvider: AddressFormProvider,
-                                        val countryOptions: CountryOptions
+                                        val countryOptions: CountryOptions,
+                                        val auditService: AuditService
                                       ) extends ManualAddressController with I18nSupport with Retrievals {
 
   private[controllers] val postCall = routes.DirectorPreviousAddressController.onSubmit _
@@ -82,7 +83,7 @@ class DirectorPreviousAddressController @Inject()(
     implicit request =>
       viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index).retrieve.right.map {
         vm =>
-          post(DirectorPreviousAddressId(establisherIndex, directorIndex), vm, mode)
+          post(DirectorPreviousAddressId(establisherIndex, directorIndex), DirectorPreviousAddressId, vm, mode)
       }
   }
 }

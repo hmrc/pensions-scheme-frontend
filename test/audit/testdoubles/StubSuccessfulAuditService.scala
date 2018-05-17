@@ -18,20 +18,18 @@ package audit.testdoubles
 
 import audit.{AuditEvent, AuditService}
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
 import scala.collection.mutable
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class StubSuccessfulAuditService extends AuditService {
 
   private val events: mutable.ListBuffer[AuditEvent] = mutable.ListBuffer()
 
   override def sendEvent[T <: AuditEvent](event: T)
-                                         (implicit rh: RequestHeader, ec: ExecutionContext): Future[AuditResult] = {
+                                         (implicit rh: RequestHeader, ec: ExecutionContext): Unit = {
 
     events += event
-    Future.successful(AuditResult.Success)
   }
 
   def verifySent[T <: AuditEvent](event: T): Boolean = events.contains(event)

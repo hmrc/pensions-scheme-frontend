@@ -16,8 +16,8 @@
 
 package controllers.register.trustees.company
 
+import audit.AuditService
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
@@ -25,7 +25,7 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId}
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
@@ -45,7 +45,8 @@ class CompanyPreviousAddressController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         val formProvider: AddressFormProvider,
-                                        val countryOptions: CountryOptions
+                                        val countryOptions: CountryOptions,
+                                        val auditService: AuditService
                                       ) extends ManualAddressController with I18nSupport with Retrievals {
 
   private[controllers] val postCall = CompanyPreviousAddressController.onSubmit _
@@ -83,7 +84,7 @@ class CompanyPreviousAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(CompanyPreviousAddressId(index), vm, mode)
+          post(CompanyPreviousAddressId(index), CompanyPreviousAddressListId, vm, mode)
       }
   }
 }
