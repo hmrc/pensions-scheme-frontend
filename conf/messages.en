@@ -443,6 +443,7 @@ messages__companyReview__secondaryHeading__partial = Establishers for
 messages__companyReview__company__editLink = Edit company details
 messages__companyReview__directors__heading = Company directors
 messages__companyReview__directors__editLink = Add, delete or edit company directors
+messages__companyReview__directors__changeLink = Change company directors
 
 messages__trustee_company_contact_details__title = Company contact details
 
@@ -475,6 +476,7 @@ messages__schemeReview__establishers__heading = Scheme establishers
 messages__schemeReview__establishers__editLink = Edit scheme establishers
 messages__schemeReview__trustees__heading = Trustees
 messages__schemeReview__trustees__editLink = Add, delete or edit trustees
+messages__schemeReview__trustees__changeLink = Change trustees
 
 messages__otherDirectors__title=Do you need to tell us about other directors?
 messages__otherDirectors__heading=Do you need to tell us about other directors?
