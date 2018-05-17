@@ -25,6 +25,7 @@ class UniqueTaxReferenceFormProviderSpec extends UtrBehaviour {
   val requiredReasonKey = "messages__error__no_sautr_establisher"
   val invalidUtrKey = "messages__error__sautr_invalid"
   val maxLengthReasonKey = "messages__error__no_sautr_length"
+  val invalidReasonKey = "messages__error__no_sautr_invalid"
 
   val formProvider = new UniqueTaxReferenceFormProvider()
 
@@ -36,7 +37,8 @@ class UniqueTaxReferenceFormProviderSpec extends UtrBehaviour {
       requiredUtrKey,
       requiredReasonKey,
       invalidUtrKey,
-      maxLengthReasonKey
+      maxLengthReasonKey,
+      invalidReasonKey
     )
   }
 }

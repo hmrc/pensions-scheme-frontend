@@ -24,12 +24,21 @@ import play.api.data.Form
 import play.api.data.Forms._
 
 class BenefitsInsurerFormProvider @Inject() extends Mappings {
-  val maxLength = 255
+  val maxLength = 160
+  val policyMaxLength = 55
+
   def apply(): Form[BenefitsInsurer] = Form(
     mapping(
-      "companyName" -> text("messages__error__company_name").verifying(maxLength(maxLength, "messages__error__company_name_length")),
-      "policyNumber" -> text("messages__error__benefits_insurance__policy").verifying(maxLength(maxLength,
-        "messages__error__benefits_insurance__policy_length"))
+      "companyName" -> text("messages__error__company_name").verifying(
+        firstError(maxLength(maxLength, "messages__error__company_name_length"),
+          safeText("messages__error__company_name_invalid")
+        )
+      ),
+      "policyNumber" -> text("messages__error__benefits_insurance__policy").verifying(
+        firstError(maxLength(policyMaxLength, "messages__error__benefits_insurance__policy_length"),
+          safeText("messages__error__benefits_insurance__policy_invalid")
+        )
+      )
     )(BenefitsInsurer.apply)(BenefitsInsurer.unapply)
   )
 }

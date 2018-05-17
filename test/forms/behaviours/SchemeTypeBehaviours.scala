@@ -18,90 +18,91 @@ package forms.behaviours
 
 import forms.FormSpec
 import forms.mappings.SchemeTypeMapping
+import generators.Generators
 import models.register.SchemeType
-import org.apache.commons.lang3.RandomStringUtils
+import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
 
-trait SchemeTypeBehaviours extends FormSpec with SchemeTypeMapping {
+trait SchemeTypeBehaviours extends FormSpec with SchemeTypeMapping with Generators with PropertyChecks {
+
+  private val schemeTypeTable = Table(
+    ("type", "value"),
+    (SchemeType.SingleTrust, "single"),
+    (SchemeType.BodyCorporate, "corp"),
+    (SchemeType.GroupLifeDeath, "group")
+  )
 
   def formWithSchemeType(testForm: Form[SchemeType],
                          requiredTypeKey: String,
                          invalidTypeKey: String,
                          requiredOtherKey: String,
+                         lengthOtherKey: String,
                          invalidOtherKey: String
                         ): Unit = {
 
-
     "schemeType" must {
-      val validSchemeTypeDetailsLength = 150
-      val invalidSchemeTypeDetailsLength = 151
+      val maxlength = 160
+      val schemeTypeFieldName = "schemeType.type"
+      val otherDetailsFieldName = "schemeType.schemeTypeDetails"
 
       val testForm: Form[SchemeType] = Form(
-        "schemeType" -> schemeTypeMapping("schemeType.error.required", "schemeType.error.invalid",
-          "messages__error__scheme_type_information", "messages__error__scheme_type_length")
+        "schemeType" -> schemeTypeMapping(requiredTypeKey, invalidTypeKey,
+          requiredOtherKey, lengthOtherKey, invalidOtherKey)
       )
 
-      "bind a valid schemeType SingleTrust" in {
-        val result = testForm.bind(Map("schemeType.type" -> "single"))
-        result.get shouldBe SchemeType.SingleTrust
-      }
-
-      "bind a valid schemeType GroupLifeDeath" in {
-        val result = testForm.bind(Map("schemeType.type" -> "group"))
-        result.get shouldBe SchemeType.GroupLifeDeath
-      }
-
-      "bind a valid schemeType BodyCorporate" in {
-        val result = testForm.bind(Map("schemeType.type" -> "corp"))
-        result.get shouldBe SchemeType.BodyCorporate
+      forAll(schemeTypeTable) { (schemeType, schemeValue) =>
+        s"bind a valid schemeType $schemeType" in {
+          val result = testForm.bind(Map("schemeType.type" -> schemeValue))
+          result.get shouldBe schemeType
+        }
       }
 
       "bind a valid schemeType Other" in {
-        val result = testForm.bind(Map("schemeType.type" -> "other", "schemeType.schemeTypeDetails" -> "some value"))
+        val result = testForm.bind(Map(schemeTypeFieldName -> "other", otherDetailsFieldName -> "some value"))
         result.get shouldBe SchemeType.Other("some value")
       }
 
       "not bind an empty Map" in {
         val result = testForm.bind(Map.empty[String, String])
-        result.errors should contain(FormError("schemeType.type", "schemeType.error.required"))
+        result.errors should contain(FormError(schemeTypeFieldName, requiredTypeKey))
       }
 
       "not bind a Map with invalid schemeType" in {
-        val result = testForm.bind(Map("schemeType.type" -> "Invalid"))
-        result.errors should contain(FormError("schemeType.type", "schemeType.error.invalid"))
+        val result = testForm.bind(Map(schemeTypeFieldName -> "Invalid"))
+        result.errors should contain(FormError(schemeTypeFieldName, invalidTypeKey))
       }
 
       "not bind a Map with type other but no schemeTypeDetails" in {
-        val result = testForm.bind(Map("schemeType.type" -> "other"))
-        result.errors should contain(FormError("schemeType.schemeTypeDetails", "messages__error__scheme_type_information"))
+        val result = testForm.bind(Map(schemeTypeFieldName -> "other"))
+        result.errors should contain(FormError(otherDetailsFieldName, requiredOtherKey))
       }
 
-      "not bind a Map with type other and schemeTypeDetails exceeds max length 150" in {
-        val testString = RandomStringUtils.random(invalidSchemeTypeDetailsLength)
-        val result = testForm.bind(Map("schemeType.type" -> "other", "schemeType.schemeTypeDetails" -> testString))
-        result.errors should contain(FormError("schemeType.schemeTypeDetails", "messages__error__scheme_type_length",
-          Seq(validSchemeTypeDetailsLength)))
+      "not bind a Map with type other and schemeTypeDetails exceeds max length 160" in {
+        forAll(stringsLongerThan(maxlength) -> "longString") {
+          string =>
+            val result = testForm.bind(Map(schemeTypeFieldName -> "other", otherDetailsFieldName -> string))
+            result.errors should contain(FormError(otherDetailsFieldName, lengthOtherKey,
+              Seq(maxlength)))
+        }
       }
 
-      "unbind a valid schemeType SingleTrust" in {
-        val result = testForm.fill(SchemeType.SingleTrust)
-        result.apply("schemeType.type").value.value shouldBe "single"
+      "not bind a Map with type other and invalid schemeTypeDetails" in {
+        val result = testForm.bind(Map(schemeTypeFieldName -> "other", otherDetailsFieldName -> "{invalid}"))
+        result.errors should contain(FormError(otherDetailsFieldName, invalidOtherKey,
+          Seq(regexSafeText)))
       }
 
-      "unbind a valid schemeType GroupLifeDeath" in {
-        val result = testForm.fill(SchemeType.GroupLifeDeath)
-        result.apply("schemeType.type").value.value shouldBe "group"
-      }
-
-      "unbind a valid schemeType BodyCorporate" in {
-        val result = testForm.fill(SchemeType.BodyCorporate)
-        result.apply("schemeType.type").value.value shouldBe "corp"
+      forAll(schemeTypeTable) { (schemeType, schemeValue) =>
+        s"unbind a valid schemeType $schemeType" in {
+          val result = testForm.fill(schemeType)
+          result.apply(schemeTypeFieldName).value.value shouldBe schemeValue
+        }
       }
 
       "unbind a valid schemeType Other" in {
         val result = testForm.fill(SchemeType.Other("some value"))
-        result.apply("schemeType.type").value.value shouldBe "other"
-        result.apply("schemeType.schemeTypeDetails").value.value shouldBe "some value"
+        result.apply(schemeTypeFieldName).value.value shouldBe "other"
+        result.apply(otherDetailsFieldName).value.value shouldBe "some value"
       }
     }
   }

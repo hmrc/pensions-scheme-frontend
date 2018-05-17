@@ -24,12 +24,14 @@ import play.api.data.Form
 import play.api.data.Forms._
 
 class SchemeDetailsFormProvider @Inject() extends SchemeTypeMapping with Constraints {
-  val schemeNameMaxLength = 255
+  val schemeNameMaxLength = 160
 
   def apply(): Form[SchemeDetails] = Form(mapping(
     "schemeName" -> text(
       "messages__error__scheme_name").
-      verifying(maxLength(schemeNameMaxLength, "messages__error__scheme_name_length")),
+      verifying(firstError(
+        maxLength(schemeNameMaxLength, "messages__error__scheme_name_length"),
+        safeText("messages__error__scheme_name_invalid"))),
     "schemeType" -> schemeTypeMapping()
   )(SchemeDetails.apply)(SchemeDetails.unapply))
 }

@@ -27,6 +27,7 @@ class NinoMappingSpec extends NinoBehaviours {
     private val requiredReasonKey = "error.reason.required"
     private val reasonLengthKey = "error.reason.length"
     private val invalidNinoKey = "error.nino.invalid"
+    private val invalidReasonKey = "error.reason.invalid"
 
   "A form with a Nino" should {
     val mapping = ninoMapping(
@@ -34,7 +35,8 @@ class NinoMappingSpec extends NinoBehaviours {
       requiredNinoKey,
       requiredReasonKey,
       reasonLengthKey,
-      invalidNinoKey
+      invalidNinoKey,
+      invalidReasonKey
     )
 
     val testForm:Form[Nino] = Form("nino" -> mapping)
@@ -44,7 +46,8 @@ class NinoMappingSpec extends NinoBehaviours {
       requiredNinoKey,
       requiredReasonKey,
       reasonLengthKey,
-      invalidNinoKey
+      invalidNinoKey,
+      invalidReasonKey
     )
   }
 
