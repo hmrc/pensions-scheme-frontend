@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-import org.scalatest.{AsyncWordSpec, MustMatchers, RecoverMethods, WordSpec}
+package connectors
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import com.github.tomakehurst.wiremock.client.WireMock._
+import models.address.TolerantAddress
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.{AsyncWordSpec, MustMatchers, RecoverMethods}
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import utils.WireMockHelper
-import com.github.tomakehurst.wiremock.client.WireMock._
-import connectors.AddressLookupConnector
-import models.address.TolerantAddress
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class AddressLookupConnectorSpec extends AsyncWordSpec
   with MustMatchers
   with WireMockHelper
-  with ScalaFutures
-  with IntegrationPatience
   with RecoverMethods {
 
   private def url = s"/v2/uk/addresses?postcode=ZZ1%201ZZ"
@@ -50,7 +49,7 @@ class AddressLookupConnectorSpec extends AsyncWordSpec
               .withBody("[]")
           )
         )
-        whenReady(connector.addressLookupByPostCode("ZZ1 1ZZ")) {
+        connector.addressLookupByPostCode("ZZ1 1ZZ") map {
           result =>
             result mustEqual Nil
         }
@@ -106,7 +105,7 @@ class AddressLookupConnectorSpec extends AsyncWordSpec
                 .withBody(payload)
             )
         )
-        whenReady(connector.addressLookupByPostCode("ZZ1 1ZZ")) {
+        connector.addressLookupByPostCode("ZZ1 1ZZ") map {
           result =>
             result mustEqual tolerantAddressSample
         }
