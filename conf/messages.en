@@ -116,7 +116,7 @@ messages__unauthorised__title = You can’t access this service with this accoun
 messages__pension_scheme_registration__title = Pension Scheme Registration - GOV.UK
 
 messages__what_you_will_need__title = What you’ll need
-messages__what_you_will_need__lede = To register a pension scheme with HMRC you will need:
+messages__what_you_will_need__lede = Your information will be saved as you progress. If you sign out, your changes will be saved for 28 days. After that time you will need to start from the beginning.
 messages__what_you_will_need__item_1 = the names, addresses, previous addresses and National Insurance numbers of any directors, trustees and partners associated with the pension scheme
 messages__what_you_will_need__item_2 = the telephone numbers, email addresses and Self Assessment Unique Taxpayer Reference numbers of any directors and trustees associated with the pension scheme
 messages__what_you_will_need__item_3 = the name, contact details, Corporation Tax Unique Taxpayer Reference number and address of the scheme establisher
