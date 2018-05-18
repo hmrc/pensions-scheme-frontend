@@ -91,14 +91,14 @@ class PostCodeLookupController @Inject()(
                     json =>
                       Redirect(navigator.nextPage(PostCodeLookupId(index), mode)(new UserAnswers(json))
                       )
-                }.recoverWith{
-                    case _ => Future.successful(
-                      BadRequest(
-                        postCodeLookup(
-                          appConfig, formWithError("invalid"), mode, index, establisherName)
-                      )
-                    )
-                  }
+                }
+              }.recoverWith{
+                case _ => Future.successful(
+                  BadRequest(
+                    postCodeLookup(
+                      appConfig, formWithError("failed"), mode, index, establisherName)
+                  )
+                )
               }
           )
       }
