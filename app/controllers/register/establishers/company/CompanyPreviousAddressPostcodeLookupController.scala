@@ -68,20 +68,37 @@ class CompanyPreviousAddressPostcodeLookupController @Inject() (
             Future.successful(BadRequest(companyPreviousAddressPostcodeLookup(appConfig, formWithErrors, mode, index, companyName))),
           (value) =>
             addressLookupConnector.addressLookupByPostCode(value).flatMap {
-              case None =>
-                Future.successful(BadRequest(companyPreviousAddressPostcodeLookup(appConfig, formWithError("invalid"), mode, index, companyName)))
 
-              case Some(Nil) =>
-                Future.successful(BadRequest(companyPreviousAddressPostcodeLookup(appConfig, formWithError("no_results"), mode, index, companyName)))
+              case Nil => {
+                Future.successful(
+                  BadRequest(
+                    companyPreviousAddressPostcodeLookup(
+                      appConfig, formWithError("no_results"),
+                      mode, index, companyName)
+                  )
+                )
+              }
+              case addresses =>
 
-              case Some(addresses) =>
-                dataCacheConnector.save(
+                dataCacheConnector
+                  .save(
                   request.externalId,
                   CompanyPreviousAddressPostcodeLookupId(index),
                   addresses
-                ).map {
+                )
+                .map {
                   json =>
-                    Redirect(navigator.nextPage(CompanyPreviousAddressPostcodeLookupId(index), mode)(new UserAnswers(json)))
+                    Redirect(navigator.nextPage(CompanyPreviousAddressPostcodeLookupId(index), mode)(new UserAnswers(json))
+                    )
+
+            }.recoverWith {
+                  case _ => Future.successful(
+                    BadRequest(
+                      companyPreviousAddressPostcodeLookup(
+                        appConfig,
+                        formWithError("invalid"), mode, index, companyName)
+                    )
+                  )
                 }
             }
         )

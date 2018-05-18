@@ -27,8 +27,9 @@ trait SchemeTypeMapping extends Formatters with Constraints with Mappings {
   protected def schemeTypeMapping(requiredTypeKey: String = "messages__error__selection",
                                   invalidTypeKey: String = "messages__error__scheme_type_invalid",
                                   requiredOtherKey: String = "messages__error__scheme_type_information",
-                                  invalidOtherKey: String = "messages__error__scheme_type_length"): Mapping[SchemeType] = {
-    val schemeTypeDetailsMaxLength = 150
+                                  lengthOtherKey: String = "messages__error__scheme_type_other_length",
+                                  invalidOtherKey: String = "messages__error__scheme_type_other_invalid"): Mapping[SchemeType] = {
+    val schemeTypeDetailsMaxLength = 160
     val other = "other"
 
     def fromSchemeType(schemeType: SchemeType): (String, Option[String]) = {
@@ -57,7 +58,9 @@ trait SchemeTypeMapping extends Formatters with Constraints with Mappings {
     tuple(
       "type" -> text(requiredTypeKey).verifying(schemeTypeConstraint(invalidTypeKey)),
       "schemeTypeDetails" -> mandatoryIfEqual("schemeType.type", other, text(requiredOtherKey).
-        verifying(maxLength(schemeTypeDetailsMaxLength, invalidOtherKey)))
+        verifying(firstError(
+          maxLength(schemeTypeDetailsMaxLength, lengthOtherKey),
+          safeText(invalidOtherKey))))
     ).transform(toSchemeType, fromSchemeType)
   }
 }

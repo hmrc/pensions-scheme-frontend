@@ -24,6 +24,7 @@ class EstablisherNinoFormProviderSpec extends NinoBehaviours  {
   val requiredNinoKey = "messages__error__nino"
   val requiredReasonKey = "messages__establisher__no_nino"
   val reasonLengthKey: String = "messages__error__no_nino_length"
+  val invalidReasonKey = "messages__error__no_nino_invalid"
   val invalidNinoKey = "messages__error__nino_invalid"
 
   val testForm = new EstablisherNinoFormProvider().apply()
@@ -34,7 +35,8 @@ class EstablisherNinoFormProviderSpec extends NinoBehaviours  {
       requiredNinoKey,
       requiredReasonKey,
       reasonLengthKey,
-      invalidNinoKey
+      invalidNinoKey,
+      invalidReasonKey
     )
   }
 }

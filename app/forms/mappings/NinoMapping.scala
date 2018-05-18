@@ -27,9 +27,10 @@ trait NinoMapping extends Mappings {
                             requiredNinoKey: String = "messages__error__nino",
                             requiredReasonKey: String = "messages__establisher__no_nino",
                             reasonLengthKey: String = "messages__error__no_nino_length",
-                            invalidNinoKey: String = "messages__error__nino_invalid"):
+                            invalidNinoKey: String = "messages__error__nino_invalid",
+                            invalidReasonKey: String = "messages__error__no_nino_invalid"):
   Mapping[Nino] = {
-    val reasonMaxLength = 150
+    val reasonMaxLength = 160
 
     def fromNino(nino: Nino): (Boolean, Option[String], Option[String]) = {
       nino match {
@@ -53,8 +54,10 @@ trait NinoMapping extends Mappings {
           .verifying(validNino(invalidNinoKey))),
       "reason" -> mandatoryIfFalse("nino.hasNino",
         text(requiredReasonKey).
-        verifying(maxLength(reasonMaxLength,reasonLengthKey)
-        )))
+        verifying(firstError(
+          maxLength(reasonMaxLength,reasonLengthKey),
+          safeText(invalidReasonKey)
+        ))))
       .transform(toNino, fromNino)
   }
 

@@ -29,9 +29,10 @@ trait CrnMapping extends Mappings {
                                                  requiredReasonKey: String = "messages__company__no_crn",
                                                  reasonLengthKey: String = "messages__error__no_crn_length",
                                                  invalidCRNKey: String = "messages__error__crn_invalid",
-                                                 noReasonKey: String = "messages__error__no_crn_company"):
+                                                 noReasonKey: String = "messages__error__no_crn_company",
+                                                 invalidReasonKey: String = "messages__error__no_crn_invalid"):
   Mapping[CompanyRegistrationNumber] = {
-    val reasonMaxLength =150
+    val reasonMaxLength =160
 
     def fromCompanyRegistrationNumber(crn: CompanyRegistrationNumber): (Boolean, Option[String], Option[String]) = {
       crn match {
@@ -52,6 +53,8 @@ trait CrnMapping extends Mappings {
     tuple("hasCrn" -> boolean(requiredKey),
       "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey).verifying(validCrn(invalidCRNKey))),
       "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(noReasonKey).
-        verifying(maxLength(reasonMaxLength,reasonLengthKey)))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
+        verifying(firstError(
+          maxLength(reasonMaxLength, reasonLengthKey),
+          safeText(invalidReasonKey))))).transform(toCompanyRegistrationNumber, fromCompanyRegistrationNumber)
   }
 }

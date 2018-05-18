@@ -58,12 +58,13 @@ class AddressMappingSpec extends AddressBehaviours {
 
   "Post Code with Country mapping" should {
 
-    val form: Form[Option[String]] = Form("postCode" -> postCodeWithCountryMapping("error.required", "error.invalid"))
+    val form: Form[Option[String]] = Form("postCode" -> postCodeWithCountryMapping("error.required", "error.invalid", "error.postcode.nonUK.length"))
 
     behave like formWithCountryAndPostCode(
       form,
       "error.required",
       "error.invalid",
+      "error.postcode.nonUK.length",
       Map.empty[String, String],
       (s: Option[String]) => s.getOrElse("")
     )

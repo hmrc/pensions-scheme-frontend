@@ -19,30 +19,42 @@ package connectors
 
 import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
-import models.address.{AddressRecord, TolerantAddress}
+import models.address.TolerantAddress
+import play.api.Logger
 import play.api.libs.json.Reads
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import play.api.http.Status._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends AddressLookupConnector {
 
-  override def addressLookupByPostCode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Seq[TolerantAddress]]] = {
+  override def addressLookupByPostCode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TolerantAddress]] = {
     val schemeHc = hc.withExtraHeaders("X-Hmrc-Origin" -> "PODS")
 
     val addressLookupUrl = s"${config.addressLookUp}/v2/uk/addresses?postcode=$postCode"
 
     implicit val reads: Reads[Seq[TolerantAddress]] = TolerantAddress.postCodeLookupReads
 
+    http.GET[HttpResponse](addressLookupUrl)(implicitly, schemeHc, implicitly) flatMap {
+      case response if response.status equals OK => Future.successful(response.json.as[Seq[TolerantAddress]])
+      case response => {
+        val message=s"Address Lookup failed with status ${response.status} Response body :${response.body}"
+        Future.failed(new HttpException(message, response.status))
+      }
+    } recoverWith logExceptions
+  }
 
-    http.GET[Seq[TolerantAddress]](addressLookupUrl)(implicitly, schemeHc, implicitly).map(Some(_)) recoverWith {
-      case _ => Future.successful(None)
+  private def logExceptions: PartialFunction[Throwable, Future[Seq[TolerantAddress]]] = {
+    case (t: Throwable) => {
+      Logger.error("Exception in AddressLookup", t)
+      Future.failed(t)
     }
   }
 }
 
 @ImplementedBy(classOf[AddressLookupConnectorImpl])
 trait AddressLookupConnector {
-  def addressLookupByPostCode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Seq[TolerantAddress]]]
+  def addressLookupByPostCode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TolerantAddress]]
 }

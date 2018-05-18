@@ -55,6 +55,7 @@ messages__common__postcode_lookup__address_postcode_hint = For example NE12 8ER
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
 messages__error__postcode = Enter the postal code
 messages__error__postcode_length = The postal code cannot be more than 8 characters
+messages__error__postcode_nonUK_length = The postal code cannot be more than 10 characters
 messages__error__postcode_invalid = There is a problem with the postcode address finder. Try again in a few minutes, or enter the address manually.
 messages__error__postcode_no_results = No results for that postcode
 
@@ -66,7 +67,8 @@ messages__error__selection = You must make a selection
 messages__error__sautr = Enter the Self Assessment Unique Tax Reference number
 messages__error__sautr_invalid = Enter a valid 10 digit Self Assessment Unique Taxpayer Reference number
 messages__error__no_sautr_establisher = You need to tell us why the establisher does not have a SAUTR
-messages__error__no_sautr_length = The reason cannot be more than 150 characters
+messages__error__no_sautr_length = The reason cannot be more than 160 characters
+messages__error__no_sautr_invalid = The reason cannot contain invalid characters
 messages__error__email = Enter an email address
 messages__error__phone = Enter a phone number
 messages__error__address_line_1_required = Enter the first line of address
@@ -116,7 +118,7 @@ messages__unauthorised__title = You can’t access this service with this accoun
 messages__pension_scheme_registration__title = Pension Scheme Registration - GOV.UK
 
 messages__what_you_will_need__title = What you’ll need
-messages__what_you_will_need__lede = To register a pension scheme with HMRC you will need:
+messages__what_you_will_need__lede = Your information will be saved as you progress. If you sign out, your changes will be saved for 28 days. After that time you will need to start from the beginning.
 messages__what_you_will_need__item_1 = the names, addresses, previous addresses and National Insurance numbers of any directors, trustees and partners associated with the pension scheme
 messages__what_you_will_need__item_2 = the telephone numbers, email addresses and Self Assessment Unique Taxpayer Reference numbers of any directors and trustees associated with the pension scheme
 messages__what_you_will_need__item_3 = the name, contact details, Corporation Tax Unique Taxpayer Reference number and address of the scheme establisher
@@ -148,9 +150,11 @@ messages__scheme_details__type_other_more = Details of the scheme type
 messages__error__scheme_name = Enter the name of the scheme
 messages__error__scheme_type_information = Enter more information about the scheme
 
-messages__error__scheme_name_length = The scheme name cannot be more than 255 characters
+messages__error__scheme_name_length = The scheme name cannot be more than 160 characters
+messages__error__scheme_name_invalid = The scheme name contains invalid characters
 messages__error__scheme_type_invalid = You must select a valid scheme type
-messages__error__scheme_type_length = The other scheme type cannot be more than 150 characters
+messages__error__scheme_type_other_length = The other scheme type cannot be more than 160 characters
+messages__error__scheme_type_other_invalid = The other scheme type contains invalid characters
 messages__error__scheme_name_psa_name_match = The Pension Scheme name cannot be the same as Pension Scheme Administrator name
 
 messages__membership_current__title = How many scheme members are there?
@@ -183,8 +187,10 @@ messages__error__company_name = Enter the company name
 messages__error__company_name_invalid = The name contains invalid characters
 
 messages__error__benefits_insurance__policy = Enter the policy number
-messages__error__company_name_length = The company name cannot be more than 255 characters
-messages__error__benefits_insurance__policy_length = The policy number cannot be more than 255 characters
+messages__error__company_name_length = The company name cannot be more than 160 characters
+messages__error__company_name_invalid = The company name contains invalid characters
+messages__error__benefits_insurance__policy_length = The policy number cannot be more than 55 characters
+messages__error__benefits_insurance__policy_invalid = The policy number contains invalid characters
 
 messages__establisher_address_years__title = How long has the establisher been at this address?
 messages__common__under_a_year = 12 months or less
@@ -219,8 +225,8 @@ messages__error__sort_code = Enter the sort code
 
 messages__error__bank_name_length = The bank name cannot be more than 28 characters
 messages__error__account_name_length = The account name cannot be more than 28 characters
-messages__error__sort_code_length = The sort code cannot be more than 6 numbers
-messages__error__sort_code_invalid = The sort code can only contain numbers
+messages__error__sort_code_length = Enter the sort code using 6 numbers
+messages__error__sort_code_invalid = Enter the sort code using 6 numbers
 messages__error__account_number_length = The account number cannot be more than 8 numbers
 messages__error__account_number_invalid = The account number can only contain numbers
 messages__scheme_country__title = Where was the scheme established?
@@ -251,7 +257,8 @@ messages__error__has_nino_establisher = Select yes if the establisher has a Nati
 messages__error__nino = Enter the National Insurance number
 messages__error__no_nino_establisher = You need to tell us why the establisher does not have a National Insurance number
 messages__error__nino_invalid = Enter a valid National Insurance number
-messages__error__no_nino_length = The reason cannot be more than 150 characters
+messages__error__no_nino_length = The reason cannot be more than 160 characters
+messages__error__no_nino_invalid = The reason cannot contain invalid characters
 
 messages__establishers__add__opt__company=Company
 messages__establishers__add__opt__individual=Individual
@@ -288,7 +295,6 @@ messages__common__vat_hint = This number issued by HMRC. It is 9 numbers, with "
 messages__common__paye = PAYE number (optional)
 messages__common__paye_hint = A PAYE reference number has the format 123/A56789
 messages__error__company_name = Enter the company name
-messages__error__company_name_length = The company name cannot be more than 255 characters
 messages__error__vat_length = The VAT Registration number cannot be more than 9 characters
 messages__error__vat_invalid = Enter a valid VAT Registration number
 messages__error__paye_length = The PAYE number cannot be more than 13 characters
@@ -309,7 +315,8 @@ messages__common__crn_hint = This is issued by Companies House. It is 8 characte
 messages__error__has_crn_company = Select yes if the company has a CRN
 messages__error__no_crn_company = You need to tell us why the company does not have a CRN
 messages__error__crn_invalid = Enter a valid 7 or 8 character Company Registration number
-messages__error__no_crn_length = The reason cannot be more than 150 characters
+messages__error__no_crn_length = The reason cannot be more than 160 characters
+messages__error__no_crn_invalid = The reason cannot contain invalid characters
 messages__error__crn = Enter the Company Registration number
 
 messages__benefits_insurance_addr__title = Insurance company address

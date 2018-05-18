@@ -30,7 +30,8 @@ class TrusteeNinoFormProvider extends NinoMapping {
       requiredNinoKey,
       requiredReasonKey,
       reasonLengthKey,
-      invalidNinoKey
+      invalidNinoKey,
+      invalidReasonKey
     )
   )
 
@@ -43,5 +44,5 @@ object TrusteeNinoFormProvider {
   val requiredReasonKey = "messages__trusteeNino__error__nino_reason_required"
   val reasonLengthKey: String = "messages__error__no_nino_length"
   val invalidNinoKey = "messages__error__nino_invalid"
-
+  val invalidReasonKey = "messages__error__no_nino_invalid"
 }

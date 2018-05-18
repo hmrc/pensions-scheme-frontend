@@ -74,6 +74,7 @@ class AddressFormProviderSpec extends FormBehaviours with FormSpec with AddressB
       form,
       "messages__error__postcode",
       "messages__error__postcode_invalid",
+      "messages__error__postcode_nonUK_length",
       Map(
         "addressLine1" -> addressLine1,
         "addressLine2" -> addressLine2

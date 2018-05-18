@@ -27,6 +27,7 @@ class UtrMappingSpec extends UtrBehaviour {
   private val requiredReasonKey = "error.reason"
   private val invalidUtrKey = "error.invalid.utr"
   private val maxLengthReasonKey = "error.reason.length"
+  private val invalidReasonKey = "error.reason.invalid"
 
 
   "UtrMapping" should {
@@ -35,7 +36,8 @@ class UtrMappingSpec extends UtrBehaviour {
       requiredUtrKey,
       requiredReasonKey,
       invalidUtrKey,
-      maxLengthReasonKey
+      maxLengthReasonKey,
+      invalidReasonKey
     ))
 
     behave like formWithUtr(testForm,
@@ -43,7 +45,9 @@ class UtrMappingSpec extends UtrBehaviour {
       requiredUtrKey,
       requiredReasonKey,
       invalidUtrKey,
-      maxLengthReasonKey)
+      maxLengthReasonKey,
+      invalidReasonKey
+    )
 
   }
 }

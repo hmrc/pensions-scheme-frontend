@@ -18,22 +18,23 @@ package forms.behaviours
 
 import forms.FormSpec
 import forms.mappings.NinoMapping
+import generators.Generators
 import models.Nino
-import org.apache.commons.lang3.RandomStringUtils
+import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
 
-trait NinoBehaviours extends FormSpec with NinoMapping {
+trait NinoBehaviours extends FormSpec with NinoMapping with PropertyChecks with Generators {
 
-  val reasonMaxLength = 150
-  val reasonInvalidLength = 151
+  val reasonMaxLength = 160
 
   def formWithNino(testForm: Form[Nino],
                    requiredKey: String,
                    requiredNinoKey: String,
                    requiredReasonKey: String,
                    reasonLengthKey: String,
-                   invalidNinoKey: String
-  ): Unit = {
+                   invalidNinoKey: String,
+                   invalidReasonKey: String
+                  ): Unit = {
 
     "behave like a form with a NINO Mapping" should {
 
@@ -51,13 +52,20 @@ trait NinoBehaviours extends FormSpec with NinoMapping {
         s"fail to bind when NINO $nino is invalid" in {
           val result = testForm.bind(Map("nino.hasNino" -> "true", "nino.nino" -> nino))
           result.errors shouldBe Seq(FormError("nino.nino", invalidNinoKey))
-         }
+        }
       }
 
-      "fail to bind when no is selected and reason exceeds max length of 150" in {
-        val testString = RandomStringUtils.randomAlphabetic(reasonInvalidLength)
-        val result = testForm.bind(Map("nino.hasNino" -> "false", "nino.reason" -> testString))
-        result.errors shouldBe Seq(FormError("nino.reason", reasonLengthKey, Seq(reasonMaxLength)))
+      "fail to bind when no is selected and reason exceeds max length of 160" in {
+        forAll(stringsLongerThan(reasonMaxLength) -> "longerString") {
+          string =>
+            val result = testForm.bind(Map("nino.hasNino" -> "false", "nino.reason" -> string))
+            result.errors shouldBe Seq(FormError("nino.reason", reasonLengthKey, Seq(reasonMaxLength)))
+        }
+      }
+
+      "fail to bind when reason is invalid" in {
+        val result = testForm.bind(Map("nino.hasNino" -> "false", "nino.reason" -> "{reason}"))
+        result.errors shouldBe Seq(FormError("nino.reason", invalidReasonKey, Seq(regexSafeText)))
       }
 
       "successfully bind when yes is selected and valid NINO is provided" in {

@@ -21,7 +21,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.Retrievals
 import identifiers.TypedIdentifier
 import models.Mode
-import models.address.TolerantAddress
+import models.address.{TolerantAddress}
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -76,13 +76,10 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
                             )(postcode: String)(implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     addressLookupConnector.addressLookupByPostCode(postcode).flatMap {
-      case None => Future.successful {
-        BadRequest(postcodeLookup(appConfig, formWithError(invalidPostcode), viewmodel))
-      }
-      case Some(Nil) => Future.successful {
-        Ok(postcodeLookup(appConfig, formWithError(noResults), viewmodel))
-      }
-      case Some(addresses) =>
+
+    case Nil => Future.successful(Ok(postcodeLookup(appConfig, formWithError(noResults), viewmodel)))
+
+      case addresses => {
         cacheConnector.save(
           request.externalId,
           id,
@@ -91,6 +88,12 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
           json =>
             Redirect(navigator.nextPage(id, mode)(UserAnswers(json)))
         }
+    }
+  } recoverWith {
+
+      case _ => {
+        Future.successful(BadRequest(postcodeLookup(appConfig, formWithError(invalidPostcode), viewmodel)))
+      }
     }
   }
 

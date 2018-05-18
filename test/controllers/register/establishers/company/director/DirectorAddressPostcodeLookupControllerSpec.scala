@@ -119,7 +119,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         .withFormUrlEncodedBody("value" -> validPostcode))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.successful(Some(Seq(fakeAddress(validPostcode))))
+        .thenReturn(Future.successful(Seq(fakeAddress(validPostcode)))
         )
 
       running(_.overrides(

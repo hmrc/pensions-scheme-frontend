@@ -57,7 +57,7 @@ class CompanyDetailsFormProviderSpec extends StringFieldBehaviours with Constrai
     behave like fieldWithRegex(
       form,
       fieldName,
-      "[invalid]",
+      "{invalid}",
       error = FormError(fieldName, invalidKey, Seq(regexSafeText))
     )
   }

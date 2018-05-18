@@ -57,7 +57,7 @@ class AdviserDetailsFormProviderSpec extends  StringFieldBehaviours with Constra
     behave like fieldWithRegex(
       form,
       fieldName,
-      "[invalid]",
+      "{invalid}",
       error = FormError(fieldName, invalidKey, Seq(regexSafeText))
     )
   }

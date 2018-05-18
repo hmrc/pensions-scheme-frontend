@@ -61,7 +61,7 @@ trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping {
       }
 
       "not bind a sort code which is less than the expected length" in {
-        val result = testForm.bind(validOtherData ++ Map("sortCode" -> "123"))
+        val result = testForm.bind(validOtherData ++ Map("sortCode" -> "12345"))
         result.errors shouldBe Seq(FormError("sortCode", keyInvalid))
       }
     }
