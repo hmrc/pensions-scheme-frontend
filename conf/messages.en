@@ -303,9 +303,6 @@ messages__establisher_company_contact_details__title = Company contact details
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the registered business address but you can enter any address you have for this company.
-messages__error__postcode = Enter the postcode
-messages__error__postcode_length = The postal code cannot be more than 8 characters
-messages__error__postcode_no_results = There are no addresses for that postcode
 
 messages__company__crn__title=Does the company have a Company Registration number (CRN)?
 messages__company__has_crn = Does the company have a Company Registration number (CRN)?
