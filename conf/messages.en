@@ -110,6 +110,7 @@ site.textarea.char_limit = (Limit is {0} characters)
 site.confirm = Confirm
 site.cancel = Cancel
 site.agree_and_continue = Agree and continue
+site.signOut = Sign out
 
 messages__unauthorised__title = You can’t access this service with this account
 
