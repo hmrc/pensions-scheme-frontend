@@ -21,6 +21,6 @@ import models.address.TolerantAddress
 
 case class IndividualAddressListId(index: Int) extends TypedIdentifier[TolerantAddress]
 
-object IndividualAddressListId extends TypedIdentifier[TolerantAddress]{
+object IndividualAddressListId {
   override def toString: String = "IndividualAddressList"
 }

@@ -24,7 +24,7 @@ import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressId, DirectorPreviousAddressListId}
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
@@ -83,7 +83,7 @@ class DirectorPreviousAddressController @Inject()(
     implicit request =>
       viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index).retrieve.right.map {
         vm =>
-          post(DirectorPreviousAddressId(establisherIndex, directorIndex), DirectorPreviousAddressId, vm, mode)
+          post(DirectorPreviousAddressId(establisherIndex, directorIndex), DirectorPreviousAddressListId(establisherIndex, directorIndex), vm, mode)
       }
   }
 }

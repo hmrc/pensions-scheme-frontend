@@ -21,6 +21,6 @@ import models.address.TolerantAddress
 
 case class CompanyAddressListId(index: Int) extends TypedIdentifier[TolerantAddress]
 
-object CompanyAddressListId extends TypedIdentifier[TolerantAddress] {
+object CompanyAddressListId {
   override def toString: String = "companyAddressList"
 }

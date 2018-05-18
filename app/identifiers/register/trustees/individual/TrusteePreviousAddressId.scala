@@ -26,7 +26,7 @@ case class TrusteePreviousAddressId(index: Int) extends TypedIdentifier[Address]
   override def path: JsPath = TrusteesId(index).path \ TrusteePreviousAddressId.toString
 }
 
-object TrusteePreviousAddressId extends TypedIdentifier[TolerantAddress] {
+object TrusteePreviousAddressId {
   override def toString: String = "trusteePreviousAddress"
 
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[TrusteePreviousAddressId] =

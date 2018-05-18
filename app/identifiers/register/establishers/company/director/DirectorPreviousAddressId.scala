@@ -25,6 +25,6 @@ case class DirectorPreviousAddressId(establisherIndex:Int, directorIndex:Int) ex
   override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \ DirectorPreviousAddressId.toString
 }
 
-object DirectorPreviousAddressId extends TypedIdentifier[TolerantAddress] {
+object DirectorPreviousAddressId {
   override def toString: String = "previousAddress"
 }
