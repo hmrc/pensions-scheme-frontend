@@ -35,17 +35,17 @@ import views.html.register.establishers.company.companyPreviousAddressPostcodeLo
 
 import scala.concurrent.Future
 
-class CompanyPreviousAddressPostcodeLookupController @Inject()(
-                                                                appConfig: FrontendAppConfig,
-                                                                override val messagesApi: MessagesApi,
-                                                                dataCacheConnector: DataCacheConnector,
-                                                                addressLookupConnector: AddressLookupConnector,
-                                                                @EstablishersCompany navigator: Navigator,
-                                                                authenticate: AuthAction,
-                                                                getData: DataRetrievalAction,
-                                                                requireData: DataRequiredAction,
-                                                                formProvider: PostCodeLookupFormProvider
-                                                              ) extends FrontendController with Retrievals with I18nSupport {
+class CompanyPreviousAddressPostcodeLookupController @Inject() (
+                                        appConfig: FrontendAppConfig,
+                                        override val messagesApi: MessagesApi,
+                                        dataCacheConnector: DataCacheConnector,
+                                        addressLookupConnector: AddressLookupConnector,
+                                        @EstablishersCompany navigator: Navigator,
+                                        authenticate: AuthAction,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
+                                        formProvider: PostCodeLookupFormProvider
+                                      ) extends FrontendController with Retrievals with I18nSupport {
 
   private val form = formProvider()
 
