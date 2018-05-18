@@ -69,7 +69,7 @@ class RegisterNavigator extends Navigator with Enumerable.Implicits {
     case DeclarationDutiesId =>
       declarationDutiesRoutes()
     case SchemeSuccessId =>
-      _ => controllers.routes.IndexController.onPageLoad()
+      _ => controllers.routes.LogoutController.onPageLoad()
   }
 
   private lazy val checkYourAnswers = controllers.register.routes.CheckYourAnswersController.onPageLoad()

@@ -15,3 +15,5 @@ GET        /language/:lang                              controllers.LanguageSwit
 GET        /this-service-has-been-reset                 controllers.SessionExpiredController.onPageLoad
 
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
+
+GET        /logout                                      controllers.LogoutController.onPageLoad
