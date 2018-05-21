@@ -63,6 +63,22 @@
       "en-GB": "Antigua and Barbuda"
     }
   },
+  "territory:AI": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Anguilla"
+    }
+  },
   "country:AL": {
     "edges": {
       "from": [
@@ -95,6 +111,22 @@
       "en-GB": "Armenia"
     }
   },
+  "country:AN": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Dutch Antilles"
+    }
+  },
   "country:AO": {
     "edges": {
       "from": [
@@ -109,6 +141,22 @@
     "names": {
       "cy": false,
       "en-GB": "Angola"
+    }
+  },
+  "territory:AQ": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Antarctica"
     }
   },
   "country:AR": {
@@ -157,6 +205,38 @@
     "names": {
       "cy": false,
       "en-GB": "Australia"
+    }
+  },
+  "territory:AW": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Aruba"
+    }
+  },
+  "territory:AX": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Aland Islands"
     }
   },
   "country:AZ": {
@@ -319,6 +399,38 @@
       "en-GB": "Benin"
     }
   },
+  "territory:BL": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Saint Barthelemy"
+    }
+  },
+  "territory:BM": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Bermuda"
+    }
+  },
   "country:BN": {
     "edges": {
       "from": [
@@ -332,7 +444,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Brunei"
+      "en-GB": "Brunei Darussalam"
     }
   },
   "country:BO": {
@@ -349,6 +461,22 @@
     "names": {
       "cy": false,
       "en-GB": "Bolivia"
+    }
+  },
+  "territory:BQ": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Bonaire, Sint Eustatius and Saba"
     }
   },
   "country:BR": {
@@ -380,7 +508,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "The Bahamas"
+      "en-GB": "Bahamas"
     }
   },
   "country:BT": {
@@ -397,6 +525,22 @@
     "names": {
       "cy": false,
       "en-GB": "Bhutan"
+    }
+  },
+  "territory:BV": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Bouvet Islands"
     }
   },
   "country:BW": {
@@ -463,6 +607,22 @@
       "en-GB": "Canada"
     }
   },
+  "territory:CC": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Cocos (Keeling) Islands"
+    }
+  },
   "country:CD": {
     "edges": {
       "from": [
@@ -476,7 +636,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Congo (Democratic Republic)"
+      "en-GB": "Democratic Republic of the Congo"
     }
   },
   "country:CF": {
@@ -508,7 +668,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Congo"
+      "en-GB": "Republic of the Congo"
     }
   },
   "country:CH": {
@@ -540,7 +700,23 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Ivory Coast"
+      "en-GB": "Cote d'Ivoire"
+    }
+  },
+  "territory:CK": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Cook Islands"
     }
   },
   "country:CL": {
@@ -636,7 +812,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Czechoslovakia"
+      "en-GB": "Serbia and Montenegro"
     }
   },
   "country:CU": {
@@ -671,6 +847,38 @@
       "en-GB": "Cape Verde"
     }
   },
+  "territory:CW": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Curaçao"
+    }
+  },
+  "territory:CX": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Christmas Island"
+    }
+  },
   "country:CY": {
     "edges": {
       "from": [
@@ -700,23 +908,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Czechia"
-    }
-  },
-  "country:DD": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "East Germany"
+      "en-GB": "Czech Republic"
     }
   },
   "country:DE": {
@@ -863,6 +1055,22 @@
       "en-GB": "Egypt"
     }
   },
+  "territory:EH": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Western Sahara"
+    }
+  },
   "country:ER": {
     "edges": {
       "from": [
@@ -943,6 +1151,22 @@
       "en-GB": "Fiji"
     }
   },
+  "territory:FK": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Falkland Islands"
+    }
+  },
   "country:FM": {
     "edges": {
       "from": [
@@ -957,6 +1181,22 @@
     "names": {
       "cy": false,
       "en-GB": "Micronesia"
+    }
+  },
+  "territory:FO": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Faroe Islands"
     }
   },
   "country:FR": {
@@ -1039,6 +1279,38 @@
       "en-GB": "Georgia"
     }
   },
+  "territory:GF": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "French Guiana"
+    }
+  },
+  "territory:GG": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Guernsey"
+    }
+  },
   "country:GH": {
     "edges": {
       "from": [
@@ -1055,6 +1327,38 @@
       "en-GB": "Ghana"
     }
   },
+  "territory:GI": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Gibraltar"
+    }
+  },
+  "territory:GL": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Greenland"
+    }
+  },
   "country:GM": {
     "edges": {
       "from": [
@@ -1068,7 +1372,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "The Gambia"
+      "en-GB": "Gambia"
     }
   },
   "country:GN": {
@@ -1085,6 +1389,22 @@
     "names": {
       "cy": false,
       "en-GB": "Guinea"
+    }
+  },
+  "territory:GP": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Guadeloupe"
     }
   },
   "country:GQ": {
@@ -1119,6 +1439,22 @@
       "en-GB": "Greece"
     }
   },
+  "territory:GS": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "South Georgia and South Sandwich Islands"
+    }
+  },
   "country:GT": {
     "edges": {
       "from": [
@@ -1133,6 +1469,22 @@
     "names": {
       "cy": false,
       "en-GB": "Guatemala"
+    }
+  },
+  "territory:GU": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Guam"
     }
   },
   "country:GW": {
@@ -1165,6 +1517,38 @@
     "names": {
       "cy": false,
       "en-GB": "Guyana"
+    }
+  },
+  "territory:HK": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Hong Kong"
+    }
+  },
+  "territory:HM": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Heard Island and McDonald Islands"
     }
   },
   "country:HN": {
@@ -1279,6 +1663,22 @@
       "en-GB": "Israel"
     }
   },
+  "territory:IM": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Isle of Man"
+    }
+  },
   "country:IN": {
     "edges": {
       "from": [
@@ -1293,6 +1693,22 @@
     "names": {
       "cy": false,
       "en-GB": "India"
+    }
+  },
+  "territory:IO": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "British Indian Ocean Territory"
     }
   },
   "country:IQ": {
@@ -1357,6 +1773,22 @@
     "names": {
       "cy": false,
       "en-GB": "Italy"
+    }
+  },
+  "territory:JE": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Jersey"
     }
   },
   "country:JM": {
@@ -1500,7 +1932,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "St Kitts and Nevis"
+      "en-GB": "Saint Kitts and Nevis"
     }
   },
   "country:KP": {
@@ -1549,6 +1981,22 @@
     "names": {
       "cy": false,
       "en-GB": "Kuwait"
+    }
+  },
+  "territory:KY": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Cayman Islands"
     }
   },
   "country:KZ": {
@@ -1807,6 +2255,22 @@
       "en-GB": "Montenegro"
     }
   },
+  "territory:MF": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Saint-Martin (French part)"
+    }
+  },
   "country:MG": {
     "edges": {
       "from": [
@@ -1903,6 +2367,54 @@
       "en-GB": "Mongolia"
     }
   },
+  "territory:MO": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Macau"
+    }
+  },
+  "territory:MP": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Northern Mariana Islands"
+    }
+  },
+  "territory:MQ": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Martinique"
+    }
+  },
   "country:MR": {
     "edges": {
       "from": [
@@ -1917,6 +2429,22 @@
     "names": {
       "cy": false,
       "en-GB": "Mauritania"
+    }
+  },
+  "territory:MS": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Montserrat"
     }
   },
   "country:MT": {
@@ -2047,6 +2575,22 @@
       "en-GB": "Namibia"
     }
   },
+  "territory:NC": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "New Caledonia"
+    }
+  },
   "country:NE": {
     "edges": {
       "from": [
@@ -2061,6 +2605,22 @@
     "names": {
       "cy": false,
       "en-GB": "Niger"
+    }
+  },
+  "territory:NF": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Norfolk Island"
     }
   },
   "country:NG": {
@@ -2159,6 +2719,22 @@
       "en-GB": "Nauru"
     }
   },
+  "territory:NU": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Niue"
+    }
+  },
   "country:NZ": {
     "edges": {
       "from": [
@@ -2221,6 +2797,22 @@
     "names": {
       "cy": false,
       "en-GB": "Peru"
+    }
+  },
+  "territory:PF": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "French Polynesia"
     }
   },
   "country:PG": {
@@ -2287,6 +2879,70 @@
       "en-GB": "Poland"
     }
   },
+  "territory:PM": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Saint Pierre and Miquelon"
+    }
+  },
+  "territory:PN": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Pitcairn Islands"
+    }
+  },
+  "territory:PR": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Puerto Rico"
+    }
+  },
+  "territory:PS": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Palestine"
+    }
+  },
   "country:PT": {
     "edges": {
       "from": [
@@ -2349,6 +3005,22 @@
     "names": {
       "cy": false,
       "en-GB": "Qatar"
+    }
+  },
+  "territory:RE": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Réunion"
     }
   },
   "country:RO": {
@@ -2511,6 +3183,22 @@
       "en-GB": "Singapore"
     }
   },
+  "territory:SH": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Saint Helena, Ascension and Tristan da Cunha"
+    }
+  },
   "country:SI": {
     "edges": {
       "from": [
@@ -2525,6 +3213,22 @@
     "names": {
       "cy": false,
       "en-GB": "Slovenia"
+    }
+  },
+  "territory:SJ": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Svalbard and Jan Mayen"
     }
   },
   "country:SK": {
@@ -2655,22 +3359,6 @@
       "en-GB": "Sao Tome and Principe"
     }
   },
-  "country:SU": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "USSR"
-    }
-  },
   "country:SV": {
     "edges": {
       "from": [
@@ -2685,6 +3373,22 @@
     "names": {
       "cy": false,
       "en-GB": "El Salvador"
+    }
+  },
+  "territory:SX": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Sint Maarten (Dutch part)"
     }
   },
   "country:SY": {
@@ -2719,6 +3423,22 @@
       "en-GB": "Swaziland"
     }
   },
+  "territory:TC": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Turks and Caicos Islands"
+    }
+  },
   "country:TD": {
     "edges": {
       "from": [
@@ -2733,6 +3453,22 @@
     "names": {
       "cy": false,
       "en-GB": "Chad"
+    }
+  },
+  "territory:TF": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "French Southern Territories"
     }
   },
   "country:TG": {
@@ -2781,6 +3517,22 @@
     "names": {
       "cy": false,
       "en-GB": "Tajikistan"
+    }
+  },
+  "territory:TK": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Tokelau"
     }
   },
   "country:TL": {
@@ -2895,6 +3647,22 @@
       "en-GB": "Tuvalu"
     }
   },
+  "territory:TW": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Taiwan"
+    }
+  },
   "country:TZ": {
     "edges": {
       "from": [
@@ -2943,6 +3711,22 @@
       "en-GB": "Uganda"
     }
   },
+  "territory:UM": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "United States Minor Outlying Islands"
+    }
+  },
   "country:US": {
     "edges": {
       "from": [
@@ -2956,7 +3740,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "United States"
+      "en-GB": "United States of America"
     }
   },
   "country:UY": {
@@ -3020,7 +3804,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "St Vincent"
+      "en-GB": "Saint Vincent and the Grenadines"
     }
   },
   "country:VE": {
@@ -3037,6 +3821,38 @@
     "names": {
       "cy": false,
       "en-GB": "Venezuela"
+    }
+  },
+  "territory:VG": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "British Virgin Islands"
+    }
+  },
+  "territory:VI": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "United States Virgin Islands"
     }
   },
   "country:VN": {
@@ -3071,6 +3887,22 @@
       "en-GB": "Vanuatu"
     }
   },
+  "territory:WF": {
+    "edges": {
+      "from": [
+      ]
+    },
+    "meta": {
+      "canonical": true,
+      "canonical-mask": 1,
+      "display-name": true,
+      "stable-name": true
+    },
+    "names": {
+      "cy": false,
+      "en-GB": "Wallis and Futuna"
+    }
+  },
   "country:WS": {
     "edges": {
       "from": [
@@ -3085,22 +3917,6 @@
     "names": {
       "cy": false,
       "en-GB": "Samoa"
-    }
-  },
-  "country:XK": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Kosovo"
     }
   },
   "country:YE": {
@@ -3119,7 +3935,7 @@
       "en-GB": "Yemen"
     }
   },
-  "country:YU": {
+  "territory:YT": {
     "edges": {
       "from": [
       ]
@@ -3132,7 +3948,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Yugoslavia"
+      "en-GB": "Mayotte"
     }
   },
   "country:ZA": {
@@ -4730,57 +5546,6 @@
       "en-GB": "BO"
     }
   },
-  "nym:BQ-BO": {
-    "edges": {
-      "from": [
-        "territory:BQ-BO"
-      ]
-    },
-    "meta": {
-      "canonical": false,
-      "canonical-mask": 0,
-      "display-name": false,
-      "stable-name": false
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "BQ-BO"
-    }
-  },
-  "nym:BQ-SA": {
-    "edges": {
-      "from": [
-        "territory:BQ-SA"
-      ]
-    },
-    "meta": {
-      "canonical": false,
-      "canonical-mask": 0,
-      "display-name": false,
-      "stable-name": false
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "BQ-SA"
-    }
-  },
-  "nym:BQ-SE": {
-    "edges": {
-      "from": [
-        "territory:BQ-SE"
-      ]
-    },
-    "meta": {
-      "canonical": false,
-      "canonical-mask": 0,
-      "display-name": false,
-      "stable-name": false
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "BQ-SE"
-    }
-  },
   "nym:BR": {
     "edges": {
       "from": [
@@ -5396,7 +6161,7 @@
   "nym:Bonaire": {
     "edges": {
       "from": [
-        "territory:BQ-BO"
+        "territory:BQ"
       ]
     },
     "meta": {
@@ -5731,23 +6496,6 @@
     "names": {
       "cy": false,
       "en-GB": "Buliwya"
-    }
-  },
-  "nym:Bundesrepublik": {
-    "edges": {
-      "from": [
-        "country:DE"
-      ]
-    },
-    "meta": {
-      "canonical": false,
-      "canonical-mask": 0,
-      "display-name": false,
-      "stable-name": false
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Bundesrepublik"
     }
   },
   "nym:Burkina Faso": {
@@ -7110,23 +7858,6 @@
       "en-GB": "Democratic Socialist Republic of Sri Lanka"
     }
   },
-  "nym:Deutschland": {
-    "edges": {
-      "from": [
-        "country:DE"
-      ]
-    },
-    "meta": {
-      "canonical": false,
-      "canonical-mask": 0,
-      "display-name": false,
-      "stable-name": false
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Deutschland"
-    }
-  },
   "nym:Dhivehi Raajje": {
     "edges": {
       "from": [
@@ -8062,23 +8793,6 @@
       "en-GB": "FR"
     }
   },
-  "nym:FRG": {
-    "edges": {
-      "from": [
-        "country:DE"
-      ]
-    },
-    "meta": {
-      "canonical": false,
-      "canonical-mask": 0,
-      "display-name": false,
-      "stable-name": false
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "FRG"
-    }
-  },
   "nym:Falkland Islands": {
     "edges": {
       "from": [
@@ -8181,7 +8895,7 @@
       "en-GB": "Federal Islamic Republic of the Comoros"
     }
   },
-  "nym:Federal Republic of Germany": {
+  "nym:Germany": {
     "edges": {
       "from": [
         "country:DE"
@@ -8195,7 +8909,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Federal Republic of Germany"
+      "en-GB": "Germany"
     }
   },
   "nym:Federal Republic of Nigeria": {
@@ -8944,23 +9658,6 @@
     "names": {
       "cy": false,
       "en-GB": "Georgia"
-    }
-  },
-  "nym:Germany Democratic Republic": {
-    "edges": {
-      "from": [
-        "country:DD"
-      ]
-    },
-    "meta": {
-      "canonical": false,
-      "canonical-mask": 0,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Germany Democratic Republic"
     }
   },
   "nym:Gibraltar": {
@@ -17140,23 +17837,6 @@
       "en-GB": "SZ"
     }
   },
-  "nym:Saba": {
-    "edges": {
-      "from": [
-        "territory:BQ-SA"
-      ]
-    },
-    "meta": {
-      "canonical": false,
-      "canonical-mask": 0,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Saba"
-    }
-  },
   "nym:Saint Barthélemy": {
     "edges": {
       "from": [
@@ -17324,7 +18004,7 @@
     },
     "names": {
       "cy": false,
-      "en-GB": "Samo"
+      "en-GB": "Samoa"
     }
   },
   "nym:Samoa i Sisifo": {
@@ -17546,23 +18226,6 @@
     "names": {
       "cy": false,
       "en-GB": "Singapura"
-    }
-  },
-  "nym:Sint Eustatius": {
-    "edges": {
-      "from": [
-        "territory:BQ-SE"
-      ]
-    },
-    "meta": {
-      "canonical": false,
-      "canonical-mask": 0,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Sint Eustatius"
     }
   },
   "nym:Sint Maarten": {
@@ -19178,23 +19841,6 @@
     "names": {
       "cy": false,
       "en-GB": "The Federal Democratic Republic of Nepal"
-    }
-  },
-  "nym:The Federal Republic of Germany": {
-    "edges": {
-      "from": [
-        "country:DE"
-      ]
-    },
-    "meta": {
-      "canonical": false,
-      "canonical-mask": 0,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "The Federal Republic of Germany"
     }
   },
   "nym:The Federal Republic of Nigeria": {
@@ -27287,1270 +27933,6 @@
     "names": {
       "cy": false,
       "en-GB": "한국 / 韓國"
-    }
-  },
-  "territory:AE-AJ": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Ajman"
-    }
-  },
-  "territory:AE-AZ": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Abu Dhabi"
-    }
-  },
-  "territory:AE-DU": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Dubai"
-    }
-  },
-  "territory:AE-FU": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Fujairah"
-    }
-  },
-  "territory:AE-RK": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Ras al-Khaimah"
-    }
-  },
-  "territory:AE-SH": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Sharjah"
-    }
-  },
-  "territory:AE-UQ": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Umm al-Quwain"
-    }
-  },
-  "territory:AI": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Anguilla"
-    }
-  },
-  "territory:AQ": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Antarctica"
-    }
-  },
-  "territory:AS": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "American Samoa"
-    }
-  },
-  "territory:AW": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Aruba"
-    }
-  },
-  "territory:AX": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Åland Islands"
-    }
-  },
-  "territory:BAT": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "British Antarctic Territory"
-    }
-  },
-  "territory:BL": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Saint Barthélemy"
-    }
-  },
-  "territory:BM": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Bermuda"
-    }
-  },
-  "territory:BQ-BO": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Bonaire"
-    }
-  },
-  "territory:BQ-SA": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Saba"
-    }
-  },
-  "territory:BQ-SE": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Sint Eustatius"
-    }
-  },
-  "territory:BV": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Bouvet Island"
-    }
-  },
-  "territory:CC": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Cocos (Keeling) Islands"
-    }
-  },
-  "territory:CK": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Cook Islands"
-    }
-  },
-  "territory:CW": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Curaçao"
-    }
-  },
-  "territory:CX": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Christmas Island"
-    }
-  },
-  "territory:EH": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Western Sahara"
-    }
-  },
-  "territory:ES-CE": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Ceuta"
-    }
-  },
-  "territory:ES-ML": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Melilla"
-    }
-  },
-  "territory:FK": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Falkland Islands"
-    }
-  },
-  "territory:FO": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Faroe Islands"
-    }
-  },
-  "territory:GF": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "French Guiana"
-    }
-  },
-  "territory:GG": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Guernsey"
-    }
-  },
-  "territory:GI": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Gibraltar"
-    }
-  },
-  "territory:GL": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Greenland"
-    }
-  },
-  "territory:GP": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Guadeloupe"
-    }
-  },
-  "territory:GS": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "South Georgia and South Sandwich Islands"
-    }
-  },
-  "territory:GU": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Guam"
-    }
-  },
-  "territory:HK": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Hong Kong"
-    }
-  },
-  "territory:HM": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Heard Island and McDonald Islands"
-    }
-  },
-  "territory:IM": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Isle of Man"
-    }
-  },
-  "territory:IO": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "British Indian Ocean Territory"
-    }
-  },
-  "territory:JE": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Jersey"
-    }
-  },
-  "territory:KY": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Cayman Islands"
-    }
-  },
-  "territory:MF": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Saint-Martin (French part)"
-    }
-  },
-  "territory:MO": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Macao"
-    }
-  },
-  "territory:MP": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Northern Mariana Islands"
-    }
-  },
-  "territory:MQ": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Martinique"
-    }
-  },
-  "territory:MS": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Montserrat"
-    }
-  },
-  "territory:NC": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "New Caledonia"
-    }
-  },
-  "territory:NF": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Norfolk Island"
-    }
-  },
-  "territory:NU": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Niue"
-    }
-  },
-  "territory:PF": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "French Polynesia"
-    }
-  },
-  "territory:PM": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Saint Pierre and Miquelon"
-    }
-  },
-  "territory:PN": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Pitcairn, Henderson, Ducie and Oeno Islands"
-    }
-  },
-  "territory:PR": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Puerto Rico"
-    }
-  },
-  "territory:PS": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Occupied Palestinian Territories"
-    }
-  },
-  "territory:RE": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Réunion"
-    }
-  },
-  "territory:SH-AC": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Ascension"
-    }
-  },
-  "territory:SH-HL": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Saint Helena"
-    }
-  },
-  "territory:SH-TA": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Tristan da Cunha"
-    }
-  },
-  "territory:SJ": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Svalbard and Jan Mayen"
-    }
-  },
-  "territory:SX": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Sint Maarten (Dutch part)"
-    }
-  },
-  "territory:TC": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Turks and Caicos Islands"
-    }
-  },
-  "territory:TF": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "French Southern Territories"
-    }
-  },
-  "territory:TK": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Tokelau"
-    }
-  },
-  "territory:TW": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Taiwan"
-    }
-  },
-  "territory:UM-67": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Johnston Atoll"
-    }
-  },
-  "territory:UM-71": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Midway Islands"
-    }
-  },
-  "territory:UM-76": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Navassa Island"
-    }
-  },
-  "territory:UM-79": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Wake Island"
-    }
-  },
-  "territory:UM-81": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Baker Island"
-    }
-  },
-  "territory:UM-84": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Howland Island"
-    }
-  },
-  "territory:UM-86": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Jarvis Island"
-    }
-  },
-  "territory:UM-89": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Kingman Reef"
-    }
-  },
-  "territory:UM-95": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Palmyra Atoll"
-    }
-  },
-  "territory:VG": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "British Virgin Islands"
-    }
-  },
-  "territory:VI": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "United States Virgin Islands"
-    }
-  },
-  "territory:WF": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Wallis and Futuna"
-    }
-  },
-  "territory:XQZ": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Akrotiri"
-    }
-  },
-  "territory:XXD": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Dhekelia"
-    }
-  },
-  "territory:YT": {
-    "edges": {
-      "from": [
-      ]
-    },
-    "meta": {
-      "canonical": true,
-      "canonical-mask": 1,
-      "display-name": true,
-      "stable-name": true
-    },
-    "names": {
-      "cy": false,
-      "en-GB": "Mayotte"
     }
   },
   "uk:ENG": {
