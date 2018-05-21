@@ -206,8 +206,6 @@ messages__complete__copy_1 = Your scheme is not yet registered. HMRC will consid
 messages__complete__copy_2 = We may contact you and request further information to support your application.
 messages__complete__copy_3 = If the scheme administrator does not meet the criteria to be a fit and proper person we may refuse your application.
 messages__complete__register_pensions_regulator = If your scheme has more than 2 members you need to register with the Pensions Regulator
-messages__complete__register_vat = You can also
-messages__complete__register_vat_link = register the scheme for VAT
 messages__complete__finish = Finish and sign out
 
 messages__uk_bank_account_details__title = Bank account details
