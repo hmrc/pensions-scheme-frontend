@@ -29,11 +29,11 @@ import models.{CompanyDetails, Index, NormalMode}
 import org.mockito.Mockito._
 import org.mockito._
 import org.scalatest.mockito.MockitoSugar
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import utils.FakeNavigator
 import views.html.register.establishers.company.companyPreviousAddressPostcodeLookup
 
@@ -113,14 +113,59 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+    "return a Bad Request" when {
+      "invalid data is submitted" in {
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
+        val boundForm = form.bind(Map("value" -> ""))
 
-      val result = controller().onSubmit(NormalMode, index)(postRequest)
+        val result = controller().onSubmit(NormalMode, index)(postRequest)
 
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm)
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm)
+      }
+
+      "post code is not valid" in {
+        val invalidPostCode = "invalid"
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", invalidPostCode))
+
+        val boundForm = form.bindFromRequest()(postRequest)
+
+        when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(invalidPostCode))(Matchers.any(), Matchers.any())).thenReturn(
+          Future.successful(Seq(TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(invalidPostCode), Some("GB")))))
+
+        val result = controller().onSubmit(NormalMode, index)(postRequest)
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm)
+      }
+
+      "no results found for the input post code" in {
+        val notFoundPostCode = "ZZ1 1ZZ"
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", notFoundPostCode))
+        val boundForm = form.withError(FormError("value", "messages__error__postcode_no_results"))
+
+        when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(notFoundPostCode))
+        (Matchers.any(), Matchers.any())).thenReturn(Future.successful((Nil)))
+
+        val result = controller().onSubmit(NormalMode, index)(postRequest)
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm)
+      }
+
+      "post code lookup fails" in {
+        val failedPostCode = "ZZ1 1ZZ"
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", failedPostCode))
+        val boundForm = form.withError(FormError("value", "messages__error__postcode_failed"))
+
+        when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any()))
+          .thenReturn(Future.failed(new HttpException("Failed",INTERNAL_SERVER_ERROR)))
+
+        val result = controller().onSubmit(NormalMode, index)(postRequest)
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm)
+      }
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
