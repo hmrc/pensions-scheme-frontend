@@ -38,23 +38,14 @@ class CompanyReviewViewSpec extends ViewBehaviours {
   val schemeName = "Test Scheme Name"
   val companyName = "test company name"
   val directors = Seq("director a", "director b", "director c")
+  val tenDirectors = Seq("director a", "director b", "director c", "director d", "director e",
+    "director f", "director g", "director h", "director i", "director j")
   def director(lastName: String): JsObject = Json.obj(
     DirectorDetailsId.toString -> DirectorDetails("director", None, lastName, LocalDate.now())
   )
 
-  val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails(schemeName, SchemeType.SingleTrust),
-    EstablishersId.toString -> Json.arr(
-      Json.obj(
-        CompanyDetailsId.toString ->
-          CompanyDetails(companyName, Some("123456"), Some("abcd")),
-        "director" -> Json.arr(director("a"), director("b"), director("c"))
-      )
-    )
-  )
-
   def createView: (() => HtmlFormat.Appendable) = () => companyReview(frontendAppConfig, index, schemeName, companyName, directors)(fakeRequest, messages)
+  def createSecView: (() => HtmlFormat.Appendable) = () => companyReview(frontendAppConfig, index, schemeName, companyName, tenDirectors)(fakeRequest, messages)
 
   "CompanyReview view" must {
     behave like normalPage(
@@ -77,10 +68,19 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       )
     }
 
-    "have link to edit director details" in {
+    "have link to edit director details when there are less than 10 directors" in {
       Jsoup.parse(createView().toString).select("a[id=edit-director-details]") must haveLink(
         routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index).url
       )
+      Jsoup.parse(createView().toString) must haveDynamicText("messages__companyReview__directors__editLink")
+
+    }
+
+    "have link to edit directors when there are 10 directors" in {
+      Jsoup.parse(createView().toString).select("a[id=edit-director-details]") must haveLink(
+        routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index).url
+      )
+      Jsoup.parse(createSecView().toString) must haveDynamicText("messages__companyReview__directors__changeLink")
     }
 
     "contain list of directors" in {
