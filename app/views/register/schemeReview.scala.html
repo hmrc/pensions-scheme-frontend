@@ -51,7 +51,11 @@
 
         @components.review_section(
             heading = messages("messages__schemeReview__trustees__heading"),
-            linkMessage = "messages__schemeReview__trustees__editLink",
+            linkMessage = if(trustees.lengthCompare(10)<0){
+                "messages__schemeReview__trustees__editLink"
+            } else {
+                "messages__schemeReview__trustees__changeLink"
+            },
             linkId = "edit-trustees",
             link = trusteesLink,
             list = Some(trustees)

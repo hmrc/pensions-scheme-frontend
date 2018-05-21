@@ -31,10 +31,13 @@ class SchemeReviewViewSpec extends ViewBehaviours {
   private val schemeName = "Test Scheme Name"
   private val establishers = Seq("establisher name", "establisher company name")
   private val trustees = Seq("trustee name", "trustee company name")
+  private val tenTrustees = Seq("trustee one", "trustee two", "trustee three", "trustee four", "trustee five",
+    "trustee six", "trustee seven", "trustee eight", "trustee nine", "trustee ten")
   private val estIndvUrl = routes1.CheckYourAnswersController.onPageLoad(0)
   private val trusteeAddUrl = routes2.AddTrusteeController.onPageLoad(CheckMode)
 
   private def createView = () => schemeReview(frontendAppConfig, schemeName, establishers, trustees, estIndvUrl, trusteeAddUrl)(fakeRequest, messages)
+  private def createSecView = () => schemeReview(frontendAppConfig, schemeName, establishers, tenTrustees, estIndvUrl, trusteeAddUrl)(fakeRequest, messages)
 
   "SchemeReview view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
@@ -72,10 +75,18 @@ class SchemeReviewViewSpec extends ViewBehaviours {
       Jsoup.parse(createView().toString) must haveDynamicText(messages("messages__schemeReview__trustees__heading"))
     }
 
-    "have link to edit trustees details" in {
+    "have link to edit trustees details when there are less than 10 trustees" in {
       Jsoup.parse(createView().toString).select("a[id=edit-trustees]") must haveLink(
         trusteeAddUrl.url
       )
+      Jsoup.parse(createView().toString) must haveDynamicText("messages__schemeReview__trustees__editLink")
+    }
+
+    "have link to edit trustees details when there are 10 trustees" in {
+      Jsoup.parse(createView().toString).select("a[id=edit-trustees]") must haveLink(
+        trusteeAddUrl.url
+      )
+      Jsoup.parse(createSecView().toString) must haveDynamicText("messages__schemeReview__trustees__changeLink")
     }
 
     "contain list of trustees" in {
