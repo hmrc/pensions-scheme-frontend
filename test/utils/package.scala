@@ -17,7 +17,7 @@
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import identifiers.register._
 import models._
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.register.SchemeDetails
 import org.scalatest.OptionValues
 
@@ -42,16 +42,70 @@ package object utils {
       answers.set(UKBankAccountId)(ukBankAccount).asOpt.value
     }
 
+    //Establishers Individual
+    def establishersIndividualAddress(index: Int, address: Address): UserAnswers = {
+      answers.set(establishers.individual.AddressId(index))(address).asOpt.value
+    }
+
+    def establishersIndividualAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
+      answers.set(establishers.individual.AddressListId(index))(selectedAddress).asOpt.value
+    }
+
+    def establishersIndividualPreviousAddress(index: Int, address: Address): UserAnswers = {
+      answers.set(establishers.individual.PreviousAddressId(index))(address).asOpt.value
+    }
+
+    def establishersIndividualPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
+      answers.set(establishers.individual.PreviousAddressListId(index))(selectedAddress).asOpt.value
+    }
+
     // Establishers company
     def establisherCompanyDetails(index: Int, companyDetails: CompanyDetails): UserAnswers = {
       answers.set(establishers.company.CompanyDetailsId(index))(companyDetails).asOpt.value
     }
 
+    def establishersCompanyAddress(index: Int, address: Address): UserAnswers = {
+      answers.set(establishers.company.CompanyAddressId(index))(address).asOpt.value
+    }
+
+    def establishersCompanyAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
+      answers.set(establishers.company.CompanyAddressListId(index))(selectedAddress).asOpt.value
+    }
+
+    def establishersCompanyPreviousAddress(index: Int, address: Address): UserAnswers = {
+      answers.set(establishers.company.CompanyPreviousAddressId(index))(address).asOpt.value
+    }
+
+    def establishersCompanyPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
+      answers.set(establishers.company.CompanyPreviousAddressListId(index))(selectedAddress).asOpt.value
+    }
+
+    //Establisher company director
+    def establishersCompanyDirectorAddress(establisherId: Int, directorId: Int, address: Address): UserAnswers = {
+      answers.set(establishers.company.director.DirectorAddressId(establisherId, directorId))(address).asOpt.value
+    }
+
+    def establishersCompanyDirectorAddressList(establisherId: Int, directorId: Int, selectedAddress: TolerantAddress): UserAnswers = {
+      answers.set(establishers.company.director.DirectorAddressListId(establisherId, directorId))(selectedAddress).asOpt.value
+    }
+
+    def establishersCompanyDirectorPreviousAddress(establisherId: Int, directorId: Int, address: Address): UserAnswers = {
+      answers.set(establishers.company.director.DirectorPreviousAddressId(establisherId, directorId))(address).asOpt.value
+    }
+
+    def establishersCompanyDirectorPreviousAddressList(establisherId: Int, directorId: Int, selectedAddress: TolerantAddress): UserAnswers = {
+      answers.set(establishers.company.director.DirectorPreviousAddressListId(establisherId, directorId))(selectedAddress).asOpt.value
+    }
+
+    // Trustees company
     def trusteesCompanyAddress(index: Int, address: Address): UserAnswers = {
       answers.set(trustees.company.CompanyAddressId(index))(address).asOpt.value
     }
 
-    // Trustees company
+    def trusteesCompanyAddressList(index: Int, address: TolerantAddress): UserAnswers = {
+      answers.set(trustees.company.CompanyAddressListId(index))(address).asOpt.value
+    }
+
     def trusteesCompanyAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
       answers.set(trustees.company.CompanyAddressYearsId(index))(addressYears).asOpt.value
     }
@@ -68,6 +122,10 @@ package object utils {
       answers.set(trustees.company.CompanyPreviousAddressId(index))(address).asOpt.value
     }
 
+    def trusteesCompanyPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
+      answers.set(trustees.company.CompanyPreviousAddressListId(index))(selectedAddress).asOpt.value
+    }
+
     def trusteesCompanyRegistrationNumber(index: Int, crn: CompanyRegistrationNumber): UserAnswers = {
       answers.set(trustees.company.CompanyRegistrationNumberId(index))(crn).asOpt.value
     }
@@ -75,6 +133,42 @@ package object utils {
     def trusteesUniqueTaxReference(index: Int, utr: UniqueTaxReference): UserAnswers = {
       answers.set(trustees.company.CompanyUniqueTaxReferenceId(index))(utr).asOpt.value
     }
+
+    //Trustee Individual
+    def trusteesAddress(index: Int, address: Address): UserAnswers = {
+      answers.set(trustees.individual.TrusteeAddressId(index))(address).asOpt.value
+    }
+
+    def trusteesAddressList(index: Int, address: TolerantAddress): UserAnswers = {
+      answers.set(trustees.individual.IndividualAddressListId(index))(address).asOpt.value
+    }
+
+    def trusteesPreviousAddress(index: Int, address: Address): UserAnswers = {
+      answers.set(trustees.individual.TrusteePreviousAddressId(index))(address).asOpt.value
+    }
+
+    def trusteesPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
+      answers.set(trustees.individual.TrusteePreviousAddressListId(index))(selectedAddress).asOpt.value
+    }
+
+    //Advisers
+    def advisersAddress(address: Address): UserAnswers = {
+      answers.set(adviser.AdviserAddressId)(address).asOpt.value
+    }
+
+    def advisersAddressList(selectedAddress: TolerantAddress): UserAnswers = {
+      answers.set(adviser.AdviserAddressListId)(selectedAddress).asOpt.value
+    }
+
+    //Insurers
+    def insurersAddress(address: Address): UserAnswers = {
+      answers.set(InsurerAddressId)(address).asOpt.value
+    }
+
+    def insurersAddressList(selectedAddress: TolerantAddress): UserAnswers = {
+      answers.set(InsurerAddressListId)(selectedAddress).asOpt.value
+    }
+
 
     // Converters
     def dataRetrievalAction: DataRetrievalAction = {

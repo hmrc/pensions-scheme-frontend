@@ -16,14 +16,13 @@
 
 package controllers.register.trustees.individual
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.individual.{IndividualPreviousAddressPostCodeLookupId, TrusteeDetailsId}
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -64,14 +63,14 @@ class IndividualPreviousAddressPostcodeLookupController @Inject()(
     }
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode).retrieve.right map get
-    }
+    implicit request =>
+      viewmodel(index, mode).retrieve.right map get
+  }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-      implicit request =>
-        viewmodel(index, mode).retrieve.right.map { vm =>
-          post(IndividualPreviousAddressPostCodeLookupId(index), vm, mode)
-        }
-    }
+    implicit request =>
+      viewmodel(index, mode).retrieve.right.map { vm =>
+        post(IndividualPreviousAddressPostCodeLookupId(index), vm, mode)
+      }
+  }
 }

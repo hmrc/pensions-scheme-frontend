@@ -19,41 +19,72 @@ package controllers.register.establishers.individual
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.individual.AddressYearsFormProvider
+import forms.address.AddressYearsFormProvider
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.individual.AddressYearsId
+import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
+import models.register.{SchemeDetails, SchemeType}
+import models.register.establishers.individual.EstablisherDetails
 import models.{AddressYears, Index, NormalMode}
+import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
-import views.html.register.establishers.individual.addressYears
+import viewmodels.Message
+import viewmodels.address.AddressYearsViewModel
+import views.html.address.addressYears
 
 class AddressYearsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new AddressYearsFormProvider()
-  val form = formProvider()
+  private val formProvider = new AddressYearsFormProvider()
+  private val form = formProvider(Message("messages__common_error__current_address_years"))
 
-  val firstIndex = Index(0)
-  val invalidIndex = Index(11)
+  private val firstIndex = Index(0)
+  private val invalidIndex = Index(11)
+  private val establisherName = "test first name test last name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddressYearsController =
-    new AddressYearsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher) =
+    new AddressYearsController(
+      frontendAppConfig,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      messagesApi,
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl
+    )
 
-  def viewAsString(form: Form[_] = form): String = addressYears(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
+  private lazy val viewModel =
+    AddressYearsViewModel(
+      postCall = routes.AddressYearsController.onSubmit(NormalMode, firstIndex),
+      title = Message("messages__establisher_address_years__title"),
+      heading = Message("messages__establisher_address_years__title"),
+      legend = Message("messages__establisher_address_years__title"),
+      Some(Message(establisherName))
+    )
 
-  val validData: JsObject = Json.obj(
+  private def viewAsString(form: Form[_] = form) =
+    addressYears(
+      frontendAppConfig,
+      form,
+      viewModel
+    )(fakeRequest, messages).toString
+
+  private val validData = Json.obj(SchemeDetailsId.toString -> Json.toJson(
+    SchemeDetails("value 1", SchemeType.SingleTrust)),
     EstablishersId.toString -> Json.arr(
-        Json.obj(
-          AddressYearsId.toString ->
-            AddressYears.options.head.value.toString
-        )
+      Json.obj(
+        EstablisherDetailsId.toString ->
+          EstablisherDetails("test first name", None, "test last name", LocalDate.now),
+        AddressYearsId.toString ->
+          AddressYears.options.head.value.toString
       )
     )
+  )
 
   "AddressYears Controller" must {
 
@@ -70,7 +101,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form.fill(AddressYears.values.head))
     }
 
-    "redirect to session expired from a GET when the index is invalid" ignore {
+    "redirect to session expired from a GET when the index is invalid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER

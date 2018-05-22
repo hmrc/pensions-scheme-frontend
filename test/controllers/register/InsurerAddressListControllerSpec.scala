@@ -22,21 +22,17 @@ import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.{InsurerAddressId, InsurerPostCodeLookupId}
 import models.NormalMode
-import models.address.{Address, TolerantAddress}
+import models.address.TolerantAddress
 import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
-import org.mockito.Matchers
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.{Enumerable, FakeNavigator, MapFormats}
-import views.html.register.insurerAddressList
-
-import scala.concurrent.Future
+import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSugar with MapFormats with Enumerable.Implicits {
 
@@ -63,11 +59,20 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl,
-      formProvider
+      new DataRequiredActionImpl
     )
+
   def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = addresses): String =
-    insurerAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages).toString
+    addressList(
+      frontendAppConfig,
+      form,
+      AddressListViewModel(
+        routes.InsurerAddressListController.onSubmit(NormalMode),
+        routes.InsurerAddressController.onPageLoad(NormalMode),
+        addresses,
+        subHeading = Some(schemeName)
+      )
+    )(fakeRequest, messages).toString
 
   def address(postCode: String): TolerantAddress = TolerantAddress(
     Some("address line 1"),
@@ -126,20 +131,13 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
     }
 
     "update the country of the chosen address to `GB`" in {
-      val dataCacheConnector = mock[DataCacheConnector]
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
-      when(dataCacheConnector.save[Address, InsurerAddressId.type](any(), Matchers.eq(InsurerAddressId), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Json.obj()))
-
-      val result = controller(new FakeDataRetrievalAction(Some(schemeDetails ++ addressObject)), dataCacheConnector)
+      val result = controller(new FakeDataRetrievalAction(Some(schemeDetails ++ addressObject)), FakeDataCacheConnector)
         .onSubmit(NormalMode)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-
-      verify(dataCacheConnector, times(1))
-        .save[Address, InsurerAddressId.type](any(), Matchers.eq(InsurerAddressId), Matchers.eq(addresses.head.toAddress.copy(country = "GB")))(any(), any(), any())
-
+      FakeDataCacheConnector.verify(InsurerAddressId, addresses.head.toAddress.copy(country = "GB"))
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
@@ -173,12 +171,11 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
         }
       }
       "scheme name is not present" in {
-        val result = controller(getEmptyData).onPageLoad(NormalMode)(fakeRequest)
+        val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
       }
     }
-
   }
 }

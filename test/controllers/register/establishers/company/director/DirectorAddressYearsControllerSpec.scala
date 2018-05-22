@@ -45,13 +45,12 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): DirectorAddressYearsController =
     new DirectorAddressYearsController(
       frontendAppConfig,
-      messagesApi,
       FakeDataCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
+      messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl,
-      formProvider
+      new DataRequiredActionImpl
     )
 
   def viewAsString(form: Form[_] = form): String = directorAddressYears(

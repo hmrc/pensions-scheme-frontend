@@ -16,9 +16,11 @@
 
 package controllers.register.establishers.individual
 
+import audit.{AddressAction, AddressEvent}
+import audit.testdoubles.StubSuccessfulAuditService
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
@@ -29,12 +31,16 @@ import views.html.register.establishers.individual.previousAddress
 import controllers.ControllerSpecBase
 import forms.address.AddressFormProvider
 import identifiers.register.SchemeDetailsId
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
+import org.scalatest.concurrent.ScalaFutures
 import play.api.mvc.Call
+import viewmodels.Message
+import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
-class PreviousAddressControllerSpec extends ControllerSpecBase {
+class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -42,15 +48,38 @@ class PreviousAddressControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
+
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
+
   def countryOptions: CountryOptions = new CountryOptions(options)
+  val fakeAuditService = new StubSuccessfulAuditService()
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PreviousAddressController =
-    new PreviousAddressController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider, countryOptions)
+    new PreviousAddressController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction, dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider,
+      countryOptions,
+      fakeAuditService
+    )
 
-  def viewAsString(form: Form[_] = form): String = previousAddress(frontendAppConfig, form, NormalMode,
-    firstIndex, options, establisherName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    manualAddress(
+      frontendAppConfig,
+      form,
+      ManualAddressViewModel(
+        routes.PreviousAddressController.onSubmit(NormalMode, firstIndex),
+        countryOptions.options,
+        Message("messages__establisher_individual_previous_address__title"),
+        Message("messages__establisher_individual_previous_address__title"),
+        Some(Message(establisherName)),
+        Some(Message("messages__establisher_individual_previous_address_lede"))
+      )
+    )(fakeRequest, messages).toString
 
   val addressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
 
@@ -115,6 +144,47 @@ class PreviousAddressControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "send an audit event when valid data is submitted" in {
+
+      val existingAddress = Address(
+        "existing-line-1",
+        "existing-line-2",
+        None,
+        None,
+        None,
+        "existing-country"
+      )
+
+      val selectedAddress = TolerantAddress(None, None, None, None, None, None)
+
+      val data =
+        UserAnswers()
+          .establishersIndividualPreviousAddress(firstIndex, existingAddress)
+          .establishersIndividualPreviousAddressList(firstIndex, selectedAddress)
+          .dataRetrievalAction
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(
+        ("addressLine1", "value 1"),
+        ("addressLine2", "value 2"),
+        ("postCode", "NE1 1NE"),
+        "country" -> "GB"
+      )
+
+      fakeAuditService.reset()
+
+      val result = controller(data).onSubmit(NormalMode, firstIndex)(postRequest)
+
+      whenReady(result) {
+        _ =>
+          fakeAuditService.verifySent(
+            AddressEvent(
+              FakeAuthAction.externalId,
+              AddressAction.LookupChanged
+            )
+          )
+      }
     }
   }
 }

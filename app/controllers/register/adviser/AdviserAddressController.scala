@@ -56,16 +56,6 @@ class AdviserAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(mode: Mode): ManualAddressViewModel =
-    ManualAddressViewModel(
-      postCall(mode),
-      countryOptions.options,
-      title = Message(title),
-      heading = Message(heading),
-      hint = None,
-      secondaryHeader = Some(secondary)
-    )
-
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
@@ -78,4 +68,14 @@ class AdviserAddressController @Inject()(
     implicit request =>
       post(AdviserAddressId, AdviserAddressListId, viewmodel(mode), mode)
   }
+
+  private def viewmodel(mode: Mode): ManualAddressViewModel =
+    ManualAddressViewModel(
+      postCall(mode),
+      countryOptions.options,
+      title = Message(title),
+      heading = Message(heading),
+      hint = None,
+      secondaryHeader = Some(secondary)
+    )
 }

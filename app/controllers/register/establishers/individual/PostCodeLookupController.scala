@@ -16,92 +16,68 @@
 
 package controllers.register.establishers.individual
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
-import controllers.Retrievals
 import controllers.actions._
+import controllers.address.{PostcodeLookupController => GenericPostcodeLookupController}
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.individual.PostCodeLookupId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, PostCodeLookupId}
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.EstablishersIndividual
-import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.establishers.individual.postCodeLookup
-
-import scala.concurrent.Future
+import viewmodels.Message
+import viewmodels.address.PostcodeLookupViewModel
 
 class PostCodeLookupController @Inject()(
-                                          appConfig: FrontendAppConfig,
+                                          override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
-                                          dataCacheConnector: DataCacheConnector,
-                                          addressLookupConnector: AddressLookupConnector,
-                                          @EstablishersIndividual navigator: Navigator,
+                                          override val cacheConnector: DataCacheConnector,
+                                          override val addressLookupConnector: AddressLookupConnector,
+                                          @EstablishersIndividual override val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: PostCodeLookupFormProvider
-                                 ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        ) extends GenericPostcodeLookupController {
 
-  private val form = formProvider()
+  private val title: Message = "messages__establisher_individual_address__title"
+  private val heading: Message = "messages__establisher_individual_address__title"
+  private val hint: Message = "messages__establisher_individual_address_lede"
 
-  def formWithError(messageKey: String): Form[String] = {
-    form.withError("value", s"messages__error__postcode_$messageKey")
-  }
+  protected val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      retrieveEstablisherName(index) {
-        establisherName =>
-          Future.successful(Ok(postCodeLookup(appConfig, form, mode, index, establisherName)))
-      }
-  }
+  private def viewmodel(index: Int, mode: Mode): Retrieval[PostcodeLookupViewModel] =
+    Retrieval {
+      implicit request =>
+        EstablisherDetailsId(index).retrieve.right.map {
+          details =>
+            PostcodeLookupViewModel(
+              routes.PostCodeLookupController.onSubmit(mode, index),
+              routes.AddressController.onPageLoad(mode, index),
+              title = Message(title),
+              heading = Message(heading),
+              subHeading = Some(details.fullName),
+              hint = Some(Message(hint))
+            )
+        }
+    }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      retrieveEstablisherName(index) {
-        establisherName =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(postCodeLookup(appConfig, formWithErrors, mode, index, establisherName))),
-            (value) =>
-              addressLookupConnector.addressLookupByPostCode(value).flatMap {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode).retrieve.right map get
+    }
 
-                case Nil => {
-                  Future.successful(
-                    BadRequest(
-                      postCodeLookup(
-                        appConfig,
-                        formWithError("no_results"), mode, index, establisherName)
-                    )
-                  )
-                }
-                case addresses =>
-                  dataCacheConnector
-                    .save(
-                    request.externalId,
-                    PostCodeLookupId(index),
-                    addresses
-                  )
-                  .map {
-                    json =>
-                      Redirect(navigator.nextPage(PostCodeLookupId(index), mode)(new UserAnswers(json))
-                      )
-                }.recoverWith{
-                    case _ => Future.successful(
-                      BadRequest(
-                        postCodeLookup(
-                          appConfig, formWithError("invalid"), mode, index, establisherName)
-                      )
-                    )
-                  }
-              }
-          )
-      }
-  }
-
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode).retrieve.right.map {
+          vm =>
+            post(PostCodeLookupId(index), vm, mode)
+        }
+    }
 }

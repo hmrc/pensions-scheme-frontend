@@ -17,7 +17,6 @@
 package controllers.register.trustees.individual
 
 import audit.AuditService
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
@@ -25,6 +24,7 @@ import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteePreviousAddressId, TrusteePreviousAddressListId}
+import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
@@ -35,18 +35,18 @@ import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
-class TrusteePreviousAddressController @Inject() (
-                                                   override val appConfig: FrontendAppConfig,
-                                                   override val messagesApi: MessagesApi,
-                                                   override val dataCacheConnector: DataCacheConnector,
-                                                   @TrusteesIndividual override val navigator: Navigator,
-                                                   authenticate: AuthAction,
-                                                   getData: DataRetrievalAction,
-                                                   requireData: DataRequiredAction,
-                                                   formProvider: AddressFormProvider,
-                                                   val countryOptions: CountryOptions,
-                                                   val auditService: AuditService
-                                      ) extends ManualAddressController with I18nSupport {
+class TrusteePreviousAddressController @Inject()(
+                                                  override val appConfig: FrontendAppConfig,
+                                                  override val messagesApi: MessagesApi,
+                                                  override val dataCacheConnector: DataCacheConnector,
+                                                  @TrusteesIndividual override val navigator: Navigator,
+                                                  authenticate: AuthAction,
+                                                  getData: DataRetrievalAction,
+                                                  requireData: DataRequiredAction,
+                                                  formProvider: AddressFormProvider,
+                                                  val countryOptions: CountryOptions,
+                                                  val auditService: AuditService
+                                                ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = TrusteePreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__trustee_individual_previous_address__title"
@@ -71,7 +71,7 @@ class TrusteePreviousAddressController @Inject() (
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map{
+      viewmodel(index, mode).retrieve.right.map {
         vm =>
           get(TrusteePreviousAddressId(index), vm)
       }

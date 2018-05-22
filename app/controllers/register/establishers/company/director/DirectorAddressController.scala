@@ -17,7 +17,6 @@
 package controllers.register.establishers.company.director
 
 import audit.AuditService
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
@@ -25,6 +24,7 @@ import controllers.address.ManualAddressController
 import controllers.register.establishers.company.director.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorAddressListId, DirectorDetailsId}
+import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
@@ -36,17 +36,17 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
 class DirectorAddressController @Inject()(
-                                          val appConfig: FrontendAppConfig,
-                                          val messagesApi: MessagesApi,
-                                          val dataCacheConnector: DataCacheConnector,
-                                          @EstablishersCompanyDirector val navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          requireData: DataRequiredAction,
-                                          val formProvider: AddressFormProvider,
-                                          val countryOptions: CountryOptions,
-                                          val auditService: AuditService
-                                        ) extends ManualAddressController with I18nSupport {
+                                           val appConfig: FrontendAppConfig,
+                                           val messagesApi: MessagesApi,
+                                           val dataCacheConnector: DataCacheConnector,
+                                           @EstablishersCompanyDirector val navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           val formProvider: AddressFormProvider,
+                                           val countryOptions: CountryOptions,
+                                           val auditService: AuditService
+                                         ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = DirectorAddressController.onSubmit _
   private[controllers] val title: Message = "messages__directorAddressPostcodeLookup__title"
@@ -55,7 +55,23 @@ class DirectorAddressController @Inject()(
 
   protected val form: Form[Address] = formProvider()
 
-  private def viewmodel(establisherIndex: Int, directorIndex:Int,  mode: Mode): Retrieval[ManualAddressViewModel] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+    implicit request =>
+      viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map {
+        vm =>
+          get(DirectorAddressId(establisherIndex, directorIndex), vm)
+      }
+  }
+
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+    implicit request =>
+      viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map {
+        vm =>
+          post(DirectorAddressId(establisherIndex, directorIndex), DirectorAddressListId(establisherIndex, directorIndex), vm, mode)
+      }
+  }
+
+  private def viewmodel(establisherIndex: Int, directorIndex: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
     Retrieval {
       implicit request =>
         DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
@@ -70,20 +86,4 @@ class DirectorAddressController @Inject()(
             )
         }
     }
-
-  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map{
-        vm =>
-          get(DirectorAddressId(establisherIndex, directorIndex), vm)
-      }
-  }
-
-  def onSubmit(mode: Mode,  establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map {
-        vm =>
-          post(DirectorAddressId(establisherIndex, directorIndex), DirectorAddressListId(establisherIndex, directorIndex), vm, mode)
-      }
-  }
 }

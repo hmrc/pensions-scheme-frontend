@@ -17,7 +17,6 @@
 package controllers.register.trustees.individual
 
 import audit.AuditService
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
@@ -25,6 +24,7 @@ import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes.TrusteeAddressController
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.individual.{IndividualAddressListId, TrusteeAddressId, TrusteeDetailsId}
+import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
@@ -73,7 +73,7 @@ class TrusteeAddressController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map{
+      viewmodel(index, mode).retrieve.right.map {
         vm =>
           get(TrusteeAddressId(index), vm)
       }

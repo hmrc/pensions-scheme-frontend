@@ -16,69 +16,73 @@
 
 package controllers.register.establishers.individual
 
-import javax.inject.Inject
-
+import audit.AuditService
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.Retrievals
 import controllers.actions._
+import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.individual.PreviousAddressId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, PreviousAddressId, PreviousAddressListId}
+import javax.inject.Inject
+import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
-import utils.{CountryOptions, Navigator, UserAnswers}
-import views.html.register.establishers.individual.previousAddress
-
-import scala.concurrent.Future
+import utils.{CountryOptions, Navigator}
+import viewmodels.Message
+import viewmodels.address.ManualAddressViewModel
 
 class PreviousAddressController @Inject()(
-                                           appConfig: FrontendAppConfig,
-                                           override val messagesApi: MessagesApi,
-                                           dataCacheConnector: DataCacheConnector,
-                                           @EstablishersIndividual navigator: Navigator,
+                                           val appConfig: FrontendAppConfig,
+                                           val messagesApi: MessagesApi,
+                                           val dataCacheConnector: DataCacheConnector,
+                                           @EstablishersIndividual val navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
-                                           formProvider: AddressFormProvider,
-                                           countryOptions: CountryOptions
-                                         ) extends FrontendController with Retrievals with I18nSupport {
+                                           val formProvider: AddressFormProvider,
+                                           val countryOptions: CountryOptions,
+                                           val auditService: AuditService
+                                         ) extends ManualAddressController with I18nSupport {
 
-  private val form = formProvider()
+  private[controllers] val postCall = routes.PreviousAddressController.onSubmit _
+  private[controllers] val title: Message = "messages__establisher_individual_previous_address__title"
+  private[controllers] val heading: Message = "messages__establisher_individual_previous_address__title"
+  private[controllers] val hint: Message = "messages__establisher_individual_previous_address_lede"
+
+  protected val form: Form[Address] = formProvider()
+
+  private def viewmodel(index: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
+    Retrieval {
+      implicit request =>
+        EstablisherDetailsId(index).retrieve.right.map {
+          details =>
+            ManualAddressViewModel(
+              postCall(mode, Index(index)),
+              countryOptions.options,
+              title = Message(title),
+              heading = Message(heading),
+              hint = Some(Message(hint)),
+              secondaryHeader = Some(details.fullName)
+            )
+        }
+    }
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) {
-        establisherName =>
-          val result = request.userAnswers.get(PreviousAddressId(index)) match {
-            case None => Ok(previousAddress(appConfig, form, mode, index, countryOptions.options, establisherName))
-            case Some(value) => Ok(previousAddress(appConfig, form.fill(value), mode, index, countryOptions.options, establisherName))
-          }
-          Future.successful(result)
+      viewmodel(index, mode).retrieve.right.map {
+        vm =>
+          get(PreviousAddressId(index), vm)
       }
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) {
-        establisherName =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(previousAddress(appConfig, formWithErrors, mode, index, countryOptions.options, establisherName))),
-            (value) =>
-              dataCacheConnector.save(
-                request.externalId,
-                PreviousAddressId(index),
-                value
-              ).map {
-                json =>
-                  Redirect(navigator.nextPage(PreviousAddressId(index), mode)(new UserAnswers(json)))
-              }
-          )
+      viewmodel(index, mode).retrieve.right.map {
+        vm =>
+          post(PreviousAddressId(index), PreviousAddressListId(index), vm, mode)
       }
   }
-
 }
