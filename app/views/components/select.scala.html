@@ -44,7 +44,7 @@
             }
             @options.map { valueOption =>
                 <option id="value-@{valueOption.value}" value="@valueOption.value"
-            @if(field.value.contains(valueOption.value)) {selected}>@messages(valueOption.label) </option>}
+            @if(field.value.contains(valueOption.value)) {selected}>@messages(valueOption.label)</option>}
         </select>
     </div>
 </div>

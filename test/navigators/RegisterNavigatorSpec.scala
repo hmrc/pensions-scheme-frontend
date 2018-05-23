@@ -65,7 +65,7 @@ class RegisterNavigatorSpec extends WordSpec with MustMatchers with NavigatorBeh
     (DeclarationDutiesId,           dutiesTrue,           schemeSuccess,                          None),
     (DeclarationDutiesId,           dutiesFalse,          adviserDetails,                         None),
     (DeclarationDutiesId,           emptyAnswers,         expired,                                None),
-    (SchemeSuccessId,               emptyAnswers,         index,                                  None)
+    (SchemeSuccessId,               emptyAnswers,         logout,                                  None)
   )
 
   navigator.getClass.getSimpleName must {
@@ -116,7 +116,7 @@ object RegisterNavigatorSpec extends Enumerable.Implicits {
   private def adviserDetails = controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
   private def establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
-  private def index = controllers.routes.IndexController.onPageLoad()
+  private def logout = controllers.routes.LogoutController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 

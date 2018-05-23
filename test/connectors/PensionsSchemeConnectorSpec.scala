@@ -163,28 +163,4 @@ object PensionsSchemeConnectorSpec extends OptionValues {
       )
     )
 
-  private val invalidCorrelationIdResponse =
-    Json.stringify(
-      Json.obj(
-        "code" -> "INVALID_CORRELATION_ID",
-        "reason" -> "test-reason"
-      )
-    )
-
-  private val invalidBusinessPartnerResponse =
-    Json.stringify(
-      Json.obj(
-        "code" -> "INVALID_BUSINESS_PARTNER",
-        "reason" -> "test-reason"
-      )
-    )
-
-  private val duplicateSubmissionResponse =
-    Json.stringify(
-      Json.obj(
-        "code" -> "DUPLICATE_SUBMISSION",
-        "reason" -> "test-reason"
-      )
-    )
-
 }

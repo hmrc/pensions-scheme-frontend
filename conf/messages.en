@@ -113,6 +113,7 @@ site.textarea.char_limit = (Limit is {0} characters)
 site.confirm = Confirm
 site.cancel = Cancel
 site.agree_and_continue = Agree and continue
+site.signOut = Sign out
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -141,7 +142,7 @@ messages__scheme_details__type_legend = What type of scheme is it?
 messages__scheme_details__type_legend_short = Scheme type
 messages__scheme_details__type_single = Single trust
 messages__scheme_details__type_single_hint = This is set up under trust and covers all members. The terms of the trust do not specifically allocate assets to a particular member.
-messages__scheme_details__type_group = Group life/death
+messages__scheme_details__type_group = Group life/death in service
 messages__scheme_details__type_group_hint = This is set up to only provide benefits on death.
 messages__scheme_details__type_corp = Body corporate
 messages__scheme_details__type_corp_hint = For example, a registered company, a local authority or a body controlled by Royal Charter.
@@ -206,8 +207,6 @@ messages__complete__copy_1 = Your scheme is not yet registered. HMRC will consid
 messages__complete__copy_2 = We may contact you and request further information to support your application.
 messages__complete__copy_3 = If the scheme administrator does not meet the criteria to be a fit and proper person we may refuse your application.
 messages__complete__register_pensions_regulator = If your scheme has more than 2 members you need to register with the Pensions Regulator
-messages__complete__register_vat = You can also
-messages__complete__register_vat_link = register the scheme for VAT
 messages__complete__finish = Finish and sign out
 
 messages__uk_bank_account_details__title = Bank account details
@@ -448,6 +447,7 @@ messages__companyReview__secondaryHeading__partial = Establishers for
 messages__companyReview__company__editLink = Edit company details
 messages__companyReview__directors__heading = Company directors
 messages__companyReview__directors__editLink = Add, delete or edit company directors
+messages__companyReview__directors__changeLink = Change company directors
 
 messages__trustee_company_contact_details__title = Company contact details
 
@@ -480,6 +480,7 @@ messages__schemeReview__establishers__heading = Scheme establishers
 messages__schemeReview__establishers__editLink = Edit scheme establishers
 messages__schemeReview__trustees__heading = Trustees
 messages__schemeReview__trustees__editLink = Add, delete or edit trustees
+messages__schemeReview__trustees__changeLink = Change trustees
 
 messages__otherDirectors__title=Do you need to tell us about other directors?
 messages__otherDirectors__heading=Do you need to tell us about other directors?

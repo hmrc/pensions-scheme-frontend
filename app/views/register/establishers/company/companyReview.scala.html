@@ -38,7 +38,11 @@
 
     @components.review_section(
         heading = messages("messages__companyReview__directors__heading"),
-        linkMessage = "messages__companyReview__directors__editLink",
+        linkMessage = if(directors.lengthCompare(10)<0){
+            "messages__companyReview__directors__editLink"
+        } else {
+            "messages__companyReview__directors__changeLink"
+        },
         linkId = "edit-director-details",
         link = routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index),
         list = Some(directors)

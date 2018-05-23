@@ -38,31 +38,30 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
 
     authorised().retrieve(Retrievals.externalId and
       Retrievals.allEnrolments) {
-
-        case Some(id) ~ enrolments =>
-            block(AuthenticatedRequest(request, id.toString, PsaId(getPsaId(enrolments))))
-        case _ =>
-          Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
+      case Some(id) ~ enrolments =>
+        block(AuthenticatedRequest(request, id.toString, PsaId(getPsaId(enrolments))))
+      case _ =>
+        Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
     } recover {
-      case ex: NoActiveSession =>
+      case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
-      case ex: InsufficientEnrolments =>
+      case _: InsufficientEnrolments =>
         Redirect(routes.UnauthorisedController.onPageLoad)
-      case ex: InsufficientConfidenceLevel =>
+      case _: InsufficientConfidenceLevel =>
         Redirect(routes.UnauthorisedController.onPageLoad)
-      case ex: UnsupportedAuthProvider =>
+      case _: UnsupportedAuthProvider =>
         Redirect(routes.UnauthorisedController.onPageLoad)
-      case ex: UnsupportedAffinityGroup =>
+      case _: UnsupportedAffinityGroup =>
         Redirect(routes.UnauthorisedController.onPageLoad)
-      case ex: UnsupportedCredentialRole =>
+      case _: UnsupportedCredentialRole =>
         Redirect(routes.UnauthorisedController.onPageLoad)
-      case ex: PsaIdNotFound =>
-        Redirect(routes.UnauthorisedController.onPageLoad)
+      case _: PsaIdNotFound =>
+        Redirect(config.registerSchemeAdministratorUrl)
     }
   }
 
   private def getPsaId(enrolments: Enrolments) =
-    enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PsaID")).map(_.value).getOrElse(throw new PsaIdNotFound)
+    enrolments.getEnrolment("HMRC-PODS-ORG").flatMap(_.getIdentifier("PSAID")).map(_.value).getOrElse(throw new PsaIdNotFound)
 
 }
 
