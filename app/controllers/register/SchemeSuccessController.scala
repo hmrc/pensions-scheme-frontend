@@ -42,14 +42,16 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         requireData: DataRequiredAction,
                                         @Register navigator: Navigator) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async{
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
 
       SubmissionReferenceNumberId.retrieve.right.map {
         submissionReferenceNumber =>
+          val schemeName = request.userAnswers.get(SchemeDetailsId).map(_.schemeName)
+          cacheConnector.removeAll(request.externalId)
           Future.successful(Ok(schemeSuccess(
             appConfig,
-            request.userAnswers.get(SchemeDetailsId).map(_.schemeName),
+            schemeName,
             LocalDate.now(),
             submissionReferenceNumber.schemeReferenceNumber))
           )
