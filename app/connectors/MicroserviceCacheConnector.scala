@@ -31,11 +31,11 @@ import play.api.mvc.Results._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MicroserviceCacheConnector @Inject()(
-                                            config: FrontendAppConfig,
-                                            http: WSClient,
-                                            crypto: ApplicationCrypto
-                                          ) extends DataCacheConnector {
+class MicroserviceCacheConnector @Inject() (
+                                             config: FrontendAppConfig,
+                                             http: WSClient,
+                                             crypto: ApplicationCrypto
+                                           ) extends DataCacheConnector {
 
   protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id"
 
@@ -93,23 +93,23 @@ class MicroserviceCacheConnector @Inject()(
   override def fetch(id: String)(implicit
                                  ec: ExecutionContext,
                                  hc: HeaderCarrier
-  ): Future[Option[JsValue]] = {
+                                ): Future[Option[JsValue]] = {
 
     http.url(url(id))
       .withHeaders(hc.headers: _*)
       .get().flatMap {
-      response =>
-        response.status match {
-          case NOT_FOUND =>
-            Future.successful(None)
-          case OK => {
-            val decrypted = crypto.JsonCrypto.decrypt(Crypted(response.body))
-            Logger.debug(s"connectors.MicroserviceCacheConnector.fetch: Successful response: $decrypted")
-            Future.successful(Some(Json.parse(decrypted.value)))
+        response =>
+          response.status match {
+            case NOT_FOUND =>
+              Future.successful(None)
+            case OK => {
+              val decrypted = crypto.JsonCrypto.decrypt(Crypted(response.body))
+              Logger.debug(s"connectors.MicroserviceCacheConnector.fetch: Successful response: $decrypted")
+              Future.successful(Some(Json.parse(decrypted.value)))
+            }
+            case _ =>
+              Future.failed(new HttpException(response.body, response.status))
           }
-          case _ =>
-            Future.failed(new HttpException(response.body, response.status))
-        }
     }
   }
 
