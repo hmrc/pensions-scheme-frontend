@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import connectors.FakeDataCacheConnector
+import connectors.DataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
 import views.html.register.schemeSuccess
@@ -24,14 +24,22 @@ import controllers.ControllerSpecBase
 import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
 import models.register.{SchemeDetails, SchemeSubmissionResponse, SchemeType}
 import org.joda.time.LocalDate
+import org.mockito.Matchers._
+import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, Json}
 import utils.FakeNavigator
+import org.mockito.Mockito._
+import play.api.mvc.Results._
 
-class SchemeSuccessControllerSpec extends ControllerSpecBase {
+import scala.concurrent.Future
+
+class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val submissionReferenceNumber="XX123456789132"
+
+  val fakeDataCacheConnector = mock[DataCacheConnector]
 
   val validData: JsObject = Json.obj(
     SchemeDetailsId.toString -> Json.toJson(SchemeDetails("test scheme name", SchemeType.SingleTrust)),
@@ -43,7 +51,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase {
     new SchemeSuccessController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      fakeDataCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
@@ -61,10 +69,12 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase {
   "SchemeSuccess Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(fakeRequest)
+      when(fakeDataCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
 
+      val result = controller().onPageLoad(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+     verify(fakeDataCacheConnector, times(1)).removeAll(any())(any(), any())
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
