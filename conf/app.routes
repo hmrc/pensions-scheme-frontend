@@ -17,3 +17,5 @@ GET        /this-service-has-been-reset                 controllers.SessionExpir
 GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
 
 GET        /logout                                      controllers.LogoutController.onPageLoad
+
+GET        /your-pension-schemes                        controllers.ListSchemesController.onPageLoad
