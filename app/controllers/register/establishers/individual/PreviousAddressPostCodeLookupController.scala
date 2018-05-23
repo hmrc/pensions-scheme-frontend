@@ -92,15 +92,15 @@ class PreviousAddressPostCodeLookupController @Inject()(
                     json =>
                       Redirect(navigator.nextPage(PreviousPostCodeLookupId(index), mode)(new UserAnswers(json))
                       )
-                }.recoverWith {
-                    case _ => Future.successful(
-                      BadRequest(
-                        previousPostCodeLookup(
-                          appConfig,
-                          formWithError("invalid"), mode, index, establisherName)
-                      )
-                    )
-                  }
+                }
+              }.recoverWith {
+                case _ => Future.successful(
+                  BadRequest(
+                    previousPostCodeLookup(
+                      appConfig,
+                      formWithError("failed"), mode, index, establisherName)
+                  )
+                )
               }
           )
       }

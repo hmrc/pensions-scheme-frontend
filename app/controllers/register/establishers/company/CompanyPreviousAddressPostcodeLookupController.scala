@@ -82,24 +82,24 @@ class CompanyPreviousAddressPostcodeLookupController @Inject() (
 
                 dataCacheConnector
                   .save(
-                  request.externalId,
-                  CompanyPreviousAddressPostcodeLookupId(index),
-                  addresses
-                )
-                .map {
-                  json =>
-                    Redirect(navigator.nextPage(CompanyPreviousAddressPostcodeLookupId(index), mode)(new UserAnswers(json))
-                    )
-
-            }.recoverWith {
-                  case _ => Future.successful(
-                    BadRequest(
-                      companyPreviousAddressPostcodeLookup(
-                        appConfig,
-                        formWithError("invalid"), mode, index, companyName)
-                    )
+                    request.externalId,
+                    CompanyPreviousAddressPostcodeLookupId(index),
+                    addresses
                   )
-                }
+                  .map {
+                    json =>
+                      Redirect(navigator.nextPage(CompanyPreviousAddressPostcodeLookupId(index), mode)(new UserAnswers(json))
+                      )
+
+                  }
+            }.recoverWith {
+              case _ => Future.successful(
+                BadRequest(
+                  companyPreviousAddressPostcodeLookup(
+                    appConfig,
+                    formWithError("failed"), mode, index, companyName)
+                )
+              )
             }
         )
       }
