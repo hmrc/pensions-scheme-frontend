@@ -27,6 +27,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import utils.WireMockHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.mvc.Results._
 
 class MicroserviceCacheConnectorSpec extends AsyncWordSpec with MustMatchers with WireMockHelper with OptionValues {
 
@@ -37,6 +38,7 @@ class MicroserviceCacheConnectorSpec extends AsyncWordSpec with MustMatchers wit
   override protected def portConfigKey: String = "microservice.services.pensions-scheme.port"
 
   protected implicit val hc: HeaderCarrier = HeaderCarrier()
+
   protected def url(id: String): String = s"/pensions-scheme/journey-cache/scheme/$id"
 
   protected lazy val connector: DataCacheConnector = injector.instanceOf[MicroserviceCacheConnector]
@@ -102,7 +104,7 @@ class MicroserviceCacheConnectorSpec extends AsyncWordSpec with MustMatchers wit
           )
       )
 
-      recoverToExceptionIf[HttpException]{
+      recoverToExceptionIf[HttpException] {
         connector.fetch("foo")
       } map {
         _.responseCode mustEqual INTERNAL_SERVER_ERROR
@@ -236,7 +238,7 @@ class MicroserviceCacheConnectorSpec extends AsyncWordSpec with MustMatchers wit
           )
       )
 
-      recoverToExceptionIf[HttpException]{
+      recoverToExceptionIf[HttpException] {
         connector.save("foo", FakeIdentifier, "foobar")
       } map {
         _.responseCode mustEqual INTERNAL_SERVER_ERROR
@@ -280,4 +282,15 @@ class MicroserviceCacheConnectorSpec extends AsyncWordSpec with MustMatchers wit
     }
   }
 
+  ".removeAll" must {
+    "remove all the data" in {
+      server.stubFor(delete(urlEqualTo(url("foo"))).
+        willReturn(ok)
+      )
+
+      connector.removeAll("foo").map{
+        _ mustEqual Ok
+      }
+    }
+  }
 }

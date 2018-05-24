@@ -20,7 +20,8 @@ import javax.inject.{Inject, Singleton}
 
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.{Configuration, Logger}
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.Result
 import play.modules.reactivemongo.MongoDbConnection
 import reactivemongo.api.DefaultDB
 import reactivemongo.api.indexes.{Index, IndexType}
@@ -29,7 +30,7 @@ import reactivemongo.play.json.ImplicitBSONHandlers._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
-
+import play.api.mvc.Results._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -91,6 +92,11 @@ class ReactiveMongoRepository(config: Configuration, mongo: () => DefaultDB)
             json.validate((__ \ "data").json.pick[JsObject]).asOpt
         }
     }
+  }
+
+  def remove(id: String): Future[Boolean] = {
+    val selector = BSONDocument("id" -> id)
+    collection.remove(selector).map(_.ok)
   }
 }
 

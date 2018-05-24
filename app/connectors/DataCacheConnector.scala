@@ -19,7 +19,7 @@ package connectors
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import play.api.libs.json._
-import play.api.mvc.AnyContent
+import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
 
@@ -57,4 +57,5 @@ trait DataCacheConnector {
 
   def upsert(cacheId: String, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue]
 
+  def removeAll(cacheId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result]
 }

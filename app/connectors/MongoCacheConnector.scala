@@ -19,9 +19,11 @@ package connectors
 import com.google.inject.Inject
 import identifiers.TypedIdentifier
 import play.api.libs.json._
+import play.api.mvc.Result
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
+import play.api.mvc.Results._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -77,4 +79,7 @@ class MongoCacheConnector @Inject() (
     sessionRepository().get(cacheId)
   }
 
+  override def removeAll(cacheId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
+    sessionRepository().remove(cacheId).map(_ => Ok)
+  }
 }
