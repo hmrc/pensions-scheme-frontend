@@ -189,4 +189,14 @@ trait ViewSpecBase extends SpecBase {
       )
   }
 
+  def haveElementWithText(id: String, text: String): Matcher[View] = Matcher[View] {
+    view =>
+      val element = Jsoup.parse(view().toString()).getElementById(id)
+      MatchResult(
+        element != null && element.text() == text,
+        s"element $id does not have text $text",
+        s"element $id has text $text"
+      )
+  }
+
 }

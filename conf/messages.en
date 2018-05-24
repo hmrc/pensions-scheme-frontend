@@ -628,3 +628,11 @@ messages__adviserPostCodeLookupAddress__secondary=Pension adviser
 messages__adviserPostCodeLookupAddress__enterPostCode= Enter the postcode below, or if you have an overseas address{0} enter the address manually {1}
 
 messages__enrolment__error__name_invalid = Enter a PSA Name
+
+messages__listSchemes__title = Your pension schemes
+messages__listSchemes__noSchemes = You have not registered any pension schemes in this service.
+messages__listSchemes__registerNewScheme = Register a new scheme
+messages__listSchemes__column_schemeName = Scheme name
+messages__listSchemes__column_srn = SRN
+messages__listSchemes__column_pstr = PSTR
+messages__listSchemes__column_status = Status
