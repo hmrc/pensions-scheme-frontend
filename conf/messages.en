@@ -53,11 +53,12 @@ messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if yo
 messages__common__postcode_lookup__address_postcode = Postcode
 messages__common__postcode_lookup__address_postcode_hint = For example NE12 8ER
 messages__common_individual_postCode_lookup__lede = This is usually the residential address for this person.
-messages__error__postcode = Enter the postal code
-messages__error__postcode_length = The postal code cannot be more than 8 characters
-messages__error__postcode_nonUK_length = The postal code cannot be more than 10 characters
-messages__error__postcode_invalid = There is a problem with the postcode address finder. Try again in a few minutes, or enter the address manually.
-messages__error__postcode_no_results = No results for that postcode
+messages__error__postcode = Enter the postcode
+messages__error__postcode_length = The postcode cannot be more than 8 characters
+messages__error__postcode_nonUK_length = The postcode cannot be more than 10 characters
+messages__error__postcode_invalid = Enter a valid postcode
+messages__error__postcode_failed = There is a problem with the address finder. Try again or enter the address manually
+messages__error__postcode_no_results = There are no addresses for that postcode
 
 messages__error__first_name = Enter the first name
 messages__error__last_name = Enter the last name
@@ -302,10 +303,6 @@ messages__establisher_company_contact_details__title = Company contact details
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the residential address for this person.
-
-messages__error__postcode = Enter the postcode
-messages__error__postcode_length = The postal code cannot be more than 8 characters
-messages__error__postcode_no_results = No results for that postcode
 
 messages__company__crn__title=Does the company have a Company Registration number (CRN)?
 messages__company__has_crn = Does the company have a Company Registration number (CRN)?
