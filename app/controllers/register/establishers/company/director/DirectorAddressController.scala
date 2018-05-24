@@ -59,7 +59,7 @@ class DirectorAddressController @Inject()(
     implicit request =>
       viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map {
         vm =>
-          get(DirectorAddressId(establisherIndex, directorIndex), vm)
+          get(DirectorAddressId(establisherIndex, directorIndex), DirectorAddressListId(establisherIndex, directorIndex), vm)
       }
   }
 

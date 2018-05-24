@@ -20,7 +20,7 @@ import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
-import identifiers.register.{InsurerAddressId, InsurerPostCodeLookupId}
+import identifiers.register.{InsurerAddressId, InsurerAddressListId, InsurerPostCodeLookupId}
 import models.NormalMode
 import models.address.TolerantAddress
 import models.register.SchemeDetails
@@ -137,7 +137,7 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
         .onSubmit(NormalMode)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      FakeDataCacheConnector.verify(InsurerAddressId, addresses.head.toAddress.copy(country = "GB"))
+      FakeDataCacheConnector.verify(InsurerAddressListId, addresses.head.copy(country = Some("GB")))
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

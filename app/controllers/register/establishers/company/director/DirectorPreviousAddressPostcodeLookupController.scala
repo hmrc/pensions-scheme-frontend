@@ -54,7 +54,8 @@ class DirectorPreviousAddressPostcodeLookupController @Inject()(
           routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex),
           Message("messages__directorPreviousAddressPostcodeLookup__title"),
           Message("messages__directorPreviousAddressPostcodeLookup__heading"),
-          Some(details.directorName)
+          Some(details.directorName),
+          Some(Message("messages__directorPreviousAddressPostcodeLookup__lede"))
         )
       )
   }

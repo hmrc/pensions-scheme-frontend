@@ -301,7 +301,8 @@ messages__error__paye_length = The PAYE number cannot be more than 13 characters
 messages__establisher_company_contact_details__title = Company contact details
 
 messages__establisher_individual_address__title = Establisher’s address
-messages__establisher_individual_address_lede = This is usually the registered business address but you can enter any address you have for this company.
+messages__establisher_individual_address_lede = This is usually the residential address for this person.
+
 messages__error__postcode = Enter the postcode
 messages__error__postcode_length = The postal code cannot be more than 8 characters
 messages__error__postcode_no_results = No results for that postcode
@@ -334,8 +335,7 @@ messages__select_the_previous_address__title = Select the previous address
 messages__previousAddressList__checkYourAnswersLabel = previousAddressList
 
 messages__establisher_individual_previous_address__title = Previous address
-messages__establisher_individual_previous_address_lede = This is usually the registered business address but you can enter any address you have for this company.
-
+messages__establisher_individual_previous_address_lede = This is usually the residential address for this person.
 
 messages__establisher_individual_name_cya_label = Name
 messages__establisher_individual_dob_cya_label = Date of birth
@@ -465,6 +465,8 @@ messages__checkYourAnswers__trustees__company__address_years = How long has the 
 
 messages__directorPreviousAddressPostcodeLookup__title = Director’s previous address
 messages__directorPreviousAddressPostcodeLookup__heading = Director’s previous address
+messages__directorPreviousAddressPostcodeLookup__lede = This is usually the director’s residential address.
+
 messages__addTrustee__title = Trustees
 messages__addTrustee__heading = Trustees
 messages__addTrustee__lede = You must tell us about all your trustees. You can add up to 10 using the digital service.
@@ -523,7 +525,7 @@ messages__error_declaration_duties_required = Tell us if you have the appropriat
 
 messages__trustee__individual__address__title = Trustee’s address
 messages__trustee__individual__address__heading = Trustee’s address
-messages__trustee__individual__address__lede = This is usually the registered business address but you can enter any address you have for this trustee.
+messages__trustee__individual__address__lede = This is usually the residential address for this person.
 
 messages__trusteeNino__title = Does the trustee have a National Insurance number?
 messages__trusteeNino__heading = Does the trustee have a National Insurance number?
@@ -617,8 +619,8 @@ messages__adviserDetails__error__email_required = Enter an email address
 messages__adviserDetails__error__adviser_name_length = The adviser name cannot be more than 107 characters
 messages__adviserDetails__error__adviser_name_invalid = The adviser name contains invalid characters
 
-messages__adviserAddress__title = Pension adviser's address
-messages__adviserAddress__heading = Pension adviser's address
+messages__adviserAddress__title = Pension adviser''s address
+messages__adviserAddress__heading = Pension adviser''s address
 messages__adviserAddress__secondary = Pension adviser
 
 messages__adviser__secondary_heading = Pension adviser

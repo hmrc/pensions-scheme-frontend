@@ -100,7 +100,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
-    "return a Bad Request when no results found for the input post code" in {
+    "return OK when no results found for the input post code to match generic controller" in {
       val notFoundPostCode = "ZZ1 1ZZ"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", notFoundPostCode))
       val boundForm = form.withError(FormError("value", "messages__error__postcode_no_results"))

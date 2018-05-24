@@ -142,7 +142,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         .onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-        FakeDataCacheConnector.verify(AddressId(firstIndex), addresses.head.toAddress.copy(country = "GB"))
+        FakeDataCacheConnector.verify(AddressListId(firstIndex), addresses.head.copy(country = Some("GB")))
     }
 
     "return a Bad Request and errors when no data is submitted" in {

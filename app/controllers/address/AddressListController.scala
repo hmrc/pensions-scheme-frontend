@@ -55,13 +55,16 @@ trait AddressListController extends FrontendController with I18nSupport {
       addressIndex => {
         val address = viewModel.addresses(addressIndex).copy(country = Some("GB"))
 
-        cacheConnector.save(request.externalId, navigatorId, address).flatMap(
-          _ => cacheConnector.save(request.externalId, dataId, address.toAddress).map(
-            json =>
-              Redirect(navigator.nextPage(navigatorId, mode)(UserAnswers(json)))
-          )
-        )
+        cacheConnector.remove(request.externalId, dataId).flatMap {
+          _ =>
+            cacheConnector.save(request.externalId, navigatorId, address).map {
+              json =>
+                Redirect(navigator.nextPage(navigatorId, mode)(UserAnswers(json)))
+            }
+        }
       }
     )
+
   }
+
 }

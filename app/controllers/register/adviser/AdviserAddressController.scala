@@ -60,7 +60,7 @@ class AdviserAddressController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
 
-      get(AdviserAddressId, viewmodel(mode))
+      get(AdviserAddressId, AdviserAddressListId, viewmodel(mode))
   }
 
 

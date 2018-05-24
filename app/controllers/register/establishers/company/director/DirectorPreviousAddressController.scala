@@ -51,7 +51,6 @@ class DirectorPreviousAddressController @Inject()(
   private[controllers] val postCall = routes.DirectorPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__companyDirectorAddress__title"
   private[controllers] val heading: Message = "messages__companyDirectorAddress__heading"
-  private[controllers] val hint: Message = "messages__common__company_address_hint"
 
   protected val form: Form[Address] = formProvider()
 
@@ -65,7 +64,6 @@ class DirectorPreviousAddressController @Inject()(
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
-              hint = Some(Message(hint)),
               secondaryHeader = Some(director.directorName)
             )
         }
@@ -75,7 +73,7 @@ class DirectorPreviousAddressController @Inject()(
     implicit request =>
       viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index).retrieve.right.map {
         vm =>
-          get(DirectorPreviousAddressId(establisherIndex, directorIndex), vm)
+          get(DirectorPreviousAddressId(establisherIndex, directorIndex), DirectorPreviousAddressListId(establisherIndex, directorIndex), vm)
       }
   }
 

@@ -74,7 +74,7 @@ class CompanyAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          get(CompanyAddressId(index), vm)
+          get(CompanyAddressId(index), CompanyAddressListId(index), vm)
       }
   }
 

@@ -24,12 +24,11 @@ import identifiers.TypedIdentifier
 import models.Mode
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
-import play.api._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{CountryOptions, Navigator, UserAnswers}
+import utils.{Navigator, UserAnswers}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
@@ -46,10 +45,14 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
   protected def get(
                      id: TypedIdentifier[Address],
+                     selectedId: TypedIdentifier[TolerantAddress],
                      viewModel: ManualAddressViewModel
                    )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     val preparedForm = request.userAnswers.get(id) match {
-      case None => form
+      case None => request.userAnswers.get(selectedId) match {
+        case Some(value) => form.fill(value.toAddress)
+        case None => form
+      }
       case Some(value) => form.fill(value)
     }
     Future.successful(Ok(manualAddress(appConfig, preparedForm, viewModel)))

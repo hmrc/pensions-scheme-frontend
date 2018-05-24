@@ -75,7 +75,7 @@ class TrusteeAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          get(TrusteeAddressId(index), vm)
+          get(TrusteeAddressId(index), IndividualAddressListId(index), vm)
       }
   }
 

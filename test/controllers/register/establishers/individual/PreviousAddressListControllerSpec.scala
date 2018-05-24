@@ -144,7 +144,8 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
         .onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      FakeDataCacheConnector.verify(PreviousAddressId(firstIndex), previousAddresses.head.toAddress.copy(country = "GB")) }
+      FakeDataCacheConnector.verify(PreviousAddressListId(firstIndex), previousAddresses.head.copy(country = Some("GB")))
+    }
 
     "return a Bad Request and errors when no data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))

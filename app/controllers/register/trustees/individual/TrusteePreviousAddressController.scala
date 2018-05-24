@@ -73,7 +73,7 @@ class TrusteePreviousAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          get(TrusteePreviousAddressId(index), vm)
+          get(TrusteePreviousAddressId(index), TrusteePreviousAddressListId(index), vm)
       }
   }
 
