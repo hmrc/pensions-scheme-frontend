@@ -83,7 +83,15 @@ class TrusteeAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(TrusteeAddressId(index), IndividualAddressListId(index), vm, mode)
+          post(TrusteeAddressId(index), IndividualAddressListId(index), vm, mode, context(vm))
       }
   }
+
+  private def context(viewModel: ManualAddressViewModel): String = {
+    viewModel.secondaryHeader match {
+      case Some(fullName) => s"Trustee Individual Address: $fullName"
+      case _ => "Trustee Individual Address"
+    }
+  }
+
 }

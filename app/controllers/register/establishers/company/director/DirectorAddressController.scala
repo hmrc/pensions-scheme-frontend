@@ -67,7 +67,13 @@ class DirectorAddressController @Inject()(
     implicit request =>
       viewmodel(establisherIndex, directorIndex, mode).retrieve.right.map {
         vm =>
-          post(DirectorAddressId(establisherIndex, directorIndex), DirectorAddressListId(establisherIndex, directorIndex), vm, mode)
+          post(
+            DirectorAddressId(establisherIndex, directorIndex),
+            DirectorAddressListId(establisherIndex, directorIndex),
+            vm,
+            mode,
+            context(vm)
+          )
       }
   }
 
@@ -86,4 +92,12 @@ class DirectorAddressController @Inject()(
             )
         }
     }
+
+  private def context(viewModel: ManualAddressViewModel): String = {
+    viewModel.secondaryHeader match {
+      case Some(name) => s"Company Director Address: $name"
+      case _ => "Company Director Address"
+    }
+  }
+
 }

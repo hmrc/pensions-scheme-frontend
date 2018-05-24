@@ -54,7 +54,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Scala
 
   val fakeAuditService = new StubSuccessfulAuditService()
 
-  val validData = Json.obj(
+  private val validData = Json.obj(
     SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
@@ -181,7 +181,16 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Scala
           fakeAuditService.verifySent(
             AddressEvent(
               FakeAuthAction.externalId,
-              AddressAction.LookupChanged
+              AddressAction.LookupChanged,
+              s"Establisher Company Previous Address: $companyName",
+              Address(
+                "value 1",
+                "value 2",
+                None,
+                None,
+                Some("NE1 1NE"),
+                "GB"
+              )
             )
           )
       }

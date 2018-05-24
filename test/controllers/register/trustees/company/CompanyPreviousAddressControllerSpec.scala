@@ -27,7 +27,7 @@ import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId}
-import models.address.{Address, TolerantAddress}
+import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -43,7 +43,6 @@ import utils.annotations.TrusteesCompany
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
-
 
 class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
@@ -110,7 +109,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
     "redirect to next page on POST request" which {
       "saves address" in {
 
-        val onwardCall = controllers.routes.IndexController.onPageLoad
+        val onwardCall = controllers.routes.IndexController.onPageLoad()
 
         val address = Address(
           addressLine1 = "value 1",
@@ -179,23 +178,6 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
               ("postCode", address.postcode.get),
               "country" -> address.country))
 
-          val existingAddress = Address(
-            "existing-line-1",
-            "existing-line-2",
-            None,
-            None,
-            None,
-            "existing-country"
-          )
-
-          val selectedAddress = TolerantAddress(None, None, None, None, None, None)
-
-          val data =
-            UserAnswers()
-              .trusteesCompanyPreviousAddress(firstIndex, existingAddress)
-              .trusteesCompanyPreviousAddressList(firstIndex, selectedAddress)
-              .dataRetrievalAction
-
           fakeAuditService.reset()
 
           val result = route(app, fakeRequest).value
@@ -205,7 +187,9 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
               fakeAuditService.verifySent(
                 AddressEvent(
                   FakeAuthAction.externalId,
-                  AddressAction.LookupChanged
+                  AddressAction.LookupChanged,
+                  s"Trustee Company Previous Address: ${companyDetails.companyName}",
+                  address
                 )
               )
           }

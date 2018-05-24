@@ -83,7 +83,15 @@ class CompanyAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode)
+          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm))
       }
   }
+
+  private def context(viewModel: ManualAddressViewModel): String = {
+    viewModel.secondaryHeader match {
+      case Some(name) => s"Trustee Company Address: $name"
+      case _ => "Trustee Company Address"
+    }
+  }
+
 }

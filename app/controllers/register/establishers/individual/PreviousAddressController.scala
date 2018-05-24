@@ -82,7 +82,15 @@ class PreviousAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(PreviousAddressId(index), PreviousAddressListId(index), vm, mode)
+          post(PreviousAddressId(index), PreviousAddressListId(index), vm, mode, context(vm))
       }
   }
+
+  private def context(viewModel: ManualAddressViewModel): String = {
+    viewModel.secondaryHeader match {
+      case Some(name) => s"Establisher Individual Previous Address: $name"
+      case _ => "Establisher Individual Previous Address"
+    }
+  }
+
 }

@@ -16,35 +16,34 @@
 
 package controllers.register.trustees.individual
 
-import audit.{AddressAction, AddressEvent, AuditService}
 import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.trustees.individual.IndividualPreviousAddressPostCodeLookupControllerSpec.onwardRoute
+import controllers.register.trustees.individual.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteePreviousAddressId}
-import models.address.{Address, TolerantAddress}
+import models.address.Address
 import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
+import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils._
+import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
-import controllers.register.trustees.individual.routes._
-import org.scalatest.concurrent.ScalaFutures
-import play.api.mvc.Call
-import utils.annotations.TrusteesIndividual
 
 class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFRequest with ScalaFutures {
 
@@ -179,23 +178,6 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
               ("postCode", address.postcode.get),
               "country" -> address.country))
 
-          val existingAddress = Address(
-            "existing-line-1",
-            "existing-line-2",
-            None,
-            None,
-            None,
-            "existing-country"
-          )
-
-          val selectedAddress = TolerantAddress(None, None, None, None, None, None)
-
-          val data =
-            UserAnswers()
-              .trusteesPreviousAddress(firstIndex, existingAddress)
-              .trusteesPreviousAddressList(firstIndex, selectedAddress)
-              .dataRetrievalAction
-
           fakeAuditService.reset()
 
           val result = route(app, fakeRequest).value
@@ -205,7 +187,9 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
               fakeAuditService.verifySent(
                 AddressEvent(
                   FakeAuthAction.externalId,
-                  AddressAction.LookupChanged
+                  AddressAction.LookupChanged,
+                  s"Trustee Previous Address: ${trusteeDetails.fullName}",
+                  address
                 )
               )
           }

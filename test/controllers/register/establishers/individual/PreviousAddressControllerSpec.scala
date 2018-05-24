@@ -16,26 +16,25 @@
 
 package controllers.register.establishers.individual
 
-import audit.{AddressAction, AddressEvent}
 import audit.testdoubles.StubSuccessfulAuditService
-import play.api.data.Form
-import play.api.libs.json.{JsObject, Json}
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
+import audit.{AddressAction, AddressEvent}
 import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import identifiers.register.establishers.individual.{AddressId, EstablisherDetailsId, PreviousAddressId}
-import models.{Index, NormalMode}
-import models.register.establishers.individual.EstablisherDetails
-import views.html.register.establishers.individual.previousAddress
 import controllers.ControllerSpecBase
+import controllers.actions._
 import forms.address.AddressFormProvider
 import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.individual.{EstablisherDetailsId, PreviousAddressId}
 import models.address.{Address, TolerantAddress}
+import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
+import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.concurrent.ScalaFutures
+import play.api.data.Form
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -181,7 +180,16 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures
           fakeAuditService.verifySent(
             AddressEvent(
               FakeAuthAction.externalId,
-              AddressAction.LookupChanged
+              AddressAction.LookupChanged,
+              s"Establisher Individual Previous Address: $establisherName",
+              Address(
+                "value 1",
+                "value 2",
+                None,
+                None,
+                Some("NE1 1NE"),
+                "GB"
+              )
             )
           )
       }
