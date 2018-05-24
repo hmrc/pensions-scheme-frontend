@@ -61,7 +61,7 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       }
     }
 
-    "display either PSTR or '' when there is no value" in {
+    "display either PSTR or 'Not assigned' when there is no value" in {
       pending
     }
 

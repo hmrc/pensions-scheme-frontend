@@ -27,6 +27,18 @@
     s"srn-$index"
 }
 
+@pstrId(index: Int) = @{
+    s"pstr-$index"
+}
+
+@statusId(index: Int) = @{
+    s"status-$index"
+}
+
+@actionId(index: Int) = @{
+    s"action-$index"
+}
+
 @main_template(
 title = messages("messages__listSchemes__title"),
 appConfig = appConfig,
@@ -45,40 +57,47 @@ bodyClasses = None) {
         <div class="column-full" id="scheme-grid">
             <div class="grid-row">
                 <div class="column-two-sixths table-column">
-                    <p id="schemeName" class="heading-small">
-                        @messages("messages__listSchemes__column_schemeName")
-                    </p>
+                    <p id="schemeName" class="heading-small">@messages("messages__listSchemes__column_schemeName")</p>
                 </div>
                 <div class="column-one-sixth table-column">
-                    <p id="srn" class="heading-small">
-                        @messages("messages__listSchemes__column_srn")
-                    </p>
+                    <p id="srn" class="heading-small">@messages("messages__listSchemes__column_srn")</p>
                 </div>
                 <div class="column-one-sixth table-column">
-                    <p id="pstr" class="heading-small">
-                        @messages("messages__listSchemes__column_pstr")
-                    </p>
+                    <p id="pstr" class="heading-small">@messages("messages__listSchemes__column_pstr")</p>
                 </div>
                 <div class="column-one-sixth table-column">
-                    <p id="schemeStatus" class="heading-small">
-                        @messages("messages__listSchemes__column_status")
-                    </p>
+                    <p id="schemeStatus" class="heading-small">@messages("messages__listSchemes__column_status")</p>
+                </div>
+                <div class="column-one-sixth table-column">
+                    <p id="schemeStatus" class="heading-small">@messages("messages__listSchemes__column_status")</p>
                 </div>
             </div>
             @for((scheme, index) <- schemes.zipWithIndex) {
                 <div class="row-group scheme-row">
                     <div class="grid-row">
                         <div class="column-two-sixths table-column scheme-name">
-                            <p id="@{schemeNameId(index)}">
-                                @scheme.name
-                            </p>
+                            <p id="@{schemeNameId(index)}">@scheme.name</p>
                         </div>
                     </div>
                     <div class="grid-row">
                         <div class="column-two-sixths table-column scheme-name">
-                            <p id="@{srnId(index)}">
-                                @scheme.referenceNumber
-                            </p>
+                            <p id="@{srnId(index)}">@scheme.referenceNumber</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-row">
+                        <div class="column-two-sixths table-column scheme-name">
+                            <p id="@{pstrId(index)}">@scheme.pstr</p>
+                        </div>
+                    </div>
+                    <div class="grid-row">
+                        <div class="column-two-sixths table-column scheme-name">
+                            <p id="@{statusId(index)}">@scheme.schemeStatus</p>
+                        </div>
+                    </div>
+                    <div class="grid-row">
+                        <div class="column-two-sixths table-column scheme-name">
+                            <p id="@{actionId(index)}"><a href="#">@messages("messages__listSchemes__")</a></p>
                         </div>
                     </div>
                 </div>
