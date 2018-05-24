@@ -1,0 +1,61 @@
+//Grid system
+.column-two-sixths {
+  float: left;
+  width: 33.33333%;
+}
+
+.column-one-sixth {
+  float: left;
+  width: 16.66667%;
+}
+
+.row-group {
+  border-bottom: 1px solid #bfc1c3;
+  padding-top:0.75em;
+  padding-bottom:0.5em;
+  display:block;
+}
+
+.row-group:after {
+  content:"";
+  display:block;
+  clear:both;
+}
+
+@media (max-width: 640px) {
+  .row-group p {
+    margin-bottom: 0.5em;
+  }
+}
+
+@media (min-width: 641px) {
+  .table-column {
+    border: 1px solid transparent;
+  }
+  .row-group {
+    padding-bottom:0;
+  }
+}
+
+//statuses
+.not-started {
+  text-transform: uppercase;
+  border-color: #6f777b;
+  color: #6f777b;
+  background-color: white;
+}
+
+.incomplete {
+  text-transform: uppercase;
+  border-color: #f47738;
+  color: #f47738;
+  background-color: white;
+}
+
+.complete {
+  text-transform: uppercase;
+  border-color: #85994b;
+  color: #85994b;
+}
+
+
