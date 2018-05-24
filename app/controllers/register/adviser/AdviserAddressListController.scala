@@ -16,13 +16,13 @@
 
 package controllers.register.adviser
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import identifiers.register.adviser._
+import javax.inject.Inject
 import models.Mode
 import models.requests.DataRequest
 import play.api.i18n.MessagesApi
@@ -65,6 +65,6 @@ class AdviserAddressListController @Inject()(override val appConfig: FrontendApp
           addresses = addresses,
           subHeading = Some(Message("messages__adviserDetails__secondary_heading"))
         )
-    }.left.map(_ => Future.successful(Redirect(routes.AdviserAddressListController.onPageLoad(mode))))//TODO : Replace this with PostCode lookup page
+    }.left.map(_ => Future.successful(Redirect(routes.AdviserPostCodeLookupController.onPageLoad(mode))))
   }
 }

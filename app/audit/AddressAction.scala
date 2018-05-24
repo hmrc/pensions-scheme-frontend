@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package audit
 
-import play.api.mvc.{Request, Result}
-import models.requests.AuthenticatedRequest
-import uk.gov.hmrc.domain.PsaId
+object AddressAction extends Enumeration {
+  type AddressAction = Value
 
-import scala.concurrent.Future
-
-object FakeAuthAction extends AuthAction {
-  override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest(request, "id", PsaId("A0000000")))
-
-  val externalId: String = "id"
+  val Lookup: AddressAction.Value = Value("lookup")
+  val Manual: AddressAction.Value = Value("manual")
+  val LookupChanged: AddressAction.Value = Value("lookup-changed")
 }
-

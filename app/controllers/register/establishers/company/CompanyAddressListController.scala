@@ -36,13 +36,14 @@ import viewmodels.address.AddressListViewModel
 import scala.concurrent.Future
 
 class CompanyAddressListController @Inject()(
-        override val appConfig: FrontendAppConfig,
-        override val cacheConnector: DataCacheConnector,
-        @EstablishersCompany override val navigator: Navigator,
-        override val messagesApi: MessagesApi,
-        authenticate: AuthAction,
-        getData: DataRetrievalAction,
-        requireData: DataRequiredAction) extends AddressListController with Retrievals {
+                                              override val appConfig: FrontendAppConfig,
+                                              override val cacheConnector: DataCacheConnector,
+                                              @EstablishersCompany override val navigator: Navigator,
+                                              override val messagesApi: MessagesApi,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction
+                                            ) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async { implicit request =>
@@ -64,10 +65,10 @@ class CompanyAddressListController @Inject()(
     (CompanyDetailsId(index) and CompanyPostCodeLookupId(index)).retrieve.right.map {
       case companyDetails ~ addresses =>
         AddressListViewModel(
-          postCall        = routes.CompanyAddressListController.onSubmit(mode, index),
+          postCall = routes.CompanyAddressListController.onSubmit(mode, index),
           manualInputCall = routes.CompanyAddressController.onPageLoad(mode, index),
-          addresses       = addresses,
-          subHeading      = Some(Message(companyDetails.companyName))
+          addresses = addresses,
+          subHeading = Some(Message(companyDetails.companyName))
         )
     }.left.map(_ => Future.successful(Redirect(CompanyPostCodeLookupController.onPageLoad(mode, index))))
   }

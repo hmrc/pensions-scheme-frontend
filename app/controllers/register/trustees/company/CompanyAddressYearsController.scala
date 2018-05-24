@@ -16,13 +16,12 @@
 
 package controllers.register.trustees.company
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
+import javax.inject.Inject
 import models.{AddressYears, Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -33,15 +32,15 @@ import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
 class CompanyAddressYearsController @Inject()(
-                                        override val appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        @TrusteesCompany override val navigator: Navigator,
-                                        override val cacheConnector: DataCacheConnector,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AddressYearsFormProvider
-                                      ) extends controllers.address.AddressYearsController {
+                                               override val appConfig: FrontendAppConfig,
+                                               override val messagesApi: MessagesApi,
+                                               @TrusteesCompany override val navigator: Navigator,
+                                               override val cacheConnector: DataCacheConnector,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               formProvider: AddressYearsFormProvider
+                                             ) extends controllers.address.AddressYearsController {
 
   private def viewmodel(index: Index, mode: Mode): Retrieval[AddressYearsViewModel] =
     Retrieval(

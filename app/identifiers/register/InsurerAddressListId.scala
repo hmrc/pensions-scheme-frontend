@@ -17,7 +17,8 @@
 package identifiers.register
 
 import identifiers._
+import models.address.TolerantAddress
 
-case object InsurerAddressListId  extends Identifier {
+case object InsurerAddressListId extends TypedIdentifier[TolerantAddress] {
   override def toString: String = "insurerAddressList"
 }

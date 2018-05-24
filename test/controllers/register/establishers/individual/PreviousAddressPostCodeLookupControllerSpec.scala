@@ -30,6 +30,9 @@ import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._
 import uk.gov.hmrc.http.HeaderCarrier
+import viewmodels.Message
+import viewmodels.address.PostcodeLookupViewModel
+import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
@@ -38,18 +41,39 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
+
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
+
   val firstIndex = Index(0)
   val establisherName: String = "test first name test last name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PreviousAddressPostCodeLookupController =
-    new PreviousAddressPostCodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector,fakeAddressLookupConnector,
-      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+    new PreviousAddressPostCodeLookupController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      fakeAddressLookupConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
 
-  def viewAsString(form: Form[_] = form): String = previousPostCodeLookup(frontendAppConfig, form, NormalMode,firstIndex,
-    establisherName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = postcodeLookup(
+    frontendAppConfig,
+    form,
+    PostcodeLookupViewModel(
+      routes.PreviousAddressPostCodeLookupController.onSubmit(NormalMode, firstIndex),
+      routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex),
+      Message("messages__establisher_individual_previous_address__title"),
+      Message("messages__establisher_individual_previous_address__title"),
+      Some(establisherName),
+      Some(Message("messages__establisher_individual_previous_address_lede"))
+    )
+  )(fakeRequest, messages).toString
+
 
   "PreviousAddress Controller" must {
 
@@ -85,7 +109,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
-      status(result) mustBe BAD_REQUEST
+      status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 

@@ -16,13 +16,15 @@
 
 package controllers.address
 
+import audit.{AddressAction, AddressEvent, AuditService}
+import audit.testdoubles.StubSuccessfulAuditService
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import forms.address.AddressFormProvider
 import identifiers.TypedIdentifier
-import models.NormalMode
-import models.address.Address
+import models._
+import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -43,25 +45,32 @@ import scala.concurrent.Future
 
 object ManualAddressControllerSpec {
 
-  val fakeIdentifier = new TypedIdentifier[Address]{
-    override def toString = "testPath"
+  val fakeAddressId: TypedIdentifier[Address] = new TypedIdentifier[Address]{
+    override def toString = "fakeAddressId"
   }
+
+  val fakeAddressListId: TypedIdentifier[TolerantAddress] = new TypedIdentifier[TolerantAddress] {
+    override def toString = "fakeAddressListId"
+  }
+
+  val externalId: String = "test-external-id"
+
+  private val psaId = PsaId("A0000000")
 
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
                                   override val dataCacheConnector: DataCacheConnector,
                                   override val navigator: Navigator,
-                                  override val countryOptions: CountryOptions,
-                                  formProvider: AddressFormProvider
+                                  formProvider: AddressFormProvider,
+                                  override val auditService: AuditService
                                 ) extends ManualAddressController {
 
-
     def onPageLoad(viewModel: ManualAddressViewModel, answers: UserAnswers): Future[Result] =
-      get(fakeIdentifier, viewModel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
+      get(fakeAddressId, fakeAddressListId, viewModel)(DataRequest(FakeRequest(), "cacheId", answers, psaId))
 
     def onSubmit(viewModel: ManualAddressViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
-      post(fakeIdentifier, viewModel, NormalMode)(DataRequest(request, "cacheId", answers, PsaId("A0000000")))
+      post(fakeAddressId, fakeAddressListId, viewModel, NormalMode)(DataRequest(request, externalId, answers, psaId))
 
     override protected val form: Form[Address] = formProvider()
   }
@@ -81,13 +90,11 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
     "country" -> "GB"
   )
 
-  val countryOptions = new CountryOptions(
-    Seq(InputOption("GB", "GB"))
-  )
+  private val countryOptions = FakeCountryOptions.fakeCountries
 
-  val viewModel = ManualAddressViewModel(
+  private val viewModel = ManualAddressViewModel(
     Call("GET", "/"),
-    countryOptions.options,
+    countryOptions,
     "title",
     "heading",
     Some("secondary.header")
@@ -95,13 +102,12 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
   "get" must {
     "return OK with view" when {
-      "data is retrieved" in {
+      "data is not retrieved" in {
 
         running(_.overrides(
-          bind[CountryOptions].to(new CountryOptions(
-            Seq(InputOption("GB", "GB"))
-          )),
-          bind[Navigator].to(FakeNavigator)
+          bind[CountryOptions].to[FakeCountryOptions],
+          bind[Navigator].to(FakeNavigator),
+          bind[AuditService].to[StubSuccessfulAuditService]
         )) {
           app =>
 
@@ -120,12 +126,12 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
         }
 
       }
-      "data is not retrieved" in {
+
+      "data is retrieved" in {
         running(_.overrides(
-          bind[CountryOptions].to(new CountryOptions(
-            Seq(InputOption("GB", "GB"))
-          )),
-          bind[Navigator].to(FakeNavigator)
+          bind[CountryOptions].to[FakeCountryOptions],
+          bind[Navigator].to(FakeNavigator),
+          bind[AuditService].to[StubSuccessfulAuditService]
         )) {
           app =>
 
@@ -144,13 +150,51 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
             val messages = app.injector.instanceOf[MessagesApi].preferred(request)
             val controller = app.injector.instanceOf[TestController]
 
-            val result = controller.onPageLoad(viewModel, UserAnswers(Json.obj(fakeIdentifier.toString -> testAddress)))
+            val result = controller.onPageLoad(viewModel, UserAnswers(Json.obj(fakeAddressId.toString -> testAddress)))
 
             status(result) mustEqual OK
             contentAsString(result) mustEqual manualAddress(appConfig, formProvider().fill(testAddress), viewModel)(request, messages).toString
 
         }
       }
+
+      "data is not retrieved but there is a selected address" in {
+
+        running(_.overrides(
+          bind[CountryOptions].to[FakeCountryOptions],
+          bind[Navigator].to(FakeNavigator),
+          bind[AuditService].to[StubSuccessfulAuditService]
+        )) {
+          app =>
+
+            val testAddress = TolerantAddress(
+              Some("address line 1"),
+              Some("address line 2"),
+              None,
+              None,
+              Some("test post code"),
+              Some("GB")
+            )
+
+            val userAnswers = UserAnswers().set(fakeAddressListId)(testAddress).asOpt.value
+
+            val request = FakeRequest()
+
+            val appConfig = app.injector.instanceOf[FrontendAppConfig]
+            val formProvider = app.injector.instanceOf[AddressFormProvider]
+            val messages = app.injector.instanceOf[MessagesApi].preferred(request)
+            val controller = app.injector.instanceOf[TestController]
+            val form = formProvider().fill(testAddress.toAddress)
+
+            val result = controller.onPageLoad(viewModel, userAnswers)
+
+            status(result) mustEqual OK
+            contentAsString(result) mustEqual manualAddress(appConfig, form, viewModel)(request, messages).toString
+
+        }
+
+      }
+
     }
   }
 
@@ -164,9 +208,10 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
         val navigator = new FakeNavigator(onwardRoute, NormalMode)
 
         running(_.overrides(
-          bind[CountryOptions].to(new CountryOptions(Seq(InputOption("GB", "GB")))),
+          bind[CountryOptions].to[FakeCountryOptions],
           bind[DataCacheConnector].to(FakeDataCacheConnector),
-          bind[Navigator].to(navigator)
+          bind[Navigator].to(navigator),
+          bind[AuditService].to[StubSuccessfulAuditService]
         )) {
           app =>
 
@@ -182,9 +227,62 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
             status(result) mustEqual SEE_OTHER
             redirectLocation(result) mustEqual Some(onwardRoute.url)
 
-            FakeDataCacheConnector.verify(fakeIdentifier, Address(
-              "value 1", "value 2", None, None, Some("AB1 1AB"), "GB"
-            ))
+            val address = Address("value 1", "value 2", None, None, Some("AB1 1AB"), "GB")
+
+            FakeDataCacheConnector.verify(fakeAddressId, address)
+        }
+
+      }
+
+      "will send an audit event" in {
+
+        val onwardRoute = Call("GET", "/")
+
+        val navigator = new FakeNavigator(onwardRoute, NormalMode)
+        val auditService = new StubSuccessfulAuditService()
+
+        running(_.overrides(
+          bind[CountryOptions].to[FakeCountryOptions],
+          bind[DataCacheConnector].to(FakeDataCacheConnector),
+          bind[Navigator].to(navigator),
+          bind[AuditService].toInstance(auditService)
+        )) {
+          app =>
+            val existingAddress = Address(
+              "existing-line-1",
+              "existing-line-2",
+              None,
+              None,
+              None,
+              "existing-country"
+            )
+
+            val selectedAddress = TolerantAddress(None, None, None, None, None, None)
+
+            val userAnswers =
+              UserAnswers()
+                .set(fakeAddressId)(existingAddress).asOpt.value
+                .set(fakeAddressListId)(selectedAddress).asOpt.value
+
+            val controller = app.injector.instanceOf[TestController]
+
+            val result = controller.onSubmit(viewModel, userAnswers, FakeRequest().withFormUrlEncodedBody(
+              ("addressLine1", "value 1"),
+              ("addressLine2", "value 2"),
+              ("postCode", "AB1 1AB"),
+              "country" -> "GB")
+            )
+
+            whenReady(result) {
+              _ =>
+                auditService.verifySent(
+                  AddressEvent(
+                    externalId,
+                    AddressAction.LookupChanged
+                  )
+                )
+            }
+
         }
 
       }
@@ -193,9 +291,8 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
     "return BAD_REQUEST with view on invalid data request" in {
 
       running(_.overrides(
-        bind[CountryOptions].to(new CountryOptions(
-          Seq(InputOption("GB", "GB"))
-        ))
+        bind[CountryOptions].to[FakeCountryOptions],
+        bind[AuditService].to[StubSuccessfulAuditService]
       )) {
         app =>
 
@@ -206,10 +303,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
           val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestController]
 
-          val form = formProvider()
-            .withError("addressLine1", "messages__error__address_line_1_required")
-            .withError("addressLine2", "messages__error__address_line_2_required")
-            .withError("country", "messages__error_country_required")
+          val form = formProvider().bind(Map.empty[String, String])
 
           val result = controller.onSubmit(viewModel, UserAnswers(), request.withFormUrlEncodedBody())
 

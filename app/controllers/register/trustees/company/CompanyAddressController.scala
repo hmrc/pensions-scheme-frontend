@@ -16,15 +16,15 @@
 
 package controllers.register.trustees.company
 
-import javax.inject.Inject
-
+import audit.AuditService
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId}
+import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId}
+import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
@@ -44,7 +44,8 @@ class CompanyAddressController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           val formProvider: AddressFormProvider,
-                                          val countryOptions: CountryOptions
+                                          val countryOptions: CountryOptions,
+                                          val auditService: AuditService
                                         ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = CompanyAddressController.onSubmit _
@@ -72,9 +73,9 @@ class CompanyAddressController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map{
+      viewmodel(index, mode).retrieve.right.map {
         vm =>
-          get(CompanyAddressId(index), vm)
+          get(CompanyAddressId(index), CompanyAddressListId(index), vm)
       }
   }
 
@@ -82,7 +83,7 @@ class CompanyAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(CompanyAddressId(index), vm, mode)
+          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode)
       }
   }
 }

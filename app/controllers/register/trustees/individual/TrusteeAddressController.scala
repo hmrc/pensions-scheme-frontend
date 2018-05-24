@@ -16,15 +16,15 @@
 
 package controllers.register.trustees.individual
 
-import javax.inject.Inject
-
+import audit.AuditService
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes.TrusteeAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeDetailsId}
+import identifiers.register.trustees.individual.{IndividualAddressListId, TrusteeAddressId, TrusteeDetailsId}
+import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
@@ -44,7 +44,8 @@ class TrusteeAddressController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           val formProvider: AddressFormProvider,
-                                          val countryOptions: CountryOptions
+                                          val countryOptions: CountryOptions,
+                                          val auditService: AuditService
                                         ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = TrusteeAddressController.onSubmit _
@@ -72,9 +73,9 @@ class TrusteeAddressController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map{
+      viewmodel(index, mode).retrieve.right.map {
         vm =>
-          get(TrusteeAddressId(index), vm)
+          get(TrusteeAddressId(index), IndividualAddressListId(index), vm)
       }
   }
 
@@ -82,7 +83,7 @@ class TrusteeAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(TrusteeAddressId(index), vm, mode)
+          post(TrusteeAddressId(index), IndividualAddressListId(index), vm, mode)
       }
   }
 }

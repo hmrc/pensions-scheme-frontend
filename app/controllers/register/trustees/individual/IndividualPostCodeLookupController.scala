@@ -16,17 +16,16 @@
 
 package controllers.register.trustees.individual
 
-import javax.inject.Inject
-
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
-import config.FrontendAppConfig
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.individual.{IndividualPostCodeLookupId, TrusteeDetailsId}
+import javax.inject.Inject
 import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import utils.Navigator
 import utils.annotations.TrusteesIndividual

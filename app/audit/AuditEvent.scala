@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package audit
 
-import play.api.mvc.{Request, Result}
-import models.requests.AuthenticatedRequest
-import uk.gov.hmrc.domain.PsaId
+trait AuditEvent {
+  def auditType: String
 
-import scala.concurrent.Future
-
-object FakeAuthAction extends AuthAction {
-  override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest(request, "id", PsaId("A0000000")))
-
-  val externalId: String = "id"
+  def details: Map[String, String]
 }
-

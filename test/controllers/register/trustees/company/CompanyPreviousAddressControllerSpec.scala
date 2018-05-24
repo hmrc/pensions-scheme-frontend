@@ -16,6 +16,8 @@
 
 package controllers.register.trustees.company
 
+import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
@@ -25,7 +27,7 @@ import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId}
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.{CompanyDetails, Index, NormalMode}
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -53,6 +55,8 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
   val formProvider = new AddressFormProvider(FakeCountryOptions())
   val companyDetails = CompanyDetails("companyName", None, None)
+
+  val fakeAuditService = new StubSuccessfulAuditService()
 
   val form: Form[Address] = formProvider()
 
@@ -144,6 +148,67 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
             FakeDataCacheConnector.verify(CompanyPreviousAddressId(firstIndex), address)
         }
+      }
+    }
+
+    "send an audit event when valid data is submitted" in {
+
+      val address = Address(
+        addressLine1 = "value 1",
+        addressLine2 = "value 2",
+        None, None,
+        postcode = Some("AB1 1AB"),
+        country = "GB"
+      )
+
+      running(_.overrides(
+        bind[FrontendAppConfig].to(frontendAppConfig),
+        bind[Navigator].toInstance(FakeNavigator),
+        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[AuthAction].to(FakeAuthAction),
+        bind[CountryOptions].to(countryOptions),
+        bind[AuditService].toInstance(fakeAuditService)
+      )) {
+        implicit app =>
+
+          val fakeRequest = addToken(FakeRequest(routes.CompanyPreviousAddressController.onSubmit(NormalMode, firstIndex))
+            .withHeaders("Csrf-Token" -> "nocheck")
+            .withFormUrlEncodedBody(
+              ("addressLine1", address.addressLine1),
+              ("addressLine2", address.addressLine2),
+              ("postCode", address.postcode.get),
+              "country" -> address.country))
+
+          val existingAddress = Address(
+            "existing-line-1",
+            "existing-line-2",
+            None,
+            None,
+            None,
+            "existing-country"
+          )
+
+          val selectedAddress = TolerantAddress(None, None, None, None, None, None)
+
+          val data =
+            UserAnswers()
+              .trusteesCompanyPreviousAddress(firstIndex, existingAddress)
+              .trusteesCompanyPreviousAddressList(firstIndex, selectedAddress)
+              .dataRetrievalAction
+
+          fakeAuditService.reset()
+
+          val result = route(app, fakeRequest).value
+
+          whenReady(result) {
+            _ =>
+              fakeAuditService.verifySent(
+                AddressEvent(
+                  FakeAuthAction.externalId,
+                  AddressAction.LookupChanged
+                )
+              )
+          }
       }
     }
   }

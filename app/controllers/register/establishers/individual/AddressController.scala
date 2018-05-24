@@ -16,70 +16,73 @@
 
 package controllers.register.establishers.individual
 
-import javax.inject.Inject
-
+import audit.AuditService
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.Retrievals
 import controllers.actions._
+import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.individual.AddressId
+import identifiers.register.establishers.individual.{AddressId, AddressListId, EstablisherDetailsId}
+import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
-import utils.{CountryOptions, Navigator, UserAnswers}
-import views.html.register.establishers.individual.address
+import utils.{CountryOptions, Navigator}
+import viewmodels.Message
+import viewmodels.address.ManualAddressViewModel
 
-import scala.concurrent.Future
+class AddressController @Inject()(
+                                   val appConfig: FrontendAppConfig,
+                                   val messagesApi: MessagesApi,
+                                   val dataCacheConnector: DataCacheConnector,
+                                   @EstablishersIndividual val navigator: Navigator,
+                                   authenticate: AuthAction,
+                                   getData: DataRetrievalAction,
+                                   requireData: DataRequiredAction,
+                                   val formProvider: AddressFormProvider,
+                                   val countryOptions: CountryOptions,
+                                   val auditService: AuditService
+                                 ) extends ManualAddressController with I18nSupport {
 
-class AddressController @Inject() (
-                                    appConfig: FrontendAppConfig,
-                                    override val messagesApi: MessagesApi,
-                                    dataCacheConnector: DataCacheConnector,
-                                    @EstablishersIndividual navigator: Navigator,
-                                    authenticate: AuthAction,
-                                    getData: DataRetrievalAction,
-                                    requireData: DataRequiredAction,
-                                    formProvider: AddressFormProvider,
-                                    countryOptions: CountryOptions
-                                  ) extends FrontendController with Retrievals with I18nSupport {
+  private[controllers] val postCall = routes.AddressController.onSubmit _
+  private[controllers] val title: Message = "messages__establisher_individual_address__title"
+  private[controllers] val heading: Message = "messages__establisher_individual_address__title"
+  private[controllers] val hint: Message = "messages__establisher_individual_address_lede"
 
-  val form: Form[Address] = formProvider()
+  protected val form: Form[Address] = formProvider()
+
+  private def viewmodel(index: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
+    Retrieval {
+      implicit request =>
+        EstablisherDetailsId(index).retrieve.right.map {
+          details =>
+            ManualAddressViewModel(
+              postCall(mode, Index(index)),
+              countryOptions.options,
+              title = Message(title),
+              heading = Message(heading),
+              hint = Some(Message(hint)),
+              secondaryHeader = Some(details.fullName)
+            )
+        }
+    }
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) {
-        establisherName =>
-          val result = request.userAnswers.get(AddressId(index)) match {
-            case None => Ok(address(appConfig, form, mode, index, countryOptions.options, establisherName))
-            case Some(value) => Ok(address(appConfig, form.fill(value), mode, index, countryOptions.options, establisherName))
-          }
-          Future.successful(result)
+      viewmodel(index, mode).retrieve.right.map {
+        vm =>
+          get(AddressId(index), AddressListId(index), vm)
       }
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) {
-        establisherName =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(address(appConfig, formWithErrors, mode, index, countryOptions.options, establisherName))),
-            (value) =>
-              dataCacheConnector.save(
-                request.externalId,
-                AddressId(index),
-                value
-              ).map {
-                json =>
-                  Redirect(navigator.nextPage(AddressId(index), mode)(new UserAnswers(json)))
-              }
-          )
+      viewmodel(index, mode).retrieve.right.map {
+        vm =>
+          post(AddressId(index), AddressListId(index), vm, mode)
       }
   }
-
 }

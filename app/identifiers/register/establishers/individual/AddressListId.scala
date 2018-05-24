@@ -16,9 +16,10 @@
 
 package identifiers.register.establishers.individual
 
-import identifiers.Identifier
+import identifiers.{Identifier, TypedIdentifier}
+import models.address.TolerantAddress
 
-case class AddressListId(index: Int) extends Identifier
+case class AddressListId(index: Int) extends  TypedIdentifier[TolerantAddress]
 
 object AddressListId {
   override def toString: String = "addressResults"

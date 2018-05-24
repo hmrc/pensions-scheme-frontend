@@ -37,6 +37,8 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.{Enumerable, FakeNavigator, MapFormats}
+import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 import views.html.register.establishers.individual.previousAddressList
 
 import scala.concurrent.Future
@@ -66,10 +68,19 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
           new FakeNavigator(desiredRoute = onwardRoute),
           FakeAuthAction,
           dataRetrievalAction,
-          new DataRequiredActionImpl, formProvider)
+          new DataRequiredActionImpl)
 
   def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = previousAddresses): String =
-    previousAddressList(frontendAppConfig, form, NormalMode, firstIndex, address, establisherName)(fakeRequest, messages).toString
+    addressList(
+      frontendAppConfig,
+      form,
+      AddressListViewModel(
+        routes.PreviousAddressListController.onSubmit(NormalMode, firstIndex),
+        routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex),
+        previousAddresses,
+        subHeading = Some(establisherName)
+      )
+    )(fakeRequest, messages).toString
 
   def address(postCode: String): TolerantAddress = TolerantAddress(
     Some("address line 1"),
@@ -127,17 +138,13 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     }
 
     "update the country of the chosen address to `GB`" in {
-      val dataCacheConnector = mock[DataCacheConnector]
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
-      when(dataCacheConnector.save[Address, PreviousAddressId](any(), Matchers.eq(PreviousAddressId(0)), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Json.obj()))
 
-      val result = controller(new FakeDataRetrievalAction(Some(validData)), dataCacheConnector)
+      val result = controller(new FakeDataRetrievalAction(Some(validData)), FakeDataCacheConnector)
         .onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      verify(dataCacheConnector, times(1))
-        .save[Address, PreviousAddressId](any(), Matchers.eq(PreviousAddressId(0)), Matchers.eq(previousAddresses.head.toAddress.copy(country = "GB")))(any(), any(), any())
+      FakeDataCacheConnector.verify(PreviousAddressListId(firstIndex), previousAddresses.head.copy(country = Some("GB")))
     }
 
     "return a Bad Request and errors when no data is submitted" in {

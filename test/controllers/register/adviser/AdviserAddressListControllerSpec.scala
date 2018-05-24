@@ -65,7 +65,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         getEmptyData,
         (request, result) => {
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.AdviserAddressListController.onPageLoad(NormalMode).url)
+          redirectLocation(result) mustBe Some(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode).url)
         }
       )
     }
@@ -110,7 +110,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase with CSRFReque
           .withFormUrlEncodedBody(("value", "0"))), getEmptyData,
         (_, result) => {
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.AdviserAddressListController.onPageLoad(NormalMode).url)
+          redirectLocation(result) mustBe Some(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode).url)
         }
       )
     }

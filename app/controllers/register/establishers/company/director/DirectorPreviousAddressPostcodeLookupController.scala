@@ -16,14 +16,13 @@
 
 package controllers.register.establishers.company.director
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressPostcodeLookupId}
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -33,17 +32,17 @@ import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
-class DirectorPreviousAddressPostcodeLookupController @Inject() (
-                                        override val appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        override val cacheConnector: DataCacheConnector,
-                                        override val addressLookupConnector: AddressLookupConnector,
-                                        @EstablishersCompanyDirector override val navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: PostCodeLookupFormProvider
-                                      ) extends PostcodeLookupController {
+class DirectorPreviousAddressPostcodeLookupController @Inject()(
+                                                                 override val appConfig: FrontendAppConfig,
+                                                                 override val messagesApi: MessagesApi,
+                                                                 override val cacheConnector: DataCacheConnector,
+                                                                 override val addressLookupConnector: AddressLookupConnector,
+                                                                 @EstablishersCompanyDirector override val navigator: Navigator,
+                                                                 authenticate: AuthAction,
+                                                                 getData: DataRetrievalAction,
+                                                                 requireData: DataRequiredAction,
+                                                                 formProvider: PostCodeLookupFormProvider
+                                                               ) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
 
@@ -55,16 +54,17 @@ class DirectorPreviousAddressPostcodeLookupController @Inject() (
           routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex),
           Message("messages__directorPreviousAddressPostcodeLookup__title"),
           Message("messages__directorPreviousAddressPostcodeLookup__heading"),
-          Some(details.directorName)
+          Some(details.directorName),
+          Some(Message("messages__directorPreviousAddressPostcodeLookup__lede"))
         )
       )
   }
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode,establisherIndex, directorIndex).retrieve.right.map(
-          vm =>
-            get(vm)
+      viewmodel(mode, establisherIndex, directorIndex).retrieve.right.map(
+        vm =>
+          get(vm)
       )
   }
 

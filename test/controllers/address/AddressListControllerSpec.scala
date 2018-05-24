@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import forms.address.AddressListFormProvider
 import identifiers.TypedIdentifier
-import models.NormalMode
+import models._
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import org.scalatest.{Matchers, WordSpec}
@@ -104,7 +104,20 @@ class AddressListControllerSpec extends WordSpec with Matchers {
         val result = controller.onSubmit(viewModel, 0)
 
         status(result) shouldBe SEE_OTHER
-        FakeDataCacheConnector.verify(fakeId, viewModel.addresses.head.toAddress)
+        FakeDataCacheConnector.verify(fakeAddressListId, viewModel.addresses.head)
+      }
+
+    }
+
+    "delete any existing address on submission of valid data" in {
+
+      running(_.overrides()) { app =>
+        val viewModel = addressListViewModel()
+        val controller = app.injector.instanceOf[TestController]
+        val result = controller.onSubmit(viewModel, 0)
+
+        status(result) shouldBe SEE_OTHER
+        FakeDataCacheConnector.verifyNot(fakeAddressId)
       }
 
     }
@@ -129,11 +142,12 @@ class AddressListControllerSpec extends WordSpec with Matchers {
 object AddressListControllerSpec {
 
   class TestController @Inject()(
-          override val appConfig: FrontendAppConfig,
-          override val messagesApi: MessagesApi
-        ) extends AddressListController {
+                                  override val appConfig: FrontendAppConfig,
+                                  override val messagesApi: MessagesApi
+                                ) extends AddressListController {
 
-    override protected def cacheConnector: DataCacheConnector =  FakeDataCacheConnector
+    override protected def cacheConnector: DataCacheConnector = FakeDataCacheConnector
+
     override protected def navigator: Navigator = new FakeNavigator(onwardRoute)
 
     def onPageLoad(viewModel: AddressListViewModel): Future[Result] = {
@@ -150,8 +164,8 @@ object AddressListControllerSpec {
 
       post(
         viewModel,
-        fakeId,
-        fakeId,
+        fakeAddressListId,
+        fakeAddressId,
         NormalMode
       )(DataRequest(request, "cacheId", UserAnswers(), PsaId("A0000000")))
 
@@ -161,12 +175,13 @@ object AddressListControllerSpec {
 
   val onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val fakeId: TypedIdentifier[Address] = new TypedIdentifier[Address]() {}
+  val fakeAddressListId: TypedIdentifier[TolerantAddress] = new TypedIdentifier[TolerantAddress]() {}
+  val fakeAddressId: TypedIdentifier[Address] = new TypedIdentifier[Address]() {}
 
   private lazy val postCall = controllers.routes.IndexController.onPageLoad()
   private lazy val manualInputCall = controllers.routes.SessionExpiredController.onPageLoad()
 
-  val addresses = Seq(
+  private val addresses = Seq(
     TolerantAddress(
       Some("Address 1 Line 1"),
       Some("Address 1 Line 2"),

@@ -75,7 +75,9 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
     manualInputCall,
     Message("messages__directorAddressPostcodeLookup__title"),
     Message("messages__directorAddressPostcodeLookup__heading"),
-    Some(director.directorName))
+    Some(director.directorName),
+    Some(Message("messages__directorAddressPostcodeLookup__lede"))
+  )
 
   "DirectorAddressPostcodeLookup Controller" must {
 

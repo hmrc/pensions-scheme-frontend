@@ -32,17 +32,17 @@ import utils.annotations.TrusteesCompany
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
-class CompanyPostCodeLookupController @Inject() (
-                                                  val appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  val cacheConnector: DataCacheConnector,
-                                                  @TrusteesCompany override val navigator: Navigator,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: PostCodeLookupFormProvider,
-                                                  val addressLookupConnector: AddressLookupConnector
-                                      ) extends PostcodeLookupController with I18nSupport {
+class CompanyPostCodeLookupController @Inject()(
+                                                 val appConfig: FrontendAppConfig,
+                                                 override val messagesApi: MessagesApi,
+                                                 val cacheConnector: DataCacheConnector,
+                                                 @TrusteesCompany override val navigator: Navigator,
+                                                 authenticate: AuthAction,
+                                                 getData: DataRetrievalAction,
+                                                 requireData: DataRequiredAction,
+                                                 formProvider: PostCodeLookupFormProvider,
+                                                 val addressLookupConnector: AddressLookupConnector
+                                               ) extends PostcodeLookupController with I18nSupport {
 
   private[controllers] val manualAddressCall = routes.CompanyAddressController.onPageLoad _
   private[controllers] val postCall = routes.CompanyPostCodeLookupController.onSubmit _
@@ -76,7 +76,7 @@ class CompanyPostCodeLookupController @Inject() (
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right.map{ vm =>
+        viewmodel(index, mode).retrieve.right.map { vm =>
           post(CompanyPostcodeLookupId(index), vm, mode)
         }
     }

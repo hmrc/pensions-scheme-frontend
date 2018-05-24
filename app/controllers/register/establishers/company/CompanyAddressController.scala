@@ -16,61 +16,73 @@
 
 package controllers.register.establishers.company
 
-import javax.inject.Inject
-
+import audit.AuditService
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.Retrievals
 import controllers.actions._
+import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.CompanyAddressId
-import models.Mode
-import play.api.data.Form
+import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId}
+import javax.inject.Inject
+import models.address.Address
+import models.{Index, Mode}
+import play.api.data._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
-import utils.{CountryOptions, Navigator, UserAnswers}
-import views.html.register.establishers.company.companyAddress
+import utils.{CountryOptions, Navigator}
+import viewmodels.Message
+import viewmodels.address.ManualAddressViewModel
 
-import scala.concurrent.Future
+class CompanyAddressController @Inject()(
+                                          val appConfig: FrontendAppConfig,
+                                          val messagesApi: MessagesApi,
+                                          val dataCacheConnector: DataCacheConnector,
+                                          @EstablishersCompany val navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          val formProvider: AddressFormProvider,
+                                          val countryOptions: CountryOptions,
+                                          val auditService: AuditService
+                                        ) extends ManualAddressController with I18nSupport {
 
-class CompanyAddressController @Inject() (
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        @EstablishersCompany navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AddressFormProvider,
-                                        countryOptions: CountryOptions
-                                      ) extends FrontendController with Retrievals with I18nSupport {
+  private[controllers] val postCall = routes.CompanyAddressController.onSubmit _
+  private[controllers] val title: Message = "messages__companyAddress__title"
+  private[controllers] val heading: Message = "messages__companyAddress__heading"
+  private[controllers] val hint: Message = "messages__companyAddress__lede"
 
-  private val form = formProvider()
+  protected val form: Form[Address] = formProvider()
 
-  def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      retrieveCompanyName(index) { companyName =>
-        val preparedForm = request.userAnswers.get(CompanyAddressId(index)) match {
-          case None => form
-          case Some(value) => form.fill(value)
+  private def viewmodel(index: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
+    Retrieval {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            ManualAddressViewModel(
+              postCall(mode, Index(index)),
+              countryOptions.options,
+              title = Message(title),
+              heading = Message(heading),
+              hint = Some(Message(hint)),
+              secondaryHeader = Some(details.companyName)
+            )
         }
-        Future.successful(Ok(companyAddress(appConfig, preparedForm, mode, index, companyName, countryOptions.options)))
-      }
-  }
+    }
 
-  def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveCompanyName(index) { companyName =>
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(companyAddress(appConfig, formWithErrors, mode, index, companyName, countryOptions.options))),
-          (value) =>
-            dataCacheConnector.save(request.externalId, CompanyAddressId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(CompanyAddressId(index), mode)(new UserAnswers(cacheMap))))
-        )
+      viewmodel(index, mode).retrieve.right.map {
+        vm =>
+          get(CompanyAddressId(index), CompanyAddressListId(index), vm)
       }
   }
 
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+    implicit request =>
+      viewmodel(index, mode).retrieve.right.map {
+        vm =>
+          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode)
+      }
+  }
 }

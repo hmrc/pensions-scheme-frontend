@@ -16,6 +16,8 @@
 
 package controllers.register.trustees.individual
 
+import audit.{AddressAction, AddressEvent, AuditService}
+import audit.testdoubles.StubSuccessfulAuditService
 import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
@@ -25,7 +27,7 @@ import controllers.register.trustees.individual.IndividualPreviousAddressPostCod
 import forms.address.AddressFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteePreviousAddressId}
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
@@ -40,10 +42,11 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 import controllers.register.trustees.individual.routes._
+import org.scalatest.concurrent.ScalaFutures
 import play.api.mvc.Call
 import utils.annotations.TrusteesIndividual
 
-class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFRequest {
+class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFRequest with ScalaFutures {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -56,6 +59,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
   val formProvider = new AddressFormProvider(FakeCountryOptions())
   val trusteeDetails = PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
   val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
+  val fakeAuditService = new StubSuccessfulAuditService()
   val form: Form[Address] = formProvider()
 
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
@@ -144,6 +148,67 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
 
             FakeDataCacheConnector.verify(TrusteePreviousAddressId(firstIndex), address)
         }
+      }
+    }
+
+    "send an audit event when valid data is submitted" in {
+
+      val address = Address(
+        addressLine1 = "value 1",
+        addressLine2 = "value 2",
+        None, None,
+        postcode = Some("AB1 1AB"),
+        country = "GB"
+      )
+
+      running(_.overrides(
+        bind[FrontendAppConfig].to(frontendAppConfig),
+        bind[Navigator].toInstance(FakeNavigator),
+        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[AuthAction].to(FakeAuthAction),
+        bind[CountryOptions].to(countryOptions),
+        bind[AuditService].toInstance(fakeAuditService)
+      )) {
+        implicit app =>
+
+          val fakeRequest = addToken(FakeRequest(routes.TrusteePreviousAddressController.onSubmit(NormalMode, firstIndex))
+            .withHeaders("Csrf-Token" -> "nocheck")
+            .withFormUrlEncodedBody(
+              ("addressLine1", address.addressLine1),
+              ("addressLine2", address.addressLine2),
+              ("postCode", address.postcode.get),
+              "country" -> address.country))
+
+          val existingAddress = Address(
+            "existing-line-1",
+            "existing-line-2",
+            None,
+            None,
+            None,
+            "existing-country"
+          )
+
+          val selectedAddress = TolerantAddress(None, None, None, None, None, None)
+
+          val data =
+            UserAnswers()
+              .trusteesPreviousAddress(firstIndex, existingAddress)
+              .trusteesPreviousAddressList(firstIndex, selectedAddress)
+              .dataRetrievalAction
+
+          fakeAuditService.reset()
+
+          val result = route(app, fakeRequest).value
+
+          whenReady(result) {
+            _ =>
+              fakeAuditService.verifySent(
+                AddressEvent(
+                  FakeAuthAction.externalId,
+                  AddressAction.LookupChanged
+                )
+              )
+          }
       }
     }
   }
