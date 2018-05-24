@@ -24,7 +24,7 @@ import controllers.actions._
 import controllers.behaviours.ControllerBehaviours
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeDetailsId}
-import models.address.{Address, TolerantAddress}
+import models.address.Address
 import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
@@ -34,7 +34,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.annotations.TrusteesIndividual
-import utils.{CountryOptions, FakeNavigator, InputOption, Navigator, UserAnswers}
+import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -54,7 +54,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
     TrusteesId.toString -> Json.arr(Json.obj(TrusteeDetailsId.toString -> personDetails))
   )))
 
-  implicit val builder = new GuiceApplicationBuilder()
+  private implicit val builder: GuiceApplicationBuilder = new GuiceApplicationBuilder()
     .overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
       bind[Navigator].qualifiedWith(classOf[TrusteesIndividual]).toInstance(FakeNavigator),
@@ -64,7 +64,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
       bind[CountryOptions].to(countryOptions)
     )
 
-  val controller = builder.build().injector.instanceOf[TrusteeAddressController]
+  private val controller = builder.build().injector.instanceOf[TrusteeAddressController]
 
   val viewmodel = ManualAddressViewModel(
     controller.postCall(NormalMode, firstIndex),
@@ -110,23 +110,6 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
             ("postCode", address.postcode.get),
             "country" -> address.country))
 
-        val existingAddress = Address(
-          "existing-line-1",
-          "existing-line-2",
-          None,
-          None,
-          None,
-          "existing-country"
-        )
-
-        val selectedAddress = TolerantAddress(None, None, None, None, None, None)
-
-        val data =
-          UserAnswers()
-            .trusteesAddress(firstIndex.id, existingAddress)
-            .trusteesAddressList(firstIndex.id, selectedAddress)
-            .dataRetrievalAction
-
         fakeAuditService.reset()
 
         val result = route(app, fakeRequest).value
@@ -136,7 +119,9 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
             fakeAuditService.verifySent(
               AddressEvent(
                 FakeAuthAction.externalId,
-                AddressAction.LookupChanged
+                AddressAction.LookupChanged,
+                s"Trustee Address: ${personDetails.fullName}",
+                address
               )
             )
         }

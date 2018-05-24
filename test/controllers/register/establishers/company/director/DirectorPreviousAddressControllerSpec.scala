@@ -26,7 +26,7 @@ import controllers.actions._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressId}
-import models.address.{Address, TolerantAddress}
+import models.address.Address
 import models.register.establishers.company.director.DirectorDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
@@ -39,7 +39,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{CountryOptions, FakeNavigator, InputOption, Navigator, UserAnswers}
+import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
@@ -89,8 +89,6 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
             controller.heading,
             secondaryHeader = Some(directorDetails.directorName)
           )
-
-          def viewAsString(form: Form[_] = form): String = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
 
           val request = addToken(
             FakeRequest(routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex))
@@ -182,23 +180,6 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
               ("postCode", address.postcode.get),
               "country" -> address.country))
 
-          val existingAddress = Address(
-            "existing-line-1",
-            "existing-line-2",
-            None,
-            None,
-            None,
-            "existing-country"
-          )
-
-          val selectedAddress = TolerantAddress(None, None, None, None, None, None)
-
-          val data =
-            UserAnswers()
-              .establishersCompanyDirectorPreviousAddress(establisherIndex, directorIndex, existingAddress)
-              .establishersCompanyDirectorPreviousAddressList(establisherIndex, directorIndex, selectedAddress)
-              .dataRetrievalAction
-
           fakeAuditService.reset()
 
           val result = route(app, fakeRequest).value
@@ -208,7 +189,9 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
               fakeAuditService.verifySent(
                 AddressEvent(
                   FakeAuthAction.externalId,
-                  AddressAction.LookupChanged
+                  AddressAction.LookupChanged,
+                  s"Company Director Previous Address: ${directorDetails.directorName}",
+                  address
                 )
               )
           }

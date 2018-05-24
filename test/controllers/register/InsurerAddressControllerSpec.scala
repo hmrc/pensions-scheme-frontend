@@ -16,17 +16,16 @@
 
 package controllers.register
 
-import audit.{AddressAction, AddressEvent}
 import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent}
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
 import identifiers.register._
-import models.address.{Address, TolerantAddress}
 import models.NormalMode
+import models.address.{Address, TolerantAddress}
 import models.register._
-import models.address.Address
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -36,7 +35,6 @@ import utils._
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
-import views.html.register.insurerAddress
 
 class InsurerAddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
@@ -173,7 +171,16 @@ class InsurerAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
           fakeAuditService.verifySent(
             AddressEvent(
               FakeAuthAction.externalId,
-              AddressAction.LookupChanged
+              AddressAction.LookupChanged,
+              "Insurer Address",
+              Address(
+                "value 1",
+                "value 2",
+                None,
+                None,
+                Some("NE1 1NE"),
+                "GB"
+              )
             )
           )
       }

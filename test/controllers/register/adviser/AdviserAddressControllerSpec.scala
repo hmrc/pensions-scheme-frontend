@@ -27,7 +27,7 @@ import controllers.register.adviser.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.adviser.AdviserAddressId
 import models.NormalMode
-import models.address.{Address, TolerantAddress}
+import models.address.Address
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
@@ -38,7 +38,7 @@ import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{CountryOptions, FakeNavigator, InputOption, Navigator, UserAnswers}
+import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -83,8 +83,6 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
             Message(controller.title),
             Message(controller.heading),
             secondaryHeader = Some(controller.secondary))
-
-          def viewAsString(form: Form[_] = form): String = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
 
           val request = addToken(
             FakeRequest(AdviserAddressController.onPageLoad(NormalMode))
@@ -171,23 +169,6 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
               ("postCode", address.postcode.get),
               "country" -> address.country))
 
-          val existingAddress = Address(
-            "existing-line-1",
-            "existing-line-2",
-            None,
-            None,
-            None,
-            "existing-country"
-          )
-
-          val selectedAddress = TolerantAddress(None, None, None, None, None, None)
-
-          val data =
-            UserAnswers()
-              .advisersAddress(existingAddress)
-              .advisersAddressList(selectedAddress)
-              .dataRetrievalAction
-
           fakeAuditService.reset()
 
           val result = route(app, fakeRequest).value
@@ -197,7 +178,9 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
               fakeAuditService.verifySent(
                 AddressEvent(
                   FakeAuthAction.externalId,
-                  AddressAction.LookupChanged
+                  AddressAction.LookupChanged,
+                  "Adviser Address",
+                  address
                 )
               )
           }

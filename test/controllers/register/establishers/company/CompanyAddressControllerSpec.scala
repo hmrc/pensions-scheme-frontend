@@ -189,7 +189,16 @@ class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
           fakeAuditService.verifySent(
             AddressEvent(
               FakeAuthAction.externalId,
-              AddressAction.LookupChanged
+              AddressAction.LookupChanged,
+              s"Establisher Company Address $companyName",
+              Address(
+                "value 1",
+                "value 2",
+                None,
+                None,
+                Some("NE1 1NE"),
+                "GB"
+              )
             )
           )
       }

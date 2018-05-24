@@ -24,17 +24,15 @@ import controllers.actions._
 import controllers.behaviours.ControllerBehaviours
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyAddressId, CompanyDetailsId}
-import models.address.{Address, TolerantAddress}
+import models.address.Address
 import models.{CompanyDetails, Index, NormalMode}
-import navigators.TrusteesCompanyNavigator
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.annotations.TrusteesCompany
-import utils.{CountryOptions, FakeNavigator, InputOption, Navigator, UserAnswers}
+import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -54,7 +52,7 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
     TrusteesId.toString -> Json.arr(Json.obj(CompanyDetailsId.toString -> companyDetails))
   )))
 
-  implicit val builder = new GuiceApplicationBuilder()
+  implicit val builder: GuiceApplicationBuilder = new GuiceApplicationBuilder()
     .overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
       bind[Navigator].qualifiedWith(classOf[TrusteesCompany]).toInstance(FakeNavigator),
@@ -64,7 +62,7 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
       bind[CountryOptions].to(countryOptions)
     )
 
-  val controller = builder.build().injector.instanceOf[CompanyAddressController]
+  private val controller = builder.build().injector.instanceOf[CompanyAddressController]
 
   val viewmodel = ManualAddressViewModel(
     controller.postCall(NormalMode, firstIndex),
@@ -110,23 +108,6 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
             ("postCode", address.postcode.get),
             "country" -> address.country))
 
-        val existingAddress = Address(
-          "existing-line-1",
-          "existing-line-2",
-          None,
-          None,
-          None,
-          "existing-country"
-        )
-
-        val selectedAddress = TolerantAddress(None, None, None, None, None, None)
-
-        val data =
-          UserAnswers()
-            .trusteesCompanyAddress(firstIndex, existingAddress)
-            .trusteesCompanyAddressList(firstIndex, selectedAddress)
-            .dataRetrievalAction
-
         fakeAuditService.reset()
 
         val result = route(app, fakeRequest).value
@@ -136,7 +117,9 @@ class CompanyAddressControllerSpec extends ControllerBehaviours {
             fakeAuditService.verifySent(
               AddressEvent(
                 FakeAuthAction.externalId,
-                AddressAction.LookupChanged
+                AddressAction.LookupChanged,
+                s"Trustee Company Address: ${companyDetails.companyName}",
+                address
               )
             )
         }

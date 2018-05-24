@@ -27,7 +27,7 @@ import controllers.register.establishers.company.director.routes._
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorDetailsId}
-import models.address.{Address, TolerantAddress}
+import models.address.Address
 import models.register.establishers.company.director.DirectorDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
@@ -40,7 +40,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{CountryOptions, FakeNavigator, InputOption, Navigator, UserAnswers}
+import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -104,8 +104,6 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
             secondaryHeader = Some(director.directorName),
             Some(Message(controller.hint))
           )
-
-          def viewAsString(form: Form[_] = form): String = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
 
           val request = addToken(
             FakeRequest(DirectorAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex))
@@ -197,23 +195,6 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
               ("postCode", address.postcode.get),
               "country" -> address.country))
 
-          val existingAddress = Address(
-            "existing-line-1",
-            "existing-line-2",
-            None,
-            None,
-            None,
-            "existing-country"
-          )
-
-          val selectedAddress = TolerantAddress(None, None, None, None, None, None)
-
-          val data =
-            UserAnswers()
-              .establishersCompanyDirectorAddress(establisherIndex, directorIndex, existingAddress)
-              .establishersCompanyDirectorAddressList(establisherIndex, directorIndex, selectedAddress)
-              .dataRetrievalAction
-
           fakeAuditService.reset()
 
           val result = route(app, fakeRequest).value
@@ -223,7 +204,9 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
               fakeAuditService.verifySent(
                 AddressEvent(
                   FakeAuthAction.externalId,
-                  AddressAction.LookupChanged
+                  AddressAction.LookupChanged,
+                  s"Company Director Address: ${director.directorName}",
+                  address
                 )
               )
           }

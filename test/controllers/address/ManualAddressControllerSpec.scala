@@ -70,7 +70,7 @@ object ManualAddressControllerSpec {
       get(fakeAddressId, fakeAddressListId, viewModel)(DataRequest(FakeRequest(), "cacheId", answers, psaId))
 
     def onSubmit(viewModel: ManualAddressViewModel, answers: UserAnswers, request: Request[AnyContent] = FakeRequest()): Future[Result] =
-      post(fakeAddressId, fakeAddressListId, viewModel, NormalMode)(DataRequest(request, externalId, answers, psaId))
+      post(fakeAddressId, fakeAddressListId, viewModel, NormalMode, "test-context")(DataRequest(request, externalId, answers, psaId))
 
     override protected val form: Form[Address] = formProvider()
   }
@@ -278,7 +278,16 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
                 auditService.verifySent(
                   AddressEvent(
                     externalId,
-                    AddressAction.LookupChanged
+                    AddressAction.LookupChanged,
+                    "test-context",
+                    Address(
+                      "value 1",
+                      "value 2",
+                      None,
+                      None,
+                      Some("AB1 1AB"),
+                      "GB"
+                    )
                   )
                 )
             }

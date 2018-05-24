@@ -16,8 +16,8 @@
 
 package controllers.register.establishers.individual
 
-import audit.{AddressAction, AddressEvent}
 import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent}
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -38,7 +38,6 @@ import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, Us
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
-import views.html.register.establishers.individual.address
 
 class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
@@ -48,7 +47,6 @@ class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
   private val form: Form[Address] = formProvider()
   private val firstIndex = Index(0)
   private val establisherName: String = "test first name test last name"
-  private val address = Address("test address line 1", "test address line 2", None, None, None, "GB")
 
   private val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
@@ -183,7 +181,16 @@ class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
           fakeAuditService.verifySent(
             AddressEvent(
               FakeAuthAction.externalId,
-              AddressAction.LookupChanged
+              AddressAction.LookupChanged,
+              s"Establisher Individual Address: $establisherName",
+              Address(
+                "value 1",
+                "value 2",
+                None,
+                None,
+                Some("NE1 1NE"),
+                "GB"
+              )
             )
           )
       }

@@ -79,7 +79,8 @@ class InsurerAddressController @Inject()(val appConfig: FrontendAppConfig,
     implicit request =>
       viewmodel(mode).retrieve.right.map {
         vm =>
-          post(InsurerAddressId, InsurerAddressListId, vm, mode)
+          post(InsurerAddressId, InsurerAddressListId, vm, mode, "Insurer Address")
       }
   }
+
 }
