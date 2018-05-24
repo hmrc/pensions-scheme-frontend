@@ -13,7 +13,6 @@ GET        /membership-current                          controllers.register.Mem
 POST       /membership-current                          controllers.register.MembershipController.onSubmit(mode: Mode = NormalMode)
 GET        /change-current-membership                   controllers.register.MembershipController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-current-membership                   controllers.register.MembershipController.onSubmit(mode: Mode = CheckMode)
-POST       /change-current-membership                   controllers.register.MembershipController.onSubmit(mode: Mode = CheckMode)
 
 GET        /membership-future                           controllers.register.MembershipFutureController.onPageLoad(mode: Mode = NormalMode)
 POST       /membership-future                           controllers.register.MembershipFutureController.onSubmit(mode: Mode = NormalMode)
