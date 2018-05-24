@@ -58,9 +58,9 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onSubmit: Action[AnyContent] = (authenticate) {
     implicit request =>
-      Redirect(navigator.nextPage(SchemeSuccessId, NormalMode)(request.userAnswers))
+      Redirect(controllers.routes.LogoutController.onPageLoad())
   }
 
 }

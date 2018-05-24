@@ -64,8 +64,7 @@ class RegisterNavigatorSpec extends WordSpec with MustMatchers with NavigatorBeh
     (DeclarationId,                 emptyAnswers,         declarationDuties,                      None),
     (DeclarationDutiesId,           dutiesTrue,           schemeSuccess,                          None),
     (DeclarationDutiesId,           dutiesFalse,          adviserDetails,                         None),
-    (DeclarationDutiesId,           emptyAnswers,         expired,                                None),
-    (SchemeSuccessId,               emptyAnswers,         logout,                                  None)
+    (DeclarationDutiesId,           emptyAnswers,         expired,                                None)
   )
 
   navigator.getClass.getSimpleName must {
