@@ -25,12 +25,12 @@ import models.{Index, NormalMode}
 import views.html.address.postcodeLookup
 import controllers.ControllerSpecBase
 import forms.address.PostCodeLookupFormProvider
-import models.address.{Address, AddressRecord, TolerantAddress}
+import models.address.TolerantAddress
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._
 import play.api.mvc.Call
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
@@ -111,6 +111,20 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
+    "return Bad request when post code lookup fails" in {
+      val failedPostCode = "ZZ1 1ZZ"
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", failedPostCode))
+      val boundForm = form.withError(FormError("value", "messages__error__postcode_failed"))
+
+      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.failed(new HttpException("Failed",INTERNAL_SERVER_ERROR)))
+
+      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+
+      status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
