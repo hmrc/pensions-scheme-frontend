@@ -18,7 +18,8 @@ package controllers
 
 import connectors.{DataCacheConnector, MongoCacheConnector}
 import controllers.actions._
-import org.joda.time.{DateTime, DateTimeZone, LocalDate}
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.{DateTime, DateTimeZone}
 import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
@@ -36,12 +37,19 @@ class SchemesOverviewControllerSpec extends ControllerSpecBase with MockitoSugar
     new SchemesOverviewController(frontendAppConfig, messagesApi, fakeCacheConnector, FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl)
 
+  private val formatter = DateTimeFormat.forPattern("dd MMMM YYYY")
   val schemeName = "Test Scheme Name"
   val lastDate: DateTime = DateTime.now(DateTimeZone.UTC)
   val timestamp: Long = lastDate.getMillis
-  val deleteDate = DateTime.now(DateTimeZone.UTC).plusDays(frontendAppConfig.daysDataSaved).toString
+  val deleteDate: String = DateTime.now(DateTimeZone.UTC).plusDays(frontendAppConfig.daysDataSaved).toString(formatter)
 
-  def viewAsString(): String = schemesOverview(frontendAppConfig, Some(schemeName), Some(lastDate.toString), Some(deleteDate))(fakeRequest, messages).toString
+  def viewAsString(): String = schemesOverview(
+        frontendAppConfig,
+        Some(schemeName),
+        Some(lastDate.toString(formatter)),
+        Some(deleteDate)
+      )(fakeRequest, messages).toString
+
   def viewAsStringNewScheme(): String = schemesOverview(frontendAppConfig, None, None, None)(fakeRequest, messages).toString
 
   "SchemesOverview Controller" must {
@@ -55,10 +63,10 @@ class SchemesOverviewControllerSpec extends ControllerSpecBase with MockitoSugar
       }
 
       "a scheme has been partially defined" in {
-        val result = controller().onPageLoad(fakeRequest)
         when(fakeCacheConnector.fetchValue(Matchers.any(), Matchers.eq("lastUpdated"))(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful(Some(Json.parse(timestamp.toString))))
 
+        val result = controller().onPageLoad(fakeRequest)
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
       }

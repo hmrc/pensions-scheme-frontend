@@ -19,6 +19,7 @@ package views
 import java.time.LocalDate
 
 import org.jsoup.Jsoup
+import play.twirl.api.HtmlFormat
 import viewmodels.Message
 import views.behaviours.ViewBehaviours
 import views.html.schemesOverview
@@ -27,11 +28,12 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "schemesOverview"
   val schemeName = "Test Scheme Name"
-  val lastDate = LocalDate.now.toString
-  val deleteDate = LocalDate.now.plusDays(28).toString
+  val lastDate: String = LocalDate.now.toString
+  val deleteDate: String = LocalDate.now.plusDays(frontendAppConfig.daysDataSaved).toString
 
-  def createView = () => schemesOverview(frontendAppConfig, Some(schemeName), Some(lastDate), Some(deleteDate))(fakeRequest, messages)
-  def createFreshView = () => schemesOverview(frontendAppConfig, None, None, None)(fakeRequest, messages)
+  def createView: (() => HtmlFormat.Appendable) = () =>
+    schemesOverview(frontendAppConfig, Some(schemeName), Some(lastDate), Some(deleteDate))(fakeRequest, messages)
+  def createFreshView: (() => HtmlFormat.Appendable) = () => schemesOverview(frontendAppConfig, None, None, None)(fakeRequest, messages)
 
   "SchemesOverview view when a scheme has been partially defined" must {
     behave like normalPage(
@@ -45,9 +47,9 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
       "_delete__link"
     )
 
-    "have link to register a new scheme" in {
+    "have link to view all schemes" in {
       Jsoup.parse(createView().toString()).select("a[id=view-schemes]") must
-        haveLink(controllers.routes.SchemesOverviewController.onPageLoad.url)
+        haveLink(controllers.routes.ListSchemesController.onPageLoad.url)
     }
 
     "have link to redirect to Pension Schemes Online service" in {
@@ -80,9 +82,9 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
       "_register__link"
     )
 
-    "have link to register a new scheme" in {
+    "have link to view all schemes" in {
       Jsoup.parse(createView().toString()).select("a[id=view-schemes]") must
-        haveLink(controllers.routes.SchemesOverviewController.onPageLoad.url)
+        haveLink(controllers.routes.ListSchemesController.onPageLoad.url)
     }
 
     "have link to redirect to Pension Schemes Online service" in {

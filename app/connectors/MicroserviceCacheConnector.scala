@@ -122,5 +122,5 @@ class MicroserviceCacheConnector @Inject() (
   override def fetchValue(id: String, value: String)(implicit
                                  ec: ExecutionContext,
                                  hc: HeaderCarrier
-  ): Future[Option[JsValue]] = ???
+  ): Future[Option[JsValue]] = fetch(id)
 }

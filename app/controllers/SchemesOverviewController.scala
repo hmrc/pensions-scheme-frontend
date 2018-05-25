@@ -16,7 +16,6 @@
 
 package controllers
 
-import java.time.{Instant, ZoneId}
 import javax.inject.Inject
 
 import config.FrontendAppConfig
@@ -24,6 +23,7 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
 import models.LastUpdatedDate
+import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTime, DateTimeZone, LocalDate}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -45,18 +45,19 @@ class SchemesOverviewController @Inject()(appConfig: FrontendAppConfig,
         case None => Future.successful(Ok(schemesOverview(appConfig, None, None, None)))
         case Some(scheme) =>
           dataCacheConnector.fetchValue(request.externalId, "lastUpdated").map { dateOpt =>
-            val date = dateOpt.map(_.as[LastUpdatedDate]).getOrElse(currentTimestamp)
+            val date = dateOpt.map(ts => LastUpdatedDate(ts.as[Long])).getOrElse(currentTimestamp)
             Ok(schemesOverview(
                 appConfig,
                 Some(scheme.schemeName),
                 Some(s"${f(date, 0)}"),
                 Some(s"${f(date, appConfig.daysDataSaved)}")
             ))
-        }
+          }
         }
       }
 
-  private def f(dt: LastUpdatedDate, daysToAdd: Int): String = new LocalDate(dt.timestamp).plusDays(daysToAdd).toString
-  private def currentTimestamp: LastUpdatedDate = LastUpdatedDate(DateTime.now(DateTimeZone.UTC).getMillis())
+  private val formatter = DateTimeFormat.forPattern("dd MMMM YYYY")
+  private def f(dt: LastUpdatedDate, daysToAdd: Int): String = new LocalDate(dt.timestamp).plusDays(daysToAdd).toString(formatter)
+  private def currentTimestamp: LastUpdatedDate = LastUpdatedDate(DateTime.now(DateTimeZone.UTC).getMillis)
 
 }
