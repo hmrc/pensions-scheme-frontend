@@ -63,6 +63,8 @@ class PreviousAddressListController @Inject()(
         postCall = routes.PreviousAddressListController.onSubmit(mode, index),
         manualInputCall = routes.PreviousAddressController.onPageLoad(mode, index),
         addresses = addresses,
+        title = Message("messages__select_the_previous_address__title"),
+        heading = Message("messages__select_the_previous_address__title"),
         subHeading = Some(Message(establisherDetails.fullName))
       )
     }.left.map(_ =>

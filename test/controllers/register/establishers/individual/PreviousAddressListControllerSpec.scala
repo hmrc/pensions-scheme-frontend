@@ -37,6 +37,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.{Enumerable, FakeNavigator, MapFormats}
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 import views.html.register.establishers.individual.previousAddressList
@@ -78,6 +79,8 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
         routes.PreviousAddressListController.onSubmit(NormalMode, firstIndex),
         routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex),
         previousAddresses,
+        title = Message("messages__select_the_previous_address__title"),
+        heading = Message("messages__select_the_previous_address__title"),
         subHeading = Some(establisherName)
       )
     )(fakeRequest, messages).toString
