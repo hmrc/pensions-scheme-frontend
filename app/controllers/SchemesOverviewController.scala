@@ -26,6 +26,7 @@ import models.LastUpdatedDate
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTime, DateTimeZone, LocalDate}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.{JsError, JsResultException, JsSuccess}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.schemesOverview
@@ -45,7 +46,13 @@ class SchemesOverviewController @Inject()(appConfig: FrontendAppConfig,
         case None => Future.successful(Ok(schemesOverview(appConfig, None, None, None)))
         case Some(scheme) =>
           dataCacheConnector.fetchValue(request.externalId, "lastUpdated").map { dateOpt =>
-            val date = dateOpt.map(ts => LastUpdatedDate(ts.as[Long])).getOrElse(currentTimestamp)
+            val date = dateOpt.map(ts =>
+                LastUpdatedDate(
+                  ts.validate[Long] match {
+                    case JsSuccess(value, _) => value
+                    case JsError(errors) => throw JsResultException(errors)
+                  }
+                )).getOrElse(currentTimestamp)
             Ok(schemesOverview(
                 appConfig,
                 Some(scheme.schemeName),
