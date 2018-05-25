@@ -48,8 +48,8 @@ class CompanyPreviousAddressController @Inject()(
                                                 ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.CompanyPreviousAddressController.onSubmit _
-  private[controllers] val title: Message = "messages__companyAddress__title"
-  private[controllers] val heading: Message = "messages__companyAddress__heading"
+  private[controllers] val title: Message = "messages__companyPreviousAddress__title"
+  private[controllers] val heading: Message = "messages__companyPreviousAddress__heading"
   private[controllers] val hint: Message = "messages__companyAddress__lede"
 
   protected val form: Form[Address] = formProvider()
