@@ -21,3 +21,6 @@ GET        /logout                                      controllers.LogoutContro
 GET        /your-pension-schemes                        controllers.ListSchemesController.onPageLoad
 
 GET        /overview                             controllers.SchemesOverviewController.onPageLoad()
+
+GET        /discard                                controllers.DeleteSchemeController.onPageLoad
+POST       /discard                                controllers.DeleteSchemeController.onSubmit

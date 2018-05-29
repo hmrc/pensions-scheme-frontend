@@ -1,18 +1,33 @@
 #!/bin/bash
 
-echo "Applying migration SchemesOverview"
+echo "Applying migration DeleteScheme"
 
 echo "Adding routes to app.routes"
+
 echo "" >> ../conf/app.routes
-echo "GET        /schemesOverview                       controllers.SchemesOverviewController.onPageLoad()" >> ../conf/app.routes
+echo "GET        /deleteScheme                       controllers.app.DeleteSchemeController.onPageLoad(mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "POST       /deleteScheme                       controllers.app.DeleteSchemeController.onSubmit(mode: Mode = NormalMode)" >> ../conf/app.routes
+
+echo "GET        /changeDeleteScheme                       controllers.app.DeleteSchemeController.onPageLoad(mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "POST       /changeDeleteScheme                       controllers.app.DeleteSchemeController.onSubmit(mode: Mode = CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "schemesOverview.title = schemesOverview" >> ../conf/messages.en
-echo "schemesOverview.heading = schemesOverview" >> ../conf/messages.en
+echo "messages__deleteScheme__title = deleteScheme" >> ../conf/messages.en
+echo "messages__deleteScheme__heading = deleteScheme" >> ../conf/messages.en
+echo "messages__deleteScheme__checkYourAnswersLabel = deleteScheme" >> ../conf/messages.en
+echo "messages__deleteScheme__error__required = Please give an answer for deleteScheme" >> ../conf/messages.en
+
+echo "Adding helper method to CheckYourAnswersHelper"
+awk '/class/ {\
+     print;\
+     print "";\
+     print "  def deleteScheme: Option[AnswerRow] = userAnswers.get(identifiers.app.DeleteSchemeId) map {";\
+     print "    x => AnswerRow(\"deleteScheme.checkYourAnswersLabel\", Seq(if(x) \"site.yes\" else \"site.no\"), true, controllers.app.routes.DeleteSchemeController.onPageLoad(CheckMode).url)"; print "  }";\
+     next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration SchemesOverview completed"
+echo "Migration DeleteScheme completed"
