@@ -16,67 +16,70 @@
 
 package controllers.register
 
-import javax.inject.Inject
-
+import audit.AuditService
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.Retrievals
 import controllers.actions._
+import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
 import identifiers.register._
+import javax.inject.Inject
 import models.Mode
 import models.address.Address
 import play.api.data.Form
 import play.api.i18n._
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{CountryOptions, Navigator, UserAnswers}
-import views.html.register.insurerAddress
+import utils.{CountryOptions, Navigator}
+import viewmodels.Message
+import viewmodels.address.ManualAddressViewModel
 
-import scala.concurrent.Future
-
-class InsurerAddressController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         dataCacheConnector: DataCacheConnector,
-                                         @Register navigator: Navigator,
+class InsurerAddressController @Inject()(val appConfig: FrontendAppConfig,
+                                         val messagesApi: MessagesApi,
+                                         val dataCacheConnector: DataCacheConnector,
+                                         @Register val navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: AddressFormProvider,
-                                         countryOptions: CountryOptions) extends FrontendController with Retrievals with I18nSupport {
+                                         val formProvider: AddressFormProvider,
+                                         val countryOptions: CountryOptions,
+                                         val auditService: AuditService
+                                        ) extends ManualAddressController with I18nSupport {
 
-  val form: Form[Address] = formProvider()
+  private[controllers] val postCall = routes.InsurerAddressController.onSubmit _
+  private[controllers] val title: Message = "messages__benefits_insurance_addr__title"
+  private[controllers] val heading: Message = "messages__benefits_insurance_addr__title"
+
+  protected val form: Form[Address] = formProvider()
+
+  private def viewmodel(mode: Mode): Retrieval[ManualAddressViewModel] =
+    Retrieval {
+      implicit request =>
+        SchemeDetailsId.retrieve.right.map {
+          schemeName =>
+            ManualAddressViewModel(
+              postCall(mode),
+              countryOptions.options,
+              title = Message(title),
+              heading = Message(heading),
+              secondaryHeader = Some(schemeName.schemeName)
+            )
+        }
+    }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          val result = request.userAnswers.get(InsurerAddressId) match {
-            case None => Ok(insurerAddress(appConfig, form, mode, countryOptions.options, schemeName))
-            case Some(value) => Ok(insurerAddress(appConfig, form.fill(value), mode, countryOptions.options, schemeName))
-          }
-          Future.successful(result)
+      viewmodel(mode).retrieve.right.map {
+        vm =>
+          get(InsurerAddressId, InsurerAddressListId, vm)
       }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(insurerAddress(appConfig, formWithErrors, mode, countryOptions.options, schemeName))),
-            (value) =>
-              dataCacheConnector.save(
-                request.externalId,
-                InsurerAddressId,
-                value
-              ).map {
-                json =>
-                  Redirect(navigator.nextPage(InsurerAddressId, mode)(new UserAnswers(json)))
-              }
-          )
+      viewmodel(mode).retrieve.right.map {
+        vm =>
+          post(InsurerAddressId, InsurerAddressListId, vm, mode, "Insurer Address")
       }
   }
 

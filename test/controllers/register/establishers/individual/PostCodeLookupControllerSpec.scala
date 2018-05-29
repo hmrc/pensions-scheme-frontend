@@ -22,15 +22,17 @@ import connectors.{AddressLookupConnector, FakeDataCacheConnector}
 import controllers.actions._
 import play.api.test.Helpers._
 import models.{Index, NormalMode}
-import views.html.register.establishers.individual.postCodeLookup
+import views.html.address.postcodeLookup
 import controllers.ControllerSpecBase
 import forms.address.PostCodeLookupFormProvider
-import models.address.{Address, AddressRecord, TolerantAddress}
+import models.address.TolerantAddress
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito._
 import play.api.mvc.Call
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
+import viewmodels.Message
+import viewmodels.address.PostcodeLookupViewModel
 
 import scala.concurrent.Future
 
@@ -38,20 +40,41 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new PostCodeLookupFormProvider()
-  val form = formProvider()
-  val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
+  private val formProvider = new PostCodeLookupFormProvider()
+  private val form = formProvider()
+
+  private val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
-  val firstIndex = Index(0)
-  val establisherName: String = "test first name test last name"
+
+  private val firstIndex = Index(0)
+  private val establisherName: String = "test first name test last name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PostCodeLookupController =
-    new PostCodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector, fakeAddressLookupConnector,
-      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+    new PostCodeLookupController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      fakeAddressLookupConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
 
-  def viewAsString(form: Form[_] = form): String = postCodeLookup(frontendAppConfig, form, NormalMode, firstIndex,
-    establisherName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    postcodeLookup(
+      frontendAppConfig,
+      form,
+      PostcodeLookupViewModel(
+        routes.PostCodeLookupController.onSubmit(NormalMode, firstIndex),
+        routes.AddressController.onPageLoad(NormalMode, firstIndex),
+        Message("messages__establisher_individual_address__title"),
+        Message("messages__establisher_individual_address__title"),
+        Some(establisherName),
+        Some(Message("messages__establisher_individual_address_lede"))
+      )
+    )(fakeRequest, messages).toString
 
   "Address Controller" must {
 
@@ -77,13 +100,27 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
-    "return a Bad Request when no results found for the input post code" in {
+    "return OK when no results found for the input post code to match generic controller" in {
       val notFoundPostCode = "ZZ1 1ZZ"
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", notFoundPostCode))
       val boundForm = form.withError(FormError("value", "messages__error__postcode_no_results"))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(notFoundPostCode))
       (Matchers.any(), Matchers.any())).thenReturn(Future.successful((Nil)))
+
+      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(boundForm)
+    }
+
+    "return Bad request when post code lookup fails" in {
+      val failedPostCode = "ZZ1 1ZZ"
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", failedPostCode))
+      val boundForm = form.withError(FormError("value", "messages__error__postcode_failed"))
+
+      when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.failed(new HttpException("Failed",INTERNAL_SERVER_ERROR)))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 

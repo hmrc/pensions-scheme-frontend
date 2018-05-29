@@ -16,24 +16,27 @@
 
 package controllers.register
 
+import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent}
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
 import identifiers.register._
-import models.address.Address
-import models.register._
 import models.NormalMode
+import models.address.{Address, TolerantAddress}
 import models.register._
-import models.address.Address
+import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils._
-import views.html.register.insurerAddress
+import viewmodels.Message
+import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
-class InsurerAddressControllerSpec extends ControllerSpecBase {
+class InsurerAddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -41,23 +44,38 @@ class InsurerAddressControllerSpec extends ControllerSpecBase {
   val form: Form[Address] = formProvider()
   val schemeName: String = "Test Scheme Name"
 
+  val fakeAuditService = new StubSuccessfulAuditService()
+
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): InsurerAddressController = new InsurerAddressController(
-    frontendAppConfig,
-    messagesApi,
-    FakeDataCacheConnector,
-    new FakeNavigator(desiredRoute = onwardRoute),
-    FakeAuthAction,
-    dataRetrievalAction,
-    new DataRequiredActionImpl,
-    formProvider,
-    countryOptions
-  )
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): InsurerAddressController =
+    new InsurerAddressController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider,
+      countryOptions,
+      fakeAuditService
+    )
 
-  def viewAsString(form: Form[_] = form): String = insurerAddress(frontendAppConfig, form, NormalMode, options, schemeName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    manualAddress(
+      frontendAppConfig,
+      form,
+      ManualAddressViewModel(
+        routes.InsurerAddressController.onSubmit(NormalMode),
+        options,
+        Message("messages__benefits_insurance_addr__title"),
+        Message("messages__benefits_insurance_addr__title"),
+        Some(schemeName)
+      )
+    )(fakeRequest, messages).toString
 
   val insurerAddressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
 
@@ -116,6 +134,56 @@ class InsurerAddressControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "send an audit event when valid data is submitted" in {
+
+      val existingAddress = Address(
+        "existing-line-1",
+        "existing-line-2",
+        None,
+        None,
+        None,
+        "existing-country"
+      )
+
+      val selectedAddress = TolerantAddress(None, None, None, None, None, None)
+
+      val data =
+        UserAnswers()
+          .insurersAddress(existingAddress)
+          .insurersAddressList(selectedAddress)
+          .dataRetrievalAction
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(
+        ("addressLine1", "value 1"),
+        ("addressLine2", "value 2"),
+        ("postCode", "NE1 1NE"),
+        "country" -> "GB"
+      )
+
+      fakeAuditService.reset()
+
+      val result = controller(data).onSubmit(NormalMode)(postRequest)
+
+      whenReady(result) {
+        _ =>
+          fakeAuditService.verifySent(
+            AddressEvent(
+              FakeAuthAction.externalId,
+              AddressAction.LookupChanged,
+              "Insurer Address",
+              Address(
+                "value 1",
+                "value 2",
+                None,
+                None,
+                Some("NE1 1NE"),
+                "GB"
+              )
+            )
+          )
+      }
     }
   }
 }

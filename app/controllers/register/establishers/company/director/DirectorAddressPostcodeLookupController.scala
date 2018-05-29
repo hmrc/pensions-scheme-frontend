@@ -16,14 +16,13 @@
 
 package controllers.register.establishers.company.director
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorDetailsId}
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -33,34 +32,19 @@ import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
-class DirectorAddressPostcodeLookupController @Inject() (
-                                        override val appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        override val cacheConnector: DataCacheConnector,
-                                        override val addressLookupConnector: AddressLookupConnector,
-                                        @EstablishersCompanyDirector override val navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: PostCodeLookupFormProvider
-                                      ) extends PostcodeLookupController {
+class DirectorAddressPostcodeLookupController @Inject()(
+                                                         override val appConfig: FrontendAppConfig,
+                                                         override val messagesApi: MessagesApi,
+                                                         override val cacheConnector: DataCacheConnector,
+                                                         override val addressLookupConnector: AddressLookupConnector,
+                                                         @EstablishersCompanyDirector override val navigator: Navigator,
+                                                         authenticate: AuthAction,
+                                                         getData: DataRetrievalAction,
+                                                         requireData: DataRequiredAction,
+                                                         formProvider: PostCodeLookupFormProvider
+                                                       ) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
-
-  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode): Retrieval[PostcodeLookupViewModel] =
-    Retrieval(
-      implicit request =>
-        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
-          details =>
-            PostcodeLookupViewModel(
-              routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex),
-              routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex),
-              Message("messages__directorAddressPostcodeLookup__title"),
-              Message("messages__directorAddressPostcodeLookup__heading"),
-              Some(details.directorName)
-            )
-        }
-    )
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
@@ -76,4 +60,21 @@ class DirectorAddressPostcodeLookupController @Inject() (
             post(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex), vm, mode)
         )
     }
+
+  private def viewmodel(establisherIndex: Index, directorIndex: Index, mode: Mode): Retrieval[PostcodeLookupViewModel] =
+    Retrieval(
+      implicit request =>
+        DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
+          details =>
+            PostcodeLookupViewModel(
+              routes.DirectorAddressPostcodeLookupController.onSubmit(mode, establisherIndex, directorIndex),
+              routes.DirectorAddressController.onPageLoad(mode, establisherIndex, directorIndex),
+              Message("messages__directorAddressPostcodeLookup__title"),
+              Message("messages__directorAddressPostcodeLookup__heading"),
+              Some(details.directorName),
+              Some(Message("messages__directorAddressPostcodeLookup__lede"))
+            )
+        }
+    )
+
 }

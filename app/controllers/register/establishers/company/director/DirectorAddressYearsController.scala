@@ -16,73 +16,53 @@
 
 package controllers.register.establishers.company.director
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
+import controllers.address.AddressYearsController
+import forms.address.AddressYearsFormProvider
 import identifiers.register.establishers.company.director.{DirectorAddressYearsId, DirectorDetailsId}
+import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.establishers.company.director.directorAddressYears
-
-import scala.concurrent.Future
+import viewmodels.Message
+import viewmodels.address.AddressYearsViewModel
 
 class DirectorAddressYearsController @Inject()(
-                                                appConfig: FrontendAppConfig,
-                                                override val messagesApi: MessagesApi,
-                                                dataCacheConnector: DataCacheConnector,
-                                                @EstablishersCompanyDirector navigator: Navigator,
+                                                val appConfig: FrontendAppConfig,
+                                                val cacheConnector: DataCacheConnector,
+                                                @EstablishersCompanyDirector val navigator: Navigator,
+                                                val messagesApi: MessagesApi,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
-                                                requireData: DataRequiredAction,
-                                                formProvider: DirectorAddressYearsFormProvider
-                                              ) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
+                                                requireData: DataRequiredAction
+                                              ) extends AddressYearsController with Retrievals {
 
-  private val form = formProvider()
+  private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { directorDetails =>
-        DirectorAddressYearsId(establisherIndex, directorIndex).retrieve.right.map { value =>
-            Future.successful(Ok(directorAddressYears(appConfig, form.fill(value), mode, establisherIndex, directorIndex, directorDetails.directorName)))
-        }.left.map{ _ =>
-          Future.successful(Ok(directorAddressYears(appConfig, form, mode, establisherIndex, directorIndex, directorDetails.directorName)))
-        }
+      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
+        get(DirectorAddressYearsId(establisherIndex, directorIndex), form, viewModel(mode, establisherIndex, directorIndex, directorDetails.directorName))
       }
   }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) => {
-            DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
-              Future.successful(BadRequest(directorAddressYears(
-                appConfig,
-                formWithErrors,
-                mode,
-                establisherIndex,
-                directorIndex,
-                directorDetails.directorName
-              )))
-            }
-          },
-          (value) =>
-            dataCacheConnector.save(
-              request.externalId,
-              DirectorAddressYearsId(establisherIndex, directorIndex),
-              value
-            ).map {
-              json =>
-                Redirect(navigator.nextPage(DirectorAddressYearsId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
-            }
-        )
+      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
+        post(DirectorAddressYearsId(establisherIndex, directorIndex), mode, form, viewModel(mode, establisherIndex, directorIndex, directorDetails.directorName))
       }
   }
+
+  private def viewModel(mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String) = AddressYearsViewModel(
+    postCall = routes.DirectorAddressYearsController.onSubmit(mode, establisherIndex, directorIndex),
+    title = Message("messages__director_address_years__title"),
+    heading = Message("messages__director_address_years__heading"),
+    legend = Message("messages__director_address_years__heading"),
+    subHeading = Some(Message(directorName))
+  )
+}

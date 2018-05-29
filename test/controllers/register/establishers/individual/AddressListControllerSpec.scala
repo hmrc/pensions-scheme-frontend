@@ -36,7 +36,9 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.{Enumerable, FakeNavigator, MapFormats}
-import views.html.register.establishers.individual.addressList
+import viewmodels.Message
+import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 import scala.concurrent.Future
 
@@ -45,7 +47,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new AddressListFormProvider()
-  val form = formProvider(Seq(0))
+  val form = formProvider(Seq.empty)
   val firstIndex = Index(0)
 
   val establisherName: String = "test first name test last name"
@@ -64,12 +66,20 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl,
-      formProvider
+      new DataRequiredActionImpl
     )
 
   def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = addresses): String =
-    addressList(frontendAppConfig, form, NormalMode, firstIndex, address, establisherName)(fakeRequest, messages).toString
+      addressList(
+        frontendAppConfig,
+        form,
+        AddressListViewModel(
+          routes.AddressListController.onSubmit(NormalMode, firstIndex),
+          routes.AddressController.onPageLoad(NormalMode, firstIndex),
+          addresses,
+          subHeading = Some(establisherName)
+        )
+      )(fakeRequest, messages).toString
 
   def address(postCode: String): TolerantAddress = TolerantAddress(
     Some("address line 1"),
@@ -81,7 +91,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
 
   val validData = Json.obj(
     SchemeDetailsId.toString -> Json.toJson(
-    SchemeDetails("value 1", SchemeType.SingleTrust)),
+      SchemeDetails("value 1", SchemeType.SingleTrust)),
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->
@@ -89,7 +99,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         UniqueTaxReferenceId.toString ->
           UniqueTaxReference.Yes("1234567891"),
         PostCodeLookupId.toString -> addresses)
-      ))
+    ))
 
   "AddressResults Controller" must {
 
@@ -126,18 +136,13 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     }
 
     "update the country of the chosen address to `GB`" in {
-      val dataCacheConnector = mock[DataCacheConnector]
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
-      when(dataCacheConnector.save[Address, AddressId](any(), Matchers.eq(AddressId(0)), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Json.obj()))
-
-      val result = controller(new FakeDataRetrievalAction(Some(validData)), dataCacheConnector)
+      val result = controller(new FakeDataRetrievalAction(Some(validData)), FakeDataCacheConnector)
         .onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      verify(dataCacheConnector, times(1))
-        .save[Address, AddressId](any(), Matchers.eq(AddressId(0)), Matchers.eq(addresses.head.toAddress.copy(country = "GB")))(any(), any(), any())
+        FakeDataCacheConnector.verify(AddressListId(firstIndex), addresses.head.copy(country = Some("GB")))
     }
 
     "return a Bad Request and errors when no data is submitted" in {

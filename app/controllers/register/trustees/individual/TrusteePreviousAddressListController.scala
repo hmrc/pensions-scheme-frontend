@@ -16,14 +16,13 @@
 
 package controllers.register.trustees.individual
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
 import identifiers.register.trustees.individual._
+import javax.inject.Inject
 import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -56,7 +55,7 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-       viewmodel(mode, index).right.map(get)
+      viewmodel(mode, index).right.map(get)
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {

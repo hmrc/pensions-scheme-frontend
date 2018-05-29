@@ -23,7 +23,6 @@ import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
-
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -43,7 +42,7 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
                                                                 requireData: DataRequiredAction,
                                                                 formProvider: PostCodeLookupFormProvider,
                                                                 val addressLookupConnector: AddressLookupConnector
-                                      ) extends PostcodeLookupController with I18nSupport {
+                                                              ) extends PostcodeLookupController with I18nSupport {
 
   private[controllers] val manualAddressCall = routes.CompanyPreviousAddressController.onPageLoad _
   private[controllers] val postCall = routes.CompanyPreviousAddressPostcodeLookupController.onSubmit _
@@ -77,7 +76,7 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        viewmodel(index, mode).retrieve.right.map{ vm =>
+        viewmodel(index, mode).retrieve.right.map { vm =>
           post(CompanyPreviousAddressPostcodeLookupId(index), vm, mode)
         }
     }

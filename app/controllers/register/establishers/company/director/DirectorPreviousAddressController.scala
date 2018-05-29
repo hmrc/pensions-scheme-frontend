@@ -16,15 +16,15 @@
 
 package controllers.register.establishers.company.director
 
-import javax.inject.Inject
-
+import audit.AuditService
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressId}
+import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressId, DirectorPreviousAddressListId}
+import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
@@ -36,21 +36,21 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
 class DirectorPreviousAddressController @Inject()(
-                                        val appConfig: FrontendAppConfig,
-                                        val messagesApi: MessagesApi,
-                                        val dataCacheConnector: DataCacheConnector,
-                                        @EstablishersCompanyDirector val navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        val formProvider: AddressFormProvider,
-                                        val countryOptions: CountryOptions
-                                      ) extends ManualAddressController with I18nSupport with Retrievals {
+                                                   val appConfig: FrontendAppConfig,
+                                                   val messagesApi: MessagesApi,
+                                                   val dataCacheConnector: DataCacheConnector,
+                                                   @EstablishersCompanyDirector val navigator: Navigator,
+                                                   authenticate: AuthAction,
+                                                   getData: DataRetrievalAction,
+                                                   requireData: DataRequiredAction,
+                                                   val formProvider: AddressFormProvider,
+                                                   val countryOptions: CountryOptions,
+                                                   val auditService: AuditService
+                                                 ) extends ManualAddressController with I18nSupport with Retrievals {
 
   private[controllers] val postCall = routes.DirectorPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__companyDirectorAddress__title"
   private[controllers] val heading: Message = "messages__companyDirectorAddress__heading"
-  private[controllers] val hint: Message = "messages__common__company_address_hint"
 
   protected val form: Form[Address] = formProvider()
 
@@ -58,13 +58,12 @@ class DirectorPreviousAddressController @Inject()(
     Retrieval {
       implicit request =>
         DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
-          director  =>
+          director =>
             ManualAddressViewModel(
               postCall(mode, establisherIndex, directorIndex),
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
-              hint = Some(Message(hint)),
               secondaryHeader = Some(director.directorName)
             )
         }
@@ -72,9 +71,9 @@ class DirectorPreviousAddressController @Inject()(
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index).retrieve.right.map{
+      viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index).retrieve.right.map {
         vm =>
-          get(DirectorPreviousAddressId(establisherIndex, directorIndex), vm)
+          get(DirectorPreviousAddressId(establisherIndex, directorIndex), DirectorPreviousAddressListId(establisherIndex, directorIndex), vm)
       }
   }
 
@@ -82,7 +81,21 @@ class DirectorPreviousAddressController @Inject()(
     implicit request =>
       viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index).retrieve.right.map {
         vm =>
-          post(DirectorPreviousAddressId(establisherIndex, directorIndex), vm, mode)
+          post(
+            DirectorPreviousAddressId(establisherIndex, directorIndex),
+            DirectorPreviousAddressListId(establisherIndex, directorIndex),
+            vm,
+            mode,
+            context(vm)
+          )
       }
   }
+
+  private def context(viewModel: ManualAddressViewModel): String = {
+    viewModel.secondaryHeader match {
+      case Some(name) => s"Company Director Previous Address: $name"
+      case _ => "Company Director Previous Address"
+    }
+  }
+
 }

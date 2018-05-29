@@ -16,14 +16,13 @@
 
 package controllers.register.establishers.company
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPostCodeLookupId}
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
@@ -33,18 +32,18 @@ import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
-class CompanyPostCodeLookupController @Inject() (
-                                                  override val appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  override val cacheConnector: DataCacheConnector,
-                                                  override val addressLookupConnector: AddressLookupConnector,
-                                                  @EstablishersCompany
-                                                  override val  navigator: Navigator,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: PostCodeLookupFormProvider
-                                        ) extends PostcodeLookupController {
+class CompanyPostCodeLookupController @Inject()(
+                                                 override val appConfig: FrontendAppConfig,
+                                                 override val messagesApi: MessagesApi,
+                                                 override val cacheConnector: DataCacheConnector,
+                                                 override val addressLookupConnector: AddressLookupConnector,
+                                                 @EstablishersCompany
+                                                 override val navigator: Navigator,
+                                                 authenticate: AuthAction,
+                                                 getData: DataRetrievalAction,
+                                                 requireData: DataRequiredAction,
+                                                 formProvider: PostCodeLookupFormProvider
+                                               ) extends PostcodeLookupController {
 
   private val title: Message = "messages__companyAddress__title"
   private val heading: Message = "messages__companyAddress__heading"

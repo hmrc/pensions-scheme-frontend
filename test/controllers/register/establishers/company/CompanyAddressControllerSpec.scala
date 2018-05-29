@@ -16,6 +16,8 @@
 
 package controllers.register.establishers.company
 
+import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent}
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -23,17 +25,20 @@ import forms.address.AddressFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyAddressId, CompanyDetailsId}
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
+import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption}
-import views.html.register.establishers.company.companyAddress
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
+import viewmodels.Message
+import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
-class CompanyAddressControllerSpec extends ControllerSpecBase {
+class CompanyAddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -47,6 +52,8 @@ class CompanyAddressControllerSpec extends ControllerSpecBase {
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
+  val fakeAuditService = new StubSuccessfulAuditService()
+
   val address = Address("value 1", "value 2", None, None, None, "GB")
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyAddressController =
@@ -59,11 +66,23 @@ class CompanyAddressControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
-      countryOptions
+      countryOptions,
+      fakeAuditService
     )
 
   def viewAsString(form: Form[_] = form): String =
-    companyAddress(frontendAppConfig, form, NormalMode, firstIndex, companyName, options)(fakeRequest, messages).toString
+    manualAddress(
+      frontendAppConfig,
+      form,
+      ManualAddressViewModel(
+        routes.CompanyAddressController.onSubmit(NormalMode, firstIndex),
+        options,
+        Message("messages__companyAddress__title"),
+        Message("messages__companyAddress__heading"),
+        Some(companyName),
+        Some(Message("messages__companyAddress__lede"))
+      )
+    )(fakeRequest, messages).toString
 
   "CompanyAddress Controller" must {
 
@@ -135,5 +154,54 @@ class CompanyAddressControllerSpec extends ControllerSpecBase {
       }
     }
 
+    "send an audit event when valid data is submitted" in {
+
+      val existingAddress = Address(
+        "existing-line-1",
+        "existing-line-2",
+        None,
+        None,
+        None,
+        "existing-country"
+      )
+
+      val selectedAddress = TolerantAddress(None, None, None, None, None, None)
+
+      val data =
+        UserAnswers()
+          .establishersCompanyAddress(firstIndex, existingAddress)
+          .establishersCompanyAddressList(firstIndex, selectedAddress)
+          .dataRetrievalAction
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(
+        ("addressLine1", "value 1"),
+        ("addressLine2", "value 2"),
+        ("postCode", "NE1 1NE"),
+        "country" -> "GB"
+      )
+
+      fakeAuditService.reset()
+
+      val result = controller(data).onSubmit(NormalMode, firstIndex)(postRequest)
+
+      whenReady(result) {
+        _ =>
+          fakeAuditService.verifySent(
+            AddressEvent(
+              FakeAuthAction.externalId,
+              AddressAction.LookupChanged,
+              s"Establisher Company Address $companyName",
+              Address(
+                "value 1",
+                "value 2",
+                None,
+                None,
+                Some("NE1 1NE"),
+                "GB"
+              )
+            )
+          )
+      }
+    }
   }
 }

@@ -32,32 +32,22 @@ import utils.annotations.Adviser
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
-class AdviserPostCodeLookupController @Inject() (
-                                                  override val appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  override val cacheConnector: DataCacheConnector,
-                                                  override val addressLookupConnector: AddressLookupConnector,
-                                                  @Adviser override val navigator: Navigator,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: PostCodeLookupFormProvider
-                                                ) extends PostcodeLookupController {
+class AdviserPostCodeLookupController @Inject()(
+                                                 override val appConfig: FrontendAppConfig,
+                                                 override val messagesApi: MessagesApi,
+                                                 override val cacheConnector: DataCacheConnector,
+                                                 override val addressLookupConnector: AddressLookupConnector,
+                                                 @Adviser override val navigator: Navigator,
+                                                 authenticate: AuthAction,
+                                                 getData: DataRetrievalAction,
+                                                 requireData: DataRequiredAction,
+                                                 formProvider: PostCodeLookupFormProvider
+                                               ) extends PostcodeLookupController {
 
   private val title: Message = "messages__adviserPostCodeLookupAddress__title"
   private val heading: Message = "messages__adviserPostCodeLookupAddress__heading"
 
   protected val form: Form[String] = formProvider()
-
-  private def viewmodel(mode: Mode) =
-      PostcodeLookupViewModel(
-        routes.AdviserPostCodeLookupController.onSubmit(mode),
-        routes.AdviserAddressController.onPageLoad(mode),
-        title = Message(title),
-        heading = Message(heading),
-        subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
-        enterPostcode=Message("messages__adviserPostCodeLookupAddress__enterPostCode")
-      )
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
@@ -71,4 +61,13 @@ class AdviserPostCodeLookupController @Inject() (
         post(AdviserAddressPostCodeLookupId, viewmodel(mode), mode)
     }
 
+  private def viewmodel(mode: Mode) =
+    PostcodeLookupViewModel(
+      routes.AdviserPostCodeLookupController.onSubmit(mode),
+      routes.AdviserAddressController.onPageLoad(mode),
+      title = Message(title),
+      heading = Message(heading),
+      subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
+      enterPostcode = Message("messages__adviserPostCodeLookupAddress__enterPostCode")
+    )
 }

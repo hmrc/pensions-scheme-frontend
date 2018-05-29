@@ -16,8 +16,7 @@
 
 package controllers.register.trustees.company
 
-import javax.inject.Inject
-
+import audit.AuditService
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
@@ -25,7 +24,8 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId}
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId}
+import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
 import play.api.data.Form
@@ -37,16 +37,17 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
 class CompanyPreviousAddressController @Inject()(
-                                        val appConfig: FrontendAppConfig,
-                                        val messagesApi: MessagesApi,
-                                        val dataCacheConnector: DataCacheConnector,
-                                        @TrusteesCompany val navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        val formProvider: AddressFormProvider,
-                                        val countryOptions: CountryOptions
-                                      ) extends ManualAddressController with I18nSupport with Retrievals {
+                                                  val appConfig: FrontendAppConfig,
+                                                  val messagesApi: MessagesApi,
+                                                  val dataCacheConnector: DataCacheConnector,
+                                                  @TrusteesCompany val navigator: Navigator,
+                                                  authenticate: AuthAction,
+                                                  getData: DataRetrievalAction,
+                                                  requireData: DataRequiredAction,
+                                                  val formProvider: AddressFormProvider,
+                                                  val countryOptions: CountryOptions,
+                                                  val auditService: AuditService
+                                                ) extends ManualAddressController with I18nSupport with Retrievals {
 
   private[controllers] val postCall = CompanyPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__companyAddress__title"
@@ -73,9 +74,9 @@ class CompanyPreviousAddressController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewmodel(index, mode).retrieve.right.map{
+      viewmodel(index, mode).retrieve.right.map {
         vm =>
-          get(CompanyPreviousAddressId(index), vm)
+          get(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index), vm)
       }
   }
 
@@ -83,7 +84,15 @@ class CompanyPreviousAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(CompanyPreviousAddressId(index), vm, mode)
+          post(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index), vm, mode, context(vm))
       }
   }
+
+  private def context(viewModel: ManualAddressViewModel): String = {
+    viewModel.secondaryHeader match {
+      case Some(name) => s"Trustee Company Previous Address: $name"
+      case _ => "Trustee Company Previous Address"
+    }
+  }
+
 }

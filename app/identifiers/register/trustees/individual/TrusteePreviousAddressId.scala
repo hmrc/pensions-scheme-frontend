@@ -18,7 +18,7 @@ package identifiers.register.trustees.individual
 
 import identifiers._
 import identifiers.register.trustees.TrusteesId
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import play.api.libs.json.JsPath
 import utils.{CheckYourAnswers, CountryOptions}
 

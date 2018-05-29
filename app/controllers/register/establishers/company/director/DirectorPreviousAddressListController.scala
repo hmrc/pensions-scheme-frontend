@@ -35,18 +35,19 @@ import viewmodels.address.AddressListViewModel
 import scala.concurrent.Future
 
 class DirectorPreviousAddressListController @Inject()(
-        override val appConfig: FrontendAppConfig,
-        override val cacheConnector: DataCacheConnector,
-        @EstablishersCompanyDirector override val navigator: Navigator,
-        override val messagesApi: MessagesApi,
-        authenticate: AuthAction,
-        getData: DataRetrievalAction,
-        requireData: DataRequiredAction) extends AddressListController with Retrievals {
+                                                       override val appConfig: FrontendAppConfig,
+                                                       override val cacheConnector: DataCacheConnector,
+                                                       @EstablishersCompanyDirector override val navigator: Navigator,
+                                                       override val messagesApi: MessagesApi,
+                                                       authenticate: AuthAction,
+                                                       getData: DataRetrievalAction,
+                                                       requireData: DataRequiredAction
+                                                     ) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async { implicit request =>
       viewmodel(mode, establisherIndex, directorIndex).right.map(get)
-  }
+    }
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async { implicit request =>
@@ -54,20 +55,20 @@ class DirectorPreviousAddressListController @Inject()(
         vm =>
           post(vm, DirectorPreviousAddressListId(establisherIndex, directorIndex), DirectorPreviousAddressId(establisherIndex, directorIndex), mode)
       }
-  }
+    }
 
   private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index)
                        (implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
 
     (DirectorDetailsId(establisherIndex, directorIndex) and DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex))
       .retrieve.right.map {
-        case directorDetails ~ addresses =>
-          AddressListViewModel(
-            postCall = routes.DirectorPreviousAddressListController.onSubmit(mode, establisherIndex, directorIndex),
-            manualInputCall = routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex),
-            addresses = addresses,
-            subHeading = Some(Message(directorDetails.directorName))
-          )
-      }.left.map(_ => Future.successful(Redirect(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex))))
+      case directorDetails ~ addresses =>
+        AddressListViewModel(
+          postCall = routes.DirectorPreviousAddressListController.onSubmit(mode, establisherIndex, directorIndex),
+          manualInputCall = routes.DirectorPreviousAddressController.onPageLoad(mode, establisherIndex, directorIndex),
+          addresses = addresses,
+          subHeading = Some(Message(directorDetails.directorName))
+        )
+    }.left.map(_ => Future.successful(Redirect(routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, establisherIndex, directorIndex))))
   }
 }

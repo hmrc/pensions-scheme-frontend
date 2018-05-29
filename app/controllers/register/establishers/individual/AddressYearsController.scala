@@ -16,55 +16,54 @@
 
 package controllers.register.establishers.individual
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.individual.AddressYearsFormProvider
-import identifiers.register.establishers.individual.AddressYearsId
+import controllers.address.{AddressYearsController => GenericAddressYearController}
+import forms.address.AddressYearsFormProvider
+import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
+import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils._
 import utils.annotations.EstablishersIndividual
-import views.html.register.establishers.individual.addressYears
-
-import scala.concurrent.Future
+import viewmodels.Message
+import viewmodels.address.AddressYearsViewModel
 
 class AddressYearsController @Inject()(
-                                        appConfig: FrontendAppConfig,
+                                        override val appConfig: FrontendAppConfig,
+                                        override val cacheConnector: DataCacheConnector,
+                                        @EstablishersIndividual val navigator: Navigator,
                                         override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        @EstablishersIndividual navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AddressYearsFormProvider
-                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                        requireData: DataRequiredAction
+                                      ) extends GenericAddressYearController with Retrievals {
 
-  private val form = formProvider()
+  private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      request.userAnswers.get(AddressYearsId(index)) match {
-        case None =>
-          Ok(addressYears(appConfig, form, mode, index))
-        case Some(value) =>
-          Ok(addressYears(appConfig, form.fill(value), mode, index))
+      EstablisherDetailsId(index).retrieve.right.map { establisherDetails =>
+        get(AddressYearsId(index), form, viewModel(mode, index, establisherDetails.fullName))
       }
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(addressYears(appConfig, formWithErrors, mode, index))),
-        (value) =>
-          dataCacheConnector.save(request.externalId, AddressYearsId(index), value).map(json =>
-            Redirect(navigator.nextPage(AddressYearsId(index), mode)(new UserAnswers(json))))
-      )
+      EstablisherDetailsId(index).retrieve.right.map { establisherDetails =>
+        post(AddressYearsId(index), mode, form, viewModel(mode, index, establisherDetails.fullName))
+      }
   }
+
+  private def viewModel(mode: Mode, index: Index, establisherName: String) = AddressYearsViewModel(
+    postCall = routes.AddressYearsController.onSubmit(mode, index),
+    title = Message("messages__establisher_address_years__title"),
+    heading = Message("messages__establisher_address_years__title"),
+    legend = Message("messages__establisher_address_years__title"),
+    subHeading = Some(Message(establisherName))
+  )
 }
+

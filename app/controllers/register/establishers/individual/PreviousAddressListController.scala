@@ -16,74 +16,58 @@
 
 package controllers.register.establishers.individual
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.address.AddressListFormProvider
+import controllers.address.{AddressListController => GenericAddressListController}
 import identifiers.register.establishers.individual._
+import javax.inject.Inject
+import models.requests.DataRequest
 import models.{Index, Mode}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, Result}
+import utils.Navigator
 import utils.annotations.EstablishersIndividual
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
-import views.html.register.establishers.individual.previousAddressList
+import viewmodels.Message
+import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.Future
 
 class PreviousAddressListController @Inject()(
-                                               appConfig: FrontendAppConfig,
+                                               override val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
-                                               dataCacheConnector: DataCacheConnector,
-                                               @EstablishersIndividual navigator: Navigator,
+                                               override val cacheConnector: DataCacheConnector,
+                                               @EstablishersIndividual override val navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
-                                               requireData: DataRequiredAction,
-                                               formProvider: AddressListFormProvider
-                                     ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats{
-
+                                               requireData: DataRequiredAction
+                                             ) extends GenericAddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) {
-        establisherName =>
-          val result = request.userAnswers.get(PreviousPostCodeLookupId(index)) match {
-            case None =>
-              Redirect(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index))
-            case Some(previousAddresses) =>
-              Ok(previousAddressList(appConfig, formProvider(previousAddresses), mode, index, previousAddresses, establisherName))
-          }
-          Future.successful(result)
-      }
+      viewmodel(mode, index).right.map(get)
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveEstablisherName(index) {
-        establisherName =>
-          request.userAnswers.get(PreviousPostCodeLookupId(index)) match {
-            case None =>
-              Future.successful(Redirect(controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index)))
-
-            case Some(previousAddresses) =>
-              formProvider(previousAddresses).bindFromRequest().fold(
-                formWithErrors =>
-                  Future.successful(BadRequest(previousAddressList(appConfig, formWithErrors, mode, index, previousAddresses, establisherName))),
-                id =>
-                  dataCacheConnector.save(
-                    request.externalId,
-                    PreviousAddressId(index),
-                    previousAddresses(id).toAddress.copy(country = "GB")
-                  ).map {
-                    json =>
-                      Redirect(navigator.nextPage(PreviousAddressListId(index), mode)(new UserAnswers(json)))
-                  }
-              )
-          }
+      viewmodel(mode, index).right.map {
+        vm =>
+          post(vm, PreviousAddressListId(index), PreviousAddressId(index), mode)
       }
   }
 
+  private def viewmodel(mode: Mode, index: Index)(implicit request: DataRequest[AnyContent]): Either[Future[Result], AddressListViewModel] = {
+    (EstablisherDetailsId(index) and PreviousPostCodeLookupId(index)).retrieve.right.map {
+      case establisherDetails ~ addresses => AddressListViewModel(
+        postCall = routes.PreviousAddressListController.onSubmit(mode, index),
+        manualInputCall = routes.PreviousAddressController.onPageLoad(mode, index),
+        addresses = addresses,
+        title = Message("messages__select_the_previous_address__title"),
+        heading = Message("messages__select_the_previous_address__title"),
+        subHeading = Some(Message(establisherDetails.fullName))
+      )
+    }.left.map(_ =>
+      Future.successful(Redirect(routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, index))))
+  }
 }

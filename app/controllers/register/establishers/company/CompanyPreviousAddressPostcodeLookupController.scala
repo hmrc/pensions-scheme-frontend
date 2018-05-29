@@ -16,92 +16,66 @@
 
 package controllers.register.establishers.company
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
-import controllers.Retrievals
 import controllers.actions._
+import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.company.CompanyPreviousAddressPostcodeLookupId
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressPostcodeLookupId}
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.EstablishersCompany
-import utils.{Navigator, UserAnswers}
-import views.html.register.establishers.company.companyPreviousAddressPostcodeLookup
+import viewmodels.Message
+import viewmodels.address.PostcodeLookupViewModel
 
-import scala.concurrent.Future
+class CompanyPreviousAddressPostcodeLookupController @Inject()(
+                                                                override val appConfig: FrontendAppConfig,
+                                                                override val messagesApi: MessagesApi,
+                                                                override val cacheConnector: DataCacheConnector,
+                                                                override val addressLookupConnector: AddressLookupConnector,
+                                                                @EstablishersCompany override val navigator: Navigator,
+                                                                authenticate: AuthAction,
+                                                                getData: DataRetrievalAction,
+                                                                requireData: DataRequiredAction,
+                                                                formProvider: PostCodeLookupFormProvider
+                                                              ) extends PostcodeLookupController {
 
-class CompanyPreviousAddressPostcodeLookupController @Inject() (
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        addressLookupConnector: AddressLookupConnector,
-                                        @EstablishersCompany navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: PostCodeLookupFormProvider
-                                      ) extends FrontendController with Retrievals with I18nSupport {
+  private val title: Message = "messages__companyPreviousAddressPostcodeLookup__title"
+  private val heading: Message = "messages__companyPreviousAddressPostcodeLookup__title"
 
-  private val form = formProvider()
+  protected val form: Form[String] = formProvider()
 
-  def formWithError(messageKey: String): Form[String] = {
-    form.withError("value", s"messages__error__postcode_$messageKey")
-  }
+  private def viewmodel(index: Int, mode: Mode): Retrieval[PostcodeLookupViewModel] =
+    Retrieval {
+      implicit request =>
+        CompanyDetailsId(index).retrieve.right.map {
+          details =>
+            PostcodeLookupViewModel(
+              routes.CompanyPreviousAddressPostcodeLookupController.onSubmit(mode, index),
+              routes.CompanyPreviousAddressController.onPageLoad(mode, index),
+              title = Message(title),
+              heading = Message(heading),
+              subHeading = Some(details.companyName)
+            )
+        }
+    }
 
-  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      retrieveCompanyName(index) { companyName =>
-        Future.successful(Ok(companyPreviousAddressPostcodeLookup(appConfig, form, mode, index, companyName)))
-      }
-  }
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode).retrieve.right map get
+    }
 
-  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      retrieveCompanyName(index) { companyName =>
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(companyPreviousAddressPostcodeLookup(appConfig, formWithErrors, mode, index, companyName))),
-          (value) =>
-            addressLookupConnector.addressLookupByPostCode(value).flatMap {
-
-              case Nil => {
-                Future.successful(
-                  BadRequest(
-                    companyPreviousAddressPostcodeLookup(
-                      appConfig, formWithError("no_results"),
-                      mode, index, companyName)
-                  )
-                )
-              }
-              case addresses =>
-
-                dataCacheConnector
-                  .save(
-                  request.externalId,
-                  CompanyPreviousAddressPostcodeLookupId(index),
-                  addresses
-                )
-                .map {
-                  json =>
-                    Redirect(navigator.nextPage(CompanyPreviousAddressPostcodeLookupId(index), mode)(new UserAnswers(json))
-                    )
-
-            }.recoverWith {
-                  case _ => Future.successful(
-                    BadRequest(
-                      companyPreviousAddressPostcodeLookup(
-                        appConfig,
-                        formWithError("invalid"), mode, index, companyName)
-                    )
-                  )
-                }
-            }
-        )
-      }
-  }
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode).retrieve.right.map {
+          vm =>
+            post(CompanyPreviousAddressPostcodeLookupId(index), vm, mode)
+        }
+    }
 }

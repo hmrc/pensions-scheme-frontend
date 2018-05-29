@@ -34,14 +34,14 @@ import viewmodels.address.AddressYearsViewModel
 
 @Singleton
 class TrusteeAddressYearsController @Inject()(
-  override val appConfig: FrontendAppConfig,
-  override val cacheConnector: DataCacheConnector,
-  @TrusteesIndividual override val navigator: Navigator,
-  override val messagesApi: MessagesApi,
-  authenticate: AuthAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction
-) extends AddressYearsController with Retrievals {
+                                               override val appConfig: FrontendAppConfig,
+                                               override val cacheConnector: DataCacheConnector,
+                                               @TrusteesIndividual override val navigator: Navigator,
+                                               override val messagesApi: MessagesApi,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction
+                                             ) extends AddressYearsController with Retrievals {
 
   private val form = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required"))
 

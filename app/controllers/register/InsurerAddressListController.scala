@@ -16,70 +16,55 @@
 
 package controllers.register
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.address.AddressListFormProvider
+import controllers.address.AddressListController
 import identifiers.register._
+import javax.inject.Inject
 import models.Mode
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import models.requests.DataRequest
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, Result}
+import utils.Navigator
 import utils.annotations.Register
-import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.insurerAddressList
+import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.Future
 
-class InsurerAddressListController @Inject()(appConfig: FrontendAppConfig,
+class InsurerAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
-                                             dataCacheConnector: DataCacheConnector,
-                                             @Register navigator: Navigator,
+                                             override val cacheConnector: DataCacheConnector,
+                                             @Register override val navigator: Navigator,
                                              authenticate: AuthAction,
                                              getData: DataRetrievalAction,
-                                             requireData: DataRequiredAction,
-                                             formProvider: AddressListFormProvider
-                                            ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                             requireData: DataRequiredAction) extends AddressListController with Retrievals {
 
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName { schemeName =>
-
-        request.userAnswers.get(InsurerPostCodeLookupId) match {
-          case None =>
-            Future.successful(Redirect(controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(mode)))
-          case Some(addresses) =>
-            Future.successful(Ok(insurerAddressList(appConfig, formProvider(addresses), mode, schemeName, addresses)))
-        }
-
-      }
+      viewModel(mode).right.map(get)
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName { schemeName =>
-        request.userAnswers.get(InsurerPostCodeLookupId) match {
-          case None =>
-            Future.successful(Redirect(controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(mode)))
-          case Some(addresses) =>
-            formProvider(addresses).bindFromRequest().fold(
-              (formWithErrors: Form[_]) =>
-                Future.successful(BadRequest(insurerAddressList(appConfig, formWithErrors, mode, schemeName, addresses))),
-              (value) =>
-                dataCacheConnector.save(
-                  request.externalId,
-                  InsurerAddressId,
-                  addresses(value).toAddress.copy(country = "GB")
-                ).map(cacheMap =>
-                  Redirect(navigator.nextPage(InsurerAddressListId, mode)(new UserAnswers(cacheMap))))
-            )
-        }
+      viewModel(mode).right.map {
+        vm =>
+          post(vm, InsurerAddressListId, InsurerAddressId, mode)
       }
   }
 
+  private def viewModel(mode: Mode)(implicit request: DataRequest[AnyContent]): Either[Future[Result],
+    AddressListViewModel] = {
+    (SchemeDetailsId and InsurerPostCodeLookupId).retrieve.right.map {
+      case schemeDetails ~ addresses =>
+        AddressListViewModel(
+          postCall = routes.InsurerAddressListController.onSubmit(mode),
+          manualInputCall = routes.InsurerAddressController.onPageLoad(mode),
+          addresses = addresses,
+          subHeading = Some(schemeDetails.schemeName)
+        )
+    }.left.map(_ => Future.successful(Redirect(routes.InsurerPostCodeLookupController.onPageLoad(mode))))
+  }
 }

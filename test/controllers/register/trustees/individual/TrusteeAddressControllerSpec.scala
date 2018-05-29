@@ -16,19 +16,24 @@
 
 package controllers.register.trustees.individual
 
+import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent, AuditService}
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerBehaviours
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.{TrusteeAddressId, TrusteeDetailsId}
+import models.address.Address
 import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import utils.annotations.{TrusteesCompany, TrusteesIndividual}
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import utils.annotations.TrusteesIndividual
 import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -41,13 +46,15 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
     Seq(InputOption("GB", "GB"))
   )
 
+  val fakeAuditService = new StubSuccessfulAuditService()
+
   val personDetails = PersonDetails("First", None, "Last", LocalDate.now())
 
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
     TrusteesId.toString -> Json.arr(Json.obj(TrusteeDetailsId.toString -> personDetails))
   )))
 
-  implicit val builder = new GuiceApplicationBuilder()
+  private implicit val builder: GuiceApplicationBuilder = new GuiceApplicationBuilder()
     .overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
       bind[Navigator].qualifiedWith(classOf[TrusteesIndividual]).toInstance(FakeNavigator),
@@ -57,7 +64,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
       bind[CountryOptions].to(countryOptions)
     )
 
-  val controller = builder.build().injector.instanceOf[TrusteeAddressController]
+  private val controller = builder.build().injector.instanceOf[TrusteeAddressController]
 
   val viewmodel = ManualAddressViewModel(
     controller.postCall(NormalMode, firstIndex),
@@ -75,4 +82,49 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
     viewmodel
   )
 
+  "send an audit event when valid data is submitted" in {
+
+    val address = Address(
+      addressLine1 = "value 1",
+      addressLine2 = "value 2",
+      None, None,
+      postcode = Some("AB1 1AB"),
+      country = "GB"
+    )
+
+    running(_.overrides(
+      bind[FrontendAppConfig].to(frontendAppConfig),
+      bind[Navigator].toInstance(FakeNavigator),
+      bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+      bind[AuthAction].to(FakeAuthAction),
+      bind[CountryOptions].to(countryOptions),
+      bind[AuditService].toInstance(fakeAuditService)
+    )) {
+      implicit app =>
+
+        val fakeRequest = addToken(FakeRequest(routes.TrusteeAddressController.onSubmit(NormalMode, firstIndex))
+          .withHeaders("Csrf-Token" -> "nocheck")
+          .withFormUrlEncodedBody(
+            ("addressLine1", address.addressLine1),
+            ("addressLine2", address.addressLine2),
+            ("postCode", address.postcode.get),
+            "country" -> address.country))
+
+        fakeAuditService.reset()
+
+        val result = route(app, fakeRequest).value
+
+        whenReady(result) {
+          _ =>
+            fakeAuditService.verifySent(
+              AddressEvent(
+                FakeAuthAction.externalId,
+                AddressAction.LookupChanged,
+                s"Trustee Address: ${personDetails.fullName}",
+                address
+              )
+            )
+        }
+    }
+  }
 }

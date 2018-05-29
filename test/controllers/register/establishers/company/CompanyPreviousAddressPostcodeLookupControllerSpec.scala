@@ -35,19 +35,24 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FakeNavigator
-import views.html.register.establishers.company.companyPreviousAddressPostcodeLookup
+import viewmodels.Message
+import viewmodels.address.PostcodeLookupViewModel
+import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 
 class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
+
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
+
   val index = Index(0)
   val companyName: String = "test company name"
+
   implicit val hc: HeaderCarrier = mock[HeaderCarrier]
 
   private def fakeAddress(postCode: String) = TolerantAddress(
@@ -79,12 +84,30 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyPreviousAddressPostcodeLookupController =
-    new CompanyPreviousAddressPostcodeLookupController(frontendAppConfig, messagesApi, FakeDataCacheConnector, fakeAddressLookupConnector,
-      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+    new CompanyPreviousAddressPostcodeLookupController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      fakeAddressLookupConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
 
-  def viewAsString(form: Form[_] = form): String = companyPreviousAddressPostcodeLookup(frontendAppConfig,
-    form, NormalMode, index, companyName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    postcodeLookup(
+      frontendAppConfig,
+      form,
+      PostcodeLookupViewModel(
+        routes.CompanyPreviousAddressPostcodeLookupController.onSubmit(NormalMode, index),
+        routes.CompanyPreviousAddressController.onPageLoad(NormalMode, index),
+        Message("messages__companyPreviousAddressPostcodeLookup__title"),
+        Message("messages__companyPreviousAddressPostcodeLookup__title"),
+        Some(companyName)
+      )
+    )(fakeRequest, messages).toString
 
   "CompanyPreviousAddressPostcodeLookup Controller" must {
 

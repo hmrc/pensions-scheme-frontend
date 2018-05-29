@@ -23,9 +23,11 @@ import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
+import play.api.mvc.Result
 import uk.gov.hmrc.crypto.{ApplicationCrypto, Crypted, PlainText}
 import uk.gov.hmrc.http._
 import utils.UserAnswers
+import play.api.mvc.Results._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -109,5 +111,11 @@ class MicroserviceCacheConnector @Inject() (
               Future.failed(new HttpException(response.body, response.status))
           }
     }
+  }
+
+  override def removeAll(id: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
+    http.url(url(id))
+      .withHeaders(hc.headers: _*)
+        .delete().map(_ => Ok)
   }
 }

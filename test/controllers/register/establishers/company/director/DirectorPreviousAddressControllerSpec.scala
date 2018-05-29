@@ -16,6 +16,8 @@
 
 package controllers.register.establishers.company.director
 
+import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
@@ -35,7 +37,6 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
@@ -56,12 +57,14 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
   val formProvider = new AddressFormProvider(countryOptions)
   val form: Form[Address] = formProvider()
 
+  val fakeAuditService = new StubSuccessfulAuditService()
+
   val retrieval = new FakeDataRetrievalAction(Some(Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj("director" -> Json.arr(
         Json.obj(DirectorDetailsId.toString -> directorDetails)
       )
-  )))))
+      )))))
 
   "PreviousAddress Controller" must {
 
@@ -84,16 +87,12 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
             countryOptions.options,
             controller.title,
             controller.heading,
-            secondaryHeader = Some(directorDetails.directorName),
-            hint = Some(controller.hint)
-
-        )
-
-          def viewAsString(form: Form[_] = form): String = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
+            secondaryHeader = Some(directorDetails.directorName)
+          )
 
           val request = addToken(
             FakeRequest(routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, directorIndex))
-            .withHeaders("Csrf-Token" -> "nocheck")
+              .withHeaders("Csrf-Token" -> "nocheck")
           )
 
           val result = route(app, request).value
@@ -153,5 +152,50 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
       }
     }
 
+    "send an audit event when valid data is submitted" in {
+
+      val address = Address(
+        addressLine1 = "value 1",
+        addressLine2 = "value 2",
+        None, None,
+        postcode = Some("AB1 1AB"),
+        country = "GB"
+      )
+
+      running(_.overrides(
+        bind[FrontendAppConfig].to(frontendAppConfig),
+        bind[Navigator].toInstance(FakeNavigator),
+        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[AuthAction].to(FakeAuthAction),
+        bind[CountryOptions].to(countryOptions),
+        bind[AuditService].toInstance(fakeAuditService)
+      )) {
+        implicit app =>
+
+          val fakeRequest = addToken(FakeRequest(routes.DirectorPreviousAddressController.onSubmit(NormalMode, establisherIndex, directorIndex))
+            .withHeaders("Csrf-Token" -> "nocheck")
+            .withFormUrlEncodedBody(
+              ("addressLine1", address.addressLine1),
+              ("addressLine2", address.addressLine2),
+              ("postCode", address.postcode.get),
+              "country" -> address.country))
+
+          fakeAuditService.reset()
+
+          val result = route(app, fakeRequest).value
+
+          whenReady(result) {
+            _ =>
+              fakeAuditService.verifySent(
+                AddressEvent(
+                  FakeAuthAction.externalId,
+                  AddressAction.LookupChanged,
+                  s"Company Director Previous Address: ${directorDetails.directorName}",
+                  address
+                )
+              )
+          }
+      }
+    }
   }
 }

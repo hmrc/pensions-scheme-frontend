@@ -17,8 +17,9 @@
 package identifiers.register.trustees.company
 
 import identifiers._
+import models.address.TolerantAddress
 
-case class CompanyAddressListId(index: Int) extends Identifier
+case class CompanyAddressListId(index: Int) extends TypedIdentifier[TolerantAddress]
 
 object CompanyAddressListId {
   override def toString: String = "companyAddressList"

@@ -45,10 +45,19 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
     }
 
     "display the correct column headers when there are schemes to display" in {
+<<<<<<< HEAD
       view(frontendAppConfig, fullList) must haveElementWithText("schemeName", messages("messages__listSchemes__column_schemeName"))
       view(frontendAppConfig, fullList) must haveElementWithText("srn", messages("messages__listSchemes__column_srn"))
       view(frontendAppConfig, fullList) must haveElementWithText("pstr", messages("messages__listSchemes__column_pstr"))
       view(frontendAppConfig, fullList) must haveElementWithText("schemeStatus", messages("messages__listSchemes__column_status"))
+=======
+      val actual = view(frontendAppConfig, fullList)
+
+      actual must haveElementWithText("schemeName", messages("messages__listSchemes__column_schemeName"))
+      actual must haveElementWithText("srn", messages("messages__listSchemes__column_srn"))
+      actual must haveElementWithText("pstr", messages("messages__listSchemes__column_pstr"))
+      actual must haveElementWithText("schemeStatus", messages("messages__listSchemes__column_status"))
+>>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
     }
 
     "display the correct rows when there are schemes to display" in {
@@ -62,11 +71,37 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
     }
 
     "display either PSTR or 'Not assigned' when there is no value" in {
+<<<<<<< HEAD
       pending
     }
 
     "display the abridged status not the full value" in {
       pending
+=======
+      val actual = view(frontendAppConfig, fullList)
+
+      actual must haveElementWithText("pstr-0", "Not assigned")
+      actual must haveElementWithText("pstr-1", "Not assigned")
+      actual must haveElementWithText("pstr-2", "Not assigned")
+      actual must haveElementWithText("pstr-3", "Not assigned")
+      actual must haveElementWithText("pstr-4", "PSTR-4")
+      actual must haveElementWithText("pstr-5", "PSTR-5")
+      actual must haveElementWithText("pstr-6", "PSTR-6")
+      actual must haveElementWithText("pstr-7", "Not assigned")
+    }
+
+    "display the abridged status not the full value" in {
+      val actual = view(frontendAppConfig, fullList)
+
+      actual must haveElementWithText("schemeStatus-0", "Pending")
+      actual must haveElementWithText("schemeStatus-1", "Pending")
+      actual must haveElementWithText("schemeStatus-2", "Pending")
+      actual must haveElementWithText("schemeStatus-3", "Rejected")
+      actual must haveElementWithText("schemeStatus-4", "Open")
+      actual must haveElementWithText("schemeStatus-5", "Closed")
+      actual must haveElementWithText("schemeStatus-6", "Closed")
+      actual must haveElementWithText("schemeStatus-7", "Rejected")
+>>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
     }
 
     "display the correct button for each status" in {
@@ -123,7 +158,11 @@ object ListSchemesViewSpec {
       "reference-number-4",
       "Open",
       None,
+<<<<<<< HEAD
       Some("pstr-5"),
+=======
+      Some("PSTR-4"),
+>>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
       None,
       None
     ),
@@ -132,7 +171,11 @@ object ListSchemesViewSpec {
       "reference-number-5",
       "Deregistered",
       None,
+<<<<<<< HEAD
       Some("pstr-6"),
+=======
+      Some("PSTR-5"),
+>>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
       None,
       None
     ),
@@ -141,7 +184,11 @@ object ListSchemesViewSpec {
       "reference-number-6",
       "Wound-up",
       None,
+<<<<<<< HEAD
       Some("pstr-7"),
+=======
+      Some("PSTR-6"),
+>>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
       None,
       None
     ),

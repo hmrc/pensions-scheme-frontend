@@ -31,7 +31,8 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
-import views.html.register.establishers.company.companyPreviousAddressList
+import viewmodels.address.AddressListViewModel
+import views.html.address.addressList
 
 class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
 
@@ -61,18 +62,34 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       SchemeDetails(schemeName, SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
-    "companyDetails" -> CompanyDetails(companyName, None, None),
-    CompanyPreviousAddressPostcodeLookupId.toString -> addresses
-  )
+        "companyDetails" -> CompanyDetails(companyName, None, None),
+        CompanyPreviousAddressPostcodeLookupId.toString -> addresses
+      )
     )
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyPreviousAddressListController =
-    new CompanyPreviousAddressListController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+    new CompanyPreviousAddressListController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction, new DataRequiredActionImpl
+    )
 
-  def viewAsString(form: Form[_] = form): String = companyPreviousAddressList(frontendAppConfig, form, NormalMode,
-    index, companyName, addresses)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    addressList(
+      frontendAppConfig,
+      form,
+      AddressListViewModel(
+        routes.CompanyPreviousAddressListController.onSubmit(NormalMode, index),
+        routes.CompanyPreviousAddressController.onPageLoad(NormalMode, index),
+        addresses,
+        subHeading = Some(companyName)
+
+      )
+    )(fakeRequest, messages).toString
 
   "CompanyPreviousAddressList Controller" must {
 
@@ -84,7 +101,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString()
     }
 
-   "redirect to the next page when valid data is submitted" in {
+    "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
       val getData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getData).onSubmit(NormalMode, index)(postRequest)

@@ -16,24 +16,29 @@
 
 package controllers.register.establishers.company
 
+import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent}
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.{CompanyAddressId, CompanyDetailsId, CompanyPreviousAddressId}
-import models.address.Address
-import models.{CompanyDetails, Index, NormalMode}
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressId}
+import models.address.{Address, TolerantAddress}
 import models.register.{SchemeDetails, SchemeType}
+import models.{CompanyDetails, Index, NormalMode}
+import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption}
-import views.html.register.establishers.company.companyPreviousAddress
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, UserAnswers}
+import viewmodels.Message
+import viewmodels.address.ManualAddressViewModel
+import views.html.address.manualAddress
 
-class CompanyPreviousAddressControllerSpec extends ControllerSpecBase {
+class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -47,7 +52,9 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase {
 
   val address = Address("address line 1", "address line 2", None, None, None, "GB")
 
-  val validData = Json.obj(
+  val fakeAuditService = new StubSuccessfulAuditService()
+
+  private val validData = Json.obj(
     SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
@@ -67,10 +74,23 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
-      countryOptions
+      countryOptions,
+      fakeAuditService
     )
 
-  def viewAsString(form: Form[_] = form): String = companyPreviousAddress(frontendAppConfig, form, NormalMode, index, companyName, options)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    manualAddress(
+      frontendAppConfig,
+      form,
+      ManualAddressViewModel(
+        routes.CompanyPreviousAddressController.onSubmit(NormalMode, index),
+        options,
+        Message("messages__companyPreviousAddress__title"),
+        Message("messages__companyPreviousAddress__heading"),
+        Some(companyName),
+        Some(Message("messages__companyAddress__lede"))
+      )
+    )(fakeRequest, messages).toString
 
   "CompanyPreviousAddress Controller" must {
 
@@ -124,6 +144,56 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "send an audit event when valid data is submitted" in {
+
+      val existingAddress = Address(
+        "existing-line-1",
+        "existing-line-2",
+        None,
+        None,
+        None,
+        "existing-country"
+      )
+
+      val selectedAddress = TolerantAddress(None, None, None, None, None, None)
+
+      val data =
+        UserAnswers()
+          .establishersCompanyPreviousAddress(index, existingAddress)
+          .establishersIndividualPreviousAddressList(index, selectedAddress)
+          .dataRetrievalAction
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(
+        ("addressLine1", "value 1"),
+        ("addressLine2", "value 2"),
+        ("postCode", "NE1 1NE"),
+        "country" -> "GB"
+      )
+
+      fakeAuditService.reset()
+
+      val result = controller(data).onSubmit(NormalMode, index)(postRequest)
+
+      whenReady(result) {
+        _ =>
+          fakeAuditService.verifySent(
+            AddressEvent(
+              FakeAuthAction.externalId,
+              AddressAction.LookupChanged,
+              s"Establisher Company Previous Address: $companyName",
+              Address(
+                "value 1",
+                "value 2",
+                None,
+                None,
+                Some("NE1 1NE"),
+                "GB"
+              )
+            )
+          )
+      }
     }
   }
 }

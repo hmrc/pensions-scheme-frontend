@@ -16,6 +16,8 @@
 
 package controllers.register.adviser
 
+import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
@@ -57,6 +59,7 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
   val formProvider = new AddressFormProvider(countryOptions)
   val form: Form[Address] = formProvider()
 
+  val fakeAuditService = new StubSuccessfulAuditService()
 
   "AdviserAddress Controller" must {
 
@@ -67,7 +70,8 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
         bind[Navigator].toInstance(FakeNavigator),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[CountryOptions].to(countryOptions)
+        bind[CountryOptions].to(countryOptions),
+        bind[AuditService].toInstance(fakeAuditService)
       )) {
         implicit app =>
 
@@ -79,8 +83,6 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
             Message(controller.title),
             Message(controller.heading),
             secondaryHeader = Some(controller.secondary))
-
-          def viewAsString(form: Form[_] = form): String = manualAddress(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
 
           val request = addToken(
             FakeRequest(AdviserAddressController.onPageLoad(NormalMode))
@@ -139,5 +141,50 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
       }
     }
 
+    "send an audit event when valid data is submitted" in {
+
+      val address = Address(
+        addressLine1 = "value 1",
+        addressLine2 = "value 2",
+        None, None,
+        postcode = Some("AB1 1AB"),
+        country = "GB"
+      )
+
+      running(_.overrides(
+        bind[FrontendAppConfig].to(frontendAppConfig),
+        bind[Navigator].toInstance(FakeNavigator),
+        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[AuthAction].to(FakeAuthAction),
+        bind[CountryOptions].to(countryOptions),
+        bind[AuditService].toInstance(fakeAuditService)
+      )) {
+        implicit app =>
+
+          val fakeRequest = addToken(FakeRequest(AdviserAddressController.onSubmit(NormalMode))
+            .withHeaders("Csrf-Token" -> "nocheck")
+            .withFormUrlEncodedBody(
+              ("addressLine1", address.addressLine1),
+              ("addressLine2", address.addressLine2),
+              ("postCode", address.postcode.get),
+              "country" -> address.country))
+
+          fakeAuditService.reset()
+
+          val result = route(app, fakeRequest).value
+
+          whenReady(result) {
+            _ =>
+              fakeAuditService.verifySent(
+                AddressEvent(
+                  FakeAuthAction.externalId,
+                  AddressAction.LookupChanged,
+                  "Adviser Address",
+                  address
+                )
+              )
+          }
+      }
+    }
   }
 }

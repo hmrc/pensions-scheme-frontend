@@ -32,11 +32,33 @@
 }
 
 @statusId(index: Int) = @{
+<<<<<<< HEAD
     s"status-$index"
 }
 
 @actionId(index: Int) = @{
     s"action-$index"
+=======
+    s"schemeStatus-$index"
+}
+
+@pstrValue(pstr: Option[String]) = @{
+    pstr.getOrElse(messages("messages__listSchemes__pstr_not_assigned"))
+}
+
+@statusValue(status: String) = @{
+    status match {
+        case "Pending"                  => messages("messages__listSchemes__status_pending")
+        case "Pending Info Required"    => messages("messages__listSchemes__status_pending")
+        case "Pending Info Received"    => messages("messages__listSchemes__status_pending")
+        case "Rejected"                 => messages("messages__listSchemes__status_rejected")
+        case "Open"                     => messages("messages__listSchemes__status_open")
+        case "Deregistered"             => messages("messages__listSchemes__status_closed")
+        case "Wound-up"                 => messages("messages__listSchemes__status_closed")
+        case "Rejected Under Appeal"    => messages("messages__listSchemes__status_rejected")
+        case _ => status
+    }
+>>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
 }
 
 @main_template(
@@ -68,9 +90,12 @@ bodyClasses = None) {
                 <div class="column-one-sixth table-column">
                     <p id="schemeStatus" class="heading-small">@messages("messages__listSchemes__column_status")</p>
                 </div>
+<<<<<<< HEAD
                 <div class="column-one-sixth table-column">
                     <p id="schemeStatus" class="heading-small">@messages("messages__listSchemes__column_status")</p>
                 </div>
+=======
+>>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
             </div>
             @for((scheme, index) <- schemes.zipWithIndex) {
                 <div class="row-group scheme-row">
@@ -87,17 +112,25 @@ bodyClasses = None) {
 
                     <div class="grid-row">
                         <div class="column-two-sixths table-column scheme-name">
+<<<<<<< HEAD
                             <p id="@{pstrId(index)}">@scheme.pstr</p>
                         </div>
                     </div>
                     <div class="grid-row">
                         <div class="column-two-sixths table-column scheme-name">
                             <p id="@{statusId(index)}">@scheme.schemeStatus</p>
+=======
+                            <p id="@{pstrId(index)}">@pstrValue(scheme.pstr)</p>
+>>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
                         </div>
                     </div>
                     <div class="grid-row">
                         <div class="column-two-sixths table-column scheme-name">
+<<<<<<< HEAD
                             <p id="@{actionId(index)}"><a href="#">@messages("messages__listSchemes__")</a></p>
+=======
+                            <p id="@{statusId(index)}">@statusValue(scheme.schemeStatus)</p>
+>>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
                         </div>
                     </div>
                 </div>
