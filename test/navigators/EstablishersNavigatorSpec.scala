@@ -16,6 +16,7 @@
 
 package navigators
 
+import base.SpecBase
 import identifiers.register.establishers.EstablisherKindId
 import models.NormalMode
 import models.register.establishers.EstablisherKind
@@ -24,9 +25,10 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
-class EstablishersNavigatorSpec extends WordSpec with MustMatchers with NavigatorBehaviour {
+class EstablishersNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import EstablishersNavigatorSpec._
+  private val navigator = new EstablishersNavigator(frontendAppConfig)
 
   private val routes = Table(
     ("Id",                          "User Answers",       "Next Page (Normal Mode)",              "Next Page (Check Mode)"),
@@ -42,8 +44,6 @@ class EstablishersNavigatorSpec extends WordSpec with MustMatchers with Navigato
 }
 
 object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits {
-
-  private val navigator = new EstablishersNavigator()
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private val company = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Company).asOpt.value

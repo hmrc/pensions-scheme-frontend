@@ -16,7 +16,8 @@
 
 package navigators
 
-import com.google.inject.Singleton
+import com.google.inject.{Inject, Singleton}
+import config.FrontendAppConfig
 import identifiers.Identifier
 import identifiers.register._
 import models.register.{SchemeDetails, SchemeType}
@@ -25,7 +26,7 @@ import play.api.mvc.Call
 import utils.{Enumerable, Navigator, UserAnswers}
 
 @Singleton
-class RegisterNavigator extends Navigator with Enumerable.Implicits {
+class RegisterNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigator with Enumerable.Implicits {
 
   override protected val routeMap: PartialFunction[Identifier, UserAnswers => Call] = {
     case WhatYouWillNeedId =>
@@ -149,14 +150,20 @@ class RegisterNavigator extends Navigator with Enumerable.Implicits {
     }
   }
 
+  private def navigateWithFeatureToggle: Call = {
+    if(appConfig.restrictEstablisherEnabled){
+      controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
+    } else {
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+    }
+  }
+
   private def checkYourAnswersRoutes()(userAnswers: UserAnswers): Call = {
     if (userAnswers.allEstablishers.isEmpty) {
-      controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
-    }
-    else if (userAnswers.allTrustees.nonEmpty) {
+      navigateWithFeatureToggle
+    } else if (userAnswers.allTrustees.nonEmpty) {
       controllers.register.routes.SchemeReviewController.onPageLoad()
-    }
-    else {
+    } else {
       userAnswers.get(SchemeDetailsId) match {
         case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
           controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)

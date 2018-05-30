@@ -64,9 +64,9 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
 
       userAnswers.allEstablishers mustEqual Seq(
         "my company" ->
-          controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, 0).url,
+          controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0).url,
         "my name" ->
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, 1).url
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 1).url
       )
     }
   }

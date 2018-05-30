@@ -16,320 +16,93 @@
 
 package navigators
 
+import base.SpecBase
+import config.FrontendAppConfig
+import identifiers.Identifier
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual._
 import identifiers.register.trustees.HaveAnyTrusteesId
 import models.register.{SchemeDetails, SchemeType}
-import models.{CheckMode, CompanyDetails, NormalMode}
-import org.scalatest.prop.PropertyChecks
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import models._
+import org.scalatest.prop.TableFor4
+import org.scalatest.{MustMatchers, OptionValues}
+import play.api.Configuration
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import utils.UserAnswers
 
-class EstablishersIndividualNavigatorSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues {
+class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
+  import EstablishersIndividualNavigatorSpec._
 
-  val navigator = new EstablishersIndividualNavigator()
-  val emptyAnswers = UserAnswers(Json.obj())
-
-  "NormalMode" when {
-
-    ".nextPage(EstablishersDetailsId)" must {
-      "return a `Call` to `EstablisherNino` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(EstablisherDetailsId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-
-    ".nextPage(EstablisherNinoId)" must {
-      "return a `Call` to `UniqueTaxReference` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(EstablisherNinoId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-
-    ".nextPage(UniqueTaxReferenceId)" must {
-      "return a `Call` to `PostCodeLookup` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(UniqueTaxReferenceId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-
-    ".nextPage(PostCodeLookupId)" must {
-      "return a `Call` to `AddressList` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(PostCodeLookupId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.AddressListController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-
-    ".nextPage(AddressListId)" must {
-      "return a `Call` to `Address` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(AddressListId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.AddressController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-
-    ".nextPage(AddressId)" must {
-      "return a `Call` to `AddressYears` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(AddressId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-
-    ".nextPage(AddressYears)" must {
-
-      "return a `Call` to `ContactDetails` page when `AddressYears` is `OverAYear`" in {
-        val answers = UserAnswers(Json.obj(
-          EstablishersId.toString -> Json.arr(
-            Json.obj(
-              AddressYearsId.toString ->
-                "over_a_year"
-            )
-          )
-        ))
-        val result = navigator.nextPage(AddressYearsId(0), NormalMode)(answers)
-        result mustEqual controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, 0)
-      }
-
-      "return a `Call` to `PreviousPostCodeLookup` page when `AddressYears` is `UnderAYear`" in {
-        val answers = UserAnswers(Json.obj(
-          EstablishersId.toString -> Json.arr(
-            Json.obj(
-              AddressYearsId.toString ->
-                "under_a_year"
-            )
-          )
-        ))
-        val result = navigator.nextPage(AddressYearsId(0), NormalMode)(answers)
-        result mustEqual controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(NormalMode, 0)
-      }
-
-      "return a `Call` to `SessionExpired` page when `AddressYears` is undefined" in {
-        val result = navigator.nextPage(AddressYearsId(0), NormalMode)(emptyAnswers)
-        result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
-      }
-    }
-
-    ".nextPage(PreviousAddressPostCodeLookup)" must {
-      "return a `Call` to `PreviousAddressList`" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(PreviousPostCodeLookupId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-
-    ".nextPage(PreviousAddressList)" must {
-      "return a `Call` to `PreviousAddress`" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(PreviousAddressListId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-
-    ".nextPage(PreviousAddress)" must {
-      "return a `Call` to `ContactDetails`" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(PreviousAddressId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-
-    ".nextPage(ContactDetails)" must {
-      "return a `Call` to `CheckYourAnswers`" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(ContactDetailsId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
-
-    ".nextPage(CheckYourAnswers)" must {
-      "return a `Call` to `HaveAnyTrusteesController`" in {
-        val answers = UserAnswers().set(SchemeDetailsId)(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).asOpt.value
-        val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(answers)
-        result mustEqual controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
-      }
-
-      "return a `Call` to `AddTrusteeController`" in {
-        val answers = UserAnswers().set(SchemeDetailsId)(SchemeDetails("test-scheme-name", SchemeType.SingleTrust)).asOpt.value
-        val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(answers)
-        result mustEqual controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
-      }
-
-      "return a `Call` to `SchemeReviewController` if trustees are present" in {
-        val hasTrusteeCompanies = UserAnswers().trusteesCompanyDetails(0, CompanyDetails("test-company-name", None, None))
-        val answers = hasTrusteeCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate))
-        val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(answers)
-        result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
-      }
-
-      "return a `Call` to `SchemeReviewController` if haveAnyTrustee is false" in {
-        val answers = UserAnswers().schemeDetails(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).set(HaveAnyTrusteesId)(false).asOpt.value
-        val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(answers)
-        result mustEqual controllers.register.routes.SchemeReviewController.onPageLoad()
-      }
-    }
+  private def navigator(isEstablisherRestricted: Boolean = false) = {
+    val application = new GuiceApplicationBuilder()
+      .configure(Configuration("microservice.services.features.restrict-establisher" -> isEstablisherRestricted))
+    val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+    new EstablishersIndividualNavigator(appConfig)
   }
 
-  "CheckMode" when {
+  private val routesWithNoRestrictedEstablishers: TableFor4[Identifier, UserAnswers, Call, Option[Call]] = Table(
+    ("Id",                          "User Answers",             "Next Page (Normal Mode)",                  "Next Page (Check Mode)"),
+    (EstablisherDetailsId(0),        emptyAnswers,               establisherNino(NormalMode),                 Some(checkYourAnswers)),
+    (EstablisherNinoId(0),           emptyAnswers,               establisherUtr(NormalMode),                  Some(checkYourAnswers)),
+    (UniqueTaxReferenceId(0),        emptyAnswers,               postCodeLookup(NormalMode),                  Some(checkYourAnswers)),
+    (PostCodeLookupId(0),            emptyAnswers,               addressList(NormalMode),                     Some(addressList(CheckMode))),
+    (AddressListId(0),               emptyAnswers,               address(NormalMode),                         Some(address(CheckMode))),
+    (AddressId(0),                   emptyAnswers,               addressYears(NormalMode),                    Some(checkYourAnswers)),
+    (AddressYearsId(0),              addressYearsOverAYear,      contactDetails,                              Some(checkYourAnswers)),
+    (AddressYearsId(0),              addressYearsUnderAYear,     previousAddressPostCodeLookup(NormalMode),   Some(previousAddressPostCodeLookup(CheckMode))),
+    (PreviousPostCodeLookupId(0),    emptyAnswers,               previousAddressAddressList(NormalMode),      Some(previousAddressAddressList(CheckMode))),
+    (PreviousAddressListId(0),       emptyAnswers,               previousAddress(NormalMode),                 Some(previousAddress(CheckMode))),
+    (PreviousAddressId(0),           emptyAnswers,               contactDetails,                              Some(checkYourAnswers)),
+    (CheckYourAnswersId,             emptyAnswers,               addEstablisher,                              None)
+  )
 
-    ".nextPage(EstablishersDetailsId)" must {
-      "return a `Call` to `CheckYourAnswers` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(EstablisherDetailsId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
-
-    ".nextPage(EstablisherNinoId)" must {
-      "return a `Call` to `CheckYourAnswers` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(EstablisherNinoId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
-
-    ".nextPage(UniqueTaxReferenceId)" must {
-      "return a `Call` to `CheckYourAnswers` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(UniqueTaxReferenceId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
-
-    ".nextPage(PostCodeLookupId)" must {
-      "return a `Call` to `AddressList` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(PostCodeLookupId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.AddressListController.onPageLoad(CheckMode, index)
-        }
-      }
-    }
-
-    ".nextPage(AddressListId)" must {
-      "return a `Call` to `Address` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(AddressListId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index)
-        }
-      }
-    }
-
-    ".nextPage(AddressId)" must {
-      "return a `Call` to `CheckYourAnswers` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(AddressId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
-
-    ".nextPage(AddressYears)" must {
-
-      "return a `Call` to `CheckYourAnswersPage` page when `AddressYears` is `OverAYear`" in {
-        val answers = UserAnswers(Json.obj(
-          EstablishersId.toString -> Json.arr(
-            Json.obj(
-              AddressYearsId.toString ->
-                "over_a_year"
-            )
-          )
-        ))
-        val result = navigator.nextPage(AddressYearsId(0), CheckMode)(answers)
-        result mustEqual controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
-      }
-
-      "return a `Call` to `PreviousPostCodeLookup` page when `AddressYears` is `UnderAYear`" in {
-        val answers = UserAnswers(Json.obj(
-          EstablishersId.toString -> Json.arr(
-            Json.obj(
-              AddressYearsId.toString ->
-                "under_a_year"
-            )
-          )
-        ))
-        val result = navigator.nextPage(AddressYearsId(0), CheckMode)(answers)
-        result mustEqual controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(CheckMode, 0)
-      }
-
-      "return a `Call` to `SessionExpired` page when `AddressYears` is undefined" in {
-        val result = navigator.nextPage(AddressYearsId(0), CheckMode)(emptyAnswers)
-        result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
-      }
-    }
-
-    ".nextPage(PreviousAddressPostCodeLookup)" must {
-      "return a `Call` to `PreviousAddressList`" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(PreviousPostCodeLookupId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(CheckMode, index)
-        }
-      }
-    }
-
-    ".nextPage(PreviousAddressList)" must {
-      "return a `Call` to `PreviousAddress`" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(PreviousAddressListId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index)
-        }
-      }
-    }
-
-    ".nextPage(PreviousAddress)" must {
-      "return a `Call` to `CheckYourAnswers`" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(PreviousAddressId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
-
-    ".nextPage(ContactDetails)" must {
-      "return a `Call` to `CheckYourAnswers`" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(ContactDetailsId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
+  s"${navigator().getClass.getSimpleName} when restrict-establisher toggle is off" must {
+    behave like navigatorWithRoutes(navigator(), routesWithNoRestrictedEstablishers, dataDescriber)
   }
+
+  //Delete the test case when the restrict-establisher toggle is removed
+  private val routesWithRestrictedEstablishers: TableFor4[Identifier, UserAnswers, Call, Option[Call]] = Table(
+    ("Id",                                       "User Answers",                      "Next Page (Normal Mode)",                  "Next Page (Check Mode)"),
+    (CheckYourAnswersId,                          schemeBodyCorporate,                 haveAnyTrustees,                            None),
+    (CheckYourAnswersId,                          schemeSingleTrust,                   addTrustees,                               None),
+    (CheckYourAnswersId,                          hasTrusteeCompanies,                 schemeReview,                               None),
+    (CheckYourAnswersId,                          bodyCorporateWithNoTrustees,         schemeReview,                               None)
+  )
+
+  s"${navigator(true).getClass.getSimpleName} when restrict-establisher toggle is on" must {
+    behave like navigatorWithRoutes(navigator(true), routesWithRestrictedEstablishers, dataDescriber)
+  }
+}
+
+object EstablishersIndividualNavigatorSpec extends OptionValues {
+  private val emptyAnswers = UserAnswers(Json.obj())
+  private val addressYearsOverAYear = UserAnswers(Json.obj())
+    .set(AddressYearsId(0))(AddressYears.OverAYear).asOpt.value
+  private val addressYearsUnderAYear = UserAnswers(Json.obj())
+    .set(AddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+  private val schemeBodyCorporate = UserAnswers().set(SchemeDetailsId)(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).asOpt.value
+  private val schemeSingleTrust = UserAnswers().set(SchemeDetailsId)(SchemeDetails("test-scheme-name", SchemeType.SingleTrust)).asOpt.value
+  private val hasTrusteeCompanies = UserAnswers().trusteesCompanyDetails(0, CompanyDetails("test-company-name", None, None))
+  private val bodyCorporateWithNoTrustees =
+    UserAnswers().schemeDetails(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).set(HaveAnyTrusteesId)(false).asOpt.value
+
+  private def establisherNino(mode: Mode) = controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(mode, 0)
+  private def establisherUtr(mode: Mode) = controllers.register.establishers.individual.routes.UniqueTaxReferenceController.onPageLoad(mode, 0)
+  private def postCodeLookup(mode: Mode) = controllers.register.establishers.individual.routes.PostCodeLookupController.onPageLoad(mode, 0)
+  private def addressList(mode: Mode) = controllers.register.establishers.individual.routes.AddressListController.onPageLoad(mode, 0)
+  private def address(mode: Mode) = controllers.register.establishers.individual.routes.AddressController.onPageLoad(mode, 0)
+  private def addressYears(mode: Mode) = controllers.register.establishers.individual.routes.AddressYearsController.onPageLoad(mode, 0)
+  private def checkYourAnswers = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
+  private def contactDetails = controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, 0)
+  private def previousAddressPostCodeLookup(mode: Mode) =
+    controllers.register.establishers.individual.routes.PreviousAddressPostCodeLookupController.onPageLoad(mode, 0)
+  private def previousAddressAddressList(mode: Mode) = controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(mode, 0)
+  private def previousAddress(mode: Mode) = controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(mode, 0)
+  private val haveAnyTrustees = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+  private val addTrustees = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+  private val schemeReview = controllers.register.routes.SchemeReviewController.onPageLoad()
+  private val addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+  private def dataDescriber(answers: UserAnswers): String = answers.toString
 }

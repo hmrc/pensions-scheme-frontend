@@ -17,6 +17,7 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
+import config.FrontendAppConfig
 import identifiers.Identifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
@@ -27,7 +28,7 @@ import play.api.mvc.Call
 import utils.{Navigator, UserAnswers}
 
 @Singleton
-class EstablishersIndividualNavigator @Inject() extends Navigator {
+class EstablishersIndividualNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers(index: Int)(answers: UserAnswers): Call =
     controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index)
@@ -107,22 +108,26 @@ class EstablishersIndividualNavigator @Inject() extends Navigator {
   }
 
   private def checkYourAnswerRoutes()(answers: UserAnswers): Call = {
-    if (answers.allTrustees.nonEmpty) {
-      controllers.register.routes.SchemeReviewController.onPageLoad()
-    } else {
-      answers.get(SchemeDetailsId) match {
-        case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
-        case Some(SchemeDetails(_, _)) =>
-          answers.get(HaveAnyTrusteesId) match {
-            case None =>
-              controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
-            case _ =>
-              controllers.register.routes.SchemeReviewController.onPageLoad()
-          }
-        case None =>
-          controllers.routes.SessionExpiredController.onPageLoad()
+    if(appConfig.restrictEstablisherEnabled) {
+      if (answers.allTrustees.nonEmpty) {
+        controllers.register.routes.SchemeReviewController.onPageLoad()
+      } else {
+        answers.get(SchemeDetailsId) match {
+          case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
+            controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+          case Some(SchemeDetails(_, _)) =>
+            answers.get(HaveAnyTrusteesId) match {
+              case None =>
+                controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+              case _ =>
+                controllers.register.routes.SchemeReviewController.onPageLoad()
+            }
+          case None =>
+            controllers.routes.SessionExpiredController.onPageLoad()
+        }
       }
+    } else {
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
     }
   }
 }

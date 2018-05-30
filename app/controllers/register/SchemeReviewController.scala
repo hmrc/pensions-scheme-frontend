@@ -58,13 +58,17 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
   }
 
   private def establisherEditUrl(establisherKind: EstablisherKind) = {
-    establisherKind match {
-      case Indivdual =>
-        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
-      case Company =>
-        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
-      case _ =>
-        controllers.routes.WhatYouWillNeedController.onPageLoad()
+    if (appConfig.restrictEstablisherEnabled) {
+      establisherKind match {
+        case Indivdual =>
+          controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
+        case Company =>
+          controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
+        case _ =>
+          controllers.routes.WhatYouWillNeedController.onPageLoad()
+      }
+    } else {
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
     }
   }
 
