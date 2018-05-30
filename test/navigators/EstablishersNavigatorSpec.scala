@@ -46,6 +46,7 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
     (AddEstablisherId(Some(false)), addEstablishersFalseWithSingleTrust,  addTrustee,                 None: Option[Call]),
     (AddEstablisherId(Some(false)), addEstablishersFalseWithBodyCorporate,haveAnyTrustee,             None: Option[Call]),
     (AddEstablisherId(Some(false)), addEstablishersFalseHaveTrusteeTrue,  schemeReview,               None: Option[Call]),
+    (AddEstablisherId(Some(false)), addEstablishersFalseWithNoScheme,     expired,                    None: Option[Call]),
     (EstablisherKindId(0),          company,                              companyDetails,             None: Option[Call]),
     (EstablisherKindId(0),          individual,                           individualDetails,          None),
     (EstablisherKindId(0),          emptyAnswers,                         expired,                    None)
@@ -70,7 +71,7 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
   private val company = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Company).asOpt.value
   private val individual = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Indivdual).asOpt.value
   private val addEstablishersTrue = UserAnswers(Json.obj(AddEstablisherId.toString -> "true"))
-  private val addEstablishersFalse = UserAnswers(Json.obj(AddEstablisherId.toString -> "false"))
+  private val addEstablishersFalseWithNoScheme = UserAnswers(Json.obj(AddEstablisherId.toString -> "false"))
 
   private val schemeReview = controllers.register.routes.SchemeReviewController.onPageLoad()
 
