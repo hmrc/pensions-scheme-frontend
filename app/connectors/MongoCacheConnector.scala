@@ -82,4 +82,12 @@ class MongoCacheConnector @Inject() (
   override def removeAll(cacheId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
     sessionRepository().remove(cacheId).map(_ => Ok)
   }
+  override def fetchValue(cacheId: String, value: String)(implicit
+                                      ec: ExecutionContext,
+                                      hc: HeaderCarrier
+  ): Future[Option[JsValue]] = {
+
+    sessionRepository().getValue(cacheId, value)
+  }
+
 }
