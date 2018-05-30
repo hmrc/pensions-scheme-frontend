@@ -82,6 +82,8 @@ class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) exten
     case CompanyPreviousAddressId(index) => checkYourAnswers(index)
     case CompanyContactDetailsId(index) => checkYourAnswers(index)
     case AddCompanyDirectorsId(index) => addDirectors(CheckMode, index)
+    case OtherDirectorsId(index)=>
+      _ => controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index)
   }
 
   private def addressYearsRoutes(index: Int)(answers: UserAnswers): Call = {
