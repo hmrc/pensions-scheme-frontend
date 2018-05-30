@@ -62,7 +62,7 @@ class DeleteSchemeController @Inject() (
               dataCacheConnector.removeAll(request.externalId)
               Future.successful(Redirect(controllers.routes.WhatYouWillNeedController.onPageLoad()))
             case false =>
-              Future.successful(Redirect(controllers.routes.WhatYouWillNeedController.onPageLoad()))
+              Future.successful(Redirect(controllers.routes.SchemesOverviewController.onPageLoad()))
           }
         )
       }

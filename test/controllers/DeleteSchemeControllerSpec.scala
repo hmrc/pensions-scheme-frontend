@@ -68,7 +68,7 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar {
       val result = controller().onSubmit(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.WhatYouWillNeedController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(controllers.routes.SchemesOverviewController.onPageLoad().url)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
