@@ -34,34 +34,45 @@ import views.html.schemesOverview
 import scala.concurrent.Future
 
 class SchemesOverviewController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
+                                          override val messagesApi: MessagesApi,
                                           dataCacheConnector: DataCacheConnector,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction) extends FrontendController with Retrievals with I18nSupport {
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction) extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
-      request.userAnswers.get(SchemeDetailsId) match {
+      request.userAnswers match {
         case None => Future.successful(Ok(schemesOverview(appConfig, None, None, None)))
-        case Some(scheme) =>
-          dataCacheConnector.fetchValue(request.externalId, "lastUpdated").map { dateOpt =>
-            val date = dateOpt.map(ts =>
-                LastUpdatedDate(
-                  ts.validate[Long] match {
-                    case JsSuccess(value, _) => value
-                    case JsError(errors) => throw JsResultException(errors)
-                  }
-                )).getOrElse(currentTimestamp)
-            Ok(schemesOverview(
-                appConfig,
-                Some(scheme.schemeName),
-                Some(s"${f(date, 0)}"),
-                Some(s"${f(date, appConfig.daysDataSaved)}")
-            ))
+        case Some(data) =>
+
+          data.get(SchemeDetailsId) match {
+
+            case Some(schemeDetails) =>
+              dataCacheConnector.fetchValue(request.externalId, "lastUpdated").map { dateOpt =>
+
+                val date = dateOpt.map(ts =>
+                  LastUpdatedDate(
+                    ts.validate[Long] match {
+                      case JsSuccess(value, _) => value
+                      case JsError(errors) => throw JsResultException(errors)
+                    }
+                  )).getOrElse(currentTimestamp)
+
+                Ok(schemesOverview(
+                  appConfig,
+                  Some(schemeDetails.schemeName),
+                  Some(s"${f(date, 0)}"),
+                  Some(s"${f(date, appConfig.daysDataSaved)}")
+                ))
+
+              }
+
+            case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
           }
-        }
+
       }
+  }
 
   private val formatter = DateTimeFormat.forPattern("dd MMMM YYYY")
   private def f(dt: LastUpdatedDate, daysToAdd: Int): String = new LocalDate(dt.timestamp).plusDays(daysToAdd).toString(formatter)

@@ -45,7 +45,7 @@
             <p><a id="register-new-scheme" href="@routes.WhatYouWillNeedController.onPageLoad">@messages("messages__schemesOverview__register__link")</a></p>
         }
         case Some(name) => {
-            <h2>@name</h2>
+            <h2>@Html(Message("messages__schemesOverview__scheme_name", name))</h2>
 
             @lastDate.map { lastEnteredDate =>
                 <p>@Html(Message("messages__schemesOverview__continue__lastDate", lastEnteredDate))</p>

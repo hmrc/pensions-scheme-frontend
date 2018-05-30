@@ -56,7 +56,7 @@ class SchemesOverviewControllerSpec extends ControllerSpecBase with MockitoSugar
 
     "return OK and the correct view for a GET" when {
       "no scheme has been defined" in {
-        val result = controller(getEmptyData).onPageLoad(fakeRequest)
+        val result = controller(dontGetAnyData).onPageLoad(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsStringNewScheme()

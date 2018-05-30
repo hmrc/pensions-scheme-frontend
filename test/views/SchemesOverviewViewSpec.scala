@@ -57,6 +57,21 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
         haveLink(frontendAppConfig.pensionSchemeOnlineServiceUrl)
     }
 
+    "display scheme name" in {
+      Jsoup.parse(createView().toString()) must
+        haveDynamicText(Message("messages__schemesOverview__scheme_name", schemeName))
+    }
+
+    "have dynamic text with date of last update" in {
+      Jsoup.parse(createView().toString()) must
+        haveDynamicText(Message("messages__schemesOverview__continue__lastDate", lastDate))
+    }
+
+    "have dynamic text with date of data deletion" in {
+      Jsoup.parse(createView().toString()) must
+        haveDynamicText(Message("messages__schemesOverview__continue__deleteDate", deleteDate))
+    }
+
     "have link for continue registration" in {
       Jsoup.parse(createView().toString()).select("a[id=continue-registration]") must
         haveLink(controllers.routes.WhatYouWillNeedController.onPageLoad.url)
@@ -83,24 +98,16 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
     )
 
     "have link to view all schemes" in {
-      Jsoup.parse(createView().toString()).select("a[id=view-schemes]") must
+      Jsoup.parse(createFreshView().toString()).select("a[id=view-schemes]") must
         haveLink(controllers.routes.ListSchemesController.onPageLoad.url)
     }
 
     "have link to redirect to Pension Schemes Online service" in {
-      Jsoup.parse(createView().toString()).select("a[id=manage-link]") must
+      Jsoup.parse(createFreshView().toString()).select("a[id=manage-link]") must
         haveLink(frontendAppConfig.pensionSchemeOnlineServiceUrl)
     }
 
-    "have dynamic text with date of last update" in {
-      Jsoup.parse(createView().toString()) must
-        haveDynamicText(Message("messages__schemesOverview__continue__lastDate", lastDate))
-    }
 
-    "have dynamic text with date of data deletion" in {
-      Jsoup.parse(createView().toString()) must
-        haveDynamicText(Message("messages__schemesOverview__continue__deleteDate", deleteDate))
-    }
 
   }
 }
