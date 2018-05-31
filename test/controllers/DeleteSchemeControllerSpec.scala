@@ -62,7 +62,7 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar {
       redirectLocation(result) mustBe Some(controllers.routes.WhatYouWillNeedController.onPageLoad().url)
     }
 
-    "redirect to the overview journey when user answers No" in {
+    "redirect to the overview page when user answers No" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
 
       val result = controller().onSubmit(postRequest)

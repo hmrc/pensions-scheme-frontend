@@ -49,7 +49,7 @@ class SchemesOverviewController @Inject()(appConfig: FrontendAppConfig,
           data.get(SchemeDetailsId) match {
 
             case Some(schemeDetails) =>
-              dataCacheConnector.fetchValue(request.externalId, "lastUpdated").map { dateOpt =>
+              dataCacheConnector.lastUpdated(request.externalId).map { dateOpt =>
 
                 val date = dateOpt.map(ts =>
                   LastUpdatedDate(
