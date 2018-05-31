@@ -17,20 +17,78 @@
 package controllers.register.establishers
 
 import config.FrontendAppConfig
+import connectors.DataCacheConnector
+import controllers.Retrievals
 import controllers.actions._
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.{ConfirmDeleteEstablisherId, EstablishersId}
 import javax.inject.Inject
+import models.register.establishers.EstablisherKind
+import models.register.establishers.EstablisherKind._
+import models.requests.DataRequest
+import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.establishers.confirmDeleteEstablisher
+import utils.{Navigator, UserAnswers}
+import views.html.register.establishers.confirmDeleteEstablisher
 
-class ConfirmDeleteEstablisherController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction) extends FrontendController with I18nSupport {
+import scala.concurrent.Future
 
-  def onPageLoad = (authenticate andThen getData andThen requireData) {
+class ConfirmDeleteEstablisherController @Inject()(
+                                                    appConfig: FrontendAppConfig,
+                                                    override val messagesApi: MessagesApi,
+                                                    dataCacheConnector: DataCacheConnector,
+                                                    navigator: Navigator,
+                                                    authenticate: AuthAction,
+                                                    getData: DataRetrievalAction,
+                                                    requireData: DataRequiredAction
+                                                  ) extends FrontendController with I18nSupport with Retrievals {
+
+  def onPageLoad(establisherIndex: Index, establisherKind: EstablisherKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      Ok(confirmDeleteEstablisher(appConfig))
+      SchemeDetailsId.retrieve.right.map {
+        case schemeDetails =>
+          establisherName(establisherIndex, establisherKind) match {
+            case Right(establisherName) =>
+              Future.successful(
+                Ok(
+                  confirmDeleteEstablisher(
+                    appConfig,
+                    schemeDetails.schemeName,
+                    establisherName,
+                    routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex),
+                    routes.AddEstablisherController.onPageLoad(NormalMode)
+                  )
+                )
+              )
+          }
+      }
   }
+
+
+  def onSubmit(establisherIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+    implicit request =>
+      dataCacheConnector.remove(request.externalId, EstablishersId(establisherIndex)).map {
+        json =>
+          Redirect(navigator.nextPage(ConfirmDeleteEstablisherId, NormalMode)(UserAnswers(json)))
+      }
+  }
+
+  private def establisherName(establisherIndex: Index, establisherKind: EstablisherKind)
+                             (implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
+    establisherKind match {
+      case Company => CompanyDetailsId(establisherIndex).retrieve.right.map(_.companyName)
+      case Indivdual => EstablisherDetailsId(establisherIndex).retrieve.right.map(_.fullName)
+      case Partnership => ???
+      case invalid => Left(Future.successful(BadRequest(s"Invalid establisher kind $invalid")))
+    }
+  }
+
+  private def postCall(index: Index, establisherKind: EstablisherKind) = {
+    routes.ConfirmDeleteEstablisherController.onSubmit(index)
+  }
+
 }

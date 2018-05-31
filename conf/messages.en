@@ -663,5 +663,6 @@ messages__deleteScheme__title = Are you sure you want to delete {0} scheme?
 messages__deleteScheme__heading = Are you sure you want to delete {0} scheme?
 messages__deleteScheme__error__required = Select yes if you want to cancel your registration
 
-confirmDeleteEstablisher.title = confirmDeleteEstablisher
-confirmDeleteEstablisher.heading = confirmDeleteEstablisher
+messages__confirmDeleteEstablisher__title = Confirm deletion
+messages__confirmDeleteEstablisher__heading = Are you sure you want to delete {0}?
+messages__confirmDeleteEstablisher__hint = This will delete any directors you have added.
