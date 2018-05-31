@@ -83,7 +83,7 @@ class ConfirmDeleteEstablisherController @Inject()(
     establisherKind match {
       case Company => CompanyDetailsId(establisherIndex).retrieve.right.map(_.companyName)
       case Indivdual => EstablisherDetailsId(establisherIndex).retrieve.right.map(_.fullName)
-      case Partnership => ???
+      case Partnership => Left(Future.successful(BadRequest(s"Invalid establisher kind - Partnership")))
       case invalid => Left(Future.successful(BadRequest(s"Invalid establisher kind $invalid")))
     }
   }

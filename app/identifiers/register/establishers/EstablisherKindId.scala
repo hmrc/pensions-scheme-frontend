@@ -26,7 +26,7 @@ import play.api.libs.json.{JsPath, JsResult, JsSuccess}
 import utils.UserAnswers
 
 case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind] {
-  override def path: JsPath = EstablishersId.path \ index \ EstablisherKindId.toString
+  override def path: JsPath = EstablishersId(index).path \ EstablisherKindId.toString
 
   private def removeAllDirectors(userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index)) match {

@@ -19,8 +19,11 @@ package controllers.register.establishers
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import models.register.SchemeDetails
+import models.register.SchemeType.SingleTrust
 import models.register.establishers.EstablisherKind
 import models.register.establishers.individual.EstablisherDetails
 import models.{Index, NormalMode}
@@ -90,6 +93,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val year = LocalDate.now().getYear - 20
 
   private val testData = Json.obj(
+    SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString -> EstablisherDetails("John", None, "Doe", new LocalDate(year, month, day))

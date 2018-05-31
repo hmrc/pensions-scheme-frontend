@@ -16,10 +16,13 @@
 
 package identifiers.register.establishers
 
-import identifiers.Identifier
+import identifiers.{Identifier, TypedIdentifier}
 import play.api.libs.json._
 
-case object EstablishersId extends Identifier {
+case class EstablishersId(index: Int) extends TypedIdentifier[Nothing] {
+  override def path: JsPath = __ \ EstablishersId.toString \ index
+}
+
+object EstablishersId {
   override def toString: String = "establishers"
-  override def path: JsPath = __ \ toString
 }
