@@ -17,7 +17,7 @@
 package views.register.establishers
 
 import controllers.register.establishers.routes._
-import models.NormalMode
+import models.{Index, NormalMode}
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.confirmDeleteEstablisher
 
@@ -25,9 +25,10 @@ class ConfirmDeleteEstablisherViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "confirmDeleteEstablisher"
 
+  private val firstIndex = Index(0)
   private val schemeName = "MyScheme"
   private val establisherName = "John Doe"
-  private val postCall = ConfirmDeleteEstablisherController.onSubmit(NormalMode)
+  private val postCall = ConfirmDeleteEstablisherController.onSubmit(firstIndex)
   private val cancelCall = AddEstablisherController.onSubmit(NormalMode)
 
   private def createView = () => confirmDeleteEstablisher(frontendAppConfig, schemeName, establisherName, postCall, cancelCall)(fakeRequest, messages)

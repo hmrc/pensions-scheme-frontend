@@ -21,6 +21,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import models.register.establishers.EstablisherKind
 import models.register.establishers.individual.EstablisherDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
@@ -36,7 +37,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   "ConfirmDeleteEstablisher Controller" must {
     "return OK and the correct view for a GET" in {
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onPageLoad(establisherIndex)(fakeRequest)
+      val result = controller(data).onPageLoad(establisherIndex, establisherKind)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -59,7 +60,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(establisherIndex)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(establisherIndex, establisherKind)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -80,13 +81,18 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val establisherIndex = Index(0)
   private val schemeName = "MyScheme Ltd"
   private val establisherName = "John Doe"
-  private lazy val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(NormalMode)
+  private val establisherKind = EstablisherKind.Indivdual
+  private lazy val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex)
   private lazy val cancelCall = routes.AddEstablisherController.onPageLoad(NormalMode)
+
+  private val day = LocalDate.now().getDayOfMonth
+  private val month = LocalDate.now().getMonthOfYear
+  private val year = LocalDate.now().getYear - 20
 
   private val testData = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        EstablisherDetailsId.toString -> EstablisherDetails("John", None, "Doe", LocalDate)
+        EstablisherDetailsId.toString -> EstablisherDetails("John", None, "Doe", new LocalDate(year, month, day))
       )
     )
   )

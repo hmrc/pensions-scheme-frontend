@@ -64,6 +64,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                   )
                 )
               )
+            case Left(result) => result
           }
       }
   }
