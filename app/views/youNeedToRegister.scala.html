@@ -18,8 +18,12 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import models.Mode
+@import viewmodels.Message
 
 @(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
+
+@psaGovUkLink = {<a id="psa-gov-uk-link" href="@appConfig.pensionAdministratorGovUkLink">@messages("messages__youNeedToRegister__p1__link")</a>}
+@pspGovUkLink = {<a id="psp-gov-uk-link" href="@appConfig.pensionPractitionerGovUkLink">@messages("messages__youNeedToRegister__p2__link")</a>}
 
 @main_template(
     title = messages("messages__youNeedToRegister__title"),
@@ -30,13 +34,12 @@
 
     <p class="lede">@messages("messages__youNeedToRegister__lede")</p>
 
-    <p>@messages("messages__youNeedToRegister__p1")</p>
-
-    <p>@messages("messages__youNeedToRegister__p2")</p>
+    <p>@Html(Message("messages__youNeedToRegister__p1").withArgs(psaGovUkLink))</p>
+    <p>@Html(Message("messages__youNeedToRegister__p2").withArgs(pspGovUkLink))</p>
 
     <div class="section">
         <a id="redirect-to-psa" href="@appConfig.registerSchemeAdministratorUrl" role="button" class="button">@messages("messages__youNeedToRegister__button")</a>
     </div>
 
-    <a id="gov-uk-link" href="https://www.gov.uk/" role="button">@messages("messages__youNeedToRegister__govUk__link")</a>
+    <a id="gov-uk-link" href="@appConfig.govUkLink" role="button">@messages("messages__youNeedToRegister__govUk__link")</a>
 }

@@ -16,11 +16,13 @@
 
 package views
 
+import com.google.inject.Inject
+import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import views.behaviours.ViewBehaviours
 import views.html.youNeedToRegister
 
-class YouNeedToRegisterViewSpec extends ViewBehaviours {
+class YouNeedToRegisterViewSpec @Inject() (appConfig: FrontendAppConfig) extends ViewBehaviours {
 
   val messageKeyPrefix = "youNeedToRegister"
 
@@ -36,7 +38,17 @@ class YouNeedToRegisterViewSpec extends ViewBehaviours {
 
     "have link to redirect to Gov UK" in {
       Jsoup.parse(createView().toString()).select("a[id=gov-uk-link]") must
-        haveLink("https://www.gov.uk/")
+        haveLink(appConfig.govUkLink)
+    }
+
+    "have link to redirect to PSA Gov UK" in {
+      Jsoup.parse(createView().toString()).select("a[id=psa-gov-uk-link]") must
+        haveLink(appConfig.pensionAdministratorGovUkLink)
+    }
+
+    "have link to redirect to PSP Gov UK" in {
+      Jsoup.parse(createView().toString()).select("a[id=psp-gov-uk-link]") must
+        haveLink(appConfig.pensionPractitionerGovUkLink)
     }
   }
 }
