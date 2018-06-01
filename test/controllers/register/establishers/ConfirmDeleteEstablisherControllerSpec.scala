@@ -62,6 +62,14 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
+    "redirect to SessionExpired if the establisher kind is Partnership" in {
+      val data = new FakeDataRetrievalAction(Some(testData))
+      val result = controller(data).onPageLoad(establisherIndex, EstablisherKind.Partnership)(fakeRequest)
+      
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
     "redirect to Session Expired for a GET if no existing data is found" in {
       val result = controller(dontGetAnyData).onPageLoad(establisherIndex, establisherKind)(fakeRequest)
 

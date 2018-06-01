@@ -47,27 +47,28 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     requireData: DataRequiredAction
                                                   ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(establisherIndex: Index, establisherKind: EstablisherKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
-    implicit request =>
-      SchemeDetailsId.retrieve.right.map {
-        case schemeDetails =>
-          establisherName(establisherIndex, establisherKind) match {
-            case Right(establisherName) =>
-              Future.successful(
-                Ok(
-                  confirmDeleteEstablisher(
-                    appConfig,
-                    schemeDetails.schemeName,
-                    establisherName,
-                    routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex),
-                    routes.AddEstablisherController.onPageLoad(NormalMode)
+  def onPageLoad(establisherIndex: Index, establisherKind: EstablisherKind): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        SchemeDetailsId.retrieve.right.map {
+          case schemeDetails =>
+            establisherName(establisherIndex, establisherKind) match {
+              case Right(establisherName) =>
+                Future.successful(
+                  Ok(
+                    confirmDeleteEstablisher(
+                      appConfig,
+                      schemeDetails.schemeName,
+                      establisherName,
+                      routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex),
+                      routes.AddEstablisherController.onPageLoad(NormalMode)
+                    )
                   )
                 )
-              )
-            case Left(result) => result
-          }
-      }
-  }
+              case Left(result) => result
+            }
+        }
+    }
 
 
   def onSubmit(establisherIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -83,8 +84,8 @@ class ConfirmDeleteEstablisherController @Inject()(
     establisherKind match {
       case Company => CompanyDetailsId(establisherIndex).retrieve.right.map(_.companyName)
       case Indivdual => EstablisherDetailsId(establisherIndex).retrieve.right.map(_.fullName)
-      case Partnership => Left(Future.successful(BadRequest(s"Invalid establisher kind - Partnership")))
-      case invalid => Left(Future.successful(BadRequest(s"Invalid establisher kind $invalid")))
+      case Partnership => Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
+      case _ => Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
     }
   }
 

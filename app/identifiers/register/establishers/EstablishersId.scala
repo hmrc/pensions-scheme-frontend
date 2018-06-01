@@ -16,7 +16,7 @@
 
 package identifiers.register.establishers
 
-import identifiers.{Identifier, TypedIdentifier}
+import identifiers.TypedIdentifier
 import play.api.libs.json._
 
 case class EstablishersId(index: Int) extends TypedIdentifier[Nothing] {
