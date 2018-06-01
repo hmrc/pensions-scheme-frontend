@@ -64,7 +64,7 @@ class CompanyReviewViewSpec extends ViewBehaviours {
 
     "have link to edit company details" in {
       Jsoup.parse(createView().toString).select("a[id=edit-company-details]") must haveLink(
-        routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
+        routes.CheckYourAnswersController.onPageLoad(index).url
       )
     }
 
