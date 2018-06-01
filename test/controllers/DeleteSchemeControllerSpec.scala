@@ -20,7 +20,7 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import forms.DeleteSchemeFormProvider
 import org.mockito.Matchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Results.Ok
@@ -46,20 +46,21 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar {
   "DeleteScheme Controller" must {
 
     "return OK and the correct view for a GET" in {
-      when(fakeDataCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
       val result = controller().onPageLoad(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect to the start of journey when user answers Yes" in {
+    "remove all is called to delete user answers when user answers Yes" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+      when(fakeDataCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
 
       val result = controller().onSubmit(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.WhatYouWillNeedController.onPageLoad().url)
+      verify(fakeDataCacheConnector, times(1)).removeAll(any())(any(), any())
     }
 
     "redirect to the overview page when user answers No" in {

@@ -59,9 +59,10 @@ class DeleteSchemeController @Inject() (
             Future.successful(BadRequest(deleteScheme(appConfig, formWithErrors, schemeName))),
           {
             case true =>
-              dataCacheConnector.removeAll(request.externalId)
-              Future.successful(Redirect(controllers.routes.WhatYouWillNeedController.onPageLoad()))
-            case false =>
+              dataCacheConnector.removeAll(request.externalId).map { _ =>
+                Redirect(controllers.routes.WhatYouWillNeedController.onPageLoad())
+              }
+                case false =>
               Future.successful(Redirect(controllers.routes.SchemesOverviewController.onPageLoad()))
           }
         )
