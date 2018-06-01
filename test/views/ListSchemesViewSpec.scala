@@ -95,11 +95,11 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       actual must haveElementWithClass("schemeStatus-0", "incomplete")
       actual must haveElementWithClass("schemeStatus-1", "incomplete")
       actual must haveElementWithClass("schemeStatus-2", "incomplete")
-      actual must haveElementWithClass("schemeStatus-3", "not-started")
+      actual must haveElementWithClass("schemeStatus-3", "rejected")
       actual must haveElementWithClass("schemeStatus-4", "complete")
       actual must haveElementWithClass("schemeStatus-5", "not-started")
       actual must haveElementWithClass("schemeStatus-6", "not-started")
-      actual must haveElementWithClass("schemeStatus-7", "not-started")
+      actual must haveElementWithClass("schemeStatus-7", "rejected")
     }
 
   }
