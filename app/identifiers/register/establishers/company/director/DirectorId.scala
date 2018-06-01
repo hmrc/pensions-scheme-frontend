@@ -23,7 +23,7 @@ import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 
 case class DirectorId(establisherIndex:Int, directorIndex:Int) extends TypedIdentifier[Nothing] {
-  override def path: JsPath = EstablishersId.path \ establisherIndex \ DirectorId.toString \ directorIndex
+  override def path: JsPath = EstablishersId(establisherIndex).path \ DirectorId.toString \ directorIndex
 
   override def cleanup(value: Option[Nothing], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
