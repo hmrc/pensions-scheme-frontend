@@ -18,93 +18,27 @@ package controllers
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import connectors.ListOfSchemesConnector
+import controllers.actions.AuthAction
 import models.SchemeDetail
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Action
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.list_schemes
 
-class ListSchemesController @Inject()(val appConfig: FrontendAppConfig, val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+class ListSchemesController @Inject()(
+                                       val appConfig: FrontendAppConfig,
+                                       val messagesApi: MessagesApi,
+                                       authenticate: AuthAction,
+                                       listSchemesConnector: ListOfSchemesConnector
+                                     ) extends FrontendController with I18nSupport {
 
-  def onPageLoad = Action {
+  def onPageLoad: Action[AnyContent] = authenticate.async {
     implicit request =>
-
-      val schemes: List[SchemeDetail] = List(
-        SchemeDetail(
-          "scheme-name-0",
-          "S8888888888",
-          "Pending",
-          None,
-          None,
-          None,
-          None
-        ),
-        SchemeDetail(
-          "scheme-name-1",
-          "S0000000000",
-          "Pending Info Required",
-          None,
-          None,
-          None,
-          None
-        ),
-        SchemeDetail(
-          "scheme-name-2",
-          "S1111111111",
-          "Pending Info Received",
-          None,
-          None,
-          None,
-          None
-        ),
-        SchemeDetail(
-          "scheme-name-3",
-          "S2222222222",
-          "Rejected",
-          None,
-          None,
-          None,
-          None
-        ),
-        SchemeDetail(
-          "scheme-name-4",
-          "S3333333333",
-          "Open",
-          None,
-          Some("pstr-5"),
-          None,
-          None
-        ),
-        SchemeDetail(
-          "scheme-name-5",
-          "S4444444444",
-          "Deregistered",
-          None,
-          Some("44444444WW"),
-          None,
-          None
-        ),
-        SchemeDetail(
-          "scheme-name-6",
-          "S5555555555",
-          "Wound-up",
-          None,
-          Some("11111111II"),
-          None,
-          None
-        ),
-        SchemeDetail(
-          "scheme-name-7",
-          "S6666666666",
-          "Rejected Under Appeal",
-          None,
-          None,
-          None,
-          None
-        )
-      )
-
-      Ok(list_schemes(appConfig, schemes))
-
+      listSchemesConnector.getListOfSchemes(request.psaId.id).map {
+        listOfSchemes =>
+          val schemes = listOfSchemes.schemeDetail.getOrElse(List.empty[SchemeDetail])
+          Ok(list_schemes(appConfig, schemes))
+      }
   }
 }
