@@ -22,4 +22,7 @@ GET        /your-pension-schemes                        controllers.ListSchemesC
 
 GET        /overview                                    controllers.SchemesOverviewController.onPageLoad()
 
+GET        /discard                                controllers.DeleteSchemeController.onPageLoad
+POST       /discard                                controllers.DeleteSchemeController.onSubmit
+
 GET        /youNeedToRegister                           controllers.YouNeedToRegisterController.onPageLoad()

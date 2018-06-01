@@ -63,7 +63,7 @@ class SchemesOverviewControllerSpec extends ControllerSpecBase with MockitoSugar
       }
 
       "a scheme has been partially defined" in {
-        when(fakeCacheConnector.fetchValue(Matchers.any(), Matchers.eq("lastUpdated"))(Matchers.any(), Matchers.any()))
+        when(fakeCacheConnector.lastUpdated(Matchers.any())(Matchers.any(), Matchers.any()))
           .thenReturn(Future.successful(Some(Json.parse(timestamp.toString))))
 
         val result = controller().onPageLoad(fakeRequest)

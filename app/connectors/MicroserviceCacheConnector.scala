@@ -119,8 +119,8 @@ class MicroserviceCacheConnector @Inject() (
         .delete().map(_ => Ok)
   }
 
-  override def fetchValue(id: String, value: String)(implicit
-                                 ec: ExecutionContext,
-                                 hc: HeaderCarrier
+  override def lastUpdated(id: String)(implicit
+                                                           ec: ExecutionContext,
+                                                           hc: HeaderCarrier
   ): Future[Option[JsValue]] = fetch(id)
 }
