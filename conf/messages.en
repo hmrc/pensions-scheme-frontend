@@ -629,6 +629,7 @@ messages__adviserPostCodeLookupAddress__enterPostCode= Enter the postcode below,
 
 messages__enrolment__error__name_invalid = Enter a PSA Name
 
+messages__listSchemes__title = Your pension schemes
 messages__listSchemes__noSchemes = You have not registered any pension schemes in this service.
 messages__listSchemes__registerNewScheme = Register a new scheme
 messages__listSchemes__column_schemeName = Scheme name
