@@ -93,3 +93,4 @@ POST       /change-declaration                          controllers.register.Dec
 
 GET        /declaration-dormant-company                 controllers.register.DeclarationDormantController.onPageLoad
 POST       /declaration-dormant-company                 controllers.register.DeclarationDormantController.onSubmit
+

@@ -1,18 +1,18 @@
 #!/bin/bash
 
-echo "Applying migration SchemesOverview"
+echo "Applying migration YouNeedToRegister"
 
-echo "Adding routes to app.routes"
-echo "" >> ../conf/app.routes
-echo "GET        /schemesOverview                       controllers.SchemesOverviewController.onPageLoad()" >> ../conf/app.routes
+echo "Adding routes to register.routes"
+echo "" >> ../conf/register.routes
+echo "GET        /youNeedToRegister                       controllers.register.YouNeedToRegisterController.onPageLoad()" >> ../conf/register.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "schemesOverview.title = schemesOverview" >> ../conf/messages.en
-echo "schemesOverview.heading = schemesOverview" >> ../conf/messages.en
+echo "youNeedToRegister.title = youNeedToRegister" >> ../conf/messages.en
+echo "youNeedToRegister.heading = youNeedToRegister" >> ../conf/messages.en
 
 echo "Moving test files from generated-test/ to test/"
 rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
-echo "Migration SchemesOverview completed"
+echo "Migration YouNeedToRegister completed"

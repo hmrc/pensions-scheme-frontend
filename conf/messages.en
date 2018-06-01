@@ -644,3 +644,11 @@ messages__schemesOverview__continue__lastDate = You last entered details about t
 messages__schemesOverview__continue__deleteDate = You have until {0} to finish this registration before the details are deleted.
 messages__schemesOverview__continue__link = Continue registering this scheme
 messages__schemesOverview__delete__link = Delete this scheme and start a new registration
+
+messages__youNeedToRegister__title = You need to register
+messages__youNeedToRegister__heading = Manage and register your pension schemes
+messages__youNeedToRegister__lede = You must register to use this service before you can register a pension scheme.
+messages__youNeedToRegister__p1 = You can only use this service if you are a pension scheme administrator.
+messages__youNeedToRegister__p2 = If you are a pension scheme practitioner, you cannot register to use this service.
+messages__youNeedToRegister__button = Register as a pension scheme administrator
+messages__youNeedToRegister__govUk__link = Exit to GOV.UK
