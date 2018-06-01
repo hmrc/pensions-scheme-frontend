@@ -1,12 +1,32 @@
 //Grid system
-.column-two-sixths {
-  float: left;
-  width: 33.33333%;
+.column-one-sixth {
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
-.column-one-sixth {
-  float: left;
-  width: 16.66667%;
+@media (min-width: 641px) {
+  .column-one-sixth {
+    float: left;
+    width: 16.66667%;
+    padding: 0 15px;
+  }
+}
+
+.column-two-sixths {
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@media (min-width: 641px) {
+  .column-two-sixths {
+    float: left;
+    width: 33.33333%;
+    padding: 0 15px;
+  }
 }
 
 .row-group {
@@ -14,6 +34,9 @@
   padding-top:0.75em;
   padding-bottom:0.5em;
   display:block;
+
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .row-group:after {
@@ -28,16 +51,55 @@
   }
 }
 
+.table-header {
+  display: none;
+
+  @media (min-width: 641px) {
+    display: block;
+  }
+}
+
 @media (min-width: 641px) {
   .table-column {
     border: 1px solid transparent;
   }
+
   .row-group {
     padding-bottom:0;
   }
 }
 
+.table-column {
+  [data-title]::before {
+    content: attr(data-title);
+    float: left;
+    font-weight: 700;
+
+    @media (min-width: 641px) {
+      content: none;
+    }
+  }
+}
+
 //statuses
+p.status { margin-bottom: 0;}
+
+.status span {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 3px;
+  display: block;
+  font-size: 0.7em;
+  font-weight: 700;
+  padding: 0px 10px;
+  position: relative;
+  top: -1px;
+  text-align: center;
+  width: 75px;
+  margin-right: 20px;
+  line-height: initial;
+}
+
 .not-started {
   text-transform: uppercase;
   border-color: #6f777b;

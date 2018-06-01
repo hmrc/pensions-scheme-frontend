@@ -32,13 +32,6 @@
 }
 
 @statusId(index: Int) = @{
-<<<<<<< HEAD
-    s"status-$index"
-}
-
-@actionId(index: Int) = @{
-    s"action-$index"
-=======
     s"schemeStatus-$index"
 }
 
@@ -58,13 +51,26 @@
         case "Rejected Under Appeal"    => messages("messages__listSchemes__status_rejected")
         case _ => status
     }
->>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
+}
+
+@statusClass(status: String) = @{
+    status match {
+        case "Pending"                  => "incomplete"
+        case "Pending Info Required"    => "incomplete"
+        case "Pending Info Received"    => "incomplete"
+        case "Rejected"                 => "not-started"
+        case "Open"                     => "complete"
+        case "Deregistered"             => "not-started"
+        case "Wound-up"                 => "not-started"
+        case "Rejected Under Appeal"    => "not-started"
+        case _ => ""
+    }
 }
 
 @main_template(
 title = messages("messages__listSchemes__title"),
 appConfig = appConfig,
-bodyClasses = None) {
+bodyClasses = Some("full-width")) {
 
     @components.back_link()
 
@@ -77,65 +83,37 @@ bodyClasses = None) {
         </div>
     } else {
         <div class="column-full" id="scheme-grid">
-            <div class="grid-row">
-                <div class="column-two-sixths table-column">
+            <div class="grid-row" aria-hidden="true">
+                <div class="column-two-sixths table-header">
                     <p id="schemeName" class="heading-small">@messages("messages__listSchemes__column_schemeName")</p>
                 </div>
-                <div class="column-one-sixth table-column">
+                <div class="column-one-sixth table-header">
                     <p id="srn" class="heading-small">@messages("messages__listSchemes__column_srn")</p>
                 </div>
-                <div class="column-one-sixth table-column">
+                <div class="column-one-sixth table-header">
                     <p id="pstr" class="heading-small">@messages("messages__listSchemes__column_pstr")</p>
                 </div>
-                <div class="column-one-sixth table-column">
+                <div class="column-one-sixth table-header">
                     <p id="schemeStatus" class="heading-small">@messages("messages__listSchemes__column_status")</p>
                 </div>
-<<<<<<< HEAD
-                <div class="column-one-sixth table-column">
-                    <p id="schemeStatus" class="heading-small">@messages("messages__listSchemes__column_status")</p>
-                </div>
-=======
->>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
             </div>
-            @for((scheme, index) <- schemes.zipWithIndex) {
-                <div class="row-group scheme-row">
-                    <div class="grid-row">
-                        <div class="column-two-sixths table-column scheme-name">
-                            <p id="@{schemeNameId(index)}">@scheme.name</p>
-                        </div>
-                    </div>
-                    <div class="grid-row">
-                        <div class="column-two-sixths table-column scheme-name">
-                            <p id="@{srnId(index)}">@scheme.referenceNumber</p>
-                        </div>
-                    </div>
 
-                    <div class="grid-row">
-                        <div class="column-two-sixths table-column scheme-name">
-<<<<<<< HEAD
-                            <p id="@{pstrId(index)}">@scheme.pstr</p>
-                        </div>
+            @for((scheme, index) <- schemes.zipWithIndex) {
+                <div class="row-group grid-row">
+                    <div class="column-two-sixths table-column scheme-name">
+                        <p id="@{schemeNameId(index)}">@scheme.name</p>
                     </div>
-                    <div class="grid-row">
-                        <div class="column-two-sixths table-column scheme-name">
-                            <p id="@{statusId(index)}">@scheme.schemeStatus</p>
-=======
-                            <p id="@{pstrId(index)}">@pstrValue(scheme.pstr)</p>
->>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
-                        </div>
+                    <div class="column-one-sixth table-column scheme-name">
+                        <p id="@{srnId(index)}" data-title='@messages("messages__listSchemes__column_srn")&nbsp;'>@scheme.referenceNumber</p>
                     </div>
-                    <div class="grid-row">
-                        <div class="column-two-sixths table-column scheme-name">
-<<<<<<< HEAD
-                            <p id="@{actionId(index)}"><a href="#">@messages("messages__listSchemes__")</a></p>
-=======
-                            <p id="@{statusId(index)}">@statusValue(scheme.schemeStatus)</p>
->>>>>>> 52c1e19749d4f770e8dd5c29dac3e33555f1a525
-                        </div>
+                    <div class="column-one-sixth table-column scheme-name">
+                        <p id="@{pstrId(index)}" data-title='@messages("messages__listSchemes__column_pstr")&nbsp;'>@pstrValue(scheme.pstr)</p>
+                    </div>
+                    <div class="column-one-sixth table-column scheme-name">
+                        <p class="status"><span id="@{statusId(index)}" class="@statusClass(scheme.schemeStatus)">@statusValue(scheme.schemeStatus)</span></p>
                     </div>
                 </div>
             }
         </div>
     }
-
 }

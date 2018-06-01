@@ -32,7 +32,7 @@ class ListSchemesController @Inject()(val appConfig: FrontendAppConfig, val mess
       val schemes: List[SchemeDetail] = List(
         SchemeDetail(
           "scheme-name-0",
-          "reference-number-0",
+          "S8888888888",
           "Pending",
           None,
           None,
@@ -41,7 +41,7 @@ class ListSchemesController @Inject()(val appConfig: FrontendAppConfig, val mess
         ),
         SchemeDetail(
           "scheme-name-1",
-          "reference-number-1",
+          "S0000000000",
           "Pending Info Required",
           None,
           None,
@@ -50,7 +50,7 @@ class ListSchemesController @Inject()(val appConfig: FrontendAppConfig, val mess
         ),
         SchemeDetail(
           "scheme-name-2",
-          "reference-number-2",
+          "S1111111111",
           "Pending Info Received",
           None,
           None,
@@ -59,7 +59,7 @@ class ListSchemesController @Inject()(val appConfig: FrontendAppConfig, val mess
         ),
         SchemeDetail(
           "scheme-name-3",
-          "reference-number-3",
+          "S2222222222",
           "Rejected",
           None,
           None,
@@ -68,7 +68,7 @@ class ListSchemesController @Inject()(val appConfig: FrontendAppConfig, val mess
         ),
         SchemeDetail(
           "scheme-name-4",
-          "reference-number-4",
+          "S3333333333",
           "Open",
           None,
           Some("pstr-5"),
@@ -77,25 +77,25 @@ class ListSchemesController @Inject()(val appConfig: FrontendAppConfig, val mess
         ),
         SchemeDetail(
           "scheme-name-5",
-          "reference-number-5",
+          "S4444444444",
           "Deregistered",
           None,
-          Some("pstr-6"),
+          Some("44444444WW"),
           None,
           None
         ),
         SchemeDetail(
           "scheme-name-6",
-          "reference-number-6",
+          "S5555555555",
           "Wound-up",
           None,
-          Some("pstr-7"),
+          Some("11111111II"),
           None,
           None
         ),
         SchemeDetail(
           "scheme-name-7",
-          "reference-number-7",
+          "S6666666666",
           "Rejected Under Appeal",
           None,
           None,
