@@ -118,4 +118,9 @@ class MicroserviceCacheConnector @Inject() (
       .withHeaders(hc.headers: _*)
         .delete().map(_ => Ok)
   }
+
+  override def lastUpdated(id: String)(implicit
+                                                           ec: ExecutionContext,
+                                                           hc: HeaderCarrier
+  ): Future[Option[JsValue]] = fetch(id)
 }

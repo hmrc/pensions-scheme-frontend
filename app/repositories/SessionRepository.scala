@@ -19,9 +19,8 @@ package repositories
 import javax.inject.{Inject, Singleton}
 
 import org.joda.time.{DateTime, DateTimeZone}
-import play.api.{Configuration, Logger}
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.Result
+import play.api.{Configuration, Logger}
 import play.modules.reactivemongo.MongoDbConnection
 import reactivemongo.api.DefaultDB
 import reactivemongo.api.indexes.{Index, IndexType}
@@ -30,7 +29,7 @@ import reactivemongo.play.json.ImplicitBSONHandlers._
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
-import play.api.mvc.Results._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -98,6 +97,18 @@ class ReactiveMongoRepository(config: Configuration, mongo: () => DefaultDB)
     val selector = BSONDocument("id" -> id)
     collection.remove(selector).map(_.ok)
   }
+
+  def getValue(id: String, value: String): Future[Option[JsValue]] = {
+    import play.api.libs.json._
+    collection.find(Json.obj("id" -> id)).one[JsObject].map {
+      json =>
+        json.flatMap {
+          json =>
+            json.validate((__ \ value).json.pick[JsValue]).asOpt
+        }
+    }
+  }
+
 }
 
 @Singleton
