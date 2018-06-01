@@ -18,23 +18,17 @@ package views.register.establishers
 
 import controllers.register.establishers.routes._
 import models.{Index, NormalMode}
+import viewmodels.Message
+import views.ViewSpecBase
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.confirmDeleteEstablisher
 
 class ConfirmDeleteEstablisherViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "confirmDeleteEstablisher"
+  import ConfirmDeleteEstablisherViewSpec._
 
-  private val firstIndex = Index(0)
-  private val schemeName = "MyScheme"
-  private val establisherName = "John Doe"
-  private val postCall = ConfirmDeleteEstablisherController.onSubmit(firstIndex)
-  private val cancelCall = AddEstablisherController.onSubmit(NormalMode)
-
-  private def createView = () => confirmDeleteEstablisher(frontendAppConfig, schemeName, establisherName, postCall, cancelCall)(fakeRequest, messages)
-
-  "ConfirmDeleteDirector view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading").format("John Doe"))
+  "ConfirmDeleteEstablisher view" must {
+    behave like normalPage(createView, messageKeyPrefix, Message(s"messages__${messageKeyPrefix}__heading").withArgs(establisherName))
 
     behave like pageWithBackLink(createView)
 
@@ -47,4 +41,26 @@ class ConfirmDeleteEstablisherViewSpec extends ViewBehaviours {
       assertLink(doc, "cancel", cancelCall.url)
     }
   }
+
+}
+
+object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
+
+  val messageKeyPrefix = "confirmDeleteEstablisher"
+
+  private val firstIndex = Index(0)
+  private val schemeName = "MyScheme"
+  private val establisherName = "John Doe"
+  private val postCall = ConfirmDeleteEstablisherController.onSubmit(firstIndex)
+  private val cancelCall = AddEstablisherController.onSubmit(NormalMode)
+
+  private def createView = () =>
+    confirmDeleteEstablisher(
+      frontendAppConfig,
+      schemeName,
+      establisherName,
+      postCall,
+      cancelCall
+    )(fakeRequest, messages)
+
 }

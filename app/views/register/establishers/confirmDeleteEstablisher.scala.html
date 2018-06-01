@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import play.api.mvc.Call
+@import viewmodels.Message
 
 @(appConfig: FrontendAppConfig, schemeName: String, establisherName: String, postCall: Call, cancelCall: Call)(implicit request: Request[_], messages: Messages)
 
@@ -29,11 +30,11 @@
         @components.back_link()
 
         @components.heading(
-            messages("messages__confirmDeleteEstablisher__heading").format(establisherName),
+            Message("messages__confirmDeleteEstablisher__heading").withArgs(establisherName),
             secondaryHeaderKey = Some(schemeName)
         )
 
-        <span class="form-hint">messages("messages__confirmDeleteEstablisher__hint")</span>
+        <span class="form-hint">@messages("messages__confirmDeleteEstablisher__hint")</span>
 
         @components.submit_button("site.confirm")
 
