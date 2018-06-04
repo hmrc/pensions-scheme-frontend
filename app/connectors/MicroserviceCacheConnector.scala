@@ -38,6 +38,7 @@ class MicroserviceCacheConnector @Inject() (
                                            ) extends DataCacheConnector {
 
   protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id"
+  protected def lastUpdatedUrl(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
 
   override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
                                                (implicit
@@ -122,5 +123,22 @@ class MicroserviceCacheConnector @Inject() (
   override def lastUpdated(id: String)(implicit
                                                            ec: ExecutionContext,
                                                            hc: HeaderCarrier
-  ): Future[Option[JsValue]] = fetch(id)
+  ): Future[Option[JsValue]] = {
+
+    http.url(lastUpdatedUrl(id))
+      .withHeaders(hc.headers: _*)
+      .get().flatMap {
+      response =>
+        response.status match {
+          case NOT_FOUND =>
+            Future.successful(None)
+          case OK => {
+            Logger.debug(s"connectors.MicroserviceCacheConnector.fetch: Successful response: ${response.body}")
+            Future.successful(Some(Json.parse(response.body)))
+          }
+          case _ =>
+            Future.failed(new HttpException(response.body, response.status))
+        }
+    }
+  }
 }
