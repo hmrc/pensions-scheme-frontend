@@ -629,6 +629,20 @@ messages__adviserPostCodeLookupAddress__enterPostCode= Enter the postcode below,
 
 messages__enrolment__error__name_invalid = Enter a PSA Name
 
+messages__listSchemes__title = Your pension schemes
+messages__listSchemes__noSchemes = You have not registered any pension schemes in this service.
+messages__listSchemes__registerNewScheme = Register a new scheme
+messages__listSchemes__column_schemeName = Scheme name
+messages__listSchemes__column_srn = SRN
+messages__listSchemes__column_pstr = PSTR
+messages__listSchemes__column_status = Status
+messages__listSchemes__pstr_not_assigned = Not assigned
+
+messages__listSchemes__status_pending = Pending
+messages__listSchemes__status_rejected = Rejected
+messages__listSchemes__status_open = Open
+messages__listSchemes__status_closed = Closed
+
 messages__schemesOverview__title = Manage and register your pension schemes
 messages__schemesOverview__heading = Manage and register your pension schemes
 messages__schemesOverview__manage__head = Manage your pension schemes
@@ -648,6 +662,10 @@ messages__schemesOverview__delete__link = Delete this scheme and start a new reg
 messages__deleteScheme__title = Are you sure you want to delete {0} scheme?
 messages__deleteScheme__heading = Are you sure you want to delete {0} scheme?
 messages__deleteScheme__error__required = Select yes if you want to cancel your registration
+
+messages__confirmDeleteEstablisher__title = Confirm deletion
+messages__confirmDeleteEstablisher__heading = Are you sure you want to delete {0}?
+messages__confirmDeleteEstablisher__hint = This will delete any directors you have added.
 
 messages__youNeedToRegister__title = You need to register
 messages__youNeedToRegister__heading = Manage and register your pension schemes
