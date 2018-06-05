@@ -16,11 +16,13 @@
 
 package viewmodels
 
+import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.{CompanyDetails, NormalMode}
 import models.person.PersonDetails
+import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
+import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.{FlatSpec, Matchers, OptionValues}
 import utils.UserAnswers
@@ -65,8 +67,47 @@ class EditableItemSpec extends FlatSpec with Matchers with OptionValues {
       )
     )
 
-    val actual = EditableItem.fromTrusteeEntityDetails(trustees)
+    val actual = EditableItem.fromEntityDetails(trustees.map(t => (t._1, t._2, EntityKind.Trustee)))
     actual shouldBe expected
   }
 
+  "EditableItem" should "convert from establisher entity details" in {
+    val companyDetails = CompanyDetails(
+      "test-company",
+      None,
+      None
+    )
+
+    val establisherDetails = PersonDetails(
+      "John",
+      None,
+      "Doe",
+      LocalDate.now()
+    )
+
+    val userAnswers =
+      UserAnswers()
+        .set(identifiers.register.establishers.company.CompanyDetailsId(0))(companyDetails)
+        .flatMap(_.set(EstablisherDetailsId(1))(establisherDetails))
+    
+    val establishers = userAnswers.asOpt.value.allEstablishers
+
+    val expected = Seq(
+      EditableItem(
+        0,
+        companyDetails.companyName,
+        controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(0, EstablisherKind.Company).url,
+        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0).url
+      ),
+      EditableItem(
+        1,
+        establisherDetails.fullName,
+        controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(1, EstablisherKind.Indivdual).url,
+        controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 1).url
+      )
+    )
+
+    val actual = EditableItem.fromEntityDetails(establishers.map(x => (x._1, x._2, EntityKind.Establisher)))
+    actual shouldBe expected
+  }
 }

@@ -16,50 +16,72 @@
 
 package viewmodels
 
+import controllers.register._
+import models.register.establishers.EstablisherKind
 import models.register.establishers.company.director.DirectorDetails
-import controllers.register.establishers.company.director.routes
 import models.register.trustees.TrusteeKind
-import models.{CheckMode, Index, NormalMode}
+import models.{Index, NormalMode}
 
 import scala.language.implicitConversions
 
 //noinspection MutatorLikeMethodIsParameterless
 case class EditableItem(index: Int, name: String, deleteLink: String, editLink: String) {
-  def id: String = s"person-$index"
   def deleteLinkId: String = s"$id-delete"
+
   def editLinkId: String = s"$id-edit"
+
+  def id: String = s"person-$index"
 }
 
 object EditableItem {
 
   implicit def indexedCompanyDirectors(directors: (Int, Seq[DirectorDetails])): Seq[EditableItem] = {
-    directors._2.zipWithIndex.map { case (director, index) =>
-      EditableItem(
-        index,
-        director.directorName,
-        routes.ConfirmDeleteDirectorController.onPageLoad(directors._1, index).url,
-        routes.DirectorDetailsController.onPageLoad(NormalMode, directors._1, Index(index)).url
-      )
+    directors._2.zipWithIndex.map {
+      case (director, index) =>
+        EditableItem(
+          index,
+          director.directorName,
+          establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(directors._1, index).url,
+          establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, directors._1, Index(index)).url
+        )
     }
   }
 
-  implicit def fromTrusteeEntityDetails(trustees: Seq[(String, String)]): Seq[EditableItem] = {
-    trustees.zipWithIndex.map { case (trustee, index) =>
-      val trusteeKind = trustee._2 match {
-        case url if url == controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
-          => TrusteeKind.Company
-        case url if url == controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, index).url
-          => TrusteeKind.Individual
-        case _ => throw new IllegalArgumentException(s"Cannot determine trustee kind: ${trustee._1}")
+  implicit def fromEntityDetails(entity: Seq[(String, String, EntityKind)]): Seq[EditableItem] = entity.zipWithIndex.map {
+    case ((entityName, changeUrl, entityKind), index) =>
+      entityKind match {
+        case EntityKind.Establisher =>
+          val establisherKind = changeUrl match {
+            case url if changeUrl == establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
+            => EstablisherKind.Company
+            case url if changeUrl == establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, index).url
+            => EstablisherKind.Indivdual
+            case _ => throw new IllegalArgumentException(s"Cannot determine establisher kind: $entityName")
+          }
+
+          EditableItem(
+            index,
+            entityName,
+            establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(index, establisherKind).url,
+            changeUrl
+          )
+
+        case EntityKind.Trustee =>
+          val trusteeKind = changeUrl match {
+            case url if changeUrl == trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
+            => TrusteeKind.Company
+            case url if changeUrl == trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, index).url
+            => TrusteeKind.Individual
+            case _ => throw new IllegalArgumentException(s"Cannot determine trustee kind: $entityName")
+          }
+
+          EditableItem(
+            index,
+            entityName,
+            trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(Index(index), trusteeKind).url,
+            changeUrl
+          )
+        case _ => throw new IllegalArgumentException(s"Cannot determine entity kind: $entityKind")
       }
-
-      EditableItem(
-        index,
-        trustee._1,
-        controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(index, trusteeKind).url,
-        trustee._2
-      )
-    }
   }
-
 }
