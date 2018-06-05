@@ -29,7 +29,7 @@ import models.{CheckMode, NormalMode}
 import models.register.{SchemeDetails, SchemeType}
 import models.register.establishers.EstablisherKind.{Company, Indivdual}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Enumerable, Navigator}
 import utils.annotations.Register
@@ -59,16 +59,20 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
 
   private def establisherEditUrl(establisherKind: EstablisherKind) = {
     if (appConfig.restrictEstablisherEnabled) {
-      establisherKind match {
-        case Indivdual =>
-          controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
-        case Company =>
-          controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
-        case _ =>
-          controllers.routes.WhatYouWillNeedController.onPageLoad()
-      }
+      editUrlWithRestriction(establisherKind)
     } else {
       controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def editUrlWithRestriction(establisherKind: EstablisherKind): Call = {
+    establisherKind match {
+      case Indivdual =>
+        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
+      case Company =>
+        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
+      case _ =>
+        controllers.routes.WhatYouWillNeedController.onPageLoad()
     }
   }
 

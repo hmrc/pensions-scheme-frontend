@@ -52,22 +52,26 @@ class EstablishersNavigator @Inject()(config: FrontendAppConfig) extends Navigat
         if (answers.allTrustees.nonEmpty) {
           controllers.register.routes.SchemeReviewController.onPageLoad()
         } else {
-          answers.get(SchemeDetailsId) match {
-            case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
-              controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
-            case Some(SchemeDetails(_, _)) =>
-              answers.get(HaveAnyTrusteesId) match {
-                case None =>
-                  controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
-                case _ =>
-                  controllers.register.routes.SchemeReviewController.onPageLoad()
-              }
-            case None =>
-              controllers.routes.SessionExpiredController.onPageLoad()
-          }
+          navigateBasedOnSchemeDetails(answers)
         }
       case _ =>
         controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.allEstablishers.length)
+    }
+  }
+
+  private def navigateBasedOnSchemeDetails(answers: UserAnswers) = {
+    answers.get(SchemeDetailsId) match {
+      case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
+        controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+      case Some(SchemeDetails(_, _)) =>
+        answers.get(HaveAnyTrusteesId) match {
+          case None =>
+            controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+          case _ =>
+            controllers.register.routes.SchemeReviewController.onPageLoad()
+        }
+      case None =>
+        controllers.routes.SessionExpiredController.onPageLoad()
     }
   }
 }
