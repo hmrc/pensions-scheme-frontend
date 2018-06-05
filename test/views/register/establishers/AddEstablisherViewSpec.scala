@@ -18,58 +18,92 @@ package views.register.establishers
 
 import controllers.register.establishers.routes
 import forms.register.establishers.AddEstablisherFormProvider
-import models.NormalMode
-import org.apache.commons.lang3.RandomStringUtils
-import org.jsoup.Jsoup
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import models.person.PersonDetails
+import models.{CompanyDetails, NormalMode}
+import org.joda.time.LocalDate
 import play.api.data.Form
-import play.twirl.api.{Html, HtmlFormat}
-import views.behaviours.QuestionViewBehaviours
+import play.twirl.api.HtmlFormat
+import utils.UserAnswers
+import viewmodels.EntityKind
+import views.behaviours.{EditableItemListBehaviours, QuestionViewBehaviours, YesNoViewBehaviours}
 import views.html.register.establishers.addEstablisher
 
-class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] {
+class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] with EditableItemListBehaviours {
+
+  val onwardRoute = routes.AddEstablisherController.onPageLoad(NormalMode).url
+
+  def companyUrl(index: Int) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
+
+  def individualUrl(index: Int) = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url
 
   val messageKeyPrefix = "establishers__add"
 
-  val schemeName = "Test Scheme Name"
-  val allEstablishers = Seq(
-    "Jo Wilson" -> routes.AddEstablisherController.onPageLoad(NormalMode).url,
-    "Paul Douglas" -> routes.AddEstablisherController.onPageLoad(NormalMode).url
+  val schemeName = "Test scheme name"
+
+  val establisherCompany = ("Establisher Company" -> companyUrl(0))
+  val establisherIndividual = ("John Doe" -> individualUrl(0))
+
+  val companyDetails = CompanyDetails(
+    "Establisher Company",
+    None,
+    None
   )
-  val form = new AddEstablisherFormProvider()(allEstablishers)
+
+  val individualDetails = PersonDetails(
+    "John",
+    None,
+    "Doe",
+    LocalDate.now()
+  )
+
+  val userAnswers =
+    UserAnswers()
+      .set(CompanyDetailsId(0))(companyDetails)
+      .flatMap(_.set(EstablisherDetailsId(1))(individualDetails))
+      .asOpt
+      .value
+
+  val establishers = userAnswers.allEstablishers
+
+  val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
   def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty,
     schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addEstablisher(frontendAppConfig,
-    form, NormalMode, allEstablishers, schemeName)(fakeRequest, messages)
+  def createView(establishers: Seq[(String, String)] = Seq.empty): () => HtmlFormat.Appendable = () =>
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers, schemeName)(fakeRequest, messages)
 
-  def createView(establishers: Seq[(String, String)] = Seq.empty): Html = addEstablisher(frontendAppConfig, form, NormalMode,
-    establishers, schemeName)(fakeRequest, messages)
+  def createViewUsingForm(establishers: Seq[(String, String)] = Seq.empty): Form[Boolean] => HtmlFormat.Appendable = (form: Form[Boolean]) =>
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers, schemeName)(fakeRequest, messages)
 
   "AddEstablisher view" must {
-
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
 
-    "display the initial message without yes/no buttons if no establishers are added yet" in {
-      val doc = Jsoup.parse(createView(Seq.empty).toString())
+    behave like pageWithSecondaryHeader(createView, schemeName)
 
-      doc must haveDynamicText("messages__establishers__add_hint")
-      doc.select("#value-yes").size() mustEqual 0
-      doc.select("#value-no").size() mustEqual 0
+    "when there are no establishers" when {
+      "not show the yes no inputs" in {
+        val doc = asDocument(createView())
+        doc.select("#value-yes").size() mustEqual 0
+        doc.select("#value-no").size() mustEqual 0
+      }
+
+      "show the add establisher text" in {
+        val doc = asDocument(createView())
+        doc must haveDynamicText("messages__establishers__add_hint")
+      }
     }
 
-    "display all the partially added establisher names with yes/No buttons if the maximum establishers are not added yet" in {
-      val doc = Jsoup.parse(createViewUsingForm(form).toString())
-      allEstablishers.foreach { establisherDetails =>
-        val (establisherName, url) = establisherDetails
-        doc must haveDynamicText(establisherName)
-        doc.select("a[id=edit-link]") must haveLink(url)
-      }
+    behave like editableItemList(createView(), createView(establishers), establishers.map(e => (e._1, e._2, EntityKind.Establisher)))
+
+    "display all the partially added establisher names with yes/No buttons" in {
+      val doc = asDocument(createView(establishers)())
       doc.select("#value-yes").size() mustEqual 1
       doc.select("#value-no").size() mustEqual 1
-
     }
   }
 }

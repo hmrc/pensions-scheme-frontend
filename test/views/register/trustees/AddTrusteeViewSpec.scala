@@ -25,7 +25,8 @@ import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import utils.UserAnswers
-import views.behaviours.{YesNoViewBehaviours, EditableItemListBehaviours}
+import viewmodels.EntityKind
+import views.behaviours.{EditableItemListBehaviours, YesNoViewBehaviours}
 import views.html.register.trustees.addTrustee
 
 class AddTrusteeViewSpec extends YesNoViewBehaviours with EditableItemListBehaviours {
@@ -89,26 +90,26 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EditableItemListBehavi
         doc.select("legend > span").size() mustBe 0
       }
 
-      "show the add director text" in {
+      "show the add trustee text" in {
         val doc = asDocument(createView()())
         doc must haveDynamicText(s"messages__${messageKeyPrefix}__lede")
       }
     }
 
-    "when there are 10 directors" when {
+    "when there are 10 trustees" when {
       "not show the yes no inputs" in {
         val doc = asDocument(createViewUsingForm(fullTrustees)(form))
         doc.select("legend > span").size() mustBe 0
       }
 
-      "show the maximum number of directors message" in {
+      "show the maximum number of trustees message" in {
         val doc = asDocument(createView(fullTrustees)())
         doc must haveDynamicText("messages__addTrustees_at_maximum")
         doc must haveDynamicText("messages__addTrustees_tell_us_if_you_have_more")
       }
     }
 
-    behave like editableItemList(createView(), createView(trustees), trustees)
+    behave like editableItemList(createView(), createView(trustees), trustees.map(t => (t._1, t._2, EntityKind.Trustee)))
     "display all the partially added trustee names with yes/No buttons if the maximum trustees are not added yet" in {
       val doc = asDocument(createView(trustees)())
       doc.select("#value-yes").size() mustEqual 1
