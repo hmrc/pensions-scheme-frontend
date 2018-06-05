@@ -32,6 +32,7 @@ import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Establishers
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.confirmDeleteEstablisher
 
@@ -41,7 +42,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
                                                     dataCacheConnector: DataCacheConnector,
-                                                    navigator: Navigator,
+                                                    @Establishers navigator: Navigator,
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction
