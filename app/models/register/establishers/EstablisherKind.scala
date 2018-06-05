@@ -16,6 +16,7 @@
 
 package models.register.establishers
 
+import play.api.mvc.JavascriptLiteral
 import utils.{Enumerable, InputOption, WithName}
 
 sealed trait EstablisherKind
@@ -37,4 +38,13 @@ object EstablisherKind {
 
   implicit val enumerable: Enumerable[EstablisherKind] =
     Enumerable(values.map(v => v.toString -> v): _*)
+
+  //noinspection ConvertExpressionToSAM
+  implicit val jsLiteral: JavascriptLiteral[EstablisherKind] = new JavascriptLiteral[EstablisherKind] {
+    override def to(value: EstablisherKind): String = value match {
+      case Company => "Company"
+      case Indivdual => "Individual"
+      case Partnership => "Partnership"
+    }
+  }
 }

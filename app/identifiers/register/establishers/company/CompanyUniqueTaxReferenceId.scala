@@ -22,7 +22,7 @@ import models.UniqueTaxReference
 import play.api.libs.json.JsPath
 
 case class CompanyUniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
-  override def path: JsPath = EstablishersId.path \ index \ CompanyUniqueTaxReferenceId.toString
+  override def path: JsPath = EstablishersId(index).path \ CompanyUniqueTaxReferenceId.toString
 }
 
 object CompanyUniqueTaxReferenceId {

@@ -55,6 +55,11 @@ trait DataCacheConnector {
                              hc: HeaderCarrier
                             ): Future[Option[JsValue]]
 
+  def lastUpdated(cacheId: String)(implicit
+                                                       ec: ExecutionContext,
+                                                       hc: HeaderCarrier
+  ): Future[Option[JsValue]]
+
   def upsert(cacheId: String, value: JsValue)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue]
 
   def removeAll(cacheId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result]

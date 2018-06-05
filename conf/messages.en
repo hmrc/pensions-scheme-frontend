@@ -203,7 +203,7 @@ messages__common__what_you_need_to_know = What you need to know
 messages__complete__title = Your application has been successfully submitted
 messages__complete__heading = Your application to register {0} has been successfully submitted
 messages__complete__application_number_is = Your submission reference number is {0}. This is not your Pension Scheme Tax Reference number (PSTR).
-messages__complete__copy_1 = Your scheme is not yet registered. HMRC will consider your application and make a decision, this can take up to 6 months.
+messages__complete__copy_1 = Your scheme is not yet registered. HMRC will consider your application and make a decision.
 messages__complete__copy_2 = We may contact you and request further information to support your application.
 messages__complete__copy_3 = If the scheme administrator does not meet the criteria to be a fit and proper person we may refuse your application.
 messages__complete__register_pensions_regulator = If your scheme has more than 2 members you need to register with the Pensions Regulator
@@ -628,3 +628,51 @@ messages__adviserPostCodeLookupAddress__secondary=Pension adviser
 messages__adviserPostCodeLookupAddress__enterPostCode= Enter the postcode below, or if you have an overseas address{0} enter the address manually {1}
 
 messages__enrolment__error__name_invalid = Enter a PSA Name
+
+messages__listSchemes__title = Your pension schemes
+messages__listSchemes__noSchemes = You have not registered any pension schemes in this service.
+messages__listSchemes__registerNewScheme = Register a new scheme
+messages__listSchemes__column_schemeName = Scheme name
+messages__listSchemes__column_srn = SRN
+messages__listSchemes__column_pstr = PSTR
+messages__listSchemes__column_status = Status
+messages__listSchemes__pstr_not_assigned = Not assigned
+
+messages__listSchemes__status_pending = Pending
+messages__listSchemes__status_rejected = Rejected
+messages__listSchemes__status_open = Open
+messages__listSchemes__status_closed = Closed
+
+messages__schemesOverview__title = Manage and register your pension schemes
+messages__schemesOverview__heading = Manage and register your pension schemes
+messages__schemesOverview__manage__head = Manage your pension schemes
+messages__schemesOverview__manage__text = You can only view pension schemes that you have registered through this service.
+messages__schemesOverview__manage__link = View your pension schemes
+messages__schemesOverview__manage__redirect__text = If you want to view a pension scheme that you did not register through this service, you must {0}
+messages__schemesOverview__manage__redirect__link = use the Pension Schemes Online service.
+messages__schemesOverview__register__head = Register a new pension scheme
+messages__schemesOverview__register__text = You have 28 days to finish a new pension scheme registration before it is deleted. You can save your progress and return to it later.
+messages__schemesOverview__register__link = Register a new scheme
+messages__schemesOverview__scheme_name = {0} scheme
+messages__schemesOverview__continue__lastDate = You last entered details about this scheme on {0}.
+messages__schemesOverview__continue__deleteDate = You have until {0} to finish this registration before the details are deleted.
+messages__schemesOverview__continue__link = Continue registering this scheme
+messages__schemesOverview__delete__link = Delete this scheme and start a new registration
+
+messages__deleteScheme__title = Are you sure you want to delete {0} scheme?
+messages__deleteScheme__heading = Are you sure you want to delete {0} scheme?
+messages__deleteScheme__error__required = Select yes if you want to cancel your registration
+
+messages__confirmDeleteEstablisher__title = Confirm deletion
+messages__confirmDeleteEstablisher__heading = Are you sure you want to delete {0}?
+messages__confirmDeleteEstablisher__hint = This will delete any directors you have added.
+
+messages__youNeedToRegister__title = You need to register
+messages__youNeedToRegister__heading = Manage and register your pension schemes
+messages__youNeedToRegister__lede = You must register to use this service before you can register a pension scheme.
+messages__youNeedToRegister__p1 = You can only use this service if you are a {0}.
+messages__youNeedToRegister__p1__link = pension scheme administrator
+messages__youNeedToRegister__p2 = If you are a {0}, you cannot register to use this service.
+messages__youNeedToRegister__p2__link = pension scheme practitioner
+messages__youNeedToRegister__button = Register as a pension scheme administrator
+messages__youNeedToRegister__govUk__link = Exit to GOV.UK

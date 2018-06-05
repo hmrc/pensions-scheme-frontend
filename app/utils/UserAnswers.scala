@@ -89,7 +89,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       individualName orElse companyName
     }
 
-    getAll[EntityDetails](EstablishersId.path)(nameReads).map(
+    getAll[EntityDetails](JsPath \ EstablishersId.toString)(nameReads).map(
       _.zipWithIndex.map {
         case (name, id) =>
           name.route(id, None)

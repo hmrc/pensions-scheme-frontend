@@ -22,12 +22,12 @@ import models.register.establishers.company.director.DirectorDetails
 import play.api.libs.json.JsPath
 
 case class DirectorDetailsId(establisherIndex:Int,directorIndex:Int) extends TypedIdentifier[DirectorDetails] {
-  override def path: JsPath = EstablishersId.path \ establisherIndex \ "director" \ directorIndex \ DirectorDetailsId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorDetailsId.toString
 }
 
 object DirectorDetailsId{
   def collectionPath(establisherIndex: Int): JsPath =
-    EstablishersId.path \ establisherIndex \ "director" \\ DirectorDetailsId.toString
+    EstablishersId(establisherIndex).path \ "director" \\ DirectorDetailsId.toString
 
   override def toString: String = "directorDetails"
 }
