@@ -19,10 +19,10 @@ package viewmodels
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.{CheckMode, CompanyDetails}
 import models.person.PersonDetails
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
+import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.{FlatSpec, Matchers, OptionValues}
 import utils.UserAnswers
@@ -57,13 +57,13 @@ class EditableItemSpec extends FlatSpec with Matchers with OptionValues {
         0,
         companyDetails.companyName,
         controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(0, TrusteeKind.Company).url,
-        controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, 0).url
+        controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0).url
       ),
       EditableItem(
         1,
         trusteeDetails.fullName,
         controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(1, TrusteeKind.Individual).url,
-        controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(CheckMode, 1).url
+        controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 1).url
       )
     )
 
@@ -89,9 +89,7 @@ class EditableItemSpec extends FlatSpec with Matchers with OptionValues {
       UserAnswers()
         .set(identifiers.register.establishers.company.CompanyDetailsId(0))(companyDetails)
         .flatMap(_.set(EstablisherDetailsId(1))(establisherDetails))
-
-    println(userAnswers)
-
+    
     val establishers = userAnswers.asOpt.value.allEstablishers
 
     val expected = Seq(
@@ -99,13 +97,13 @@ class EditableItemSpec extends FlatSpec with Matchers with OptionValues {
         0,
         companyDetails.companyName,
         controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(0, EstablisherKind.Company).url,
-        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, 0).url
+        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0).url
       ),
       EditableItem(
         1,
         establisherDetails.fullName,
         controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(1, EstablisherKind.Indivdual).url,
-        controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, 1).url
+        controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 1).url
       )
     )
 

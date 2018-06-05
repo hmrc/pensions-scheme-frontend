@@ -16,15 +16,15 @@
 
 package controllers.register.establishers
 
-import play.api.data.Form
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import models.NormalMode
-import play.api.test.Helpers._
 import org.joda.time.LocalDate
+import play.api.data.Form
+import play.api.test.Helpers._
+import utils.FakeNavigator
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherControllerSpec extends ControllerSpecBase {

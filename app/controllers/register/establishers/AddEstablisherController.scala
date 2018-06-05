@@ -16,14 +16,13 @@
 
 package controllers.register.establishers
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
+import javax.inject.Inject
 import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -63,7 +62,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
               Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
                 establishers, schemeName))),
             value =>
-                Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode)(request.userAnswers)))
+              Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode)(request.userAnswers)))
           )
       }
   }

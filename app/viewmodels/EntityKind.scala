@@ -19,6 +19,9 @@ package viewmodels
 sealed trait EntityKind
 
 object EntityKind {
+
   case object Establisher extends EntityKind
+
   case object Trustee extends EntityKind
+
 }

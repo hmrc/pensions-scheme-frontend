@@ -27,55 +27,55 @@ import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import utils.UserAnswers
 import viewmodels.EntityKind
-import views.behaviours.{EditableItemListBehaviours, QuestionViewBehaviours, YesNoViewBehaviours}
+import views.behaviours.{EditableItemListBehaviours, QuestionViewBehaviours}
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] with EditableItemListBehaviours {
 
-  val onwardRoute = routes.AddEstablisherController.onPageLoad(NormalMode).url
+  private val onwardRoute = routes.AddEstablisherController.onPageLoad(NormalMode).url
 
-  def companyUrl(index: Int) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
+  private def companyUrl(index: Int) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
 
-  def individualUrl(index: Int) = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url
+  private def individualUrl(index: Int) = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url
 
-  val messageKeyPrefix = "establishers__add"
+  private val messageKeyPrefix = "establishers__add"
 
-  val schemeName = "Test scheme name"
+  private val schemeName = "Test scheme name"
 
-  val establisherCompany = ("Establisher Company" -> companyUrl(0))
-  val establisherIndividual = ("John Doe" -> individualUrl(0))
+  private val establisherCompany = "Establisher Company" -> companyUrl(0)
+  private val establisherIndividual = "John Doe" -> individualUrl(0)
 
-  val companyDetails = CompanyDetails(
+  private val companyDetails = CompanyDetails(
     "Establisher Company",
     None,
     None
   )
 
-  val individualDetails = PersonDetails(
+  private val individualDetails = PersonDetails(
     "John",
     None,
     "Doe",
     LocalDate.now()
   )
 
-  val userAnswers =
+  private val userAnswers =
     UserAnswers()
       .set(CompanyDetailsId(0))(companyDetails)
       .flatMap(_.set(EstablisherDetailsId(1))(individualDetails))
       .asOpt
       .value
 
-  val establishers = userAnswers.allEstablishers
+  private val establishers = userAnswers.allEstablishers
 
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
-  def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty,
+  private def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty,
     schemeName)(fakeRequest, messages)
 
-  def createView(establishers: Seq[(String, String)] = Seq.empty): () => HtmlFormat.Appendable = () =>
+  private def createView(establishers: Seq[(String, String)] = Seq.empty): () => HtmlFormat.Appendable = () =>
     addEstablisher(frontendAppConfig, form, NormalMode, establishers, schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm(establishers: Seq[(String, String)] = Seq.empty): Form[Boolean] => HtmlFormat.Appendable = (form: Form[Boolean]) =>
+  private def createViewUsingForm(establishers: Seq[(String, String)] = Seq.empty): Form[Boolean] => HtmlFormat.Appendable = (form: Form[Boolean]) =>
     addEstablisher(frontendAppConfig, form, NormalMode, establishers, schemeName)(fakeRequest, messages)
 
   "AddEstablisher view" must {

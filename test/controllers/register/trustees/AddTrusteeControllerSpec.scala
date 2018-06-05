@@ -41,6 +41,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   def editTrusteeCompanyRoute(id: Int): String =
     controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id).url
+
   def editTrusteeIndividualRoute(id: Int): String =
     controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id).url
 
@@ -55,7 +56,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   private def validData = {
     Json.obj(SchemeDetailsId.toString ->
       SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-        TrusteesId.toString -> Json.arr(
+      TrusteesId.toString -> Json.arr(
         Json.obj(
           CompanyDetailsId.toString -> CompanyDetails("Trustee Company A", None, None)
         ),
@@ -71,7 +72,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddTrusteeController=
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddTrusteeController =
     new AddTrusteeController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 

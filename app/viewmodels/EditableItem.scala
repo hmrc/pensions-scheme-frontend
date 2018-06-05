@@ -16,11 +16,11 @@
 
 package viewmodels
 
-import controllers.register.establishers.company.director.routes
+import controllers.register._
 import models.register.establishers.EstablisherKind
 import models.register.establishers.company.director.DirectorDetails
 import models.register.trustees.TrusteeKind
-import models.{CheckMode, Index, NormalMode}
+import models.{Index, NormalMode}
 
 import scala.language.implicitConversions
 
@@ -41,55 +41,47 @@ object EditableItem {
         EditableItem(
           index,
           director.directorName,
-          routes.ConfirmDeleteDirectorController.onPageLoad(directors._1, index).url,
-          routes.DirectorDetailsController.onPageLoad(NormalMode, directors._1, Index(index)).url
+          establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(directors._1, index).url,
+          establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, directors._1, Index(index)).url
         )
     }
   }
 
-  implicit def fromEntityDetails(entity: Seq[(String, String, EntityKind)]): Seq[EditableItem]= {
-    entity.zipWithIndex.map {
-      case (entity, index) =>
-        entity._3 match {
-
-          case EntityKind.Establisher => {
-            val establisherKind = entity._2 match {
-              case url if url == controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
-              => EstablisherKind.Company
-              case url if url == controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, index).url
-              => EstablisherKind.Indivdual
-              case _ => throw new IllegalArgumentException(s"Cannot determine establisher kind: ${entity._1} - ${entity._2} - ${index}")
-            }
-
-            EditableItem(
-              index,
-              entity._1,
-              controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(index, establisherKind).url,
-              entity._2
-            )
+  implicit def fromEntityDetails(entity: Seq[(String, String, EntityKind)]): Seq[EditableItem] = entity.zipWithIndex.map {
+    case ((entityName, changeUrl, entityKind), index) =>
+      entityKind match {
+        case EntityKind.Establisher =>
+          val establisherKind = changeUrl match {
+            case url if changeUrl == establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
+            => EstablisherKind.Company
+            case url if changeUrl == establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, index).url
+            => EstablisherKind.Indivdual
+            case _ => throw new IllegalArgumentException(s"Cannot determine establisher kind: $entityName")
           }
 
+          EditableItem(
+            index,
+            entityName,
+            establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(index, establisherKind).url,
+            changeUrl
+          )
 
-
-
-          case EntityKind.Trustee => {
-            val trusteeKind = entity._2 match {
-              case url if url == controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
-              => TrusteeKind.Company
-              case url if url == controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(CheckMode, index).url
-              => TrusteeKind.Individual
-              case _ => throw new IllegalArgumentException(s"Cannot determine trustee kind: ${entity._1} - ${entity._2} - ${index}")
-            }
-
-            EditableItem(
-              index,
-              entity._1,
-              controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(Index(index), trusteeKind).url,
-              entity._2
-            )
+        case EntityKind.Trustee =>
+          val trusteeKind = changeUrl match {
+            case url if changeUrl == trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
+            => TrusteeKind.Company
+            case url if changeUrl == trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, index).url
+            => TrusteeKind.Individual
+            case _ => throw new IllegalArgumentException(s"Cannot determine trustee kind: $entityName")
           }
-          case _ => throw new IllegalArgumentException(s"Cannot determine entity kind: ${entity._3}")
-        }
-    }
+
+          EditableItem(
+            index,
+            entityName,
+            trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(Index(index), trusteeKind).url,
+            changeUrl
+          )
+        case _ => throw new IllegalArgumentException(s"Cannot determine entity kind: $entityKind")
+      }
   }
 }

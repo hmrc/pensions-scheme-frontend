@@ -31,43 +31,47 @@ import views.html.register.trustees.addTrustee
 
 class AddTrusteeViewSpec extends YesNoViewBehaviours with EditableItemListBehaviours {
 
-  val onwardRoute = routes.AddTrusteeController.onPageLoad(NormalMode).url
-  def companyUrl(index: Int) = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
-  def individualUrl(index: Int) = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0).url
+  private val onwardRoute = routes.AddTrusteeController.onPageLoad(NormalMode).url
 
-  val messageKeyPrefix = "addTrustee"
-  val schemeName = "Test scheme name"
+  private def companyUrl(index: Int) = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
+
+  private def individualUrl(index: Int) = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0).url
+
+  private val messageKeyPrefix = "addTrustee"
+  private val schemeName = "Test scheme name"
   private val maxTrustees = frontendAppConfig.maxTrustees
-  val trusteeCompany = ("Trustee Company" -> companyUrl(0))
-  val trusteeIndividual = ("John Doe" -> individualUrl(0))
-  val companyDetails = CompanyDetails(
+  private val trusteeCompany = "Trustee Company" -> companyUrl(0)
+  private val trusteeIndividual = "John Doe" -> individualUrl(0)
+  private val companyDetails = CompanyDetails(
     "Trustee Company",
     None,
     None
   )
 
-  val trusteeDetails = PersonDetails(
+  private val trusteeDetails = PersonDetails(
     "John",
     None,
     "Doe",
     LocalDate.now()
   )
 
-  val userAnswers =
+  private val userAnswers =
     UserAnswers()
       .set(CompanyDetailsId(0))(companyDetails)
       .flatMap(_.set(TrusteeDetailsId(1))(trusteeDetails))
       .asOpt
       .value
 
-  val trustees = userAnswers.allTrustees
-  val fullTrustees = (0 to 9).map(index => ("trustee name", companyUrl(index)))
+  private val trustees = userAnswers.allTrustees
+  private val fullTrustees = (0 to 9).map(index => ("trustee name", companyUrl(index)))
 
   val form = new AddTrusteeFormProvider()()
 
-  def createView(trustees: Seq[(String, String)] = Seq.empty)  = () => addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages)
+  private def createView(trustees: Seq[(String, String)] = Seq.empty) = () =>
+    addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages)
 
-  def createViewUsingForm(trustees: Seq[(String, String)] = Seq.empty)  = (form: Form[Boolean]) => addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages)
+  private def createViewUsingForm(trustees: Seq[(String, String)] = Seq.empty) = (form: Form[Boolean]) =>
+    addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages)
 
   "AddTrustee view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
