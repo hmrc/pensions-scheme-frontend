@@ -54,8 +54,9 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val listOfSchemesUrl: String = pensionsSchemeUrl +
     runModeConfiguration.underlying.getString("urls.listOfSchemes")
   lazy val pensionSchemeOnlineServiceUrl: String = loadConfig("urls.pensionSchemeOnlineService")
-
-
+  lazy val pensionAdministratorGovUkLink = runModeConfiguration.underlying.getString("urls.pensionAdministratorGovUkLink")
+  lazy val pensionPractitionerGovUkLink = runModeConfiguration.underlying.getString("urls.pensionPractitionerGovUkLink")
+  lazy val govUkLink = runModeConfiguration.underlying.getString("urls.govUkLink")
   lazy val languageTranslationEnabled = runModeConfiguration.getBoolean("microservice.services.features.welsh-translation").getOrElse(true)
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),

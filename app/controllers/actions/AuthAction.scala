@@ -56,7 +56,7 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
       case _: UnsupportedCredentialRole =>
         Redirect(routes.UnauthorisedController.onPageLoad)
       case _: PsaIdNotFound =>
-        Redirect(config.registerSchemeAdministratorUrl)
+        Redirect(controllers.routes.YouNeedToRegisterController.onPageLoad())
     }
   }
 
