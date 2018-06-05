@@ -19,7 +19,7 @@ package navigators
 import base.SpecBase
 import identifiers.Identifier
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.{AddEstablisherId, EstablisherKindId}
+import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.NormalMode
@@ -49,7 +49,8 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
     (AddEstablisherId(Some(false)), addEstablishersFalseWithNoScheme,     expired,                    None: Option[Call]),
     (EstablisherKindId(0),          company,                              companyDetails,             None: Option[Call]),
     (EstablisherKindId(0),          individual,                           individualDetails,          None),
-    (EstablisherKindId(0),          emptyAnswers,                         expired,                    None)
+    (EstablisherKindId(0),          emptyAnswers,                         expired,                    None),
+    (ConfirmDeleteEstablisherId,    emptyAnswers,                         addEstablisher,             None)
   )
 
   navigator.getClass.getSimpleName must {
@@ -82,6 +83,7 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
   private val establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
   private val addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
   private val haveAnyTrustee = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+  private val addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
 
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
 

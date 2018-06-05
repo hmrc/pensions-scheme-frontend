@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import identifiers.Identifier
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.{AddEstablisherId, EstablisherKindId}
+import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import identifiers.register.trustees.HaveAnyTrusteesId
 import models.NormalMode
 import models.register.{SchemeDetails, SchemeType}
@@ -33,6 +33,8 @@ class EstablishersNavigator @Inject()(config: FrontendAppConfig) extends Navigat
   override protected def routeMap: PartialFunction[Identifier, UserAnswers => Call] = {
     case AddEstablisherId(value) => addEstablisherRoutes(value)
     case EstablisherKindId(index) => establisherKindRoutes(index)
+    case ConfirmDeleteEstablisherId =>
+      _ => controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
   }
 
   private def establisherKindRoutes(index: Int)(answers: UserAnswers): Call = {
