@@ -16,18 +16,29 @@
 
 package navigators
 
+import base.SpecBase
+import config.FrontendAppConfig
 import identifiers.register._
 import models.register.{SchemeDetails, SchemeType}
 import models.{CheckMode, CompanyDetails, Mode, NormalMode}
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.MustMatchers
+import play.api.Configuration
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
 
-class RegisterNavigatorSpec extends WordSpec with MustMatchers with NavigatorBehaviour {
+class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import RegisterNavigatorSpec._
 
-  private lazy val routes = Table(
+  private def navigator(isEstablisherRestricted: Boolean = false) = {
+    val application = new GuiceApplicationBuilder()
+      .configure(Configuration("microservice.services.features.restrict-establisher" -> isEstablisherRestricted))
+    val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+    new RegisterNavigator(appConfig)
+  }
+
+  private lazy val routesWithRestrictedEstablisher = Table(
     ("Id",                          "User Answers",       "Next Page (Normal Mode)",              "Next Page (Check Mode)"),
     // Start - what you will need
     (WhatYouWillNeedId,             emptyAnswers,         schemeDetails(NormalMode),              None),
@@ -53,7 +64,7 @@ class RegisterNavigatorSpec extends WordSpec with MustMatchers with NavigatorBeh
     (UKBankDetailsId,               emptyAnswers,         checkYourAnswers,                       Some(checkYourAnswers)),
 
     //Check your answers - jump off to establishers
-    (CheckYourAnswersId,            noEstablishers,       establisherKind,                        None),
+    (CheckYourAnswersId,            noEstablishers,       addEstablisher,                         None),
     (CheckYourAnswersId,            hasEstablishers,      schemeReview,                           None),
     (CheckYourAnswersId,            needsTrustees,        addTrustee,                             None),
 
@@ -66,17 +77,22 @@ class RegisterNavigatorSpec extends WordSpec with MustMatchers with NavigatorBeh
     (DeclarationDutiesId,           dutiesFalse,          adviserDetails,                         None),
     (DeclarationDutiesId,           emptyAnswers,         expired,                                None)
   )
-
-  navigator.getClass.getSimpleName must {
-    behave like navigatorWithRoutes(navigator, routes, dataDescriber)
+  s"${navigator().getClass.getSimpleName} when restrict-establisher toggle is off" must {
+    behave like navigatorWithRoutes(navigator(), routesWithRestrictedEstablisher, dataDescriber)
   }
 
+  //Delete the test case when the restrict-establisher toggle is removed
+  private lazy val routesWithNoRestrictedEstablisher = Table(
+    ("Id",                          "User Answers",       "Next Page (Normal Mode)",              "Next Page (Check Mode)"),
+    (CheckYourAnswersId,            noEstablishers,       establisherKind,                         None)
+  )
+  s"${navigator(true).getClass.getSimpleName} when restrict-establisher toggle is on" must {
+    behave like navigatorWithRoutes(navigator(true), routesWithNoRestrictedEstablisher, dataDescriber)
+  }
 }
 
 //noinspection MutatorLikeMethodIsParameterless
 object RegisterNavigatorSpec extends Enumerable.Implicits {
-
-  private val navigator = new RegisterNavigator()
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private val securedBenefitsTrue = UserAnswers().securedBenefits(true)
@@ -114,8 +130,8 @@ object RegisterNavigatorSpec extends Enumerable.Implicits {
   private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
   private def adviserDetails = controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
   private def establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
+  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
-  private def logout = controllers.routes.LogoutController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
