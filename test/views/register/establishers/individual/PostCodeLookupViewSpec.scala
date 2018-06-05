@@ -45,7 +45,7 @@ class PostCodeLookupViewSpec extends StringViewBehaviours {
     behave like pageWithBackLink(createView)
 
     behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.PostCodeLookupController.onSubmit(NormalMode, firstIndex).url,
-      Some("messages__common__address_postcode"), expectedHint = Some("messages__common__address_postcode_hint"))
+      Some("messages__common__address_postcode"))
 
     "have establisher name rendered on the page" in {
       Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)
