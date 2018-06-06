@@ -104,7 +104,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       )
     }
 
-    "redirect to Advisor Address Post Code Lookup if no address data on a POST request" in {
+    "redirect to Adviser Address Post Code Lookup if no address data on a POST request" in {
       requestResult(
         implicit app => addToken(FakeRequest(routes.AdviserAddressListController.onSubmit(NormalMode))
           .withFormUrlEncodedBody(("value", "0"))), getEmptyData,
