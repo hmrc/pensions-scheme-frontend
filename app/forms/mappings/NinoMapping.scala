@@ -21,7 +21,7 @@ import play.api.data.Forms.tuple
 import uk.gov.voa.play.form.ConditionalMappings.{mandatoryIfFalse, mandatoryIfTrue}
 import play.api.data.Mapping
 
-trait NinoMapping extends Mappings {
+trait NinoMapping extends Mappings with Transforms {
 
    def ninoMapping(requiredKey: String = "messages__error__has_nino_establisher",
                             requiredNinoKey: String = "messages__error__nino",
@@ -42,7 +42,7 @@ trait NinoMapping extends Mappings {
     def toNino(ninoTuple: (Boolean, Option[String], Option[String])) = {
 
       ninoTuple match {
-        case (true, Some(nino), None)  => Nino.Yes(nino)
+        case (true, Some(nino), None)  => Nino.Yes(strip(nino).toUpperCase)
         case (false, None, Some(reason))  => Nino.No(reason)
         case _ => throw new RuntimeException("Invalid selection")
       }

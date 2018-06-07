@@ -22,6 +22,10 @@ trait Transforms {
     strip(value).replaceAll("^[gG][bB]", "")
   }
 
+  def payeTransform(value: String): String = {
+    standardTextTransform(value)
+  }
+
   def noTransform(value: String): String = {
     value
   }
