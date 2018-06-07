@@ -41,9 +41,12 @@ trait UtrBehaviour extends FormSpec with UtrMapping with PropertyChecks with Gen
       val utr = "uniqueTaxReference.utr"
       val reason = "uniqueTaxReference.reason"
 
-      "bind a valid uniqueTaxReference with utr when yes is selected" in {
-        val result = testForm.bind(Map(hasUtr -> "true", utr -> "1234556676"))
-        result.get shouldBe UniqueTaxReference.Yes("1234556676")
+      Seq("1234556676", " 1234454646 ").foreach {
+        utrNo =>
+          s"bind a valid uniqueTaxReference with utr $utrNo when yes is selected" in {
+            val result = testForm.bind(Map(hasUtr -> "true", utr -> utrNo))
+            result.get shouldBe UniqueTaxReference.Yes(utrNo.trim)
+          }
       }
 
       "fail to bind" when {

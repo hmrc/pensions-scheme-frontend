@@ -58,7 +58,6 @@ trait PayeBehaviours extends FormSpec with StringFieldBehaviours with Constraint
       val testForm = form.bind(Map(fieldName -> " 1234567890123 "))
       testForm.get shouldEqual "1234567890123"
     }
-
   }
 
 }
