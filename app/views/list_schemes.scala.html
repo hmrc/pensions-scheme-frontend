@@ -16,61 +16,14 @@
 
 @import config.FrontendAppConfig
 @import models.SchemeDetail
+@import views.formatters.Date
 
 @(appConfig: FrontendAppConfig, schemes: List[SchemeDetail])(implicit request: Request[_], messages: Messages)
 
-@schemeNameId(index: Int) = @{
-    s"schemeName-$index"
-}
-
-@srnId(index: Int) = @{
-    s"srn-$index"
-}
-
-@pstrId(index: Int) = @{
-    s"pstr-$index"
-}
-
-@statusId(index: Int) = @{
-    s"schemeStatus-$index"
-}
-
-@pstrValue(pstr: Option[String]) = @{
-    pstr.getOrElse(messages("messages__listSchemes__pstr_not_assigned"))
-}
-
-@statusValue(status: String) = @{
-    status match {
-        case "Pending"                  => messages("messages__listSchemes__status_pending")
-        case "Pending Info Required"    => messages("messages__listSchemes__status_pending")
-        case "Pending Info Received"    => messages("messages__listSchemes__status_pending")
-        case "Rejected"                 => messages("messages__listSchemes__status_rejected")
-        case "Open"                     => messages("messages__listSchemes__status_open")
-        case "Deregistered"             => messages("messages__listSchemes__status_closed")
-        case "Wound-up"                 => messages("messages__listSchemes__status_closed")
-        case "Rejected Under Appeal"    => messages("messages__listSchemes__status_rejected")
-        case _ => status
-    }
-}
-
-@statusClass(status: String) = @{
-    status match {
-        case "Pending"                  => "incomplete"
-        case "Pending Info Required"    => "incomplete"
-        case "Pending Info Received"    => "incomplete"
-        case "Rejected"                 => "rejected"
-        case "Open"                     => "complete"
-        case "Deregistered"             => "not-started"
-        case "Wound-up"                 => "not-started"
-        case "Rejected Under Appeal"    => "rejected"
-        case _ => ""
-    }
-}
-
 @main_template(
-title = messages("messages__listSchemes__title"),
-appConfig = appConfig,
-bodyClasses = Some("full-width")) {
+    title = messages("messages__listSchemes__title"),
+    appConfig = appConfig,
+    bodyClasses = Some("full-width")) {
 
     @components.back_link()
 
@@ -82,38 +35,7 @@ bodyClasses = Some("full-width")) {
             <p><a id="registerNewScheme" href="@(controllers.routes.WhatYouWillNeedController.onPageLoad.url)">@messages("messages__listSchemes__registerNewScheme")</a></p>
         </div>
     } else {
-        <div class="column-full" id="scheme-grid">
-            <div class="grid-row" aria-hidden="true">
-                <div class="column-two-sixths table-header">
-                    <p id="schemeName" class="heading-small">@messages("messages__listSchemes__column_schemeName")</p>
-                </div>
-                <div class="column-one-sixth table-header">
-                    <p id="srn" class="heading-small">@messages("messages__listSchemes__column_srn")</p>
-                </div>
-                <div class="column-one-sixth table-header">
-                    <p id="pstr" class="heading-small">@messages("messages__listSchemes__column_pstr")</p>
-                </div>
-                <div class="column-one-sixth table-header">
-                    <p id="schemeStatus" class="heading-small">@messages("messages__listSchemes__column_status")</p>
-                </div>
-            </div>
+        @components.scheme_list(schemes, messages("messages__listSchemes__not_open_closed_heading"), "0")
 
-            @for((scheme, index) <- schemes.zipWithIndex) {
-                <div class="row-group grid-row">
-                    <div class="column-two-sixths table-column scheme-name">
-                        <p id="@{schemeNameId(index)}">@scheme.name</p>
-                    </div>
-                    <div class="column-one-sixth table-column scheme-name">
-                        <p id="@{srnId(index)}" data-title='@messages("messages__listSchemes__column_srn")&nbsp;'>@scheme.referenceNumber</p>
-                    </div>
-                    <div class="column-one-sixth table-column scheme-name">
-                        <p id="@{pstrId(index)}" data-title='@messages("messages__listSchemes__column_pstr")&nbsp;'>@pstrValue(scheme.pstr)</p>
-                    </div>
-                    <div class="column-one-sixth table-column scheme-name">
-                        <p class="status"><span id="@{statusId(index)}" class="@statusClass(scheme.schemeStatus)">@statusValue(scheme.schemeStatus)</span></p>
-                    </div>
-                </div>
-            }
-        </div>
     }
 }

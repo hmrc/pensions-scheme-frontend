@@ -76,32 +76,30 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       actual must haveElementWithText("pstr-7", "Not assigned")
     }
 
-    "display the abridged status not the full value" in {
+    "display the full status value" in {
       val actual = view(frontendAppConfig, fullList)
 
       actual must haveElementWithText("schemeStatus-0", "Pending")
-      actual must haveElementWithText("schemeStatus-1", "Pending")
-      actual must haveElementWithText("schemeStatus-2", "Pending")
+      actual must haveElementWithText("schemeStatus-1", "Pending information required")
+      actual must haveElementWithText("schemeStatus-2", "Pending information received")
       actual must haveElementWithText("schemeStatus-3", "Rejected")
       actual must haveElementWithText("schemeStatus-4", "Open")
-      actual must haveElementWithText("schemeStatus-5", "Closed")
-      actual must haveElementWithText("schemeStatus-6", "Closed")
-      actual must haveElementWithText("schemeStatus-7", "Rejected")
+      actual must haveElementWithText("schemeStatus-5", "Deregistered")
+      actual must haveElementWithText("schemeStatus-6", "Wound up")
+      actual must haveElementWithText("schemeStatus-7", "Rejected under appeal")
     }
 
-    "display the correct style for each status" in {
+    "display the date" in {
       val actual = view(frontendAppConfig, fullList)
 
-      actual must haveElementWithClass("schemeStatus-0", "incomplete")
-      actual must haveElementWithClass("schemeStatus-1", "incomplete")
-      actual must haveElementWithClass("schemeStatus-2", "incomplete")
-      actual must haveElementWithClass("schemeStatus-3", "rejected")
-      actual must haveElementWithClass("schemeStatus-4", "complete")
-      actual must haveElementWithClass("schemeStatus-5", "not-started")
-      actual must haveElementWithClass("schemeStatus-6", "not-started")
-      actual must haveElementWithClass("schemeStatus-7", "rejected")
+      actual must haveElementWithText("schemeDate-0", "29 November 2017")
     }
 
+    "display the no date text" in {
+      val actual = view(frontendAppConfig, fullList)
+
+      actual must haveElementWithText("schemeDate-1", "Scheme not open")
+    }
   }
 
 }
@@ -114,7 +112,7 @@ object ListSchemesViewSpec {
       "scheme-name-0",
       "reference-number-0",
       "Pending",
-      None,
+      Option("29 November 2017"),
       None,
       None,
       None

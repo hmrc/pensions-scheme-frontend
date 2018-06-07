@@ -1,0 +1,121 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.formatters.Date
+
+@(schemes: List[SchemeDetail], listHeading: String, listId: String)(implicit messages: Messages)
+
+@schemeNameId(index: Int) = @{
+    s"schemeName-$index"
+}
+
+@srnId(index: Int) = @{
+    s"srn-$index"
+}
+
+@pstrId(index: Int) = @{
+    s"pstr-$index"
+}
+
+@statusId(index: Int) = @{
+    s"schemeStatus-$index"
+}
+
+@statusDate(index: Int) = @{
+    s"schemeDate-$index"
+}
+
+@pstrValue(pstr: Option[String]) = @{
+    pstr.getOrElse(messages("messages__listSchemes__pstr_not_assigned"))
+}
+
+@dateValue(date: Option[String]) = @{
+    if(date.nonEmpty){
+        Date.IsoLocalToViewDate(date.getOrElse(""))
+    } else {
+        messages("messages__listSchemes__no_date")
+    }
+}
+
+@statusValue(status: String) = @{
+    status match {
+        case "Pending"                  => messages("messages__listSchemes__status_pending")
+        case "Pending Info Required"    => messages("messages__listSchemes__status_pending_req")
+        case "Pending Info Received"    => messages("messages__listSchemes__status_pending_rec")
+        case "Rejected"                 => messages("messages__listSchemes__status_rejected")
+        case "Open"                     => messages("messages__listSchemes__status_open")
+        case "Deregistered"             => messages("messages__listSchemes__status_deregistered")
+        case "Wound-up"                 => messages("messages__listSchemes__status_wound_up")
+        case "Rejected Under Appeal"    => messages("messages__listSchemes__status_rejected_appeal")
+        case _ => status
+    }
+}
+
+@statusClass(status: String) = @{
+    status match {
+        case "Pending"                  => "incomplete"
+        case "Pending Info Required"    => "incomplete"
+        case "Pending Info Received"    => "incomplete"
+        case "Rejected"                 => "rejected"
+        case "Open"                     => "complete"
+        case "Deregistered"             => "not-started"
+        case "Wound-up"                 => "not-started"
+        case "Rejected Under Appeal"    => "rejected"
+        case _ => ""
+    }
+}
+
+<h2 class="heading-medium">@listHeading</h2>
+
+<div id="@{listId}SchemeList">
+    <div class="grid-row" aria-hidden="true">
+        <div class="column-two-sixths table-header">
+            <p id="schemeName" class="heading-small">@messages("messages__listSchemes__column_schemeName")</p>
+        </div>
+        <div class="column-one-sixth table-header">
+            <p id="srn" class="heading-small">@messages("messages__listSchemes__column_srn")</p>
+        </div>
+        <div class="column-one-sixth table-header">
+            <p id="pstr" class="heading-small">@messages("messages__listSchemes__column_pstr")</p>
+        </div>
+        <div class="column-one-sixth table-header">
+            <p id="schemeStatus" class="heading-small">@messages("messages__listSchemes__column_status")</p>
+        </div>
+        <div class="column-one-sixth table-header">
+            <p id="schemeDate" class="heading-small">@messages("messages__listSchemes__column_date")</p>
+        </div>
+    </div>
+
+    @for((scheme, index) <- schemes.zipWithIndex) {
+    <div class="row-group grid-row">
+        <div class="column-two-sixths table-column scheme-name">
+            <p id="@{schemeNameId(index)}">@scheme.name</p>
+        </div>
+        <div class="column-one-sixth table-column scheme-name">
+            <p id="@{srnId(index)}" data-title='@messages("messages__listSchemes__column_srn")&nbsp;'>@scheme.referenceNumber</p>
+        </div>
+        <div class="column-one-sixth table-column scheme-name">
+            <p id="@{pstrId(index)}" data-title='@messages("messages__listSchemes__column_pstr")&nbsp;'>@pstrValue(scheme.pstr)</p>
+        </div>
+        <div class="column-one-sixth table-column scheme-name">
+            <p id="@{statusId(index)}">@statusValue(scheme.schemeStatus)</p>
+        </div>
+        <div class="column-one-sixth table-column scheme-name">
+            <p id="@{statusDate(index)}">@dateValue(scheme.openDate)</p>
+        </div>
+    </div>
+    }
+</div>
