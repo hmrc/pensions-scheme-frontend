@@ -17,11 +17,11 @@
 package forms.behaviours
 
 import forms.FormSpec
-import forms.mappings.{Constraints, PayeMapping, Transforms}
-import play.api.data.{Form, FormError, Mapping}
+import forms.mappings.{Constraints, PayeMapping}
+import play.api.data.{Form, FormError}
 import wolfendale.scalacheck.regexp.RegexpGen
 
-trait PayeBehaviours extends FormSpec with StringFieldBehaviours with Constraints with PayeMapping with Transforms{
+trait PayeBehaviours extends FormSpec with StringFieldBehaviours with Constraints with PayeMapping {
 
   def formWithPayeField(
        form: Form[_],
@@ -51,4 +51,5 @@ trait PayeBehaviours extends FormSpec with StringFieldBehaviours with Constraint
       )
     }
   }
+
 }

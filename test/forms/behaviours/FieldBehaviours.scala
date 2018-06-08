@@ -43,21 +43,6 @@ trait FieldBehaviours extends FormSpec with PropertyChecks with Generators with 
     }
   }
 
-  def fieldThatBindsValidDataWithTransform(form: Form[_],
-                                          transformName: String,
-                                           data: Map[String, String],
-                                          transformFn: (String) => String,
-                                          fieldName: String,
-                                          validData: Seq[String]): Unit = {
-    s"bind valid data with $transformName" in {
-      validData.foreach {
-        dataItem: String =>
-          val result = form.bind(data).apply(fieldName)
-          result.value.value shouldBe transformFn(dataItem)
-      }
-    }
-  }
-
   def mandatoryField(form: Form[_],
                      fieldName: String,
                      requiredError: FormError): Unit = {

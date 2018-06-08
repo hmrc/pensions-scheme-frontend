@@ -30,6 +30,10 @@ trait Transforms {
     value.trim
   }
 
+  def ninoTransform(value: String): String = {
+    strip(value).toUpperCase
+  }
+
   protected def strip(value: String): String = {
     value.replaceAll(" ", "")
   }

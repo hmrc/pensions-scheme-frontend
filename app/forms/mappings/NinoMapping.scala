@@ -42,7 +42,7 @@ trait NinoMapping extends Mappings with Transforms {
     def toNino(ninoTuple: (Boolean, Option[String], Option[String])) = {
 
       ninoTuple match {
-        case (true, Some(nino), None)  => Nino.Yes(strip(nino).toUpperCase)
+        case (true, Some(nino), None)  => Nino.Yes(nino)
         case (false, None, Some(reason))  => Nino.No(reason)
         case _ => throw new RuntimeException("Invalid selection")
       }
@@ -50,7 +50,7 @@ trait NinoMapping extends Mappings with Transforms {
 
     tuple("hasNino" -> boolean(requiredKey),
       "nino" -> mandatoryIfTrue("nino.hasNino",
-        text(requiredNinoKey)
+        text(requiredNinoKey).transform(ninoTransform, noTransform)
           .verifying(validNino(invalidNinoKey))),
       "reason" -> mandatoryIfFalse("nino.hasNino",
         text(requiredReasonKey).

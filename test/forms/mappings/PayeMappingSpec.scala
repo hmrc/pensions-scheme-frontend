@@ -35,8 +35,6 @@ class PayeMappingSpec extends PayeBehaviours {
       keyPayeLength,
       keyPayeInvalid
     )
-
-
   }
 
 }
