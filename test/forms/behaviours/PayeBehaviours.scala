@@ -50,14 +50,5 @@ trait PayeBehaviours extends FormSpec with StringFieldBehaviours with Constraint
         FormError(fieldName, keyPayeInvalid, Seq(regexPaye))
       )
     }
-
-    "Succesfully bind when a CRN is provided with spaces" in {
-      val mapping: Mapping[String] = payeMapping(keyPayeLength, keyPayeInvalid)
-      val form: Form[String] = Form(fieldName -> mapping)
-
-      val testForm = form.bind(Map(fieldName -> " 1234567890123 "))
-      testForm.get shouldEqual "1234567890123"
-    }
   }
-
 }

@@ -18,6 +18,7 @@ package forms
 
 import forms.behaviours.{PayeBehaviours, StringFieldBehaviours, VatBehaviours}
 import forms.mappings.Constraints
+import models.CompanyDetails
 import org.scalatest.OptionValues
 import play.api.data.FormError
 import wolfendale.scalacheck.regexp.RegexpGen
@@ -88,7 +89,17 @@ class CompanyDetailsFormProviderSpec extends StringFieldBehaviours with Constrai
       keyPayeLength,
       keyPayeInvalid
     )
+  }
 
+  "form" must {
+    val rawData = Map("companyName" -> "test company", "vatNumber" -> " GB1 2 3 456789 ", "payeNumber" -> " 1234567898765 ")
+    val expectedData = CompanyDetails("test company", Some("123456789"), Some("1234567898765"))
+
+    behave like formWithTransform[CompanyDetails](
+      form,
+      rawData,
+      expectedData
+    )
   }
 
 }

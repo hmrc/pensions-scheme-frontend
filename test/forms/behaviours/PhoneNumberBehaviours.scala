@@ -37,14 +37,6 @@ trait PhoneNumberBehaviours extends FormSpec with StringFieldBehaviours with Con
         numbersWithMaxLength(PhoneNumberMapping.maxPhoneNumberLength)
       )
 
-      behave like fieldThatBindsValidDataWithTransform(
-        form,
-        "standardTextTransform",
-        standardTextTransform,
-        fieldName,
-        Seq(" 123456789123445678978654 ")
-      )
-
       behave like fieldWithMaxLength(
         form,
         fieldName,

@@ -18,6 +18,7 @@ package forms.register
 
 import forms.behaviours.{EmailBehaviours, PhoneNumberBehaviours, StringFieldBehaviours}
 import forms.mappings.Constraints
+import models.register.AdviserDetails
 import org.scalatest.OptionValues
 import play.api.data.FormError
 import wolfendale.scalacheck.regexp.RegexpGen
@@ -90,6 +91,17 @@ class AdviserDetailsFormProviderSpec extends  StringFieldBehaviours with Constra
       keyPhoneNumberRequired,
       keyPhoneNumberLength,
       keyPhoneNumberInvalid
+    )
+  }
+
+  "form" must {
+    val rawData = Map("adviserName" -> "adviser name", "emailAddress" -> "test@test.com", "phoneNumber" -> " 123456789012345678901234 ")
+    val expectedData = AdviserDetails("adviser name", "test@test.com", "123456789012345678901234")
+
+    behave like formWithTransform(
+      form,
+      rawData,
+      expectedData
     )
   }
 }
