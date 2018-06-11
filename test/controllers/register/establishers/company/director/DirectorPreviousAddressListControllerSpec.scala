@@ -39,6 +39,9 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
 
   private val directorDetails = DirectorDetails("Joe", None, "Bloggs", LocalDate.now())
 
+  val previousAddressTitle = "Select the previous address"
+  val previousAddressHeading = "Select the previous address"
+
   private val addresses = Seq(
     TolerantAddress(
       Some("Address 1 Line 1"),
@@ -191,6 +194,8 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
       routes.DirectorPreviousAddressListController.onSubmit(NormalMode, Index(0), Index(0)),
       routes.DirectorPreviousAddressController.onPageLoad(NormalMode, Index(0), Index(0)),
       addresses,
+      title = previousAddressTitle,
+      heading = previousAddressHeading,
       subHeading = Some(Message(directorDetails.directorName))
     )
   }
