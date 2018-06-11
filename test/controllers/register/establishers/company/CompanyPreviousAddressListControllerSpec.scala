@@ -43,6 +43,8 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
   val index = Index(0)
   val companyName = "test company name"
   val schemeName = "test scheme name"
+  val previousAddressTitle = "Select the previous address"
+  val previousAddressHeading = "Select the previous address"
   val addresses = Seq(
     address("test post code 1"),
     address("test post code 2")
@@ -86,6 +88,8 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
         routes.CompanyPreviousAddressListController.onSubmit(NormalMode, index),
         routes.CompanyPreviousAddressController.onPageLoad(NormalMode, index),
         addresses,
+        title = previousAddressTitle,
+        heading = previousAddressHeading,
         subHeading = Some(companyName)
 
       )

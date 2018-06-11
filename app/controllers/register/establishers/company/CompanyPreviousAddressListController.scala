@@ -29,6 +29,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.Navigator
 import utils.annotations.EstablishersCompany
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.Future
@@ -61,6 +62,8 @@ class CompanyPreviousAddressListController @Inject()(
           postCall = routes.CompanyPreviousAddressListController.onSubmit(mode, index),
           manualInputCall = routes.CompanyPreviousAddressController.onPageLoad(mode, index),
           addresses = addresses,
+          title = Message("messages__select_the_previous_address__title"),
+          heading = Message("messages__select_the_previous_address__heading"),
           subHeading = Some(companyDetails.companyName)
         )
     }.left.map(_ => Future.successful(Redirect(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, index))))

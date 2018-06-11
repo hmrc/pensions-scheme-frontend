@@ -38,6 +38,10 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
 
   private val companyDetails = CompanyDetails("Test company name", None, None)
 
+  val previousAddressTitle = "Select the previous address"
+  val previousAddressHeading = "Select the previous address"
+
+
   private val addresses = Seq(
     TolerantAddress(
       Some("Address 1 Line 1"),
@@ -190,6 +194,8 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
       routes.CompanyPreviousAddressListController.onSubmit(NormalMode, Index(0)),
       routes.CompanyPreviousAddressController.onPageLoad(NormalMode, Index(0)),
       addresses,
+      title = previousAddressTitle,
+      heading = previousAddressHeading,
       subHeading = Some(Message(companyDetails.companyName))
     )
   }
