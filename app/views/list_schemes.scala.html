@@ -20,6 +20,14 @@
 
 @(appConfig: FrontendAppConfig, schemes: List[SchemeDetail])(implicit request: Request[_], messages: Messages)
 
+@openSchemes(schemes: List[SchemeDetail]) = @{
+    schemes.filter((i: SchemeDetail) => i.pstr.nonEmpty)
+}
+
+@nonOpenSchemes(schemes: List[SchemeDetail]) = @{
+    schemes.filter((i: SchemeDetail) => i.pstr.isEmpty)
+}
+
 @main_template(
     title = messages("messages__listSchemes__title"),
     appConfig = appConfig,
@@ -29,13 +37,15 @@
 
     @components.heading(headingKey = "messages__listSchemes__title")
 
+
     @if(schemes.isEmpty) {
         <div class="column-two-thirds">
             <p id="noSchemes">@messages("messages__listSchemes__noSchemes")</p>
             <p><a id="registerNewScheme" href="@(controllers.routes.WhatYouWillNeedController.onPageLoad.url)">@messages("messages__listSchemes__registerNewScheme")</a></p>
         </div>
     } else {
-        @components.scheme_list(schemes, messages("messages__listSchemes__not_open_closed_heading"), "0")
+        @components.scheme_list(openSchemes(schemes), messages("messages__listSchemes__not_open_closed_heading"), "1")
 
+        @components.scheme_list(nonOpenSchemes(schemes), messages("messages__listSchemes__not_open_closed_heading"), "2")
     }
 }

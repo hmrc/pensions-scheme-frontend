@@ -19,23 +19,23 @@
 @(schemes: List[SchemeDetail], listHeading: String, listId: String)(implicit messages: Messages)
 
 @schemeNameId(index: Int) = @{
-    s"schemeName-$index"
+    s"schemeName-$listId-$index"
 }
 
 @srnId(index: Int) = @{
-    s"srn-$index"
+    s"srn-$listId-$index"
 }
 
 @pstrId(index: Int) = @{
-    s"pstr-$index"
+    s"pstr-$listId-$index"
 }
 
 @statusId(index: Int) = @{
-    s"schemeStatus-$index"
+    s"schemeStatus-$listId-$index"
 }
 
-@statusDate(index: Int) = @{
-    s"schemeDate-$index"
+@statusDateId(index: Int) = @{
+    s"schemeDate-$listId-$index"
 }
 
 @pstrValue(pstr: Option[String]) = @{
@@ -80,7 +80,7 @@
 
 <h2 class="heading-medium">@listHeading</h2>
 
-<div id="@{listId}SchemeList">
+<div id="schemeList-@{listId}">
     <div class="grid-row" aria-hidden="true">
         <div class="column-two-sixths table-header">
             <p id="schemeName" class="heading-small">@messages("messages__listSchemes__column_schemeName")</p>
@@ -114,7 +114,7 @@
             <p id="@{statusId(index)}">@statusValue(scheme.schemeStatus)</p>
         </div>
         <div class="column-one-sixth table-column scheme-name">
-            <p id="@{statusDate(index)}">@dateValue(scheme.openDate)</p>
+            <p id="@{statusDateId(index)}">@dateValue(scheme.openDate)</p>
         </div>
     </div>
     }

@@ -648,8 +648,8 @@ messages__listSchemes__status_pending_req = Pending information required
 messages__listSchemes__status_pending_rec = Pending information received
 messages__listSchemes__status_rejected = Rejected
 messages__listSchemes__status_open = Open
-messages__listSchemes__status_deregistered = Deregistered
-messages__listSchemes__status_wound_up = Wound up
+messages__listSchemes__status_deregistered = De-registered
+messages__listSchemes__status_wound_up = Wound-up
 messages__listSchemes__status_rejected_appeal = Rejected under appeal
 
 messages__schemesOverview__title = Manage and register your pension schemes

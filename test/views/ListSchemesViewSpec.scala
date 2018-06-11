@@ -56,52 +56,103 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
     "display the correct rows when there are schemes to display" in {
       val actual = view(frontendAppConfig, fullList)
 
-      fullList.zipWithIndex.foreach {
-        case (scheme, index) =>
-          actual must haveElementWithText(s"schemeName-$index", scheme.name)
-          actual must haveElementWithText(s"srn-$index", scheme.referenceNumber)
-      }
+      //table 1
+      actual must haveElementWithText(s"schemeName-1-0", "scheme-name-4")
+      actual must haveElementWithText(s"srn-1-0", "reference-number-4")
+
+      actual must haveElementWithText(s"schemeName-1-1", "scheme-name-5")
+      actual must haveElementWithText(s"srn-1-1", "reference-number-5")
+
+      actual must haveElementWithText(s"schemeName-1-2", "scheme-name-6")
+      actual must haveElementWithText(s"srn-1-2", "reference-number-6")
+
+      //table 2
+      actual must haveElementWithText(s"schemeName-2-0", "scheme-name-0")
+      actual must haveElementWithText(s"srn-2-0", "reference-number-0")
+
+      actual must haveElementWithText(s"schemeName-2-1", "scheme-name-1")
+      actual must haveElementWithText(s"srn-2-1", "reference-number-1")
+
+      actual must haveElementWithText(s"schemeName-2-2", "scheme-name-2")
+      actual must haveElementWithText(s"srn-2-2", "reference-number-2")
+
+      actual must haveElementWithText(s"schemeName-2-3", "scheme-name-3")
+      actual must haveElementWithText(s"srn-2-3", "reference-number-3")
+
+      actual must haveElementWithText(s"schemeName-2-4", "scheme-name-7")
+      actual must haveElementWithText(s"srn-2-4", "reference-number-7")
     }
 
     "display either PSTR or 'Not assigned' when there is no value" in {
       val actual = view(frontendAppConfig, fullList)
 
-      actual must haveElementWithText("pstr-0", "Not assigned")
-      actual must haveElementWithText("pstr-1", "Not assigned")
-      actual must haveElementWithText("pstr-2", "Not assigned")
-      actual must haveElementWithText("pstr-3", "Not assigned")
-      actual must haveElementWithText("pstr-4", "PSTR-4")
-      actual must haveElementWithText("pstr-5", "PSTR-5")
-      actual must haveElementWithText("pstr-6", "PSTR-6")
-      actual must haveElementWithText("pstr-7", "Not assigned")
+      //table 1
+      actual must haveElementWithText("pstr-1-0", "PSTR-4")
+      actual must haveElementWithText("pstr-1-1", "PSTR-5")
+      actual must haveElementWithText("pstr-1-2", "PSTR-6")
+
+      //table 2
+      actual must haveElementWithText("pstr-2-0", "Not assigned")
+      actual must haveElementWithText("pstr-2-1", "Not assigned")
+      actual must haveElementWithText("pstr-2-2", "Not assigned")
+      actual must haveElementWithText("pstr-2-3", "Not assigned")
+      actual must haveElementWithText("pstr-2-4", "Not assigned")
     }
 
     "display the full status value" in {
       val actual = view(frontendAppConfig, fullList)
 
-      actual must haveElementWithText("schemeStatus-0", "Pending")
-      actual must haveElementWithText("schemeStatus-1", "Pending information required")
-      actual must haveElementWithText("schemeStatus-2", "Pending information received")
-      actual must haveElementWithText("schemeStatus-3", "Rejected")
-      actual must haveElementWithText("schemeStatus-4", "Open")
-      actual must haveElementWithText("schemeStatus-5", "Deregistered")
-      actual must haveElementWithText("schemeStatus-6", "Wound up")
-      actual must haveElementWithText("schemeStatus-7", "Rejected under appeal")
+      //table 1
+      actual must haveElementWithText("schemeStatus-1-0", "Open")
+      actual must haveElementWithText("schemeStatus-1-1", "De-registered")
+      actual must haveElementWithText("schemeStatus-1-2", "Wound-up")
+
+      //table 2
+      actual must haveElementWithText("schemeStatus-2-0", "Pending")
+      actual must haveElementWithText("schemeStatus-2-1", "Pending information required")
+      actual must haveElementWithText("schemeStatus-2-2", "Pending information received")
+      actual must haveElementWithText("schemeStatus-2-3", "Rejected")
+      actual must haveElementWithText("schemeStatus-2-4", "Rejected under appeal")
     }
 
     "display the date" in {
       val actual = view(frontendAppConfig, fullList)
 
-      actual must haveElementWithText("schemeDate-0", "29 November 2017")
+      actual must haveElementWithText("schemeDate-1-0", "9 November 2017")
+      actual must haveElementWithText("schemeDate-1-1", "10 November 2017")
+      actual must haveElementWithText("schemeDate-1-2", "11 November 2017")
     }
 
     "display the no date text" in {
       val actual = view(frontendAppConfig, fullList)
 
-      actual must haveElementWithText("schemeDate-1", "Scheme not open")
+      actual must haveElementWithText("schemeDate-2-0", "Scheme not open")
+      actual must haveElementWithText("schemeDate-2-1", "Scheme not open")
+      actual must haveElementWithText("schemeDate-2-2", "Scheme not open")
+      actual must haveElementWithText("schemeDate-2-3", "Scheme not open")
+      actual must haveElementWithText("schemeDate-2-4", "Scheme not open")
+    }
+
+    "display a scheme list with only schemes with a PSTR number" in {
+      val actual = view(frontendAppConfig, fullList)
+
+      actual must haveClassWithSize("row-group", 3, "schemeList-1")
+      actual must haveElementWithText("schemeName-1-0", "scheme-name-4")
+      actual must haveElementWithText("schemeName-1-1", "scheme-name-5")
+      actual must haveElementWithText("schemeName-1-2", "scheme-name-6")
+    }
+
+    "display a scheme list with only schemes without a PSTR number" in {
+      val actual = view(frontendAppConfig, fullList)
+
+      actual must haveClassWithSize("row-group", 5, "schemeList-2")
+      actual must haveElementWithText("schemeName-2-0", "scheme-name-0")
+      actual must haveElementWithText("schemeName-2-1", "scheme-name-1")
+      actual must haveElementWithText("schemeName-2-2", "scheme-name-2")
+      actual must haveElementWithText("schemeName-2-3", "scheme-name-3")
+      actual must haveElementWithText("schemeName-2-4", "scheme-name-7")
     }
   }
-
 }
 
 object ListSchemesViewSpec {
@@ -112,7 +163,7 @@ object ListSchemesViewSpec {
       "scheme-name-0",
       "reference-number-0",
       "Pending",
-      Option("29 November 2017"),
+      None,
       None,
       None,
       None
@@ -148,7 +199,7 @@ object ListSchemesViewSpec {
       "scheme-name-4",
       "reference-number-4",
       "Open",
-      None,
+      Option("2017-11-09"),
       Some("PSTR-4"),
       None,
       None
@@ -157,7 +208,7 @@ object ListSchemesViewSpec {
       "scheme-name-5",
       "reference-number-5",
       "Deregistered",
-      None,
+      Option("2017-11-10"),
       Some("PSTR-5"),
       None,
       None
@@ -166,7 +217,7 @@ object ListSchemesViewSpec {
       "scheme-name-6",
       "reference-number-6",
       "Wound-up",
-      None,
+      Option("2017-11-11"),
       Some("PSTR-6"),
       None,
       None
