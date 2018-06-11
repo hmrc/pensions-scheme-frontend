@@ -92,7 +92,7 @@ class CompanyDetailsFormProviderSpec extends StringFieldBehaviours with Constrai
   }
 
   "form" must {
-    val rawData = Map("companyName" -> "test company", "vatNumber" -> " GB1 2 3 456789 ", "payeNumber" -> " 1234567898765 ")
+    val rawData = Map("companyName" -> "test company", "vatNumber" -> " GB1 2 3 456789 ", "payeNumber" -> " 123\\/4567898765 ")
     val expectedData = CompanyDetails("test company", Some("123456789"), Some("1234567898765"))
 
     behave like formWithTransform[CompanyDetails](
