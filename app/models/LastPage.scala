@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package models.requests
+package models
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.domain.PsaId
+import play.api.libs.json.{Format, Json}
 
-trait IdentifiedRequest {
-  def externalId: String
+case class LastPage(method: String, url: String)
+
+object LastPage {
+  implicit val formatsLastPage: Format[LastPage] = Json.format[LastPage]
 }
-
-case class AuthenticatedRequest[A] (request: Request[A], externalId: String, psaId: PsaId)
-  extends WrappedRequest[A](request) with IdentifiedRequest
