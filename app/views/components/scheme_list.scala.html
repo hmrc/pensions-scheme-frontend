@@ -16,7 +16,7 @@
 
 @import views.formatters.Date
 
-@(schemes: List[SchemeDetail], listHeading: String, listId: String)(implicit messages: Messages)
+@(schemes: List[SchemeDetail], listHeading: String, listId: String, schemeOpened: Boolean)(implicit messages: Messages)
 
 @schemeNameId(index: Int) = @{
     s"schemeName-$listId-$index"
@@ -85,18 +85,24 @@
         <div class="column-two-sixths table-header">
             <p id="schemeName" class="heading-small">@messages("messages__listSchemes__column_schemeName")</p>
         </div>
-        <div class="column-one-sixth table-header">
-            <p id="srn" class="heading-small">@messages("messages__listSchemes__column_srn")</p>
-        </div>
-        <div class="column-one-sixth table-header">
-            <p id="pstr" class="heading-small">@messages("messages__listSchemes__column_pstr")</p>
-        </div>
-        <div class="column-one-sixth table-header">
+        @if(!schemeOpened) {
+            <div class="column-two-sixths table-header">
+                <p id="srn" class="heading-small">@messages("messages__listSchemes__column_srn")</p>
+            </div>
+        }
+        @if(schemeOpened) {
+            <div class="column-two-sixths table-header">
+                <p id="pstr" class="heading-small">@messages("messages__listSchemes__column_pstr")</p>
+            </div>
+        }
+        <div class="@if(schemeOpened){column-one-sixth}else{column-two-sixths} table-header">
             <p id="schemeStatus" class="heading-small">@messages("messages__listSchemes__column_status")</p>
         </div>
-        <div class="column-one-sixth table-header">
-            <p id="schemeDate" class="heading-small">@messages("messages__listSchemes__column_date")</p>
-        </div>
+        @if(schemeOpened) {
+            <div class="column-one-sixth table-header">
+                <p id="schemeDate" class="heading-small">@messages("messages__listSchemes__column_date")</p>
+            </div>
+        }
     </div>
 
     @for((scheme, index) <- schemes.zipWithIndex) {
@@ -104,18 +110,24 @@
         <div class="column-two-sixths table-column scheme-name">
             <p id="@{schemeNameId(index)}">@scheme.name</p>
         </div>
-        <div class="column-one-sixth table-column scheme-name">
-            <p id="@{srnId(index)}" data-title='@messages("messages__listSchemes__column_srn")&nbsp;'>@scheme.referenceNumber</p>
-        </div>
-        <div class="column-one-sixth table-column scheme-name">
-            <p id="@{pstrId(index)}" data-title='@messages("messages__listSchemes__column_pstr")&nbsp;'>@pstrValue(scheme.pstr)</p>
-        </div>
-        <div class="column-one-sixth table-column scheme-name">
+        @if(!schemeOpened) {
+            <div class="column-two-sixths table-column scheme-name">
+                <p id="@{srnId(index)}" data-title='@messages("messages__listSchemes__column_srn")&nbsp;'>@scheme.referenceNumber</p>
+            </div>
+        }
+        @if(schemeOpened) {
+            <div class="column-two-sixths table-column scheme-name">
+                <p id="@{pstrId(index)}" data-title='@messages("messages__listSchemes__column_pstr")&nbsp;'>@pstrValue(scheme.pstr)</p>
+            </div>
+        }
+        <div class="@if(schemeOpened){column-one-sixth}else{column-two-sixths} table-column scheme-name">
             <p id="@{statusId(index)}">@statusValue(scheme.schemeStatus)</p>
         </div>
-        <div class="column-one-sixth table-column scheme-name">
-            <p id="@{statusDateId(index)}">@dateValue(scheme.openDate)</p>
-        </div>
+        @if(schemeOpened) {
+            <div class="column-one-sixth table-column scheme-name">
+                <p id="@{statusDateId(index)}">@dateValue(scheme.openDate)</p>
+            </div>
+        }
     </div>
     }
 </div>

@@ -152,6 +152,76 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       actual must haveElementWithText("schemeName-2-3", "scheme-name-3")
       actual must haveElementWithText("schemeName-2-4", "scheme-name-7")
     }
+
+    "show the PSTR table when there are schemes with PSTRs" in {
+      val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
+
+      assertRenderedById(actual, "schemeList-1")
+    }
+
+    "not show the PSTR table when there are no schemes with PSTRs" in {
+      val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
+
+      assertNotRenderedById(actual, "schemeList-1")
+    }
+
+    "show the non-PSTR table when there are schemes without PSTRS" in {
+      val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
+
+      assertRenderedById(actual, "schemeList-2")
+    }
+
+    "not show the non-PSTR tables when there are no schemes without PSTRS" in {
+      val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
+
+      assertNotRenderedById(actual, "schemeList-2")
+    }
+
+    "show the SRN column and header" when {
+      "schemes have never been opened" in {
+        val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
+
+        assertRenderedById(actual, "srn")
+
+        assertRenderedById(actual, "schemeName-1-1")
+      }
+    }
+
+    "not show the SRN column and header" when {
+      "schemes have been opened" in {
+        val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
+
+        assertNotRenderedById(actual, "srn")
+      }
+    }
+
+    "show the PSTR column and header" when {
+      "schemes have been opened" in {
+        val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
+
+      }
+    }
+
+    "not show the PSTR column and header" when {
+      "schemes have never been opened" in {
+        val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
+
+      }
+    }
+
+    "show the date column and header" when {
+      "schemes have been opened" in {
+        val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
+
+      }
+    }
+
+    "not show the date column and header" when {
+      "schemes have never been opened" in {
+        val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
+
+      }
+    }
   }
 }
 
@@ -232,6 +302,85 @@ object ListSchemesViewSpec {
       None
     )
   )
+
+  val PSTRSchemeList: List[SchemeDetail] = List(
+    SchemeDetail(
+      "scheme-name-4",
+      "reference-number-4",
+      "Open",
+      Option("2017-11-09"),
+      Some("PSTR-4"),
+      None,
+      None
+    ),
+    SchemeDetail(
+      "scheme-name-5",
+      "reference-number-5",
+      "Deregistered",
+      Option("2017-11-10"),
+      Some("PSTR-5"),
+      None,
+      None
+    ),
+    SchemeDetail(
+      "scheme-name-6",
+      "reference-number-6",
+      "Wound-up",
+      Option("2017-11-11"),
+      Some("PSTR-6"),
+      None,
+      None
+    )
+  )
+
+  val noPSTRSchemeList: List[SchemeDetail] = List(
+    SchemeDetail(
+      "scheme-name-0",
+      "reference-number-0",
+      "Pending",
+      None,
+      None,
+      None,
+      None
+    ),
+    SchemeDetail(
+      "scheme-name-1",
+      "reference-number-1",
+      "Pending Info Required",
+      None,
+      None,
+      None,
+      None
+    ),
+    SchemeDetail(
+      "scheme-name-2",
+      "reference-number-2",
+      "Pending Info Received",
+      None,
+      None,
+      None,
+      None
+    ),
+    SchemeDetail(
+      "scheme-name-3",
+      "reference-number-3",
+      "Rejected",
+      None,
+      None,
+      None,
+      None
+    ),
+    SchemeDetail(
+      "scheme-name-7",
+      "reference-number-7",
+      "Rejected Under Appeal",
+      None,
+      None,
+      None,
+      None
+    )
+  )
+
 
   def view(appConfig: FrontendAppConfig, schemes: List[SchemeDetail] = emptyList)
           (implicit request: Request[_], messages: Messages): () => HtmlFormat.Appendable =

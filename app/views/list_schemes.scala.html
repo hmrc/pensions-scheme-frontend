@@ -44,8 +44,22 @@
             <p><a id="registerNewScheme" href="@(controllers.routes.WhatYouWillNeedController.onPageLoad.url)">@messages("messages__listSchemes__registerNewScheme")</a></p>
         </div>
     } else {
-        @components.scheme_list(openSchemes(schemes), messages("messages__listSchemes__not_open_closed_heading"), "1")
+        @if(openSchemes(schemes).nonEmpty){
+            @components.scheme_list(
+                openSchemes(schemes),
+                messages("messages__listSchemes__not_open_closed_heading"),
+                "1",
+                true
+            )
+        }
 
-        @components.scheme_list(nonOpenSchemes(schemes), messages("messages__listSchemes__not_open_closed_heading"), "2")
+        @if(nonOpenSchemes(schemes).nonEmpty){
+            @components.scheme_list(
+                nonOpenSchemes(schemes),
+                messages("messages__listSchemes__not_open_closed_heading"),
+                "2",
+                false
+            )
+        }
     }
-}
+}s
