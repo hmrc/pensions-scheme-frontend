@@ -73,6 +73,10 @@ trait NinoBehaviours extends FormSpec with NinoMapping with PropertyChecks with 
         form.get shouldEqual Nino.Yes("AB020202A")
       }
 
+      "successfully bind when yes is selected and valid NINO with spaces is provided" in {
+        val form = testForm.bind(Map("nino.hasNino" -> "true", "nino.nino" -> " a b 0 2 0 2 0 2 a "))
+        form.get shouldEqual Nino.Yes("AB020202A")
+      }
       "successfully bind when no is selected and reason is provided" in {
         val form = testForm.bind(Map("nino.hasNino" -> "false", "nino.reason" -> "haven't got Nino"))
         form.get shouldBe Nino.No("haven't got Nino")

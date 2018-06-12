@@ -21,7 +21,7 @@ import play.api.data.Forms.tuple
 import play.api.data.Mapping
 import uk.gov.voa.play.form.ConditionalMappings.{mandatoryIfFalse, mandatoryIfTrue}
 
-trait CrnMapping extends Mappings {
+trait CrnMapping extends Mappings with Transforms{
 
 
   protected def companyRegistrationNumberMapping(requiredKey: String = "messages__error__has_crn_company",
@@ -51,7 +51,8 @@ trait CrnMapping extends Mappings {
     }
 
     tuple("hasCrn" -> boolean(requiredKey),
-      "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey).verifying(validCrn(invalidCRNKey))),
+      "crn" -> mandatoryIfTrue("companyRegistrationNumber.hasCrn", text(requiredCRNKey).
+        transform(standardTextTransform, noTransform).verifying(validCrn(invalidCRNKey))),
       "reason" -> mandatoryIfFalse("companyRegistrationNumber.hasCrn", text(noReasonKey).
         verifying(firstError(
           maxLength(reasonMaxLength, reasonLengthKey),
