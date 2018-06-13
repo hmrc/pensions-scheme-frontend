@@ -16,20 +16,19 @@
 
 package controllers.register.establishers
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.AddEstablisherId
+import javax.inject.Inject
 import models.Mode
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
+import utils.annotations.Establishers
 import views.html.register.establishers.addEstablisher
 
 import scala.concurrent.Future
@@ -37,7 +36,7 @@ import scala.concurrent.Future
 class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          dataCacheConnector: DataCacheConnector,
-                                         navigator: Navigator,
+                                         @Establishers navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
@@ -61,9 +60,9 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
           formProvider(establishers).bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
-                request.userAnswers.allEstablishers, schemeName))),
+                establishers, schemeName))),
             value =>
-                Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode)(request.userAnswers)))
+              Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode)(request.userAnswers)))
           )
       }
   }

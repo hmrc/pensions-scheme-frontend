@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package models.requests
+package viewmodels
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.domain.PsaId
+sealed trait EntityKind
 
-trait IdentifiedRequest {
-  def externalId: String
+object EntityKind {
+
+  case object Establisher extends EntityKind
+
+  case object Trustee extends EntityKind
+
 }
-
-case class AuthenticatedRequest[A] (request: Request[A], externalId: String, psaId: PsaId)
-  extends WrappedRequest[A](request) with IdentifiedRequest

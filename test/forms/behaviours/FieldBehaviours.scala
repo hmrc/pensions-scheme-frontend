@@ -20,12 +20,14 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import forms.FormSpec
+import forms.mappings.Transforms
 import generators.Generators
 import org.scalacheck.Gen
+import org.scalatest.OptionValues
 import org.scalatest.prop.PropertyChecks
 import play.api.data.{Form, FormError}
 
-trait FieldBehaviours extends FormSpec with PropertyChecks with Generators {
+trait FieldBehaviours extends FormSpec with PropertyChecks with Generators with Transforms with OptionValues {
 
   def fieldThatBindsValidData(form: Form[_],
                               fieldName: String,

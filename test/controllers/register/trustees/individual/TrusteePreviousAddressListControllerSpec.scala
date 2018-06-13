@@ -40,6 +40,9 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
 
   private val trusteeDetails = PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
 
+  val previousAddressTitle = "Select the previous address"
+  val previousAddressHeading = "Select the previous address"
+
   private val addresses = Seq(
     TolerantAddress(
       Some("Address 1 Line 1"),
@@ -191,7 +194,8 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
       routes.TrusteePreviousAddressListController.onSubmit(NormalMode, Index(0)),
       routes.TrusteePreviousAddressController.onPageLoad(NormalMode, Index(0)),
       addresses,
-      heading = "messages__select_the_previous_address__title",
+      title = previousAddressTitle,
+      heading = previousAddressHeading,
       subHeading = Some(Message(trusteeDetails.fullName))
     )
   }

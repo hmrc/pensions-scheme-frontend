@@ -29,6 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.Navigator
 import utils.annotations.TrusteesIndividual
+import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
 import scala.concurrent.Future
@@ -47,7 +48,8 @@ class TrusteePreviousAddressListController @Inject()(override val appConfig: Fro
         routes.TrusteePreviousAddressListController.onSubmit(mode, index),
         routes.TrusteePreviousAddressController.onPageLoad(mode, index),
         addresses,
-        heading = "messages__select_the_previous_address__title",
+        title = Message("messages__select_the_previous_address__title"),
+        heading = Message("messages__select_the_previous_address__heading"),
         subHeading = Some(trusteeDetails.fullName)
       )
     }.left.map(_ => Future.successful(Redirect(routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(mode, index))))

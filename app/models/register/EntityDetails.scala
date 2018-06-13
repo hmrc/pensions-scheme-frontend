@@ -16,7 +16,7 @@
 
 package models.register
 
-import models.{CheckMode, NormalMode}
+import models.NormalMode
 
 sealed trait EntityDetails {
   def route(id1: Int, id2: Option[Int]): (String, String)
@@ -37,11 +37,11 @@ sealed trait EntityDetails {
   case class EstablisherIndividualName(name: String) extends EntityDetails {
     override def route(id: Int, id2: Option[Int]): (String, String) =
       name ->
-        controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(CheckMode, id).url
+        controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, id).url
   }
 
   case class EstablisherCompanyName(name: String) extends EntityDetails {
     override def route(id: Int, id2: Option[Int]): (String, String) =
       name ->
-        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(CheckMode, id).url
+        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id).url
   }

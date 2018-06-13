@@ -28,7 +28,7 @@ import views.html.register.establishers.company.companyPreviousAddressList
 
 class CompanyPreviousAddressListViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "select_the_address"
+  val messageKeyPrefix = "select_the_previous_address"
 
   val form = new AddressListFormProvider()(Seq(0, 1))
   val index = Index(0)

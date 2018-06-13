@@ -16,8 +16,6 @@
 
 package controllers.register.trustees
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
@@ -25,6 +23,7 @@ import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.AddTrusteeId
+import javax.inject.Inject
 import models.Mode
 import play.api.Logger
 import play.api.data.Form
@@ -38,16 +37,16 @@ import views.html.register.trustees.addTrustee
 
 import scala.concurrent.Future
 
-class AddTrusteeController @Inject() (
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        @Trustees navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AddTrusteeFormProvider
-                                      ) extends FrontendController with I18nSupport with Retrievals {
+class AddTrusteeController @Inject()(
+                                      appConfig: FrontendAppConfig,
+                                      override val messagesApi: MessagesApi,
+                                      dataCacheConnector: DataCacheConnector,
+                                      @Trustees navigator: Navigator,
+                                      authenticate: AuthAction,
+                                      getData: DataRetrievalAction,
+                                      requireData: DataRequiredAction,
+                                      formProvider: AddTrusteeFormProvider
+                                    ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

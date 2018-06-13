@@ -82,6 +82,8 @@ class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) exten
     case CompanyPreviousAddressId(index) => checkYourAnswers(index)
     case CompanyContactDetailsId(index) => checkYourAnswers(index)
     case AddCompanyDirectorsId(index) => addDirectors(CheckMode, index)
+    case OtherDirectorsId(index)=>
+      _ => controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index)
   }
 
   private def addressYearsRoutes(index: Int)(answers: UserAnswers): Call = {
@@ -129,6 +131,14 @@ class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) exten
   }
 
   private def checkYourAnswerRoutes()(answers: UserAnswers): Call = {
+    if (appConfig.restrictEstablisherEnabled) {
+      checkYourAnswerRoutesWithRestriction(answers)
+    } else {
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def checkYourAnswerRoutesWithRestriction(answers: UserAnswers) = {
     if (answers.allTrustees.nonEmpty) {
       controllers.register.routes.SchemeReviewController.onPageLoad()
     } else {

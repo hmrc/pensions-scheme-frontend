@@ -17,6 +17,7 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
+import config.FrontendAppConfig
 import identifiers.Identifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
@@ -27,7 +28,7 @@ import play.api.mvc.Call
 import utils.{Navigator, UserAnswers}
 
 @Singleton
-class EstablishersIndividualNavigator @Inject() extends Navigator {
+class EstablishersIndividualNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers(index: Int)(answers: UserAnswers): Call =
     controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index)
@@ -107,6 +108,14 @@ class EstablishersIndividualNavigator @Inject() extends Navigator {
   }
 
   private def checkYourAnswerRoutes()(answers: UserAnswers): Call = {
+    if(appConfig.restrictEstablisherEnabled) {
+      checkYourAnswerRoutesWithRestriction(answers)
+    } else {
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def checkYourAnswerRoutesWithRestriction(answers: UserAnswers) = {
     if (answers.allTrustees.nonEmpty) {
       controllers.register.routes.SchemeReviewController.onPageLoad()
     } else {

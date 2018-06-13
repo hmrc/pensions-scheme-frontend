@@ -16,6 +16,7 @@
 
 package controllers.register
 
+import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
@@ -29,6 +30,8 @@ import models.person.PersonDetails
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
+import play.api.Configuration
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
@@ -36,6 +39,90 @@ import utils.FakeNavigator
 import views.html.register.schemeReview
 
 class SchemeReviewControllerSpec extends ControllerSpecBase {
+ import SchemeReviewControllerSpec._
+
+  "SchemeReview Controller" when {
+
+    "called GET" must {
+
+      "return OK, the correct view and the correct Edit Urls for Trustees and establishers for individuals" in {
+        val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+        val result = controller(getRelevantData).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(establisherIndvUrl, trusteeSingleTrustUrl, establisherIndv, trustees)
+      }
+
+      "return OK, the correct view and the correct Edit Urls for Trustees and establishers for Single Trust when" +
+        "restrict-establisher toggle is on" in {
+        val validData: JsObject = Json.obj(
+          SchemeDetailsId.toString ->
+            SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+          "establishers" -> Json.arr(
+            Json.obj(
+              EstablisherKindId.toString -> "company",
+              CompanyDetailsId.toString -> CompanyDetails("establisher", None, None)
+            )
+          )
+        )
+        val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+        val result = controller(getRelevantData).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(establisherCompanyUrl, trusteeSingleTrustUrl)
+      }
+
+      "return OK, the correct view and the correct Edit Urls for Trustees and establishers for Body Corporate when" +
+        "restrict-establisher toggle is on" in {
+        val validData: JsObject = Json.obj(
+          SchemeDetailsId.toString ->
+            SchemeDetails("Test Scheme Name", SchemeType.BodyCorporate),
+          "establishers" -> Json.arr(
+            Json.obj(
+              EstablisherKindId.toString -> "company",
+              CompanyDetailsId.toString -> CompanyDetails("establisher", None, None)
+            )
+          ),
+          HaveAnyTrusteesId.toString -> false
+        )
+        val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+        val result = controller(getRelevantData).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(establisherCompanyUrl, haveAnyTrusteeUrl)
+      }
+
+      "return OK, the correct view and the correct Edit Urls for Trustees and establishers for Single Trust/BodyCorporate" +
+        "when restrict-establisher toggle is off" in {
+        val validData: JsObject = Json.obj(
+          SchemeDetailsId.toString ->
+            SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+          "establishers" -> Json.arr(
+            Json.obj(
+              EstablisherKindId.toString -> "company",
+              CompanyDetailsId.toString -> CompanyDetails("establisher", None, None)
+            )
+          )
+        )
+        val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+        val result = controller(getRelevantData, isEstablisherRestricted = false).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(
+          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode),
+          trusteeSingleTrustUrl)
+      }
+    }
+
+    "redirect to the next page on submit" in {
+      val result = controller().onSubmit()(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+  }
+}
+
+object SchemeReviewControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -65,72 +152,21 @@ class SchemeReviewControllerSpec extends ControllerSpecBase {
   val establisherIndvUrl: Call = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
   val establisherCompanyUrl: Call = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
 
-  val trusteeSingleTrustUrl = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode)
-  val haveAnyTrusteeUrl = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+  private val trusteeSingleTrustUrl = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode)
+  private val haveAnyTrusteeUrl = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeReviewController =
-    new SchemeReviewController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, isEstablisherRestricted: Boolean = true):
+  SchemeReviewController = {
+    val application = new GuiceApplicationBuilder()
+      .configure(Configuration("microservice.services.features.restrict-establisher" -> isEstablisherRestricted))
+    val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+    new SchemeReviewController(appConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl)
+  }
 
   def viewAsString(establisherUrl: Call, trusteeUrl: Call, establishers: Seq[String] = establisherOrg, trustees: Seq[String] = Seq.empty): String =
     schemeReview(frontendAppConfig, schemeName, establishers, trustees, establisherUrl, trusteeUrl)(fakeRequest, messages).toString
-
-  "SchemeReview Controller" when {
-
-    "called GET" must {
-
-      "return OK, the correct view and the correct Edit Urls for Trustees and establishers for individuals" in {
-        val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-        val result = controller(getRelevantData).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(establisherIndvUrl, trusteeSingleTrustUrl, establisherIndv, trustees)
-      }
-
-      "return OK, the correct view and the correct Edit Urls for Trustees and establishers for company" in {
-        val validData: JsObject = Json.obj(
-          SchemeDetailsId.toString ->
-            SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-          "establishers" -> Json.arr(
-            Json.obj(
-              EstablisherKindId.toString -> "company",
-              CompanyDetailsId.toString -> CompanyDetails("establisher", None, None)
-            )
-          )
-        )
-        val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-        val result = controller(getRelevantData).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(establisherCompanyUrl, trusteeSingleTrustUrl)
-      }
-
-      "return OK, the correct view and the correct Edit Urls for Trustees and establishers for Body Corporate" in {
-        val validData: JsObject = Json.obj(
-          SchemeDetailsId.toString ->
-            SchemeDetails("Test Scheme Name", SchemeType.BodyCorporate),
-          "establishers" -> Json.arr(
-            Json.obj(
-              EstablisherKindId.toString -> "company",
-              CompanyDetailsId.toString -> CompanyDetails("establisher", None, None)
-            )
-          ),
-          HaveAnyTrusteesId.toString -> false
-        )
-        val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-        val result = controller(getRelevantData).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(establisherCompanyUrl, haveAnyTrusteeUrl)
-      }
-    }
-
-    "redirect to the next page on submit" in {
-      val result = controller().onSubmit()(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-    }
-  }
 }
 
 

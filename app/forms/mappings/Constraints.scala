@@ -125,7 +125,7 @@ trait Constraints {
 
   protected def validNino(invalidKey: String) : Constraint[String] = {
     Constraint {
-      case nino if Nino.isValid(nino.replaceAll(" ", "").toUpperCase) => Valid
+      case nino if Nino.isValid(nino) => Valid
       case _ => Invalid(invalidKey)
     }
   }
