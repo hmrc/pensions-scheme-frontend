@@ -17,19 +17,18 @@
 package controllers.register.adviser
 
 import config.FrontendAppConfig
+import connectors.{DataCacheConnector, PensionsSchemeConnector}
 import controllers.actions._
+import identifiers.register.SubmissionReferenceNumberId
 import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId}
 import javax.inject.Inject
-
-import connectors.{DataCacheConnector, PensionsSchemeConnector}
-import identifiers.register.SubmissionReferenceNumberId
 import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswers.Ops._
-import utils.{CountryOptions, Navigator, UserAnswers}
 import utils.annotations.Adviser
+import utils.{CountryOptions, Navigator2}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -39,7 +38,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         @Adviser navigator: Navigator,
+                                         @Adviser navigator: Navigator2,
                                          implicit val countryOptions: CountryOptions,
                                          pensionsSchemeConnector: PensionsSchemeConnector) extends FrontendController with I18nSupport {
 
@@ -63,8 +62,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       pensionsSchemeConnector.registerScheme(request.userAnswers, request.psaId.id).flatMap(submissionResponse =>
-        dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).map { cacheMap =>
-          Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode)(request.userAnswers))
+        dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).map { _ =>
+          Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
         }
       )
 

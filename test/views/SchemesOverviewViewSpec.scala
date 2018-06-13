@@ -74,7 +74,7 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
 
     "have link for continue registration" in {
       Jsoup.parse(createView().toString()).select("a[id=continue-registration]") must
-        haveLink(controllers.routes.WhatYouWillNeedController.onPageLoad.url)
+        haveLink(controllers.routes.ContinueRegistrationController.continue().url)
     }
 
     "have link for delete registration" in {

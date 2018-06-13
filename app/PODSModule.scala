@@ -18,7 +18,7 @@ import com.google.inject.AbstractModule
 import connectors.{DataCacheConnector, PSANameCacheConnector}
 import navigators._
 import utils.annotations._
-import utils.Navigator
+import utils.{Navigator, Navigator2}
 
 class PODSModule extends AbstractModule {
 
@@ -63,6 +63,10 @@ class PODSModule extends AbstractModule {
     bind(classOf[Navigator])
       .annotatedWith(classOf[Adviser])
       .to(classOf[AdviserNavigator])
+
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[Adviser])
+      .to(classOf[AdviserNavigator2])
 
   }
 
