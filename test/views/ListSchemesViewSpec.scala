@@ -54,83 +54,85 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
     }
 
     "display the correct rows when there are schemes to display" in {
-      val actual = view(frontendAppConfig, fullList)
+      val actual = asDocument(view(frontendAppConfig, fullList).apply())
 
       //table 1
-      actual must haveElementWithText(s"schemeName-1-0 .span", "scheme-name-4")
+      assertEqualsValue(actual, "#schemeName-1-0 span:nth-child(1)", "scheme-name-4")
 
-      actual must haveElementWithText(s"schemeName-1-1", "scheme-name-5")
+      assertEqualsValue(actual, "#schemeName-1-1 span:nth-child(1)", "scheme-name-5")
 
-      actual must haveElementWithText(s"schemeName-1-2", "scheme-name-6")
+      assertEqualsValue(actual, "#schemeName-1-2 span:nth-child(1)", "scheme-name-6")
 
       //table 2
-      actual must haveElementWithText(s"schemeName-2-0", "scheme-name-0")
-      actual must haveElementWithText(s"srn-2-0", "reference-number-0")
+      assertEqualsValue(actual, "#schemeName-2-0 span:nth-child(1)", "scheme-name-0")
+      assertEqualsValue(actual, "#srn-2-0 span:nth-child(1)", "reference-number-0")
 
-      actual must haveElementWithText(s"schemeName-2-1", "scheme-name-1")
-      actual must haveElementWithText(s"srn-2-1", "reference-number-1")
+      assertEqualsValue(actual, "#schemeName-2-1 span:nth-child(1)", "scheme-name-1")
+      assertEqualsValue(actual, "#srn-2-1 span:nth-child(1)", "reference-number-1")
 
-      actual must haveElementWithText(s"schemeName-2-2", "scheme-name-2")
-      actual must haveElementWithText(s"srn-2-2", "reference-number-2")
+      assertEqualsValue(actual, "#schemeName-2-2 span:nth-child(1)", "scheme-name-2")
+      assertEqualsValue(actual, "#srn-2-2 span:nth-child(1)", "reference-number-2")
 
-      actual must haveElementWithText(s"schemeName-2-3", "scheme-name-3")
-      actual must haveElementWithText(s"srn-2-3", "reference-number-3")
+      assertEqualsValue(actual, "#schemeName-2-3 span:nth-child(1)", "scheme-name-3")
+      assertEqualsValue(actual, "#srn-2-3 span:nth-child(1)", "reference-number-3")
 
-      actual must haveElementWithText(s"schemeName-2-4", "scheme-name-7")
-      actual must haveElementWithText(s"srn-2-4", "reference-number-7")
+      assertEqualsValue(actual, "#schemeName-2-4 span:nth-child(1)", "scheme-name-7")
+      assertEqualsValue(actual, "#srn-2-4 span:nth-child(1)", "reference-number-7")
     }
 
     "display either PSTR or 'Not assigned' when there is no value" in {
-      val actual = view(frontendAppConfig, fullList)
+      val actual = asDocument(view(frontendAppConfig, fullList).apply())
 
       //table 1
-      actual must haveElementWithText("pstr-1-0", "PSTR-4")
-      actual must haveElementWithText("pstr-1-1", "PSTR-5")
-      actual must haveElementWithText("pstr-1-2", "PSTR-6")
+      assertEqualsValue(actual, "#pstr-1-0 span:nth-child(1)", "PSTR-4")
+      assertEqualsValue(actual, "#pstr-1-1 span:nth-child(1)", "PSTR-5")
+      assertEqualsValue(actual, "#pstr-1-2 span:nth-child(1)", "PSTR-6")
     }
 
     "display the full status value" in {
-      val actual = view(frontendAppConfig, fullList)
+      val actual = asDocument(view(frontendAppConfig, fullList).apply())
 
       //table 1
-      actual must haveElementWithText("schemeStatus-1-0", "Open")
-      actual must haveElementWithText("schemeStatus-1-1", "De-registered")
-      actual must haveElementWithText("schemeStatus-1-2", "Wound-up")
+      assertEqualsValue(actual, "#schemeStatus-1-0 span:nth-child(1)", "Open")
+      assertEqualsValue(actual, "#schemeStatus-1-1 span:nth-child(1)", "De-registered")
+      assertEqualsValue(actual, "#schemeStatus-1-2 span:nth-child(1)", "Wound-up")
 
       //table 2
-      actual must haveElementWithText("schemeStatus-2-0", "Pending")
-      actual must haveElementWithText("schemeStatus-2-1", "Pending information required")
-      actual must haveElementWithText("schemeStatus-2-2", "Pending information received")
-      actual must haveElementWithText("schemeStatus-2-3", "Rejected")
-      actual must haveElementWithText("schemeStatus-2-4", "Rejected under appeal")
+      assertEqualsValue(actual, "#schemeStatus-2-0 span:nth-child(1)", "Pending")
+      assertEqualsValue(actual, "#schemeStatus-2-1 span:nth-child(1)", "Pending information required")
+      assertEqualsValue(actual, "#schemeStatus-2-2 span:nth-child(1)", "Pending information received")
+      assertEqualsValue(actual, "#schemeStatus-2-3 span:nth-child(1)", "Rejected")
+      assertEqualsValue(actual, "#schemeStatus-2-4 span:nth-child(1)", "Rejected under appeal")
     }
 
     "display the date" in {
-      val actual = view(frontendAppConfig, fullList)
+      val actual = asDocument(view(frontendAppConfig, fullList).apply())
 
-      actual must haveElementWithText("schemeDate-1-0", "9 November 2017")
-      actual must haveElementWithText("schemeDate-1-1", "10 November 2017")
-      actual must haveElementWithText("schemeDate-1-2", "11 November 2017")
+      assertEqualsValue(actual, "#schemeDate-1-0 span:nth-child(1)", "9 November 2017")
+      assertEqualsValue(actual, "#schemeDate-1-1 span:nth-child(1)", "10 November 2017")
+      assertEqualsValue(actual, "#schemeDate-1-2 span:nth-child(1)", "11 November 2017")
     }
 
     "display a scheme list with only schemes with a PSTR number" in {
       val actual = view(frontendAppConfig, fullList)
+      val actualAsDoc = asDocument(actual.apply())
 
       actual must haveClassWithSize("row-group", 3, "schemeList-1")
-      actual must haveElementWithText("schemeName-1-0", "scheme-name-4")
-      actual must haveElementWithText("schemeName-1-1", "scheme-name-5")
-      actual must haveElementWithText("schemeName-1-2", "scheme-name-6")
+      assertEqualsValue(actualAsDoc, "#schemeName-1-0 span:nth-child(1)", "scheme-name-4")
+      assertEqualsValue(actualAsDoc, "#schemeName-1-1 span:nth-child(1)", "scheme-name-5")
+      assertEqualsValue(actualAsDoc, "#schemeName-1-2 span:nth-child(1)", "scheme-name-6")
     }
 
     "display a scheme list with only schemes without a PSTR number" in {
       val actual = view(frontendAppConfig, fullList)
+      val actualAsDoc = asDocument(actual.apply())
 
       actual must haveClassWithSize("row-group", 5, "schemeList-2")
-      actual must haveElementWithText("schemeName-2-0", "scheme-name-0")
-      actual must haveElementWithText("schemeName-2-1", "scheme-name-1")
-      actual must haveElementWithText("schemeName-2-2", "scheme-name-2")
-      actual must haveElementWithText("schemeName-2-3", "scheme-name-3")
-      actual must haveElementWithText("schemeName-2-4", "scheme-name-7")
+      assertEqualsValue(actualAsDoc, "#schemeName-2-0 span:nth-child(1)", "scheme-name-0")
+      assertEqualsValue(actualAsDoc, "#schemeName-2-1 span:nth-child(1)", "scheme-name-1")
+      assertEqualsValue(actualAsDoc, "#schemeName-2-2 span:nth-child(1)", "scheme-name-2")
+      assertEqualsValue(actualAsDoc, "#schemeName-2-3 span:nth-child(1)", "scheme-name-3")
+      assertEqualsValue(actualAsDoc, "#schemeName-2-4 span:nth-child(1)", "scheme-name-7")
     }
 
     "show the PSTR table when there are schemes with PSTRs" in {
