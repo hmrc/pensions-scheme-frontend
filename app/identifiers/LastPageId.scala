@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package models.requests
+package identifiers
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.domain.PsaId
+import models.LastPage
 
-trait IdentifiedRequest {
-  def externalId: String
+object LastPageId extends TypedIdentifier[LastPage] {
+  override def toString: String = "lastPage"
 }
-
-case class AuthenticatedRequest[A] (request: Request[A], externalId: String, psaId: PsaId)
-  extends WrappedRequest[A](request) with IdentifiedRequest
