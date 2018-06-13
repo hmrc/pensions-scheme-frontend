@@ -106,28 +106,43 @@
     </div>
 
     @for((scheme, index) <- schemes.zipWithIndex) {
-    <div class="row-group grid-row">
-        <div class="column-two-sixths table-column scheme-name">
-            <p id="@{schemeNameId(index)}">@scheme.name</p>
-        </div>
-        @if(!schemeOpened) {
+        <div class="row-group grid-row">
             <div class="column-two-sixths table-column scheme-name">
-                <p id="@{srnId(index)}" data-title='@messages("messages__listSchemes__column_srn")&nbsp;'>@scheme.referenceNumber</p>
+                <p id="@{schemeNameId(index)}">
+                    <span aria-hidden="true">@scheme.name</span>
+                    <span class="visually-hidden">@messages("messages__listSchemes__schemeName__screen_reader", scheme.name)</span>
+                </p>
             </div>
-        }
-        @if(schemeOpened) {
-            <div class="column-two-sixths table-column scheme-name">
-                <p id="@{pstrId(index)}" data-title='@messages("messages__listSchemes__column_pstr")&nbsp;'>@pstrValue(scheme.pstr)</p>
+            @if(!schemeOpened) {
+                <div class="column-two-sixths table-column scheme-name">
+                    <p id="@{srnId(index)}" data-title='@messages("messages__listSchemes__column_srn")&nbsp;'>
+                        <span aria-hidden="true">@scheme.referenceNumber</span>
+                        <span class="visually-hidden">@messages("messages__listSchemes__SRN__screen_reader", scheme.name, scheme.referenceNumber)</span>
+                    </p>
+                </div>
+            }
+            @if(schemeOpened) {
+                <div class="column-two-sixths table-column scheme-name">
+                    <p id="@{pstrId(index)}" data-title='@messages("messages__listSchemes__column_pstr")&nbsp;'>
+                        <span aria-hidden="true">@pstrValue(scheme.pstr)</span>
+                        <span class="visually-hidden">@messages("messages__listSchemes__PSTR__screen_reader", scheme.name, scheme.pstr)</span>
+                    </p>
+                </div>
+            }
+            <div class="@if(schemeOpened){column-one-sixth}else{column-two-sixths} table-column scheme-name">
+                <p id="@{statusId(index)}">
+                    <span>@statusValue(scheme.schemeStatus)</span>
+                    <span class="visually-hidden">@messages("messages__listSchemes__status__screen_reader", scheme.name, scheme.schemeStatus)</span>
+                </p>
             </div>
-        }
-        <div class="@if(schemeOpened){column-one-sixth}else{column-two-sixths} table-column scheme-name">
-            <p id="@{statusId(index)}">@statusValue(scheme.schemeStatus)</p>
+            @if(schemeOpened) {
+                <div class="column-one-sixth table-column scheme-name">
+                    <p id="@{statusDateId(index)}">
+                        <span>@dateValue(scheme.openDate)</span>
+                        <span class="visually-hidden">@messages("messages__listSchemes__date__screen_reader", scheme.name, dateValue(scheme.openDate))</span>
+                    </p>
+                </div>
+            }
         </div>
-        @if(schemeOpened) {
-            <div class="column-one-sixth table-column scheme-name">
-                <p id="@{statusDateId(index)}">@dateValue(scheme.openDate)</p>
-            </div>
-        }
-    </div>
     }
 </div>

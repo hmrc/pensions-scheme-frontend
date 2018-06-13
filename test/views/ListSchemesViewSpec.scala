@@ -57,14 +57,11 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       val actual = view(frontendAppConfig, fullList)
 
       //table 1
-      actual must haveElementWithText(s"schemeName-1-0", "scheme-name-4")
-      actual must haveElementWithText(s"srn-1-0", "reference-number-4")
+      actual must haveElementWithText(s"schemeName-1-0 .span", "scheme-name-4")
 
       actual must haveElementWithText(s"schemeName-1-1", "scheme-name-5")
-      actual must haveElementWithText(s"srn-1-1", "reference-number-5")
 
       actual must haveElementWithText(s"schemeName-1-2", "scheme-name-6")
-      actual must haveElementWithText(s"srn-1-2", "reference-number-6")
 
       //table 2
       actual must haveElementWithText(s"schemeName-2-0", "scheme-name-0")
@@ -90,13 +87,6 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       actual must haveElementWithText("pstr-1-0", "PSTR-4")
       actual must haveElementWithText("pstr-1-1", "PSTR-5")
       actual must haveElementWithText("pstr-1-2", "PSTR-6")
-
-      //table 2
-      actual must haveElementWithText("pstr-2-0", "Not assigned")
-      actual must haveElementWithText("pstr-2-1", "Not assigned")
-      actual must haveElementWithText("pstr-2-2", "Not assigned")
-      actual must haveElementWithText("pstr-2-3", "Not assigned")
-      actual must haveElementWithText("pstr-2-4", "Not assigned")
     }
 
     "display the full status value" in {
@@ -121,16 +111,6 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       actual must haveElementWithText("schemeDate-1-0", "9 November 2017")
       actual must haveElementWithText("schemeDate-1-1", "10 November 2017")
       actual must haveElementWithText("schemeDate-1-2", "11 November 2017")
-    }
-
-    "display the no date text" in {
-      val actual = view(frontendAppConfig, fullList)
-
-      actual must haveElementWithText("schemeDate-2-0", "Scheme not open")
-      actual must haveElementWithText("schemeDate-2-1", "Scheme not open")
-      actual must haveElementWithText("schemeDate-2-2", "Scheme not open")
-      actual must haveElementWithText("schemeDate-2-3", "Scheme not open")
-      actual must haveElementWithText("schemeDate-2-4", "Scheme not open")
     }
 
     "display a scheme list with only schemes with a PSTR number" in {
@@ -182,8 +162,7 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
         val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
 
         assertRenderedById(actual, "srn")
-
-        assertRenderedById(actual, "schemeName-1-1")
+        assertRenderedById(actual, "srn-2-0")
       }
     }
 
@@ -192,6 +171,7 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
         val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
 
         assertNotRenderedById(actual, "srn")
+        assertNotRenderedById(actual, "srn-1-0")
       }
     }
 
@@ -199,6 +179,8 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       "schemes have been opened" in {
         val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
 
+        assertRenderedById(actual, "pstr")
+        assertRenderedById(actual, "pstr-1-0")
       }
     }
 
@@ -206,6 +188,8 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       "schemes have never been opened" in {
         val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
 
+        assertNotRenderedById(actual, "pstr")
+        assertNotRenderedById(actual, "pstr-1-0")
       }
     }
 
@@ -213,6 +197,8 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       "schemes have been opened" in {
         val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
 
+        assertRenderedById(actual, "schemeDate")
+        assertRenderedById(actual, "schemeDate-1-0")
       }
     }
 
@@ -220,6 +206,8 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       "schemes have never been opened" in {
         val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
 
+        assertNotRenderedById(actual, "schemeDate")
+        assertNotRenderedById(actual, "schemeDate-1-0")
       }
     }
   }

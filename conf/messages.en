@@ -652,6 +652,12 @@ messages__listSchemes__status_deregistered = De-registered
 messages__listSchemes__status_wound_up = Wound-up
 messages__listSchemes__status_rejected_appeal = Rejected under appeal
 
+messages__listSchemes__schemeName__screen_reader = The scheme name is: {0}
+messages__listSchemes__SRN__screen_reader = {0}’s, SRN is {1}
+messages__listSchemes__PSTR__screen_reader = {0}’s, PSTR is {1}
+messages__listSchemes__status__screen_reader = {0}'s' status is {1}
+messages__listSchemes__date__screen_reader = {0} was opened on {1}
+
 messages__schemesOverview__title = Manage and register your pension schemes
 messages__schemesOverview__heading = Manage and register your pension schemes
 messages__schemesOverview__manage__head = Manage your pension schemes
