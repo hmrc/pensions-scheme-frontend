@@ -19,7 +19,7 @@ package controllers
 import controllers.actions.{DataRetrievalAction, FakeAuthAction}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.FakeNavigator2
 
 class ContinueRegistrationControllerSpec extends ControllerSpecBase {
 
@@ -42,7 +42,7 @@ object ContinueRegistrationControllerSpec {
 
   def nextPage: Call = Call("GET", "http://www.test.com")
 
-  val fakeNavigator = new FakeNavigator(nextPage)
+  val fakeNavigator = new FakeNavigator2(nextPage)
 
   def controller(data: DataRetrievalAction): ContinueRegistrationController =
     new ContinueRegistrationController(FakeAuthAction, data, fakeNavigator)

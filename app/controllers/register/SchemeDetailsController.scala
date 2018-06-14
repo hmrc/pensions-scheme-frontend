@@ -16,30 +16,28 @@
 
 package controllers.register
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
 import forms.register.SchemeDetailsFormProvider
 import identifiers.register.SchemeDetailsId
+import javax.inject.Inject
 import models.Mode
+import models.PSAName._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{NameMatchingFactory, Navigator, UserAnswers}
+import utils.{NameMatchingFactory, Navigator2, UserAnswers}
 import views.html.register.schemeDetails
-
-import models.PSAName._
 
 import scala.concurrent.Future
 
 class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
-                                        @Register navigator: Navigator,
+                                        @Register navigator: Navigator2,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         formProvider: SchemeDetailsFormProvider,
@@ -61,7 +59,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
-        (value) =>
+        value =>
           nameMatchingFactory.nameMatching(value.schemeName).flatMap {
             case Some(nameMatching) =>
               if(nameMatching.isMatch){
@@ -71,7 +69,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                 ), mode)))
               } else {
                 dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
-                  Redirect(navigator.nextPage(SchemeDetailsId, mode)(UserAnswers(cacheMap)))
+                  Redirect(navigator.nextPage(SchemeDetailsId, mode, UserAnswers(cacheMap)))
                 )
               }
             case _ =>

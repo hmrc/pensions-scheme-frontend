@@ -25,17 +25,17 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.{CheckMode, CompanyDetails, NormalMode}
 import models.person.PersonDetails
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
+import models.{CheckMode, CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.Configuration
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
-import utils.FakeNavigator
+import utils.FakeNavigator2
 import views.html.register.schemeReview
 
 class SchemeReviewControllerSpec extends ControllerSpecBase {
@@ -161,14 +161,10 @@ object SchemeReviewControllerSpec extends ControllerSpecBase {
       .configure(Configuration("microservice.services.features.restrict-establisher" -> isEstablisherRestricted))
     val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-    new SchemeReviewController(appConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new SchemeReviewController(appConfig, messagesApi, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl)
   }
 
   def viewAsString(establisherUrl: Call, trusteeUrl: Call, establishers: Seq[String] = establisherOrg, trustees: Seq[String] = Seq.empty): String =
     schemeReview(frontendAppConfig, schemeName, establishers, trustees, establisherUrl, trusteeUrl)(fakeRequest, messages).toString
 }
-
-
-
-
