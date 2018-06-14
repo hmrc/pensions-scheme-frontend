@@ -63,7 +63,6 @@ trait StringFieldBehaviours extends FieldBehaviours {
                            expectedData: A): Unit = {
     s"bind the form with the transformation" in {
       val result = form.bind(data)
-      println("\n\nresult : "+result)
       result.errors.size shouldBe 0
       result.get shouldBe expectedData
     }
