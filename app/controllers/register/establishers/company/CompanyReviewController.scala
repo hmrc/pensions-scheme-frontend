@@ -16,20 +16,19 @@
 
 package controllers.register.establishers.company
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyReviewId}
+import javax.inject.Inject
 import models.register.establishers.company.director.DirectorDetails
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.Navigator2
 import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.companyReview
 
@@ -37,7 +36,7 @@ import scala.concurrent.Future
 
 class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
-                                        @EstablishersCompany navigator: Navigator,
+                                        @EstablishersCompany navigator: Navigator2,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction) extends FrontendController with I18nSupport with Retrievals {
@@ -45,7 +44,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       (SchemeDetailsId and CompanyDetailsId(index)).retrieve.right.map{
-        case (schemeDetails ~ companyDetails) =>
+        case schemeDetails ~ companyDetails =>
           val directors: Seq[String] = request
             .userAnswers
             .getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
@@ -57,7 +56,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode)(request.userAnswers))
+      Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers))
   }
 
 }
