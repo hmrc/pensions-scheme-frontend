@@ -16,14 +16,13 @@
 
 package controllers.register
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationFormProvider
 import identifiers.register.{DeclarationDormantId, DeclarationId, SchemeDetailsId}
+import javax.inject.Inject
 import models.NormalMode
 import models.register.DeclarationDormant.{No, Yes}
 import models.requests.DataRequest
@@ -33,7 +32,7 @@ import play.api.mvc.{Action, AnyContent, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator2, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.Future
@@ -42,7 +41,7 @@ class DeclarationController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        dataCacheConnector: DataCacheConnector,
-                                       @Register navigator: Navigator,
+                                       @Register navigator: Navigator2,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
@@ -62,12 +61,12 @@ class DeclarationController @Inject()(
         (formWithErrors: Form[_]) => {
           showPage(BadRequest.apply, formWithErrors)
         },
-        (value) =>
+        value =>
           dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(DeclarationId, NormalMode)(UserAnswers(cacheMap)))))
+            Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))))
   }
 
-  private def showPage(status: (HtmlFormat.Appendable) => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
+  private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
     SchemeDetailsId.retrieve.right.map { details =>
       val isCompany = request.userAnswers.hasCompanies
       request.userAnswers.get(DeclarationDormantId) match {

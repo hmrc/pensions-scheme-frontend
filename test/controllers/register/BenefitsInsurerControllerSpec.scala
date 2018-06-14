@@ -16,24 +16,23 @@
 
 package controllers.register
 
-import play.api.data.Form
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
 import forms.register.BenefitsInsurerFormProvider
 import identifiers.register.{BenefitsInsurerId, SchemeDetailsId}
 import models.NormalMode
-import views.html.register.benefitsInsurer
-import controllers.ControllerSpecBase
 import models.register.SchemeType.SingleTrust
 import models.register.{BenefitsInsurer, SchemeDetails}
+import play.api.data.Form
+import play.api.libs.json.Json
+import play.api.test.Helpers._
+import utils.FakeNavigator2
+import views.html.register.benefitsInsurer
 
 class BenefitsInsurerControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new BenefitsInsurerFormProvider()
   val form = formProvider()
@@ -45,13 +44,13 @@ class BenefitsInsurerControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl,
       formProvider
     )
 
-  def viewAsString(form: Form[_] = form) = benefitsInsurer(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = benefitsInsurer(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   "BenefitsInsurer Controller" must {
 

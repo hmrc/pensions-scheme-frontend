@@ -17,7 +17,6 @@
 package controllers.register
 
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
@@ -30,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator2, UserAnswers}
 import views.html.register.investmentRegulated
 
 import scala.concurrent.Future
@@ -38,7 +37,7 @@ import scala.concurrent.Future
 class InvestmentRegulatedController @Inject()(appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
                                               dataCacheConnector: DataCacheConnector,
-                                              @Register navigator: Navigator,
+                                              @Register navigator: Navigator2,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
@@ -65,9 +64,9 @@ class InvestmentRegulatedController @Inject()(appConfig: FrontendAppConfig,
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
             Future.successful(BadRequest(investmentRegulated(appConfig, formWithErrors, mode, schemeDetails.schemeName)))
           },
-        (value) =>
+        value =>
           dataCacheConnector.save(request.externalId, InvestmentRegulatedId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(InvestmentRegulatedId, mode)(new UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(InvestmentRegulatedId, mode, UserAnswers(cacheMap))))
       )
   }
 }

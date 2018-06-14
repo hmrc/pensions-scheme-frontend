@@ -17,29 +17,28 @@
 package controllers.register
 
 import connectors.DataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import views.html.register.schemeSuccess
 import controllers.ControllerSpecBase
+import controllers.actions._
 import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
 import models.register.{SchemeDetails, SchemeSubmissionResponse, SchemeType}
 import org.joda.time.LocalDate
 import org.mockito.Matchers._
+import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.{JsObject, Json}
-import utils.FakeNavigator
-import org.mockito.Mockito._
 import play.api.mvc.Results._
+import play.api.test.Helpers._
+import views.html.register.schemeSuccess
 
 import scala.concurrent.Future
 
 class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
-  private val onwardRoute = controllers.routes.LogoutController.onPageLoad()
+  private lazy val onwardRoute = controllers.routes.LogoutController.onPageLoad()
 
   val submissionReferenceNumber="XX123456789132"
 
-  val fakeDataCacheConnector = mock[DataCacheConnector]
+  private val fakeDataCacheConnector = mock[DataCacheConnector]
 
   val validData: JsObject = Json.obj(
     SchemeDetailsId.toString -> Json.toJson(SchemeDetails("test scheme name", SchemeType.SingleTrust)),
@@ -54,8 +53,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       fakeDataCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl,
-      new FakeNavigator(onwardRoute)
+      new DataRequiredActionImpl
     )
 
   def viewAsString(): String =
@@ -65,6 +63,8 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       LocalDate.now(),
       submissionReferenceNumber
     )(fakeRequest, messages).toString
+
+  appRunning()
 
   "SchemeSuccess Controller" must {
 

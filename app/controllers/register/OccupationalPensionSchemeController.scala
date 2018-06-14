@@ -16,30 +16,28 @@
 
 package controllers.register
 
-import javax.inject.Inject
-
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
 import config.FrontendAppConfig
+import connectors.DataCacheConnector
 import controllers.Retrievals
+import controllers.actions._
 import forms.register.OccupationalPensionSchemeFormProvider
 import identifiers.register.{OccupationalPensionSchemeId, SchemeDetailsId}
+import javax.inject.Inject
 import models.Mode
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import utils.{Navigator, UserAnswers}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Register
+import utils.{Navigator2, UserAnswers}
 import views.html.register.occupationalPensionScheme
 
 import scala.concurrent.Future
-import play.api.libs.json._
-import utils.annotations.Register
 
 class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
                                                     dataCacheConnector: DataCacheConnector,
-                                                    @Register navigator: Navigator,
+                                                    @Register navigator: Navigator2,
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
@@ -66,9 +64,9 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
             Future.successful(BadRequest(occupationalPensionScheme(appConfig, formWithErrors, mode, schemeDetails.schemeName)))
           },
-        (value) =>
+        value =>
           dataCacheConnector.save(request.externalId, OccupationalPensionSchemeId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(OccupationalPensionSchemeId, mode)(new UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(OccupationalPensionSchemeId, mode, UserAnswers(cacheMap))))
       )
   }
 }
