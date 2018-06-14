@@ -20,11 +20,12 @@ import base.SpecBase
 import config.FrontendAppConfig
 import identifiers.register._
 import models.register.{SchemeDetails, SchemeType}
-import models.{CheckMode, CompanyDetails, Mode, NormalMode}
+import models._
 import org.scalatest.MustMatchers
 import play.api.Configuration
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
 class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
@@ -38,9 +39,11 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     new RegisterNavigator(appConfig)
   }
 
-  private lazy val routesWithRestrictedEstablisher = Table(
+  private def routesWithRestrictedEstablisher = Table(
     ("Id",                          "User Answers",       "Next Page (Normal Mode)",              "Next Page (Check Mode)"),
-    // Start - what you will need
+    // Start - continue or what you will need
+    (ContinueRegistrationId,        emptyAnswers,         whatYouWillNeed,                        None),
+    (ContinueRegistrationId,        savedLastPage,        lastPage,                               None),
     (WhatYouWillNeedId,             emptyAnswers,         schemeDetails(NormalMode),              None),
 
     // Scheme registration
@@ -78,21 +81,26 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (DeclarationDutiesId,           emptyAnswers,         expired,                                None)
   )
   s"${navigator().getClass.getSimpleName} when restrict-establisher toggle is off" must {
+    appRunning()
     behave like navigatorWithRoutes(navigator(), routesWithRestrictedEstablisher, dataDescriber)
   }
 
   //Delete the test case when the restrict-establisher toggle is removed
-  private lazy val routesWithNoRestrictedEstablisher = Table(
+  private def routesWithNoRestrictedEstablisher = Table(
     ("Id",                          "User Answers",       "Next Page (Normal Mode)",              "Next Page (Check Mode)"),
     (CheckYourAnswersId,            noEstablishers,       establisherKind,                         None)
   )
   s"${navigator(true).getClass.getSimpleName} when restrict-establisher toggle is on" must {
+    appRunning()
     behave like navigatorWithRoutes(navigator(true), routesWithNoRestrictedEstablisher, dataDescriber)
   }
+
 }
 
 //noinspection MutatorLikeMethodIsParameterless
 object RegisterNavigatorSpec extends Enumerable.Implicits {
+
+  private val lastPage: Call = Call("GET", "http://www.test.com")
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private val securedBenefitsTrue = UserAnswers().securedBenefits(true)
@@ -105,6 +113,7 @@ object RegisterNavigatorSpec extends Enumerable.Implicits {
   private val noEstablishers = emptyAnswers
   private val hasEstablishers = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.GroupLifeDeath))
   private val needsTrustees = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.SingleTrust))
+  private val savedLastPage = UserAnswers().lastPage(LastPage(lastPage.method, lastPage.url))
 
   private def benefits(mode: Mode) = controllers.register.routes.BenefitsController.onPageLoad(mode)
   private def benefitsInsurer(mode: Mode) = controllers.register.routes.BenefitsInsurerController.onPageLoad(mode)
@@ -126,6 +135,7 @@ object RegisterNavigatorSpec extends Enumerable.Implicits {
   private def securedBenefits(mode: Mode) = controllers.register.routes.SecuredBenefitsController.onPageLoad(mode)
   private def uKBankAccount(mode: Mode) = controllers.register.routes.UKBankAccountController.onPageLoad(mode)
   private def uKBankDetails(mode: Mode) = controllers.register.routes.UKBankDetailsController.onPageLoad(mode)
+  private def whatYouWillNeed = controllers.routes.WhatYouWillNeedController.onPageLoad()
 
   private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
   private def adviserDetails = controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)

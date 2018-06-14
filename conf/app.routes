@@ -26,3 +26,5 @@ GET        /discard                                     controllers.DeleteScheme
 POST       /discard                                     controllers.DeleteSchemeController.onSubmit
 
 GET        /you-need-to-register                        controllers.YouNeedToRegisterController.onPageLoad()
+
+GET        /continue-registration                       controllers.ContinueRegistrationController.continue()

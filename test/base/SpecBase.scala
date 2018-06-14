@@ -38,4 +38,7 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
   implicit def messages: Messages = messagesApi.preferred(fakeRequest)
 
   def environment: Environment = injector.instanceOf[Environment]
+
+  def appRunning(): Unit = app
+
 }

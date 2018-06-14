@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package navigators
 
 import connectors.FakeDataCacheConnector
 import identifiers.{Identifier, LastPageId}
@@ -24,23 +24,33 @@ import org.scalatest.prop.{PropertyChecks, TableFor6}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.{Navigator2, UserAnswers}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait NavigatorBehaviour2 extends PropertyChecks with OptionValues {
   this: WordSpec with MustMatchers =>
 
-  def navigatorWithRoutes[A <: Identifier](navigator: Navigator2,
+  protected implicit val request: IdentifiedRequest = new IdentifiedRequest {
+    override def externalId: String = "test-external-id"
+  }
+
+  protected implicit val hc: HeaderCarrier = HeaderCarrier()
+
+  //scalastyle:off method.length
+  def navigatorWithRoutes[A <: Identifier](
+    navigator: Navigator2,
     dataCacheConnector: FakeDataCacheConnector,
-    routes: TableFor6[A, UserAnswers, Call, Boolean, Option[Call], Boolean])
-    (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Unit = {
+    routes: TableFor6[A, UserAnswers, Call, Boolean, Option[Call], Boolean],
+    describer: UserAnswers => String
+  ): Unit = {
 
     "behave like a navigator" when {
 
       "navigating in NormalMode" must {
         forAll(routes) {
           (id: Identifier, userAnswers: UserAnswers, call: Call, save: Boolean, _: Option[Call], _: Boolean) =>
-            s"move from $id to $call when data is $userAnswers" in {
+            s"move from $id to $call with data: ${describer(userAnswers)}" in {
               val result = navigator.nextPage(id, NormalMode, userAnswers)
               result mustBe call
             }
@@ -61,7 +71,7 @@ trait NavigatorBehaviour2 extends PropertyChecks with OptionValues {
       "navigating in CheckMode" must {
         forAll(routes) { (id: Identifier, userAnswers: UserAnswers, _: Call, _: Boolean, editCall: Option[Call], save: Boolean) =>
           if (editCall.isDefined) {
-            s"move from $id to ${editCall.value} when data is $userAnswers" in {
+            s"move from $id to ${editCall.value} with data: ${describer(userAnswers)}" in {
               val result = navigator.nextPage(id, CheckMode, userAnswers)
               result mustBe editCall.value
             }
@@ -79,10 +89,13 @@ trait NavigatorBehaviour2 extends PropertyChecks with OptionValues {
           }
         }
       }
-    }
-  }
 
-  def nonMatchingNavigator(navigator: Navigator2)(implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Unit = {
+    }
+
+  }
+  //scalastyle:on method.length
+
+  def nonMatchingNavigator(navigator: Navigator2): Unit = {
 
     val testId: Identifier = new Identifier {}
 

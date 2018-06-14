@@ -15,12 +15,14 @@
  */
 
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
+import identifiers.LastPageId
 import identifiers.register._
 import models._
 import models.address.{Address, TolerantAddress}
 import models.register.SchemeDetails
 import org.scalatest.OptionValues
 
+//scalastyle:off number.of.methods
 package object utils {
 
   implicit class UserAnswerOps(answers: UserAnswers) extends OptionValues {
@@ -169,6 +171,10 @@ package object utils {
       answers.set(InsurerAddressListId)(selectedAddress).asOpt.value
     }
 
+    // Other
+    def lastPage(page: LastPage): UserAnswers = {
+      answers.set(LastPageId)(page).asOpt.value
+    }
 
     // Converters
     def dataRetrievalAction: DataRetrievalAction = {

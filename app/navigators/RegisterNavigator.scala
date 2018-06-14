@@ -18,7 +18,7 @@ package navigators
 
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import identifiers.Identifier
+import identifiers.{Identifier, LastPageId}
 import identifiers.register._
 import models.register.{SchemeDetails, SchemeType}
 import models.{CheckMode, Mode, NormalMode}
@@ -29,6 +29,8 @@ import utils.{Enumerable, Navigator, UserAnswers}
 class RegisterNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigator with Enumerable.Implicits {
 
   override protected val routeMap: PartialFunction[Identifier, UserAnswers => Call] = {
+    case ContinueRegistrationId =>
+      continueRegistrationRoutes()
     case WhatYouWillNeedId =>
       _ => controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode)
     case SchemeDetailsId =>
@@ -170,6 +172,13 @@ class RegisterNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigato
         case _ =>
           controllers.register.routes.SchemeReviewController.onPageLoad()
       }
+    }
+  }
+
+  private def continueRegistrationRoutes()(userAnswers: UserAnswers): Call = {
+    userAnswers.get(LastPageId) match {
+      case Some(lastPage) => Call(lastPage.method, lastPage.url)
+      case _ => controllers.routes.WhatYouWillNeedController.onPageLoad()
     }
   }
 
