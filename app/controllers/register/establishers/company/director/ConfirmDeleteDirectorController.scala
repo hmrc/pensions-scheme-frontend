@@ -17,7 +17,6 @@
 package controllers.register.establishers.company.director
 
 import javax.inject.Inject
-
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import controllers.actions._
@@ -30,7 +29,7 @@ import identifiers.register.establishers.company.director.{ConfirmDeleteDirector
 import models.{Index, NormalMode}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator, Navigator2, UserAnswers}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 import scala.concurrent.Future
@@ -39,7 +38,7 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  dataCacheConnector: DataCacheConnector,
-                                                 @EstablishersCompanyDirector navigator: Navigator,
+                                                 @EstablishersCompanyDirector navigator: Navigator2,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction
@@ -67,7 +66,7 @@ class ConfirmDeleteDirectorController @Inject()(
     implicit request =>
       dataCacheConnector.remove(request.externalId, DirectorId(establisherIndex, directorIndex)).map {
         json =>
-          Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode)(UserAnswers(json)))
+          Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, UserAnswers(json)))
       }
   }
 }

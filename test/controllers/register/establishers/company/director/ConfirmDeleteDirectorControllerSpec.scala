@@ -29,7 +29,7 @@ import identifiers.register.establishers.company.director.{DirectorDetailsId, Di
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import play.api.libs.json._
-import utils.FakeNavigator
+import utils.{FakeNavigator, FakeNavigator2}
 
 class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
 
@@ -107,7 +107,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl
