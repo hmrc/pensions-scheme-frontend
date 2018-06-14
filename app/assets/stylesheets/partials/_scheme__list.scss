@@ -34,9 +34,6 @@
   padding-top:0.75em;
   padding-bottom:0.5em;
   display:block;
-
-  word-break: break-word;
-  overflow-wrap: break-word;
 }
 
 .row-group:after {
@@ -85,13 +82,12 @@
 p.status { margin-bottom: 0;}
 
 .status span {
-  border-width: 1px;
-  border-style: solid;
+  border: 1px solid;
   border-radius: 3px;
   display: block;
   font-size: 0.7em;
   font-weight: 700;
-  padding: 0px 10px;
+  padding: 0 10px;
   position: relative;
   top: -1px;
   text-align: center;

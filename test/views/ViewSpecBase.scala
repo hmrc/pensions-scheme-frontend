@@ -194,7 +194,7 @@ trait ViewSpecBase extends SpecBase {
       val element = Jsoup.parse(view().toString()).getElementById(id)
       MatchResult(
         element != null && element.text() == text,
-        s"element $id does not have text $text",
+        s"element $id does not have text $text. Text is ${element.text()}",
         s"element $id has text $text"
       )
   }
@@ -206,6 +206,22 @@ trait ViewSpecBase extends SpecBase {
         element != null && element.hasClass(className),
         s"element $id does not have class $className. Class is ${element.classNames.toString}",
         s"element $id has class $className"
+      )
+  }
+
+  def haveClassWithSize(className: String, size: Int, id: String = ""): Matcher[View] = Matcher[View] {
+    view =>
+      val list = if(id.isEmpty) {
+        Jsoup.parse(view().toString()).getElementsByClass(className)
+      } else {
+        val idEls = Jsoup.parse(view().toString()).getElementById(id)
+        idEls.getElementsByClass(className)
+      }
+
+      MatchResult(
+        list != null && list.size() == size,
+        s"Not the correct amount of elements with class $className. Size is ${list.size()}, expected $size",
+        s"There are $size Elements with class of $className"
       )
   }
 
