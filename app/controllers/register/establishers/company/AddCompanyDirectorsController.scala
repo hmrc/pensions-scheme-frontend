@@ -16,8 +16,6 @@
 
 package controllers.register.establishers.company
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
@@ -25,6 +23,7 @@ import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.company.AddCompanyDirectorsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
+import javax.inject.Inject
 import models.Mode
 import models.register.establishers.company.director.DirectorDetails
 import play.api.Logger
@@ -33,7 +32,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.Navigator2
 import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.addCompanyDirectors
 
@@ -43,7 +42,7 @@ class AddCompanyDirectorsController @Inject() (
                                                      appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      dataCacheConnector: DataCacheConnector,
-                                                     @EstablishersCompany navigator: Navigator,
+                                                     @EstablishersCompany navigator: Navigator2,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
@@ -72,7 +71,7 @@ class AddCompanyDirectorsController @Inject() (
         .getOrElse(Nil)
 
       if (directors.isEmpty || directors.lengthCompare(appConfig.maxDirectors) >= 0) {
-        Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode)(request.userAnswers)))
+        Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, request.userAnswers)))
       }
       else {
 
@@ -93,14 +92,14 @@ class AddCompanyDirectorsController @Inject() (
                   )
                 )
             },
-          (value) =>
+          value =>
             request.userAnswers.set(AddCompanyDirectorsId(index))(value).fold(
               errors => {
                 Logger.error("Unable to set user answer", JsResultException(errors))
                 Future.successful(InternalServerError)
               },
               userAnswers => {
-                Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode)(userAnswers)))
+                Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, userAnswers)))
               }
             )
         )
