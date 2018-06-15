@@ -68,6 +68,10 @@ class PODSModule extends AbstractModule {
       .annotatedWith(classOf[Adviser])
       .to(classOf[AdviserNavigator2])
 
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[EstablishersIndividual])
+      .to(classOf[EstablishersIndividualNavigator2])
+
   }
 
 }

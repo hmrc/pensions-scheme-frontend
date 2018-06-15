@@ -17,7 +17,6 @@
 package controllers.register.establishers.individual
 
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
@@ -26,7 +25,7 @@ import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{CheckYourAnswersFactory, Navigator}
+import utils.{CheckYourAnswersFactory, Navigator, Navigator2}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 import utils.CheckYourAnswers.Ops._
@@ -40,7 +39,7 @@ class CheckYourAnswersController @Inject() (appConfig: FrontendAppConfig,
                                             getData: DataRetrievalAction,
                                             requiredData: DataRequiredAction,
                                             checkYourAnswersFactory: CheckYourAnswersFactory,
-                                            @EstablishersIndividual navigator: Navigator) extends FrontendController with Retrievals with I18nSupport {
+                                            @EstablishersIndividual navigator: Navigator2) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
@@ -62,7 +61,7 @@ class CheckYourAnswersController @Inject() (appConfig: FrontendAppConfig,
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData) {
     implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode)(request.userAnswers))
+      Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
   }
 
 }
