@@ -56,6 +56,8 @@ class EstablishersCompanyDirectorNavigator2 @Inject()(val dataCacheConnector: Da
         checkYourAnswers(establisherIndex, directorIndex)(from.userAnswers)
       case ConfirmDeleteDirectorId(establisherIndex) =>
         NavigateTo.dontSave(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex))
+      case CheckYourAnswersId(establisherIndex, directorIndex) =>
+        NavigateTo.save(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex))
       case _ => None
     }
   }

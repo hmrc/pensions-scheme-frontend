@@ -46,7 +46,8 @@ class EstablishersCompanyDirectorNavigator2Spec extends SpecBase with NavigatorB
     (DirectorPreviousAddressListId(0, 0),     emptyAnswers,   directorPreviousAddress(NormalMode),    true,         Some(directorPreviousAddress(CheckMode)),       true),
     (DirectorPreviousAddressId(0, 0),         emptyAnswers,   directorContactDetails(NormalMode),     true,         Some(checkYourAnswers),                   true),
     (DirectorContactDetailsId(0, 0),          emptyAnswers,   checkYourAnswers,                       true,         Some(checkYourAnswers),                   true),
-    (ConfirmDeleteDirectorId(0),           emptyAnswers,   addCompanyDirectors(NormalMode),        false,        None,                                     false)
+    (ConfirmDeleteDirectorId(0),           emptyAnswers,   addCompanyDirectors(NormalMode),        false,        None,                                     false),
+    (CheckYourAnswersId(0, 0),           emptyAnswers,   addCompanyDirectors(NormalMode),        true,        None,                                     true)
   )
 
   navigator.getClass.getSimpleName must {
