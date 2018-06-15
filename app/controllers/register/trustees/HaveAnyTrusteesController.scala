@@ -16,22 +16,21 @@
 
 package controllers.register.trustees
 
-import javax.inject.Inject
-
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
 import config.FrontendAppConfig
+import connectors.DataCacheConnector
 import controllers.Retrievals
+import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.HaveAnyTrusteesId
+import javax.inject.Inject
 import models.Mode
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator2, UserAnswers}
 import views.html.register.trustees.haveAnyTrustees
 
 import scala.concurrent.Future
@@ -40,7 +39,7 @@ class HaveAnyTrusteesController @Inject()(
                                            appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            dataCacheConnector: DataCacheConnector,
-                                           @Trustees navigator: Navigator,
+                                           @Trustees navigator: Navigator2,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
@@ -66,9 +65,9 @@ class HaveAnyTrusteesController @Inject()(
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode, schemeDetails.schemeName))),
-          (value) =>
+          value =>
             dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(HaveAnyTrusteesId, mode)(UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(HaveAnyTrusteesId, mode, UserAnswers(cacheMap))))
         )
       }
   }
