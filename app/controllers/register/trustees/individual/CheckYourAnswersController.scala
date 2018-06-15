@@ -17,7 +17,6 @@
 package controllers.register.trustees.individual
 
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
@@ -28,7 +27,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswers.Ops._
-import utils.CountryOptions
+import utils.{CountryOptions, Navigator2}
+import utils.annotations.TrusteesIndividual
 import viewmodels.{AnswerSection, Message}
 import views.html.check_your_answers
 
@@ -37,6 +37,7 @@ import scala.language.implicitConversions
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
+                                           @TrusteesIndividual navigator: Navigator2,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requiredData: DataRequiredAction,
@@ -77,6 +78,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData) {
     implicit request =>
-      Redirect(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
+      Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))
   }
 }

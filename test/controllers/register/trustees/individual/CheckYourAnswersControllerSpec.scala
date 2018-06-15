@@ -52,7 +52,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       "POST is called" in {
         val result = controller().onSubmit(firstIndex)(fakeRequest)
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url)
+        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
     }
   }
@@ -73,11 +73,13 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     Some("messages__checkYourAnswers__section__contact_details"),
     Seq.empty[AnswerRow]
   )
+  val onwardRoute = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
+      new FakeNavigator2(onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

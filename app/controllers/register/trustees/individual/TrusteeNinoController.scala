@@ -16,20 +16,19 @@
 
 package controllers.register.trustees.individual
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.individual.TrusteeNinoFormProvider
 import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteeNinoId}
+import javax.inject.Inject
 import models.{Index, Mode, Nino}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.Navigator2
 import utils.annotations.TrusteesIndividual
 import views.html.register.trustees.individual.trusteeNino
 
@@ -40,7 +39,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
-                                      @TrusteesIndividual navigator: Navigator,
+                                      @TrusteesIndividual navigator: Navigator2,
                                       dataCacheConnector: DataCacheConnector) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Nino] = new TrusteeNinoFormProvider()()
@@ -63,7 +62,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
           Future.successful(BadRequest(trusteeNino(appConfig, errors, mode, index, trusteeDetails.fullName)))
         },
         nino => dataCacheConnector.save(TrusteeNinoId(index), nino).map { userAnswers =>
-          Redirect(navigator.nextPage(TrusteeNinoId(index), mode)(userAnswers))
+          Redirect(navigator.nextPage(TrusteeNinoId(index), mode, userAnswers))
         }
       )
   }

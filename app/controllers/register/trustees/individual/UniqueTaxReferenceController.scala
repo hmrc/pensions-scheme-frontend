@@ -16,21 +16,20 @@
 
 package controllers.register.trustees.individual
 
-import javax.inject.Inject
-
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
 import config.FrontendAppConfig
+import connectors.DataCacheConnector
 import controllers.Retrievals
+import controllers.actions._
 import forms.register.trustees.individual.UniqueTaxReferenceFormProvider
 import identifiers.register.trustees.individual.{TrusteeDetailsId, UniqueTaxReferenceId}
+import javax.inject.Inject
 import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesIndividual
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator2, UserAnswers}
 import views.html.register.trustees.individual.uniqueTaxReference
 
 import scala.concurrent.Future
@@ -39,7 +38,7 @@ class UniqueTaxReferenceController @Inject()(
                                               appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
                                               dataCacheConnector: DataCacheConnector,
-                                              @TrusteesIndividual navigator: Navigator,
+                                              @TrusteesIndividual navigator: Navigator2,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
@@ -67,7 +66,7 @@ class UniqueTaxReferenceController @Inject()(
             Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index, details.fullName))),
           (value) =>
             dataCacheConnector.save(request.externalId, UniqueTaxReferenceId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(UniqueTaxReferenceId(index), mode)(new UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(UniqueTaxReferenceId(index), mode, new UserAnswers(cacheMap))))
         )
       }
   }
