@@ -55,7 +55,7 @@ trait NavigatorBehaviour2 extends PropertyChecks with OptionValues {
               result mustBe call
             }
 
-            s"move from $id to $call and ${if (!save) "not "}save the page" in {
+            s"move from $id to $call with data: ${describer(userAnswers)} and ${if (!save) "not "}save the page" in {
               dataCacheConnector.reset()
               navigator.nextPage(id, NormalMode, userAnswers)
               if (save) {

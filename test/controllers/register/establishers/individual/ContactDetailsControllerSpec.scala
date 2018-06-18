@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import play.api.data.Form
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
+import utils.{FakeNavigator, FakeNavigator2}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
@@ -45,7 +45,7 @@ class ContactDetailsControllerSpec extends ControllerSpecBase {
   val establisherName = "test first name test last name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): ContactDetailsController =
-    new ContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
+    new ContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = contactDetails(frontendAppConfig, form, NormalMode,

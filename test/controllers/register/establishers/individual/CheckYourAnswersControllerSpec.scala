@@ -58,7 +58,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       checkYourAnswersFactory,
-      new FakeNavigator(onwardRoute)
+      new FakeNavigator2(onwardRoute)
     )
 
   "Check Your Answers Controller" must {
