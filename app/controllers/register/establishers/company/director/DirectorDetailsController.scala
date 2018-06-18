@@ -17,7 +17,6 @@
 package controllers.register.establishers.company.director
 
 import javax.inject.Inject
-
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -32,7 +31,7 @@ import models.register.establishers.company.director.DirectorDetails
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator, Navigator2, UserAnswers}
 import views.html.register.establishers.company.director.directorDetails
 
 import scala.concurrent.Future
@@ -41,7 +40,7 @@ class DirectorDetailsController @Inject() (
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
-                                        @EstablishersCompanyDirector navigator: Navigator,
+                                        @EstablishersCompanyDirector navigator: Navigator2,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
@@ -72,7 +71,7 @@ class DirectorDetailsController @Inject() (
             ,
             (value) =>
               dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
-                Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode)(new UserAnswers(cacheMap))))
+                Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, new UserAnswers(cacheMap))))
           )
         }
     }
