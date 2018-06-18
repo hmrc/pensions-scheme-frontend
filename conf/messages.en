@@ -481,7 +481,7 @@ messages__schemeReview__trustees__changeLink = Change trustees
 
 messages__otherDirectors__title=Do you need to tell us about other directors?
 messages__otherDirectors__heading=Do you need to tell us about other directors?
-messages__otherDirectors__lede=You don't have to add them now. We may contact you if we need this information.
+messages__otherDirectors__lede=You do not have to add them now. We may contact you if we need this information.
 messages__otherDirectors__error__required=You must make a selection
 
 
@@ -589,7 +589,7 @@ messages__confirmDeleteTrustee__heading = Are you sure you want to delete {0}?
 
 messages__moreThanTenTrustees__title = Do you need to tell us about other trustees?
 messages__moreThanTenTrustees__heading = Do you need to tell us about other trustees?
-messages__moreThanTenTrustees__hint = You don't have to add them now. We may contact you if we need this information.
+messages__moreThanTenTrustees__hint = You do not have to add them now. We may contact you if we need this information.
 
 messages__declarationDormant__title = Have any of the scheme establishers been dormant in the last 12 months?
 messages__declarationDormant__heading = Have any of the scheme establishers been dormant in the last 12 months?
