@@ -28,26 +28,37 @@ class TrusteesCompanyNavigator2 @Inject()(val dataCacheConnector: DataCacheConne
     from.id match {
       case CompanyDetailsId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(NormalMode, index))
+
       case CompanyRegistrationNumberId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(NormalMode, index))
+
       case CompanyUniqueTaxReferenceId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, index))
+
       case CompanyPostcodeLookupId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyAddressListController.onPageLoad(NormalMode, index))
+
       case CompanyAddressListId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(NormalMode, index))
+
       case CompanyAddressId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, index))
+
       case CompanyAddressYearsId(index) =>
         addressYearsRoutes(index,from.userAnswers)
+
       case CompanyPreviousAddressPostcodeLookupId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, index))
+
       case CompanyPreviousAddressListId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyPreviousAddressController.onPageLoad(NormalMode, index))
+
       case CompanyPreviousAddressId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index))
+
       case CompanyContactDetailsId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(index))
+
       case CheckYourAnswersId =>
         NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
       case _ => None
@@ -56,21 +67,38 @@ class TrusteesCompanyNavigator2 @Inject()(val dataCacheConnector: DataCacheConne
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
-      case CompanyDetailsId(index) => checkYourAnswers(index,from.userAnswers)
-      case CompanyRegistrationNumberId(index) => checkYourAnswers(index,from.userAnswers)
-      case CompanyUniqueTaxReferenceId(index) => checkYourAnswers(index,from.userAnswers)
+      case CompanyDetailsId(index) =>
+        checkYourAnswers(index,from.userAnswers)
+
+      case CompanyRegistrationNumberId(index) =>
+        checkYourAnswers(index,from.userAnswers)
+
+      case CompanyUniqueTaxReferenceId(index) =>
+        checkYourAnswers(index,from.userAnswers)
+
       case CompanyPostcodeLookupId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyAddressListController.onPageLoad(CheckMode, index))
+
       case CompanyAddressListId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(CheckMode, index))
-      case CompanyAddressId(index) => checkYourAnswers(index,from.userAnswers)
-      case CompanyAddressYearsId(index) => editAddressYearsRoutes(index,from.userAnswers)
+
+      case CompanyAddressId(index) =>
+        checkYourAnswers(index,from.userAnswers)
+
+      case CompanyAddressYearsId(index) =>
+        editAddressYearsRoutes(index,from.userAnswers)
+
       case CompanyPreviousAddressPostcodeLookupId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(CheckMode, index))
+
       case CompanyPreviousAddressListId(index) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index))
-      case CompanyPreviousAddressId(index) => checkYourAnswers(index,from.userAnswers)
-      case CompanyContactDetailsId(index) => checkYourAnswers(index,from.userAnswers)
+
+      case CompanyPreviousAddressId(index) =>
+        checkYourAnswers(index,from.userAnswers)
+
+      case CompanyContactDetailsId(index) =>
+        checkYourAnswers(index,from.userAnswers)
       case _ => None
     }
   }

@@ -35,20 +35,20 @@ class TrusteesCompanyNavigator2Spec extends SpecBase with MustMatchers with Navi
 
   private def routesTrusteeCompany: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
 
-    ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),
-    (CompanyDetailsId(0), emptyAnswers, companyRegistrationNumber(NormalMode), true, Some(checkYourAnswers), true),
-    (CompanyRegistrationNumberId(0), emptyAnswers, companyUTR(NormalMode), true, Some(checkYourAnswers), true),
-    (CompanyUniqueTaxReferenceId(0), emptyAnswers, companyPostCodeLookup(NormalMode), true, Some(checkYourAnswers), true),
-    (CompanyPostcodeLookupId(0), emptyAnswers, companyAddressList(NormalMode), true, Some(companyAddressList(CheckMode)), true),
-    (CompanyAddressListId(0), emptyAnswers, companyManualAddress(NormalMode), true, Some(companyManualAddress(CheckMode)), true),
-    (CompanyAddressId(0), emptyAnswers, companyAddressYears(NormalMode), true, Some(checkYourAnswers), true),
-    (CompanyAddressYearsId(0), addressYearsOverAYear, companyContactDetails, true, Some(checkYourAnswers), true),
-    (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(NormalMode), true, Some(prevAddPostCodeLookup(CheckMode)), true),
-    (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(NormalMode), true, Some(companyPaList(CheckMode)), true),
-    (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(NormalMode), true, Some(companyPreviousAddress(CheckMode)), true),
-    (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails, true, Some(checkYourAnswers), true),
-    (CompanyContactDetailsId(0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
-    (CheckYourAnswersId, emptyAnswers, addTrustee, true, None, false)
+    ("Id",                                      "UserAnswers",          "Next Page (Normal Mode)",              "Save (NM)",  "Next Page (CheckMode)",            "Save (CM)"),
+    (CompanyDetailsId(0),                        emptyAnswers,          companyRegistrationNumber(NormalMode),    true,        Some(checkYourAnswers),                 true),
+    (CompanyRegistrationNumberId(0),             emptyAnswers,          companyUTR(NormalMode),                   true,        Some(checkYourAnswers),                 true),
+    (CompanyUniqueTaxReferenceId(0),             emptyAnswers,          companyPostCodeLookup(NormalMode),        true,        Some(checkYourAnswers),                 true),
+    (CompanyPostcodeLookupId(0),                 emptyAnswers,          companyAddressList(NormalMode),           true,        Some(companyAddressList(CheckMode)),    true),
+    (CompanyAddressListId(0),                    emptyAnswers,          companyManualAddress(NormalMode),         true,        Some(companyManualAddress(CheckMode)),  true),
+    (CompanyAddressId(0),                        emptyAnswers,          companyAddressYears(NormalMode),          true,        Some(checkYourAnswers),                 true),
+    (CompanyAddressYearsId(0),                   addressYearsOverAYear, companyContactDetails,                    true,        Some(checkYourAnswers),                 true),
+    (CompanyAddressYearsId(0),                   addressYearsUnderAYear,prevAddPostCodeLookup(NormalMode),        true,        Some(prevAddPostCodeLookup(CheckMode)), true),
+    (CompanyPreviousAddressPostcodeLookupId(0),  emptyAnswers,          companyPaList(NormalMode),                true,        Some(companyPaList(CheckMode)),         true),
+    (CompanyPreviousAddressListId(0),            emptyAnswers,          companyPreviousAddress(NormalMode),       true,        Some(companyPreviousAddress(CheckMode)),true),
+    (CompanyPreviousAddressId(0),                emptyAnswers,          companyContactDetails,                    true,        Some(checkYourAnswers),                 true),
+    (CompanyContactDetailsId(0),                 emptyAnswers,          checkYourAnswers,                         true,        Some(checkYourAnswers),                 true),
+    (CheckYourAnswersId,                         emptyAnswers,          addTrustee,                               true,        None,                                  false)
   )
 
 
