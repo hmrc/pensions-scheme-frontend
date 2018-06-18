@@ -17,6 +17,7 @@
 package controllers.register.trustees.company
 
 import javax.inject.Inject
+
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
@@ -28,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswers.Ops._
 import utils.annotations.TrusteesCompany
-import utils.{CheckYourAnswersFactory, CountryOptions, Navigator}
+import utils.{CheckYourAnswersFactory, CountryOptions, Navigator, Navigator2}
 import viewmodels.{AnswerSection, Message}
 import views.html.check_your_answers
 
@@ -42,7 +43,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            requiredData: DataRequiredAction,
                                            checkYourAnswersFactory: CheckYourAnswersFactory,
                                            implicit val countryOptions: CountryOptions,
-                                           @TrusteesCompany navigator: Navigator
+                                           @TrusteesCompany navigator: Navigator2
                                           ) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
@@ -97,7 +98,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData) {
     implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode)(request.userAnswers))
+      Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode,request.userAnswers))
   }
 
 }
