@@ -60,7 +60,7 @@ class EstablishersCompanyNavigator2 @Inject()(val dataCacheConnector: DataCacheC
       case OtherDirectorsId(index)=>
         NavigateTo.save(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index))
       case CompanyReviewId(_) =>
-        checkYourAnswerRoutes(from.userAnswers)
+        NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
       case CheckYourAnswersId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index))
       case _ => None
@@ -145,31 +145,7 @@ class EstablishersCompanyNavigator2 @Inject()(val dataCacheConnector: DataCacheC
   }
 
   private def checkYourAnswerRoutes(answers: UserAnswers): Option[NavigateTo] = {
-    if (appConfig.restrictEstablisherEnabled) {
-      checkYourAnswerRoutesWithRestriction(answers)
-    } else {
-      NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
-    }
-  }
-
-  private def checkYourAnswerRoutesWithRestriction(answers: UserAnswers): Option[NavigateTo] = {
-    if (answers.allTrustees.nonEmpty) {
-      NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
-    } else {
-      answers.get(SchemeDetailsId) match {
-        case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
-          NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
-        case Some(SchemeDetails(_, _)) =>
-          answers.get(HaveAnyTrusteesId) match {
-            case None =>
-              NavigateTo.save(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode))
-            case _ =>
-              NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
-          }
-        case None =>
-          NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
-      }
-    }
+    NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
   }
 
 }
