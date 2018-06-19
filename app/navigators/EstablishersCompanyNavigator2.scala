@@ -143,9 +143,4 @@ class EstablishersCompanyNavigator2 @Inject()(val dataCacheConnector: DataCacheC
       NavigateTo.save(controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode, index))
     }
   }
-
-  private def checkYourAnswerRoutes(answers: UserAnswers): Option[NavigateTo] = {
-    NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
-  }
-
 }
