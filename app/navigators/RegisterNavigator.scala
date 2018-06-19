@@ -152,17 +152,9 @@ class RegisterNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigato
     }
   }
 
-  private def navigateWithFeatureToggle: Call = {
-    if(appConfig.restrictEstablisherEnabled){
-      controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
-    } else {
-      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
-    }
-  }
-
   private def checkYourAnswersRoutes()(userAnswers: UserAnswers): Call = {
     if (userAnswers.allEstablishers.isEmpty) {
-      navigateWithFeatureToggle
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
     } else if (userAnswers.allTrustees.nonEmpty) {
       controllers.register.routes.SchemeReviewController.onPageLoad()
     } else {

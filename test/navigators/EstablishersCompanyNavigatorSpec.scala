@@ -70,21 +70,8 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CompanyReviewId(0),                        emptyAnswers,                  addEstablisher,                        None)
   )
 
-  s"${navigator().getClass.getSimpleName} when restrict-establisher toggle is off" must {
+  s"${navigator().getClass.getSimpleName}" must {
     behave like navigatorWithRoutes(navigator(), routesWithNoRestrictedEstablishers, dataDescriber)
-  }
-
-  //Delete the test case when the restrict-establisher toggle is removed
-  private val routesWithRestrictedEstablishers: TableFor4[Identifier, UserAnswers, Call, Option[Call]] = Table(
-    ("Id",                                       "User Answers",                      "Next Page (Normal Mode)",                  "Next Page (Check Mode)"),
-    (CompanyReviewId(0),                          schemeBodyCorporate,                 haveAnyTrustees,                             None),
-    (CompanyReviewId(0),                          schemeSingleTrust,                   addTrustees,                                 None),
-    (CompanyReviewId(0),                          hasTrusteeCompaniesForBodyCorporate, schemeReview,                                None),
-    (CompanyReviewId(0),                          noTrusteeCompaniesForBodyCorporate,  schemeReview,                                None)
-  )
-
-  s"${navigator(true).getClass.getSimpleName} when restrict-establisher toggle is on" must {
-    behave like navigatorWithRoutes(navigator(true), routesWithRestrictedEstablishers, dataDescriber)
   }
 }
 
