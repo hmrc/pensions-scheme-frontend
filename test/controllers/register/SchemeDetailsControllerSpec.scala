@@ -29,14 +29,14 @@ import play.api.libs.json.{Json, Reads}
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
+import utils.{FakeNavigator2, NameMatching, NameMatchingFactory}
 import views.html.register.schemeDetails
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeDetailsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new SchemeDetailsFormProvider()
   val form = formProvider()
@@ -55,14 +55,14 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       formProvider,
       FakeNameMatchingFactory
     )
 
-  def viewAsString(form: Form[_] = form) = schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
 
   "SchemeDetails Controller" must {
 

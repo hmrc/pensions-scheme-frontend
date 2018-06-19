@@ -42,14 +42,17 @@ import identifiers.register.establishers.company.{CompanyContactDetailsId, Compa
 import models._
 import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.FakeNavigator2
 import views.html.register.establishers.company.companyContactDetails
 
 class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  //scalastyle:off magic.number
+
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new ContactDetailsFormProvider()
   val form = formProvider()
@@ -57,14 +60,28 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(10)
   val companyName = "test company name"
 
-
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) : CompanyContactDetailsController =
-    new CompanyContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+    new CompanyContactDetailsController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator2(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
 
-  def viewAsString(form: Form[_] = form) = companyContactDetails(frontendAppConfig, form, NormalMode, firstIndex, companyName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    companyContactDetails(
+      frontendAppConfig,
+      form,
+      NormalMode,
+      firstIndex,
+      companyName
+    )(fakeRequest, messages).toString
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     SchemeDetailsId.toString ->
       SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(

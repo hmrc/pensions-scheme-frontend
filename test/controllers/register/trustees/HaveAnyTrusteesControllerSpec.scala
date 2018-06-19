@@ -16,19 +16,19 @@
 
 package controllers.register.trustees
 
-import play.api.data.Form
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
-import play.api.libs.json._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.HaveAnyTrusteesId
 import models.NormalMode
 import models.register.{SchemeDetails, SchemeType}
+import play.api.data.Form
+import play.api.libs.json._
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator2
 import views.html.register.trustees.haveAnyTrustees
 
 class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
@@ -39,9 +39,8 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val schemeName = "Test Scheme Name"
 
-
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): HaveAnyTrusteesController =
-    new HaveAnyTrusteesController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new HaveAnyTrusteesController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = haveAnyTrustees(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString

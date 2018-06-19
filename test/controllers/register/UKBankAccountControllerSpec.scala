@@ -27,12 +27,12 @@ import models.register.SchemeType.SingleTrust
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.FakeNavigator2
 import views.html.register.uKBankAccount
 
 class UKBankAccountControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new UKBankAccountFormProvider()
   val form = formProvider()
@@ -44,14 +44,14 @@ class UKBankAccountControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider
     )
 
-  def viewAsString(form: Form[_] = form) = uKBankAccount(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = uKBankAccount(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   "UKBankAccount Controller" must {
 

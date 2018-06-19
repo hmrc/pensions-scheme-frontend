@@ -16,24 +16,24 @@
 
 package controllers.register
 
-import play.api.data.Form
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
 import forms.register.UKBankDetailsFormProvider
 import identifiers.register.{SchemeDetailsId, UKBankDetailsId}
 import models.NormalMode
-import views.html.register.uKBankDetails
-import controllers.ControllerSpecBase
 import models.register.SchemeType.SingleTrust
 import models.register.{SchemeDetails, SortCode, UKBankDetails}
 import org.apache.commons.lang3.RandomUtils
 import org.joda.time.LocalDate
+import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator2
+import views.html.register.uKBankDetails
 
+//scalastyle:off magic.number
 class UKBankDetailsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
@@ -48,7 +48,7 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
@@ -57,8 +57,8 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
 
   def viewAsString(form: Form[_] = form): String = uKBankDetails(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
-  val accountNo = RandomUtils.nextInt(10000000, 99999999).toString
-  val sortCode = RandomUtils.nextInt(100000, 999999).toString
+  private val accountNo = RandomUtils.nextInt(10000000, 99999999).toString
+  private val sortCode = RandomUtils.nextInt(100000, 999999).toString
 
   "UKBankDetails Controller" must {
 

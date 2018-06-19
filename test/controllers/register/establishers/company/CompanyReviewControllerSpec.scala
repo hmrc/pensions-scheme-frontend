@@ -29,7 +29,7 @@ import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.FakeNavigator2
 import views.html.register.establishers.company.companyReview
 
 class CompanyReviewControllerSpec extends ControllerSpecBase {
@@ -37,7 +37,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyReviewController =
-    new CompanyReviewController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new CompanyReviewController(frontendAppConfig, messagesApi, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl)
 
   val index = Index(0)

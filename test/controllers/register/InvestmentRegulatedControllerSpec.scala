@@ -16,20 +16,19 @@
 
 package controllers.register
 
-import play.api.data.Form
-import play.api.libs.json.{JsBoolean, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
 import forms.register.InvestmentRegulatedFormProvider
 import identifiers.register.{InvestmentRegulatedId, SchemeDetailsId}
 import models.NormalMode
 import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
+import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator2
 import views.html.register.investmentRegulated
 
 class InvestmentRegulatedControllerSpec extends ControllerSpecBase {
@@ -46,7 +45,7 @@ class InvestmentRegulatedControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
