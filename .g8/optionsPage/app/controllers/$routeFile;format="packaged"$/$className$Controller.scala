@@ -11,7 +11,7 @@ import config.FrontendAppConfig
 import forms.$routeFile$.$className$FormProvider
 import identifiers.$routeFile$.$className$Id
 import models.$routeFile$.$className$
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 import views.html.$routeFile$.$className;format="decap"$
 import models.Mode
 import scala.concurrent.Future

@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class DirectorContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  dataCacheConnector: DataCacheConnector,
-                                                 @EstablishersCompanyDirector navigator: Navigator2,
+                                                 @EstablishersCompanyDirector navigator: Navigator,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,

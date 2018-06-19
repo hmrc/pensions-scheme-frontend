@@ -29,7 +29,7 @@ import identifiers.register.establishers.company.director.{ConfirmDeleteDirector
 import models.{Index, NormalMode}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Navigator, Navigator2, UserAnswers}
+import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 import scala.concurrent.Future
@@ -38,7 +38,7 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  dataCacheConnector: DataCacheConnector,
-                                                 @EstablishersCompanyDirector navigator: Navigator2,
+                                                 @EstablishersCompanyDirector navigator: Navigator,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction

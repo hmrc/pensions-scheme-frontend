@@ -35,7 +35,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
-import utils.FakeNavigator2
+import utils.FakeNavigator
 import views.html.register.schemeReview
 
 class SchemeReviewControllerSpec extends ControllerSpecBase {
@@ -120,7 +120,7 @@ object SchemeReviewControllerSpec extends ControllerSpecBase {
     val application = new GuiceApplicationBuilder()
     val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-    new SchemeReviewController(appConfig, messagesApi, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
+    new SchemeReviewController(appConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl)
   }
 

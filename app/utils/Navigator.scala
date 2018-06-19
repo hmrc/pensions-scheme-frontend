@@ -16,33 +16,59 @@
 
 package utils
 
-import javax.inject.{Inject, Singleton}
-
+import connectors.DataCacheConnector
+import identifiers.{Identifier, LastPageId}
+import models.requests.IdentifiedRequest
+import models.{CheckMode, LastPage, Mode, NormalMode}
+import play.api.Logger
 import play.api.mvc.Call
-import controllers.routes
-import identifiers.Identifier
-import models.{CheckMode, Mode, NormalMode}
+import uk.gov.hmrc.http.HeaderCarrier
 
-@Singleton
-class Navigator @Inject()() {
+import scala.concurrent.ExecutionContext
+import scala.util.Failure
 
-  protected def routeMap: PartialFunction[Identifier, UserAnswers => Call] = Map(
+abstract class Navigator {
 
-  )
+  protected def dataCacheConnector: DataCacheConnector
 
-  protected def editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = Map(
+  protected def routeMap(from: NavigateFrom): Option[NavigateTo]
 
-  )
+  protected def editRouteMap(from: NavigateFrom): Option[NavigateTo]
 
-  def nextPage(id: Identifier, mode: Mode): UserAnswers => Call = mode match {
-    case NormalMode =>
-      routeMap.lift(id).getOrElse(_ =>
-        routes.IndexController.onPageLoad()
-      )
-    case CheckMode =>
-      editRouteMap.lift(id).getOrElse(_ =>
-        routes.IndexController.onPageLoad()
-      )
+  def nextPage(id: Identifier, mode: Mode, userAnswers: UserAnswers)(implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
+    val navigateTo = {
+      mode match {
+        case NormalMode => routeMap(NavigateFrom(id, userAnswers))
+        case CheckMode => editRouteMap(NavigateFrom(id, userAnswers))
+      }
+    }
+
+    navigateTo
+      .map(to => saveAndContinue(to, ex.externalId))
+      .getOrElse(defaultPage(id, mode))
+  }
+
+  private[this] def saveAndContinue(navigation: NavigateTo, externalID: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Call = {
+    if (navigation.save) {
+      dataCacheConnector.save(externalID, LastPageId, LastPage(navigation.page.method, navigation.page.url)) andThen {
+        case Failure(t: Throwable) => Logger.warn("Error saving user's current page", t)
+      }
+    }
+    navigation.page
+  }
+
+  private[this] def defaultPage(id: Identifier, mode: Mode): Call = {
+    Logger.warn(s"No navigation defined for id $id in mode $mode")
+    controllers.routes.IndexController.onPageLoad()
+  }
+
+  case class NavigateFrom(id: Identifier, userAnswers: UserAnswers)
+
+  case class NavigateTo(page: Call, save: Boolean)
+
+  object NavigateTo {
+    def save(page: Call): Option[NavigateTo] = Some(NavigateTo(page, true))
+    def dontSave(page: Call): Option[NavigateTo] = Some(NavigateTo(page, false))
   }
 
 }

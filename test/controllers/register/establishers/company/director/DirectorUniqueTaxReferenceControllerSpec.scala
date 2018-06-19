@@ -28,11 +28,13 @@ import models.register.establishers.company.director.DirectorDetails
 import models.UniqueTaxReference
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeNavigator2}
+import utils.FakeNavigator
 import views.html.register.establishers.company.director.directorUniqueTaxReference
+
+//scalastyle:off magic.number
 
 class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
@@ -45,7 +47,7 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   val form: Form[UniqueTaxReference] = formProvider()
   val companyName = "test company name"
   val directorName = "First Name Middle Name Last Name"
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         "director" -> Json.arr(
@@ -60,7 +62,7 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     )
   )
 
-  val validDataNoDirectorDetails = Json.obj(
+  val validDataNoDirectorDetails: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         "director" -> Json.arr(
@@ -73,7 +75,7 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     )
   )
 
-  val validDataEmptyForm = Json.obj(
+  val validDataEmptyForm: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
@@ -90,10 +92,18 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): DirectorUniqueTaxReferenceController =
-    new DirectorUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute),
+    new DirectorUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = directorUniqueTaxReference(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex,directorName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    directorUniqueTaxReference(
+      frontendAppConfig,
+      form,
+      NormalMode,
+      establisherIndex,
+      directorIndex,
+      directorName
+    )(fakeRequest, messages).toString
 
   "DirectorUniqueTaxReference Controller" must {
     val getRelevantData = new FakeDataRetrievalAction(Some(validData))

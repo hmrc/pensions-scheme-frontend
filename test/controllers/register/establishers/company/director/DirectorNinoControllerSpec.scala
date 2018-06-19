@@ -23,18 +23,21 @@ import forms.register.establishers.company.director.DirectorNinoFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoId}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import models._
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import play.api.data.Form
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeNavigator2}
+import utils.FakeNavigator
 import views.html.register.establishers.company.director.directorNino
+
+//scalastyle:off magic.number
 
 class DirectorNinoControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
   val companyName = "test company name"
   val formProvider = new DirectorNinoFormProvider()
   val form = formProvider()
@@ -43,7 +46,7 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(11)
   val directorName = "First Name Middle Name Last Name"
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
@@ -59,8 +62,7 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
     )
   )
 
-
-  val validDataNoDirectorDetails = Json.obj(
+  val validDataNoDirectorDetails: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
@@ -75,7 +77,8 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
       )
     )
   )
-  val validDataNoPreviousAnswer = Json.obj(
+
+  val validDataNoPreviousAnswer: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
@@ -90,7 +93,7 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorNinoController =
-    new DirectorNinoController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute),
+    new DirectorNinoController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = directorNino(frontendAppConfig, form, NormalMode,
@@ -152,7 +155,6 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a GET if no existing director details data is found" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoDirectorDetails))
       val result = controller(dontGetAnyData).onPageLoad(NormalMode, establisherIndex, directorIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -166,7 +168,6 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing director details data is found" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validDataNoDirectorDetails))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", Nino.options.head.value))
       val result = controller(dontGetAnyData).onSubmit(NormalMode, establisherIndex, directorIndex)(postRequest)
       status(result) mustBe SEE_OTHER

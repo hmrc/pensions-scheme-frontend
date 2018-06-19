@@ -23,7 +23,7 @@ import models.CheckMode
 import models.register.{Benefits, SchemeDetails, SchemeType}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import utils.{FakeCountryOptions, FakeNavigator2}
+import utils.{FakeCountryOptions, FakeNavigator}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -58,7 +58,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 object CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
-  private val fakeNavigator = new FakeNavigator2(onwardRoute)
+  private val fakeNavigator = new FakeNavigator(onwardRoute)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
     new CheckYourAnswersController(

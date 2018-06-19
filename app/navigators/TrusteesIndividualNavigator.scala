@@ -17,80 +17,90 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
-import identifiers.Identifier
+import connectors.DataCacheConnector
 import identifiers.register.trustees.individual._
 import models.{AddressYears, CheckMode, NormalMode}
 import play.api.mvc.Call
 import utils.{Navigator, UserAnswers}
 
 @Singleton
-class TrusteesIndividualNavigator @Inject() extends Navigator {
+class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: DataCacheConnector) extends Navigator {
 
-  private def checkYourAnswers(index: Int)(answers: UserAnswers): Call =
-    controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(index)
+  private def checkYourAnswers(index: Int)(answers: UserAnswers): Option[NavigateTo] =
+    NavigateTo.save(controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(index))
 
-  override protected val routeMap: PartialFunction[Identifier, UserAnswers => Call] = {
-    case TrusteeDetailsId(index) =>
-      _ => controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(NormalMode, index)
-    case TrusteeNinoId(index) =>
-      _ => controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onPageLoad(NormalMode, index)
-    case UniqueTaxReferenceId(index) =>
-      _ => controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, index)
-    case IndividualPostCodeLookupId(index) =>
-      _ => controllers.register.trustees.individual.routes.IndividualAddressListController.onPageLoad(NormalMode, index)
-    case IndividualAddressListId(index) =>
-      _ => controllers.register.trustees.individual.routes.TrusteeAddressController.onPageLoad(NormalMode, index)
-    case TrusteeAddressId(index) =>
-      _ => controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onPageLoad(NormalMode, index)
-    case TrusteeAddressYearsId(index) =>
-      addressYearsRoutes(index)
-    case IndividualPreviousAddressPostCodeLookupId(index) =>
-      _ => controllers.register.trustees.individual.routes.TrusteePreviousAddressListController.onPageLoad(NormalMode, index)
-    case TrusteePreviousAddressListId(index) =>
-      _ => controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(NormalMode, index)
-    case TrusteePreviousAddressId(index) =>
-      _ => controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(NormalMode, index)
-    case TrusteeContactDetailsId(index) =>
-      _ => controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(index)
-  }
-
-  override protected val editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
-    case TrusteeDetailsId(index) => checkYourAnswers(index)
-    case TrusteeNinoId(index) => checkYourAnswers(index)
-    case UniqueTaxReferenceId(index) => checkYourAnswers(index)
-    case IndividualPostCodeLookupId(index) =>
-      _ => controllers.register.trustees.individual.routes.IndividualAddressListController.onPageLoad(CheckMode, index)
-    case IndividualAddressListId(index) =>
-      _ => controllers.register.trustees.individual.routes.TrusteeAddressController.onPageLoad(CheckMode, index)
-    case TrusteeAddressId(index) => checkYourAnswers(index)
-    case TrusteeAddressYearsId(index) => editAddressYearsRoutes(index)
-    case IndividualPreviousAddressPostCodeLookupId(index) =>
-      _ => controllers.register.trustees.individual.routes.TrusteePreviousAddressListController.onPageLoad(CheckMode, index)
-    case TrusteePreviousAddressListId(index) =>
-      _ => controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(CheckMode, index)
-    case TrusteePreviousAddressId(index) => checkYourAnswers(index)
-    case TrusteeContactDetailsId(index) => checkYourAnswers(index)
-  }
-
-  private def addressYearsRoutes(index: Int)(answers: UserAnswers): Call = {
-    answers.get(TrusteeAddressYearsId(index)) match {
-      case Some(AddressYears.UnderAYear) =>
-        controllers.register.trustees.individual.routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, index)
-      case Some(AddressYears.OverAYear) =>
-        controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(NormalMode, index)
-      case None =>
-        controllers.routes.SessionExpiredController.onPageLoad()
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
+    from.id match {
+      case TrusteeDetailsId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.TrusteeNinoController.onPageLoad(NormalMode, index))
+      case TrusteeNinoId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.UniqueTaxReferenceController.onPageLoad(NormalMode, index))
+      case UniqueTaxReferenceId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, index))
+      case IndividualPostCodeLookupId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.IndividualAddressListController.onPageLoad(NormalMode, index))
+      case IndividualAddressListId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.TrusteeAddressController.onPageLoad(NormalMode, index))
+      case TrusteeAddressId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.TrusteeAddressYearsController.onPageLoad(NormalMode, index))
+      case TrusteeAddressYearsId(index) =>
+        addressYearsRoutes(index)(from.userAnswers)
+      case IndividualPreviousAddressPostCodeLookupId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.TrusteePreviousAddressListController.onPageLoad(NormalMode, index))
+      case TrusteePreviousAddressListId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(NormalMode, index))
+      case TrusteePreviousAddressId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(NormalMode, index))
+      case TrusteeContactDetailsId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(index))
+      case CheckYourAnswersId(index) =>
+        NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
+      case _ =>
+        None
     }
   }
 
-  private def editAddressYearsRoutes(index: Int)(answers: UserAnswers): Call = {
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
+    from.id match {
+      case TrusteeDetailsId(index) => checkYourAnswers(index)(from.userAnswers)
+      case TrusteeNinoId(index) => checkYourAnswers(index)(from.userAnswers)
+      case UniqueTaxReferenceId(index) => checkYourAnswers(index)(from.userAnswers)
+      case IndividualPostCodeLookupId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.IndividualAddressListController.onPageLoad(CheckMode, index))
+      case IndividualAddressListId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.TrusteeAddressController.onPageLoad(CheckMode, index))
+      case TrusteeAddressId(index) => checkYourAnswers(index)(from.userAnswers)
+      case TrusteeAddressYearsId(index) => editAddressYearsRoutes(index)(from.userAnswers)
+      case IndividualPreviousAddressPostCodeLookupId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.TrusteePreviousAddressListController.onPageLoad(CheckMode, index))
+      case TrusteePreviousAddressListId(index) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.TrusteePreviousAddressController.onPageLoad(CheckMode, index))
+      case TrusteePreviousAddressId(index) => checkYourAnswers(index)(from.userAnswers)
+      case TrusteeContactDetailsId(index) => checkYourAnswers(index)(from.userAnswers)
+      case _ =>
+        None
+    }
+  }
+
+  private def addressYearsRoutes(index: Int)(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(TrusteeAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
-        controllers.register.trustees.individual.routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, index)
+        NavigateTo.save(controllers.register.trustees.individual.routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, index))
       case Some(AddressYears.OverAYear) =>
-        controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(index)
+        NavigateTo.save(controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(NormalMode, index))
       case None =>
-        controllers.routes.SessionExpiredController.onPageLoad()
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def editAddressYearsRoutes(index: Int)(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(TrusteeAddressYearsId(index)) match {
+      case Some(AddressYears.UnderAYear) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.IndividualPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, index))
+      case Some(AddressYears.OverAYear) =>
+        NavigateTo.save(controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(index))
+      case None =>
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 }

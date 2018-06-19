@@ -21,7 +21,7 @@ import controllers.actions._
 import models.{CheckMode, Index}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{CheckYourAnswersFactory, CountryOptions, FakeNavigator2, InputOption}
+import utils.{CheckYourAnswersFactory, CountryOptions, FakeNavigator, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -70,7 +70,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       checkYourAnswersFactory,
-      new FakeNavigator2(onwardRoute)
+      new FakeNavigator(onwardRoute)
     )
 
   def viewAsString(): String =

@@ -16,285 +16,95 @@
 
 package navigators
 
-import identifiers.register.trustees.TrusteesId
+import base.SpecBase
+import connectors.FakeDataCacheConnector
+import identifiers.Identifier
 import identifiers.register.trustees.company._
-import models.{CheckMode, NormalMode}
-import org.scalatest.prop.PropertyChecks
-import org.scalatest.{MustMatchers, WordSpec}
+import models.{AddressYears, CheckMode, Index, Mode, NormalMode}
+import org.scalatest.prop.TableFor6
+import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import utils.UserAnswers
+import views.html.register.trustees.company._
 
-class TrusteesCompanyNavigatorSpec extends WordSpec with MustMatchers with PropertyChecks {
 
-  val navigator = new TrusteesCompanyNavigator()
-  val emptyAnswers = UserAnswers(Json.obj())
+class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
-  "Normal Mode" when {
-    ".nextPage(CompanyDetails)" must {
-      "return a `Call` to `CompanyRegistrationNumber` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyDetailsId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
+  import TrusteesCompanyNavigatorSpec._
 
-    ".nextPage(CompanyRegistrationNumber)" must {
-      "return a Call to UTR page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyRegistrationNumberId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-    ".nextPage(CompanyUniqueTaxReference)" must {
-      "return a 'Call' to 'Address Post Code' page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyUniqueTaxReferenceId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-    ".nextPage(CompanyAddressPostCode)" must {
-      "return a 'Call' to 'Address Picker' page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyPostcodeLookupId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyAddressListController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
+  private def routesTrusteeCompany: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
 
-    ".nextPage(CompanyAddressList)" must {
-      "return a 'Call' to 'Address Manual' page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyAddressListId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
+    ("Id",                                      "UserAnswers",          "Next Page (Normal Mode)",              "Save (NM)",  "Next Page (CheckMode)",            "Save (CM)"),
+    (CompanyDetailsId(0),                        emptyAnswers,          companyRegistrationNumber(NormalMode),    true,        Some(checkYourAnswers),                 true),
+    (CompanyRegistrationNumberId(0),             emptyAnswers,          companyUTR(NormalMode),                   true,        Some(checkYourAnswers),                 true),
+    (CompanyUniqueTaxReferenceId(0),             emptyAnswers,          companyPostCodeLookup(NormalMode),        true,        Some(checkYourAnswers),                 true),
+    (CompanyPostcodeLookupId(0),                 emptyAnswers,          companyAddressList(NormalMode),           true,        Some(companyAddressList(CheckMode)),    true),
+    (CompanyAddressListId(0),                    emptyAnswers,          companyManualAddress(NormalMode),         true,        Some(companyManualAddress(CheckMode)),  true),
+    (CompanyAddressId(0),                        emptyAnswers,          companyAddressYears(NormalMode),          true,        Some(checkYourAnswers),                 true),
+    (CompanyAddressYearsId(0),                   addressYearsOverAYear, companyContactDetails,                    true,        Some(checkYourAnswers),                 true),
+    (CompanyAddressYearsId(0),                   addressYearsUnderAYear,prevAddPostCodeLookup(NormalMode),        true,        Some(prevAddPostCodeLookup(CheckMode)), true),
+    (CompanyPreviousAddressPostcodeLookupId(0),  emptyAnswers,          companyPaList(NormalMode),                true,        Some(companyPaList(CheckMode)),         true),
+    (CompanyPreviousAddressListId(0),            emptyAnswers,          companyPreviousAddress(NormalMode),       true,        Some(companyPreviousAddress(CheckMode)),true),
+    (CompanyPreviousAddressId(0),                emptyAnswers,          companyContactDetails,                    true,        Some(checkYourAnswers),                 true),
+    (CompanyContactDetailsId(0),                 emptyAnswers,          checkYourAnswers,                         true,        Some(checkYourAnswers),                 true),
+    (CompanyAddressYearsId(0),                   emptyAnswers,          sessionExpired,                           false,       Some(sessionExpired),                   false),
+    (CheckYourAnswersId,                         emptyAnswers,          addTrustee,                               true,        None,                                 false)
+  )
 
-    ".nextPage(CompanyAddress)" must {
-      "return a 'Call' to 'Address Years' page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyAddressId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
 
-    ".nextPage(CompanyAddressYears)" must {
-      "return a 'Call' to 'Previous Address Postcode' page when 'CompanyAddressYears' is 'LessThanOneYear'" in {
-        val answers = UserAnswers(Json.obj(
-          TrusteesId.toString -> Json.arr(
-            Json.obj(
-              CompanyAddressYearsId.toString ->
-                "under_a_year"
-            )
-          )
-        ))
-        val result = navigator.nextPage(CompanyAddressYearsId(0), NormalMode)(answers)
-        result mustEqual controllers.register.trustees.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0)
-      }
-
-      "return a 'Call' to 'Company Contact Details' page when 'AddressYears' is 'MoreThanOneYear'" in {
-        val answers = UserAnswers(Json.obj(
-          TrusteesId.toString -> Json.arr(
-            Json.obj(
-              CompanyAddressYearsId.toString ->
-                "over_a_year"
-            )
-          )
-        ))
-        val result = navigator.nextPage(CompanyAddressYearsId(0), NormalMode)(answers)
-        result mustEqual controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, 0)
-      }
-    }
-    ".nextPage(CompanyPreviousAddressPostCode)" must {
-      "return a 'Call' to 'Previous Address Picker' page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyPreviousAddressPostcodeLookupId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-
-    ".nextPage(CompanyPreviousAddressPicker)" must {
-      "return a 'Call' to 'Previous Address Manual' page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyPreviousAddressListId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyPreviousAddressController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-
-    ".nextPage(CompanyPreviousAddressManual)" must {
-      "return a 'Call' to 'Company Contact Details" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyPreviousAddressId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index)
-        }
-      }
-    }
-
-    ".nextPage(CompanyContactDetails)" must {
-      "return a 'Call' to 'Company Check Your Answers" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyContactDetailsId(index), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
-
-    ".nextPage(CheckYourAnswers)" must {
-      "return a 'Call' to 'AddTrustees'" in {
-        val result = navigator.nextPage(CheckYourAnswersId, NormalMode)(emptyAnswers)
-        result mustEqual controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
-      }
-    }
+  "EstablishersCompanyNavigator when restrict-establisher toggle is off" must {
+    appRunning()
+    val navigator = new TrusteesCompanyNavigator(FakeDataCacheConnector)
+    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routesTrusteeCompany, dataDescriber)
+    behave like nonMatchingNavigator(navigator)
   }
+}
+//noinspection MutatorLikeMethodIsParameterless
+object TrusteesCompanyNavigatorSpec extends OptionValues {
 
-  "CheckMode" when {
-    ".nextPage(CompanyDetails)" must {
-      "return a `Call` to `CheckYourAnswers` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyDetailsId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
-    ".nextPage(CompanyRegistrationNumber)" must {
-      "return a `Call` to `CheckYourAnswers` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyRegistrationNumberId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
+  private val navigator=new TrusteesCompanyNavigator(FakeDataCacheConnector)
 
-    ".nextPage(CompanyUniqueTaxReference)" must {
-      "return a `Call` to `CheckYourAnswers` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyUniqueTaxReferenceId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
+  private def companyRegistrationNumber(mode: Mode): Call =
+    controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, 0)
 
-    ".nextPage(CompanyPostCodeLookupId)" must {
-      "return a `Call` to `CompanyAddressList` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyPostcodeLookupId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyAddressListController.onPageLoad(CheckMode, index)
-        }
-      }
-    }
+  private def companyUTR(mode: Mode): Call =
+    controllers.register.trustees.company.routes.CompanyUniqueTaxReferenceController.onPageLoad(mode, 0)
 
-    ".nextPage(CompanyAddressListId)" must {
-      "return a `Call` to `CompanyAddress` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyAddressListId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(CheckMode, index)
-        }
-      }
-    }
+  private def companyPostCodeLookup(mode: Mode) = controllers.register.trustees.company.routes.CompanyPostCodeLookupController.onPageLoad(mode, 0)
 
-    ".nextPage(CompanyAddressId)" must {
-      "return a `Call` to `CheckYourAnswers` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyAddressId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
+  private def companyAddressList(mode: Mode) = controllers.register.trustees.company.routes.CompanyAddressListController.onPageLoad(mode, 0)
 
-    ".nextPage(CompanyAddressYears)" must {
+  private def companyManualAddress(mode: Mode) = controllers.register.trustees.company.routes.CompanyAddressController.onPageLoad(mode, 0)
 
-      "return a `Call` to `CompanyPreviousPostCodeLookup` page when `CompanyAddressYears` is `UnderAYear`" in {
-        val answers = UserAnswers(Json.obj(
-          TrusteesId.toString -> Json.arr(
-            Json.obj(
-              CompanyAddressYearsId.toString ->
-                "under_a_year"
-            )
-          )
-        ))
-        val result = navigator.nextPage(CompanyAddressYearsId(0), CheckMode)(answers)
-        result mustEqual controllers.register.trustees.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, 0)
-      }
+  private def companyAddressYears(mode: Mode) = controllers.register.trustees.company.routes.CompanyAddressYearsController.onPageLoad(mode, 0)
 
-      "return a `Call` to `CheckYourAnswersPage` page when `CompanyAddressYears` is `OverAYear`" in {
-        val answers = UserAnswers(Json.obj(
-          TrusteesId.toString -> Json.arr(
-            Json.obj(
-              CompanyAddressYearsId.toString ->
-                "over_a_year"
-            )
-          )
-        ))
-        val result = navigator.nextPage(CompanyAddressYearsId(0), CheckMode)(answers)
-        result mustEqual controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(0)
-      }
+  private def prevAddPostCodeLookup(mode: Mode) =
+    controllers.register.trustees.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(mode, 0)
 
-      "return a `Call` to `SessionExpired` page when `CompanyAddressYears` is undefined" in {
-        val result = navigator.nextPage(CompanyAddressYearsId(0), CheckMode)(emptyAnswers)
-        result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
-      }
-    }
+  private def companyPaList(mode: Mode) =
+    controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(mode, 0)
 
-    ".nextPage(CompanyPreviousAddressPostCodeLookup)" must {
-      "return a `Call` to `CompanyPreviousAddressList`" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyPreviousAddressPostcodeLookupId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyPreviousAddressListController.onPageLoad(CheckMode, index)
-        }
-      }
-    }
+  private def companyPreviousAddress(mode: Mode) =
+    controllers.register.trustees.company.routes.CompanyPreviousAddressController.onPageLoad(mode, 0)
 
-    ".nextPage(CompanyPreviousAddressList)" must {
-      "return a `Call` to `CompanyPreviousAddress`" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyPreviousAddressListId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index)
-        }
-      }
-    }
+  private def companyContactDetails = controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, 0)
 
-    ".nextPage(CompanyPreviousAddress)" must {
-      "return a `Call` to `CheckYourAnswers`" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyPreviousAddressId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
+  private def checkYourAnswers = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(0)
 
-    ".nextPage(CompanyContactDetails)" must {
-      "return a `Call` to `CheckYourAnswers`" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(CompanyContactDetailsId(index), CheckMode)(emptyAnswers)
-            result mustEqual controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(index)
-        }
-      }
-    }
-  }
+  private def addTrustee=controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+
+  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+
+  private val emptyAnswers = UserAnswers(Json.obj())
+
+  private val addressYearsOverAYear = UserAnswers(Json.obj())
+    .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
+
+  private val addressYearsUnderAYear = UserAnswers(Json.obj())
+    .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+
+  private def dataDescriber(answers: UserAnswers): String = answers.toString
+
+
 }

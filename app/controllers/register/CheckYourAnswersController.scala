@@ -26,7 +26,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswers.Ops._
 import utils.annotations.Register
-import utils.{CountryOptions, Enumerable, Navigator2}
+import utils.{CountryOptions, Enumerable, Navigator}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -36,7 +36,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
                                            implicit val countryOptions: CountryOptions,
-                                           @Register navigator: Navigator2) extends FrontendController with Enumerable.Implicits with I18nSupport {
+                                           @Register navigator: Navigator) extends FrontendController with Enumerable.Implicits with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>

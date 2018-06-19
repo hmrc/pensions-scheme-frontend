@@ -31,7 +31,7 @@ import models.register.establishers.company.director.DirectorDetails
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Navigator, Navigator2, UserAnswers}
+import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.company.director.directorDetails
 
 import scala.concurrent.Future
@@ -40,7 +40,7 @@ class DirectorDetailsController @Inject() (
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
-                                        @EstablishersCompanyDirector navigator: Navigator2,
+                                        @EstablishersCompanyDirector navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,

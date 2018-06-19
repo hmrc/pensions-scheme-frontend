@@ -27,7 +27,7 @@ import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator2
+import utils.Navigator
 import utils.annotations.Establishers
 import views.html.register.establishers.addEstablisher
 
@@ -36,7 +36,7 @@ import scala.concurrent.Future
 class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          dataCacheConnector: DataCacheConnector,
-                                         @Establishers navigator: Navigator2,
+                                         @Establishers navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,

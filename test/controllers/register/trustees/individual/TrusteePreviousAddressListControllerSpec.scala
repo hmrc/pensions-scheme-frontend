@@ -22,7 +22,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.trustees.individual.{IndividualPreviousAddressPostCodeLookupId, TrusteeDetailsId}
-import models.address.{Address, TolerantAddress}
+import models.address.TolerantAddress
 import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
@@ -39,6 +39,8 @@ import views.html.address.addressList
 class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
 
   private val trusteeDetails = PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
+  private lazy val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private lazy val fakeNavigator = new FakeNavigator(onwardRoute)
 
   val previousAddressTitle = "Select the previous address"
   val previousAddressHeading = "Select the previous address"
@@ -77,7 +79,8 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.TrusteePreviousAddressListController.onPageLoad(NormalMode, Index(0))))
         val result = route(app, request).value
@@ -97,7 +100,8 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[DataRetrievalAction].toInstance(getEmptyData)
+        bind[DataRetrievalAction].toInstance(getEmptyData),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.TrusteePreviousAddressListController.onPageLoad(NormalMode, Index(0))))
         val result = route(app, request).value
@@ -113,7 +117,8 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[DataRetrievalAction].toInstance(dontGetAnyData)
+        bind[DataRetrievalAction].toInstance(dontGetAnyData),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.TrusteePreviousAddressListController.onPageLoad(NormalMode, Index(0))))
         val result = route(app, request).value
@@ -126,12 +131,10 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
 
     "redirect to the next page on POST of valid data" in {
 
-      val onwardRoute = controllers.routes.IndexController.onPageLoad()
-
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(new FakeNavigator(onwardRoute)),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.TrusteePreviousAddressListController.onSubmit(NormalMode, Index(0)))
@@ -150,7 +153,8 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[DataRetrievalAction].toInstance(dontGetAnyData)
+        bind[DataRetrievalAction].toInstance(dontGetAnyData),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request =
           addToken(
@@ -171,7 +175,8 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[DataRetrievalAction].toInstance(getEmptyData)
+        bind[DataRetrievalAction].toInstance(getEmptyData),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request =
           addToken(

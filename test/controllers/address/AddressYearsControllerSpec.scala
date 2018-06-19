@@ -36,6 +36,7 @@ import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 import org.mockito.Mockito._
 import org.mockito.Matchers.{eq => eqTo, _}
+import play.api.inject.bind
 import uk.gov.hmrc.domain.PsaId
 
 import scala.concurrent.Future
@@ -77,7 +78,9 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
 
     "return a successful result when there is no existing answer" in {
 
-      running(_.overrides()) {
+      running(_.overrides(
+        bind[Navigator].toInstance(FakeNavigator)
+      )) {
         app =>
 
           implicit val materializer: Materializer = app.materializer
@@ -96,7 +99,9 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
 
     "return a successful result when there is an existing answer" in {
 
-      running(_.overrides()) {
+      running(_.overrides(
+        bind[Navigator].toInstance(FakeNavigator)
+      )) {
         app =>
 
           implicit val materializer: Materializer = app.materializer
@@ -139,12 +144,9 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
             eqTo(FakeIdentifier), any())(any(), any(), any(), any())
           ) thenReturn Future.successful(UserAnswers())
 
-          val appConfig = app.injector.instanceOf[FrontendAppConfig]
-          val formProvider = app.injector.instanceOf[AddressYearsFormProvider]
           val request = FakeRequest().withFormUrlEncodedBody(
             "value" -> AddressYears.OverAYear.toString
           )
-          val messages = app.injector.instanceOf[MessagesApi].preferred(request)
           val controller = app.injector.instanceOf[TestController]
           val result = controller.onSubmit(viewmodel, UserAnswers(), request)
 
@@ -155,7 +157,9 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
 
     "return a bad request when the submitted data is invalid" in {
 
-      running(_.overrides()) {
+      running(_.overrides(
+        bind[Navigator].toInstance(FakeNavigator)
+      )) {
         app =>
 
           implicit val materializer: Materializer = app.materializer

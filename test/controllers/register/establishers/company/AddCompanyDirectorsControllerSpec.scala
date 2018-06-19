@@ -29,7 +29,7 @@ import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
-import utils.{FakeNavigator2, Navigator2, UserAnswers}
+import utils.{FakeNavigator, Navigator, UserAnswers}
 import views.html.register.establishers.company.addCompanyDirectors
 
 class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
@@ -39,13 +39,13 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
   private val formProvider = new AddCompanyDirectorsFormProvider()
   private val form = formProvider()
 
-  private def fakeNavigator() = new FakeNavigator2(desiredRoute = onwardRoute)
+  private def fakeNavigator() = new FakeNavigator(desiredRoute = onwardRoute)
 
   val firstIndex = Index(0)
 
   private def controller(
     dataRetrievalAction: DataRetrievalAction = getEmptyData,
-    navigator: Navigator2 = fakeNavigator()
+    navigator: Navigator = fakeNavigator()
   ) =
     new AddCompanyDirectorsController(
       frontendAppConfig,

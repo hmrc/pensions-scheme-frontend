@@ -22,7 +22,7 @@ import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
 import identifiers.register.trustees.individual._
-import models.address.{Address, TolerantAddress}
+import models.address.TolerantAddress
 import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
@@ -70,7 +70,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
 
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
-  val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
+  lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
 
 
   "Individual Address List Controller" must {
@@ -78,7 +78,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[DataRetrievalAction].toInstance(dataRetrievalAction)
+        bind[DataRetrievalAction].toInstance(dataRetrievalAction),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0))))
         val result = route(app, request).value
@@ -99,7 +100,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[DataRetrievalAction].toInstance(getEmptyData)
+        bind[DataRetrievalAction].toInstance(getEmptyData),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0))))
         val result = route(app, request).value
@@ -115,7 +117,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[DataRetrievalAction].toInstance(dontGetAnyData)
+        bind[DataRetrievalAction].toInstance(dontGetAnyData),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0))))
         val result = route(app, request).value
@@ -152,7 +155,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[DataRetrievalAction].toInstance(dontGetAnyData)
+        bind[DataRetrievalAction].toInstance(dontGetAnyData),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request =
           addToken(
@@ -173,7 +177,8 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind[DataRetrievalAction].toInstance(getEmptyData)
+        bind[DataRetrievalAction].toInstance(getEmptyData),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request =
           addToken(

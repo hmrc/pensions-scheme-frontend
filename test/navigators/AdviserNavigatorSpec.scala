@@ -16,33 +16,37 @@
 
 package navigators
 
-import AdviserNavigatorSpec._
+import base.SpecBase
+import connectors.FakeDataCacheConnector
 import identifiers.register.adviser._
 import models.{CheckMode, Mode, NormalMode}
-import org.scalatest.{MustMatchers, WordSpec}
 import play.api.libs.json.Json
 import utils.UserAnswers
 
-class AdviserNavigatorSpec extends WordSpec with MustMatchers with NavigatorBehaviour {
+class AdviserNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
-  private val routes = Table(
-    ("Id",                            "User Answers",       "Next Page (Normal Mode)",              "Next Page (Check Mode)"),
-    (AdviserDetailsId,                emptyAnswers,         adviserPostCodeLookup(NormalMode),      Some(checkYourAnswersPage)),
-    (AdviserAddressPostCodeLookupId,  emptyAnswers,         adviserAddressList(NormalMode),         Some(adviserAddressList(CheckMode))),
-    (AdviserAddressListId,            emptyAnswers,         adviserAddress(NormalMode),             Some(adviserAddress(CheckMode))),
-    (AdviserAddressId,                emptyAnswers,         checkYourAnswersPage,                   Some(checkYourAnswersPage)),
-    (CheckYourAnswersId,              emptyAnswers,         schemeSuccess,                          None)
+  import AdviserNavigatorSpec._
+
+  private def routes() = Table(
+    ("Id",                            "User Answers", "Next Page (Normal Mode)",          "Save (NM)",  "Next Page (Check Mode)",             "Save (CM)"),
+    (AdviserDetailsId,                emptyAnswers,   adviserPostCodeLookup(NormalMode),  true,         Some(checkYourAnswersPage),           true),
+    (AdviserAddressPostCodeLookupId,  emptyAnswers,   adviserAddressList(NormalMode),     true,         Some(adviserAddressList(CheckMode)),  true),
+    (AdviserAddressListId,            emptyAnswers,   adviserAddress(NormalMode),         true,         Some(adviserAddress(CheckMode)),      true),
+    (AdviserAddressId,                emptyAnswers,   checkYourAnswersPage,               true,         Some(checkYourAnswersPage),           true),
+    (CheckYourAnswersId,              emptyAnswers,   schemeSuccess,                      true,         None,                                 true)
   )
 
   navigator.getClass.getSimpleName must {
-    behave like navigatorWithRoutes(navigator, routes, dataDescriber)
+    appRunning()
+    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routes(), dataDescriber)
+    behave like nonMatchingNavigator(navigator)
   }
 
 }
 
 object AdviserNavigatorSpec {
 
-  private val navigator = new AdviserNavigator()
+  private val navigator = new AdviserNavigator(FakeDataCacheConnector)
 
   private val emptyAnswers = UserAnswers(Json.obj())
 

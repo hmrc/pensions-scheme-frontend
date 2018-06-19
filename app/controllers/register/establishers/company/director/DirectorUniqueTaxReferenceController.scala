@@ -30,7 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator, Navigator2, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.director.directorUniqueTaxReference
 
 import scala.concurrent.Future
@@ -39,7 +39,7 @@ class DirectorUniqueTaxReferenceController @Inject()(
                                                              appConfig: FrontendAppConfig,
                                                              override val messagesApi: MessagesApi,
                                                              dataCacheConnector: DataCacheConnector,
-                                                             @EstablishersCompanyDirector navigator: Navigator2,
+                                                             @EstablishersCompanyDirector navigator: Navigator,
                                                              authenticate: AuthAction,
                                                              getData: DataRetrievalAction,
                                                              requireData: DataRequiredAction,

@@ -27,7 +27,7 @@ import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsError, JsResultException, JsSuccess}
 import play.api.test.Helpers._
-import utils.{FakeNavigator2, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.register.trustees.individual.trusteeNino
 
 class TrusteeNinoControllerSpec extends ControllerSpecBase {
@@ -110,7 +110,7 @@ object TrusteeNinoControllerSpec extends ControllerSpecBase {
   )
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
-  private val fakeNavigator = new FakeNavigator2(desiredRoute = onwardRoute)
+  private val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
 
   private val form: Form[Nino] = new TrusteeNinoFormProvider()()
 

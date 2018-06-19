@@ -59,7 +59,7 @@ trait AddressListController extends FrontendController with I18nSupport {
           _ =>
             cacheConnector.save(request.externalId, navigatorId, address).map {
               json =>
-                Redirect(navigator.nextPage(navigatorId, mode)(UserAnswers(json)))
+                Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json)))
             }
         }
       }

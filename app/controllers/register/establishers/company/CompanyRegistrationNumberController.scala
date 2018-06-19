@@ -38,7 +38,7 @@ class CompanyRegistrationNumberController @Inject()(
                                                      appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      dataCacheConnector: DataCacheConnector,
-                                                     @EstablishersCompany navigator: Navigator2,
+                                                     @EstablishersCompany navigator: Navigator,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,

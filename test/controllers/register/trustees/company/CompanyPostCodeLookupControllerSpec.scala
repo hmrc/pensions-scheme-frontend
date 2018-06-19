@@ -125,7 +125,8 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRe
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
-          bind[PostCodeLookupFormProvider].to(formProvider)
+          bind[PostCodeLookupFormProvider].to(formProvider),
+          bind[Navigator].toInstance(FakeNavigator)
         )) {
           implicit app =>
 

@@ -20,7 +20,7 @@ import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
-import identifiers.register.{InsurerAddressId, InsurerAddressListId, InsurerPostCodeLookupId}
+import identifiers.register.{InsurerAddressListId, InsurerPostCodeLookupId}
 import models.NormalMode
 import models.address.TolerantAddress
 import models.register.SchemeDetails
