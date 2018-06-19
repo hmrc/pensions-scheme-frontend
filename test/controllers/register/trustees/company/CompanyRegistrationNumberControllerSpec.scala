@@ -29,7 +29,7 @@ import models.{CompanyDetails, CompanyRegistrationNumber, Index, NormalMode}
 import play.api.data.Form
 import play.api.libs.json.{JsString, _}
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.{FakeNavigator, FakeNavigator2}
 import views.html.register.trustees.company.companyRegistrationNumber
 
 class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
@@ -68,7 +68,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getCompanyDetails) =
-    new CompanyRegistrationNumberController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new CompanyRegistrationNumberController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form) = companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages).toString

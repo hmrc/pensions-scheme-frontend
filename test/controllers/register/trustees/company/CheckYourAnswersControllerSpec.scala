@@ -159,7 +159,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       new CheckYourAnswersFactory(fakeCountryOptions),
       fakeCountryOptions,
-      new FakeNavigator(onwardRoute)
+      new FakeNavigator2(onwardRoute)
     )
 
 }

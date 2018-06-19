@@ -30,7 +30,7 @@ import identifiers.register.trustees.company.{CompanyContactDetailsId, CompanyDe
 import models.{ContactDetails, Index, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.TrusteesCompany
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import utils._
 import views.html.register.trustees.company.companyContactDetails
 
 import scala.concurrent.Future
@@ -39,7 +39,7 @@ class CompanyContactDetailsController @Inject() (
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
-                                        @TrusteesCompany navigator: Navigator,
+                                        @TrusteesCompany navigator: Navigator2,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
@@ -69,7 +69,7 @@ class CompanyContactDetailsController @Inject() (
               Future.successful(BadRequest(companyContactDetails(appConfig, formWithErrors, mode, index, companyDetails.companyName))),
             (value) =>
               dataCacheConnector.save(request.externalId, CompanyContactDetailsId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(CompanyContactDetailsId(index), mode) (new UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(CompanyContactDetailsId(index), mode,UserAnswers(cacheMap))))
           )
       }
   }

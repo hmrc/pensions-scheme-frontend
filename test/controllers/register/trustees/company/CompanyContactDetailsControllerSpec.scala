@@ -18,7 +18,7 @@ package controllers.register.trustees.company
 
 import play.api.data.Form
 import play.api.libs.json.Json
-import utils.FakeNavigator
+import utils.{FakeNavigator, FakeNavigator2}
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import play.api.test.Helpers._
@@ -43,7 +43,7 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
   val companyName = "test company name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany) :
-  CompanyContactDetailsController  = new CompanyContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+  CompanyContactDetailsController  = new CompanyContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form) = companyContactDetails(frontendAppConfig, form, NormalMode, firstIndex, companyName)(fakeRequest, messages).toString
