@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.FakeNavigator2
 import views.html.whatYouWillNeed
 
 class WhatYouWillNeedControllerSpec extends ControllerSpecBase {
@@ -31,7 +31,7 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase {
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
-      new FakeNavigator(onwardRoute)
+      new FakeNavigator2(onwardRoute)
     )
 
   def viewAsString(): String = whatYouWillNeed(frontendAppConfig)(fakeRequest, messages).toString

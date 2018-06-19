@@ -16,24 +16,27 @@
 
 package controllers.register.establishers.company
 
-import play.api.data.Form
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers.{contentAsString, _}
-import play.api.libs.json._
 import forms.register.establishers.company.OtherDirectorsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, OtherDirectorsId}
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
+import play.api.data.Form
+import play.api.libs.json._
+import play.api.mvc.Call
+import play.api.test.Helpers.{contentAsString, _}
+import utils.FakeNavigator2
 import views.html.register.establishers.company.otherDirectors
 
 class OtherDirectorsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  //scalastyle:off magic.number
+
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
   val schemeName = "Test Scheme Name"
 
   val index = Index(0)
@@ -43,7 +46,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val companyName = "test company name"
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     SchemeDetailsId.toString ->
       SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
@@ -54,11 +57,26 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
     )
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
-    new OtherDirectorsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): OtherDirectorsController =
+    new OtherDirectorsController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator2(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
 
-  def viewAsString(form: Form[_] = form) = otherDirectors(frontendAppConfig, form, NormalMode,index,companyName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    otherDirectors(
+      frontendAppConfig,
+      form,
+      NormalMode,
+      index,
+      companyName
+    )(fakeRequest, messages).toString
 
   "OtherDirectors Controller" must {
 

@@ -54,56 +54,165 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
     }
 
     "display the correct rows when there are schemes to display" in {
-      val actual = view(frontendAppConfig, fullList)
+      val actual = asDocument(view(frontendAppConfig, fullList).apply())
 
-      fullList.zipWithIndex.foreach {
-        case (scheme, index) =>
-          actual must haveElementWithText(s"schemeName-$index", scheme.name)
-          actual must haveElementWithText(s"srn-$index", scheme.referenceNumber)
-      }
+      //table 1
+      assertEqualsValue(actual, "#schemeName-1-0 span:nth-child(1)", "scheme-name-4")
+
+      assertEqualsValue(actual, "#schemeName-1-1 span:nth-child(1)", "scheme-name-5")
+
+      assertEqualsValue(actual, "#schemeName-1-2 span:nth-child(1)", "scheme-name-6")
+
+      //table 2
+      assertEqualsValue(actual, "#schemeName-2-0 span:nth-child(1)", "scheme-name-0")
+      assertEqualsValue(actual, "#srn-2-0 span:nth-child(1)", "reference-number-0")
+
+      assertEqualsValue(actual, "#schemeName-2-1 span:nth-child(1)", "scheme-name-1")
+      assertEqualsValue(actual, "#srn-2-1 span:nth-child(1)", "reference-number-1")
+
+      assertEqualsValue(actual, "#schemeName-2-2 span:nth-child(1)", "scheme-name-2")
+      assertEqualsValue(actual, "#srn-2-2 span:nth-child(1)", "reference-number-2")
+
+      assertEqualsValue(actual, "#schemeName-2-3 span:nth-child(1)", "scheme-name-3")
+      assertEqualsValue(actual, "#srn-2-3 span:nth-child(1)", "reference-number-3")
+
+      assertEqualsValue(actual, "#schemeName-2-4 span:nth-child(1)", "scheme-name-7")
+      assertEqualsValue(actual, "#srn-2-4 span:nth-child(1)", "reference-number-7")
     }
 
     "display either PSTR or 'Not assigned' when there is no value" in {
-      val actual = view(frontendAppConfig, fullList)
+      val actual = asDocument(view(frontendAppConfig, fullList).apply())
 
-      actual must haveElementWithText("pstr-0", "Not assigned")
-      actual must haveElementWithText("pstr-1", "Not assigned")
-      actual must haveElementWithText("pstr-2", "Not assigned")
-      actual must haveElementWithText("pstr-3", "Not assigned")
-      actual must haveElementWithText("pstr-4", "PSTR-4")
-      actual must haveElementWithText("pstr-5", "PSTR-5")
-      actual must haveElementWithText("pstr-6", "PSTR-6")
-      actual must haveElementWithText("pstr-7", "Not assigned")
+      //table 1
+      assertEqualsValue(actual, "#pstr-1-0 span:nth-child(1)", "PSTR-4")
+      assertEqualsValue(actual, "#pstr-1-1 span:nth-child(1)", "PSTR-5")
+      assertEqualsValue(actual, "#pstr-1-2 span:nth-child(1)", "PSTR-6")
     }
 
-    "display the abridged status not the full value" in {
-      val actual = view(frontendAppConfig, fullList)
+    "display the full status value" in {
+      val actual = asDocument(view(frontendAppConfig, fullList).apply())
 
-      actual must haveElementWithText("schemeStatus-0", "Pending")
-      actual must haveElementWithText("schemeStatus-1", "Pending")
-      actual must haveElementWithText("schemeStatus-2", "Pending")
-      actual must haveElementWithText("schemeStatus-3", "Rejected")
-      actual must haveElementWithText("schemeStatus-4", "Open")
-      actual must haveElementWithText("schemeStatus-5", "Closed")
-      actual must haveElementWithText("schemeStatus-6", "Closed")
-      actual must haveElementWithText("schemeStatus-7", "Rejected")
+      //table 1
+      assertEqualsValue(actual, "#schemeStatus-1-0 span:nth-child(1)", "Open")
+      assertEqualsValue(actual, "#schemeStatus-1-1 span:nth-child(1)", "De-registered")
+      assertEqualsValue(actual, "#schemeStatus-1-2 span:nth-child(1)", "Wound-up")
+
+      //table 2
+      assertEqualsValue(actual, "#schemeStatus-2-0 span:nth-child(1)", "Pending")
+      assertEqualsValue(actual, "#schemeStatus-2-1 span:nth-child(1)", "Pending information required")
+      assertEqualsValue(actual, "#schemeStatus-2-2 span:nth-child(1)", "Pending information received")
+      assertEqualsValue(actual, "#schemeStatus-2-3 span:nth-child(1)", "Rejected")
+      assertEqualsValue(actual, "#schemeStatus-2-4 span:nth-child(1)", "Rejected under appeal")
     }
 
-    "display the correct style for each status" in {
-      val actual = view(frontendAppConfig, fullList)
+    "display the date" in {
+      val actual = asDocument(view(frontendAppConfig, fullList).apply())
 
-      actual must haveElementWithClass("schemeStatus-0", "incomplete")
-      actual must haveElementWithClass("schemeStatus-1", "incomplete")
-      actual must haveElementWithClass("schemeStatus-2", "incomplete")
-      actual must haveElementWithClass("schemeStatus-3", "rejected")
-      actual must haveElementWithClass("schemeStatus-4", "complete")
-      actual must haveElementWithClass("schemeStatus-5", "not-started")
-      actual must haveElementWithClass("schemeStatus-6", "not-started")
-      actual must haveElementWithClass("schemeStatus-7", "rejected")
+      assertEqualsValue(actual, "#schemeDate-1-0 span:nth-child(1)", "9 November 2017")
+      assertEqualsValue(actual, "#schemeDate-1-1 span:nth-child(1)", "10 November 2017")
+      assertEqualsValue(actual, "#schemeDate-1-2 span:nth-child(1)", "11 November 2017")
     }
 
+    "display a scheme list with only schemes with a PSTR number" in {
+      val actual = view(frontendAppConfig, fullList)
+      val actualAsDoc = asDocument(actual.apply())
+
+      actual must haveClassWithSize("row-group", 3, "schemeList-1")
+      assertEqualsValue(actualAsDoc, "#schemeName-1-0 span:nth-child(1)", "scheme-name-4")
+      assertEqualsValue(actualAsDoc, "#schemeName-1-1 span:nth-child(1)", "scheme-name-5")
+      assertEqualsValue(actualAsDoc, "#schemeName-1-2 span:nth-child(1)", "scheme-name-6")
+    }
+
+    "display a scheme list with only schemes without a PSTR number" in {
+      val actual = view(frontendAppConfig, fullList)
+      val actualAsDoc = asDocument(actual.apply())
+
+      actual must haveClassWithSize("row-group", 5, "schemeList-2")
+      assertEqualsValue(actualAsDoc, "#schemeName-2-0 span:nth-child(1)", "scheme-name-0")
+      assertEqualsValue(actualAsDoc, "#schemeName-2-1 span:nth-child(1)", "scheme-name-1")
+      assertEqualsValue(actualAsDoc, "#schemeName-2-2 span:nth-child(1)", "scheme-name-2")
+      assertEqualsValue(actualAsDoc, "#schemeName-2-3 span:nth-child(1)", "scheme-name-3")
+      assertEqualsValue(actualAsDoc, "#schemeName-2-4 span:nth-child(1)", "scheme-name-7")
+    }
+
+    "show the PSTR table when there are schemes with PSTRs" in {
+      val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
+
+      assertRenderedById(actual, "schemeList-1")
+    }
+
+    "not show the PSTR table when there are no schemes with PSTRs" in {
+      val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
+
+      assertNotRenderedById(actual, "schemeList-1")
+    }
+
+    "show the non-PSTR table when there are schemes without PSTRS" in {
+      val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
+
+      assertRenderedById(actual, "schemeList-2")
+    }
+
+    "not show the non-PSTR tables when there are no schemes without PSTRS" in {
+      val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
+
+      assertNotRenderedById(actual, "schemeList-2")
+    }
+
+    "show the SRN column and header" when {
+      "schemes have never been opened" in {
+        val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
+
+        assertRenderedById(actual, "srn")
+        assertRenderedById(actual, "srn-2-0")
+      }
+    }
+
+    "not show the SRN column and header" when {
+      "schemes have been opened" in {
+        val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
+
+        assertNotRenderedById(actual, "srn")
+        assertNotRenderedById(actual, "srn-1-0")
+      }
+    }
+
+    "show the PSTR column and header" when {
+      "schemes have been opened" in {
+        val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
+
+        assertRenderedById(actual, "pstr")
+        assertRenderedById(actual, "pstr-1-0")
+      }
+    }
+
+    "not show the PSTR column and header" when {
+      "schemes have never been opened" in {
+        val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
+
+        assertNotRenderedById(actual, "pstr")
+        assertNotRenderedById(actual, "pstr-1-0")
+      }
+    }
+
+    "show the date column and header" when {
+      "schemes have been opened" in {
+        val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
+
+        assertRenderedById(actual, "schemeDate")
+        assertRenderedById(actual, "schemeDate-1-0")
+      }
+    }
+
+    "not show the date column and header" when {
+      "schemes have never been opened" in {
+        val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
+
+        assertNotRenderedById(actual, "schemeDate")
+        assertNotRenderedById(actual, "schemeDate-1-0")
+      }
+    }
   }
-
 }
 
 object ListSchemesViewSpec {
@@ -150,7 +259,7 @@ object ListSchemesViewSpec {
       "scheme-name-4",
       "reference-number-4",
       "Open",
-      None,
+      Option("2017-11-09"),
       Some("PSTR-4"),
       None,
       None
@@ -159,7 +268,7 @@ object ListSchemesViewSpec {
       "scheme-name-5",
       "reference-number-5",
       "Deregistered",
-      None,
+      Option("2017-11-10"),
       Some("PSTR-5"),
       None,
       None
@@ -168,7 +277,7 @@ object ListSchemesViewSpec {
       "scheme-name-6",
       "reference-number-6",
       "Wound-up",
-      None,
+      Option("2017-11-11"),
       Some("PSTR-6"),
       None,
       None
@@ -183,6 +292,85 @@ object ListSchemesViewSpec {
       None
     )
   )
+
+  val PSTRSchemeList: List[SchemeDetail] = List(
+    SchemeDetail(
+      "scheme-name-4",
+      "reference-number-4",
+      "Open",
+      Option("2017-11-09"),
+      Some("PSTR-4"),
+      None,
+      None
+    ),
+    SchemeDetail(
+      "scheme-name-5",
+      "reference-number-5",
+      "Deregistered",
+      Option("2017-11-10"),
+      Some("PSTR-5"),
+      None,
+      None
+    ),
+    SchemeDetail(
+      "scheme-name-6",
+      "reference-number-6",
+      "Wound-up",
+      Option("2017-11-11"),
+      Some("PSTR-6"),
+      None,
+      None
+    )
+  )
+
+  val noPSTRSchemeList: List[SchemeDetail] = List(
+    SchemeDetail(
+      "scheme-name-0",
+      "reference-number-0",
+      "Pending",
+      None,
+      None,
+      None,
+      None
+    ),
+    SchemeDetail(
+      "scheme-name-1",
+      "reference-number-1",
+      "Pending Info Required",
+      None,
+      None,
+      None,
+      None
+    ),
+    SchemeDetail(
+      "scheme-name-2",
+      "reference-number-2",
+      "Pending Info Received",
+      None,
+      None,
+      None,
+      None
+    ),
+    SchemeDetail(
+      "scheme-name-3",
+      "reference-number-3",
+      "Rejected",
+      None,
+      None,
+      None,
+      None
+    ),
+    SchemeDetail(
+      "scheme-name-7",
+      "reference-number-7",
+      "Rejected Under Appeal",
+      None,
+      None,
+      None,
+      None
+    )
+  )
+
 
   def view(appConfig: FrontendAppConfig, schemes: List[SchemeDetail] = emptyList)
           (implicit request: Request[_], messages: Messages): () => HtmlFormat.Appendable =

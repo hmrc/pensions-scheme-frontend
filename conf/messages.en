@@ -481,7 +481,7 @@ messages__schemeReview__trustees__changeLink = Change trustees
 
 messages__otherDirectors__title=Do you need to tell us about other directors?
 messages__otherDirectors__heading=Do you need to tell us about other directors?
-messages__otherDirectors__lede=You don't have to add them now. We may contact you if we need this information.
+messages__otherDirectors__lede=You do not have to add them now. We may contact you if we need this information.
 messages__otherDirectors__error__required=You must make a selection
 
 
@@ -589,7 +589,7 @@ messages__confirmDeleteTrustee__heading = Are you sure you want to delete {0}?
 
 messages__moreThanTenTrustees__title = Do you need to tell us about other trustees?
 messages__moreThanTenTrustees__heading = Do you need to tell us about other trustees?
-messages__moreThanTenTrustees__hint = You don't have to add them now. We may contact you if we need this information.
+messages__moreThanTenTrustees__hint = You do not have to add them now. We may contact you if we need this information.
 
 messages__declarationDormant__title = Have any of the scheme establishers been dormant in the last 12 months?
 messages__declarationDormant__heading = Have any of the scheme establishers been dormant in the last 12 months?
@@ -628,18 +628,33 @@ messages__adviserPostCodeLookupAddress__enterPostCode= Enter the postcode below,
 messages__enrolment__error__name_invalid = Enter a PSA Name
 
 messages__listSchemes__title = Your pension schemes
+messages__listSchemes__open__heading = Schemes that have been opened
+messages__listSchemes__not_open__heading = Schemes that have not been opened
 messages__listSchemes__noSchemes = You have not registered any pension schemes in this service.
 messages__listSchemes__registerNewScheme = Register a new scheme
 messages__listSchemes__column_schemeName = Scheme name
 messages__listSchemes__column_srn = SRN
 messages__listSchemes__column_pstr = PSTR
 messages__listSchemes__column_status = Status
+messages__listSchemes__column_date = Date scheme opened
+
+messages__listSchemes__no_date = Scheme not open
 messages__listSchemes__pstr_not_assigned = Not assigned
 
 messages__listSchemes__status_pending = Pending
+messages__listSchemes__status_pending_req = Pending information required
+messages__listSchemes__status_pending_rec = Pending information received
 messages__listSchemes__status_rejected = Rejected
 messages__listSchemes__status_open = Open
-messages__listSchemes__status_closed = Closed
+messages__listSchemes__status_deregistered = De-registered
+messages__listSchemes__status_wound_up = Wound-up
+messages__listSchemes__status_rejected_appeal = Rejected under appeal
+
+messages__listSchemes__schemeName__screen_reader = The scheme name is: {0}
+messages__listSchemes__SRN__screen_reader = {0}’s, submission reference number is {1}
+messages__listSchemes__PSTR__screen_reader = {0}’s, Pension Scheme Tax Reference number is {1}
+messages__listSchemes__status__screen_reader = {0}'s' status is {1}
+messages__listSchemes__date__screen_reader = {0} was opened on {1}
 
 messages__schemesOverview__title = Manage and register your pension schemes
 messages__schemesOverview__heading = Manage and register your pension schemes

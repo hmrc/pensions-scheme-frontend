@@ -17,7 +17,6 @@
 package controllers.register
 
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
@@ -30,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator2, UserAnswers}
 import views.html.register.benefits
 
 import scala.concurrent.Future
@@ -38,7 +37,7 @@ import scala.concurrent.Future
 class BenefitsController @Inject()(appConfig: FrontendAppConfig,
                                    override val messagesApi: MessagesApi,
                                    dataCacheConnector: DataCacheConnector,
-                                   @Register navigator: Navigator,
+                                   @Register navigator: Navigator2,
                                    authenticate: AuthAction,
                                    getData: DataRetrievalAction,
                                    requireData: DataRequiredAction,
@@ -65,9 +64,9 @@ class BenefitsController @Inject()(appConfig: FrontendAppConfig,
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
             Future.successful(BadRequest(benefits(appConfig, formWithErrors, mode, schemeDetails.schemeName)))
           },
-        (value) =>
+        value =>
           dataCacheConnector.save(request.externalId, BenefitsId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(BenefitsId, mode)(new UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(BenefitsId, mode, UserAnswers(cacheMap))))
       )
   }
 }

@@ -16,30 +16,28 @@
 
 package controllers.register
 
-import javax.inject.Inject
-
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
 import config.FrontendAppConfig
+import connectors.DataCacheConnector
 import controllers.Retrievals
+import controllers.actions._
 import forms.register.SchemeEstablishedCountryFormProvider
 import identifiers.register.{SchemeDetailsId, SchemeEstablishedCountryId}
+import javax.inject.Inject
 import models.Mode
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import utils.{CountryOptions, Navigator, UserAnswers}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.Register
+import utils.{CountryOptions, Navigator2, UserAnswers}
 import views.html.register.schemeEstablishedCountry
 
 import scala.concurrent.Future
-import play.api.libs.json._
-import utils.annotations.Register
 
 class SchemeEstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
                                                    override val messagesApi: MessagesApi,
                                                    dataCacheConnector: DataCacheConnector,
-                                                   @Register navigator: Navigator,
+                                                   @Register navigator: Navigator2,
                                                    authenticate: AuthAction,
                                                    getData: DataRetrievalAction,
                                                    requireData: DataRequiredAction,
@@ -66,9 +64,9 @@ class SchemeEstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
             Future.successful(BadRequest(schemeEstablishedCountry(appConfig, formWithErrors, mode, schemeDetails.schemeName, countryOptions.options)))
           },
-        (value) =>
+        value =>
           dataCacheConnector.save(request.externalId, SchemeEstablishedCountryId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(SchemeEstablishedCountryId, mode)(new UserAnswers(cacheMap)))
+            Redirect(navigator.nextPage(SchemeEstablishedCountryId, mode, UserAnswers(cacheMap)))
           )
       )
   }

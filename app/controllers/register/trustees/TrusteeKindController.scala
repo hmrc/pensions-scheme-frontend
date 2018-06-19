@@ -16,25 +16,24 @@
 
 package controllers.register.trustees
 
-import javax.inject.Inject
-
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
 import config.FrontendAppConfig
+import connectors.DataCacheConnector
 import controllers.Retrievals
+import controllers.actions._
 import forms.register.trustees.TrusteeKindFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteeKindId
-import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.trustees.trusteeKind
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.Logger
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
+import utils.{Enumerable, Navigator2}
+import views.html.register.trustees.trusteeKind
 
 import scala.concurrent.Future
 
@@ -42,7 +41,7 @@ class TrusteeKindController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        dataCacheConnector: DataCacheConnector,
-                                       @Trustees navigator: Navigator,
+                                       @Trustees navigator: Navigator2,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
@@ -68,14 +67,14 @@ class TrusteeKindController @Inject()(
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index, schemeDetails.schemeName))),
-          (value) =>
+          value =>
             request.userAnswers.set(TrusteeKindId(index))(value).fold(
               errors => {
                 Logger.error("Unable to set user answer", JsResultException(errors))
                 Future.successful(InternalServerError)
               },
               userAnswers =>
-                Future.successful(Redirect(navigator.nextPage(TrusteeKindId(index), mode)(userAnswers)))
+                Future.successful(Redirect(navigator.nextPage(TrusteeKindId(index), mode, userAnswers)))
             )
         )
       }

@@ -62,7 +62,7 @@ class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) exten
     case OtherDirectorsId(index)=>
       _ => controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index)
     case CompanyReviewId(_) =>
-      checkYourAnswerRoutes()
+      _ => controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
   }
 
   override protected val editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
@@ -127,34 +127,6 @@ class EstablishersCompanyNavigator @Inject()(appConfig: FrontendAppConfig) exten
     }
     else {
       controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode, index)
-    }
-  }
-
-  private def checkYourAnswerRoutes()(answers: UserAnswers): Call = {
-    if (appConfig.restrictEstablisherEnabled) {
-      checkYourAnswerRoutesWithRestriction(answers)
-    } else {
-      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
-    }
-  }
-
-  private def checkYourAnswerRoutesWithRestriction(answers: UserAnswers) = {
-    if (answers.allTrustees.nonEmpty) {
-      controllers.register.routes.SchemeReviewController.onPageLoad()
-    } else {
-      answers.get(SchemeDetailsId) match {
-        case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
-        case Some(SchemeDetails(_, _)) =>
-          answers.get(HaveAnyTrusteesId) match {
-            case None =>
-              controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
-            case _ =>
-              controllers.register.routes.SchemeReviewController.onPageLoad()
-          }
-        case None =>
-          controllers.routes.SessionExpiredController.onPageLoad()
-      }
     }
   }
 }

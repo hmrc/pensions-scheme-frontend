@@ -16,22 +16,20 @@
 
 package controllers.register.establishers.company
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.company.CompanyUniqueTaxReferenceId
-import models.UniqueTaxReference
-import models.{Index, Mode}
+import javax.inject.Inject
+import models.{Index, Mode, UniqueTaxReference}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator2, UserAnswers}
 import views.html.register.establishers.company.companyUniqueTaxReference
 
 import scala.concurrent.Future
@@ -40,7 +38,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
                                                      appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      dataCacheConnector: DataCacheConnector,
-                                                     @EstablishersCompany navigator: Navigator,
+                                                     @EstablishersCompany navigator: Navigator2,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
@@ -70,14 +68,14 @@ class CompanyUniqueTaxReferenceController @Inject()(
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, companyName))),
-            (value) =>
+            value =>
               dataCacheConnector.save(
                 request.externalId,
                 CompanyUniqueTaxReferenceId(index),
                 value
               ).map {
                 json =>
-                  Redirect(navigator.nextPage(CompanyUniqueTaxReferenceId(index), mode)(new UserAnswers(json)))
+                  Redirect(navigator.nextPage(CompanyUniqueTaxReferenceId(index), mode, UserAnswers(json)))
               }
           )
       }

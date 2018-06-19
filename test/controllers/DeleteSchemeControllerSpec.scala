@@ -25,7 +25,6 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers.{contentAsString, _}
-import utils.FakeNavigator
 import views.html.deleteScheme
 
 import scala.concurrent.Future
@@ -35,10 +34,10 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar {
   val formProvider = new DeleteSchemeFormProvider()
   val form: Form[Boolean] = formProvider()
   val schemeName = "Test Scheme Name"
-  val fakeDataCacheConnector = mock[DataCacheConnector]
+  val fakeDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): DeleteSchemeController =
-    new DeleteSchemeController(frontendAppConfig, messagesApi, fakeDataCacheConnector, FakeNavigator, FakeAuthAction,
+    new DeleteSchemeController(frontendAppConfig, messagesApi, fakeDataCacheConnector, FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = deleteScheme(frontendAppConfig, form, schemeName)(fakeRequest, messages).toString

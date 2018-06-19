@@ -33,7 +33,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Establishers
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator2, UserAnswers}
 import views.html.register.establishers.confirmDeleteEstablisher
 
 import scala.concurrent.Future
@@ -42,7 +42,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
                                                     dataCacheConnector: DataCacheConnector,
-                                                    @Establishers navigator: Navigator,
+                                                    @Establishers navigator: Navigator2,
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction
@@ -52,7 +52,7 @@ class ConfirmDeleteEstablisherController @Inject()(
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         SchemeDetailsId.retrieve.right.map {
-          case schemeDetails =>
+          schemeDetails =>
             establisherName(establisherIndex, establisherKind) match {
               case Right(establisherName) =>
                 Future.successful(
@@ -76,7 +76,7 @@ class ConfirmDeleteEstablisherController @Inject()(
     implicit request =>
       dataCacheConnector.remove(request.externalId, EstablishersId(establisherIndex)).map {
         json =>
-          Redirect(navigator.nextPage(ConfirmDeleteEstablisherId, NormalMode)(UserAnswers(json)))
+          Redirect(navigator.nextPage(ConfirmDeleteEstablisherId, NormalMode, UserAnswers(json)))
       }
   }
 
@@ -88,10 +88,6 @@ class ConfirmDeleteEstablisherController @Inject()(
       case Partnership => Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
       case _ => Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
     }
-  }
-
-  private def postCall(index: Index, establisherKind: EstablisherKind) = {
-    routes.ConfirmDeleteEstablisherController.onSubmit(index)
   }
 
 }
