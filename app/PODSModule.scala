@@ -36,6 +36,10 @@ class PODSModule extends AbstractModule {
       .annotatedWith(classOf[Register])
       .to(classOf[RegisterNavigator])
 
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[Register])
+      .to(classOf[RegisterNavigator2])
+
     bind(classOf[Navigator])
       .annotatedWith(classOf[EstablishersCompany])
         .to(classOf[EstablishersCompanyNavigator])

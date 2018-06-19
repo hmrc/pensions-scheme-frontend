@@ -38,10 +38,10 @@ trait NavigatorBehaviour2 extends PropertyChecks with OptionValues {
   protected implicit val hc: HeaderCarrier = HeaderCarrier()
 
   //scalastyle:off method.length
-  def navigatorWithRoutes[A <: Identifier](
+  def navigatorWithRoutes[A <: Identifier, B <: Option[Call]](
     navigator: Navigator2,
     dataCacheConnector: FakeDataCacheConnector,
-    routes: TableFor6[A, UserAnswers, Call, Boolean, Option[Call], Boolean],
+    routes: TableFor6[A, UserAnswers, Call, Boolean, B, Boolean],
     describer: UserAnswers => String
   ): Unit = {
 
@@ -55,7 +55,7 @@ trait NavigatorBehaviour2 extends PropertyChecks with OptionValues {
               result mustBe call
             }
 
-            s"move from $id to $call and ${if (!save) "not "}save the page" in {
+            s"move from $id to $call and ${if (!save) "not " else ""}save the page" in {
               dataCacheConnector.reset()
               navigator.nextPage(id, NormalMode, userAnswers)
               if (save) {
@@ -76,7 +76,7 @@ trait NavigatorBehaviour2 extends PropertyChecks with OptionValues {
               result mustBe editCall.value
             }
 
-            s"move from $id to $editCall and ${if (!save) "not "}save the page" in {
+            s"move from $id to $editCall and ${if (!save) "not " else ""}save the page" in {
               dataCacheConnector.reset()
               navigator.nextPage(id, CheckMode, userAnswers)
               if (save) {
