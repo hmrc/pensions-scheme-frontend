@@ -109,7 +109,7 @@ object SchemeReviewControllerSpec extends ControllerSpecBase {
   val establisherIndv = Seq("establisher name")
   val establisherOrg = Seq("establisher")
   val trustees = Seq("trustee name", "trustee company name")
-  val establisherIndvUrl: Call = controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
+  val establisherIndvUrl: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
   val establisherCompanyUrl: Call = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
 
   private val trusteeSingleTrustUrl = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode)
