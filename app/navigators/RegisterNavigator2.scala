@@ -155,17 +155,9 @@ class RegisterNavigator2 @Inject()(val dataCacheConnector: DataCacheConnector, a
     }
   }
 
-  private def navigateWithFeatureToggle: Option[NavigateTo] = {
-    if(appConfig.restrictEstablisherEnabled){
-      NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0))
-    } else {
-      NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
-    }
-  }
-
   private def checkYourAnswersRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
     if (userAnswers.allEstablishers.isEmpty) {
-      navigateWithFeatureToggle
+      NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
     } else if (userAnswers.allTrustees.nonEmpty) {
       NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
     } else {
