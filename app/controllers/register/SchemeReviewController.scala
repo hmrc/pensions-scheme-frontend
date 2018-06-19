@@ -52,27 +52,9 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
           val trustees = request.userAnswers.allTrustees.map(_._1)
 
           Future.successful(Ok(schemeReview(appConfig, schemeDetails.schemeName, establishers, trustees,
-            establisherEditUrl(establisherKind), trusteeEditUrl(schemeDetails, request.userAnswers.get(HaveAnyTrusteesId)))))
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode),
+            trusteeEditUrl(schemeDetails, request.userAnswers.get(HaveAnyTrusteesId)))))
       }
-  }
-
-  private def establisherEditUrl(establisherKind: EstablisherKind) = {
-    if (appConfig.restrictEstablisherEnabled) {
-      editUrlWithRestriction(establisherKind)
-    } else {
-      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
-    }
-  }
-
-  private def editUrlWithRestriction(establisherKind: EstablisherKind): Call = {
-    establisherKind match {
-      case Indivdual =>
-        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
-      case Company =>
-        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
-      case _ =>
-        controllers.routes.WhatYouWillNeedController.onPageLoad()
-    }
   }
 
   private def trusteeEditUrl(schemeDetails: SchemeDetails, haveAnyTrustees: Option[Boolean]) = {

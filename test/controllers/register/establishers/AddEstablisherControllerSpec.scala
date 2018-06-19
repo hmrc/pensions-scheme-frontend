@@ -23,24 +23,25 @@ import forms.register.establishers.AddEstablisherFormProvider
 import models.NormalMode
 import org.joda.time.LocalDate
 import play.api.data.Form
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.FakeNavigator2
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new AddEstablisherFormProvider()
   val form = formProvider(Seq.empty)
   val schemeName = "Test Scheme Name"
-  val day = LocalDate.now().getDayOfMonth
-  val month = LocalDate.now().getMonthOfYear
-  val year = LocalDate.now().getYear - 20
+  val day: Int = LocalDate.now().getDayOfMonth
+  val month: Int = LocalDate.now().getMonthOfYear
+  val year: Int = LocalDate.now().getYear - 20
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddEstablisherController =
     new AddEstablisherController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+      new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form, allEstablishers: Seq[(String, String)] = Seq.empty): String = addEstablisher(frontendAppConfig,

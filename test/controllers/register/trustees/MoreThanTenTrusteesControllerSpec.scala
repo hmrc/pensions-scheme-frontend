@@ -16,21 +16,19 @@
 
 package controllers.register.trustees
 
-import play.api.data.Form
-import play.api.libs.json.JsBoolean
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
-import play.api.libs.json._
 import forms.register.trustees.MoreThanTenTrusteesFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.MoreThanTenTrusteesId
 import models.NormalMode
 import models.register.{SchemeDetails, SchemeType}
+import play.api.data.Form
+import play.api.libs.json._
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator2
 import views.html.register.trustees.moreThanTenTrustees
 
 class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
@@ -47,7 +45,7 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): MoreThanTenTrusteesController =
-    new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = moreThanTenTrustees(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString

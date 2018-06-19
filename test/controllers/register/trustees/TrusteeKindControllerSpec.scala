@@ -16,37 +16,36 @@
 
 package controllers.register.trustees
 
-import play.api.data.Form
-import play.api.libs.json.JsString
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import play.api.libs.json._
-import forms.register.trustees.TrusteeKindFormProvider
-import identifiers.register.trustees.TrusteeKindId
-import models.{Index, NormalMode}
-import models.register.trustees.TrusteeKind
-import views.html.register.trustees.trusteeKind
 import controllers.ControllerSpecBase
+import controllers.actions._
+import forms.register.trustees.TrusteeKindFormProvider
 import identifiers.register.SchemeDetailsId
+import identifiers.register.trustees.TrusteeKindId
+import models.register.trustees.TrusteeKind
 import models.register.{SchemeDetails, SchemeType}
+import models.{Index, NormalMode}
+import play.api.data.Form
+import play.api.libs.json.{JsString, _}
+import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator2
+import views.html.register.trustees.trusteeKind
 
 class TrusteeKindControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new TrusteeKindFormProvider()
   val form = formProvider()
   val index = Index(0)
   val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName) =
-    new TrusteeKindController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): TrusteeKindController =
+    new TrusteeKindController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = trusteeKind(frontendAppConfig, form, NormalMode, index, schemeName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = trusteeKind(frontendAppConfig, form, NormalMode, index, schemeName)(fakeRequest, messages).toString
 
   "TrusteeKind Controller" must {
 

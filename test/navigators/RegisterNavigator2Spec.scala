@@ -76,24 +76,12 @@ class RegisterNavigator2Spec extends SpecBase with MustMatchers with NavigatorBe
     (DeclarationDutiesId,           emptyAnswers,         expired,                                false,        None,                                 false)
   )
 
-  "RegisterNavigator when restrict-establisher toggle is off" must {
+  "RegisterNavigator" must {
     appRunning()
     val navigator = testNavigator()
     behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
-
-  //Delete the test case when the restrict-establisher toggle is removed
-  private def routesWithNoRestrictedEstablisher = Table(
-    ("Id",                          "User Answers",       "Next Page (Normal Mode)",              "Save (NM)",  "Next Page (Check Mode)",             "Save (CM)"),
-    (CheckYourAnswersId,            noEstablishers,       establisherKind,                        true,         None,                                 false)
-  )
-
-  "RegisterNavigator when restrict-establisher toggle is on" must {
-    appRunning()
-    behave like navigatorWithRoutes(testNavigator(true), FakeDataCacheConnector, routesWithNoRestrictedEstablisher, dataDescriber)
-  }
-
 }
 
 //noinspection MutatorLikeMethodIsParameterless
