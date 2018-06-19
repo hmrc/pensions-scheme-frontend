@@ -31,7 +31,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.Navigator2
 import utils.annotations.Trustees
 import views.html.register.trustees.addTrustee
 
@@ -41,7 +41,7 @@ class AddTrusteeController @Inject()(
                                       appConfig: FrontendAppConfig,
                                       override val messagesApi: MessagesApi,
                                       dataCacheConnector: DataCacheConnector,
-                                      @Trustees navigator: Navigator,
+                                      @Trustees navigator: Navigator2,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
@@ -64,21 +64,21 @@ class AddTrusteeController @Inject()(
       val trustees = request.userAnswers.allTrustees
 
       if (trustees.isEmpty || trustees.lengthCompare(appConfig.maxTrustees) >= 0)
-        Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode)(request.userAnswers)))
+        Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers)))
       else {
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             SchemeDetailsId.retrieve.right.map { schemeDetails =>
               Future.successful(BadRequest(addTrustee(appConfig, formWithErrors, mode, schemeDetails.schemeName, trustees)))
             },
-          (value) =>
+          value =>
             request.userAnswers.set(AddTrusteeId)(value).fold(
               errors => {
                 Logger.error("Unable to set user answer", JsResultException(errors))
                 Future.successful(InternalServerError)
               },
               userAnswers =>
-                Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode)(userAnswers)))
+                Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, userAnswers)))
             )
         )
       }

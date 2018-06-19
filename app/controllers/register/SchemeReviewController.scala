@@ -16,30 +16,29 @@
 
 package controllers.register
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.{SchemeDetailsId, SchemeReviewId}
+import javax.inject.Inject
 import models.register.establishers.EstablisherKind
-import models.{CheckMode, NormalMode}
-import models.register.{SchemeDetails, SchemeType}
 import models.register.establishers.EstablisherKind.{Company, Indivdual}
+import models.register.{SchemeDetails, SchemeType}
+import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Enumerable, Navigator}
 import utils.annotations.Register
+import utils.{Enumerable, Navigator2}
 import views.html.register.schemeReview
 
 import scala.concurrent.Future
 
 class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       @Register navigator: Navigator,
+                                       @Register navigator: Navigator2,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction) extends FrontendController with I18nSupport with
@@ -53,27 +52,9 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
           val trustees = request.userAnswers.allTrustees.map(_._1)
 
           Future.successful(Ok(schemeReview(appConfig, schemeDetails.schemeName, establishers, trustees,
-            establisherEditUrl(establisherKind), trusteeEditUrl(schemeDetails, request.userAnswers.get(HaveAnyTrusteesId)))))
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode),
+            trusteeEditUrl(schemeDetails, request.userAnswers.get(HaveAnyTrusteesId)))))
       }
-  }
-
-  private def establisherEditUrl(establisherKind: EstablisherKind) = {
-    if (appConfig.restrictEstablisherEnabled) {
-      editUrlWithRestriction(establisherKind)
-    } else {
-      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
-    }
-  }
-
-  private def editUrlWithRestriction(establisherKind: EstablisherKind): Call = {
-    establisherKind match {
-      case Indivdual =>
-        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0)
-      case Company =>
-        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
-      case _ =>
-        controllers.routes.WhatYouWillNeedController.onPageLoad()
-    }
   }
 
   private def trusteeEditUrl(schemeDetails: SchemeDetails, haveAnyTrustees: Option[Boolean]) = {
@@ -89,7 +70,7 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Redirect(navigator.nextPage(SchemeReviewId, NormalMode)(request.userAnswers))
+      Redirect(navigator.nextPage(SchemeReviewId, NormalMode, request.userAnswers))
   }
 
 }

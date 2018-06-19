@@ -16,20 +16,20 @@
 
 package controllers.register
 
-import play.api.data.Form
-import play.api.libs.json.{JsString, Json}
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
 import forms.register.MembershipFormProvider
 import identifiers.register.{MembershipId, SchemeDetailsId}
 import models.NormalMode
-import views.html.register.membership
-import controllers.ControllerSpecBase
 import models.register.SchemeType.SingleTrust
 import models.register.{Membership, SchemeDetails}
+import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator2
+import views.html.register.membership
 
 class MembershipControllerSpec extends ControllerSpecBase {
 
@@ -45,7 +45,7 @@ class MembershipControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

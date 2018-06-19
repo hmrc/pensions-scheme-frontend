@@ -17,7 +17,6 @@
 package controllers.register.establishers.company
 
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
@@ -30,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import utils._
 import views.html.register.establishers.company.companyContactDetails
 
 import scala.concurrent.Future
@@ -38,7 +37,7 @@ import scala.concurrent.Future
 class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
                                                   dataCacheConnector: DataCacheConnector,
-                                                  @EstablishersCompany navigator: Navigator,
+                                                  @EstablishersCompany navigator: Navigator2,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
@@ -66,9 +65,9 @@ class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(companyContactDetails(appConfig, formWithErrors, mode, index, companyName))),
-            (value) =>
+            value =>
               dataCacheConnector.save(request.externalId, CompanyContactDetailsId(index), value).map(cacheMap =>
-                Redirect(navigator.nextPage(CompanyContactDetailsId(index), mode)(new UserAnswers(cacheMap))))
+                Redirect(navigator.nextPage(CompanyContactDetailsId(index), mode, UserAnswers(cacheMap))))
           )
       }
   }

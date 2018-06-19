@@ -32,7 +32,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
-import utils.FakeNavigator
+import utils.FakeNavigator2
 import views.html.register.trustees.addTrustee
 
 class AddTrusteeControllerSpec extends ControllerSpecBase {
@@ -47,11 +47,11 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   val formProvider = new AddTrusteeFormProvider()
   val schemeName = "Test Scheme Name"
-  private val maxTrustees = frontendAppConfig.maxTrustees
-  val trusteeCompanyA: (String, String) = ("Trustee Company A" -> editTrusteeCompanyRoute(0))
-  val trusteeCompanyB: (String, String) = ("Trustee Company B" -> editTrusteeCompanyRoute(1))
-  val trusteeIndividual: (String, String) = ("Trustee Individual" -> editTrusteeIndividualRoute(2))
-  val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
+
+  lazy val trusteeCompanyA: (String, String) = "Trustee Company A" -> editTrusteeCompanyRoute(0)
+  lazy val trusteeCompanyB: (String, String) = "Trustee Company B" -> editTrusteeCompanyRoute(1)
+  lazy val trusteeIndividual: (String, String) = "Trustee Individual" -> editTrusteeIndividualRoute(2)
+  lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
 
   private def validData = {
     Json.obj(SchemeDetailsId.toString ->
@@ -73,7 +73,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   val form = formProvider()
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddTrusteeController =
-    new AddTrusteeController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new AddTrusteeController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form, trustees: Seq[(String, String)] = Seq.empty): String =

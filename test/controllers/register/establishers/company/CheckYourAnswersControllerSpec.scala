@@ -19,8 +19,9 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import models.{CheckMode, Index}
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{CheckYourAnswersFactory, CountryOptions, InputOption}
+import utils.{CheckYourAnswersFactory, CountryOptions, FakeNavigator2, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -31,9 +32,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val testSchemeName = "Test Scheme Name"
 
   val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
-  def postUrl = routes.CheckYourAnswersController.onSubmit(index)
+  def postUrl: Call = routes.CheckYourAnswersController.onSubmit(index)
 
-  val answersCD: Seq[AnswerRow] = Seq(
+  lazy val answersCD: Seq[AnswerRow] = Seq(
     AnswerRow(
       "messages__common__cya__name",
       Seq("test company name"),
@@ -54,18 +55,31 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
     )
   )
 
-  val answers = Seq(
+  lazy val answers = Seq(
     AnswerSection(Some("messages__common__company_details__title"), answersCD),
     AnswerSection(Some("messages__establisher_company_contact_details__title"), Seq.empty
     ))
 
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CheckYourAnswersController =
+    new CheckYourAnswersController(
+      frontendAppConfig,
+      messagesApi,
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      checkYourAnswersFactory,
+      new FakeNavigator2(onwardRoute)
+    )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
-    new CheckYourAnswersController(frontendAppConfig, messagesApi, FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, checkYourAnswersFactory)
-
-  def viewAsString() = check_your_answers(frontendAppConfig, answers, Some(testSchemeName), postUrl)(fakeRequest, messages).toString
+  def viewAsString(): String =
+    check_your_answers(
+      frontendAppConfig,
+      answers,
+      Some(testSchemeName),
+      postUrl
+    )(fakeRequest, messages).toString
 
   "CheckYourAnswers Controller" must {
 

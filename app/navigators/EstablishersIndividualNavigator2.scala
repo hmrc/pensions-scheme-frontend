@@ -60,7 +60,7 @@ class EstablishersIndividualNavigator2 @Inject()(
       case ContactDetailsId(index) =>
         checkYourAnswers(index)(from.userAnswers)
       case CheckYourAnswersId =>
-        checkYourAnswerRoutes()(from.userAnswers)
+        NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
     }
   }
 
@@ -110,34 +110,6 @@ class EstablishersIndividualNavigator2 @Inject()(
         NavigateTo.save(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index))
       case None =>
         NavigateTo.save(controllers.routes.SessionExpiredController.onPageLoad())
-    }
-  }
-
-  private def checkYourAnswerRoutes()(answers: UserAnswers): Option[NavigateTo] = {
-    if(appConfig.restrictEstablisherEnabled) {
-      checkYourAnswerRoutesWithRestriction(answers)
-    } else {
-      NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
-    }
-  }
-
-  private def checkYourAnswerRoutesWithRestriction(answers: UserAnswers): Option[NavigateTo] = {
-    if (answers.allTrustees.nonEmpty) {
-      NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
-    } else {
-      answers.get(SchemeDetailsId) match {
-        case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
-          NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
-        case Some(SchemeDetails(_, _)) =>
-          answers.get(HaveAnyTrusteesId) match {
-            case None =>
-              NavigateTo.save(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode))
-            case _ =>
-              NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
-          }
-        case None =>
-          NavigateTo.save(controllers.routes.SessionExpiredController.onPageLoad())
-      }
     }
   }
 }

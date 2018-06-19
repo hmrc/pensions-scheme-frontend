@@ -22,14 +22,13 @@ import controllers.actions._
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyUniqueTaxReferenceId}
-import models._
-import models.UniqueTaxReference
+import models.{UniqueTaxReference, _}
 import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.FakeNavigator2
 import views.html.register.establishers.company.companyUniqueTaxReference
 
 class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
@@ -41,7 +40,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   val form: Form[UniqueTaxReference] = formProvider()
   val companyName = "test company name"
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     SchemeDetails.toString ->
       SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
@@ -59,11 +58,25 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyUniqueTaxReferenceController =
-    new CompanyUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+    new CompanyUniqueTaxReferenceController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator2(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
 
-  def viewAsString(form: Form[_] = form): String = companyUniqueTaxReference(frontendAppConfig, form, NormalMode, firstIndex,
-    companyName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    companyUniqueTaxReference(
+      frontendAppConfig,
+      form,
+      NormalMode,
+      firstIndex,
+      companyName
+    )(fakeRequest, messages).toString
 
   "CompanyUniqueTaxReference Controller" must {
 

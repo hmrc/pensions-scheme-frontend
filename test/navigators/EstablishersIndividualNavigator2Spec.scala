@@ -36,14 +36,9 @@ import utils.UserAnswers
 class EstablishersIndividualNavigator2Spec extends SpecBase with MustMatchers with NavigatorBehaviour2 {
   import EstablishersIndividualNavigator2Spec._
 
-  private def navigator(isEstablisherRestricted: Boolean = false) = {
-    val application = new GuiceApplicationBuilder()
-      .configure(Configuration("microservice.services.features.restrict-establisher" -> isEstablisherRestricted))
-    val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-    new EstablishersIndividualNavigator2(appConfig, FakeDataCacheConnector)
-  }
+  private val navigator = new EstablishersIndividualNavigator2(frontendAppConfig, FakeDataCacheConnector)
 
-  private def routesWithNoRestrictedEstablishers: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                          "User Answers",             "Next Page (Normal Mode)",                  "Save (NM)",  "Next Page (Check Mode)",             "Save (CM)"),
     (EstablisherDetailsId(0),        emptyAnswers,               establisherNino(NormalMode),                 true, Some(checkYourAnswers), true),
     (EstablisherNinoId(0),           emptyAnswers,               establisherUtr(NormalMode),                  true, Some(checkYourAnswers), true),
@@ -59,23 +54,9 @@ class EstablishersIndividualNavigator2Spec extends SpecBase with MustMatchers wi
     (CheckYourAnswersId,             emptyAnswers,               addEstablisher,                              true, None, true)
   )
 
-  s"${navigator().getClass.getSimpleName} when restrict-establisher toggle is off" must {
+  s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator(), FakeDataCacheConnector, routesWithNoRestrictedEstablishers, dataDescriber)
-  }
-
-  private def routesWithRestrictedEstablishers: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                          "User Answers",             "Next Page (Normal Mode)",                  "Save (NM)",  "Next Page (Check Mode)",             "Save (CM)"),
-    (CheckYourAnswersId,                          schemeBodyCorporate,                 haveAnyTrustees,                            true,          None,                      true),
-    (CheckYourAnswersId,                          schemeSingleTrust,                   addTrustees,                                true,          None,                      true),
-    (CheckYourAnswersId,                          hasTrusteeCompanies,                 schemeReview,                               true,          None,                      true),
-    (CheckYourAnswersId,                          bodyCorporateWithNoTrustees,         schemeReview,                               true,          None,                      true)
-
-  )
-
-  s"${navigator(true).getClass.getSimpleName} when restrict-establisher toggle is on" must {
-    appRunning()
-    behave like navigatorWithRoutes(navigator(true), FakeDataCacheConnector, routesWithRestrictedEstablishers, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routes, dataDescriber)
   }
 }
 

@@ -22,6 +22,7 @@ import utils.{Navigator, Navigator2}
 
 class PODSModule extends AbstractModule {
 
+  //scalastyle:off method.length
   override def configure(): Unit = {
 
     bind(classOf[DataCacheConnector])
@@ -36,9 +37,17 @@ class PODSModule extends AbstractModule {
       .annotatedWith(classOf[Register])
       .to(classOf[RegisterNavigator])
 
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[Register])
+      .to(classOf[RegisterNavigator2])
+
     bind(classOf[Navigator])
       .annotatedWith(classOf[EstablishersCompany])
         .to(classOf[EstablishersCompanyNavigator])
+
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[EstablishersCompany])
+      .to(classOf[EstablishersCompanyNavigator2])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[TrusteesCompany])
@@ -56,9 +65,17 @@ class PODSModule extends AbstractModule {
       .annotatedWith(classOf[Establishers])
       .to(classOf[EstablishersNavigator])
 
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[Establishers])
+      .to(classOf[EstablishersNavigator2])
+
     bind(classOf[Navigator])
       .annotatedWith(classOf[Trustees])
       .to(classOf[TrusteesNavigator])
+
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[Trustees])
+      .to(classOf[TrusteesNavigator2])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[Adviser])
