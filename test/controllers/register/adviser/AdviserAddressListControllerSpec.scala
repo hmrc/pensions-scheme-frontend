@@ -28,11 +28,11 @@ import play.api.Application
 import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{Request, Result}
+import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, _}
 import utils.annotations.Adviser
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator2, Navigator2, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -63,7 +63,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase with CSRFReque
       requestResult(
         implicit app => addToken(FakeRequest(routes.AdviserAddressListController.onPageLoad(NormalMode))),
         getEmptyData,
-        (request, result) => {
+        (_, result) => {
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(routes.AdviserPostCodeLookupController.onPageLoad(NormalMode).url)
         }
@@ -119,7 +119,8 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
 object AdviserAddressListControllerSpec extends ControllerSpecBase {
 
-  val onwardRoute = controllers.routes.IndexController.onPageLoad()
+  lazy val onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
   private val addresses = Seq(
     TolerantAddress(
       Some("Address 1 Line 1"),
@@ -155,14 +156,14 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
     )
   }
 
-  private def requestResult[T](request: (Application) => Request[T], data: DataRetrievalAction,
-                               test: (Request[_], Future[Result]) => Unit)(implicit writeable: Writeable[T]) = {
+  private def requestResult[T](request: Application => Request[T], data: DataRetrievalAction,
+                               test: (Request[_], Future[Result]) => Unit)(implicit writeable: Writeable[T]): Unit = {
     running(
       _.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].to(FakeDataCacheConnector),
         bind[DataRetrievalAction].to(data),
-        bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
+        bind(classOf[Navigator2]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator2(onwardRoute))
       )
     ) {
       app =>

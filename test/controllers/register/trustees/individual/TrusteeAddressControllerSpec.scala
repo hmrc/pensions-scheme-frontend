@@ -34,7 +34,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.annotations.TrusteesIndividual
-import utils.{CountryOptions, FakeNavigator, InputOption, Navigator}
+import utils.{CountryOptions, FakeNavigator2, InputOption, Navigator2}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -57,7 +57,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
   private implicit val builder: GuiceApplicationBuilder = new GuiceApplicationBuilder()
     .overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
-      bind[Navigator].qualifiedWith(classOf[TrusteesIndividual]).toInstance(FakeNavigator),
+      bind[Navigator2].qualifiedWith(classOf[TrusteesIndividual]).toInstance(FakeNavigator2),
       bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),
@@ -94,7 +94,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
 
     running(_.overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
-      bind[Navigator].toInstance(FakeNavigator),
+      bind[Navigator2].toInstance(FakeNavigator2),
       bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
       bind[AuthAction].to(FakeAuthAction),
       bind[CountryOptions].to(countryOptions),

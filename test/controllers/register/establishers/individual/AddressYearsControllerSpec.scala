@@ -23,18 +23,20 @@ import forms.address.AddressYearsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
-import models.register.{SchemeDetails, SchemeType}
 import models.register.establishers.individual.EstablisherDetails
+import models.register.{SchemeDetails, SchemeType}
 import models.{AddressYears, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.FakeNavigator2
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
+
+//scalastyle:off magic.number
 
 class AddressYearsControllerSpec extends ControllerSpecBase {
 
@@ -51,7 +53,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
     new AddressYearsController(
       frontendAppConfig,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,

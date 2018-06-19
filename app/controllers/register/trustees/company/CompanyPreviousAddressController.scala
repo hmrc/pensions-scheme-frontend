@@ -32,7 +32,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.TrusteesCompany
-import utils.{CountryOptions, Navigator}
+import utils.{CountryOptions, Navigator2}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -40,7 +40,7 @@ class CompanyPreviousAddressController @Inject()(
                                                   val appConfig: FrontendAppConfig,
                                                   val messagesApi: MessagesApi,
                                                   val dataCacheConnector: DataCacheConnector,
-                                                  @TrusteesCompany val navigator: Navigator,
+                                                  @TrusteesCompany val navigator: Navigator2,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,

@@ -16,20 +16,20 @@
 
 package controllers.register.establishers.individual
 
-import play.api.data.{Form, FormError}
-import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
-import controllers.actions._
-import play.api.test.Helpers._
-import models.{Index, NormalMode}
-import views.html.register.establishers.individual.previousPostCodeLookup
 import controllers.ControllerSpecBase
+import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
-import models.address.{Address, AddressRecord, TolerantAddress}
-import org.scalatest.mockito.MockitoSugar
+import models.address.TolerantAddress
+import models.{Index, NormalMode}
 import org.mockito.Mockito._
 import org.mockito._
+import org.scalatest.mockito.MockitoSugar
+import play.api.data.{Form, FormError}
+import play.api.mvc.Call
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.FakeNavigator2
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -37,7 +37,7 @@ import views.html.address.postcodeLookup
 import scala.concurrent.Future
 class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
@@ -54,7 +54,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       messagesApi,
       FakeDataCacheConnector,
       fakeAddressLookupConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

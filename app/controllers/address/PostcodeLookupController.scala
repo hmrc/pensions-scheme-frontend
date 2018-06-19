@@ -21,13 +21,13 @@ import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.Retrievals
 import identifiers.TypedIdentifier
 import models.Mode
-import models.address.{TolerantAddress}
+import models.address.TolerantAddress
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator2, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -39,7 +39,7 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
   protected def appConfig: FrontendAppConfig
   protected def cacheConnector: DataCacheConnector
   protected def addressLookupConnector: AddressLookupConnector
-  protected def navigator: Navigator
+  protected def navigator: Navigator2
 
   protected def form: Form[String]
 
@@ -79,21 +79,19 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
 
     case Nil => Future.successful(Ok(postcodeLookup(appConfig, formWithError(noResults), viewmodel)))
 
-      case addresses => {
+      case addresses =>
         cacheConnector.save(
           request.externalId,
           id,
           addresses
         ).map {
           json =>
-            Redirect(navigator.nextPage(id, mode)(UserAnswers(json)))
+            Redirect(navigator.nextPage(id, mode, UserAnswers(json)))
         }
-    }
-  } recoverWith {
 
-      case _ => {
+    } recoverWith {
+      case _ =>
         Future.successful(BadRequest(postcodeLookup(appConfig, formWithError(invalidPostcode), viewmodel)))
-      }
     }
   }
 

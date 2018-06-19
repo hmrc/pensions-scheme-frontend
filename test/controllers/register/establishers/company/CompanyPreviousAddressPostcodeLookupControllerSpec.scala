@@ -34,7 +34,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.FakeNavigator
+import utils.FakeNavigator2
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -66,7 +66,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
 
   private val testAnswer = "AB12 3CD"
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     SchemeDetailsId.toString ->
       SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(
@@ -89,7 +89,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
       messagesApi,
       FakeDataCacheConnector,
       fakeAddressLookupConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

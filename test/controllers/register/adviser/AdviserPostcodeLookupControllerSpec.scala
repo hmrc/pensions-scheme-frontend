@@ -36,7 +36,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, SEE_OTHER, contentAsString, redirectLocation, route, running, status, _}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.annotations.Adviser
-import utils.{FakeNavigator, Navigator}
+import utils.{FakeNavigator2, Navigator2}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -86,7 +86,8 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[DataCacheConnector].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryAdviser)
+        bind[DataRetrievalAction].to(getMandatoryAdviser),
+        bind[Navigator2].qualifiedWith(classOf[Adviser]).toInstance(new FakeNavigator2(onwardRoute))
       )) {
         implicit app =>
 
@@ -113,7 +114,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(
-          (Seq(fakeAddress(testAnswer))))
+          Seq(fakeAddress(testAnswer)))
         )
 
       running(_.overrides(
@@ -125,7 +126,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[DataRetrievalAction].to(getMandatoryAdviser),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
         bind[PostCodeLookupFormProvider].to(formProvider),
-        bind[Navigator].qualifiedWith(classOf[Adviser]).toInstance(new FakeNavigator(onwardRoute))
+        bind[Navigator2].qualifiedWith(classOf[Adviser]).toInstance(new FakeNavigator2(onwardRoute))
       )) {
         implicit app =>
 

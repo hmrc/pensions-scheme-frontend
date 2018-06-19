@@ -37,7 +37,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
-import utils._
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator2, Navigator2, UserAnswers}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
@@ -61,7 +61,7 @@ object ManualAddressControllerSpec {
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
                                   override val dataCacheConnector: DataCacheConnector,
-                                  override val navigator: Navigator,
+                                  override val navigator: Navigator2,
                                   formProvider: AddressFormProvider,
                                   override val auditService: AuditService
                                 ) extends ManualAddressController {
@@ -106,7 +106,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
         running(_.overrides(
           bind[CountryOptions].to[FakeCountryOptions],
-          bind[Navigator].to(FakeNavigator),
+          bind[Navigator2].to(FakeNavigator2),
           bind[AuditService].to[StubSuccessfulAuditService]
         )) {
           app =>
@@ -130,7 +130,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
       "data is retrieved" in {
         running(_.overrides(
           bind[CountryOptions].to[FakeCountryOptions],
-          bind[Navigator].to(FakeNavigator),
+          bind[Navigator2].to(FakeNavigator2),
           bind[AuditService].to[StubSuccessfulAuditService]
         )) {
           app =>
@@ -162,7 +162,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
         running(_.overrides(
           bind[CountryOptions].to[FakeCountryOptions],
-          bind[Navigator].to(FakeNavigator),
+          bind[Navigator2].to(FakeNavigator2),
           bind[AuditService].to[StubSuccessfulAuditService]
         )) {
           app =>
@@ -205,12 +205,12 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
         val onwardRoute = Call("GET", "/")
 
-        val navigator = new FakeNavigator(onwardRoute, NormalMode)
+        val navigator = new FakeNavigator2(onwardRoute, NormalMode)
 
         running(_.overrides(
           bind[CountryOptions].to[FakeCountryOptions],
           bind[DataCacheConnector].to(FakeDataCacheConnector),
-          bind[Navigator].to(navigator),
+          bind[Navigator2].to(navigator),
           bind[AuditService].to[StubSuccessfulAuditService]
         )) {
           app =>
@@ -225,7 +225,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
             )
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result) mustEqual Some(onwardRoute.url)
+            redirectLocation(result) mustBe Some(onwardRoute.url)
 
             val address = Address("value 1", "value 2", None, None, Some("AB1 1AB"), "GB")
 
@@ -238,13 +238,13 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
         val onwardRoute = Call("GET", "/")
 
-        val navigator = new FakeNavigator(onwardRoute, NormalMode)
+        val navigator = new FakeNavigator2(onwardRoute, NormalMode)
         val auditService = new StubSuccessfulAuditService()
 
         running(_.overrides(
           bind[CountryOptions].to[FakeCountryOptions],
           bind[DataCacheConnector].to(FakeDataCacheConnector),
-          bind[Navigator].to(navigator),
+          bind[Navigator2].to(navigator),
           bind[AuditService].toInstance(auditService)
         )) {
           app =>
@@ -301,7 +301,8 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
       running(_.overrides(
         bind[CountryOptions].to[FakeCountryOptions],
-        bind[AuditService].to[StubSuccessfulAuditService]
+        bind[AuditService].to[StubSuccessfulAuditService],
+        bind[Navigator2].toInstance(FakeNavigator2)
       )) {
         app =>
 

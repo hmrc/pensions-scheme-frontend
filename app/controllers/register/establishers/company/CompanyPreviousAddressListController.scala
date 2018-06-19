@@ -21,13 +21,13 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyPreviousAddressId, CompanyPreviousAddressListId, CompanyPreviousAddressPostcodeLookupId}
+import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models._
 import models.requests.DataRequest
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
-import utils.Navigator
+import utils.Navigator2
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -38,7 +38,7 @@ class CompanyPreviousAddressListController @Inject()(
                                                       val appConfig: FrontendAppConfig,
                                                       val messagesApi: MessagesApi,
                                                       val cacheConnector: DataCacheConnector,
-                                                      @EstablishersCompany val navigator: Navigator,
+                                                      @EstablishersCompany val navigator: Navigator2,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,
                                                       requireData: DataRequiredAction

@@ -31,7 +31,7 @@ import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
-import utils.{FakeNavigator, Navigator, UserAnswers}
+import utils.{FakeNavigator2, Navigator2, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -148,7 +148,7 @@ object AddressListControllerSpec {
 
     override protected def cacheConnector: DataCacheConnector = FakeDataCacheConnector
 
-    override protected def navigator: Navigator = new FakeNavigator(onwardRoute)
+    override protected def navigator: Navigator2 = new FakeNavigator2(onwardRoute)
 
     def onPageLoad(viewModel: AddressListViewModel): Future[Result] = {
 

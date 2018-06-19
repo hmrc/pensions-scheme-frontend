@@ -20,37 +20,35 @@ import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.AddressYearsFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.{CompanyAddressId, CompanyAddressYearsId, CompanyDetailsId}
-import models.address.Address
-import models.register.{SchemeDetails, SchemeType}
+import identifiers.register.establishers.company.{CompanyAddressYearsId, CompanyDetailsId}
 import models.{AddressYears, CompanyDetails, Index, NormalMode}
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.FakeNavigator2
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
-import views.html.register.establishers.company.companyAddressYears
+
+//scalastyle:off magic.number
 
 class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new AddressYearsFormProvider()
   private val form = formProvider()
   private val firstIndex = Index(0)
   private val invalidIndex = Index(10)
   private val companyName = "test company"
-  private val address = Address("value 1", "value 2", None, None, None, "GB")
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyAddressYearsController =
     new CompanyAddressYearsController(
       frontendAppConfig,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
@@ -70,7 +68,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
       )
     )(fakeRequest, messages).toString
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd"))

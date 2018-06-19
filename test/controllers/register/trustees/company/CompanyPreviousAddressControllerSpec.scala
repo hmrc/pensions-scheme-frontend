@@ -38,7 +38,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils._
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator2, InputOption, Navigator2}
 import utils.annotations.TrusteesCompany
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -72,7 +72,8 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
-        bind[CountryOptions].to(countryOptions)
+        bind[CountryOptions].to(countryOptions),
+        bind[Navigator2].toInstance(FakeNavigator2)
       )) {
         implicit app =>
 
@@ -120,7 +121,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
         )
 
         running(_.overrides(
-          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator(onwardCall)),
+          bind(classOf[Navigator2]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator2(onwardCall)),
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
           bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
@@ -162,7 +163,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[Navigator].toInstance(FakeNavigator),
+        bind[Navigator2].toInstance(FakeNavigator2),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[CountryOptions].to(countryOptions),

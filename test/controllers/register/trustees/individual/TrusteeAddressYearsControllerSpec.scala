@@ -27,7 +27,7 @@ import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsError, JsResultException, JsSuccess}
 import play.api.test.Helpers._
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator2, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
@@ -119,7 +119,7 @@ object TrusteeAddressYearsControllerSpec extends ControllerSpecBase {
   private val form = new AddressYearsFormProvider()(Message("messages__trusteeAddressYears__error_required"))
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
-  private val fakeNavigator = new FakeNavigator(onwardRoute)
+  private val fakeNavigator = new FakeNavigator2(onwardRoute)
 
   private def controller(dataRetrievalAction: DataRetrievalAction) =
     new TrusteeAddressYearsController(

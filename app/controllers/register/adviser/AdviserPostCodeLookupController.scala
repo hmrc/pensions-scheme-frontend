@@ -27,7 +27,7 @@ import models.Mode
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import utils.Navigator
+import utils.Navigator2
 import utils.annotations.Adviser
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -37,7 +37,7 @@ class AdviserPostCodeLookupController @Inject()(
                                                  override val messagesApi: MessagesApi,
                                                  override val cacheConnector: DataCacheConnector,
                                                  override val addressLookupConnector: AddressLookupConnector,
-                                                 @Adviser override val navigator: Navigator,
+                                                 @Adviser override val navigator: Navigator2,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,

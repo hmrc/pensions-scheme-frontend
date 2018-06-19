@@ -16,23 +16,23 @@
 
 package controllers.register.establishers.individual
 
-import play.api.data.{Form, FormError}
-import utils.FakeNavigator
 import connectors.{AddressLookupConnector, FakeDataCacheConnector}
-import controllers.actions._
-import play.api.test.Helpers._
-import models.{Index, NormalMode}
-import views.html.address.postcodeLookup
 import controllers.ControllerSpecBase
+import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
-import org.scalatest.mockito.MockitoSugar
+import models.{Index, NormalMode}
 import org.mockito.Mockito._
 import org.mockito._
+import org.scalatest.mockito.MockitoSugar
+import play.api.data.{Form, FormError}
 import play.api.mvc.Call
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
+import utils.FakeNavigator2
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
+import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
 
@@ -55,7 +55,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       messagesApi,
       FakeDataCacheConnector,
       fakeAddressLookupConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
@@ -106,7 +106,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       val boundForm = form.withError(FormError("value", "messages__error__postcode_no_results"))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(notFoundPostCode))
-      (Matchers.any(), Matchers.any())).thenReturn(Future.successful((Nil)))
+      (Matchers.any(), Matchers.any())).thenReturn(Future.successful(Nil))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 
