@@ -19,12 +19,9 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import identifiers.register.trustees.HaveAnyTrusteesId
 import models.register.establishers.company.director.DirectorDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.{AddressYears, CheckMode, Mode, NormalMode}
 import utils.{Navigator2, UserAnswers}
 
@@ -143,4 +140,5 @@ class EstablishersCompanyNavigator2 @Inject()(val dataCacheConnector: DataCacheC
       NavigateTo.save(controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode, index))
     }
   }
+
 }
