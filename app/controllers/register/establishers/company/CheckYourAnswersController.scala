@@ -17,20 +17,20 @@
 package controllers.register.establishers.company
 
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyRegistrationNumberId}
+import identifiers.register.establishers.company.{CheckYourAnswersId, CompanyDetailsId, CompanyRegistrationNumberId}
 import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.CheckYourAnswersFactory
+import utils.{CheckYourAnswersFactory, Navigator2}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 import utils.CheckYourAnswers.Ops._
+import utils.annotations.EstablishersCompany
 
 import scala.concurrent.Future
 
@@ -39,7 +39,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         checkYourAnswersFactory: CheckYourAnswersFactory)
+                                         checkYourAnswersFactory: CheckYourAnswersFactory,
+                                         @EstablishersCompany navigator: Navigator2)
                                           extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -73,6 +74,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Redirect(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index))
+      Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))
   }
+
 }
