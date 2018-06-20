@@ -48,6 +48,7 @@ class EstablishersIndividualNavigator2Spec extends SpecBase with MustMatchers wi
     (AddressId(0),                   emptyAnswers,               addressYears(NormalMode),                    true, Some(checkYourAnswers), true),
     (AddressYearsId(0),              addressYearsOverAYear,      contactDetails,                              true, Some(checkYourAnswers), true),
     (AddressYearsId(0),              addressYearsUnderAYear,     previousAddressPostCodeLookup(NormalMode),   true, Some(previousAddressPostCodeLookup(CheckMode)), true),
+    (AddressYearsId(0),              emptyAnswers,               sessionExpired,                              false, Some(sessionExpired),  false),
     (PreviousPostCodeLookupId(0),    emptyAnswers,               previousAddressAddressList(NormalMode),      true, Some(previousAddressAddressList(CheckMode)), true),
     (PreviousAddressListId(0),       emptyAnswers,               previousAddress(NormalMode),                 true, Some(previousAddress(CheckMode)), true),
     (PreviousAddressId(0),           emptyAnswers,               contactDetails,                              true, Some(checkYourAnswers), true),
@@ -89,6 +90,7 @@ object EstablishersIndividualNavigator2Spec extends OptionValues {
   private def schemeReview = controllers.register.routes.SchemeReviewController.onPageLoad()
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 }
 
 

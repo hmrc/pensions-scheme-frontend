@@ -98,7 +98,7 @@ class EstablishersIndividualNavigator2 @Inject()(
       case Some(AddressYears.OverAYear) =>
         NavigateTo.save(controllers.register.establishers.individual.routes.ContactDetailsController.onPageLoad(NormalMode, index))
       case None =>
-        NavigateTo.save(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 
@@ -109,7 +109,7 @@ class EstablishersIndividualNavigator2 @Inject()(
       case Some(AddressYears.OverAYear) =>
         NavigateTo.save(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index))
       case None =>
-        NavigateTo.save(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 }
