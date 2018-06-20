@@ -96,7 +96,7 @@ class EstablishersCompanyDirectorNavigator2 @Inject()(val dataCacheConnector: Da
       case Some(AddressYears.OverAYear) =>
         NavigateTo.save(routes.DirectorContactDetailsController.onPageLoad(NormalMode, establisherIndex, directorIndex))
       case None =>
-        NavigateTo.save(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 
@@ -107,7 +107,7 @@ class EstablishersCompanyDirectorNavigator2 @Inject()(val dataCacheConnector: Da
       case Some(AddressYears.OverAYear) =>
         NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(establisherIndex, directorIndex))
       case None =>
-        NavigateTo.save(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 }

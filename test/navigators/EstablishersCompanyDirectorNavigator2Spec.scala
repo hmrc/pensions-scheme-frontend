@@ -42,6 +42,7 @@ class EstablishersCompanyDirectorNavigator2Spec extends SpecBase with NavigatorB
     (DirectorAddressId(0, 0),                 emptyAnswers,   directorAddressYears(NormalMode),       true,         Some(checkYourAnswers),                   true),
     (DirectorAddressYearsId(0, 0),            addressYearsOverAYear,   directorContactDetails(NormalMode),true,     Some(checkYourAnswers),                   true),
     (DirectorAddressYearsId(0, 0),            addressYearsUnderAYear,   directorPreviousAddPostcode(NormalMode),true,Some(directorPreviousAddPostcode(CheckMode)),  true),
+    (DirectorAddressYearsId(0, 0),            emptyAnswers,   sessionExpired,                         false,        Some(sessionExpired),                     false),
     (DirectorPreviousAddressPostcodeLookupId(0, 0), emptyAnswers,   directorPreviousAddList(NormalMode),true,       Some(directorPreviousAddList(CheckMode)),       true),
     (DirectorPreviousAddressListId(0, 0),     emptyAnswers,   directorPreviousAddress(NormalMode),    true,         Some(directorPreviousAddress(CheckMode)),       true),
     (DirectorPreviousAddressId(0, 0),         emptyAnswers,   directorContactDetails(NormalMode),     true,         Some(checkYourAnswers),                   true),
@@ -65,6 +66,7 @@ object EstablishersCompanyDirectorNavigator2Spec extends OptionValues{
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
 
+  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
   private def directorDetails(mode: Mode) = routes.DirectorDetailsController.onPageLoad(mode, directorIndex, establisherIndex)
   private def directorNino(mode: Mode) = routes.DirectorNinoController.onPageLoad(mode, directorIndex, establisherIndex)
   private def directorUtr(mode: Mode) = routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, directorIndex, establisherIndex)
