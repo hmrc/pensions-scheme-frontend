@@ -30,7 +30,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.FakeNavigator
+import utils.{FakeNavigator, FakeNavigator2}
 import views.html.register.establishers.individual.establisherNino
 
 class EstablisherNinoControllerSpec extends ControllerSpecBase {
@@ -55,7 +55,7 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): EstablisherNinoController =
-    new EstablisherNinoController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
+    new EstablisherNinoController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = establisherNino(frontendAppConfig, form, NormalMode,

@@ -20,12 +20,14 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company
+import identifiers.register.establishers.company.director.CheckYourAnswersId
 import javax.inject.Inject
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.CheckYourAnswersFactory
+import utils.{CheckYourAnswersFactory, Navigator2}
+import utils.annotations.EstablishersCompanyDirector
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -33,6 +35,7 @@ import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
+                                          @EstablishersCompanyDirector navigator: Navigator2,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
@@ -63,13 +66,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           appConfig,
           Seq(companyDirectorDetails,companyDirectorContactDetails),
           Some(schemeName),
-          company.director.routes.CheckYourAnswersController.onSubmit(companyIndex)))
+          company.director.routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex)))
         )
       }
   }
 
-  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onSubmit(companyIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Redirect(company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index))
+      Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), NormalMode, request.userAnswers))
   }
 }
