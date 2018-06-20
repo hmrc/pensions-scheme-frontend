@@ -49,6 +49,10 @@ package object utils {
       answers.set(establishers.individual.AddressId(index))(address).asOpt.value
     }
 
+    def trusteesIndividualAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
+      answers.set(trustees.individual.TrusteeAddressYearsId(index))(addressYears).asOpt.value
+    }
+
     def establishersIndividualAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(establishers.individual.AddressListId(index))(selectedAddress).asOpt.value
     }

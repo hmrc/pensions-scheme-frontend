@@ -17,7 +17,6 @@
 package controllers.register.establishers.individual
 
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
@@ -30,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, Navigator2, UserAnswers}
 import views.html.register.establishers.individual._
 
 import scala.concurrent.Future
@@ -39,7 +38,7 @@ class ContactDetailsController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           dataCacheConnector: DataCacheConnector,
-                                          @EstablishersIndividual navigator: Navigator,
+                                          @EstablishersIndividual navigator: Navigator2,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
@@ -76,7 +75,7 @@ class ContactDetailsController @Inject()(
                 value
               ).map {
                 json =>
-                  Redirect(navigator.nextPage(ContactDetailsId(index), mode)(new UserAnswers(json)))
+                  Redirect(navigator.nextPage(ContactDetailsId(index), mode, new UserAnswers(json)))
               }
           )
       }
