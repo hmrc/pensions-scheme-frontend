@@ -17,7 +17,6 @@
 package controllers.register.establishers.company.director
 
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
@@ -31,7 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, Navigator2, UserAnswers}
 import views.html.register.establishers.company.director.directorUniqueTaxReference
 
 import scala.concurrent.Future
@@ -40,7 +39,7 @@ class DirectorUniqueTaxReferenceController @Inject()(
                                                              appConfig: FrontendAppConfig,
                                                              override val messagesApi: MessagesApi,
                                                              dataCacheConnector: DataCacheConnector,
-                                                             @EstablishersCompanyDirector navigator: Navigator,
+                                                             @EstablishersCompanyDirector navigator: Navigator2,
                                                              authenticate: AuthAction,
                                                              getData: DataRetrievalAction,
                                                              requireData: DataRequiredAction,
@@ -74,7 +73,7 @@ class DirectorUniqueTaxReferenceController @Inject()(
               value
             ).map {
               json =>
-                Redirect(navigator.nextPage(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
+                Redirect(navigator.nextPage(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex), mode, new UserAnswers(json)))
             }
         )
       }

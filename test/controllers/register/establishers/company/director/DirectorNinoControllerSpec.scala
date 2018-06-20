@@ -29,7 +29,7 @@ import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.{FakeNavigator, FakeNavigator2}
 import views.html.register.establishers.company.director.directorNino
 
 class DirectorNinoControllerSpec extends ControllerSpecBase {
@@ -90,7 +90,7 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): DirectorNinoController =
-    new DirectorNinoController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
+    new DirectorNinoController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = directorNino(frontendAppConfig, form, NormalMode,

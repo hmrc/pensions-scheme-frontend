@@ -17,7 +17,6 @@
 package controllers.register.establishers.company.director
 
 import javax.inject.Inject
-
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -30,7 +29,7 @@ import models.{ContactDetails, Index, Mode}
 import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, MapFormats, Navigator, UserAnswers}
+import utils._
 import views.html.register.establishers.company.director.directorContactDetails
 
 import scala.concurrent.Future
@@ -38,7 +37,7 @@ import scala.concurrent.Future
 class DirectorContactDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  dataCacheConnector: DataCacheConnector,
-                                                 @EstablishersCompanyDirector navigator: Navigator,
+                                                 @EstablishersCompanyDirector navigator: Navigator2,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
@@ -67,7 +66,7 @@ class DirectorContactDetailsController @Inject()(appConfig: FrontendAppConfig,
             Future.successful(BadRequest(directorContactDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, director.directorName))),
           (value) =>
             dataCacheConnector.save(request.externalId, DirectorContactDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
-              Redirect(navigator.nextPage(DirectorContactDetailsId(establisherIndex, directorIndex), mode)(new UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(DirectorContactDetailsId(establisherIndex, directorIndex), mode, new UserAnswers(cacheMap))))
         )
       }
   }
