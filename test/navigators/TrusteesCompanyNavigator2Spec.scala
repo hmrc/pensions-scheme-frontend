@@ -48,7 +48,8 @@ class TrusteesCompanyNavigator2Spec extends SpecBase with MustMatchers with Navi
     (CompanyPreviousAddressListId(0),            emptyAnswers,          companyPreviousAddress(NormalMode),       true,        Some(companyPreviousAddress(CheckMode)),true),
     (CompanyPreviousAddressId(0),                emptyAnswers,          companyContactDetails,                    true,        Some(checkYourAnswers),                 true),
     (CompanyContactDetailsId(0),                 emptyAnswers,          checkYourAnswers,                         true,        Some(checkYourAnswers),                 true),
-    (CheckYourAnswersId,                         emptyAnswers,          addTrustee,                               true,        None,                                  false)
+    (CompanyAddressYearsId(0),                   emptyAnswers,          sessionExpired,                           false,       Some(sessionExpired),                   false),
+    (CheckYourAnswersId,                         emptyAnswers,          addTrustee,                               true,        None,                                 false)
   )
 
 
@@ -63,8 +64,6 @@ class TrusteesCompanyNavigator2Spec extends SpecBase with MustMatchers with Navi
 object TrusteesCompanyNavigator2Spec extends OptionValues {
 
   private val navigator=new TrusteesCompanyNavigator2(FakeDataCacheConnector)
-
-  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def companyRegistrationNumber(mode: Mode): Call =
     controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, 0)
@@ -95,11 +94,17 @@ object TrusteesCompanyNavigator2Spec extends OptionValues {
 
   private def addTrustee=controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
 
+  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+
   private val emptyAnswers = UserAnswers(Json.obj())
+
   private val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
+
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+
+
 }

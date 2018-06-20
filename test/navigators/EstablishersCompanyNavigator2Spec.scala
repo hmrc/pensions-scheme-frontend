@@ -48,6 +48,7 @@ class EstablishersCompanyNavigator2Spec extends SpecBase with MustMatchers with 
     (CompanyAddressId(0),                       emptyAnswers,                  companyAddressYears(NormalMode),       true,         Some(checkYourAnswers),                   true),
     (CompanyAddressYearsId(0),                  addressYearsOverAYear,         companyContactDetails,                 true,         Some(checkYourAnswers),                   true),
     (CompanyAddressYearsId(0),                  addressYearsUnderAYear,        prevAddPostCodeLookup(NormalMode),     true,         Some(prevAddPostCodeLookup(CheckMode)),   true),
+    (CompanyAddressYearsId(0),                  emptyAnswers,                  sessionExpired,                        false,        Some(sessionExpired),                     false ),
     (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers,                  companyPaList(NormalMode),             true,         Some(companyPaList(CheckMode)),           true),
     (CompanyPreviousAddressListId(0),           emptyAnswers,                  companyPreviousAddress(NormalMode),    true,         Some(companyPreviousAddress(CheckMode)),  true),
     (CompanyPreviousAddressId(0),               emptyAnswers,                  companyContactDetails,                 true,         Some(checkYourAnswers),                   true),
