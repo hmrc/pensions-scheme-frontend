@@ -89,7 +89,7 @@ class TrusteesIndividualNavigator2 @Inject()(val dataCacheConnector: DataCacheCo
       case Some(AddressYears.OverAYear) =>
         NavigateTo.save(controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(NormalMode, index))
       case None =>
-        NavigateTo.save(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 
@@ -100,7 +100,7 @@ class TrusteesIndividualNavigator2 @Inject()(val dataCacheConnector: DataCacheCo
       case Some(AddressYears.OverAYear) =>
         NavigateTo.save(controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(index))
       case None =>
-        NavigateTo.save(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 }

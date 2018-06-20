@@ -37,6 +37,7 @@ class TrusteesIndividualNavigator2Spec extends SpecBase with NavigatorBehaviour2
     (TrusteeAddressId(0),                 emptyAnswers,   addressYears(NormalMode),           true,         Some(checkYourAnswers),           true),
     (TrusteeAddressYearsId(0),            overAYear,      contactDetails(NormalMode),         true,         Some(checkYourAnswers),           true),
     (TrusteeAddressYearsId(0),            underAYear,     previousAddressPostcode(NormalMode),true,         Some(previousAddressPostcode(CheckMode)), true),
+    (TrusteeAddressYearsId(0),            emptyAnswers,   sessionExpired,                     false,         Some(sessionExpired),              false),
     (IndividualPreviousAddressPostCodeLookupId(0), emptyAnswers,   previousAddressList(NormalMode), true,   Some(previousAddressList(CheckMode)), true),
     (TrusteePreviousAddressListId(0),     emptyAnswers,   previousAddress(NormalMode),        true,         Some(previousAddress(CheckMode)), true),
     (TrusteePreviousAddressId(0),         emptyAnswers,   contactDetails(NormalMode),         true,         Some(checkYourAnswers),            true),
@@ -72,6 +73,7 @@ object TrusteesIndividualNavigator2Spec {
   private def contactDetails(mode: Mode) = controllers.register.trustees.individual.routes.TrusteeContactDetailsController.onPageLoad(mode, firstIndex)
   private def checkYourAnswers = controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(firstIndex)
   private def addTrustee(mode: Mode) = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(mode)
+  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def overAYear = UserAnswers().trusteesIndividualAddressYears(0, AddressYears.OverAYear)
   private def underAYear = UserAnswers().trusteesIndividualAddressYears(0, AddressYears.UnderAYear)
