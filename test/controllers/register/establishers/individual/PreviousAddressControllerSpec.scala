@@ -25,6 +25,7 @@ import forms.address.AddressFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{EstablisherDetailsId, PreviousAddressId}
 import models.address.{Address, TolerantAddress}
+import models.person.PersonDetails
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode}
@@ -87,7 +88,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test first name", None, "test last name", LocalDate.now),
+          PersonDetails("test first name", None, "test last name", LocalDate.now, false),
         PreviousAddressId.toString ->
           Json.toJson(Address("address line 1", "address line 2", Some("test town"),
             Some("test county"), Some("test post code"), "GB")

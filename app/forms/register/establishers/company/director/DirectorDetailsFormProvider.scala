@@ -43,6 +43,6 @@ class DirectorDetailsFormProvider @Inject() extends Mappings {
       ),
       "date" -> dateMapping("messages__error__date").verifying(
         futureDate("messages__error__date_future"))
-    )(DirectorDetails.apply)(DirectorDetails.unapply)
+    )(DirectorDetails.applyDelete)(DirectorDetails.unapplyDelete)
   )
  }

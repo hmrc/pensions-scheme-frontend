@@ -49,7 +49,7 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(establisherIndex, directorIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verifyRemoved(DirectorId(establisherIndex, directorIndex))
+      FakeDataCacheConnector.verify(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true))
     }
 
     "redirect to the next page on a successful POST" in {
@@ -85,6 +85,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
   private val directorName = "John Doe"
   private lazy val postCall = routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex)
   private lazy val cancelCall = AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
+  private val directorDetails = DirectorDetails("John", None, "Doe", LocalDate.now(), false)
 
   private val testData = Json.obj(
     EstablishersId.toString -> Json.arr(
@@ -93,7 +94,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
-              DirectorDetails("John", None, "Doe", LocalDate.now())
+              directorDetails
           )
         )
       )

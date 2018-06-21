@@ -64,9 +64,12 @@ class ConfirmDeleteDirectorController @Inject()(
 
   def onSubmit(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      dataCacheConnector.remove(request.externalId, DirectorId(establisherIndex, directorIndex)).map {
-        json =>
-          Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, UserAnswers(json)))
+      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
+        case directorDetails =>
+          dataCacheConnector.save(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true)).map {
+            userAnswers =>
+              Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers))
+          }
       }
   }
 }

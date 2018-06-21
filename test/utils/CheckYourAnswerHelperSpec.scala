@@ -25,6 +25,7 @@ import models.UniqueTaxReference.{No, Yes}
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import models._
+import models.person.PersonDetails
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import viewmodels.AnswerRow
@@ -35,7 +36,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
   val countryOptions: CountryOptions = new CountryOptions(inputOptions)
   val firstIndex = Index(0)
 
-  val establisherDetails = EstablisherDetails("test first name", Some("test middle name"), "test last name", LocalDate.now)
+  val establisherDetails = PersonDetails("test first name", Some("test middle name"), "test last name", LocalDate.now, false)
 
   def checkYourAnswerHelper(userAnswers: UserAnswers): CheckYourAnswersHelper = new CheckYourAnswersHelper(
     userAnswers, countryOptions

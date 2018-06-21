@@ -17,6 +17,7 @@
 package views.register.establishers
 
 import controllers.register.establishers.routes._
+import models.register.establishers.EstablisherKind
 import models.{Index, NormalMode}
 import viewmodels.Message
 import views.ViewSpecBase
@@ -51,7 +52,7 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
   private val firstIndex = Index(0)
   private val schemeName = "MyScheme"
   private val establisherName = "John Doe"
-  private val postCall = ConfirmDeleteEstablisherController.onSubmit(firstIndex)
+  private val postCall = ConfirmDeleteEstablisherController.onSubmit(firstIndex, EstablisherKind.Indivdual)
   private val cancelCall = AddEstablisherController.onSubmit(NormalMode)
 
   private def createView = () =>

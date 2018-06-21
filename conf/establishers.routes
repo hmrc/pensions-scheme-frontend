@@ -6,10 +6,10 @@ GET        /change-establishers                                                 
 POST       /change-establishers                                                                             controllers.register.establishers.AddEstablisherController.onSubmit(mode: Mode = CheckMode)
 
 GET        /:index/company/delete-establisher                                                               controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(index: Index, establisherKind: EstablisherKind = EstablisherKind.Company)
-POST       /:index/company/delete-establisher                                                               controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(index: Index)
+POST       /:index/company/delete-establisher                                                               controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(index: Index, establisherKind: EstablisherKind = EstablisherKind.Company)
 
 GET        /:index/individual/delete-establisher                                                            controllers.register.establishers.ConfirmDeleteEstablisherController.onPageLoad(index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual)
-POST       /:index/individual/delete-establisher                                                            controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(index: Index)
+POST       /:index/individual/delete-establisher                                                            controllers.register.establishers.ConfirmDeleteEstablisherController.onSubmit(index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual)
 
 GET        /:index/individual/how-long-at-address                                                           controllers.register.establishers.individual.AddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Index)
 POST       /:index/individual/how-long-at-address                                                           controllers.register.establishers.individual.AddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index)

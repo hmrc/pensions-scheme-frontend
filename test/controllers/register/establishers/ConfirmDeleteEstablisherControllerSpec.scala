@@ -21,12 +21,13 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import models.person.PersonDetails
 import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
 import models.register.establishers.EstablisherKind
-import models.register.establishers.individual.EstablisherDetails
-import models.{Index, NormalMode}
+import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import play.api.test.Helpers._
@@ -46,17 +47,25 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString()
     }
 
-    "delete the establisher on a POST" in {
+    "delete the establisher individual on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(establisherIndex)(fakeRequest)
+      val result = controller(data).onSubmit(establisherIndex, establisherKind)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verifyRemoved(EstablishersId(establisherIndex))
+      FakeDataCacheConnector.verify(EstablisherDetailsId(establisherIndex), personDetails.copy(isDeleted = true))
+    }
+
+    "delete the establisher company on a POST" in {
+      val data = new FakeDataRetrievalAction(Some(testData))
+      val result = controller(data).onSubmit(Index(1), EstablisherKind.Company)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      FakeDataCacheConnector.verify(CompanyDetailsId(Index(1)), companyDetails.copy(isDeleted = true))
     }
 
     "redirect to the next page on a successful POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(establisherIndex)(fakeRequest)
+      val result = controller(data).onSubmit(establisherIndex, establisherKind)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -78,7 +87,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(establisherIndex)(fakeRequest)
+      val result = controller(dontGetAnyData).onSubmit(establisherIndex, establisherKind)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -93,18 +102,22 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val schemeName = "MyScheme Ltd"
   private val establisherName = "John Doe"
   private val establisherKind = EstablisherKind.Indivdual
-  private lazy val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex)
-  private lazy val cancelCall = routes.AddEstablisherController.onPageLoad(NormalMode)
-
   private val day = LocalDate.now().getDayOfMonth
   private val month = LocalDate.now().getMonthOfYear
   private val year = LocalDate.now().getYear - 20
+  private lazy val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex, establisherKind)
+  private lazy val cancelCall = routes.AddEstablisherController.onPageLoad(NormalMode)
+  private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day), false)
+  private val companyDetails = CompanyDetails("Test Ltd", None, None, false)
 
   private val testData = Json.obj(
     SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
-        EstablisherDetailsId.toString -> EstablisherDetails("John", None, "Doe", new LocalDate(year, month, day))
+        EstablisherDetailsId.toString -> personDetails
+      ),
+      Json.obj(
+        CompanyDetailsId.toString -> companyDetails
       )
     )
   )

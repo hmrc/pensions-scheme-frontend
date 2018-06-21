@@ -54,6 +54,6 @@ class CompanyDetailsFormProvider @Inject() extends Mappings with PayeMapping wit
           "messages__company__paye_error_invalid"
         )
       )
-    )(CompanyDetails.apply)(CompanyDetails.unapply)
+    )(CompanyDetails.applyDelete)(CompanyDetails.unapplyDelete)
   )
 }

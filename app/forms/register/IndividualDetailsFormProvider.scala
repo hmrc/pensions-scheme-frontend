@@ -40,7 +40,7 @@ class IndividualDetailsFormProvider extends Mappings {
         regexp(regexName, "messages__error__last_name_invalid"))
       ),
       "date" -> dateMapping("messages__error__date").verifying(futureDate("messages__error__date_future"))
-    )(PersonDetails.apply)(PersonDetails.unapply)
+    )(PersonDetails.applyDelete)(PersonDetails.unapplyDelete)
   )
 
 }

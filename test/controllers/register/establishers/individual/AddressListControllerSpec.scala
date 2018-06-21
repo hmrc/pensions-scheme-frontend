@@ -23,6 +23,7 @@ import forms.address.AddressListFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
 import models.address.{Address, TolerantAddress}
+import models.person.PersonDetails
 import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, UniqueTaxReference}
@@ -95,7 +96,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test first name", None, "test last name", LocalDate.now),
+          PersonDetails("test first name", None, "test last name", LocalDate.now, false),
         UniqueTaxReferenceId.toString ->
           UniqueTaxReference.Yes("1234567891"),
         PostCodeLookupId.toString -> addresses)

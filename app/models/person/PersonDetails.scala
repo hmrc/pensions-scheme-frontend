@@ -19,7 +19,7 @@ package models.person
 import org.joda.time.LocalDate
 import play.api.libs.json._
 
-case class PersonDetails (firstName: String, middleName:Option[String], lastName: String, date:LocalDate){
+case class PersonDetails (firstName: String, middleName:Option[String], lastName: String, date:LocalDate, isDeleted: Boolean = false){
 
   def fullName: String = middleName match {
     case Some(middle) => s"$firstName $middle $lastName"
@@ -30,4 +30,11 @@ case class PersonDetails (firstName: String, middleName:Option[String], lastName
 
 object PersonDetails {
   implicit val format: OFormat[PersonDetails] = Json.format[PersonDetails]
+  def applyDelete(firstName: String, middleName:Option[String], lastName: String, date:LocalDate): PersonDetails = {
+    PersonDetails(firstName, middleName, lastName, date, false)
+  }
+
+  def unapplyDelete(personDetails: PersonDetails): Option[(String, Option[String], String, LocalDate)] = {
+    Some((personDetails.firstName, personDetails.middleName, personDetails.lastName, personDetails.date))
+  }
 }

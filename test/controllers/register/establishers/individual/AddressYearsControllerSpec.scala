@@ -23,6 +23,7 @@ import forms.address.AddressYearsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
+import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.register.establishers.individual.EstablisherDetails
 import models.{AddressYears, Index, NormalMode}
@@ -79,7 +80,7 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
     EstablishersId.toString -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test first name", None, "test last name", LocalDate.now),
+          PersonDetails("test first name", None, "test last name", LocalDate.now, false),
         AddressYearsId.toString ->
           AddressYears.options.head.value.toString
       )

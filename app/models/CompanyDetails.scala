@@ -18,8 +18,15 @@ package models
 
 import play.api.libs.json._
 
-case class CompanyDetails (companyName: String, vatNumber: Option[String], payeNumber: Option[String])
+case class CompanyDetails (companyName: String, vatNumber: Option[String], payeNumber: Option[String], isDeleted: Boolean = false)
 
 object CompanyDetails {
   implicit val format = Json.format[CompanyDetails]
+  def applyDelete(companyName: String, vatNumber:Option[String], payeNumber: Option[String]): CompanyDetails = {
+    CompanyDetails(companyName, vatNumber, payeNumber, false)
+  }
+
+  def unapplyDelete(companyDetails: CompanyDetails): Option[(String, Option[String], Option[String])] = {
+    Some((companyDetails.companyName, companyDetails.vatNumber, companyDetails.payeNumber))
+  }
 }
