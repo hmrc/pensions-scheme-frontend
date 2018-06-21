@@ -33,7 +33,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesCompany
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, Navigator2, UserAnswers}
 import views.html.register.trustees.company.companyDetails
 
 import scala.concurrent.Future
@@ -42,7 +42,7 @@ class CompanyDetailsController @Inject() (
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
-                                        @TrusteesCompany navigator: Navigator,
+                                        @TrusteesCompany navigator: Navigator2,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
@@ -78,7 +78,7 @@ class CompanyDetailsController @Inject() (
                 _.upsert(TrusteeKindId(index))(Company){ answers =>
                   dataCacheConnector.upsert(request.externalId, answers.json).map{
                     json =>
-                      Redirect(navigator.nextPage(CompanyDetailsId(index), mode)(new UserAnswers(json)))
+                      Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json)))
                   }
                 }
               }

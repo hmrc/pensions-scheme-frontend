@@ -16,21 +16,20 @@
 
 package controllers.register.establishers
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
 import identifiers.register.establishers.EstablisherKindId
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Establishers
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator2, UserAnswers}
 import views.html.register.establishers.establisherKind
 
 import scala.concurrent.Future
@@ -39,7 +38,7 @@ class EstablisherKindController @Inject()(
                                            appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            dataCacheConnector: DataCacheConnector,
-                                           @Establishers navigator: Navigator,
+                                           @Establishers navigator: Navigator2,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
@@ -67,14 +66,14 @@ class EstablisherKindController @Inject()(
           form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index,schemeName))),
-          (value) =>
+          value =>
             dataCacheConnector.save(
               request.externalId,
               EstablisherKindId(index),
               value
             ).map {
               json =>
-                Redirect(navigator.nextPage(EstablisherKindId(index), mode)(new UserAnswers(json)))
+                Redirect(navigator.nextPage(EstablisherKindId(index), mode, UserAnswers(json)))
             }
         )
       }

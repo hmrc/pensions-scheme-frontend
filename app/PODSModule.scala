@@ -22,6 +22,7 @@ import utils.{Navigator, Navigator2}
 
 class PODSModule extends AbstractModule {
 
+  //scalastyle:off method.length
   override def configure(): Unit = {
 
     bind(classOf[DataCacheConnector])
@@ -36,13 +37,25 @@ class PODSModule extends AbstractModule {
       .annotatedWith(classOf[Register])
       .to(classOf[RegisterNavigator])
 
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[Register])
+      .to(classOf[RegisterNavigator2])
+
     bind(classOf[Navigator])
       .annotatedWith(classOf[EstablishersCompany])
         .to(classOf[EstablishersCompanyNavigator])
 
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[EstablishersCompany])
+      .to(classOf[EstablishersCompanyNavigator2])
+
     bind(classOf[Navigator])
       .annotatedWith(classOf[TrusteesCompany])
       .to(classOf[TrusteesCompanyNavigator])
+
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[TrusteesCompany])
+      .to(classOf[TrusteesCompanyNavigator2])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[TrusteesIndividual])
@@ -56,17 +69,37 @@ class PODSModule extends AbstractModule {
       .annotatedWith(classOf[Establishers])
       .to(classOf[EstablishersNavigator])
 
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[Establishers])
+      .to(classOf[EstablishersNavigator2])
+
     bind(classOf[Navigator])
       .annotatedWith(classOf[Trustees])
       .to(classOf[TrusteesNavigator])
+
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[Trustees])
+      .to(classOf[TrusteesNavigator2])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[Adviser])
       .to(classOf[AdviserNavigator])
 
     bind(classOf[Navigator2])
+      .annotatedWith(classOf[TrusteesIndividual])
+      .to(classOf[TrusteesIndividualNavigator2])
+
+    bind(classOf[Navigator2])
       .annotatedWith(classOf[Adviser])
       .to(classOf[AdviserNavigator2])
+
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[EstablishersIndividual])
+      .to(classOf[EstablishersIndividualNavigator2])
+
+    bind(classOf[Navigator2])
+      .annotatedWith(classOf[EstablishersCompanyDirector])
+      .to(classOf[EstablishersCompanyDirectorNavigator2])
 
   }
 

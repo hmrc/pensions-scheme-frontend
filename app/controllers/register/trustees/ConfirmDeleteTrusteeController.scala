@@ -16,25 +16,24 @@
 
 package controllers.register.trustees
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
-import identifiers.register.trustees.{ConfirmDeleteTrusteeId, TrusteesId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.{Index, NormalMode}
+import identifiers.register.trustees.{ConfirmDeleteTrusteeId, TrusteesId}
+import javax.inject.Inject
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual}
 import models.requests.DataRequest
+import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator2, UserAnswers}
 import views.html.register.trustees.confirmDeleteTrustee
 
 import scala.concurrent.Future
@@ -44,7 +43,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
-                                               @Trustees navigator: Navigator,
+                                               @Trustees navigator: Navigator2,
                                                dataCacheConnector: DataCacheConnector) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -69,7 +68,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       dataCacheConnector.remove(request.externalId, TrusteesId(index)).map { json =>
-        Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode)(UserAnswers(json)))
+        Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, UserAnswers(json)))
       }
   }
 

@@ -17,7 +17,6 @@
 package controllers.register.establishers.company.director
 
 import javax.inject.Inject
-
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -30,7 +29,7 @@ import identifiers.register.establishers.company.director.{DirectorDetailsId, Di
 import models.{Index, Mode, Nino}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, Navigator2, UserAnswers}
 import views.html.register.establishers.company.director.directorNino
 
 import scala.concurrent.Future
@@ -39,7 +38,7 @@ class DirectorNinoController @Inject()(
                                                appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
                                                dataCacheConnector: DataCacheConnector,
-                                               @EstablishersCompanyDirector navigator: Navigator,
+                                               @EstablishersCompanyDirector navigator: Navigator2,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
@@ -72,7 +71,7 @@ class DirectorNinoController @Inject()(
               DirectorNinoId(establisherIndex, directorIndex),
               value
             ) map { json =>
-                Redirect(navigator.nextPage(DirectorNinoId(establisherIndex, directorIndex), mode)(new UserAnswers(json)))
+                Redirect(navigator.nextPage(DirectorNinoId(establisherIndex, directorIndex), mode, new UserAnswers(json)))
             }
         )
       }

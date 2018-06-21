@@ -16,20 +16,19 @@
 
 package controllers.register
 
-import javax.inject.Inject
-
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import controllers.actions._
 import config.FrontendAppConfig
+import controllers.actions._
 import identifiers.register._
+import javax.inject.Inject
 import models.{CheckMode, NormalMode}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import views.html.check_your_answers
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswers.Ops._
 import utils.annotations.Register
-import utils.{CountryOptions, Enumerable, Navigator}
+import utils.{CountryOptions, Enumerable, Navigator2}
 import viewmodels.AnswerSection
+import views.html.check_your_answers
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
@@ -37,7 +36,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
                                            implicit val countryOptions: CountryOptions,
-                                           @Register navigator: Navigator) extends FrontendController with Enumerable.Implicits with I18nSupport {
+                                           @Register navigator: Navigator2) extends FrontendController with Enumerable.Implicits with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -76,7 +75,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode)(request.userAnswers))
+      Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
   }
 
 }

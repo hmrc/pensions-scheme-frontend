@@ -35,14 +35,9 @@ import utils.UserAnswers
 class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
   import EstablishersIndividualNavigatorSpec._
 
-  private def navigator(isEstablisherRestricted: Boolean = false) = {
-    val application = new GuiceApplicationBuilder()
-      .configure(Configuration("microservice.services.features.restrict-establisher" -> isEstablisherRestricted))
-    val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-    new EstablishersIndividualNavigator(appConfig)
-  }
+  private val navigator = new EstablishersIndividualNavigator(frontendAppConfig)
 
-  private val routesWithNoRestrictedEstablishers: TableFor4[Identifier, UserAnswers, Call, Option[Call]] = Table(
+  private val routes: TableFor4[Identifier, UserAnswers, Call, Option[Call]] = Table(
     ("Id",                          "User Answers",             "Next Page (Normal Mode)",                  "Next Page (Check Mode)"),
     (EstablisherDetailsId(0),        emptyAnswers,               establisherNino(NormalMode),                 Some(checkYourAnswers)),
     (EstablisherNinoId(0),           emptyAnswers,               establisherUtr(NormalMode),                  Some(checkYourAnswers)),
@@ -58,21 +53,8 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     (CheckYourAnswersId,             emptyAnswers,               addEstablisher,                              None)
   )
 
-  s"${navigator().getClass.getSimpleName} when restrict-establisher toggle is off" must {
-    behave like navigatorWithRoutes(navigator(), routesWithNoRestrictedEstablishers, dataDescriber)
-  }
-
-  //Delete the test case when the restrict-establisher toggle is removed
-  private val routesWithRestrictedEstablishers: TableFor4[Identifier, UserAnswers, Call, Option[Call]] = Table(
-    ("Id",                                       "User Answers",                      "Next Page (Normal Mode)",                  "Next Page (Check Mode)"),
-    (CheckYourAnswersId,                          schemeBodyCorporate,                 haveAnyTrustees,                            None),
-    (CheckYourAnswersId,                          schemeSingleTrust,                   addTrustees,                               None),
-    (CheckYourAnswersId,                          hasTrusteeCompanies,                 schemeReview,                               None),
-    (CheckYourAnswersId,                          bodyCorporateWithNoTrustees,         schemeReview,                               None)
-  )
-
-  s"${navigator(true).getClass.getSimpleName} when restrict-establisher toggle is on" must {
-    behave like navigatorWithRoutes(navigator(true), routesWithRestrictedEstablishers, dataDescriber)
+  s"${navigator.getClass.getSimpleName}" must {
+    behave like navigatorWithRoutes(navigator, routes, dataDescriber)
   }
 }
 

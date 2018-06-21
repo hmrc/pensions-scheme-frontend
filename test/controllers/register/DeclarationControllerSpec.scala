@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import connectors.{FakeDataCacheConnector, PensionsSchemeConnector}
+import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationFormProvider
@@ -25,16 +25,13 @@ import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
 import models.CompanyDetails
 import models.person.PersonDetails
-import models.register.{DeclarationDormant, SchemeDetails, SchemeSubmissionResponse, SchemeType}
+import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator2, UserAnswers}
 import views.html.register.declaration
-
-import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationControllerSpec extends ControllerSpecBase {
 
@@ -123,7 +120,7 @@ object DeclarationControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator(onwardRoute),
+      new FakeNavigator2(onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

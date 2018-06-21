@@ -16,21 +16,20 @@
 
 package controllers.register.establishers.company
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyDetailsFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator2, UserAnswers}
 import views.html.register.establishers.company.companyDetails
 
 import scala.concurrent.Future
@@ -39,7 +38,7 @@ class CompanyDetailsController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           dataCacheConnector: DataCacheConnector,
-                                          @EstablishersCompany navigator: Navigator,
+                                          @EstablishersCompany navigator: Navigator2,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
@@ -70,14 +69,14 @@ class CompanyDetailsController @Inject()(
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, schemeName))),
-            (value) =>
+            value =>
               dataCacheConnector.save(
                 request.externalId,
                 CompanyDetailsId(index),
                 value
               ).map {
                 json =>
-                  Redirect(navigator.nextPage(CompanyDetailsId(index), mode)(new UserAnswers(json)))
+                  Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json)))
               }
           )
       }

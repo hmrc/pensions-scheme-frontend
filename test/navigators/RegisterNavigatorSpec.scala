@@ -80,21 +80,10 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (DeclarationDutiesId,           dutiesFalse,          adviserDetails,                         None),
     (DeclarationDutiesId,           emptyAnswers,         expired,                                None)
   )
-  s"${navigator().getClass.getSimpleName} when restrict-establisher toggle is off" must {
+  s"${navigator().getClass.getSimpleName}" must {
     appRunning()
     behave like navigatorWithRoutes(navigator(), routesWithRestrictedEstablisher, dataDescriber)
   }
-
-  //Delete the test case when the restrict-establisher toggle is removed
-  private def routesWithNoRestrictedEstablisher = Table(
-    ("Id",                          "User Answers",       "Next Page (Normal Mode)",              "Next Page (Check Mode)"),
-    (CheckYourAnswersId,            noEstablishers,       establisherKind,                         None)
-  )
-  s"${navigator(true).getClass.getSimpleName} when restrict-establisher toggle is on" must {
-    appRunning()
-    behave like navigatorWithRoutes(navigator(true), routesWithNoRestrictedEstablisher, dataDescriber)
-  }
-
 }
 
 //noinspection MutatorLikeMethodIsParameterless

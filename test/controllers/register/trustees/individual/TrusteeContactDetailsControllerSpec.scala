@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers._
-import utils.{FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, FakeNavigator2, UserAnswers}
 import views.html.register.trustees.individual.trusteeContactDetails
 
 class TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
@@ -120,7 +120,7 @@ object TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

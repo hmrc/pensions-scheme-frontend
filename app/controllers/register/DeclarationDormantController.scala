@@ -16,21 +16,20 @@
 
 package controllers.register
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationDormantFormProvider
 import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
-import models.{Mode, NormalMode}
+import javax.inject.Inject
+import models.NormalMode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator2, UserAnswers}
 import views.html.register.declarationDormant
 
 import scala.concurrent.Future
@@ -39,7 +38,7 @@ class DeclarationDormantController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        dataCacheConnector: DataCacheConnector,
-                                       @Register navigator: Navigator,
+                                       @Register navigator: Navigator2,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
@@ -66,9 +65,9 @@ class DeclarationDormantController @Inject()(
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
             Future.successful(BadRequest(declarationDormant(appConfig, formWithErrors, schemeDetails.schemeName)))
           },
-        (value) =>
+        value =>
           dataCacheConnector.save(request.externalId, DeclarationDormantId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(DeclarationDormantId, NormalMode)(new UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(DeclarationDormantId, NormalMode, UserAnswers(cacheMap))))
       )
   }
 }

@@ -23,17 +23,17 @@ import models.NormalMode
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator2, UserAnswers}
 
 class ContinueRegistrationController @Inject()(
   authenticate: AuthAction,
   getData: DataRetrievalAction,
-  @Register navigator: Navigator
+  @Register navigator: Navigator2
 ) extends FrontendController {
 
   def continue(): Action[AnyContent] = (authenticate andThen getData) {
-    request =>
-      Redirect(navigator.nextPage(ContinueRegistrationId, NormalMode)(request.userAnswers.getOrElse(UserAnswers())))
+    implicit request =>
+      Redirect(navigator.nextPage(ContinueRegistrationId, NormalMode, request.userAnswers.getOrElse(UserAnswers())))
   }
 
 }

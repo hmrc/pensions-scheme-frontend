@@ -61,7 +61,6 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy"))
-  lazy val restrictEstablisherEnabled = runModeConfiguration.getBoolean("microservice.services.features.restrict-establisher").getOrElse(true)
 
   def routeToSwitchLanguage: (String => Call) = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
   lazy val locationCanonicalList = loadConfig("location.canonical.list")

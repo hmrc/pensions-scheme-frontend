@@ -16,21 +16,20 @@
 
 package controllers.register
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.UKBankAccountFormProvider
 import identifiers.register.{SchemeDetailsId, UKBankAccountId}
+import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator2, UserAnswers}
 import views.html.register.uKBankAccount
 
 import scala.concurrent.Future
@@ -38,7 +37,7 @@ import scala.concurrent.Future
 class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
-                                        @Register navigator: Navigator,
+                                        @Register navigator: Navigator2,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
@@ -65,9 +64,9 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
             Future.successful(BadRequest(uKBankAccount(appConfig, formWithErrors, mode, schemeDetails.schemeName)))
           },
-        (value) =>
+        value =>
           dataCacheConnector.save(request.externalId, UKBankAccountId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(UKBankAccountId, mode)(new UserAnswers(cacheMap))))
+            Redirect(navigator.nextPage(UKBankAccountId, mode, UserAnswers(cacheMap))))
       )
   }
 }

@@ -16,40 +16,36 @@
 
 package controllers.register.trustees.individual
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.IndividualDetailsFormProvider
-import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.individual.TrusteeDetailsId
+import javax.inject.Inject
 import models.register.trustees.TrusteeKind._
 import models.{Index, Mode}
-import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsResultException, Writes}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesIndividual
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator2, UserAnswers}
 import views.html.register.trustees.individual.trusteeDetails
 
 import scala.concurrent.Future
 
 class TrusteeDetailsController @Inject() (
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        @TrusteesIndividual navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: IndividualDetailsFormProvider
+                                           appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           dataCacheConnector: DataCacheConnector,
+                                           @TrusteesIndividual navigator: Navigator2,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           formProvider: IndividualDetailsFormProvider
                                       ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -77,7 +73,7 @@ class TrusteeDetailsController @Inject() (
                 request.userAnswers.upsert(TrusteeDetailsId(index))(value){
                   _.upsert(TrusteeKindId(index))(Individual){ answers =>
                     dataCacheConnector.upsert(request.externalId, answers.json).map{ cacheMap =>
-                      Redirect(navigator.nextPage(TrusteeDetailsId(index), mode)(new UserAnswers(cacheMap)))
+                      Redirect(navigator.nextPage(TrusteeDetailsId(index), mode, new UserAnswers(cacheMap)))
                     }
                   }
                 }
