@@ -106,6 +106,7 @@ class TrusteesCompanyNavigator2 @Inject()(val dataCacheConnector: DataCacheConne
   private def checkYourAnswers(index: Int,answers: UserAnswers):Option[NavigateTo]  = {
     NavigateTo.save(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(index))
   }
+
   private def addressYearsRoutes(index: Int,answers: UserAnswers): Option[NavigateTo] = {
     answers.get(CompanyAddressYearsId(index)) match {
       case Some(AddressYears.UnderAYear) =>
@@ -113,7 +114,7 @@ class TrusteesCompanyNavigator2 @Inject()(val dataCacheConnector: DataCacheConne
       case Some(AddressYears.OverAYear) =>
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index))
       case None =>
-        NavigateTo.save(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 
