@@ -206,3 +206,5 @@ GET        /:establisherIndex/company/other-directors                           
 POST       /:establisherIndex/company/other-directors                                                       controllers.register.establishers.company.OtherDirectorsController.onSubmit(mode:Mode=NormalMode,establisherIndex:Index)
 GET        /:establisherIndex/company/change-other-directors                                                controllers.register.establishers.company.OtherDirectorsController.onPageLoad(mode:Mode=CheckMode, establisherIndex:Index)
 POST       /:establisherIndex/company/change-other-directors                                                controllers.register.establishers.company.OtherDirectorsController.onSubmit(mode:Mode=CheckMode,establisherIndex:Index)
+
+GET        /:establisherIndex/company/director/:directorIndex/already-deleted                    controllers.register.establishers.company.director.AlreadyDeletedController.onPageLoad(establisherIndex: Index, directorIndex: Index)

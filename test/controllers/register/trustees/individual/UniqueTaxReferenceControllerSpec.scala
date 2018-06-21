@@ -20,14 +20,13 @@ import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.individual.UniqueTaxReferenceFormProvider
-import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.individual.{TrusteeDetailsId, UniqueTaxReferenceId}
 import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, UniqueTaxReference}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.libs.json.{JsString, _}
+import play.api.libs.json._
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.register.trustees.individual.uniqueTaxReference
