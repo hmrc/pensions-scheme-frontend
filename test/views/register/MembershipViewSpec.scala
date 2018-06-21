@@ -34,10 +34,11 @@ class MembershipViewSpec extends ViewBehaviours {
 
   def createView: () => HtmlFormat.Appendable = () => membership(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => membership(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => membership(frontendAppConfig, form, NormalMode,
+    schemeName)(fakeRequest, messages)
 
   "Membership view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "_body1", "_body2")
 
     behave like pageWithSecondaryHeader(createView, schemeName)
 
