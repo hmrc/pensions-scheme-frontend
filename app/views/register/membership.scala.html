@@ -35,6 +35,10 @@
 
         @components.heading("messages__membership_current__title", secondaryHeaderKey = Some(name))
 
+        <p>@messages("messages__membership_current__body1")</p>
+
+        <p>@messages("messages__membership_current__body2")</p>
+
         @components.input_radio(
             field = form("value"),
             legend = messages("messages__membership_current__title"),
