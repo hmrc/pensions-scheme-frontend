@@ -39,7 +39,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HttpException
-import utils.{FakeNavigator2, Navigator2, UserAnswers}
+import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -58,7 +58,7 @@ object PostcodeLookupControllerSpec {
                                    override val messagesApi: MessagesApi,
                                    override val cacheConnector: DataCacheConnector,
                                    override val addressLookupConnector: AddressLookupConnector,
-                                   override val navigator: Navigator2,
+                                   override val navigator: Navigator,
                                    formProvider: PostCodeLookupFormProvider
                                  ) extends PostcodeLookupController {
 
@@ -89,7 +89,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
     "return a successful result" in {
 
       running(_.overrides(
-        bind[Navigator2].toInstance(FakeNavigator2)
+        bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
 
@@ -126,7 +126,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
       }
 
       running(_.overrides(
-        bind[Navigator2].toInstance(FakeNavigator2),
+        bind[Navigator].toInstance(FakeNavigator),
         bind[DataCacheConnector].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(addressConnector)
       )) {
@@ -153,7 +153,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
           Future.failed(new HttpException("Failed",INTERNAL_SERVER_ERROR))
 
         running(_.overrides(
-          bind[Navigator2].toInstance(FakeNavigator2),
+          bind[Navigator].toInstance(FakeNavigator),
           bind[DataCacheConnector].toInstance(cacheConnector),
           bind[AddressLookupConnector].toInstance(addressConnector)
         )) {
@@ -182,7 +182,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
         verifyZeroInteractions(addressConnector)
 
         running(_.overrides(
-          bind[Navigator2].toInstance(FakeNavigator2),
+          bind[Navigator].toInstance(FakeNavigator),
           bind[DataCacheConnector].toInstance(cacheConnector),
           bind[AddressLookupConnector].toInstance(addressConnector)
         )) {
@@ -217,7 +217,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
           }
 
           running(_.overrides(
-            bind[Navigator2].toInstance(FakeNavigator2),
+            bind[Navigator].toInstance(FakeNavigator),
             bind[DataCacheConnector].toInstance(cacheConnector),
             bind[AddressLookupConnector].toInstance(addressConnector)
           )) {

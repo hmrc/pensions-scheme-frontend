@@ -23,12 +23,12 @@ import models.NormalMode
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Navigator2, UserAnswers}
+import utils.{Navigator, UserAnswers}
 
 class ContinueRegistrationController @Inject()(
   authenticate: AuthAction,
   getData: DataRetrievalAction,
-  @Register navigator: Navigator2
+  @Register navigator: Navigator
 ) extends FrontendController {
 
   def continue(): Action[AnyContent] = (authenticate andThen getData) {

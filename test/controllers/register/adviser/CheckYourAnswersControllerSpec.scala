@@ -24,7 +24,7 @@ import models.register.SchemeSubmissionResponse
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeCountryOptions, FakeNavigator2, UserAnswers}
+import utils.{FakeCountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
 
@@ -91,7 +91,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      new FakeNavigator2(onwardRoute),
+      new FakeNavigator(onwardRoute),
       new FakeCountryOptions,
       fakePensionsSchemeConnector
     )

@@ -26,7 +26,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsResult, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator2, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
@@ -56,7 +56,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CompanyAddressYearsController =
-    new CompanyAddressYearsController(frontendAppConfig, messagesApi, new FakeNavigator2(desiredRoute = onwardRoute), FakeDataCacheConnector, FakeAuthAction,
+    new CompanyAddressYearsController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeDataCacheConnector, FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = addressYears(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString

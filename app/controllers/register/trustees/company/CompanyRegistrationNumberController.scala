@@ -30,7 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesCompany
-import utils.{Navigator, Navigator2, UserAnswers}
+import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.company.companyRegistrationNumber
 
 import scala.concurrent.Future
@@ -39,7 +39,7 @@ class CompanyRegistrationNumberController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        dataCacheConnector: DataCacheConnector,
-                                       @TrusteesCompany navigator: Navigator2,
+                                       @TrusteesCompany navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,

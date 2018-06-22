@@ -27,7 +27,7 @@ import models.register.SchemeType.SingleTrust
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import utils.FakeNavigator2
+import utils.FakeNavigator
 import views.html.register.occupationalPensionScheme
 
 class OccupationalPensionSchemeControllerSpec extends ControllerSpecBase {
@@ -44,7 +44,7 @@ class OccupationalPensionSchemeControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator2(desiredRoute = onwardRoute),
+      new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

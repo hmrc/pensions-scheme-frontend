@@ -27,14 +27,15 @@ import identifiers.register.trustees.company.CompanyRegistrationNumberId
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, CompanyRegistrationNumber, Index, NormalMode}
 import play.api.data.Form
-import play.api.libs.json.{JsString, _}
+import play.api.libs.json._
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeNavigator2}
+import utils.FakeNavigator
 import views.html.register.trustees.company.companyRegistrationNumber
 
 class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new CompanyRegistrationNumberFormProvider()
   val index = Index(0)
@@ -54,7 +55,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     ))
   )
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
       SchemeDetailsId.toString ->
         SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
       TrusteesId.toString -> Json.arr(
@@ -67,11 +68,26 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       )
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getCompanyDetails) =
-    new CompanyRegistrationNumberController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  def controller(dataRetrievalAction: DataRetrievalAction = getCompanyDetails): CompanyRegistrationNumberController =
+    new CompanyRegistrationNumberController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
 
-  def viewAsString(form: Form[_] = form) = companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String =
+    companyRegistrationNumber(
+      frontendAppConfig,
+      form,
+      NormalMode,
+      index,
+      companyName
+    )(fakeRequest, messages).toString
 
   "CompanyRegistrationNumber Controller" must {
 

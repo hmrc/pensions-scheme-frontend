@@ -33,7 +33,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{Enumerable, FakeNavigator2, MapFormats}
+import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -59,7 +59,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
         new PreviousAddressListController(
           frontendAppConfig, messagesApi,
           dataCacheConnector,
-          new FakeNavigator2(desiredRoute = onwardRoute),
+          new FakeNavigator(desiredRoute = onwardRoute),
           FakeAuthAction,
           dataRetrievalAction,
           new DataRequiredActionImpl)

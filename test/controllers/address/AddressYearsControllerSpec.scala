@@ -31,7 +31,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{FakeNavigator2, Navigator2, UserAnswers}
+import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 import org.mockito.Mockito._
@@ -49,7 +49,7 @@ object AddressYearsControllerSpec {
                                    override val appConfig: FrontendAppConfig,
                                    override val messagesApi: MessagesApi,
                                    override val cacheConnector: DataCacheConnector,
-                                   override val navigator: Navigator2,
+                                   override val navigator: Navigator,
                                    formProvider: AddressYearsFormProvider
                                  ) extends AddressYearsController {
 
@@ -79,7 +79,7 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
     "return a successful result when there is no existing answer" in {
 
       running(_.overrides(
-        bind[Navigator2].toInstance(FakeNavigator2)
+        bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
 
@@ -100,7 +100,7 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
     "return a successful result when there is an existing answer" in {
 
       running(_.overrides(
-        bind[Navigator2].toInstance(FakeNavigator2)
+        bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
 
@@ -134,7 +134,7 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
 
       running(_.overrides(
         bind[DataCacheConnector].toInstance(cacheConnector),
-        bind[Navigator2].toInstance(FakeNavigator2)
+        bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
 
@@ -158,7 +158,7 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
     "return a bad request when the submitted data is invalid" in {
 
       running(_.overrides(
-        bind[Navigator2].toInstance(FakeNavigator2)
+        bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
 

@@ -27,7 +27,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import utils.Navigator2
+import utils.Navigator
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -35,7 +35,7 @@ import viewmodels.address.AddressYearsViewModel
 class CompanyAddressYearsController @Inject()(
                                                val appConfig: FrontendAppConfig,
                                                val cacheConnector: DataCacheConnector,
-                                               @EstablishersCompany val navigator: Navigator2,
+                                               @EstablishersCompany val navigator: Navigator,
                                                val messagesApi: MessagesApi,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,

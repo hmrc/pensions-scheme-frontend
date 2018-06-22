@@ -30,7 +30,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{Enumerable, FakeNavigator2, MapFormats}
+import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -56,7 +56,7 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
     new InsurerAddressListController(
       frontendAppConfig, messagesApi,
       dataCacheConnector,
-      new FakeNavigator2(desiredRoute = onwardRoute),
+      new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl

@@ -27,12 +27,13 @@ import models.{ContactDetails, _}
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeNavigator2, UserAnswers}
+import utils.FakeNavigator
 import views.html.register.establishers.company.director.directorContactDetails
 
+//scalastyle:off magic.number
 
 class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
 
@@ -47,13 +48,13 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
   val directorName = "First Name Middle Name Last Name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): DirectorContactDetailsController =
-    new DirectorContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute),
+    new DirectorContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = directorContactDetails(frontendAppConfig, form, NormalMode,
     establisherIndex, directorIndex, directorName)(fakeRequest, messages).toString
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
@@ -68,7 +69,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
     )
   )
 
-  val validDataNoPreviousAnswer = Json.obj(
+  val validDataNoPreviousAnswer: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
@@ -82,7 +83,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
     )
   )
 
-  val validDataNoDirectorDetails = Json.obj(
+  val validDataNoDirectorDetails: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails(companyName, Some("123456"), Some("abcd")),
@@ -90,8 +91,6 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
         )
       )
     )
-
-
 
   "DirectorContactDetails Controller" must {
 

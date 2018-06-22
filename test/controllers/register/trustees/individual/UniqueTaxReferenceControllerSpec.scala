@@ -28,7 +28,7 @@ import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
-import utils.FakeNavigator2
+import utils.FakeNavigator
 import views.html.register.trustees.individual.uniqueTaxReference
 
 class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
@@ -55,7 +55,7 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   )
   
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee) =
-    new UniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
+    new UniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form) = uniqueTaxReference(frontendAppConfig, form, NormalMode, index, trustee)(fakeRequest, messages).toString

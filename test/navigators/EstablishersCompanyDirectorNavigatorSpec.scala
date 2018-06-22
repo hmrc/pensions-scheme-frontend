@@ -16,330 +16,76 @@
 
 package navigators
 
-import controllers.actions.FakeDataRetrievalAction
-import identifiers.register.establishers.company.director._
-import models.{CheckMode, CompanyDetails, Index, NormalMode}
-import org.scalatest.prop.PropertyChecks
-import org.scalatest.{MustMatchers, WordSpec}
-import play.api.libs.json.Json
-import utils.UserAnswers
+import base.SpecBase
+import connectors.FakeDataCacheConnector
 import controllers.register.establishers.company.director.routes
-import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.CompanyDetailsId
-import models.register.establishers.company.director.DirectorDetails
-import models.register.{SchemeDetails, SchemeType}
-import org.joda.time.LocalDate
+import identifiers.Identifier
+import identifiers.register.establishers.company.director._
+import models._
+import org.scalatest.OptionValues
+import org.scalatest.prop.TableFor6
+import play.api.libs.json.Json
+import play.api.mvc.Call
+import utils.UserAnswers
 
-class EstablishersCompanyDirectorNavigatorSpec extends WordSpec with MustMatchers with PropertyChecks {
-  val navigator = new EstablishersCompanyDirectorNavigator()
-  val emptyAnswers = new UserAnswers(Json.obj())
-  val establisherIndex = Index(0)
+class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
-  "NormalMode" when {
+  import EstablishersCompanyDirectorNavigatorSpec._
 
-    ".nextPage(DirectorDetailsId)" must {
-      "return a `Call` to `DirectorNino` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorDetailsId(establisherIndex, index), NormalMode)(emptyAnswers)
-            result mustEqual routes.DirectorNinoController.onPageLoad(NormalMode, establisherIndex, index)
-        }
-      }
-    }
+  private def routes(): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id",                              "User Answers", "Next Page (Normal Mode)",          "Save (NM)",  "Next Page (Check Mode)",             "Save (CM)"),
+    (DirectorDetailsId(0, 0),                 emptyAnswers,   directorNino(NormalMode),               true,         Some(checkYourAnswers),                   true),
+    (DirectorNinoId(0, 0),                    emptyAnswers,   directorUtr(NormalMode),                true,         Some(checkYourAnswers),                   true),
+    (DirectorUniqueTaxReferenceId(0, 0),      emptyAnswers,   directorAddressPostcode(NormalMode),    true,         Some(checkYourAnswers),                   true),
+    (DirectorAddressPostcodeLookupId(0, 0),   emptyAnswers,   directorAddressList(NormalMode),        true,         Some(directorAddressList(CheckMode)),     true),
+    (DirectorAddressListId(0, 0),             emptyAnswers,   directorAddress(NormalMode),            true,         Some(directorAddress(CheckMode)),         true),
+    (DirectorAddressId(0, 0),                 emptyAnswers,   directorAddressYears(NormalMode),       true,         Some(checkYourAnswers),                   true),
+    (DirectorAddressYearsId(0, 0),            addressYearsOverAYear,   directorContactDetails(NormalMode),true,     Some(checkYourAnswers),                   true),
+    (DirectorAddressYearsId(0, 0),            addressYearsUnderAYear,   directorPreviousAddPostcode(NormalMode),true,Some(directorPreviousAddPostcode(CheckMode)),  true),
+    (DirectorAddressYearsId(0, 0),            emptyAnswers,   sessionExpired,                         false,        Some(sessionExpired),                     false),
+    (DirectorPreviousAddressPostcodeLookupId(0, 0), emptyAnswers,   directorPreviousAddList(NormalMode),true,       Some(directorPreviousAddList(CheckMode)),       true),
+    (DirectorPreviousAddressListId(0, 0),     emptyAnswers,   directorPreviousAddress(NormalMode),    true,         Some(directorPreviousAddress(CheckMode)),       true),
+    (DirectorPreviousAddressId(0, 0),         emptyAnswers,   directorContactDetails(NormalMode),     true,         Some(checkYourAnswers),                   true),
+    (DirectorContactDetailsId(0, 0),          emptyAnswers,   checkYourAnswers,                       true,         Some(checkYourAnswers),                   true),
+    (ConfirmDeleteDirectorId(0),           emptyAnswers,   addCompanyDirectors(NormalMode),        false,        None,                                     false),
+    (CheckYourAnswersId(0, 0),           emptyAnswers,   addCompanyDirectors(NormalMode),        true,        None,                                     true)
+  )
 
-    ".nextPage(DirectorNinoId)" must {
-      "return a `Call` to `DirectorUniqueTaxReference` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorNinoId(establisherIndex, index), NormalMode)(emptyAnswers)
-            result mustEqual routes.DirectorUniqueTaxReferenceController.onPageLoad(NormalMode, establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorUniqueTaxReferenceId)" must {
-      "return a `Call` to `DirectorAddressPostcodeLookup` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorUniqueTaxReferenceId(establisherIndex, index), NormalMode)(emptyAnswers)
-            result mustEqual routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorAddressPostcodeLookupId)" must {
-      "return a `Call` to `DirectorAddressList` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorAddressPostcodeLookupId(establisherIndex, index), NormalMode)(emptyAnswers)
-            result mustEqual routes.DirectorAddressListController.onPageLoad(NormalMode, establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorAddressListId)" must {
-      "return a `Call` to `DirectorAddress` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorAddressListId(establisherIndex, index), NormalMode)(emptyAnswers)
-            result mustEqual routes.DirectorAddressController.onPageLoad(NormalMode, establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorAddressId)" must {
-      "return a `Call` to `DirectorAddressYears` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorAddressId(establisherIndex, index), NormalMode)(emptyAnswers)
-            result mustEqual routes.DirectorAddressYearsController.onPageLoad(NormalMode, establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(AddressYears)" must {
-
-      "return a `Call` to `ContactDetails` page when `AddressYears` is `OverAYear`" in {
-        val answers = new UserAnswers(Json.obj(
-            EstablishersId.toString -> Json.arr(
-              Json.obj(
-                "director" -> Json.arr(
-                  Json.obj(
-                    DirectorAddressYearsId.toString -> "over_a_year"
-                  )
-                )
-              )
-            )
-          ))
-
-        val result = navigator.nextPage(DirectorAddressYearsId(0, 0), NormalMode)(answers)
-        result mustEqual routes.DirectorContactDetailsController.onPageLoad(NormalMode, establisherIndex, 0)
-      }
-
-      "return a `Call` to `PreviousPostCodeLookup` page when `AddressYears` is `UnderAYear`" in {
-
-        val answers = new UserAnswers(Json.obj(
-          EstablishersId.toString -> Json.arr(
-            Json.obj(
-              "director" -> Json.arr(
-                Json.obj(
-                  DirectorAddressYearsId.toString -> "under_a_year"
-                )
-              )
-            )
-          )
-        ))
-
-        val result = navigator.nextPage(DirectorAddressYearsId(0, 0), NormalMode)(answers)
-        result mustEqual routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, establisherIndex, 0)
-      }
-
-      "return a `Call` to `SessionExpired` page when `AddressYears` is undefined" in {
-        val result = navigator.nextPage(DirectorAddressYearsId(0, 0), NormalMode)(emptyAnswers)
-        result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
-      }
-    }
-
-    ".nextPage(DirectorPreviousAddressPostcodeLookupId)" must {
-      "return a `Call` to `DirectorPreviousAddressList` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorPreviousAddressPostcodeLookupId(establisherIndex, index), NormalMode)(emptyAnswers)
-            result mustEqual routes.DirectorPreviousAddressListController.onPageLoad(NormalMode, establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorPreviousAddressListId)" must {
-      "return a `Call` to `DirectorPreviousAddress` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorPreviousAddressListId(establisherIndex, index), NormalMode)(emptyAnswers)
-            result mustEqual routes.DirectorPreviousAddressController.onPageLoad(NormalMode, establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorPreviousAddressId)" must {
-      "return a `Call` to `DirectorContactDetails` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorPreviousAddressId(establisherIndex, index), NormalMode)(emptyAnswers)
-            result mustEqual routes.DirectorContactDetailsController.onPageLoad(NormalMode, establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorContactDetailsId)" must {
-      "return a `Call` to `CheckYourAnswers` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorContactDetailsId(establisherIndex, index), NormalMode)(emptyAnswers)
-            result mustEqual routes.CheckYourAnswersController.onPageLoad(establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(ConfirmDeleteDirectorId)" must {
-      "return a `Call` to `AddCompanyDirectors` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode)(emptyAnswers)
-            result mustEqual controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
-        }
-      }
-    }
-
+  navigator.getClass.getSimpleName must {
+    appRunning()
+    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routes(), dataDescriber)
+    behave like nonMatchingNavigator(navigator)
   }
 
-  "CheckMode" when {
-
-    ".nextPage(DirectorDetailsId)" must {
-      "return a `Call` to `DirectorNino` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorDetailsId(establisherIndex, index), CheckMode)(emptyAnswers)
-            result mustEqual routes.CheckYourAnswersController.onPageLoad(establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorNinoId)" must {
-      "return a `Call` to `DirectorUniqueTaxReference` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorNinoId(establisherIndex, index), CheckMode)(emptyAnswers)
-            result mustEqual routes.CheckYourAnswersController.onPageLoad(establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorUniqueTaxReferenceId)" must {
-      "return a `Call` to `DirectorAddressPostcodeLookup` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorUniqueTaxReferenceId(establisherIndex, index), CheckMode)(emptyAnswers)
-            result mustEqual routes.CheckYourAnswersController.onPageLoad(establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorAddressPostcodeLookupId)" must {
-      "return a `Call` to `DirectorAddressList` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorAddressPostcodeLookupId(establisherIndex, index), CheckMode)(emptyAnswers)
-            result mustEqual routes.DirectorAddressListController.onPageLoad(CheckMode, establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorAddressListId)" must {
-      "return a `Call` to `DirectorAddress` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorAddressListId(establisherIndex, index), CheckMode)(emptyAnswers)
-            result mustEqual routes.DirectorAddressController.onPageLoad(CheckMode, establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorAddressId)" must {
-      "return a `Call` to `DirectorAddressYears` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorAddressId(establisherIndex, index), CheckMode)(emptyAnswers)
-            result mustEqual routes.CheckYourAnswersController.onPageLoad(establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(AddressYears)" must {
-
-      "return a `Call` to `ContactDetails` page when `AddressYears` is `OverAYear`" in {
-
-        val answers = new UserAnswers(Json.obj(
-          EstablishersId.toString -> Json.arr(
-            Json.obj(
-              "director" -> Json.arr(
-                Json.obj(
-                  DirectorAddressYearsId.toString -> "over_a_year"
-                )
-              )
-            )
-          )
-        ))
-
-        val result = navigator.nextPage(DirectorAddressYearsId(0, 0), CheckMode)(answers)
-        result mustEqual routes.CheckYourAnswersController.onPageLoad(establisherIndex, 0)
-      }
-
-      "return a `Call` to `PreviousPostCodeLookup` page when `AddressYears` is `UnderAYear`" in {
-        val answers = new UserAnswers(Json.obj(
-          EstablishersId.toString -> Json.arr(
-            Json.obj(
-              "director" -> Json.arr(
-                Json.obj(
-                  DirectorAddressYearsId.toString -> "under_a_year"
-                )
-              )
-            )
-          )
-        ))
-        val result = navigator.nextPage(DirectorAddressYearsId(0, 0), CheckMode)(answers)
-        result mustEqual routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(CheckMode, establisherIndex, 0)
-      }
-
-      "return a `Call` to `SessionExpired` page when `AddressYears` is undefined" in {
-        val result = navigator.nextPage(DirectorAddressYearsId(0, 0), CheckMode)(emptyAnswers)
-        result mustEqual controllers.routes.SessionExpiredController.onPageLoad()
-      }
-    }
-
-    ".nextPage(DirectorPreviousAddressPostcodeLookupId)" must {
-      "return a `Call` to `DirectorPreviousAddressList` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorPreviousAddressPostcodeLookupId(establisherIndex, index), CheckMode)(emptyAnswers)
-            result mustEqual routes.DirectorPreviousAddressListController.onPageLoad(CheckMode, establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorPreviousAddressListId)" must {
-      "return a `Call` to `DirectorPreviousAddress` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorPreviousAddressListId(establisherIndex, index), CheckMode)(emptyAnswers)
-            result mustEqual routes.DirectorPreviousAddressController.onPageLoad(CheckMode, establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorPreviousAddressId)" must {
-      "return a `Call` to `DirectorContactDetails` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorPreviousAddressId(establisherIndex, index), CheckMode)(emptyAnswers)
-            result mustEqual routes.CheckYourAnswersController.onPageLoad(establisherIndex, index)
-        }
-      }
-    }
-
-    ".nextPage(DirectorContactDetailsId)" must {
-      "return a `Call` to `CheckYourAnswers` page" in {
-        (0 to 10).foreach {
-          index =>
-            val result = navigator.nextPage(DirectorContactDetailsId(establisherIndex, index), CheckMode)(emptyAnswers)
-            result mustEqual routes.CheckYourAnswersController.onPageLoad(establisherIndex, index)
-        }
-      }
-    }
-
-  }
 }
 
+object EstablishersCompanyDirectorNavigatorSpec extends OptionValues{
 
+  private val navigator = new EstablishersCompanyDirectorNavigator(FakeDataCacheConnector)
+  private val emptyAnswers = UserAnswers(Json.obj())
+  val establisherIndex = Index(0)
+  val directorIndex = Index(0)
 
+  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+  private def directorDetails(mode: Mode) = routes.DirectorDetailsController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorNino(mode: Mode) = routes.DirectorNinoController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorUtr(mode: Mode) = routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorContactDetails(mode: Mode) = routes.DirectorContactDetailsController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorAddressPostcode(mode: Mode) = routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorAddressList(mode: Mode) = routes.DirectorAddressListController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorAddress(mode: Mode) = routes.DirectorAddressController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorAddressYears(mode: Mode) = routes.DirectorAddressYearsController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorPreviousAddPostcode(mode: Mode) = routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorPreviousAddList(mode: Mode) = routes.DirectorPreviousAddressListController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def directorPreviousAddress(mode: Mode) = routes.DirectorPreviousAddressController.onPageLoad(mode, directorIndex, establisherIndex)
+  private def checkYourAnswers = routes.CheckYourAnswersController.onPageLoad(directorIndex, establisherIndex)
+  private def addCompanyDirectors(mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(
+    mode, establisherIndex)
 
+  val addressYearsOverAYear = UserAnswers(Json.obj())
+    .set(DirectorAddressYearsId(establisherIndex, directorIndex))(AddressYears.OverAYear).asOpt.value
+  val addressYearsUnderAYear = UserAnswers(Json.obj())
+    .set(DirectorAddressYearsId(establisherIndex, directorIndex))(AddressYears.UnderAYear).asOpt.value
+
+  private def dataDescriber(answers: UserAnswers): String = answers.toString
+}

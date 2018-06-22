@@ -17,65 +17,64 @@
 package navigators
 
 import base.SpecBase
-import config.FrontendAppConfig
+import connectors.FakeDataCacheConnector
 import identifiers.Identifier
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import identifiers.register.trustees.HaveAnyTrusteesId
 import models._
-import models.register.{SchemeDetails, SchemeType}
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
-import org.scalatest.prop.TableFor4
+import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
-import play.api.Configuration
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
+
+//scalastyle:off line.size.limit
+//scalastyle:off magic.number
 
 class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import EstablishersCompanyNavigatorSpec._
 
-  private def navigator(isEstablisherRestricted: Boolean = false) = {
-    val application = new GuiceApplicationBuilder()
-      .configure(Configuration("microservice.services.features.restrict-establisher" -> isEstablisherRestricted))
-    val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-    new EstablishersCompanyNavigator(appConfig)
-  }
-  
-  private val routesWithNoRestrictedEstablishers: TableFor4[Identifier, UserAnswers, Call, Option[Call]] = Table(
-    ("Id",                                     "User Answers",                "Next Page (Normal Mode)",             "Next Page (Check Mode)"),
-    (CompanyDetailsId(0),                       emptyAnswers,                  companyRegistrationNumber(NormalMode), Some(checkYourAnswers)),
-    (CompanyRegistrationNumberId(0),            emptyAnswers,                  companyUTR(NormalMode),                Some(checkYourAnswers)),
-    (CompanyUniqueTaxReferenceId(0),            emptyAnswers,                  companyPostCodeLookup(NormalMode),     Some(checkYourAnswers)),
-    (CompanyPostCodeLookupId(0),                emptyAnswers,                  companyAddressList(NormalMode),        Some(companyAddressList(CheckMode))),
-    (CompanyAddressListId(0),                   emptyAnswers,                  companyManualAddress(NormalMode),      Some(companyManualAddress(CheckMode))),
-    (CompanyAddressId(0),                       emptyAnswers,                  companyAddressYears(NormalMode),       Some(checkYourAnswers)),
-    (CompanyAddressYearsId(0),                  addressYearsOverAYear,         companyContactDetails,                 Some(checkYourAnswers)),
-    (CompanyAddressYearsId(0),                  addressYearsUnderAYear,        prevAddPostCodeLookup(NormalMode),     Some(prevAddPostCodeLookup(CheckMode))),
-    (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers,                  companyPaList(NormalMode),             Some(companyPaList(CheckMode))),
-    (CompanyPreviousAddressListId(0),           emptyAnswers,                  companyPreviousAddress(NormalMode),    Some(companyPreviousAddress(CheckMode))),
-    (CompanyPreviousAddressId(0),               emptyAnswers,                  companyContactDetails,                 Some(checkYourAnswers)),
-    (CompanyContactDetailsId(0),                emptyAnswers,                  checkYourAnswers,                      Some(checkYourAnswers)),
-    (AddCompanyDirectorsId(0),                  emptyAnswers,                  directorDetails(0, NormalMode),        Some(directorDetails(0, CheckMode))),
-    (AddCompanyDirectorsId(0),                  addCompanyDirectorsTrue,       directorDetails(1, NormalMode),        Some(directorDetails(1, CheckMode))),
-    (AddCompanyDirectorsId(0),                  addCompanyDirectorsFalse,      companyReview,                         Some(companyReview)),
-    (AddCompanyDirectorsId(0),                  addOneCompanyDirectors,        sessionExpired,                        Some(sessionExpired)),
-    (AddCompanyDirectorsId(0),                  addCompanyDirectorsMoreThan10, otherDirectors(NormalMode),            Some(otherDirectors(CheckMode))),
-    (OtherDirectorsId(0),                       emptyAnswers,                  companyReview,                         Some(companyReview)),
-    (CompanyReviewId(0),                        emptyAnswers,                  addEstablisher,                        None)
+  private def routesWithNoRestrictedEstablishers: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id",                                     "User Answers",                 "Next Page (Normal Mode)",             "Save (NM)",  "Next Page (Check Mode)",                 "Save (CM)"),
+    (CompanyDetailsId(0),                       emptyAnswers,                  companyRegistrationNumber(NormalMode), true,         Some(checkYourAnswers),                   true),
+    (CompanyRegistrationNumberId(0),            emptyAnswers,                  companyUTR(NormalMode),                true,         Some(checkYourAnswers),                   true),
+    (CompanyUniqueTaxReferenceId(0),            emptyAnswers,                  companyPostCodeLookup(NormalMode),     true,         Some(checkYourAnswers),                   true),
+    (CompanyPostCodeLookupId(0),                emptyAnswers,                  companyAddressList(NormalMode),        true,         Some(companyAddressList(CheckMode)),      true),
+    (CompanyAddressListId(0),                   emptyAnswers,                  companyManualAddress(NormalMode),      true,         Some(companyManualAddress(CheckMode)),    true),
+    (CompanyAddressId(0),                       emptyAnswers,                  companyAddressYears(NormalMode),       true,         Some(checkYourAnswers),                   true),
+    (CompanyAddressYearsId(0),                  addressYearsOverAYear,         companyContactDetails,                 true,         Some(checkYourAnswers),                   true),
+    (CompanyAddressYearsId(0),                  addressYearsUnderAYear,        prevAddPostCodeLookup(NormalMode),     true,         Some(prevAddPostCodeLookup(CheckMode)),   true),
+    (CompanyAddressYearsId(0),                  emptyAnswers,                  sessionExpired,                        false,        Some(sessionExpired),                     false ),
+    (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers,                  companyPaList(NormalMode),             true,         Some(companyPaList(CheckMode)),           true),
+    (CompanyPreviousAddressListId(0),           emptyAnswers,                  companyPreviousAddress(NormalMode),    true,         Some(companyPreviousAddress(CheckMode)),  true),
+    (CompanyPreviousAddressId(0),               emptyAnswers,                  companyContactDetails,                 true,         Some(checkYourAnswers),                   true),
+    (CompanyContactDetailsId(0),                emptyAnswers,                  checkYourAnswers,                      true,         Some(checkYourAnswers),                   true),
+    (AddCompanyDirectorsId(0),                  emptyAnswers,                  directorDetails(0, NormalMode),        true,         Some(directorDetails(0, CheckMode)),      true),
+    (AddCompanyDirectorsId(0),                  addCompanyDirectorsTrue,       directorDetails(1, NormalMode),        true,         Some(directorDetails(1, CheckMode)),      true),
+    (AddCompanyDirectorsId(0),                  addCompanyDirectorsFalse,      companyReview,                         true,         Some(companyReview),                      true),
+    (AddCompanyDirectorsId(0),                  addOneCompanyDirectors,        sessionExpired,                        false,        Some(sessionExpired),                     false),
+    (AddCompanyDirectorsId(0),                  addCompanyDirectorsMoreThan10, otherDirectors(NormalMode),            true,         Some(otherDirectors(CheckMode)),          true),
+    (OtherDirectorsId(0),                       emptyAnswers,                  companyReview,                         true,         Some(companyReview),                      true),
+    (CompanyReviewId(0),                        emptyAnswers,                  addEstablisher,                        true,         None,                                     false),
+    (CheckYourAnswersId(0),                     emptyAnswers,                  addCompanyDirectors(0, NormalMode),    true,         None,                                     false)
   )
 
-  s"${navigator().getClass.getSimpleName}" must {
-    behave like navigatorWithRoutes(navigator(), routesWithNoRestrictedEstablishers, dataDescriber)
+  "EstablishersCompanyNavigator when restrict-establisher toggle is off" must {
+    appRunning()
+    val navigator = new EstablishersCompanyNavigator(FakeDataCacheConnector, frontendAppConfig)
+    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routesWithNoRestrictedEstablishers, dataDescriber)
+    behave like nonMatchingNavigator(navigator)
   }
+
 }
 
+//noinspection MutatorLikeMethodIsParameterless
 object EstablishersCompanyNavigatorSpec extends OptionValues {
+
   private val johnDoe = DirectorDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
 
   private def validData(directors: DirectorDetails*) = {
@@ -89,7 +88,7 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
     )
   }
 
-  private val sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+  private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def companyRegistrationNumber(mode: Mode): Call =
     controllers.register.establishers.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, 0)
@@ -119,36 +118,27 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
   private def directorDetails(index: Index, mode: Mode) =
     controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(mode, 0, index)
 
-  private val companyReview = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
+  private def companyReview = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
 
   private def otherDirectors(mode: Mode) = controllers.register.establishers.company.routes.OtherDirectorsController.onPageLoad(mode, 0)
 
-  private val haveAnyTrustees = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
-  private val addTrustees = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
-  private val schemeReview = controllers.register.routes.SchemeReviewController.onPageLoad()
-
   private def checkYourAnswers = controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(0)
 
-  private val addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+
+  private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, index)
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
-  private val schemeBodyCorporate = UserAnswers(Json.obj()).set(SchemeDetailsId)(SchemeDetails("test-scheme-name",
-    SchemeType.BodyCorporate)).asOpt.value
-  private val schemeSingleTrust = UserAnswers(Json.obj()).set(SchemeDetailsId)(SchemeDetails("test-scheme-name",
-    SchemeType.SingleTrust)).asOpt.value
 
   private val addCompanyDirectorsTrue = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(true).asOpt.value
   private val addCompanyDirectorsFalse = UserAnswers(validData(johnDoe)).set(AddCompanyDirectorsId(0))(false).asOpt.value
   private val addCompanyDirectorsMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
   private val addOneCompanyDirectors = UserAnswers(validData(johnDoe))
-  private val hasTrusteeCompaniesForBodyCorporate = UserAnswers().trusteesCompanyDetails(0, CompanyDetails("test-company-name", None, None)).
-    schemeDetails(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate))
-  private val noTrusteeCompaniesForBodyCorporate = UserAnswers().schemeDetails(SchemeDetails("test-scheme-name", SchemeType.BodyCorporate)).set(
-    HaveAnyTrusteesId)(false).asOpt.value
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+
 }

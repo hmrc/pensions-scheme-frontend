@@ -27,7 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import utils.Navigator2
+import utils.Navigator
 import utils.annotations.TrusteesCompany
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -36,7 +36,7 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
                                                                 val appConfig: FrontendAppConfig,
                                                                 override val messagesApi: MessagesApi,
                                                                 val cacheConnector: DataCacheConnector,
-                                                                @TrusteesCompany val navigator: Navigator2,
+                                                                @TrusteesCompany val navigator: Navigator,
                                                                 authenticate: AuthAction,
                                                                 getData: DataRetrievalAction,
                                                                 requireData: DataRequiredAction,

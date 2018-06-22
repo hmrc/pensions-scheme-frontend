@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator2
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
@@ -48,7 +48,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
     new CompanyAddressYearsController(
       frontendAppConfig,
       FakeDataCacheConnector,
-      new FakeNavigator2(desiredRoute = onwardRoute),
+      new FakeNavigator(desiredRoute = onwardRoute),
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
