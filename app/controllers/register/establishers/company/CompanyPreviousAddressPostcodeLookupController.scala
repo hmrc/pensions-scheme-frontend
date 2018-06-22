@@ -27,7 +27,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import utils.Navigator
+import utils.Navigator2
 import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
@@ -37,7 +37,7 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
                                                                 override val messagesApi: MessagesApi,
                                                                 override val cacheConnector: DataCacheConnector,
                                                                 override val addressLookupConnector: AddressLookupConnector,
-                                                                @EstablishersCompany override val navigator: Navigator,
+                                                                @EstablishersCompany override val navigator: Navigator2,
                                                                 authenticate: AuthAction,
                                                                 getData: DataRetrievalAction,
                                                                 requireData: DataRequiredAction,

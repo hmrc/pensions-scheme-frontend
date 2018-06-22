@@ -31,7 +31,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.TrusteesIndividual
-import utils.{CountryOptions, Navigator}
+import utils.{CountryOptions, Navigator2}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
@@ -39,7 +39,7 @@ class TrusteePreviousAddressController @Inject()(
                                                   override val appConfig: FrontendAppConfig,
                                                   override val messagesApi: MessagesApi,
                                                   override val dataCacheConnector: DataCacheConnector,
-                                                  @TrusteesIndividual override val navigator: Navigator,
+                                                  @TrusteesIndividual override val navigator: Navigator2,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,

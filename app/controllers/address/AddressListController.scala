@@ -26,7 +26,7 @@ import models.requests.DataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator2, UserAnswers}
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -36,7 +36,7 @@ trait AddressListController extends FrontendController with I18nSupport {
 
   protected def appConfig: FrontendAppConfig
   protected def cacheConnector: DataCacheConnector
-  protected def navigator: Navigator
+  protected def navigator: Navigator2
   protected def formProvider: AddressListFormProvider = new AddressListFormProvider()
 
   protected def get(viewModel: AddressListViewModel)
@@ -59,7 +59,7 @@ trait AddressListController extends FrontendController with I18nSupport {
           _ =>
             cacheConnector.save(request.externalId, navigatorId, address).map {
               json =>
-                Redirect(navigator.nextPage(navigatorId, mode)(UserAnswers(json)))
+                Redirect(navigator.nextPage(navigatorId, mode, UserAnswers(json)))
             }
         }
       }

@@ -23,7 +23,7 @@ import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.SchemeDetailsId
 import models.NormalMode
-import models.address.{Address, AddressRecord, TolerantAddress}
+import models.address.TolerantAddress
 import models.person.PersonDetails
 import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
@@ -40,7 +40,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, route, _}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.annotations.Register
-import utils.{FakeNavigator, Navigator}
+import utils.{FakeNavigator2, Navigator2}
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
@@ -96,7 +96,7 @@ object InsurerPostCodeLookupControllerSpec extends OptionValues {
   val form = formProvider()
   val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())
   val validPostcode = "ZZ1 1ZZ"
-  val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
+  val fakeNavigator = new FakeNavigator2(desiredRoute = onwardRoute)
   val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
   val retrieval = new FakeDataRetrievalAction(Some(
@@ -109,14 +109,14 @@ object InsurerPostCodeLookupControllerSpec extends OptionValues {
     }
   }
 
-  private def requestResult[T](request: (Application) => Request[T], test: (Request[_], Future[Result]) => Unit)
+  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
                               (implicit writeable: Writeable[T]): Unit = {
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].toInstance(retrieval),
       bind[DataRequiredAction].to(new DataRequiredActionImpl),
       bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-      bind(classOf[Navigator]).qualifiedWith(classOf[Register]).toInstance(fakeNavigator),
+      bind(classOf[Navigator2]).qualifiedWith(classOf[Register]).toInstance(fakeNavigator),
       bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
       bind[PostCodeLookupFormProvider].to(formProvider)
     )) {

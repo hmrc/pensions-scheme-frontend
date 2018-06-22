@@ -18,15 +18,14 @@ package controllers.register.trustees.individual
 
 import base.CSRFRequest
 import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
-import play.api.test.Helpers._
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.address.{Address, AddressRecord, TolerantAddress}
-import models.{Index, NormalMode}
+import models.address.TolerantAddress
 import models.person.PersonDetails
+import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -36,9 +35,10 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.annotations.TrusteesIndividual
-import utils.{FakeNavigator, Navigator}
+import utils.{FakeNavigator2, Navigator2}
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -84,7 +84,7 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
   val form = formProvider()
   val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())
   val validPostcode = "ZZ1 1ZZ"
-  val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
+  val fakeNavigator = new FakeNavigator2(desiredRoute = onwardRoute)
   val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
   lazy val viewModel = PostcodeLookupViewModel(
@@ -112,13 +112,13 @@ object IndividualPreviousAddressPostCodeLookupControllerSpec extends ControllerS
     }
   }
 
-  private def requestResult[T](request: (Application) => Request[T], test: (Request[_], Future[Result]) => Unit)(implicit writeable: Writeable[T]): Unit = {
+  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)(implicit writeable: Writeable[T]): Unit = {
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].toInstance(retrieval),
       bind[DataRequiredAction].to(new DataRequiredActionImpl),
       bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
-      bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+      bind(classOf[Navigator2]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
       bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
       bind[PostCodeLookupFormProvider].to(formProvider)
     )) {

@@ -27,7 +27,7 @@ import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import utils.Navigator
+import utils.Navigator2
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
@@ -35,7 +35,7 @@ import viewmodels.address.AddressYearsViewModel
 class DirectorAddressYearsController @Inject()(
                                                 val appConfig: FrontendAppConfig,
                                                 val cacheConnector: DataCacheConnector,
-                                                @EstablishersCompanyDirector val navigator: Navigator,
+                                                @EstablishersCompanyDirector val navigator: Navigator2,
                                                 val messagesApi: MessagesApi,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
@@ -54,7 +54,12 @@ class DirectorAddressYearsController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
-        post(DirectorAddressYearsId(establisherIndex, directorIndex), mode, form, viewModel(mode, establisherIndex, directorIndex, directorDetails.directorName))
+        post(
+          DirectorAddressYearsId(establisherIndex, directorIndex),
+          mode,
+          form,
+          viewModel(mode, establisherIndex, directorIndex, directorDetails.directorName)
+        )
       }
   }
 

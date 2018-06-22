@@ -17,7 +17,6 @@
 package controllers.register
 
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
@@ -28,7 +27,7 @@ import models.Mode
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
-import utils.Navigator
+import utils.Navigator2
 import utils.annotations.Register
 import viewmodels.address.PostcodeLookupViewModel
 
@@ -36,15 +35,15 @@ class InsurerPostCodeLookupController @Inject()(val appConfig: FrontendAppConfig
                                                 override val messagesApi: MessagesApi,
                                                 val cacheConnector: DataCacheConnector,
                                                 val addressLookupConnector: AddressLookupConnector,
-                                                @Register val navigator: Navigator,
+                                                @Register val navigator: Navigator2,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
                                                 formProvider: PostCodeLookupFormProvider
                                                ) extends PostcodeLookupController {
 
-  val postCall: (Mode) => Call = routes.InsurerPostCodeLookupController.onSubmit
-  val manualCall: (Mode) => Call = routes.InsurerAddressController.onPageLoad
+  val postCall: Mode => Call = routes.InsurerPostCodeLookupController.onSubmit
+  val manualCall: Mode => Call = routes.InsurerAddressController.onPageLoad
 
   val form: Form[String] = formProvider()
 

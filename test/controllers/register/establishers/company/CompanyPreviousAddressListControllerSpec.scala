@@ -30,7 +30,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.FakeNavigator2
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
@@ -75,7 +75,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
+      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl
     )
@@ -117,14 +117,16 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
     "redirect to postcode lookup when no address results exist (get)" in {
       val result = controller().onPageLoad(NormalMode, 0)(fakeRequest)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0).url
+      redirectLocation(result).value mustEqual
+        controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0).url
     }
 
     "redirect to postcode lookup when no address results exist (post)" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
       val result = controller().onSubmit(NormalMode, 0)(postRequest)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0).url
+      redirectLocation(result).value mustEqual
+        controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0).url
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
