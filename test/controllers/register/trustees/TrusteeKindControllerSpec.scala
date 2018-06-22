@@ -29,7 +29,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsString, _}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator2
+import utils.FakeNavigator
 import views.html.register.trustees.trusteeKind
 
 class TrusteeKindControllerSpec extends ControllerSpecBase {
@@ -42,7 +42,7 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): TrusteeKindController =
-    new TrusteeKindController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
+    new TrusteeKindController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = trusteeKind(frontendAppConfig, form, NormalMode, index, schemeName)(fakeRequest, messages).toString

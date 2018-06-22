@@ -32,7 +32,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, route, running, status, _}
 import utils.annotations.TrusteesIndividual
-import utils.{FakeNavigator2, Navigator2, UserAnswers}
+import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
@@ -70,7 +70,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
 
   private val dataRetrievalAction = new FakeDataRetrievalAction(data)
-  lazy val fakeNavigator = new FakeNavigator2(desiredRoute = onwardRoute)
+  lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
 
 
   "Individual Address List Controller" must {
@@ -79,7 +79,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction),
-        bind(classOf[Navigator2]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0))))
         val result = route(app, request).value
@@ -101,7 +101,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator2]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0))))
         val result = route(app, request).value
@@ -118,7 +118,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator2]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.IndividualAddressListController.onPageLoad(NormalMode, Index(0))))
         val result = route(app, request).value
@@ -134,7 +134,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-        bind(classOf[Navigator2]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request =
@@ -156,7 +156,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
-        bind(classOf[Navigator2]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request =
           addToken(
@@ -178,7 +178,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
         bind[AuthAction].to(FakeAuthAction),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[DataRetrievalAction].toInstance(getEmptyData),
-        bind(classOf[Navigator2]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
+        bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
         val request =
           addToken(

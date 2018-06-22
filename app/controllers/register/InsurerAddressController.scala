@@ -30,14 +30,14 @@ import play.api.data.Form
 import play.api.i18n._
 import play.api.mvc._
 import utils.annotations.Register
-import utils.{CountryOptions, Navigator2}
+import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
 class InsurerAddressController @Inject()(val appConfig: FrontendAppConfig,
                                          val messagesApi: MessagesApi,
                                          val dataCacheConnector: DataCacheConnector,
-                                         @Register val navigator: Navigator2,
+                                         @Register val navigator: Navigator,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,

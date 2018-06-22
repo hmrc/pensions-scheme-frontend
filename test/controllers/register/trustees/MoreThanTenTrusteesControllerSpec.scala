@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator2
+import utils.FakeNavigator
 import views.html.register.trustees.moreThanTenTrustees
 
 class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
@@ -45,7 +45,7 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): MoreThanTenTrusteesController =
-    new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
+    new MoreThanTenTrusteesController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = moreThanTenTrustees(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString

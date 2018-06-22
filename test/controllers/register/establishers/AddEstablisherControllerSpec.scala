@@ -25,7 +25,7 @@ import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator2
+import utils.FakeNavigator
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherControllerSpec extends ControllerSpecBase {
@@ -41,7 +41,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddEstablisherController =
     new AddEstablisherController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
-      new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
+      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form, allEstablishers: Seq[(String, String)] = Seq.empty): String = addEstablisher(frontendAppConfig,

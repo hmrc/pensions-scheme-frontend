@@ -39,7 +39,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator2, InputOption, Navigator2}
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, Navigator}
 import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -57,7 +57,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
 
   val formProvider = new AddressFormProvider(FakeCountryOptions())
   val trusteeDetails = PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
-  lazy val fakeNavigator = new FakeNavigator2(desiredRoute = onwardRoute)
+  lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
   val fakeAuditService = new StubSuccessfulAuditService()
   val form: Form[Address] = formProvider()
 
@@ -71,7 +71,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[Navigator2].toInstance(FakeNavigator2),
+        bind[Navigator].toInstance(FakeNavigator),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
@@ -123,7 +123,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
           bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
-          bind(classOf[Navigator2]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
+          bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
@@ -162,7 +162,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[Navigator2].toInstance(FakeNavigator2),
+        bind[Navigator].toInstance(FakeNavigator),
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[CountryOptions].to(countryOptions),

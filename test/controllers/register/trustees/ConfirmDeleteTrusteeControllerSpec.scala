@@ -32,7 +32,7 @@ import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.Writes
 import play.api.test.Helpers._
-import utils.{FakeNavigator2, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.register.trustees.confirmDeleteTrustee
 
 class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
@@ -127,7 +127,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      new FakeNavigator2(onwardRoute),
+      new FakeNavigator(onwardRoute),
       FakeDataCacheConnector
     )
 

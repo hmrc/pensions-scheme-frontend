@@ -29,7 +29,7 @@ import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.FakeNavigator2
+import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
@@ -54,7 +54,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       messagesApi,
       FakeDataCacheConnector,
       fakeAddressLookupConnector,
-      new FakeNavigator2(desiredRoute = onwardRoute),
+      new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

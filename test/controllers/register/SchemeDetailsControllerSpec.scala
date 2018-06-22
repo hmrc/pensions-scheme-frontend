@@ -29,7 +29,7 @@ import play.api.libs.json.{Json, Reads}
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeNavigator2, NameMatching, NameMatchingFactory}
+import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
 import views.html.register.schemeDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -55,7 +55,7 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator2(desiredRoute = onwardRoute),
+      new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       formProvider,

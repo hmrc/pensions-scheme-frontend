@@ -27,7 +27,7 @@ import models.requests.DataRequest
 import models.{Index, Mode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
-import utils.Navigator2
+import utils.Navigator
 import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -36,7 +36,7 @@ import scala.concurrent.Future
 
 class TrusteePreviousAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
-                                                     @TrusteesIndividual override val navigator: Navigator2,
+                                                     @TrusteesIndividual override val navigator: Navigator,
                                                      override val cacheConnector: DataCacheConnector,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,

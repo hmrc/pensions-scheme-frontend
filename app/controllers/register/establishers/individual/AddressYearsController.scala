@@ -35,7 +35,7 @@ import viewmodels.address.AddressYearsViewModel
 class AddressYearsController @Inject()(
                                         override val appConfig: FrontendAppConfig,
                                         override val cacheConnector: DataCacheConnector,
-                                        @EstablishersIndividual val navigator: Navigator2,
+                                        @EstablishersIndividual val navigator: Navigator,
                                         override val messagesApi: MessagesApi,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,

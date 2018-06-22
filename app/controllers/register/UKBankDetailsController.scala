@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Navigator2, UserAnswers}
+import utils.{Navigator, UserAnswers}
 import views.html.register.uKBankDetails
 
 import scala.concurrent.Future
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
-                                        @Register navigator: Navigator2,
+                                        @Register navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,

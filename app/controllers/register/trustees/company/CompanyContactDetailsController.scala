@@ -39,7 +39,7 @@ class CompanyContactDetailsController @Inject() (
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: DataCacheConnector,
-                                        @TrusteesCompany navigator: Navigator2,
+                                        @TrusteesCompany navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,

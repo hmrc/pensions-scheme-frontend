@@ -32,7 +32,7 @@ import play.api.mvc.{Action, AnyContent, Result}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Enumerable, Navigator2, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.Future
@@ -41,7 +41,7 @@ class DeclarationController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        dataCacheConnector: DataCacheConnector,
-                                       @Register navigator: Navigator2,
+                                       @Register navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,

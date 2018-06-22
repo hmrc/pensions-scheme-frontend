@@ -139,10 +139,11 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         val result = route(app, fakeRequest).get
 
         status(result) must be(SEE_OTHER)
-        redirectLocation(result) mustEqual Some(onwardRoute.url)
+        redirectLocation(result) mustBe Some(onwardRoute.url)
 
       }
     }
 
   }
+
 }

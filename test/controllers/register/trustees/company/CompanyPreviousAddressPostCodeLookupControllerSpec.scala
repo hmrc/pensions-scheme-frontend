@@ -30,7 +30,6 @@ import org.mockito.Matchers
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -46,8 +45,7 @@ import scala.concurrent.Future
 
 class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRequest with MockitoSugar with ScalaFutures {
 
-  def onwardRoute = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0))
-
+  def onwardRoute: Call = routes.CompanyPreviousAddressListController.onPageLoad(NormalMode, Index(0))
 
   val formProvider = new PostCodeLookupFormProvider()
   val form = formProvider()
@@ -90,8 +88,6 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
             heading = Message(controller.heading),
             subHeading = Some(company.companyName)
           )
-
-          def viewAsString(form: Form[_] = form) = postcodeLookup(frontendAppConfig, form, viewModel)(fakeRequest, messages).toString
 
           val request = addToken(FakeRequest(routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, firstIndex))
             .withHeaders("Csrf-Token" -> "nocheck"))
