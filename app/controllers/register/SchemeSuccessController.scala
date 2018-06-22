@@ -23,12 +23,14 @@ import controllers.actions._
 import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
 import javax.inject.Inject
 import org.joda.time.LocalDate
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.register.schemeSuccess
 
 import scala.concurrent.Future
+import scala.util.Failure
 
 class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -43,7 +45,11 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
       SubmissionReferenceNumberId.retrieve.right.map {
         submissionReferenceNumber =>
           val schemeName = request.userAnswers.get(SchemeDetailsId).map(_.schemeName)
-          cacheConnector.removeAll(request.externalId)
+
+          cacheConnector.removeAll(request.externalId) andThen {
+            case Failure(t: Throwable) => Logger.warn("Could not remove scheme data following successful submission.", t)
+          }
+
           Future.successful(Ok(schemeSuccess(
             appConfig,
             schemeName,
