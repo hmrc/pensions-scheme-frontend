@@ -45,10 +45,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       (SchemeDetailsId and CompanyDetailsId(index)).retrieve.right.map{
         case schemeDetails ~ companyDetails =>
-          val directors: Seq[String] = request
-            .userAnswers
-            .getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
-            .getOrElse(Nil).map(directorDetails => directorDetails.directorName)
+          val directors: Seq[String] = request.userAnswers.allDirectors(index).map(directorDetails => directorDetails.directorName)
 
           Future.successful(Ok(companyReview(appConfig, index, schemeDetails.schemeName, companyDetails.companyName, directors)))
       }

@@ -22,7 +22,6 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
 import models.address.Address
 import models.UniqueTaxReference.{No, Yes}
-import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import models._
 import models.person.PersonDetails

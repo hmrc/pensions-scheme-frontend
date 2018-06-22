@@ -25,7 +25,6 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.individual.{AddressYearsId, EstablisherDetailsId}
 import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
-import models.register.establishers.individual.EstablisherDetails
 import models.{AddressYears, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form

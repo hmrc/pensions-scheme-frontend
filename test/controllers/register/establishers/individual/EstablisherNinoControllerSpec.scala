@@ -25,13 +25,11 @@ import identifiers.register.establishers.individual.{EstablisherDetailsId, Estab
 import models._
 import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
-import models.register.establishers.individual.{EstablisherDetails, EstablishersIndividualMap}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.{FakeNavigator, FakeNavigator2}
+import utils.FakeNavigator2
 import views.html.register.establishers.individual.establisherNino
 
 class EstablisherNinoControllerSpec extends ControllerSpecBase {

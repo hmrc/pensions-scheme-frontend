@@ -30,6 +30,7 @@ case class PersonDetails (firstName: String, middleName:Option[String], lastName
 
 object PersonDetails {
   implicit val format: OFormat[PersonDetails] = Json.format[PersonDetails]
+
   def applyDelete(firstName: String, middleName:Option[String], lastName: String, date:LocalDate): PersonDetails = {
     PersonDetails(firstName, middleName, lastName, date, false)
   }

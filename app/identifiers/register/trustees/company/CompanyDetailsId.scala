@@ -19,12 +19,13 @@ package identifiers.register.trustees.company
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
 import models.CompanyDetails
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, __}
 
 case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] {
   override def path: JsPath = TrusteesId(index).path \ CompanyDetailsId.toString
 }
 
 object CompanyDetailsId {
+  def collectionPath: JsPath = __ \ "trustees" \\ CompanyDetailsId.toString
   override lazy val toString: String = "companyDetails"
 }

@@ -17,20 +17,18 @@
 package utils
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.CompanyDetails
 import models.person.PersonDetails
 import models.register._
-import models.register.establishers.individual.EstablisherDetails
+import models.register.establishers.company.director.DirectorDetails
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
-
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
@@ -76,25 +74,25 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
   def allEstablishers: Seq[(String, String)] = {
 
-    val nameReads: Reads[EntityDetails] =  {
+    val allCompanyEstablisher = getAllRecursive[CompanyDetails](CompanyDetailsId.collectionPath).map(_.filterNot(_.isDeleted).map(
+      details => EstablisherCompanyName(details.companyName)
+    )).getOrElse(Nil)
 
-      val individualName: Reads[EntityDetails] =
-        (__ \ EstablisherDetailsId.toString).read[EstablisherDetails]
-          .map(details => EstablisherIndividualName(s"${details.firstName} ${details.lastName}"))
+    val allIndividualEstablisher = getAllRecursive[PersonDetails](EstablisherDetailsId.collectionPath).map(_.filterNot(_.isDeleted).map(
+      details => EstablisherIndividualName(s"${details.firstName} ${details.lastName}")
+    )).getOrElse(Nil)
 
-      val companyName: Reads[EntityDetails] =
-        (__ \ CompanyDetailsId.toString).read[CompanyDetails]
-          .map(details => EstablisherCompanyName(details.companyName))
+    val allEstablisherEntityDetails = allCompanyEstablisher ++ allIndividualEstablisher
 
-      individualName orElse companyName
+    allEstablisherEntityDetails.zipWithIndex.map {
+      case (name, id) =>
+        name.route(id, None)
     }
+  }
 
-    getAll[EntityDetails](JsPath \ EstablishersId.toString)(nameReads).map(
-      _.zipWithIndex.map {
-        case (name, id) =>
-          name.route(id, None)
-      }
-    ).getOrElse(Seq.empty)
+  def allDirectors(index: Int): Seq[DirectorDetails] = {
+    getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
+      .map(_.filterNot(_.isDeleted)).getOrElse(Nil)
   }
 
   private def traverse[A](seq: Seq[JsResult[A]]): JsResult[Seq[A]] = {
@@ -108,34 +106,27 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         })
       case s =>
         s.collect {
-          case e @ JsError(_) =>
+          case e@JsError(_) =>
             e
         }.reduceLeft(JsError.merge)
     }
   }
 
   def allTrustees: Seq[(String, String)] = {
+    import identifiers.register.trustees._
 
-    val nameReads: Reads[EntityDetails] =  {
+    val allCompanyTrustees = getAllRecursive[CompanyDetails](company.CompanyDetailsId.collectionPath).getOrElse(Seq.empty).filterNot(_.isDeleted).map(
+      details => TrusteeCompanyName(details.companyName)
+    )
+    val allIndividualTrustees = getAllRecursive[PersonDetails](TrusteeDetailsId.collectionPath).getOrElse(Seq.empty).filterNot(_.isDeleted).map(
+      details => TrusteeIndividualName(s"${details.firstName} ${details.lastName}")
+    )
+    val allTrusteeEntityDetails = allCompanyTrustees ++ allIndividualTrustees
 
-      val individualName: Reads[EntityDetails] = (__ \ TrusteeDetailsId.toString)
-        .read[PersonDetails]
-        .map(details => TrusteeIndividualName(details.fullName))
-
-      val companyName: Reads[EntityDetails] = (__ \ identifiers.register.trustees.company.CompanyDetailsId.toString)
-        .read[CompanyDetails]
-        .map(details => TrusteeCompanyName(details.companyName))
-
-      individualName orElse companyName
+    allTrusteeEntityDetails.zipWithIndex.map {
+      case (name, id) =>
+        name.route(id, None)
     }
-
-    getAll[EntityDetails](JsPath \ TrusteesId.toString)(nameReads).map {
-      _.zipWithIndex.map {
-        case (name, id) =>
-          name.route(id, None)
-      }
-    }.getOrElse(Seq.empty)
-
   }
 
   def hasCompanies: Boolean = {
@@ -148,8 +139,8 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   def upsert[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)
-                                                        (fn: UserAnswers => Future[Result])
-                                                        (implicit writes: Writes[id.Data]): Future[Result] = {
+                                                (fn: UserAnswers => Future[Result])
+                                                (implicit writes: Writes[id.Data]): Future[Result] = {
     this
       .set(id)(value)
       .fold(

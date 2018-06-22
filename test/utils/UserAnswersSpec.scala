@@ -17,12 +17,13 @@
 package utils
 
 import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
-import models.register.establishers.individual.EstablisherDetails
+import models.register.establishers.company.director.DirectorDetails
 import models.{CheckMode, CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -51,11 +52,11 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
         EstablishersId.toString -> Json.arr(
           Json.obj(
             EstablisherCompanyDetailsId.toString ->
-              CompanyDetails("my company", None, None)
+              CompanyDetails("my company", None, None, false)
           ),
           Json.obj(
             EstablisherDetailsId.toString ->
-              EstablisherDetails("my", None, "name", LocalDate.now)
+              PersonDetails("my", None, "name", LocalDate.now, false)
           )
         )
       )
@@ -76,15 +77,30 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
     "return the expected results" in {
 
       val userAnswers = UserAnswers()
-        .set(TrusteeDetailsId(0))(PersonDetails("First", None, "Last", LocalDate.now))
-        .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company", None, None))).get
+        .set(TrusteeDetailsId(0))(PersonDetails("First", None, "Last", LocalDate.now, false))
+        .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company", None, None, false))).get
 
       val result = userAnswers.allTrustees
 
-      result must contain("First Last" -> controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(
-        NormalMode, 0).url)
       result must contain("My Company" -> controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(
+        NormalMode, 0).url)
+      result must contain("First Last" -> controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(
         NormalMode, 1).url)
+    }
+  }
+
+  ".allDirectors" must {
+
+    "return the expected results" in {
+
+      val userAnswers = UserAnswers()
+        .set(DirectorDetailsId(0, 0))(DirectorDetails("First", None, "Last", LocalDate.now, false))
+        .flatMap(_.set(DirectorDetailsId(0, 1))(DirectorDetails("First1", None, "Last1", LocalDate.now, true))).get
+
+      val result = userAnswers.allDirectors(0)
+
+      result.size mustEqual 1
+      result mustBe Seq(DirectorDetails("First", None, "Last", LocalDate.now, false))
     }
   }
 

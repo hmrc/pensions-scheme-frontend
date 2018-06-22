@@ -120,9 +120,7 @@ class EstablishersCompanyNavigator2 @Inject()(val dataCacheConnector: DataCacheC
   }
 
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers): Option[NavigateTo] = {
-    val directors = answers
-      .getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
-      .getOrElse(Nil)
+    val directors = answers.allDirectors(index)
 
     if (directors.isEmpty) {
       NavigateTo.save(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(mode, index, 0))

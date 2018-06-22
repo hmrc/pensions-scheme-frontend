@@ -26,7 +26,6 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{EstablisherDetailsId, PreviousAddressId}
 import models.address.{Address, TolerantAddress}
 import models.person.PersonDetails
-import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate

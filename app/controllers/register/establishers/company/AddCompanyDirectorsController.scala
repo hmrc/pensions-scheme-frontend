@@ -55,21 +55,14 @@ class AddCompanyDirectorsController @Inject() (
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
-          val directors = request
-            .userAnswers
-            .getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
-            .getOrElse(Nil)
+          val directors = request.userAnswers.allDirectors(index)
           Future.successful(Ok(addCompanyDirectors(appConfig, form, mode, index, companyName, directors)))
       }
   }
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val directors = request
-        .userAnswers
-        .getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
-        .getOrElse(Nil)
-
+      val directors = request.userAnswers.allDirectors(index)
       if (directors.isEmpty || directors.lengthCompare(appConfig.maxDirectors) >= 0) {
         Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, request.userAnswers)))
       }

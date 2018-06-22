@@ -23,7 +23,6 @@ import forms.register.establishers.individual.UniqueTaxReferenceFormProvider
 import identifiers.register.establishers.individual.{EstablisherDetailsId, UniqueTaxReferenceId}
 import models._
 import models.person.PersonDetails
-import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -54,7 +53,7 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       ),
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test", None, "test", LocalDate.now)
+          PersonDetails("test", None, "test", LocalDate.now)
       )
     )
   )

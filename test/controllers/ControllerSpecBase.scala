@@ -29,7 +29,6 @@ import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.CompanyDetails
 import models.person.PersonDetails
 import models.register.establishers.company.director.DirectorDetails
-import models.register.establishers.individual.EstablisherDetails
 import models.register.{AdviserDetails, SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.Json

@@ -23,14 +23,11 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
-import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{CheckMode, CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
-import play.api.Configuration
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -92,15 +89,15 @@ object SchemeReviewControllerSpec extends ControllerSpecBase {
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherKindId.toString -> "individual",
-        EstablisherDetailsId.toString -> EstablisherDetails("establisher", None, "name", LocalDate.now())
+        EstablisherDetailsId.toString -> PersonDetails("establisher", None, "name", LocalDate.now(), false)
       )
     ),
     "trustees" -> Json.arr(
       Json.obj(
-        TrusteeDetailsId.toString -> PersonDetails("trustee", None, "name", LocalDate.now())
+        TrusteeDetailsId.toString -> PersonDetails("trustee", None, "name", LocalDate.now(), false)
       ),
       Json.obj(
-        identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("trustee company name", None, None)
+        identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("trustee company name", None, None, false)
       )
     )
   )
@@ -108,7 +105,7 @@ object SchemeReviewControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
   val establisherIndv = Seq("establisher name")
   val establisherOrg = Seq("establisher")
-  val trustees = Seq("trustee name", "trustee company name")
+  val trustees = Seq("trustee company name", "trustee name")
   val establisherIndvUrl: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
   val establisherCompanyUrl: Call = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
 
