@@ -62,18 +62,19 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
+
     "remove the trustee in a POST request for a company trustee" in {
       val result = controller(testData(companyId)(companyTrustee)).onSubmit(0, Company)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verifyRemoved(trusteeId)
+      FakeDataCacheConnector.verify(companyId, companyTrustee.copy(isDeleted = true))
     }
 
     "remove the trustee in a POST request for an individual trustee" in {
       val result = controller(testData(individualId)(individualTrustee)).onSubmit(0, Individual)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verifyRemoved(trusteeId)
+      FakeDataCacheConnector.verify(individualId, individualTrustee.copy(isDeleted = true))
     }
 
     "redirect to the next page following a POST request" in {

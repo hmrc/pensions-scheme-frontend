@@ -67,9 +67,30 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      dataCacheConnector.remove(request.externalId, TrusteesId(index)).map { json =>
-        Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, UserAnswers(json)))
+      deleteTrustee(trusteeKind, index) match {
+        case Right(futureUserAnswers) =>
+          futureUserAnswers.map { userAnswers =>
+            Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, userAnswers))
+          }
+        case Left(result) =>
+          result
       }
+  }
+
+  private def deleteTrustee(trusteeKind: TrusteeKind, establisherIndex: Index)(implicit dataRequest: DataRequest[AnyContent]):
+  Either[Future[Result], Future[UserAnswers]] = {
+    trusteeKind match {
+      case Company =>
+        CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
+          dataCacheConnector.save(CompanyDetailsId(establisherIndex), companyDetails.copy(isDeleted = true))
+        }
+      case Individual =>
+        TrusteeDetailsId(establisherIndex).retrieve.right.map { establisherDetails =>
+          dataCacheConnector.save(TrusteeDetailsId(establisherIndex), establisherDetails.copy(isDeleted = true))
+        }
+      case _ =>
+        Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
+    }
   }
 
   private def trusteeName(index: Index, trusteeKind: TrusteeKind)(implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
