@@ -17,19 +17,19 @@
 package controllers.register.establishers.company.director
 
 import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import models.{CompanyDetails, Index, NormalMode}
-import views.html.register.establishers.company.director.confirmDeleteDirector
 import controllers.ControllerSpecBase
+import controllers.actions._
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorId}
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.register.establishers.company.director.DirectorDetails
+import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.libs.json._
-import utils.{FakeNavigator, FakeNavigator2}
+import play.api.test.Helpers._
+import utils.FakeNavigator2
+import views.html.register.establishers.company.director.confirmDeleteDirector
 
 class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
 
@@ -37,15 +37,23 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
 
   "ConfirmDeleteDirector Controller" must {
     "return OK and the correct view for a GET" in {
-      val data = new FakeDataRetrievalAction(Some(testData))
+      val data = new FakeDataRetrievalAction(Some(testData()))
       val result = controller(data).onPageLoad(establisherIndex, directorIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
 
+    "redirect to already deleted view for a GET if the director was already deleted" in {
+      val data = new FakeDataRetrievalAction(Some(testData(directorDeleted)))
+      val result = controller(data).onPageLoad(establisherIndex, directorIndex)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex).url)
+    }
+
     "delete the director on a POST" in {
-      val data = new FakeDataRetrievalAction(Some(testData))
+      val data = new FakeDataRetrievalAction(Some(testData()))
       val result = controller(data).onSubmit(establisherIndex, directorIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
@@ -53,7 +61,7 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page on a successful POST" in {
-      val data = new FakeDataRetrievalAction(Some(testData))
+      val data = new FakeDataRetrievalAction(Some(testData()))
       val result = controller(data).onSubmit(establisherIndex, directorIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
@@ -87,19 +95,21 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
   private lazy val cancelCall = AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
   private val directorDetails = DirectorDetails("John", None, "Doe", LocalDate.now(), false)
 
-  private val testData = Json.obj(
+  private def testData(directors: DirectorDetails = directorDetails) = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
-              directorDetails
+              directors
           )
         )
       )
     )
   )
+
+  val directorDeleted = directorDetails.copy(isDeleted = true)
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 

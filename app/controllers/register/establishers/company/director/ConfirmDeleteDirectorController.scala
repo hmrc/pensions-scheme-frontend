@@ -48,17 +48,22 @@ class ConfirmDeleteDirectorController @Inject()(
     implicit request =>
       (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
         case company ~ director =>
-          Future.successful(
-            Ok(
-              confirmDeleteDirector(
-                appConfig,
-                company.companyName,
-                director.directorName,
-                routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
-                AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
+          director.isDeleted match {
+            case false =>
+              Future.successful(
+                Ok(
+                  confirmDeleteDirector(
+                    appConfig,
+                    company.companyName,
+                    director.directorName,
+                    routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
+                    AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
+                  )
+                )
               )
-            )
-          )
+            case true =>
+              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex)))
+          }
       }
   }
 
