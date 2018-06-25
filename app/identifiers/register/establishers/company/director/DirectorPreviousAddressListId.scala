@@ -17,10 +17,14 @@
 package identifiers.register.establishers.company.director
 
 import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
 import models.address.TolerantAddress
+import play.api.libs.json.JsPath
 
-case class DirectorPreviousAddressListId(establisherId: Int, directorId: Int) extends TypedIdentifier[TolerantAddress]
+case class DirectorPreviousAddressListId(establisherId: Int, directorId: Int) extends TypedIdentifier[TolerantAddress] {
+  override def path: JsPath = EstablishersId(establisherId).path \ "director" \ directorId \ DirectorPreviousAddressListId.toString
+}
 
 object DirectorPreviousAddressListId {
-  override def toString: String = "addressResults"
+  override def toString: String = "directorPreviousAddressList"
 }
