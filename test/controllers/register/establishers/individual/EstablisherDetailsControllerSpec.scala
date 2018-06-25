@@ -30,7 +30,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeNavigator2}
+import utils.FakeNavigator
 import views.html.register.establishers.individual.establisherDetails
 
 class EstablisherDetailsControllerSpec extends ControllerSpecBase {
@@ -45,9 +45,9 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(0)
   val invalidIndex = Index(3)
 
-  val day = LocalDate.now().getDayOfMonth
-  val month = LocalDate.now().getMonthOfYear
-  val year = LocalDate.now().getYear - 20
+  val day: Int = LocalDate.now().getDayOfMonth
+  val month: Int = LocalDate.now().getMonthOfYear
+  val year: Int = LocalDate.now().getYear - 20
 
   val establisherDetailsObj = PersonDetails("firstName", None, "lastName", new LocalDate(year, month, day))
 
@@ -59,7 +59,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator2(desiredRoute = onwardRoute),
+      new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

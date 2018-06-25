@@ -84,7 +84,7 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
   val form = formProvider()
   val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())
   val validPostcode = "ZZ1 1ZZ"
-  val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
+  lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
   val address = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some(validPostcode), Some("GB"))
 
   lazy val viewModel = PostcodeLookupViewModel(
@@ -110,7 +110,7 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
       Future.successful(Seq(address))
     }
   }
-  private def requestResult[T](request: (Application) => Request[T], test: (Request[_], Future[Result]) => Unit)(implicit writeable: Writeable[T]): Unit = {
+  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)(implicit writeable: Writeable[T]): Unit = {
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].toInstance(retrieval),

@@ -80,7 +80,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
         ).map {
           cacheMap =>
             auditEvent.foreach(auditService.sendEvent(_))
-            Redirect(navigator.nextPage(id, mode)(UserAnswers(cacheMap)))
+            Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap)))
         }
       }
     )

@@ -27,10 +27,10 @@ import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeNavigator2}
+import utils.FakeNavigator
 import views.html.register.establishers.individual.uniqueTaxReference
 
 class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
@@ -42,7 +42,7 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   val firstIndex = Index(0)
   val establisherName = "test first name test last name"
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     SchemeDetails.toString ->
       SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     "establishers" -> Json.arr(
@@ -60,7 +60,7 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): UniqueTaxReferenceController =
-    new UniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute),
+    new UniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = uniqueTaxReference(frontendAppConfig, form, NormalMode, firstIndex,

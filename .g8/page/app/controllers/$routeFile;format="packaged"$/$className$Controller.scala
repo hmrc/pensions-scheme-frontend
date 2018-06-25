@@ -9,7 +9,7 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import models.Mode
-import utils.{Navigator, UserAnswers}
+import utils.UserAnswers
 import views.html.$routeFile$.$className;format="decap"$
 
 import scala.concurrent.Future

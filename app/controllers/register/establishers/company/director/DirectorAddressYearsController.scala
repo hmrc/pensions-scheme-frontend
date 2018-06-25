@@ -54,7 +54,12 @@ class DirectorAddressYearsController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
-        post(DirectorAddressYearsId(establisherIndex, directorIndex), mode, form, viewModel(mode, establisherIndex, directorIndex, directorDetails.directorName))
+        post(
+          DirectorAddressYearsId(establisherIndex, directorIndex),
+          mode,
+          form,
+          viewModel(mode, establisherIndex, directorIndex, directorDetails.directorName)
+        )
       }
   }
 

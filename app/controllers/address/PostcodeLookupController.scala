@@ -21,7 +21,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.Retrievals
 import identifiers.TypedIdentifier
 import models.Mode
-import models.address.{TolerantAddress}
+import models.address.TolerantAddress
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -79,21 +79,19 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
 
     case Nil => Future.successful(Ok(postcodeLookup(appConfig, formWithError(noResults), viewmodel)))
 
-      case addresses => {
+      case addresses =>
         cacheConnector.save(
           request.externalId,
           id,
           addresses
         ).map {
           json =>
-            Redirect(navigator.nextPage(id, mode)(UserAnswers(json)))
+            Redirect(navigator.nextPage(id, mode, UserAnswers(json)))
         }
-    }
-  } recoverWith {
 
-      case _ => {
+    } recoverWith {
+      case _ =>
         Future.successful(BadRequest(postcodeLookup(appConfig, formWithError(invalidPostcode), viewmodel)))
-      }
     }
   }
 

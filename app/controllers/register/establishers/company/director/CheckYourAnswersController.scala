@@ -26,7 +26,7 @@ import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{CheckYourAnswersFactory, Navigator2}
+import utils.{CheckYourAnswersFactory, Navigator}
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.AnswerSection
 import views.html.check_your_answers
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
-                                          @EstablishersCompanyDirector navigator: Navigator2,
+                                          @EstablishersCompanyDirector navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,

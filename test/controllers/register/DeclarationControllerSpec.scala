@@ -30,7 +30,7 @@ import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator2, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
 
 class DeclarationControllerSpec extends ControllerSpecBase {
@@ -120,7 +120,7 @@ object DeclarationControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator2(onwardRoute),
+      new FakeNavigator(onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

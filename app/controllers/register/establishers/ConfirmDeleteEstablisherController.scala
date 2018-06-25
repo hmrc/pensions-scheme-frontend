@@ -33,7 +33,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Establishers
-import utils.{Navigator2, UserAnswers}
+import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.confirmDeleteEstablisher
 
 import scala.concurrent.Future
@@ -42,7 +42,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
                                                     dataCacheConnector: DataCacheConnector,
-                                                    @Establishers navigator: Navigator2,
+                                                    @Establishers navigator: Navigator,
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction

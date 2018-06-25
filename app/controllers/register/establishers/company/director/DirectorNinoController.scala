@@ -29,7 +29,7 @@ import identifiers.register.establishers.company.director.{DirectorDetailsId, Di
 import models.{Index, Mode, Nino}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Enumerable, Navigator, Navigator2, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.director.directorNino
 
 import scala.concurrent.Future
@@ -38,7 +38,7 @@ class DirectorNinoController @Inject()(
                                                appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
                                                dataCacheConnector: DataCacheConnector,
-                                               @EstablishersCompanyDirector navigator: Navigator2,
+                                               @EstablishersCompanyDirector navigator: Navigator,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,

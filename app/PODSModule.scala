@@ -18,7 +18,7 @@ import com.google.inject.AbstractModule
 import connectors.{DataCacheConnector, PSANameCacheConnector}
 import navigators._
 import utils.annotations._
-import utils.{Navigator, Navigator2}
+import utils.Navigator
 
 class PODSModule extends AbstractModule {
 
@@ -30,76 +30,40 @@ class PODSModule extends AbstractModule {
       .to(classOf[PSANameCacheConnector])
 
     bind(classOf[Navigator])
-      .annotatedWith(classOf[EstablishersIndividual])
-      .to(classOf[EstablishersIndividualNavigator])
-
-    bind(classOf[Navigator])
       .annotatedWith(classOf[Register])
       .to(classOf[RegisterNavigator])
 
-    bind(classOf[Navigator2])
-      .annotatedWith(classOf[Register])
-      .to(classOf[RegisterNavigator2])
-
     bind(classOf[Navigator])
       .annotatedWith(classOf[EstablishersCompany])
-        .to(classOf[EstablishersCompanyNavigator])
-
-    bind(classOf[Navigator2])
-      .annotatedWith(classOf[EstablishersCompany])
-      .to(classOf[EstablishersCompanyNavigator2])
+      .to(classOf[EstablishersCompanyNavigator])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[TrusteesCompany])
       .to(classOf[TrusteesCompanyNavigator])
 
-    bind(classOf[Navigator2])
-      .annotatedWith(classOf[TrusteesCompany])
-      .to(classOf[TrusteesCompanyNavigator2])
+    bind(classOf[Navigator])
+      .annotatedWith(classOf[Establishers])
+      .to(classOf[EstablishersNavigator])
+
+    bind(classOf[Navigator])
+      .annotatedWith(classOf[Trustees])
+      .to(classOf[TrusteesNavigator])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[TrusteesIndividual])
       .to(classOf[TrusteesIndividualNavigator])
 
     bind(classOf[Navigator])
-      .annotatedWith(classOf[EstablishersCompanyDirector])
-      .to(classOf[EstablishersCompanyDirectorNavigator])
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[Establishers])
-      .to(classOf[EstablishersNavigator])
-
-    bind(classOf[Navigator2])
-      .annotatedWith(classOf[Establishers])
-      .to(classOf[EstablishersNavigator2])
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[Trustees])
-      .to(classOf[TrusteesNavigator])
-
-    bind(classOf[Navigator2])
-      .annotatedWith(classOf[Trustees])
-      .to(classOf[TrusteesNavigator2])
-
-    bind(classOf[Navigator])
       .annotatedWith(classOf[Adviser])
       .to(classOf[AdviserNavigator])
 
-    bind(classOf[Navigator2])
-      .annotatedWith(classOf[TrusteesIndividual])
-      .to(classOf[TrusteesIndividualNavigator2])
-
-    bind(classOf[Navigator2])
-      .annotatedWith(classOf[Adviser])
-      .to(classOf[AdviserNavigator2])
-
-    bind(classOf[Navigator2])
+    bind(classOf[Navigator])
       .annotatedWith(classOf[EstablishersIndividual])
-      .to(classOf[EstablishersIndividualNavigator2])
+      .to(classOf[EstablishersIndividualNavigator])
 
-    bind(classOf[Navigator2])
+    bind(classOf[Navigator])
       .annotatedWith(classOf[EstablishersCompanyDirector])
-      .to(classOf[EstablishersCompanyDirectorNavigator2])
+      .to(classOf[EstablishersCompanyDirectorNavigator])
 
   }
 

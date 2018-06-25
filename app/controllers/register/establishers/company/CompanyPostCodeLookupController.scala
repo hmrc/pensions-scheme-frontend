@@ -47,8 +47,6 @@ class CompanyPostCodeLookupController @Inject()(
 
   private val title: Message = "messages__companyAddress__title"
   private val heading: Message = "messages__companyAddress__heading"
-  private val invalidPostcode: Message = "messages__error__postcode_invalid"
-  private val noResults: Message = "messages__error__postcode_no_results"
 
   protected val form: Form[String] = formProvider()
 
