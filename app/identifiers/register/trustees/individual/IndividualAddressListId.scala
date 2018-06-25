@@ -16,10 +16,14 @@
 
 package identifiers.register.trustees.individual
 
-import identifiers.{Identifier, TypedIdentifier}
+import identifiers.TypedIdentifier
+import identifiers.register.trustees.TrusteesId
 import models.address.TolerantAddress
+import play.api.libs.json.JsPath
 
-case class IndividualAddressListId(index: Int) extends TypedIdentifier[TolerantAddress]
+case class IndividualAddressListId(index: Int) extends TypedIdentifier[TolerantAddress] {
+  override def path: JsPath = TrusteesId(index).path \ IndividualAddressListId.toString
+}
 
 object IndividualAddressListId {
   override def toString: String = "IndividualAddressList"
