@@ -23,22 +23,20 @@ import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.{SchemeDetailsId, SchemeReviewId}
 import javax.inject.Inject
-import models.register.establishers.EstablisherKind
-import models.register.establishers.EstablisherKind.{Company, Indivdual}
 import models.register.{SchemeDetails, SchemeType}
 import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Enumerable, Navigator2}
+import utils.{Enumerable, Navigator}
 import views.html.register.schemeReview
 
 import scala.concurrent.Future
 
 class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       @Register navigator: Navigator2,
+                                       @Register navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction) extends FrontendController with I18nSupport with

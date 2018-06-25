@@ -19,29 +19,25 @@ package models.register
 import models.NormalMode
 
 sealed trait EntityDetails {
-  def route(id1: Int, id2: Option[Int]): (String, String)
+  def route(id1: Int, id2: Option[Int]): (String, Boolean, String)
 }
 
-  case class TrusteeIndividualName(name: String) extends EntityDetails {
-    override def route(id: Int, id2: Option[Int]): (String, String) =
-      name ->
-        controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id).url
+  case class TrusteeIndividualName(name: String, isDeleted: Boolean) extends EntityDetails {
+    override def route(id: Int, id2: Option[Int]): (String, Boolean, String) =
+      (name, isDeleted, controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id).url)
   }
 
-  case class TrusteeCompanyName(name: String) extends EntityDetails {
-    override def route(id: Int, id2: Option[Int]): (String, String) =
-      name ->
-        controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id).url
+  case class TrusteeCompanyName(name: String, isDeleted: Boolean) extends EntityDetails {
+    override def route(id: Int, id2: Option[Int]): (String, Boolean, String) =
+      (name, isDeleted, controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id).url)
   }
 
-  case class EstablisherIndividualName(name: String) extends EntityDetails {
-    override def route(id: Int, id2: Option[Int]): (String, String) =
-      name ->
-        controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, id).url
+  case class EstablisherIndividualName(name: String, isDeleted: Boolean) extends EntityDetails {
+    override def route(id: Int, id2: Option[Int]): (String, Boolean, String) =
+      (name, isDeleted, controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, id).url)
   }
 
-  case class EstablisherCompanyName(name: String) extends EntityDetails {
-    override def route(id: Int, id2: Option[Int]): (String, String) =
-      name ->
-        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id).url
+  case class EstablisherCompanyName(name: String, isDeleted: Boolean) extends EntityDetails {
+    override def route(id: Int, id2: Option[Int]): (String, Boolean, String) =
+      (name, isDeleted, controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id).url)
   }

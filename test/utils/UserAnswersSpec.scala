@@ -24,7 +24,7 @@ import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompany
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
 import models.register.establishers.company.director.DirectorDetails
-import models.{CheckMode, CompanyDetails, NormalMode}
+import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
@@ -52,11 +52,11 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
         EstablishersId.toString -> Json.arr(
           Json.obj(
             EstablisherCompanyDetailsId.toString ->
-              CompanyDetails("my company", None, None, false)
+              CompanyDetails("my company", None, None)
           ),
           Json.obj(
             EstablisherDetailsId.toString ->
-              PersonDetails("my", None, "name", LocalDate.now, false)
+              PersonDetails("my", None, "name", LocalDate.now)
           )
         )
       )
@@ -77,14 +77,14 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
     "return the expected results" in {
 
       val userAnswers = UserAnswers()
-        .set(TrusteeDetailsId(0))(PersonDetails("First", None, "Last", LocalDate.now, false))
-        .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company", None, None, false))).get
+        .set(TrusteeDetailsId(0))(PersonDetails("First", None, "Last", LocalDate.now))
+        .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company", None, None))).get
 
       val result = userAnswers.allTrustees
 
-      result must contain("My Company" -> controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(
-        NormalMode, 0).url)
       result must contain("First Last" -> controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(
+        NormalMode, 0).url)
+      result must contain("My Company" -> controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(
         NormalMode, 1).url)
     }
   }

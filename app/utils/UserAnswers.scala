@@ -17,9 +17,11 @@
 package utils
 
 import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.CompanyDetails
 import models.person.PersonDetails
@@ -29,6 +31,7 @@ import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
+
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
@@ -74,20 +77,26 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
   def allEstablishers: Seq[(String, String)] = {
 
-    val allCompanyEstablisher = getAllRecursive[CompanyDetails](CompanyDetailsId.collectionPath).map(_.filterNot(_.isDeleted).map(
-      details => EstablisherCompanyName(details.companyName)
-    )).getOrElse(Nil)
+    val nameReads: Reads[EntityDetails] =  {
 
-    val allIndividualEstablisher = getAllRecursive[PersonDetails](EstablisherDetailsId.collectionPath).map(_.filterNot(_.isDeleted).map(
-      details => EstablisherIndividualName(s"${details.firstName} ${details.lastName}")
-    )).getOrElse(Nil)
+      val individualName: Reads[EntityDetails] =
+        (__ \ EstablisherDetailsId.toString).read[PersonDetails]
+          .map(details => EstablisherIndividualName(s"${details.firstName} ${details.lastName}", details.isDeleted))
 
-    val allEstablisherEntityDetails = allCompanyEstablisher ++ allIndividualEstablisher
+      val companyName: Reads[EntityDetails] =
+        (__ \ CompanyDetailsId.toString).read[CompanyDetails]
+          .map(details => EstablisherCompanyName(details.companyName, details.isDeleted))
 
-    allEstablisherEntityDetails.zipWithIndex.map {
-      case (name, id) =>
-        name.route(id, None)
+      individualName orElse companyName
     }
+
+    getAll[EntityDetails](JsPath \ EstablishersId.toString)(nameReads).zipWithIndex.flatMap{
+      case (entity, id) =>
+        entity.filterNot(_.route(id, None)._2).map{ filtered =>
+          val (name, _, url) = filtered.route(id, None)
+          (name, url)
+        }
+    }.toSeq
   }
 
   def allDirectors(index: Int): Seq[DirectorDetails] = {
@@ -113,20 +122,27 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   def allTrustees: Seq[(String, String)] = {
-    import identifiers.register.trustees._
 
-    val allCompanyTrustees = getAllRecursive[CompanyDetails](company.CompanyDetailsId.collectionPath).getOrElse(Seq.empty).filterNot(_.isDeleted).map(
-      details => TrusteeCompanyName(details.companyName)
-    )
-    val allIndividualTrustees = getAllRecursive[PersonDetails](TrusteeDetailsId.collectionPath).getOrElse(Seq.empty).filterNot(_.isDeleted).map(
-      details => TrusteeIndividualName(s"${details.firstName} ${details.lastName}")
-    )
-    val allTrusteeEntityDetails = allCompanyTrustees ++ allIndividualTrustees
+    val nameReads: Reads[EntityDetails] = {
 
-    allTrusteeEntityDetails.zipWithIndex.map {
-      case (name, id) =>
-        name.route(id, None)
+      val individualName: Reads[EntityDetails] = (__ \ TrusteeDetailsId.toString)
+        .read[PersonDetails]
+        .map(details => TrusteeIndividualName(details.fullName, details.isDeleted))
+
+      val companyName: Reads[EntityDetails] = (__ \ identifiers.register.trustees.company.CompanyDetailsId.toString)
+        .read[CompanyDetails]
+        .map(details => TrusteeCompanyName(details.companyName, details.isDeleted))
+
+      individualName orElse companyName
     }
+
+    getAll[EntityDetails](JsPath \ TrusteesId.toString)(nameReads).zipWithIndex.flatMap {
+      case (entity, id) =>
+        entity.filterNot(_.route(id, None)._2).map { filtered =>
+          val (name, _, url) = filtered.route(id, None)
+          (name, url)
+        }
+    }.toSeq
   }
 
   def hasCompanies: Boolean = {

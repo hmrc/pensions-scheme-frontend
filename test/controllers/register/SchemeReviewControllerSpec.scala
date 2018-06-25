@@ -32,7 +32,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
-import utils.FakeNavigator2
+import utils.FakeNavigator
 import views.html.register.schemeReview
 
 class SchemeReviewControllerSpec extends ControllerSpecBase {
@@ -89,15 +89,15 @@ object SchemeReviewControllerSpec extends ControllerSpecBase {
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherKindId.toString -> "individual",
-        EstablisherDetailsId.toString -> PersonDetails("establisher", None, "name", LocalDate.now(), false)
+        EstablisherDetailsId.toString -> PersonDetails("establisher", None, "name", LocalDate.now())
       )
     ),
     "trustees" -> Json.arr(
       Json.obj(
-        TrusteeDetailsId.toString -> PersonDetails("trustee", None, "name", LocalDate.now(), false)
+        TrusteeDetailsId.toString -> PersonDetails("trustee", None, "name", LocalDate.now())
       ),
       Json.obj(
-        identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("trustee company name", None, None, false)
+        identifiers.register.trustees.company.CompanyDetailsId.toString -> CompanyDetails("trustee company name", None, None)
       )
     )
   )
@@ -105,7 +105,7 @@ object SchemeReviewControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
   val establisherIndv = Seq("establisher name")
   val establisherOrg = Seq("establisher")
-  val trustees = Seq("trustee company name", "trustee name")
+  val trustees = Seq("trustee name", "trustee company name")
   val establisherIndvUrl: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
   val establisherCompanyUrl: Call = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
 
@@ -117,7 +117,7 @@ object SchemeReviewControllerSpec extends ControllerSpecBase {
     val application = new GuiceApplicationBuilder()
     val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-    new SchemeReviewController(appConfig, messagesApi, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
+    new SchemeReviewController(appConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl)
   }
 
