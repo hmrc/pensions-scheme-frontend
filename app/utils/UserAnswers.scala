@@ -145,6 +145,20 @@ case class UserAnswers(json: JsValue = Json.obj()) {
     }.getOrElse(Seq.empty)
   }
 
+  def establishersCount: Int = {
+    (json \ EstablishersId.toString).validate[JsArray] match {
+      case JsSuccess(establisherArray, _) => establisherArray.value.size
+      case _ => 0
+    }
+  }
+
+  def trusteesCount: Int = {
+    (json \ TrusteesId.toString).validate[JsArray] match {
+      case JsSuccess(trusteesArray, _) => trusteesArray.value.size
+      case _ => 0
+    }
+  }
+
   def hasCompanies: Boolean = {
     val establishers = json \ "establishers" \\ "companyDetails"
 

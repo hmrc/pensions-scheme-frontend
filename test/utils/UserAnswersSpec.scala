@@ -133,6 +133,47 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
     }
   }
 
+  ".establishersCount" must {
+
+    "return the count of all establishers irrespective of whether they are deleted or not" in {
+
+      val json = Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            EstablisherCompanyDetailsId.toString ->
+              CompanyDetails("my company", None, None)
+          ),
+          Json.obj(
+            EstablisherDetailsId.toString ->
+              PersonDetails("my", None, "name", LocalDate.now, true)
+          ),
+          Json.obj(
+            EstablisherDetailsId.toString ->
+              PersonDetails("my", None, "name", LocalDate.now)
+          )
+        )
+      )
+
+      val userAnswers = UserAnswers(json)
+
+      val result = userAnswers.establishersCount
+
+      result mustEqual 3
+    }
+  }
+
+  ".trusteesCount" must {
+
+    "return the count of all trustees irrespective of whether they are deleted or not" in {
+      val userAnswers = UserAnswers()
+        .set(TrusteeDetailsId(0))(PersonDetails("First", None, "Last", LocalDate.now, true))
+        .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company", None, None))).get
+
+      val result = userAnswers.trusteesCount
+      result mustEqual 2
+    }
+  }
+
   ".getAllRecursive" must {
 
     "get all matching recursive results" in {
