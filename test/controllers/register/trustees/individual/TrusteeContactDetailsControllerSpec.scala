@@ -22,14 +22,15 @@ import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.trustees.individual.{TrusteeContactDetailsId, TrusteeDetailsId}
 import models.person.PersonDetails
-import models.{ContactDetails, Index, NormalMode}
+import models.{ContactDetails, Index, Mode, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.{AnyContent, Call, Request}
 import play.api.test.Helpers._
 import utils.{FakeNavigator, UserAnswers}
-import views.html.register.trustees.individual.trusteeContactDetails
+import viewmodels.{ContactDetailsViewModel, Message}
+import views.html.contactDetails
 
 class TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
 
@@ -45,28 +46,28 @@ class TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val filledForm = form.fill(contactDetails)
-      val result = controller(trusteeAndAnswerData(contactDetails)).onPageLoad(NormalMode, index)(fakeRequest)
+      val filledForm = form.fill(contactDetailsModel)
+      val result = controller(trusteeAndAnswerData(contactDetailsModel)).onPageLoad(NormalMode, index)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(filledForm)
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val request = postRequest(contactDetails)
+      val request = postRequest(contactDetailsModel)
 
-      val result = controller().onSubmit(NormalMode, index)(request)
+      val result = controller(trusteeData).onSubmit(NormalMode, index)(request)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "save the answer" in {
-      val request = postRequest(contactDetails)
+      val request = postRequest(contactDetailsModel)
 
-      val result = controller().onSubmit(NormalMode, index)(request)
+      val result = controller(trusteeData).onSubmit(NormalMode, index)(request)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verify(TrusteeContactDetailsId(index), contactDetails)
+      FakeDataCacheConnector.verify(TrusteeContactDetailsId(index), contactDetailsModel)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
@@ -97,7 +98,7 @@ class TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
 
 object TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
   private val index = Index(0)
 
   private val trustee = PersonDetails(
@@ -107,7 +108,7 @@ object TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
     LocalDate.now()
   )
 
-  private val contactDetails = ContactDetails(
+  private val contactDetailsModel = ContactDetails(
     "john.doe@doe.net",
     "1234567890"
   )
@@ -115,12 +116,20 @@ object TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
   private val formProvider = new ContactDetailsFormProvider()
   private val form = formProvider()
 
+  private def viewmodel(mode: Mode, index: Index, trusteeName: String) = ContactDetailsViewModel(
+    postCall = routes.TrusteeContactDetailsController.onSubmit(mode, index),
+    title = Message("messages__trustee_contact_details__title"),
+    heading = Message("messages__trustee_contact_details__heading"),
+    body = Message("messages__contact_details__body"),
+    subHeading = Some(trusteeName)
+  )
+
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
     new TrusteeContactDetailsController(
+      new FakeNavigator(desiredRoute = onwardRoute),
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
@@ -128,12 +137,10 @@ object TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
     )
 
   private def viewAsString(form: Form[_] = form) =
-    trusteeContactDetails(
+    contactDetails(
       frontendAppConfig,
       form,
-      NormalMode,
-      index,
-      trustee.fullName
+      viewmodel(NormalMode, index, trustee.fullName)
     )(fakeRequest, messages).toString
 
   private def trusteeUserAnswers: UserAnswers = {
