@@ -68,8 +68,6 @@ messages__error__sautr_invalid = Enter a valid 10 digit Self Assessment Unique T
 messages__error__no_sautr_establisher = You need to tell us why the establisher does not have a SAUTR
 messages__error__no_sautr_length = The reason cannot be more than 160 characters
 messages__error__no_sautr_invalid = The reason cannot contain invalid characters
-messages__error__email = Enter an email address
-messages__error__phone = Enter a phone number
 messages__error__address_line_1_required = Enter the first line of address
 messages__error__address_line_2_required = Enter the second line of address
 messages__error__address_line_1_length = The first line of address cannot be more than 35 characters
@@ -271,10 +269,33 @@ messages__establisher__no_sautr = Tell us why the establisher does not have a SA
 messages__error__has_sautr_establisher = Select yes if the establisher has a SAUTR
 
 messages__establisher_individual_contact_details__title = Enter the scheme establisher’s contact details
+messages__establisher_individual_contact_details__heading = Enter the scheme establisher’s contact details
+
+messages__establisher_company_contact_details__title = Enter the company’s contact details
+messages__establisher_company_contact_details__heading = Enter the company’s contact details
+
+messages__company_director_contact__title = Enter the director’s contact details
+messages__company_director_contact__heading = Enter the director’s contact details
+
+messages__trustee_company_contact_details__title = Enter the company’s contact details
+messages__trustee_company_contact_details__heading = Enter the company’s contact details
+
+messages__trustee_contact_details__title = Enter the trustee’s contact details
+messages__trustee_contact_details__heading = Enter the trustee’s contact details
+
+messages__contact_details__body = We will use this information to contact you about your schemes. You can enter a group or individual email.
+
+messages__contact_details__email = Email address
+messages__contact_details__phone = Phone number
+
+messages__error__email = Enter an email address
+messages__error__phone = Enter a phone number
 messages__error__email_length = The email address cannot be more than 132 characters
 messages__error__email_invalid = Enter a valid email address
 messages__error__phone_length = The telephone number cannot be more than 24 characters
 messages__error__phone_invalid = The telephone number can only contain numbers
+
+messages__trusteeContactDetails__checkYourAnswersLabel = Trustee’s contact details
 
 messages__establisher__has_ct_utr__title = Does the establisher have a Corporation Tax Unique Taxpayer Reference number (CTUTR)?
 messages__establisher__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
@@ -299,8 +320,6 @@ messages__error__company_name = Enter the company name
 messages__error__vat_length = The VAT Registration number cannot be more than 9 characters
 messages__error__vat_invalid = Enter a valid VAT Registration number
 messages__error__paye_length = The PAYE number cannot be more than 13 characters
-
-messages__establisher_company_contact_details__title = Enter the company's contact details
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the residential address for this person.
@@ -391,9 +410,6 @@ messages__company__paye_error_invalid = Enter a valid PAYE number
 
 messages__companyPreviousAddress__checkYourAnswersLabel = Previous Address
 
-messages__company_director_contact__title = Contact details for director
-messages__company_director_contact__heading = Contact details for director
-
 messages__director_nino_question_cya_label = Does the director have a National Insurance number?
 messages__director_nino_cya_label = National Insurance number
 messages__director_nino_reason_cya_label = Reason the director does not have a National Insurance number
@@ -446,8 +462,6 @@ messages__companyReview__company__editLink = Edit company details
 messages__companyReview__directors__heading = Company directors
 messages__companyReview__directors__editLink = Add, delete or edit company directors
 messages__companyReview__directors__changeLink = Change company directors
-
-messages__trustee_company_contact_details__title = Company contact details
 
 messages__companyRegistrationNumber__title = Does the trustee have a Company Registration number?
 messages__companyRegistrationNumber__heading = Does the trustee have a Company Registration number?
@@ -565,14 +579,6 @@ messages__trusteeUtr_question_cya_label = Does the trustee have a Unique Taxpaye
 messages__trusteePreviousAddress__title = Trustee’s address
 messages__trusteePreviousAddress__heading = Trustee’s address
 messages__trusteePreviousAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
-
-messages__trusteeContactDetails__title = Trustee’s contact details
-messages__trusteeContactDetails__heading = Trustee’s contact details
-messages__trusteeContactDetails__emailAddress = Email address
-messages__trusteeContactDetails__phoneNumber = Phone number
-messages__trusteeContactDetails__checkYourAnswersLabel = Trustee’s contact details
-
-contactDetails.body = We will use this information to contact you about your schemes. You can enter a group or individual email.
 
 messages__declaration__title = Declaration
 messages__declaration__heading = Declaration
