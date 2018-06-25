@@ -31,7 +31,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator2
+import utils.Navigator
 import utils.annotations.Trustees
 import views.html.register.trustees.addTrustee
 
@@ -41,7 +41,7 @@ class AddTrusteeController @Inject()(
                                       appConfig: FrontendAppConfig,
                                       override val messagesApi: MessagesApi,
                                       dataCacheConnector: DataCacheConnector,
-                                      @Trustees navigator: Navigator2,
+                                      @Trustees navigator: Navigator,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,

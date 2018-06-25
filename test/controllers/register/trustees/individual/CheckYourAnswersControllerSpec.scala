@@ -79,7 +79,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
-      new FakeNavigator2(onwardRoute),
+      new FakeNavigator(onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

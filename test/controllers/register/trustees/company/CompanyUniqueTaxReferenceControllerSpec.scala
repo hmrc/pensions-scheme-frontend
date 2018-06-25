@@ -26,11 +26,13 @@ import models._
 import models.UniqueTaxReference
 import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeNavigator2}
+import utils.FakeNavigator
 import views.html.register.trustees.company.companyUniqueTaxReference
+
+//scalastyle:off magic.number
 
 class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
 
@@ -42,7 +44,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   val form: Form[UniqueTaxReference] = formProvider()
   val companyName = "test company name"
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     SchemeDetails.toString ->
       SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     TrusteesId.toString -> Json.arr(
@@ -60,7 +62,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany): CompanyUniqueTaxReferenceController =
-    new CompanyUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute),
+    new CompanyUniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = companyUniqueTaxReference(frontendAppConfig, form, NormalMode, firstIndex,

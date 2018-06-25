@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.CheckYourAnswers.Ops._
 import utils.annotations.Adviser
-import utils.{CountryOptions, Navigator2}
+import utils.{CountryOptions, Navigator}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -38,7 +38,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         @Adviser navigator: Navigator2,
+                                         @Adviser navigator: Navigator,
                                          implicit val countryOptions: CountryOptions,
                                          pensionsSchemeConnector: PensionsSchemeConnector) extends FrontendController with I18nSupport {
 

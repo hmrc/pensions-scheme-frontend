@@ -37,7 +37,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
-import utils._
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, Navigator, UserAnswers}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
@@ -225,7 +225,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
             )
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result) mustEqual Some(onwardRoute.url)
+            redirectLocation(result) mustBe Some(onwardRoute.url)
 
             val address = Address("value 1", "value 2", None, None, Some("AB1 1AB"), "GB")
 
@@ -301,7 +301,8 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
 
       running(_.overrides(
         bind[CountryOptions].to[FakeCountryOptions],
-        bind[AuditService].to[StubSuccessfulAuditService]
+        bind[AuditService].to[StubSuccessfulAuditService],
+        bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
 

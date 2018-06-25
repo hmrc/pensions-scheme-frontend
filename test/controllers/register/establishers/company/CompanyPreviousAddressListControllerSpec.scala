@@ -117,14 +117,16 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
     "redirect to postcode lookup when no address results exist (get)" in {
       val result = controller().onPageLoad(NormalMode, 0)(fakeRequest)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0).url
+      redirectLocation(result).value mustEqual
+        controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0).url
     }
 
     "redirect to postcode lookup when no address results exist (post)" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "0"))
       val result = controller().onSubmit(NormalMode, 0)(postRequest)
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0).url
+      redirectLocation(result).value mustEqual
+        controllers.register.establishers.company.routes.CompanyPreviousAddressPostcodeLookupController.onPageLoad(NormalMode, 0).url
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

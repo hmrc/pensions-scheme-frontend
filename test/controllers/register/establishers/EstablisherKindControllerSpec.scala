@@ -29,7 +29,7 @@ import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator2
+import utils.FakeNavigator
 import views.html.register.establishers.establisherKind
 
 class EstablisherKindControllerSpec extends ControllerSpecBase {
@@ -56,7 +56,7 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName):EstablisherKindController =
-    new EstablisherKindController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute),
+    new EstablisherKindController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = establisherKind(frontendAppConfig, form, NormalMode,firstIndex,schemeName)(fakeRequest, messages).toString

@@ -39,7 +39,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils._
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, Navigator}
 import utils.annotations.TrusteesIndividual
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -57,7 +57,7 @@ class TrusteePreviousAddressControllerSpec extends ControllerSpecBase with CSRFR
 
   val formProvider = new AddressFormProvider(FakeCountryOptions())
   val trusteeDetails = PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
-  val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
+  lazy val fakeNavigator = new FakeNavigator(desiredRoute = onwardRoute)
   val fakeAuditService = new StubSuccessfulAuditService()
   val form: Form[Address] = formProvider()
 

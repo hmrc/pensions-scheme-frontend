@@ -23,7 +23,7 @@ import models.{CheckMode, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{CheckYourAnswersFactory, CountryOptions, DateHelper, FakeNavigator2, InputOption}
+import utils.{CheckYourAnswersFactory, CountryOptions, DateHelper, FakeNavigator, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -55,7 +55,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val onwardRoute = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, 0)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CheckYourAnswersController =
-    new director.CheckYourAnswersController(frontendAppConfig, messagesApi, new FakeNavigator2(onwardRoute), FakeAuthAction,
+    new director.CheckYourAnswersController(frontendAppConfig, messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, checkYourAnswersFactory)
 
   def viewAsString(): String = check_your_answers(frontendAppConfig, answers, Some(testSchemeName), postUrl)(fakeRequest, messages).toString

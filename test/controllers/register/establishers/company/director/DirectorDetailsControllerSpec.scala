@@ -16,30 +16,28 @@
 
 package controllers.register.establishers.company.director
 
-import play.api.data.Form
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.{FakeNavigator, FakeNavigator2}
 import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import forms.register.establishers.company.director.DirectorDetailsFormProvider
-import identifiers.register.establishers.company.director.DirectorDetailsId
-import models.{CompanyDetails, Index, NormalMode}
-import models.register.establishers.company.director.DirectorDetails
-import views.html.register.establishers.company.director.directorDetails
 import controllers.ControllerSpecBase
-import identifiers.register.SchemeDetailsId
+import controllers.actions._
+import forms.register.establishers.company.director.DirectorDetailsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.individual.EstablisherDetailsId
-import models.register.{SchemeDetails, SchemeType}
+import identifiers.register.establishers.company.director.DirectorDetailsId
+import models.register.establishers.company.director.DirectorDetails
+import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
-import play.api.libs.json
+import play.api.data.Form
+import play.api.libs.json.Json
+import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator
+import views.html.register.establishers.company.director.directorDetails
+
+//scalastyle:off magic.number
 
 class DirectorDetailsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new DirectorDetailsFormProvider()
   val form = formProvider()
@@ -50,18 +48,18 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
 
   val companyName ="test company name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): DirectorDetailsController =
     new DirectorDetailsController(
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator2(desiredRoute = onwardRoute),
+      new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider)
 
-  def viewAsString(form: Form[_] = form) = directorDetails(
+  def viewAsString(form: Form[_] = form): String = directorDetails(
     frontendAppConfig,
     form,
     NormalMode,
@@ -69,9 +67,9 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
     firstDirectorIndex,
     companyName)(fakeRequest, messages).toString
 
-  val day = LocalDate.now().getDayOfMonth
-  val month = LocalDate.now().getMonthOfYear
-  val year = LocalDate.now().getYear - 20
+  val day: Int = LocalDate.now().getDayOfMonth
+  val month: Int = LocalDate.now().getMonthOfYear
+  val year: Int = LocalDate.now().getYear - 20
 
   "DirectorDetails Controller" must {
 

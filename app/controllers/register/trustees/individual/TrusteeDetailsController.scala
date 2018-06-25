@@ -32,7 +32,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesIndividual
-import utils.{Enumerable, Navigator2, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.individual.trusteeDetails
 
 import scala.concurrent.Future
@@ -41,7 +41,7 @@ class TrusteeDetailsController @Inject() (
                                            appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            dataCacheConnector: DataCacheConnector,
-                                           @TrusteesIndividual navigator: Navigator2,
+                                           @TrusteesIndividual navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,

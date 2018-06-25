@@ -59,7 +59,7 @@ trait AddressYearsController extends FrontendController with Retrievals with I18
       addressYears =>
         cacheConnector.save(id, addressYears).map {
           answers =>
-            Redirect(navigator.nextPage(id, mode)(answers))
+            Redirect(navigator.nextPage(id, mode, answers))
         }
     )
   }

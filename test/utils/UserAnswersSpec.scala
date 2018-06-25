@@ -70,6 +70,35 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
           controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 1).url
       )
     }
+
+    "return a map of establishers names and edit links when one of the establsihers is deleted" in {
+
+      val json = Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            EstablisherDetailsId.toString ->
+              PersonDetails("my", None, "name 1", LocalDate.now)
+          ),
+          Json.obj(
+            EstablisherCompanyDetailsId.toString ->
+              CompanyDetails("my company 2", None, None, true)
+          ),
+          Json.obj(
+            EstablisherDetailsId.toString ->
+              PersonDetails("my", None, "name 4", LocalDate.now)
+          )
+        )
+      )
+
+      val userAnswers = UserAnswers(json)
+
+      userAnswers.allEstablishers mustEqual Seq(
+        "my name 1" ->
+          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url,
+        "my name 4" ->
+        controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 1).url
+      )
+    }
   }
 
   ".allTrustees" must {

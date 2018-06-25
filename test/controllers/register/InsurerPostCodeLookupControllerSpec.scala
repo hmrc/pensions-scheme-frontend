@@ -23,7 +23,7 @@ import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.SchemeDetailsId
 import models.NormalMode
-import models.address.{Address, AddressRecord, TolerantAddress}
+import models.address.TolerantAddress
 import models.person.PersonDetails
 import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
@@ -109,7 +109,7 @@ object InsurerPostCodeLookupControllerSpec extends OptionValues {
     }
   }
 
-  private def requestResult[T](request: (Application) => Request[T], test: (Request[_], Future[Result]) => Unit)
+  private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)
                               (implicit writeable: Writeable[T]): Unit = {
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),

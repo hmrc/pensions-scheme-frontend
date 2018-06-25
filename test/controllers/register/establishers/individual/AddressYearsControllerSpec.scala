@@ -28,13 +28,15 @@ import models.register.{SchemeDetails, SchemeType}
 import models.{AddressYears, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
+
+//scalastyle:off magic.number
 
 class AddressYearsControllerSpec extends ControllerSpecBase {
 

@@ -17,7 +17,6 @@
 package controllers.register
 
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
@@ -43,8 +42,8 @@ class InsurerPostCodeLookupController @Inject()(val appConfig: FrontendAppConfig
                                                 formProvider: PostCodeLookupFormProvider
                                                ) extends PostcodeLookupController {
 
-  val postCall: (Mode) => Call = routes.InsurerPostCodeLookupController.onSubmit
-  val manualCall: (Mode) => Call = routes.InsurerAddressController.onPageLoad
+  val postCall: Mode => Call = routes.InsurerPostCodeLookupController.onSubmit
+  val manualCall: Mode => Call = routes.InsurerAddressController.onPageLoad
 
   val form: Form[String] = formProvider()
 

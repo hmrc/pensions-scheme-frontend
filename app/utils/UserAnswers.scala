@@ -90,14 +90,15 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       individualName orElse companyName
     }
 
-    getAll[EntityDetails](JsPath \ EstablishersId.toString)(nameReads).zipWithIndex.flatMap{
-      case (entity, id) =>
-        entity.filterNot(_.route(id, None)._2).map{ filtered =>
-          val (name, _, url) = filtered.route(id, None)
+    getAll[EntityDetails](JsPath \ EstablishersId.toString)(nameReads).map { entity =>
+      entity.filterNot(_.route(0, None)._2).zipWithIndex.map{
+        case (filtered, index) =>
+          val (name, _, url) = filtered.route(index, None)
           (name, url)
-        }
-    }.toSeq
+      }
+    }.getOrElse(Seq.empty)
   }
+
 
   def allDirectors(index: Int): Seq[DirectorDetails] = {
     getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
@@ -135,14 +136,13 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
       individualName orElse companyName
     }
-
-    getAll[EntityDetails](JsPath \ TrusteesId.toString)(nameReads).zipWithIndex.flatMap {
-      case (entity, id) =>
-        entity.filterNot(_.route(id, None)._2).map { filtered =>
-          val (name, _, url) = filtered.route(id, None)
+    getAll[EntityDetails](JsPath \ TrusteesId.toString)(nameReads).map { entity =>
+      entity.filterNot(_.route(0, None)._2).zipWithIndex.map{
+        case (filtered, index) =>
+          val (name, _, url) = filtered.route(index, None)
           (name, url)
-        }
-    }.toSeq
+      }
+    }.getOrElse(Seq.empty)
   }
 
   def hasCompanies: Boolean = {

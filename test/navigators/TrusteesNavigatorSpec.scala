@@ -17,71 +17,48 @@
 package navigators
 
 import base.SpecBase
+import connectors.FakeDataCacheConnector
 import identifiers.register.SchemeDetailsId
-import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees._
+import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.NormalMode
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import models.register.trustees.TrusteeKind
+import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
-import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
-// scalastyle:off magic.number
+//scalastyle:off magic.number
+
 class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
+
 
   import TrusteesNavigatorSpec._
 
-  private val navigator = new TrusteesNavigator(frontendAppConfig)
-
-  private val routes = Table(
-    ("Id",                          "User Answers",             "Next Page (Normal Mode)",  "Next Page (Check Mode)"),
-    (HaveAnyTrusteesId,             haveAnyTrusteesTrue,        addTrustee,                 None),
-    (HaveAnyTrusteesId,             haveAnyTrusteesFalse,       schemeReview,               None),
-    (HaveAnyTrusteesId,             emptyAnswers,               sessionExpired,             None),
-    (AddTrusteeId,                  addTrusteeTrue(0),          trusteeKind(0),             Some(trusteeKind(0))),
-    (AddTrusteeId,                  addTrusteeTrue(1),          trusteeKind(1),             Some(trusteeKind(1))),
-    (AddTrusteeId,                  emptyAnswers,               trusteeKind(0),             Some(trusteeKind(0))),
-    (AddTrusteeId,                  trustees(10),               moreThanTenTrustees,        Some(moreThanTenTrustees)),
-    (AddTrusteeId,                  addTrusteeFalse,            schemeReview,               Some(schemeReview)),
-    (MoreThanTenTrusteesId,         emptyAnswers,               schemeReview,               None),
-    (TrusteeKindId(0),              trusteeKindCompany,         companyDetails,             None),
-    (TrusteeKindId(0),              trusteeKindIndividual,      trusteeDetails,             None),
-    (TrusteeKindId(0),              emptyAnswers,               sessionExpired,             None),
-    (ConfirmDeleteTrusteeId,        emptyAnswers,               addTrustee,                 None)
+  private def routes = Table(
+    ("Id",                          "User Answers",             "Next Page (Normal Mode)",  "Save (NM)",  "Next Page (Check Mode)",   "Save (CM)"),
+    (HaveAnyTrusteesId,             haveAnyTrusteesTrue,        addTrustee,                 true,         None,                       false),
+    (HaveAnyTrusteesId,             haveAnyTrusteesFalse,       schemeReview,               true,         None,                       false),
+    (HaveAnyTrusteesId,             emptyAnswers,               sessionExpired,             false,        None,                       false),
+    (AddTrusteeId,                  addTrusteeTrue(0),          trusteeKind(0),             true,         Some(trusteeKind(0)),       true),
+    (AddTrusteeId,                  addTrusteeTrue(1),          trusteeKind(1),             true,         Some(trusteeKind(1)),       true),
+    (AddTrusteeId,                  emptyAnswers,               trusteeKind(0),             true,         Some(trusteeKind(0)),       true),
+    (AddTrusteeId,                  trustees(10),               moreThanTenTrustees,        true,         Some(moreThanTenTrustees),  true),
+    (AddTrusteeId,                  addTrusteeFalse,            schemeReview,               true,         Some(schemeReview),         true),
+    (MoreThanTenTrusteesId,         emptyAnswers,               schemeReview,               true,         None,                       false),
+    (TrusteeKindId(0),              trusteeKindCompany,         companyDetails,             true,         None,                       false),
+    (TrusteeKindId(0),              trusteeKindIndividual,      trusteeDetails,             true,         None,                       false),
+    (TrusteeKindId(0),              emptyAnswers,               sessionExpired,             false,        None,                       false),
+    (ConfirmDeleteTrusteeId,        emptyAnswers,               addTrustee,                 true,         None,                       false)
   )
 
+  private val navigator = new TrusteesNavigator(FakeDataCacheConnector, frontendAppConfig)
+
   navigator.getClass.getSimpleName must {
-    behave like navigatorWithRoutes(navigator, routes, dataDescriber)
-  }
-
-  "trusteeEntryRoutes" must {
-    "navigate to HaveAnyTrustees when SchemeType is Group life/death" in {
-      val result = TrusteesNavigator.trusteeEntryRoutes()(emptyAnswers.schemeType(SchemeType.GroupLifeDeath))
-      result mustBe controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
-    }
-
-    "navigate to HaveAnyTrustees when SchemeType is Body corporate" in {
-      val result = TrusteesNavigator.trusteeEntryRoutes()(emptyAnswers.schemeType(SchemeType.BodyCorporate))
-      result mustBe controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
-    }
-
-    "navigate to HaveAnyTrustees when SchemeType is Other" in {
-      val result = TrusteesNavigator.trusteeEntryRoutes()(emptyAnswers.schemeType(SchemeType.Other("test")))
-      result mustBe controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
-    }
-
-    "navigate to AddTrustee when SchemeType is Single trust" in {
-      val result = TrusteesNavigator.trusteeEntryRoutes()(emptyAnswers.schemeType(SchemeType.SingleTrust))
-      result mustBe controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
-    }
-
-    "navigate to SessionExpired when there are no SchemeDetails" in {
-      val result = TrusteesNavigator.trusteeEntryRoutes()(emptyAnswers)
-      result mustBe controllers.routes.SessionExpiredController.onPageLoad()
-    }
+    appRunning()
+    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routes, dataDescriber)
+    behave like nonMatchingNavigator(navigator)
   }
 
 }
