@@ -31,7 +31,8 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
-import views.html.register.establishers.individual.contactDetails
+import viewmodels.{ContactDetailsViewModel, Message}
+import views.html.contactDetails
 
 //scalastyle:off magic.number
 
@@ -45,12 +46,31 @@ class ContactDetailsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(10)
   val establisherName = "test first name test last name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): ContactDetailsController =
-    new ContactDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+  private def viewmodel(mode: Mode, index: Index, establisherName: String) = ContactDetailsViewModel(
+    postCall = routes.ContactDetailsController.onSubmit(mode, index),
+    title = Message("messages__establisher_individual_contact_details__title"),
+    heading = Message("messages__establisher_individual_contact_details__heading"),
+    body = Message("messages__contact_details__body"),
+    subHeading = Some(establisherName)
+  )
 
-  def viewAsString(form: Form[_] = form): String = contactDetails(frontendAppConfig, form, NormalMode,
-    firstIndex, establisherName)(fakeRequest, messages).toString
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): ContactDetailsController =
+    new ContactDetailsController(
+      new FakeNavigator(desiredRoute = onwardRoute),
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
+
+  def viewAsString(form: Form[_] = form): String = contactDetails(
+    frontendAppConfig,
+    form,
+    viewmodel(NormalMode, firstIndex, establisherName)
+  )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(
     SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
