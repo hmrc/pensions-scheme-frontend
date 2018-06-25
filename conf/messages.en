@@ -269,7 +269,7 @@ messages__establisher__has_sautr__title = Does the establisher have a Self Asses
 messages__establisher__no_sautr = Tell us why the establisher does not have a SAUTR
 messages__error__has_sautr_establisher = Select yes if the establisher has a SAUTR
 
-messages__establisher_individual_contact_details__title = Establisher's contact details
+messages__establisher_individual_contact_details__title = Enter the scheme establisher’s contact details
 messages__error__email_length = The email address cannot be more than 132 characters
 messages__error__email_invalid = Enter a valid email address
 messages__error__phone_length = The telephone number cannot be more than 24 characters
@@ -299,7 +299,7 @@ messages__error__vat_length = The VAT Registration number cannot be more than 9 
 messages__error__vat_invalid = Enter a valid VAT Registration number
 messages__error__paye_length = The PAYE number cannot be more than 13 characters
 
-messages__establisher_company_contact_details__title = Company contact details
+messages__establisher_company_contact_details__title = Enter the company's contact details
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the residential address for this person.
@@ -570,6 +570,8 @@ messages__trusteeContactDetails__heading = Trustee’s contact details
 messages__trusteeContactDetails__emailAddress = Email address
 messages__trusteeContactDetails__phoneNumber = Phone number
 messages__trusteeContactDetails__checkYourAnswersLabel = Trustee’s contact details
+
+contactDetails.body = We will use this information to contact you about your schemes. You can enter a group or individual email.
 
 messages__declaration__title = Declaration
 messages__declaration__heading = Declaration

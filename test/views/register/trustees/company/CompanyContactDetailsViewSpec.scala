@@ -26,7 +26,7 @@ import play.twirl.api.HtmlFormat
 
 class CompanyContactDetailsViewSpec extends QuestionViewBehaviours[ContactDetails] {
 
-  val messageKeyPrefix = "establisher_company_contact_details"
+  val messageKeyPrefix = "trustee_company_contact_details"
   val index = Index(1)
   val companyName = "test company name"
 
