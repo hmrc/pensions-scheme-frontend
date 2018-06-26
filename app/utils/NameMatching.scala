@@ -19,6 +19,7 @@ package utils
 case class NameMatching(name1: String, name2: String) {
 
   private val shortenPercentage = 50
+  private val maximumPermittedWordMatchPercentage = 70
 
   private val specialWords = List("AND", "CCC", "CIC", "COMPANIES", "COMPANY", "CORPORATION", "INCORPORATED",
     "CORP", "CO.", "CO", "INC.", "INC", "UNLIMITED", "LIMITED", "LLP", "LP", "ULTD", "UNLTD", "LTD",
@@ -63,7 +64,7 @@ case class NameMatching(name1: String, name2: String) {
 
 
   def shortenLongest: NameMatching = {
-    if (entireWordmatchPercentage(NameMatching(name1,name2)) >= 70) {
+    if (entireWordmatchPercentage(name1,name2) >= maximumPermittedWordMatchPercentage) {
       name1.length < name2.length match {
         case true => NameMatching(name1, shorten(name2, name1, shortenPercentage))
         case false => NameMatching(shorten(name1, name2, shortenPercentage), name2)
@@ -74,13 +75,11 @@ case class NameMatching(name1: String, name2: String) {
     }
   }
 
-  def entireWordmatchPercentage(words: NameMatching): Int = {
-    if (words.name1.length < words.name2.length) {
-      println(getEntireWordPercentage(words.name1,words.name2))
-      getEntireWordPercentage(words.name1,words.name2)
+  def entireWordmatchPercentage(word1: String, word2: String): Int = {
+    if (word1.length < word2.length) {
+      getEntireWordPercentage(word1,word2)
     } else {
-      println(getEntireWordPercentage(words.name2,words.name1))
-      getEntireWordPercentage(words.name2,words.name1)
+      getEntireWordPercentage(word2,word1)
     }
   }
 
