@@ -145,3 +145,6 @@ GET        /add-trustees                                                controll
 POST       /add-trustees                                                controllers.register.trustees.HaveAnyTrusteesController.onSubmit(mode: Mode = NormalMode)
 GET        /change-trustees                                             controllers.register.trustees.HaveAnyTrusteesController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-trustees                                             controllers.register.trustees.HaveAnyTrusteesController.onSubmit(mode: Mode = CheckMode)
+
+GET        /:index/company/already-deleted                              controllers.register.trustees.AlreadyDeletedController.onPageLoad(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Company)
+GET        /:index/individual/already-deleted                           controllers.register.trustees.AlreadyDeletedController.onPageLoad(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Individual)
