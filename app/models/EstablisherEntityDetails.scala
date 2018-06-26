@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models
 
-sealed trait EntityKind
+import models.register.establishers.EstablisherKind
+import utils.Enumerable
 
-object EntityKind {
+case class EstablisherEntityDetails(name: String, isDeleted: Boolean, changeUrl: Option[String], deleteUrl: Option[String], establisherKind: EstablisherKind)
 
-  case object Establisher extends EntityKind
-
-  case object Trustee extends EntityKind
-
-}
-
-
+object EstablisherEntityDetails extends Enumerable.Implicits

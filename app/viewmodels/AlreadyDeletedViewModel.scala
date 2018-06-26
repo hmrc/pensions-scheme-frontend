@@ -16,14 +16,10 @@
 
 package viewmodels
 
-sealed trait EntityKind
+import play.api.mvc.Call
 
-object EntityKind {
-
-  case object Establisher extends EntityKind
-
-  case object Trustee extends EntityKind
-
-}
-
-
+case class AlreadyDeletedViewModel(
+                                  title: Message,
+                                  deletedEntity: String,
+                                  returnCall: Call
+                                  )

@@ -17,9 +17,9 @@
 @(
 messageKey: String = "",
 href: String,
-buttonClass: Option[String] = Some("button-start")
+id: String
 )(implicit messages: Messages)
 
 <div class="section">
-    <a href="@href" role="button" class="button @buttonClass">@messages(messageKey)</a>
+ <a id="@id" href="@href" role="button" class="button">@messages(messageKey)</a>
 </div>

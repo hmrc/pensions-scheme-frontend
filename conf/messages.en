@@ -111,6 +111,7 @@ site.textarea.char_limit = (Limit is {0} characters)
 site.confirm = Confirm
 site.cancel = Cancel
 site.agree_and_continue = Agree and continue
+site.go_back = Go back
 site.signOut = Sign out
 
 messages__unauthorised__title = You can’t access this service with this account
@@ -691,3 +692,8 @@ messages__youNeedToRegister__p2 = If you are a {0}, you cannot register to use t
 messages__youNeedToRegister__p2__link = pension scheme practitioner
 messages__youNeedToRegister__button = Register as a pension scheme administrator
 messages__youNeedToRegister__govUk__link = Exit to GOV.UK
+
+messages__alreadyDeleted__director_title = You have already deleted this director
+messages__alreadyDeleted__heading = You have already deleted {0}
+messages__alreadyDeleted__lede = You have already confirmed deletion of {0}.
+messages__alreadyDeleted__text = This page no longer exists.

@@ -47,7 +47,7 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
       (SchemeDetailsId and EstablisherKindId(0)).retrieve.right.map {
         case schemeDetails ~ establisherKind =>
           val establishers = request.userAnswers.allEstablishers.map(_._1)
-          val trustees = request.userAnswers.allTrustees.map(_._1)
+          val trustees = request.userAnswers.allTrustees.map(_.name)
 
           Future.successful(Ok(schemeReview(appConfig, schemeDetails.schemeName, establishers, trustees,
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode),

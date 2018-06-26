@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models
 
-sealed trait EntityKind
+import models.register.trustees.TrusteeKind
+import utils.Enumerable
 
-object EntityKind {
+case class TrusteeEntityDetails(name: String, isDeleted: Boolean, changeUrl: Option[String], deleteUrl: Option[String], trusteeKind: TrusteeKind)
 
-  case object Establisher extends EntityKind
-
-  case object Trustee extends EntityKind
-
-}
-
-
+object TrusteeList extends Enumerable.Implicits

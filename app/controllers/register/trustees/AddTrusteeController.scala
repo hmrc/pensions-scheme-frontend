@@ -33,6 +33,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
 import utils.annotations.Trustees
+import viewmodels.EditableItem
 import views.html.register.trustees.addTrustee
 
 import scala.concurrent.Future
@@ -53,7 +54,8 @@ class AddTrusteeController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       SchemeDetailsId.retrieve.right.map { schemeDetails =>
-        val trustees = request.userAnswers.allTrustees
+        val trustees = request.userAnswers.allTrusteesAfterDelete
+
         Future.successful(Ok(addTrustee(appConfig, form, mode, schemeDetails.schemeName, trustees)))
       }
   }
@@ -61,7 +63,7 @@ class AddTrusteeController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
 
-      val trustees = request.userAnswers.allTrustees
+      val trustees = request.userAnswers.allTrusteesAfterDelete
 
       if (trustees.isEmpty || trustees.lengthCompare(appConfig.maxTrustees) >= 0)
         Future.successful(Redirect(navigator.nextPage(AddTrusteeId, mode, request.userAnswers)))

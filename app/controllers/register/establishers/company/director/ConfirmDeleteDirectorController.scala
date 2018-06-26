@@ -46,19 +46,25 @@ class ConfirmDeleteDirectorController @Inject()(
 
   def onPageLoad(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
+      println("\n\n\ndirectorIndex : "+directorIndex)
       (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
         case company ~ director =>
-          Future.successful(
-            Ok(
-              confirmDeleteDirector(
-                appConfig,
-                company.companyName,
-                director.directorName,
-                routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
-                AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
+          director.isDeleted match {
+            case false =>
+              Future.successful(
+                Ok(
+                  confirmDeleteDirector(
+                    appConfig,
+                    company.companyName,
+                    director.directorName,
+                    routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
+                    AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
+                  )
+                )
               )
-            )
-          )
+            case true =>
+              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex)))
+          }
       }
   }
 

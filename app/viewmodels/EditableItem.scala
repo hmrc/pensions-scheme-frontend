@@ -20,7 +20,7 @@ import controllers.register._
 import models.register.establishers.EstablisherKind
 import models.register.establishers.company.director.DirectorDetails
 import models.register.trustees.TrusteeKind
-import models.{Index, NormalMode}
+import models.{Index, NormalMode, TrusteeEntityDetails, TrusteeList}
 
 import scala.language.implicitConversions
 
@@ -44,6 +44,12 @@ object EditableItem {
           establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(directors._1, index).url,
           establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, directors._1, Index(index)).url
         )
+    }
+  }
+
+  implicit def fromEntityDetailsKind(trusteEntityDetails: Seq[TrusteeEntityDetails]) = {
+    trusteEntityDetails.map{ trusteeEntity =>
+      EditableItem(0, trusteeEntity.name, trusteeEntity.deleteUrl.getOrElse(""), trusteeEntity.changeUrl.getOrElse(""))
     }
   }
 

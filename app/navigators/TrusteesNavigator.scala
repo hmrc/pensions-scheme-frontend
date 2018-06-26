@@ -71,7 +71,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
       case None if trusteesLengthCompare >= 0 =>
         NavigateTo.save(MoreThanTenTrusteesController.onPageLoad(NormalMode))
       case None =>
-        NavigateTo.save(TrusteeKindController.onPageLoad(NormalMode, 0))
+        NavigateTo.save(TrusteeKindController.onPageLoad(NormalMode, answers.trusteesCount))
     }
   }
 

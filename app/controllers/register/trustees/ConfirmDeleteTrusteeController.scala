@@ -50,7 +50,9 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       SchemeDetailsId.retrieve.right.map { schemeDetails =>
         trusteeName(index, trusteeKind) match {
-          case Right(trusteeName) => Future.successful(
+          case Right(trusteeName) =>
+            println("\n\n\n\n 1...trusteeName:"+trusteeName)
+            Future.successful(
             Ok(
               confirmDeleteTrustee(
                 appConfig,
@@ -67,6 +69,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
+      println("\n\n\n 2...trustee Index: "+trusteeKind+"|||"+index)
       deleteTrustee(trusteeKind, index) match {
         case Right(futureUserAnswers) =>
           futureUserAnswers.map { userAnswers =>
@@ -77,16 +80,16 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  private def deleteTrustee(trusteeKind: TrusteeKind, establisherIndex: Index)(implicit dataRequest: DataRequest[AnyContent]):
+  private def deleteTrustee(trusteeKind: TrusteeKind, trusteeIndex: Index)(implicit dataRequest: DataRequest[AnyContent]):
   Either[Future[Result], Future[UserAnswers]] = {
     trusteeKind match {
       case Company =>
-        CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
-          dataCacheConnector.save(CompanyDetailsId(establisherIndex), companyDetails.copy(isDeleted = true))
+        CompanyDetailsId(trusteeIndex).retrieve.right.map { companyDetails =>
+          dataCacheConnector.save(CompanyDetailsId(trusteeIndex), companyDetails.copy(isDeleted = true))
         }
       case Individual =>
-        TrusteeDetailsId(establisherIndex).retrieve.right.map { establisherDetails =>
-          dataCacheConnector.save(TrusteeDetailsId(establisherIndex), establisherDetails.copy(isDeleted = true))
+        TrusteeDetailsId(trusteeIndex).retrieve.right.map { establisherDetails =>
+          dataCacheConnector.save(TrusteeDetailsId(trusteeIndex), establisherDetails.copy(isDeleted = true))
         }
       case _ =>
         Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))

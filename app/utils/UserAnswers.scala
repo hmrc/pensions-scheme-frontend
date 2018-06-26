@@ -16,6 +16,7 @@
 
 package utils
 
+import controllers.register.{establishers, trustees}
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
@@ -23,14 +24,16 @@ import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.CompanyDetails
+import models.{CompanyDetails, Index, NormalMode, TrusteeEntityDetails}
 import models.person.PersonDetails
 import models.register._
 import models.register.establishers.company.director.DirectorDetails
+import models.register.trustees.TrusteeKind
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
+import viewmodels.EntityKind
 
 import scala.concurrent.Future
 import scala.language.implicitConversions
@@ -122,27 +125,47 @@ case class UserAnswers(json: JsValue = Json.obj()) {
     }
   }
 
-  def allTrustees: Seq[(String, String)] = {
+  def allTrustees: Seq[TrusteeEntityDetails] = {
+    val nameReads: Reads[TrusteeEntityDetails] = {
 
-    val nameReads: Reads[EntityDetails] = {
-
-      val individualName: Reads[EntityDetails] = (__ \ TrusteeDetailsId.toString)
+      val individualTrustee: Reads[TrusteeEntityDetails] = (__ \ TrusteeDetailsId.toString)
         .read[PersonDetails]
-        .map(details => TrusteeIndividualName(details.fullName, details.isDeleted))
+        .map(details => TrusteeEntityDetails(details.fullName, details.isDeleted, None, None, TrusteeKind.Individual))
 
-      val companyName: Reads[EntityDetails] = (__ \ identifiers.register.trustees.company.CompanyDetailsId.toString)
+      val companyTrustee: Reads[TrusteeEntityDetails] = (__ \ identifiers.register.trustees.company.CompanyDetailsId.toString)
         .read[CompanyDetails]
-        .map(details => TrusteeCompanyName(details.companyName, details.isDeleted))
+        .map(details => TrusteeEntityDetails(details.companyName, details.isDeleted, None, None, TrusteeKind.Company))
 
-      individualName orElse companyName
+      individualTrustee orElse companyTrustee
     }
-    getAll[EntityDetails](JsPath \ TrusteesId.toString)(nameReads).map { entity =>
-      entity.filterNot(_.route(0, None)._2).zipWithIndex.map{
-        case (filtered, index) =>
-          val (name, _, url) = filtered.route(index, None)
-          (name, url)
-      }
+
+    getAll[TrusteeEntityDetails](JsPath \ TrusteesId.toString)(nameReads).map {
+      case (trusteeEntityDetails) =>
+        trusteeEntityDetails.map{
+          case (trusteeEntity) =>
+            trusteeEntity.trusteeKind match {
+            case TrusteeKind.Individual =>
+              trusteeEntity.copy(
+                changeUrl = Some(controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(
+                  NormalMode, trusteeEntityDetails.indexOf(trusteeEntity)).url),
+                deleteUrl = Some(trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(
+                  Index(trusteeEntityDetails.indexOf(trusteeEntity)), TrusteeKind.Individual).url)
+              )
+            case TrusteeKind.Company =>
+                trusteeEntity.copy(
+                  changeUrl = Some(controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(
+                    NormalMode, trusteeEntityDetails.indexOf(trusteeEntity)).url),
+                  deleteUrl = Some(trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(
+                    Index(trusteeEntityDetails.indexOf(trusteeEntity)), TrusteeKind.Company).url))
+            case _ => trusteeEntity
+          }
+        }
+
     }.getOrElse(Seq.empty)
+  }
+
+  def allTrusteesAfterDelete: Seq[TrusteeEntityDetails] = {
+    allTrustees.filterNot(_.isDeleted)
   }
 
   def establishersCount: Int = {
