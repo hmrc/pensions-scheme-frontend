@@ -72,15 +72,51 @@ class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues 
     "shorten the longer of the two values" when {
 
       "x% of longer name is less than length of shorter name" in {
-        val nameMatchingExp = NameMatching("CHRI$S WILLIAMS!", "CHRI%S WILLI@AMS")
-        val nameMatching = NameMatching("CHRI$S WILLIAMS!", "CHRI%S WILLI@AMS SONS.")
+        val nameMatchingExp = NameMatching("CHRI$S WILLIAMS!", "CHRI$S WILLIAMS!")
+        val nameMatching = NameMatching("CHRI$S WILLIAMS!", "CHRI$S WILLIAMS! SONS")
         nameMatching.shortenLongest mustEqual nameMatchingExp
       }
 
       "x% of longer name is more than length of shorter name" in {
-        val nameMatchingExp = NameMatching("CHRI$S WILLIAMS! CARPE", "CHRI%S WILLI@AMS")
-        val nameMatching = NameMatching("CHRI$S WILLIAMS! CARPETS AND HEAVY MACHINERY", "CHRI%S WILLI@AMS")
+        val nameMatchingExp = NameMatching("CHRI$S WILLIAMS! TABLES", "CHRI$S WILLIAMS! TABLES")
+        val nameMatching = NameMatching("CHRI$S WILLIAMS! TABLES&CARPETS", "CHRI$S WILLIAMS! TABLES")
         nameMatching.shortenLongest mustEqual nameMatchingExp
+      }
+    }
+
+    "not shorten anything" when {
+      "we are sure that the words are different" in {
+        val nameMatching = NameMatching("AIROOAUTOMOTIVEUK", "AIROOAUTOMOTIVEUKGROUPLIFESCHEME")
+
+        nameMatching.shortenLongest mustEqual nameMatching
+      }
+    }
+  }
+
+  "matchpercentage" must {
+    "estimate a match percentage on two values" when {
+      "second value is the longest" in {
+        val nameMatching = NameMatching("AIROOAUTOMOTIVEUK", "AIROOAUTOMOTIVEUKGROUPLIFESCHEME")
+
+        nameMatching.entireWordmatchPercentage(nameMatching) mustEqual 53
+      }
+
+      "second value is the longest and none of the words match" in {
+        val nameMatching = NameMatching("TTTTTTTT", "AAAAAAAAAAAAAAAAA")
+
+        nameMatching.entireWordmatchPercentage(nameMatching) mustEqual 0
+      }
+
+      "first value is the longest" in {
+        val nameMatching = NameMatching("AIROOAUTOMOTIVEUKGROUPLIFESCHEME", "AIROOAUTOMOTIVEUK")
+
+        nameMatching.entireWordmatchPercentage(nameMatching) mustEqual 53
+      }
+
+      "both values have the same length" in {
+        val nameMatching = NameMatching("AIROOAUTOMOTIVEUKGROUPLIFESCHEME", "AIROOAUTOMOTIVEUKGROUPLIFESCHEME")
+
+        nameMatching.entireWordmatchPercentage(nameMatching) mustEqual 100
       }
     }
   }
@@ -98,11 +134,14 @@ class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues 
         val nameMatching = NameMatching("CHRI$S WILLIAMS! CARPETS AND HEAVY MACHINERY", "CHRI%S WILLI@AMS")
         nameMatching.isMatch mustBe false
       }
+
+      "names after transformation do not match when one of them is longer than the other" in {
+        val nameMatching = NameMatching("AIROO AUTOMOTIVE UK LTD", "AIROO Automotive UK Group Life Scheme")
+
+        nameMatching.isMatch mustBe false
+      }
     }
   }
-
-
-
 }
 
 

@@ -63,11 +63,34 @@ case class NameMatching(name1: String, name2: String) {
 
 
   def shortenLongest: NameMatching = {
-    name1.length < name2.length match {
-      case true => NameMatching(name1,shorten(name2, name1, shortenPercentage))
-      case false => NameMatching(shorten(name1, name2, shortenPercentage),name2)
+    if (entireWordmatchPercentage(NameMatching(name1,name2)) >= 70) {
+      name1.length < name2.length match {
+        case true => NameMatching(name1, shorten(name2, name1, shortenPercentage))
+        case false => NameMatching(shorten(name1, name2, shortenPercentage), name2)
+      }
+    }
+    else {
+      NameMatching(name1,name2)
     }
   }
+
+  def entireWordmatchPercentage(words: NameMatching): Int = {
+    if (words.name1.length < words.name2.length) {
+      println(getEntireWordPercentage(words.name1,words.name2))
+      getEntireWordPercentage(words.name1,words.name2)
+    } else {
+      println(getEntireWordPercentage(words.name2,words.name1))
+      getEntireWordPercentage(words.name2,words.name1)
+    }
+  }
+
+  private def getEntireWordPercentage(shortestWord: String, longestWord: String) : Int = {
+    if (longestWord.contains(shortestWord)) {
+      (shortestWord.length * 100) / longestWord.length
+    }
+    else 0
+  }
+
 
   private def shorten(long: String, short: String, x: Int): String = {
     val x_percent_of_long = long.length*x*0.01
