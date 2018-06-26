@@ -39,7 +39,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     // Start - continue or what you will need
     (ContinueRegistrationId,        emptyAnswers,         whatYouWillNeed,                        false,        None,                                 false),
     (ContinueRegistrationId,        savedLastPage,        lastPage,                               false,        None,                                 false),
-    (WhatYouWillNeedId,             emptyAnswers,         schemeDetails(NormalMode),              true,         None,                                 false),
+    (WhatYouWillNeedId,             emptyAnswers,         schemeDetails(NormalMode),              false,        None,                                 false),
 
     // Scheme registration
     (SchemeDetailsId,               emptyAnswers,         schemeEstablishedCountry(NormalMode),   true,         Some(checkYourAnswers),               true),

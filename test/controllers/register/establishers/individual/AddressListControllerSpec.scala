@@ -23,7 +23,9 @@ import forms.address.AddressListFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
 import models.address.TolerantAddress
+import models.address.{Address, TolerantAddress}
 import models.person.PersonDetails
+import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, UniqueTaxReference}
 import org.joda.time.LocalDate
