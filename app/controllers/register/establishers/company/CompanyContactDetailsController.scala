@@ -16,45 +16,37 @@
 
 package controllers.register.establishers.company
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.Retrievals
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.company.CompanyContactDetailsId
-import models.{ContactDetails, Index, Mode}
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import javax.inject.Inject
+import models.{Index, Mode}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.EstablishersCompany
 import utils._
-import views.html.register.establishers.company.companyContactDetails
+import utils.annotations.EstablishersCompany
+import viewmodels.{ContactDetailsViewModel, Message}
 
-import scala.concurrent.Future
+class CompanyContactDetailsController @Inject()(
+                                                 @EstablishersCompany override val navigator: Navigator,
+                                                 override val appConfig: FrontendAppConfig,
+                                                 override val messagesApi: MessagesApi,
+                                                 override val cacheConnector: DataCacheConnector,
+                                                 authenticate: AuthAction,
+                                                 getData: DataRetrievalAction,
+                                                 requireData: DataRequiredAction,
+                                                 formProvider: ContactDetailsFormProvider
+                                               ) extends controllers.ContactDetailsController {
 
-class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  dataCacheConnector: DataCacheConnector,
-                                                  @EstablishersCompany navigator: Navigator,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: ContactDetailsFormProvider
-                                               ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
-
-  val form: Form[ContactDetails] = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
-          val redirectResult = request.userAnswers.get(CompanyContactDetailsId(index)) match {
-            case None => Ok(companyContactDetails(appConfig, form, mode, index, companyName))
-            case Some(value) => Ok(companyContactDetails(appConfig, form.fill(value), mode, index, companyName))
-          }
-          Future.successful(redirectResult)
+          get(CompanyContactDetailsId(index), form, viewmodel(mode, index, companyName))
       }
   }
 
@@ -62,14 +54,15 @@ class CompanyContactDetailsController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyContactDetails(appConfig, formWithErrors, mode, index, companyName))),
-            value =>
-              dataCacheConnector.save(request.externalId, CompanyContactDetailsId(index), value).map(cacheMap =>
-                Redirect(navigator.nextPage(CompanyContactDetailsId(index), mode, UserAnswers(cacheMap))))
-          )
+          post(CompanyContactDetailsId(index), mode, form, viewmodel(mode, index, companyName))
       }
   }
 
+  private def viewmodel(mode: Mode, index: Index, companyName: String) = ContactDetailsViewModel(
+    postCall = routes.CompanyContactDetailsController.onSubmit(mode, index),
+    title = Message("messages__establisher_company_contact_details__title"),
+    heading = Message("messages__establisher_company_contact_details__heading"),
+    body = Message("messages__contact_details__body"),
+    subHeading = Some(companyName)
+  )
 }
