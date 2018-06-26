@@ -45,8 +45,9 @@ import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator2
-import views.html.register.establishers.company.companyContactDetails
+import utils.FakeNavigator
+import viewmodels.{ContactDetailsViewModel, Message}
+import views.html.contactDetails
 
 class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
 
@@ -60,12 +61,20 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(10)
   val companyName = "test company name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany) : CompanyContactDetailsController =
+  private def viewmodel(mode: Mode, index: Index, companyName: String) = ContactDetailsViewModel(
+    postCall = routes.CompanyContactDetailsController.onSubmit(mode, index),
+    title = Message("messages__establisher_company_contact_details__title"),
+    heading = Message("messages__establisher_company_contact_details__heading"),
+    body = Message("messages__contact_details__body"),
+    subHeading = Some(companyName)
+  )
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyContactDetailsController =
     new CompanyContactDetailsController(
+      new FakeNavigator(desiredRoute = onwardRoute),
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator2(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
@@ -73,12 +82,10 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
     )
 
   def viewAsString(form: Form[_] = form): String =
-    companyContactDetails(
+    contactDetails(
       frontendAppConfig,
       form,
-      NormalMode,
-      firstIndex,
-      companyName
+      viewmodel(NormalMode, firstIndex, companyName)
     )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

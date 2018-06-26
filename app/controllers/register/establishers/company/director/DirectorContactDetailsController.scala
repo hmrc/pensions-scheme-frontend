@@ -16,58 +16,53 @@
 
 package controllers.register.establishers.company.director
 
-import javax.inject.Inject
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
-import controllers.Retrievals
 import forms.ContactDetailsFormProvider
-import models.{ContactDetails, Index, Mode}
 import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
+import javax.inject.Inject
+import models.{Index, Mode}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import utils.annotations.EstablishersCompanyDirector
 import utils._
-import views.html.register.establishers.company.director.directorContactDetails
+import utils.annotations.EstablishersCompanyDirector
+import viewmodels.{ContactDetailsViewModel, Message}
 
-import scala.concurrent.Future
+class DirectorContactDetailsController @Inject()(
+                                                  @EstablishersCompanyDirector override val navigator: Navigator,
+                                                  override val appConfig: FrontendAppConfig,
+                                                  override val messagesApi: MessagesApi,
+                                                  override val cacheConnector: DataCacheConnector,
+                                                  authenticate: AuthAction,
+                                                  getData: DataRetrievalAction,
+                                                  requireData: DataRequiredAction,
+                                                  formProvider: ContactDetailsFormProvider
+                                                ) extends controllers.ContactDetailsController {
 
-class DirectorContactDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                 override val messagesApi: MessagesApi,
-                                                 dataCacheConnector: DataCacheConnector,
-                                                 @EstablishersCompanyDirector navigator: Navigator2,
-                                                 authenticate: AuthAction,
-                                                 getData: DataRetrievalAction,
-                                                 requireData: DataRequiredAction,
-                                                 formProvider: ContactDetailsFormProvider
-                                                       ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
-
-  val form: Form[ContactDetails] = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { director =>
-        DirectorContactDetailsId(establisherIndex, directorIndex).retrieve.right.map{ value =>
-          Future.successful(Ok(directorContactDetails(appConfig, form.fill(value), mode, establisherIndex, directorIndex, director.directorName)))
-        }.left.map{ _ =>
-          Future.successful(Ok(directorContactDetails(appConfig, form, mode, establisherIndex, directorIndex, director.directorName)))
-        }
+      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
+        director =>
+          get(DirectorContactDetailsId(establisherIndex, directorIndex), form, viewmodel(mode, establisherIndex, directorIndex, director.directorName))
       }
   }
-
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorContactDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, director.directorName))),
-          (value) =>
-            dataCacheConnector.save(request.externalId, DirectorContactDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
-              Redirect(navigator.nextPage(DirectorContactDetailsId(establisherIndex, directorIndex), mode, new UserAnswers(cacheMap))))
-        )
+      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
+        director =>
+          post(DirectorContactDetailsId(establisherIndex, directorIndex), mode, form, viewmodel(mode, establisherIndex, directorIndex, director.directorName))
       }
   }
+
+  private def viewmodel(mode: Mode, establisherIndex: Index, directorIndex: Index, directorName: String) = ContactDetailsViewModel(
+    postCall = routes.DirectorContactDetailsController.onSubmit(mode, establisherIndex, directorIndex),
+    title = Message("messages__company_director_contact__title"),
+    heading = Message("messages__company_director_contact__heading"),
+    body = Message("messages__contact_details__body"),
+    subHeading = Some(directorName)
+  )
 }

@@ -22,29 +22,21 @@ import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
-import models.address.{Address, TolerantAddress}
+import models.address.TolerantAddress
 import models.person.PersonDetails
-import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, UniqueTaxReference}
 import org.joda.time.LocalDate
-import org.mockito.Matchers
-import org.mockito.Matchers.any
-import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.{Enumerable, FakeNavigator, MapFormats}
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
-import views.html.register.establishers.individual.previousAddressList
-
-import scala.concurrent.Future
-
 
 class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerable.Implicits with MapFormats with MockitoSugar with BeforeAndAfterEach {
 
@@ -95,7 +87,7 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     Some("United Kingdom")
   )
 
-  val validData = Json.obj(SchemeDetailsId.toString -> Json.toJson(
+  val validData: JsObject = Json.obj(SchemeDetailsId.toString -> Json.toJson(
     SchemeDetails("value 1", SchemeType.SingleTrust)),
     "establishers" -> Json.arr(
       Json.obj(

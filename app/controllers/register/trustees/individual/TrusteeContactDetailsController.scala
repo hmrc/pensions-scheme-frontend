@@ -18,57 +18,51 @@ package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.Retrievals
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.trustees.individual.{TrusteeContactDetailsId, TrusteeDetailsId}
 import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.TrusteesIndividual
-import utils.{Navigator2, UserAnswers}
-import views.html.register.trustees.individual.trusteeContactDetails
+import viewmodels.{ContactDetailsViewModel, Message}
 
-import scala.concurrent.Future
-
-class TrusteeContactDetailsController @Inject() (
-                                                  appConfig: FrontendAppConfig,
-                                                  override val messagesApi: MessagesApi,
-                                                  dataCacheConnector: DataCacheConnector,
-                                                  @TrusteesIndividual navigator: Navigator2,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: ContactDetailsFormProvider
-                                      ) extends FrontendController with I18nSupport with Retrievals {
+class TrusteeContactDetailsController @Inject()(
+                                                 @TrusteesIndividual override val navigator: Navigator,
+                                                 override val appConfig: FrontendAppConfig,
+                                                 override val messagesApi: MessagesApi,
+                                                 override val cacheConnector: DataCacheConnector,
+                                                 authenticate: AuthAction,
+                                                 getData: DataRetrievalAction,
+                                                 requireData: DataRequiredAction,
+                                                 formProvider: ContactDetailsFormProvider
+                                               ) extends controllers.ContactDetailsController {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-        val preparedForm = request.userAnswers.get(TrusteeContactDetailsId(index)) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        Future.successful(Ok(trusteeContactDetails(appConfig, preparedForm, mode, index, trusteeDetails.fullName)))
+      TrusteeDetailsId(index).retrieve.right.map {
+        trusteeDetails =>
+          get(TrusteeContactDetailsId(index), form, viewmodel(mode, index, trusteeDetails.fullName))
       }
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-            Future.successful(BadRequest(trusteeContactDetails(appConfig, formWithErrors, mode, index, trusteeDetails.fullName)))
-          },
-        (value) =>
-          dataCacheConnector.save(request.externalId, TrusteeContactDetailsId(index), value).map(cacheMap =>
-            Redirect(navigator.nextPage(TrusteeContactDetailsId(index), mode, UserAnswers(cacheMap))))
-      )
+      TrusteeDetailsId(index).retrieve.right.map {
+        trusteeDetails =>
+          post(TrusteeContactDetailsId(index), mode, form, viewmodel(mode, index, trusteeDetails.fullName))
+      }
   }
 
+  private def viewmodel(mode: Mode, index: Index, trusteeName: String) = ContactDetailsViewModel(
+    postCall = routes.TrusteeContactDetailsController.onSubmit(mode, index),
+    title = Message("messages__trustee_contact_details__title"),
+    heading = Message("messages__trustee_contact_details__heading"),
+    body = Message("messages__contact_details__body"),
+    subHeading = Some(trusteeName)
+  )
 }

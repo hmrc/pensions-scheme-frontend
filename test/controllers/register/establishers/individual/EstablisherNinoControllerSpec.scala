@@ -25,18 +25,17 @@ import identifiers.register.establishers.individual.{EstablisherDetailsId, Estab
 import models._
 import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
-import models.register.establishers.individual.{EstablisherDetails, EstablishersIndividualMap}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.Call
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.cache.client.CacheMap
-import utils.{FakeNavigator, FakeNavigator2}
+import utils.FakeNavigator
 import views.html.register.establishers.individual.establisherNino
 
 class EstablisherNinoControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new EstablisherNinoFormProvider()
   val form = formProvider()
@@ -44,7 +43,7 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
   val establisherName = "test first name test last name"
   val establisherDetails = PersonDetails("test first name", None, "test last name", LocalDate.now, false)
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     "establishers" -> Json.arr(
       Json.obj(
@@ -56,7 +55,7 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): EstablisherNinoController =
-    new EstablisherNinoController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute),
+    new EstablisherNinoController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = establisherNino(frontendAppConfig, form, NormalMode,

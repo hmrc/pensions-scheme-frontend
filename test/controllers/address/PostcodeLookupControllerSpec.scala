@@ -88,7 +88,9 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
   "get" must {
     "return a successful result" in {
 
-      running(_.overrides()) {
+      running(_.overrides(
+        bind[Navigator].toInstance(FakeNavigator)
+      )) {
         app =>
 
           implicit val mat: Materializer = app.materializer
@@ -116,7 +118,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
       val address = TolerantAddress(Some(""), Some(""), None, None, None, Some("GB"))
 
       when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any())) thenReturn Future.successful {
-        (Seq(address))
+        Seq(address)
       }
 
       when(cacheConnector.save(eqTo("cacheId"), eqTo(FakeIdentifier), eqTo(Seq(address)))(any(), any(), any())) thenReturn Future.successful {
@@ -211,7 +213,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
           val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
           when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any())) thenReturn Future.successful {
-            (Seq.empty)
+            Seq.empty
           }
 
           running(_.overrides(

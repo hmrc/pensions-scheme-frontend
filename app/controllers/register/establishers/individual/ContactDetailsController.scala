@@ -16,48 +16,37 @@
 
 package controllers.register.establishers.individual
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.Retrievals
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.individual.ContactDetailsId
-import models.{ContactDetails, Index, Mode}
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import javax.inject.Inject
+import models.{Index, Mode}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.EstablishersIndividual
-import utils.{Enumerable, Navigator, Navigator2, UserAnswers}
-import views.html.register.establishers.individual._
-
-import scala.concurrent.Future
+import viewmodels.{ContactDetailsViewModel, Message}
 
 class ContactDetailsController @Inject()(
-                                          appConfig: FrontendAppConfig,
+                                          @EstablishersIndividual override val navigator: Navigator,
+                                          override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
-                                          dataCacheConnector: DataCacheConnector,
-                                          @EstablishersIndividual navigator: Navigator2,
+                                          override val cacheConnector: DataCacheConnector,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: ContactDetailsFormProvider
-                                        ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        ) extends controllers.ContactDetailsController {
 
-  private val form: Form[ContactDetails] = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          val redirectResult = request.userAnswers.get(ContactDetailsId(index)) match {
-            case None =>
-              Ok(contactDetails(appConfig, form, mode, index, establisherName))
-            case Some(value) =>
-              Ok(contactDetails(appConfig, form.fill(value), mode, index, establisherName))
-          }
-          Future.successful(redirectResult)
+          get(ContactDetailsId(index), form, viewmodel(mode, index, establisherName))
       }
   }
 
@@ -65,22 +54,15 @@ class ContactDetailsController @Inject()(
     implicit request =>
       retrieveEstablisherName(index) {
         establisherName =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(contactDetails(appConfig, formWithErrors, mode, index, establisherName))),
-            (value) =>
-              dataCacheConnector.save(
-                request.externalId,
-                ContactDetailsId(index),
-                value
-              ).map {
-                json =>
-                  Redirect(navigator.nextPage(ContactDetailsId(index), mode, new UserAnswers(json)))
-              }
-          )
+          post(ContactDetailsId(index), mode, form, viewmodel(mode, index, establisherName))
       }
   }
 
+  private def viewmodel(mode: Mode, index: Index, establisherName: String) = ContactDetailsViewModel(
+    postCall = routes.ContactDetailsController.onSubmit(mode, index),
+    title = Message("messages__establisher_individual_contact_details__title"),
+    heading = Message("messages__establisher_individual_contact_details__heading"),
+    body = Message("messages__contact_details__body"),
+    subHeading = Some(establisherName)
+  )
 }
-
-

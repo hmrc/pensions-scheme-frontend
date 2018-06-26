@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator2
+import utils.Navigator
 import utils.annotations.TrusteesIndividual
 import views.html.register.trustees.individual.trusteeNino
 
@@ -39,7 +39,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
                                       authenticate: AuthAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
-                                      @TrusteesIndividual navigator: Navigator2,
+                                      @TrusteesIndividual navigator: Navigator,
                                       dataCacheConnector: DataCacheConnector) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Nino] = new TrusteeNinoFormProvider()()

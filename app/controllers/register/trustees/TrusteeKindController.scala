@@ -32,7 +32,7 @@ import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
-import utils.{Enumerable, Navigator2}
+import utils.{Enumerable, Navigator}
 import views.html.register.trustees.trusteeKind
 
 import scala.concurrent.Future
@@ -41,7 +41,7 @@ class TrusteeKindController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
                                        dataCacheConnector: DataCacheConnector,
-                                       @Trustees navigator: Navigator2,
+                                       @Trustees navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,

@@ -16,161 +16,164 @@
 
 package navigators
 
-import com.google.inject.{Inject, Singleton}
+import com.google.inject.Inject
 import config.FrontendAppConfig
-import identifiers.{Identifier, LastPageId}
+import connectors.DataCacheConnector
+import identifiers.LastPageId
 import identifiers.register._
 import models.register.{SchemeDetails, SchemeType}
 import models.{CheckMode, Mode, NormalMode}
 import play.api.mvc.Call
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Navigator, UserAnswers}
 
-@Singleton
-class RegisterNavigator @Inject()(appConfig: FrontendAppConfig) extends Navigator with Enumerable.Implicits {
+//scalastyle:off cyclomatic.complexity
+class RegisterNavigator @Inject()(val dataCacheConnector: DataCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
 
-  override protected val routeMap: PartialFunction[Identifier, UserAnswers => Call] = {
-    case ContinueRegistrationId =>
-      continueRegistrationRoutes()
-    case WhatYouWillNeedId =>
-      _ => controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode)
-    case SchemeDetailsId =>
-      _ => controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(NormalMode)
-    case SchemeEstablishedCountryId =>
-      _ => controllers.register.routes.MembershipController.onPageLoad(NormalMode)
-    case MembershipId =>
-      _ => controllers.register.routes.MembershipFutureController.onPageLoad(NormalMode)
-    case MembershipFutureId =>
-      _ => controllers.register.routes.InvestmentRegulatedController.onPageLoad(NormalMode)
-    case InvestmentRegulatedId =>
-      _ => controllers.register.routes.OccupationalPensionSchemeController.onPageLoad(NormalMode)
-    case OccupationalPensionSchemeId =>
-      _ => controllers.register.routes.BenefitsController.onPageLoad(NormalMode)
-    case BenefitsId =>
-      _ => controllers.register.routes.SecuredBenefitsController.onPageLoad(NormalMode)
-    case SecuredBenefitsId =>
-      securedBenefitsRoutes(NormalMode)
-    case BenefitsInsurerId =>
-      _ => controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(NormalMode)
-    case InsurerPostCodeLookupId =>
-      _ => controllers.register.routes.InsurerAddressListController.onPageLoad(NormalMode)
-    case InsurerAddressListId =>
-      _ => controllers.register.routes.InsurerAddressController.onPageLoad(NormalMode)
-    case InsurerAddressId =>
-      _ => controllers.register.routes.UKBankAccountController.onPageLoad(NormalMode)
-    case UKBankAccountId =>
-      uKBankAccountRoutes(NormalMode)
-    case UKBankDetailsId =>
-      _ => controllers.register.routes.CheckYourAnswersController.onPageLoad()
-    case CheckYourAnswersId =>
-      checkYourAnswersRoutes()
-    case SchemeReviewId =>
-      schemeReviewRoutes()
-    case DeclarationDormantId =>
-      _ => controllers.register.routes.DeclarationController.onPageLoad()
-    case DeclarationId =>
-      _ => controllers.register.routes.DeclarationDutiesController.onPageLoad()
-    case DeclarationDutiesId =>
-      declarationDutiesRoutes()
-  }
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
+    from.id match {
+      case ContinueRegistrationId =>
+        continueRegistrationRoutes(from.userAnswers)
+      case WhatYouWillNeedId =>
+        NavigateTo.dontSave(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
+      case SchemeDetailsId =>
+        NavigateTo.save(controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(NormalMode))
+      case SchemeEstablishedCountryId =>
+        NavigateTo.save(controllers.register.routes.MembershipController.onPageLoad(NormalMode))
+      case MembershipId =>
+        NavigateTo.save(controllers.register.routes.MembershipFutureController.onPageLoad(NormalMode))
+      case MembershipFutureId =>
+        NavigateTo.save(controllers.register.routes.InvestmentRegulatedController.onPageLoad(NormalMode))
+      case InvestmentRegulatedId =>
+        NavigateTo.save(controllers.register.routes.OccupationalPensionSchemeController.onPageLoad(NormalMode))
+      case OccupationalPensionSchemeId =>
+        NavigateTo.save(controllers.register.routes.BenefitsController.onPageLoad(NormalMode))
+      case BenefitsId =>
+        NavigateTo.save(controllers.register.routes.SecuredBenefitsController.onPageLoad(NormalMode))
+      case SecuredBenefitsId =>
+        securedBenefitsRoutes(NormalMode, from.userAnswers)
+      case BenefitsInsurerId =>
+        NavigateTo.save(controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(NormalMode))
+      case InsurerPostCodeLookupId =>
+        NavigateTo.save(controllers.register.routes.InsurerAddressListController.onPageLoad(NormalMode))
+      case InsurerAddressListId =>
+        NavigateTo.save(controllers.register.routes.InsurerAddressController.onPageLoad(NormalMode))
+      case InsurerAddressId =>
+        NavigateTo.save(controllers.register.routes.UKBankAccountController.onPageLoad(NormalMode))
+      case UKBankAccountId =>
+        uKBankAccountRoutes(NormalMode, from.userAnswers)
+      case UKBankDetailsId =>
+        NavigateTo.save(controllers.register.routes.CheckYourAnswersController.onPageLoad())
+      case CheckYourAnswersId =>
+        checkYourAnswersRoutes(from.userAnswers)
+      case SchemeReviewId =>
+        schemeReviewRoutes(from.userAnswers)
+      case DeclarationDormantId =>
+        NavigateTo.save(controllers.register.routes.DeclarationController.onPageLoad())
+      case DeclarationId =>
+        NavigateTo.save(controllers.register.routes.DeclarationDutiesController.onPageLoad())
+      case DeclarationDutiesId =>
+        declarationDutiesRoutes(from.userAnswers)
+      case _ => None
+    }
 
   private lazy val checkYourAnswers = controllers.register.routes.CheckYourAnswersController.onPageLoad()
 
-  // scalastyle:off cyclomatic.complexity
-  override protected def editRouteMap: PartialFunction[Identifier, UserAnswers => Call] = {
-    case SchemeDetailsId =>
-      _ => checkYourAnswers
-    case SchemeEstablishedCountryId =>
-      _ => checkYourAnswers
-    case MembershipId =>
-      _ => checkYourAnswers
-    case MembershipFutureId =>
-      _ => checkYourAnswers
-    case InvestmentRegulatedId =>
-      _ => checkYourAnswers
-    case OccupationalPensionSchemeId =>
-      _ => checkYourAnswers
-    case BenefitsId =>
-      _ => checkYourAnswers
-    case InsurerPostCodeLookupId =>
-      _ => controllers.register.routes.InsurerAddressListController.onPageLoad(CheckMode)
-    case InsurerAddressListId =>
-      _ => controllers.register.routes.InsurerAddressController.onPageLoad(CheckMode)
-    case InsurerAddressId =>
-      _ => checkYourAnswers
-    case SecuredBenefitsId =>
-      securedBenefitsRoutes(CheckMode)
-    case BenefitsInsurerId =>
-      _ => checkYourAnswers
-    case UKBankAccountId =>
-      uKBankAccountRoutes(CheckMode)
-    case UKBankDetailsId =>
-      _ => checkYourAnswers
-  }
-  // scalastyle:on cyclomatic.complexity
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] =
+    from.id match {
+      case SchemeDetailsId =>
+        NavigateTo.save(checkYourAnswers)
+      case SchemeEstablishedCountryId =>
+        NavigateTo.save(checkYourAnswers)
+      case MembershipId =>
+        NavigateTo.save(checkYourAnswers)
+      case MembershipFutureId =>
+        NavigateTo.save(checkYourAnswers)
+      case InvestmentRegulatedId =>
+        NavigateTo.save(checkYourAnswers)
+      case OccupationalPensionSchemeId =>
+        NavigateTo.save(checkYourAnswers)
+      case BenefitsId =>
+        NavigateTo.save(checkYourAnswers)
+      case InsurerPostCodeLookupId =>
+        NavigateTo.save(controllers.register.routes.InsurerAddressListController.onPageLoad(CheckMode))
+      case InsurerAddressListId =>
+        NavigateTo.save(controllers.register.routes.InsurerAddressController.onPageLoad(CheckMode))
+      case InsurerAddressId =>
+        NavigateTo.save(checkYourAnswers)
+      case SecuredBenefitsId =>
+        securedBenefitsRoutes(CheckMode, from.userAnswers)
+      case BenefitsInsurerId =>
+        NavigateTo.save(checkYourAnswers)
+      case UKBankAccountId =>
+        uKBankAccountRoutes(CheckMode, from.userAnswers)
+      case UKBankDetailsId =>
+        NavigateTo.save(checkYourAnswers)
+      case _ => None
+    }
 
-  private def securedBenefitsRoutes(mode: Mode)(answers: UserAnswers): Call = {
+  private def securedBenefitsRoutes(mode: Mode, answers: UserAnswers): Option[NavigateTo] = {
     (answers.get(SecuredBenefitsId), mode) match {
       case (Some(true), _) =>
-        controllers.register.routes.BenefitsInsurerController.onPageLoad(mode)
+        NavigateTo.save(controllers.register.routes.BenefitsInsurerController.onPageLoad(mode))
       case (Some(false), NormalMode) =>
-        controllers.register.routes.UKBankAccountController.onPageLoad(mode)
+        NavigateTo.save(controllers.register.routes.UKBankAccountController.onPageLoad(mode))
       case (Some(false), CheckMode) =>
-        controllers.register.routes.CheckYourAnswersController.onPageLoad()
+        NavigateTo.save(controllers.register.routes.CheckYourAnswersController.onPageLoad())
       case (None, _) =>
-        controllers.routes.SessionExpiredController.onPageLoad()
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 
-  private def uKBankAccountRoutes(mode: Mode)(answers: UserAnswers): Call = {
+  private def uKBankAccountRoutes(mode: Mode, answers: UserAnswers): Option[NavigateTo] = {
     answers.get(UKBankAccountId) match {
       case Some(true) =>
-        controllers.register.routes.UKBankDetailsController.onPageLoad(mode)
+        NavigateTo.save(controllers.register.routes.UKBankDetailsController.onPageLoad(mode))
       case Some(false) =>
-        controllers.register.routes.CheckYourAnswersController.onPageLoad()
+        NavigateTo.save(controllers.register.routes.CheckYourAnswersController.onPageLoad())
       case None =>
-        controllers.routes.SessionExpiredController.onPageLoad()
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 
-  private def schemeReviewRoutes()(userAnswers: UserAnswers): Call = {
+  private def schemeReviewRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
     if (userAnswers.hasCompanies) {
-      controllers.register.routes.DeclarationDormantController.onPageLoad()
+      NavigateTo.save(controllers.register.routes.DeclarationDormantController.onPageLoad())
     }
     else {
-      controllers.register.routes.DeclarationController.onPageLoad()
+      NavigateTo.save(controllers.register.routes.DeclarationController.onPageLoad())
     }
   }
 
-  private def declarationDutiesRoutes()(userAnswers: UserAnswers): Call = {
+  private def declarationDutiesRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
     userAnswers.get(DeclarationDutiesId) match {
       case Some(true) =>
-        controllers.register.routes.SchemeSuccessController.onPageLoad()
+        NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
       case Some(false) =>
-        controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
+        NavigateTo.save(controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode))
       case None =>
-        controllers.routes.SessionExpiredController.onPageLoad()
+        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
 
-  private def checkYourAnswersRoutes()(userAnswers: UserAnswers): Call = {
+  private def checkYourAnswersRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
     if (userAnswers.allEstablishers.isEmpty) {
-      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
+      NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
     } else if (userAnswers.allTrustees.nonEmpty) {
-      controllers.register.routes.SchemeReviewController.onPageLoad()
+      NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
     } else {
       userAnswers.get(SchemeDetailsId) match {
         case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
-          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+          NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
         case _ =>
-          controllers.register.routes.SchemeReviewController.onPageLoad()
+          NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
       }
     }
   }
 
-  private def continueRegistrationRoutes()(userAnswers: UserAnswers): Call = {
+  private def continueRegistrationRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
     userAnswers.get(LastPageId) match {
-      case Some(lastPage) => Call(lastPage.method, lastPage.url)
-      case _ => controllers.routes.WhatYouWillNeedController.onPageLoad()
+      case Some(lastPage) => NavigateTo.dontSave(Call(lastPage.method, lastPage.url))
+      case _ => NavigateTo.dontSave(controllers.routes.WhatYouWillNeedController.onPageLoad())
     }
   }
 

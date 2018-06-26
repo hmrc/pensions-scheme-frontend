@@ -66,7 +66,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
 
   private val testAnswer = "AB12 3CD"
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     SchemeDetailsId.toString ->
       SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     EstablishersId.toString -> Json.arr(

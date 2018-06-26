@@ -38,7 +38,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils._
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, Navigator}
 import utils.annotations.TrusteesCompany
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -72,7 +72,8 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
         bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
-        bind[CountryOptions].to(countryOptions)
+        bind[CountryOptions].to(countryOptions),
+        bind[Navigator].toInstance(FakeNavigator)
       )) {
         implicit app =>
 

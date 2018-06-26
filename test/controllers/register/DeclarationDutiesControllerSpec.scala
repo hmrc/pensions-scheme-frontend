@@ -27,7 +27,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeNavigator2, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declarationDuties
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,7 +51,7 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase {
   }
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): DeclarationDutiesController =
-    new DeclarationDutiesController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator2(desiredRoute = onwardRoute), FakeAuthAction,
+    new DeclarationDutiesController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider, fakePensionsSchemeConnector)
 
   def viewAsString(form: Form[_] = form): String = declarationDuties(frontendAppConfig, form, "Test Scheme Name")(fakeRequest, messages).toString

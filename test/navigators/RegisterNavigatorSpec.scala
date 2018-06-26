@@ -18,76 +18,74 @@ package navigators
 
 import base.SpecBase
 import config.FrontendAppConfig
+import connectors.FakeDataCacheConnector
 import identifiers.register._
-import models.register.{SchemeDetails, SchemeType}
 import models._
+import models.register.{SchemeDetails, SchemeType}
 import org.scalatest.MustMatchers
 import play.api.Configuration
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
-import utils.{Enumerable, UserAnswers}
+import utils.UserAnswers
 
+//scalastyle:off line.size.limit
 class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import RegisterNavigatorSpec._
 
-  private def navigator(isEstablisherRestricted: Boolean = false) = {
-    val application = new GuiceApplicationBuilder()
-      .configure(Configuration("microservice.services.features.restrict-establisher" -> isEstablisherRestricted))
-    val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-    new RegisterNavigator(appConfig)
-  }
-
   private def routesWithRestrictedEstablisher = Table(
-    ("Id",                          "User Answers",       "Next Page (Normal Mode)",              "Next Page (Check Mode)"),
+    ("Id",                          "User Answers",       "Next Page (Normal Mode)",              "Save (NM)",  "Next Page (Check Mode)",             "Save (CM)"),
     // Start - continue or what you will need
-    (ContinueRegistrationId,        emptyAnswers,         whatYouWillNeed,                        None),
-    (ContinueRegistrationId,        savedLastPage,        lastPage,                               None),
-    (WhatYouWillNeedId,             emptyAnswers,         schemeDetails(NormalMode),              None),
+    (ContinueRegistrationId,        emptyAnswers,         whatYouWillNeed,                        false,        None,                                 false),
+    (ContinueRegistrationId,        savedLastPage,        lastPage,                               false,        None,                                 false),
+    (WhatYouWillNeedId,             emptyAnswers,         schemeDetails(NormalMode),              false,        None,                                 false),
 
     // Scheme registration
-    (SchemeDetailsId,               emptyAnswers,         schemeEstablishedCountry(NormalMode),   Some(checkYourAnswers)),
-    (SchemeEstablishedCountryId,    emptyAnswers,         membership(NormalMode),                 Some(checkYourAnswers)),
-    (MembershipId,                  emptyAnswers,         membershipFuture(NormalMode),           Some(checkYourAnswers)),
-    (MembershipFutureId,            emptyAnswers,         investmentRegulated(NormalMode),        Some(checkYourAnswers)),
-    (InvestmentRegulatedId,         emptyAnswers,         occupationalPensionScheme(NormalMode),  Some(checkYourAnswers)),
-    (OccupationalPensionSchemeId,   emptyAnswers,         benefits(NormalMode),                   Some(checkYourAnswers)),
-    (BenefitsId,                    emptyAnswers,         securedBenefits(NormalMode),            Some(checkYourAnswers)),
-    (SecuredBenefitsId,             securedBenefitsTrue,  benefitsInsurer(NormalMode),            Some(benefitsInsurer(CheckMode))),
-    (SecuredBenefitsId,             securedBenefitsFalse, uKBankAccount(NormalMode),              Some(checkYourAnswers)),
-    (SecuredBenefitsId,             emptyAnswers,         expired,                                Some(expired)),
-    (BenefitsInsurerId,             emptyAnswers,         insurerPostCodeLookup(NormalMode),      Some(checkYourAnswers)),
-    (InsurerPostCodeLookupId,       emptyAnswers,         insurerAddressList(NormalMode),         Some(insurerAddressList(CheckMode))),
-    (InsurerAddressListId,          emptyAnswers,         insurerAddress(NormalMode),             Some(insurerAddress(CheckMode))),
-    (InsurerAddressId,              emptyAnswers,         uKBankAccount(NormalMode),              Some(checkYourAnswers)),
-    (UKBankAccountId,               ukBankAccountTrue,    uKBankDetails(NormalMode),              Some(uKBankDetails(CheckMode))),
-    (UKBankAccountId,               ukBankAccountFalse,   checkYourAnswers,                       Some(checkYourAnswers)),
-    (UKBankAccountId,               emptyAnswers,         expired,                                Some(expired)),
-    (UKBankDetailsId,               emptyAnswers,         checkYourAnswers,                       Some(checkYourAnswers)),
+    (SchemeDetailsId,               emptyAnswers,         schemeEstablishedCountry(NormalMode),   true,         Some(checkYourAnswers),               true),
+    (SchemeEstablishedCountryId,    emptyAnswers,         membership(NormalMode),                 true,         Some(checkYourAnswers),               true),
+    (MembershipId,                  emptyAnswers,         membershipFuture(NormalMode),           true,         Some(checkYourAnswers),               true),
+    (MembershipFutureId,            emptyAnswers,         investmentRegulated(NormalMode),        true,         Some(checkYourAnswers),               true),
+    (InvestmentRegulatedId,         emptyAnswers,         occupationalPensionScheme(NormalMode),  true,         Some(checkYourAnswers),               true),
+    (OccupationalPensionSchemeId,   emptyAnswers,         benefits(NormalMode),                   true,         Some(checkYourAnswers),               true),
+    (BenefitsId,                    emptyAnswers,         securedBenefits(NormalMode),            true,         Some(checkYourAnswers),               true),
+    (SecuredBenefitsId,             securedBenefitsTrue,  benefitsInsurer(NormalMode),            true,         Some(benefitsInsurer(CheckMode)),     true),
+    (SecuredBenefitsId,             securedBenefitsFalse, uKBankAccount(NormalMode),              true,         Some(checkYourAnswers),               true),
+    (SecuredBenefitsId,             emptyAnswers,         expired,                                false,        Some(expired),                        false),
+    (BenefitsInsurerId,             emptyAnswers,         insurerPostCodeLookup(NormalMode),      true,         Some(checkYourAnswers),               true),
+    (InsurerPostCodeLookupId,       emptyAnswers,         insurerAddressList(NormalMode),         true,         Some(insurerAddressList(CheckMode)),  true),
+    (InsurerAddressListId,          emptyAnswers,         insurerAddress(NormalMode),             true,         Some(insurerAddress(CheckMode)),      true),
+    (InsurerAddressId,              emptyAnswers,         uKBankAccount(NormalMode),              true,         Some(checkYourAnswers),               true),
+    (UKBankAccountId,               ukBankAccountTrue,    uKBankDetails(NormalMode),              true,         Some(uKBankDetails(CheckMode)),       true),
+    (UKBankAccountId,               ukBankAccountFalse,   checkYourAnswers,                       true,         Some(checkYourAnswers),               true),
+    (UKBankAccountId,               emptyAnswers,         expired,                                false,        Some(expired),                        false),
+    (UKBankDetailsId,               emptyAnswers,         checkYourAnswers,                       true,         Some(checkYourAnswers),               true),
 
     //Check your answers - jump off to establishers
-    (CheckYourAnswersId,            noEstablishers,       addEstablisher,                         None),
-    (CheckYourAnswersId,            hasEstablishers,      schemeReview,                           None),
-    (CheckYourAnswersId,            needsTrustees,        addTrustee,                             None),
+    (CheckYourAnswersId,            noEstablishers,       addEstablisher,                         true,         None,                                 false),
+    (CheckYourAnswersId,            hasEstablishers,      schemeReview,                           true,         None,                                 false),
+    (CheckYourAnswersId,            needsTrustees,        addTrustee,                             true,         None,                                 false),
 
     // Review, declarations, success - return from establishers
-    (SchemeReviewId,                hasCompanies,         declarationDormant,                     None),
-    (SchemeReviewId,                emptyAnswers,         declaration,                            None),
-    (DeclarationDormantId,          emptyAnswers,         declaration,                            None),
-    (DeclarationId,                 emptyAnswers,         declarationDuties,                      None),
-    (DeclarationDutiesId,           dutiesTrue,           schemeSuccess,                          None),
-    (DeclarationDutiesId,           dutiesFalse,          adviserDetails,                         None),
-    (DeclarationDutiesId,           emptyAnswers,         expired,                                None)
+    (SchemeReviewId,                hasCompanies,         declarationDormant,                     true,         None,                                 false),
+    (SchemeReviewId,                emptyAnswers,         declaration,                            true,         None,                                 false),
+    (DeclarationDormantId,          emptyAnswers,         declaration,                            true,         None,                                 false),
+    (DeclarationId,                 emptyAnswers,         declarationDuties,                      true,         None,                                 false),
+    (DeclarationDutiesId,           dutiesTrue,           schemeSuccess,                          false,        None,                                 false),
+    (DeclarationDutiesId,           dutiesFalse,          adviserDetails,                         true,         None,                                 false),
+    (DeclarationDutiesId,           emptyAnswers,         expired,                                false,        None,                                 false)
   )
-  s"${navigator().getClass.getSimpleName}" must {
+
+  "RegisterNavigator" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator(), routesWithRestrictedEstablisher, dataDescriber)
+    val navigator = testNavigator()
+    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
+    behave like nonMatchingNavigator(navigator)
   }
 }
 
 //noinspection MutatorLikeMethodIsParameterless
-object RegisterNavigatorSpec extends Enumerable.Implicits {
+object RegisterNavigatorSpec {
 
   private val lastPage: Call = Call("GET", "http://www.test.com")
 
@@ -133,5 +131,12 @@ object RegisterNavigatorSpec extends Enumerable.Implicits {
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+
+  private def testNavigator(isEstablisherRestricted: Boolean = false): RegisterNavigator = {
+    val application = new GuiceApplicationBuilder()
+      .configure(Configuration("microservice.services.features.restrict-establisher" -> isEstablisherRestricted))
+    val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+    new RegisterNavigator(FakeDataCacheConnector, appConfig)
+  }
 
 }

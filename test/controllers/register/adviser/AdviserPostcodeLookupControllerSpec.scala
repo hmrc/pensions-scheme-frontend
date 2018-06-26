@@ -86,7 +86,8 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
         bind[DataCacheConnector].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataRetrievalAction].to(getMandatoryAdviser)
+        bind[DataRetrievalAction].to(getMandatoryAdviser),
+        bind[Navigator].qualifiedWith(classOf[Adviser]).toInstance(new FakeNavigator(onwardRoute))
       )) {
         implicit app =>
 
@@ -113,7 +114,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.eq(validPostcode))(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(
-          (Seq(fakeAddress(testAnswer))))
+          Seq(fakeAddress(testAnswer)))
         )
 
       running(_.overrides(

@@ -26,14 +26,17 @@ import models.register.establishers.company.director.DirectorDetails
 import models.{AddressYears, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.register.establishers.company.director.directorAddressYears
 
+//scalastyle:off magic.number
+
 class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new DirectorAddressYearsFormProvider()
   val form = formProvider()
@@ -62,7 +65,7 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
     director.directorName
   )(fakeRequest, messages).toString
 
-  val validData = Json.obj(
+  val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         "director" -> Json.arr(

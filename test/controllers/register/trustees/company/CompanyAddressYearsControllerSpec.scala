@@ -19,21 +19,23 @@ package controllers.register.trustees.company
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import identifiers.register.establishers.EstablishersId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
 import models.{AddressYears, CompanyDetails, Index, NormalMode}
 import play.api.data.Form
-import play.api.libs.json.Json
+import play.api.libs.json.{JsResult, Json}
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.{FakeNavigator, UserAnswers}
 import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
+//scalastyle:off magic.number
+
 class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new forms.address.AddressYearsFormProvider()
   val form = formProvider(Message("messages__common_error__current_address_years"))
@@ -57,9 +59,9 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
     new CompanyAddressYearsController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeDataCacheConnector, FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form) = addressYears(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = addressYears(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
   
-  val validData = UserAnswers()
+  val validData: JsResult[UserAnswers] = UserAnswers()
     .set(CompanyDetailsId(0))(companyDetails)
 
   val getRelevantData = new FakeDataRetrievalAction(Some(validData.get.json))
