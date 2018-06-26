@@ -46,7 +46,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          val establishers = request.userAnswers.allEstablishers
+          val establishers = request.userAnswers.allEstablishersAfterDelete
           Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
             establishers, schemeName)))
       }
@@ -56,7 +56,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          val establishers = request.userAnswers.allEstablishers
+          val establishers = request.userAnswers.allEstablishersAfterDelete
           formProvider(establishers).bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,

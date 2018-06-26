@@ -17,11 +17,10 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.trustees.routes._
-@import models.{Mode, TrusteeEntityDetails}
-@import viewmodels.EntityKind
-@import viewmodels.EditableItem
+@import models.{Mode}
+@import viewmodels.{EntityKind, EditableItem}
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, trustees: Seq[TrusteeEntityDetails])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, trustees: Seq[EditableItem])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__addTrustee__title"),

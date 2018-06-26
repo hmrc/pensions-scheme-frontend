@@ -45,7 +45,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       (SchemeDetailsId and CompanyDetailsId(index)).retrieve.right.map{
         case schemeDetails ~ companyDetails =>
-          val directors: Seq[String] = request.userAnswers.allDirectors(index).map(directorDetails => directorDetails.directorName)
+          val directors: Seq[String] = request.userAnswers.allDirectorsAfterDelete(index).map(directorDetails => directorDetails.name)
 
           Future.successful(Ok(companyReview(appConfig, index, schemeDetails.schemeName, companyDetails.companyName, directors)))
       }

@@ -16,28 +16,35 @@
 
 package models.register
 
+import models.register.trustees.TrusteeKind
 import models.NormalMode
+import models.register.establishers.EstablisherKind
+import viewmodels.EditableItem
 
 sealed trait EntityDetails {
-  def route(id1: Int, id2: Option[Int]): (String, Boolean, String)
+  def route(id1: Int, id2: Option[Int]): EditableItem
 }
 
-  case class TrusteeIndividualName(name: String, isDeleted: Boolean) extends EntityDetails {
-    override def route(id: Int, id2: Option[Int]): (String, Boolean, String) =
-      (name, isDeleted, controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id).url)
-  }
+case class TrusteeIndividualNameCopy(name: String, isDeleted: Boolean) extends EntityDetails {
+  override def route(id: Int, id2: Option[Int]): EditableItem =
+    EditableItem(id, name, isDeleted, controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id).url,
+      controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id, TrusteeKind.Individual).url)
+}
 
-  case class TrusteeCompanyName(name: String, isDeleted: Boolean) extends EntityDetails {
-    override def route(id: Int, id2: Option[Int]): (String, Boolean, String) =
-      (name, isDeleted, controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id).url)
-  }
+case class TrusteeCompanyNameCopy(name: String, isDeleted: Boolean) extends EntityDetails {
+  override def route(id: Int, id2: Option[Int]): EditableItem =
+    EditableItem(id, name, isDeleted, controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id).url,
+      controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id, TrusteeKind.Company).url)
+}
 
-  case class EstablisherIndividualName(name: String, isDeleted: Boolean) extends EntityDetails {
-    override def route(id: Int, id2: Option[Int]): (String, Boolean, String) =
-      (name, isDeleted, controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, id).url)
-  }
+case class EstablisherIndividualNameCopy(name: String, isDeleted: Boolean) extends EntityDetails {
+  override def route(id: Int, id2: Option[Int]): EditableItem =
+    EditableItem(id, name, isDeleted, controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, id).url,
+      controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(id, EstablisherKind.Indivdual).url)
+}
 
-  case class EstablisherCompanyName(name: String, isDeleted: Boolean) extends EntityDetails {
-    override def route(id: Int, id2: Option[Int]): (String, Boolean, String) =
-      (name, isDeleted, controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id).url)
-  }
+case class EstablisherCompanyNameCopy(name: String, isDeleted: Boolean) extends EntityDetails {
+  override def route(id: Int, id2: Option[Int]): EditableItem =
+    EditableItem(id, name, isDeleted, controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id).url,
+      controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(id, EstablisherKind.Company).url)
+}

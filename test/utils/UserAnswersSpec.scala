@@ -126,7 +126,7 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
         .set(DirectorDetailsId(0, 0))(DirectorDetails("First", None, "Last", LocalDate.now, false))
         .flatMap(_.set(DirectorDetailsId(0, 1))(DirectorDetails("First1", None, "Last1", LocalDate.now, true))).get
 
-      val result = userAnswers.allDirectors(0)
+      val result = userAnswers.allDirectorsAfterDelete(0)
 
       result.size mustEqual 1
       result mustBe Seq(DirectorDetails("First", None, "Last", LocalDate.now, false))
@@ -159,6 +159,21 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
       val result = userAnswers.establishersCount
 
       result mustEqual 3
+    }
+  }
+
+  ".DirectorsCount" must {
+
+    "return the count of all establishers irrespective of whether they are deleted or not" in {
+
+      val userAnswers = UserAnswers()
+        .set(DirectorDetailsId(0, 0))(DirectorDetails("First", None, "Last", LocalDate.now, false))
+        .flatMap(_.set(DirectorDetailsId(0, 1))(DirectorDetails("First1", None, "Last1", LocalDate.now, true))).get
+
+
+      val result = userAnswers.directorCount
+
+      result mustEqual 2
     }
   }
 
