@@ -33,7 +33,6 @@ import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
 import viewmodels.EditableItem
-
 import scala.concurrent.Future
 import scala.language.implicitConversions
 

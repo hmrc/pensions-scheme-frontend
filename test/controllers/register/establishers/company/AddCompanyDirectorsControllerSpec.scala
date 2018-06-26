@@ -30,6 +30,7 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
 import utils.{FakeNavigator, Navigator, UserAnswers}
+import viewmodels.EditableItem
 import views.html.register.establishers.company.addCompanyDirectors
 
 class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
@@ -58,7 +59,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form, directors: Seq[DirectorDetails] = Nil) =
+  private def viewAsString(form: Form[_] = form, directors: Seq[EditableItem] = Nil) =
     addCompanyDirectors(
       frontendAppConfig,
       form,
@@ -89,6 +90,9 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     )
   }
 
+  private def deleteDirectorLink(index: Int, establisherIndex: Int) = controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(establisherIndex, index).url
+  private def editDirectorLink(index: Int, establisherIndex: Int) = controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, establisherIndex, index).url
+
   "AddCompanyDirectors Controller" must {
 
     "return OK and the correct view for a GET" in {
@@ -106,7 +110,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
           val getRelevantData = new FakeDataRetrievalAction(Some(userAnswers.json))
           val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex)(fakeRequest)
 
-          contentAsString(result) mustBe viewAsString(form, Seq(johnDoe))
+          contentAsString(result) mustBe viewAsString(form, Seq(EditableItem(0, johnDoe.directorName, false, editDirectorLink(0, 0), deleteDirectorLink(0, 0))))
         }
     }
 
@@ -134,7 +138,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(postRequest)
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm, Seq(johnDoe))
+      contentAsString(result) mustBe viewAsString(boundForm, Seq(EditableItem(0, johnDoe.directorName, false, editDirectorLink(0, 0), deleteDirectorLink(0, 0))))
     }
 
     "not save the answer when directors exist and valid data is submitted" in {
@@ -166,11 +170,13 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
     "populate the view with directors when they exist" in {
       val directors = Seq(johnDoe, joeBloggs)
+      val directorsViewModel = Seq(EditableItem(0, johnDoe.directorName, false, editDirectorLink(0, 0), deleteDirectorLink(0, 0)),
+        EditableItem(1, joeBloggs.directorName, false, editDirectorLink(1, 0), deleteDirectorLink(1, 0)))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex)(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(form, directors)
+      contentAsString(result) mustBe viewAsString(form, directorsViewModel)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {

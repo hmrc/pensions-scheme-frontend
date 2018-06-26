@@ -51,7 +51,6 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
       SchemeDetailsId.retrieve.right.map { schemeDetails =>
         trusteeName(index, trusteeKind) match {
           case Right(trusteeName) =>
-            println("\n\n\n\n 1...trusteeName:"+trusteeName)
             Future.successful(
             Ok(
               confirmDeleteTrustee(
@@ -69,7 +68,6 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      println("\n\n\n 2...trustee Index: "+trusteeKind+"|||"+index)
       deleteTrustee(trusteeKind, index) match {
         case Right(futureUserAnswers) =>
           futureUserAnswers.map { userAnswers =>
