@@ -17,8 +17,8 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.trustees.routes._
-@import models.{Mode}
-@import viewmodels.{EntityKind, EditableItem}
+@import models.Mode
+@import viewmodels.EditableItem
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, trustees: Seq[EditableItem])(implicit request: Request[_], messages: Messages)
 

@@ -25,7 +25,7 @@ import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import utils.UserAnswers
-import viewmodels.{EditableItem, EntityKind}
+import viewmodels.EditableItem
 import views.behaviours.{EditableItemListBehaviours, YesNoViewBehaviours}
 import views.html.register.trustees.addTrustee
 
