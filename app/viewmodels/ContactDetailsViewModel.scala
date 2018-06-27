@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.individual
+package viewmodels
 
-import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
-import models.address.TolerantAddress
-import play.api.libs.json.JsPath
+import play.api.mvc.Call
 
-case class IndividualAddressListId(index: Int) extends TypedIdentifier[TolerantAddress] {
-  override def path: JsPath = TrusteesId(index).path \ IndividualAddressListId.toString
-}
-
-object IndividualAddressListId {
-  override def toString: String = "IndividualAddressList"
-}
+case class ContactDetailsViewModel(
+                                    postCall: Call,
+                                    title: Message,
+                                    heading: Message,
+                                    body: Message,
+                                    subHeading: Option[Message] = None
+                                  )

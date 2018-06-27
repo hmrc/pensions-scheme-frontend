@@ -16,22 +16,23 @@
 
 package controllers.register.trustees.company
 
-import play.api.data.Form
-import play.api.libs.json.{JsObject, Json}
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
-import controllers.actions._
-import play.api.test.Helpers._
-import identifiers.register.trustees.company.CompanyContactDetailsId
-import models.{CompanyDetails, ContactDetails, Index, NormalMode}
-import views.html.register.trustees.company.companyContactDetails
 import controllers.ControllerSpecBase
+import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.company.CompanyContactDetailsId
+import models._
 import models.register.{SchemeDetails, SchemeType}
+import play.api.data.Form
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator
+import viewmodels.{ContactDetailsViewModel, Message}
+import views.html.contactDetails
 
 //scalastyle:off magic.number
 
@@ -45,13 +46,21 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(10)
   val companyName = "test company name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany) :
-  CompanyContactDetailsController  =
+  private def viewmodel(mode: Mode, index: Index, companyName: String) = ContactDetailsViewModel(
+    postCall = routes.CompanyContactDetailsController.onSubmit(mode, index),
+    title = Message("messages__trustee_company_contact_details__title"),
+    heading = Message("messages__trustee_company_contact_details__heading"),
+    body = Message("messages__contact_details__body"),
+    subHeading = Some(companyName)
+  )
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteeCompany):
+  CompanyContactDetailsController =
     new CompanyContactDetailsController(
+      new FakeNavigator(desiredRoute = onwardRoute),
       frontendAppConfig,
       messagesApi,
       FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
@@ -59,27 +68,25 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
     )
 
   def viewAsString(form: Form[_] = form): String =
-    companyContactDetails(
+    contactDetails(
       frontendAppConfig,
       form,
-      NormalMode,
-      firstIndex,
-      companyName
+      viewmodel(NormalMode, firstIndex, companyName)
     )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString->
-    SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    SchemeDetailsId.toString ->
+      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
     TrusteesId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString ->
-        CompanyDetails("test company name", Some("123456"), Some("abcd")),
+          CompanyDetails("test company name", Some("123456"), Some("abcd")),
         CompanyContactDetailsId.toString ->
-        ContactDetails("test@test.com", "123456789")
+          ContactDetails("test@test.com", "123456789")
       ),
       Json.obj(
         CompanyDetailsId.toString ->
-        CompanyDetails("test", Some("654321"), Some("bcda"))
+          CompanyDetails("test", Some("654321"), Some("bcda"))
       )
     )
   )

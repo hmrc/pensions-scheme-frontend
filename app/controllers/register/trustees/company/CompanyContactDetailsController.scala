@@ -16,62 +16,53 @@
 
 package controllers.register.trustees.company
 
-import javax.inject.Inject
-
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
-import config.FrontendAppConfig
-import controllers.Retrievals
 import forms.ContactDetailsFormProvider
 import identifiers.register.trustees.company.{CompanyContactDetailsId, CompanyDetailsId}
-import models.{ContactDetails, Index, Mode}
+import javax.inject.Inject
+import models.{Index, Mode}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
-import utils.annotations.TrusteesCompany
 import utils._
-import views.html.register.trustees.company.companyContactDetails
+import utils.annotations.TrusteesCompany
+import viewmodels.{ContactDetailsViewModel, Message}
 
-import scala.concurrent.Future
+class CompanyContactDetailsController @Inject()(
+                                                 @TrusteesCompany override val navigator: Navigator,
+                                                 override val appConfig: FrontendAppConfig,
+                                                 override val messagesApi: MessagesApi,
+                                                 override val cacheConnector: DataCacheConnector,
+                                                 authenticate: AuthAction,
+                                                 getData: DataRetrievalAction,
+                                                 requireData: DataRequiredAction,
+                                                 formProvider: ContactDetailsFormProvider
+                                               ) extends controllers.ContactDetailsController {
 
-class CompanyContactDetailsController @Inject() (
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        @TrusteesCompany navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: ContactDetailsFormProvider
-                                      ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats{
-
-  val form: Form[ContactDetails] = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      CompanyDetailsId(index).retrieve.right.flatMap{
+      CompanyDetailsId(index).retrieve.right.map {
         companyDetails =>
-          CompanyContactDetailsId(index).retrieve.right.map{ value =>
-           Future.successful(Ok(companyContactDetails(appConfig, form.fill(value), mode, index, companyDetails.companyName)))
-          }.left.map{ _ =>
-           Future.successful(Ok(companyContactDetails(appConfig, form, mode, index, companyDetails.companyName)))
-          }
+          get(CompanyContactDetailsId(index), form, viewmodel(mode, index, companyDetails.companyName))
       }
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map {
-            companyDetails=>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyContactDetails(appConfig, formWithErrors, mode, index, companyDetails.companyName))),
-            (value) =>
-              dataCacheConnector.save(request.externalId, CompanyContactDetailsId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(CompanyContactDetailsId(index), mode,UserAnswers(cacheMap))))
-          )
+        companyDetails =>
+          post(CompanyContactDetailsId(index), mode, form, viewmodel(mode, index, companyDetails.companyName))
       }
   }
 
- }
+  private def viewmodel(mode: Mode, index: Index, companyName: String) = ContactDetailsViewModel(
+    postCall = routes.CompanyContactDetailsController.onSubmit(mode, index),
+    title = Message("messages__trustee_company_contact_details__title"),
+    heading = Message("messages__trustee_company_contact_details__heading"),
+    body = Message("messages__contact_details__body"),
+    subHeading = Some(companyName)
+  )
+}

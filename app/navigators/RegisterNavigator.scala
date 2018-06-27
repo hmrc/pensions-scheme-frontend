@@ -34,7 +34,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
       case ContinueRegistrationId =>
         continueRegistrationRoutes(from.userAnswers)
       case WhatYouWillNeedId =>
-        NavigateTo.save(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
       case SchemeDetailsId =>
         NavigateTo.save(controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(NormalMode))
       case SchemeEstablishedCountryId =>

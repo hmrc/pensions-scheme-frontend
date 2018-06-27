@@ -17,9 +17,13 @@
 package identifiers.register.establishers.company
 
 import identifiers._
+import identifiers.register.establishers.EstablishersId
 import models.address.TolerantAddress
+import play.api.libs.json.JsPath
 
-case class CompanyAddressListId(index: Int) extends TypedIdentifier[TolerantAddress]
+case class CompanyAddressListId(index: Int) extends TypedIdentifier[TolerantAddress] {
+  override def path: JsPath = EstablishersId(index).path \ CompanyAddressListId.toString
+}
 
 object CompanyAddressListId {
   override def toString: String = "companyAddressList"
