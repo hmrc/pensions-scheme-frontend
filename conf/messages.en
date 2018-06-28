@@ -705,3 +705,5 @@ messages__alreadyDeleted__director_title = You have already deleted this directo
 messages__alreadyDeleted__heading = You have already deleted {0}
 messages__alreadyDeleted__lede = You have already confirmed deletion of {0}.
 messages__alreadyDeleted__text = This page no longer exists.
+
+messages__alreadyDeleted__establisher_title = You have already deleted this establisher

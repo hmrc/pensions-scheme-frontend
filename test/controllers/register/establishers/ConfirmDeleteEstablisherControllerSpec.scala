@@ -47,6 +47,24 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString()
     }
 
+    "redirect to already deleted view for a GET if the establisher was already deleted" in {
+
+      val deletedData = Json.obj(
+        SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            EstablisherDetailsId.toString -> deletedEstablisher
+          )
+        )
+      )
+      val data = new FakeDataRetrievalAction(Some(deletedData))
+
+      val result = controller(data).onPageLoad(establisherIndex, establisherKind)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(establisherIndex, establisherKind).url)
+    }
+
     "delete the establisher individual on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
       val result = controller(data).onSubmit(establisherIndex, establisherKind)(fakeRequest)
@@ -74,7 +92,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "redirect to SessionExpired if the establisher kind is Partnership" in {
       val data = new FakeDataRetrievalAction(Some(testData))
       val result = controller(data).onPageLoad(establisherIndex, EstablisherKind.Partnership)(fakeRequest)
-      
+
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
@@ -107,8 +125,9 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val year = LocalDate.now().getYear - 20
   private lazy val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex, establisherKind)
   private lazy val cancelCall = routes.AddEstablisherController.onPageLoad(NormalMode)
-  private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day), false)
-  private val companyDetails = CompanyDetails("Test Ltd", None, None, false)
+  private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day))
+  private val companyDetails = CompanyDetails("Test Ltd", None, None)
+  private val deletedEstablisher = personDetails.copy(isDeleted = true)
 
   private val testData = Json.obj(
     SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
@@ -118,6 +137,9 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       ),
       Json.obj(
         CompanyDetailsId.toString -> companyDetails
+      ),
+      Json.obj(
+        EstablisherDetailsId.toString -> deletedEstablisher
       )
     )
   )
