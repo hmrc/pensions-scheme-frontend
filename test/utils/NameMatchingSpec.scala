@@ -78,8 +78,8 @@ class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues 
       }
 
       "x% of longer name is more than length of shorter name" in {
-        val nameMatchingExp = NameMatching("CHRI$S WILLIAMS! TABLES", "CHRI$S WILLIAMS! TABLES")
-        val nameMatching = NameMatching("CHRI$S WILLIAMS! TABLES&CARPETS", "CHRI$S WILLIAMS! TABLES")
+        val nameMatchingExp = NameMatching("CHRI$S WILLIAMS! T", "CHRI$S WILLIAMS! T")
+        val nameMatching = NameMatching("CHRI$S WILLIAMS! TABLE", "CHRI$S WILLIAMS! T")
         nameMatching.shortenLongest mustEqual nameMatchingExp
       }
     }
@@ -143,6 +143,12 @@ class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues 
 
       "names after transformation do not match when one of them is longer than the other" in {
         val nameMatching = NameMatching("AIROO AUTOMOTIVE UK LTD", "AIROO Automotive UK Group Life Scheme")
+
+        nameMatching.isMatch mustBe false
+      }
+
+      "names after transformation do not match when one of them is longer than the other containing SASS" in {
+        val nameMatching = NameMatching("Halkin Carpets UK Ltd", "Halkin Carpets UK Ltd SASS")
 
         nameMatching.isMatch mustBe false
       }
