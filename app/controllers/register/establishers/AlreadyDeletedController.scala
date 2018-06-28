@@ -24,7 +24,6 @@ import identifiers.register.establishers.individual.EstablisherDetailsId
 import javax.inject.Inject
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
-import models.register.establishers.individual.EstablisherDetails
 import models.requests.DataRequest
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -64,7 +63,7 @@ class AlreadyDeletedController @Inject()(
       case Company => CompanyDetailsId(index).retrieve.right.map(_.companyName)
       case Indivdual => EstablisherDetailsId(index).retrieve.right.map(_.fullName)
       case Partnership => Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
-      case invalid => Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
+      case _ => Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
     }
   }
 }
