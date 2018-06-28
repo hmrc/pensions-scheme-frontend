@@ -18,9 +18,9 @@ package models.register.establishers.company.director
 
 import org.joda.time.LocalDate
 import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 case class DirectorDetails (firstName: String, middleName:Option[String], lastName: String, date:LocalDate, isDeleted: Boolean = false){
-
   def directorName: String = middleName match {
     case Some(middle) => s"$firstName $middle $lastName"
     case _ => s"$firstName $lastName"
@@ -28,7 +28,15 @@ case class DirectorDetails (firstName: String, middleName:Option[String], lastNa
 }
 
 object DirectorDetails {
-  implicit val format: OFormat[DirectorDetails] = Json.format[DirectorDetails]
+  implicit val reads: Reads[DirectorDetails] =
+    ((JsPath \ "firstName").read[String] and
+      (JsPath \ "middleName").readNullable[String] and
+      (JsPath \ "lastName").read[String] and
+      (JsPath \ "date").read[LocalDate] and
+      ((JsPath \ "isDeleted").read[Boolean] orElse (Reads.pure(false)))
+      ) (DirectorDetails.apply _)
+
+  implicit val writes: Writes[DirectorDetails] = Json.writes[DirectorDetails]
 
   def applyDelete(firstName: String, middleName:Option[String], lastName: String, date:LocalDate): DirectorDetails = {
     DirectorDetails(firstName, middleName, lastName, date, false)

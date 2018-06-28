@@ -19,19 +19,19 @@ package models
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
-case class CompanyDetails (companyName: String, vatNumber: Option[String], payeNumber: Option[String], isDeleted: Boolean = false){
-}
+case class CompanyDetails(companyName: String, vatNumber: Option[String], payeNumber: Option[String], isDeleted: Boolean = false)
 
 object CompanyDetails {
-  implicit val readsCompanyDetails : Reads[CompanyDetails] = (
-    (JsPath \ "companyName").read[String] and
+  implicit val reads: Reads[CompanyDetails] =
+    ((JsPath \ "companyName").read[String] and
       (JsPath \ "vatNumber").readNullable[String] and
       (JsPath \ "payeNumber").readNullable[String] and
       ((JsPath \ "isDeleted").read[Boolean] orElse (Reads.pure(false)))
-    )(CompanyDetails.apply _)
-  
-  implicit val format = Json.format[CompanyDetails]
-  def applyDelete(companyName: String, vatNumber:Option[String], payeNumber: Option[String]): CompanyDetails = {
+      ) (CompanyDetails.apply _)
+
+  implicit val writes: Writes[CompanyDetails] = Json.writes[CompanyDetails]
+
+  def applyDelete(companyName: String, vatNumber: Option[String], payeNumber: Option[String]): CompanyDetails = {
     CompanyDetails(companyName, vatNumber, payeNumber, false)
   }
 

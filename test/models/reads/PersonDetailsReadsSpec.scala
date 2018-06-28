@@ -16,25 +16,27 @@
 
 package models.reads
 
-import models.CompanyDetails
+import java.time.LocalDate
+
+import models.person.PersonDetails
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
 
 
-class CompanyDetailsReadsSpec extends WordSpec with MustMatchers with OptionValues {
-  "Company Details json" should {
+class PersonDetailsReadsSpec extends WordSpec with MustMatchers with OptionValues {
+  "Person Details json" should {
 
-    "map correctly to company details" when {
+    "map correctly to person details" when {
 
-      "We have company details with isDeleted defaulted to false when no isDeleted flag is in json" in {
-        val payload = Json.obj("companyName" -> "test", "vatNumber" -> "testVat", "payeNumber" -> "testPaye")
-        val result = payload.as[CompanyDetails]
+      "We have person details with isDeleted defaulted to false when no isDeleted flag is in json" in {
+        val payload = Json.obj("firstName" -> "test", "middleName" -> "testVat", "lastName" -> "testPaye", "date" -> LocalDate.now())
+        val result = payload.as[PersonDetails]
         result.isDeleted mustBe false
       }
 
-      "We have company details with isDeleted flag to true when isDeleted is present in json" in {
-        val payload = Json.obj("companyName" -> "test", "vatNumber" -> "testVat", "payeNumber" -> "testPaye", "isDeleted" -> true)
-        val result = payload.as[CompanyDetails]
+      "We have person details with isDeleted flag to true when isDeleted is present in json" in {
+        val payload = Json.obj("firstName" -> "test", "middleName" -> "testVat", "lastName" -> "testPaye", "date" -> LocalDate.now(), "isDeleted" -> true)
+        val result = payload.as[PersonDetails]
         result.isDeleted mustBe true
       }
     }
