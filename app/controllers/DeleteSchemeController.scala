@@ -22,6 +22,7 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
 import forms.DeleteSchemeFormProvider
+import identifiers.register.SchemeDetailsId
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -42,11 +43,18 @@ class DeleteSchemeController @Inject() (
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
-      retrieveSchemeName { schemeName =>
-      Future.successful(Ok(deleteScheme(appConfig, form, schemeName)))
-    }
+      request.userAnswers match {
+        case Some(data) => {
+          data.get(SchemeDetailsId) match {
+            case Some(schemeDetails) =>
+              Future.successful(Ok(deleteScheme(appConfig, form, schemeDetails.schemeName)))
+            case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+          }
+        }
+        case None => Future.successful(Redirect(controllers.routes.SchemesOverviewController.onPageLoad()))
+      }
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -60,7 +68,7 @@ class DeleteSchemeController @Inject() (
               dataCacheConnector.removeAll(request.externalId).map { _ =>
                 Redirect(controllers.routes.WhatYouWillNeedController.onPageLoad())
               }
-                case false =>
+            case false =>
               Future.successful(Redirect(controllers.routes.SchemesOverviewController.onPageLoad()))
           }
         )
