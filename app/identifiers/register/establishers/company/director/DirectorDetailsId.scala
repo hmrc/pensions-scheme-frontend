@@ -28,7 +28,7 @@ case class DirectorDetailsId(establisherIndex:Int,directorIndex:Int) extends Typ
 
   override def cleanup(value: Option[DirectorDetails], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.allDirectorsAfterDelete(this.establisherIndex).lengthCompare(10) match {
-      case x if x<=0 => userAnswers.remove(OtherDirectorsId(this.establisherIndex))
+      case lengthCompare if lengthCompare <= 0 => userAnswers.remove(OtherDirectorsId(this.establisherIndex))
       case _ => super.cleanup(value, userAnswers)
     }
   }

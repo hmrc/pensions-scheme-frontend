@@ -81,11 +81,11 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
       val individualName: Reads[EntityDetails] = (__ \ EstablisherDetailsId.toString)
         .read[PersonDetails]
-        .map(details => EstablisherIndividualNameCopy(details.fullName, details.isDeleted))
+        .map(details => EstablisherIndividualName(details.fullName, details.isDeleted))
 
       val companyName: Reads[EntityDetails] = (__ \ CompanyDetailsId.toString)
         .read[CompanyDetails]
-        .map(details => EstablisherCompanyNameCopy(details.companyName, details.isDeleted))
+        .map(details => EstablisherCompanyName(details.companyName, details.isDeleted))
 
       individualName orElse companyName
     }
@@ -140,11 +140,11 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
       val individualName: Reads[EntityDetails] = (__ \ TrusteeDetailsId.toString)
         .read[PersonDetails]
-        .map(details => TrusteeIndividualNameCopy(details.fullName, details.isDeleted))
+        .map(details => TrusteeIndividualName(details.fullName, details.isDeleted))
 
       val companyName: Reads[EntityDetails] = (__ \ identifiers.register.trustees.company.CompanyDetailsId.toString)
         .read[CompanyDetails]
-        .map(details => TrusteeCompanyNameCopy(details.companyName, details.isDeleted))
+        .map(details => TrusteeCompanyName(details.companyName, details.isDeleted))
 
       individualName orElse companyName
     }

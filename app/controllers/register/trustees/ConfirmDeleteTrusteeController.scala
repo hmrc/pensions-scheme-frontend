@@ -80,8 +80,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  private def deleteTrustee(trusteeKind: TrusteeKind, trusteeIndex: Index)(implicit dataRequest: DataRequest[AnyContent]):
-  Either[Future[Result], Future[UserAnswers]] = {
+  private def deleteTrustee(trusteeKind: TrusteeKind, trusteeIndex: Index)(implicit dataRequest: DataRequest[AnyContent]) = {
     trusteeKind match {
       case Company =>
         CompanyDetailsId(trusteeIndex).retrieve.right.map { companyDetails =>

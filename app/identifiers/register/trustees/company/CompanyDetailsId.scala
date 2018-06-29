@@ -27,7 +27,7 @@ case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] 
 
   override def cleanup(value: Option[CompanyDetails], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.allTrusteesAfterDelete.lengthCompare(10) match {
-      case x if x<=0 => userAnswers.remove(MoreThanTenTrusteesId)
+      case lengthCompare if lengthCompare <= 0 => userAnswers.remove(MoreThanTenTrusteesId)
       case _ => super.cleanup(value, userAnswers)
     }
   }

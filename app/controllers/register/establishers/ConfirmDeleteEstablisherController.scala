@@ -86,8 +86,7 @@ class ConfirmDeleteEstablisherController @Inject()(
       }
   }
 
-  private def deleteEstablisher(establisherKind: EstablisherKind, establisherIndex: Index)(implicit dataRequest: DataRequest[AnyContent]):
-  Either[Future[Result], Future[UserAnswers]] = {
+  private def deleteEstablisher(establisherKind: EstablisherKind, establisherIndex: Index)(implicit dataRequest: DataRequest[AnyContent]) = {
     establisherKind match {
       case Company =>
         CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
