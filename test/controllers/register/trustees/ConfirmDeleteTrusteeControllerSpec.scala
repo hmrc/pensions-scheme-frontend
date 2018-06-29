@@ -55,6 +55,13 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(individualTrustee.fullName, Individual)
     }
 
+    "redirect to already deleted view for a GET if the trustee was already deleted" in {
+      val result = controller(testData(individualId)(deletedTrustee)).onPageLoad(index = 0, trusteeKind = Individual)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.AlreadyDeletedController.onPageLoad(index = 0, trusteeKind = Individual).url)
+    }
+
     "redirect to Session Expired for a GET if no cached data exists" in {
       val result = controller(dontGetAnyData).onPageLoad(0, Company)(fakeRequest)
 
@@ -62,18 +69,19 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
+
     "remove the trustee in a POST request for a company trustee" in {
       val result = controller(testData(companyId)(companyTrustee)).onSubmit(0, Company)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verifyRemoved(trusteeId)
+      FakeDataCacheConnector.verify(companyId, companyTrustee.copy(isDeleted = true))
     }
 
     "remove the trustee in a POST request for an individual trustee" in {
       val result = controller(testData(individualId)(individualTrustee)).onSubmit(0, Individual)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verifyRemoved(trusteeId)
+      FakeDataCacheConnector.verify(individualId, individualTrustee.copy(isDeleted = true))
     }
 
     "redirect to the next page following a POST request" in {
@@ -101,7 +109,6 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
     SchemeType.BodyCorporate
   )
 
-  private val trusteeId = TrusteesId(0)
   private val individualId = TrusteeDetailsId(0)
   private val companyId = CompanyDetailsId(0)
 
@@ -117,6 +124,9 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
     None,
     None
   )
+
+  private val deletedTrustee = individualTrustee.copy(isDeleted = true)
+
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 

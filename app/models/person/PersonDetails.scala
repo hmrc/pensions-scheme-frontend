@@ -16,18 +16,33 @@
 
 package models.person
 
+import play.api.libs.functional.syntax._
 import org.joda.time.LocalDate
 import play.api.libs.json._
 
-case class PersonDetails (firstName: String, middleName:Option[String], lastName: String, date:LocalDate){
-
+case class PersonDetails(firstName: String, middleName: Option[String], lastName: String, date: LocalDate, isDeleted: Boolean = false) {
   def fullName: String = middleName match {
     case Some(middle) => s"$firstName $middle $lastName"
     case _ => s"$firstName $lastName"
   }
-
 }
 
 object PersonDetails {
-  implicit val format: OFormat[PersonDetails] = Json.format[PersonDetails]
+  implicit val reads: Reads[PersonDetails] =
+    ((JsPath \ "firstName").read[String] and
+      (JsPath \ "middleName").readNullable[String] and
+      (JsPath \ "lastName").read[String] and
+      (JsPath \ "date").read[LocalDate] and
+      ((JsPath \ "isDeleted").read[Boolean] orElse (Reads.pure(false)))
+      ) (PersonDetails.apply _)
+
+  implicit val writes: Writes[PersonDetails] = Json.writes[PersonDetails]
+
+  def applyDelete(firstName: String, middleName: Option[String], lastName: String, date: LocalDate): PersonDetails = {
+    PersonDetails(firstName, middleName, lastName, date, false)
+  }
+
+  def unapplyDelete(personDetails: PersonDetails): Option[(String, Option[String], String, LocalDate)] = {
+    Some((personDetails.firstName, personDetails.middleName, personDetails.lastName, personDetails.date))
+  }
 }

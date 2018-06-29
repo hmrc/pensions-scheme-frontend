@@ -29,7 +29,6 @@ import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.CompanyDetails
 import models.person.PersonDetails
 import models.register.establishers.company.director.DirectorDetails
-import models.register.establishers.individual.EstablisherDetails
 import models.register.{AdviserDetails, SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
@@ -52,7 +51,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
       "establishers" -> Json.arr(
         Json.obj(
-          EstablisherDetailsId.toString -> EstablisherDetails("test first name", None, "test last name", LocalDate.now())
+          EstablisherDetailsId.toString -> PersonDetails("test first name", None, "test last name", LocalDate.now(), false)
         )
       )
     )))

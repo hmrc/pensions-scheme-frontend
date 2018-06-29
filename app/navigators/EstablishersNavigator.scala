@@ -48,8 +48,10 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: DataCacheConnector
         } else {
           navigateBasedOnSchemeDetails(answers)
         }
-      case _ =>
-        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.allEstablishers.length))
+      case Some(true) =>
+        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount))
+      case None =>
+        NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount))
     }
   }
 

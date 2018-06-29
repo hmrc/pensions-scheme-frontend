@@ -22,10 +22,8 @@ import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.company.AddCompanyDirectorsId
-import identifiers.register.establishers.company.director.DirectorDetailsId
 import javax.inject.Inject
 import models.Mode
-import models.register.establishers.company.director.DirectorDetails
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -55,21 +53,14 @@ class AddCompanyDirectorsController @Inject() (
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
-          val directors = request
-            .userAnswers
-            .getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
-            .getOrElse(Nil)
+          val directors = request.userAnswers.allDirectorsAfterDelete(index)
           Future.successful(Ok(addCompanyDirectors(appConfig, form, mode, index, companyName, directors)))
       }
   }
 
   def onSubmit(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val directors = request
-        .userAnswers
-        .getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
-        .getOrElse(Nil)
-
+      val directors = request.userAnswers.allDirectorsAfterDelete(index)
       if (directors.isEmpty || directors.lengthCompare(appConfig.maxDirectors) >= 0) {
         Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, request.userAnswers)))
       }

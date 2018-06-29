@@ -23,7 +23,7 @@ import forms.ContactDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{ContactDetailsId, EstablisherDetailsId}
 import models._
-import models.register.establishers.individual.EstablisherDetails
+import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -77,13 +77,13 @@ class ContactDetailsControllerSpec extends ControllerSpecBase {
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test first name", None, "test last name", LocalDate.now),
+          PersonDetails("test first name", None, "test last name", LocalDate.now, false),
         ContactDetailsId.toString ->
           ContactDetails("test@test.com", "123456789")
       ),
       Json.obj(
         EstablisherDetailsId.toString ->
-          EstablisherDetails("test", None, "test", LocalDate.now)
+          PersonDetails("test", None, "test", LocalDate.now, false)
       )
     )
   )

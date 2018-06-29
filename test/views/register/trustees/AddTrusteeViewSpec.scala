@@ -25,7 +25,7 @@ import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import utils.UserAnswers
-import viewmodels.EntityKind
+import viewmodels.EditableItem
 import views.behaviours.{EditableItemListBehaviours, YesNoViewBehaviours}
 import views.html.register.trustees.addTrustee
 
@@ -63,14 +63,14 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EditableItemListBehavi
       .value
 
   private val trustees = userAnswers.allTrustees
-  private val fullTrustees = (0 to 9).map(index => ("trustee name", companyUrl(index)))
+  private val fullTrustees = (0 to 9).map(index => EditableItem(index, "trustee name", false, companyUrl(index), ""))
 
   val form = new AddTrusteeFormProvider()()
 
-  private def createView(trustees: Seq[(String, String)] = Seq.empty) = () =>
+  private def createView(trustees: Seq[EditableItem] = Seq.empty) = () =>
     addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages)
 
-  private def createViewUsingForm(trustees: Seq[(String, String)] = Seq.empty) = (form: Form[Boolean]) =>
+  private def createViewUsingForm(trustees: Seq[EditableItem] = Seq.empty) = (form: Form[Boolean]) =>
     addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages)
 
   "AddTrustee view" must {
@@ -113,7 +113,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EditableItemListBehavi
       }
     }
 
-    behave like editableItemList(createView(), createView(trustees), trustees.map(t => (t._1, t._2, EntityKind.Trustee)))
+    behave like editableItemList(createView(), createView(trustees), trustees)
     "display all the partially added trustee names with yes/No buttons if the maximum trustees are not added yet" in {
       val doc = asDocument(createView(trustees)())
       doc.select("#value-yes").size() mustEqual 1

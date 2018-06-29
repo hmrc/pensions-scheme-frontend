@@ -702,6 +702,9 @@ messages__youNeedToRegister__button = Register as a pension scheme administrator
 messages__youNeedToRegister__govUk__link = Exit to GOV.UK
 
 messages__alreadyDeleted__director_title = You have already deleted this director
+messages__alreadyDeleted__trustee_title = You have already deleted this trustee
 messages__alreadyDeleted__heading = You have already deleted {0}
 messages__alreadyDeleted__lede = You have already confirmed deletion of {0}.
 messages__alreadyDeleted__text = This page no longer exists.
+
+messages__alreadyDeleted__establisher_title = You have already deleted this establisher

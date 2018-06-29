@@ -23,6 +23,7 @@ import views.behaviours.{EditableItemListBehaviours, YesNoViewBehaviours}
 import models.NormalMode
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
+import viewmodels.EditableItem
 import views.html.register.establishers.company.addCompanyDirectors
 
 class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemListBehaviours {
@@ -37,10 +38,14 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemL
   // scalastyle:on magic.number
 
   val messageKeyPrefix = "addCompanyDirectors"
+  private def deleteDirectorLink(index: Int, establisherIndex: Int) = controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(establisherIndex, index).url
+  private def editDirectorLink(index: Int, establisherIndex: Int) = controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, establisherIndex, index).url
 
   val form = new AddCompanyDirectorsFormProvider()()
+  private val johnDoeEditableItem = EditableItem(0, johnDoe.directorName, false, editDirectorLink(0, 0), deleteDirectorLink(0, 0))
+  private val joeBloggsEditableItem = EditableItem(1, joeBloggs.directorName, false, editDirectorLink(1, 0), deleteDirectorLink(1, 0))
 
-  private def createView(directors: Seq[DirectorDetails] = Nil) =
+  private def createView(directors: Seq[EditableItem] = Nil) =
     () =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -51,7 +56,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemL
         directors
       )(fakeRequest, messages)
 
-  private def createViewUsingForm(directors: Seq[DirectorDetails] = Nil) =
+  private def createViewUsingForm(directors: Seq[EditableItem] = Nil) =
     (form: Form[_]) =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -71,7 +76,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemL
     behave like pageWithSecondaryHeader(createView(), companyName)
 
     behave like yesNoPage(
-      createViewUsingForm(Seq(johnDoe)),
+      createViewUsingForm(Seq(johnDoeEditableItem)),
       messageKeyPrefix,
       routes.AddCompanyDirectorsController.onSubmit(NormalMode, 0).url,
       legendKey = "add_more",
@@ -95,24 +100,24 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemL
       submit.first().text() mustBe messages("messages__addCompanyDirectors_add_director")
     }
 
-    val directors: Seq[DirectorDetails] = Seq(johnDoe, joeBloggs)
+    val directors: Seq[EditableItem] = Seq(johnDoeEditableItem, joeBloggsEditableItem)
 
-    behave like editableItemList(createView(), createView(directors), (establisherIndex, directors))
+    behave like editableItemList(createView(), createView(directors), (directors))
 
     "show the Continue button when there are directors" in {
-      val doc = asDocument(createViewUsingForm(Seq(johnDoe))(form))
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEditableItem))(form))
       val submit = doc.select("button#submit")
       submit.size() mustBe 1
       submit.first().text() mustBe messages("site.save_and_continue")
     }
 
     "not show the yes no inputs if there are 10 or more directors" in {
-      val doc = asDocument(createViewUsingForm(Seq.fill(maxDirectors)(johnDoe))(form))
+      val doc = asDocument(createViewUsingForm(Seq.fill(maxDirectors)(johnDoeEditableItem))(form))
       doc.select("legend > span").size() mustBe 0
     }
 
     "show the maximum number of directors message when there are 10 or more directors" in {
-      val doc = asDocument(createView(Seq.fill(maxDirectors)(johnDoe))())
+      val doc = asDocument(createView(Seq.fill(maxDirectors)(johnDoeEditableItem))())
       doc must haveDynamicText("messages__addCompanyDirectors_at_maximum")
       doc must haveDynamicText("messages__addCompanyDirectors_tell_us_if_you_have_more")
     }

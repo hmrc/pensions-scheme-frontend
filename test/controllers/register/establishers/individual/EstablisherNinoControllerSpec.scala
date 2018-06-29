@@ -23,7 +23,7 @@ import forms.register.establishers.individual.EstablisherNinoFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.{EstablisherDetailsId, EstablisherNinoId}
 import models._
-import models.register.establishers.individual.EstablisherDetails
+import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -41,7 +41,7 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val firstIndex = Index(0)
   val establisherName = "test first name test last name"
-  val establisherDetails = EstablisherDetails("test first name", None, "test last name", LocalDate.now)
+  val establisherDetails = PersonDetails("test first name", None, "test last name", LocalDate.now, false)
 
   val validData: JsObject = Json.obj(
     SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),

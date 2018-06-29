@@ -17,36 +17,27 @@
 package utils
 
 import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
-import models.register.establishers.individual.EstablisherDetails
-import models.{CheckMode, CompanyDetails, NormalMode}
+import models.register.establishers.EstablisherKind
+import models.register.establishers.EstablisherKind.{Company, Indivdual}
+import models.register.establishers.company.director.DirectorDetails
+import models.register.trustees.TrusteeKind
+import models.register.trustees.TrusteeKind.Individual
+import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
+import viewmodels.EditableItem
 
 class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
-
-  private val establishers = Json.obj(
-    "establishers" -> Json.arr(
-      Json.obj(
-        "name" -> "foo"
-      ),
-      Json.obj(
-        "name" -> "bar"
-      )
-    )
-  )
-
-  private val company = CompanyDetails("test-company-name", None, None)
-  private val person = PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())
-
+ import UserAnswersSpec._
   ".allEstablishers" must {
-    "return a map of establishers names and edit links" in {
-
+    "return a map of establishers names, edit links and delete links" in {
       val json = Json.obj(
         EstablishersId.toString -> Json.arr(
           Json.obj(
@@ -55,36 +46,139 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
           ),
           Json.obj(
             EstablisherDetailsId.toString ->
-              EstablisherDetails("my", None, "name", LocalDate.now)
+              PersonDetails("my", None, "name", LocalDate.now)
+          )
+        )
+      )
+      val userAnswers = UserAnswers(json)
+      val allEstablishersEditableItem = Seq(editableItem("my company", 0, Company), editableItem("my name", 1, Indivdual))
+
+      userAnswers.allEstablishers mustEqual allEstablishersEditableItem
+    }
+  }
+
+  ".allEstablishersAfterDelete" must {
+    "return a map of establishers names, edit links and delete links when one of the establishers is deleted" in {
+      val json = Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            EstablisherDetailsId.toString ->
+              PersonDetails("my", None, "name 1", LocalDate.now)
+          ),
+          Json.obj(
+            EstablisherCompanyDetailsId.toString ->
+              CompanyDetails("my company 2", None, None, true)
+          ),
+          Json.obj(
+            EstablisherDetailsId.toString ->
+              PersonDetails("my", None, "name 3", LocalDate.now)
+          )
+        )
+      )
+
+      val userAnswers = UserAnswers(json)
+      val allEstablisherEditableItems = Seq(editableItem("my name 1", 0, Indivdual), editableItem("my name 3", 2, Indivdual))
+
+      userAnswers.allEstablishersAfterDelete mustEqual allEstablisherEditableItems
+    }
+  }
+
+  ".allTrustees" must {
+
+    "return a map of trustee names, edit links and delete links" in {
+      val userAnswers = UserAnswers()
+        .set(TrusteeDetailsId(0))(PersonDetails("First", None, "Last", LocalDate.now))
+        .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company", None, None))).get
+      val allTrusteesEditableItem = Seq(trusteeEditableItem("First Last", 0, TrusteeKind.Individual), trusteeEditableItem("My Company", 1, TrusteeKind.Company))
+
+      val result = userAnswers.allTrustees
+
+      result mustEqual allTrusteesEditableItem
+    }
+  }
+
+  ".allTrusteesAfterDelete" must {
+
+    "return a map of trustee names, edit links and delete links when one of the trustee is deleted" in {
+      val userAnswers = UserAnswers()
+        .set(TrusteeDetailsId(0))(PersonDetails("First", None, "Last", LocalDate.now, true))
+        .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company", None, None))).get
+      val allTrusteesEditableItem = Seq(trusteeEditableItem("My Company", 1, TrusteeKind.Company))
+
+      val result = userAnswers.allTrusteesAfterDelete
+
+      result mustEqual allTrusteesEditableItem
+    }
+  }
+
+  ".allDirectors" must {
+
+    "return a map of director names, edit links and delete links" in {
+      val userAnswers = UserAnswers()
+        .set(DirectorDetailsId(0, 0))(DirectorDetails("First", None, "Last", LocalDate.now, false))
+        .flatMap(_.set(DirectorDetailsId(0, 1))(DirectorDetails("First1", None, "Last1", LocalDate.now, false))).get
+      val directorEditableItem = Seq(
+        EditableItem(0, "First Last", false, editDirectorLink(0, 0), deleteDirectorLink(0, 0)),
+        EditableItem(1, "First1 Last1", false, editDirectorLink(1, 0), deleteDirectorLink(1, 0)))
+      val result = userAnswers.allDirectors(0)
+
+      result.size mustEqual 2
+      result mustBe directorEditableItem
+    }
+  }
+
+  ".allDirectorsAfterDelete" must {
+
+    "return a map of director names, edit links and delete links after one of the directors is deleted" in {
+      val userAnswers = UserAnswers()
+        .set(DirectorDetailsId(0, 0))(DirectorDetails("First", None, "Last", LocalDate.now, true))
+        .flatMap(_.set(DirectorDetailsId(0, 1))(DirectorDetails("First1", None, "Last1", LocalDate.now, false))).get
+      val directorEditableItem = Seq(
+        EditableItem(1, "First1 Last1", false, editDirectorLink(1, 0), deleteDirectorLink(1, 0)))
+      val result = userAnswers.allDirectorsAfterDelete(0)
+
+      result.size mustEqual 1
+      result mustBe directorEditableItem
+    }
+  }
+
+  ".establishersCount" must {
+
+    "return the count of all establishers irrespective of whether they are deleted or not" in {
+      val json = Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            EstablisherCompanyDetailsId.toString ->
+              CompanyDetails("my company", None, None)
+          ),
+          Json.obj(
+            EstablisherDetailsId.toString ->
+              PersonDetails("my", None, "name", LocalDate.now, true)
+          ),
+          Json.obj(
+            EstablisherDetailsId.toString ->
+              PersonDetails("my", None, "name", LocalDate.now)
           )
         )
       )
 
       val userAnswers = UserAnswers(json)
 
-      userAnswers.allEstablishers mustEqual Seq(
-        "my company" ->
-          controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0).url,
-        "my name" ->
-          controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 1).url
-      )
+      val result = userAnswers.establishersCount
+
+      result mustEqual 3
     }
   }
 
-  ".allTrustees" must {
+  ".trusteesCount" must {
 
-    "return the expected results" in {
-
+    "return the count of all trustees irrespective of whether they are deleted or not" in {
       val userAnswers = UserAnswers()
-        .set(TrusteeDetailsId(0))(PersonDetails("First", None, "Last", LocalDate.now))
+        .set(TrusteeDetailsId(0))(PersonDetails("First", None, "Last", LocalDate.now, true))
         .flatMap(_.set(identifiers.register.trustees.company.CompanyDetailsId(1))(CompanyDetails("My Company", None, None))).get
 
-      val result = userAnswers.allTrustees
-
-      result must contain("First Last" -> controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(
-        NormalMode, 0).url)
-      result must contain("My Company" -> controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(
-        NormalMode, 1).url)
+      val result = userAnswers.trusteesCount
+      result mustEqual 2
     }
   }
 
@@ -205,4 +299,45 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
     }
   }
 
+}
+
+object UserAnswersSpec {
+  private def deleteDirectorLink(index: Int, establisherIndex: Int) = controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(establisherIndex, index).url
+  private def editDirectorLink(index: Int, establisherIndex: Int) = controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, establisherIndex, index).url
+
+  private def editableItem(name: String, index: Int, establisherKind: EstablisherKind) = {
+    establisherKind match {
+      case Indivdual =>
+        EditableItem(index, name, false, controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, index).url,
+          controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(index, Indivdual).url)
+      case _ =>
+        EditableItem(index, name, false, controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url,
+          controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(index, Company).url)
+    }
+  }
+
+  private def trusteeEditableItem(name: String, index: Int, trusteeKind: TrusteeKind) = {
+    trusteeKind match {
+      case Individual =>
+        EditableItem(index, name, false, controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, index).url,
+          controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(index, TrusteeKind.Individual).url)
+      case _ =>
+        EditableItem(index, name, false, controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url,
+          controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(index, TrusteeKind.Company).url)
+    }
+  }
+
+  private val establishers = Json.obj(
+    "establishers" -> Json.arr(
+      Json.obj(
+        "name" -> "foo"
+      ),
+      Json.obj(
+        "name" -> "bar"
+      )
+    )
+  )
+
+  private val company = CompanyDetails("test-company-name", None, None)
+  private val person = PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())
 }

@@ -18,9 +18,9 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.trustees.routes._
 @import models.Mode
-@import viewmodels.EntityKind
+@import viewmodels.EditableItem
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, trustees: Seq[(String, String)])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, trustees: Seq[EditableItem])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__addTrustee__title"),
@@ -41,7 +41,7 @@
 
         } else {
 
-            @components.editable_item_list(trustees.map(t => (t._1, t._2, EntityKind.Trustee)))
+            @components.editable_item_list(trustees)
 
             @if(trustees.size < appConfig.maxTrustees) {
                 @components.input_yes_no(

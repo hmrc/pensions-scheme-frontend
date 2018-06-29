@@ -20,8 +20,6 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import identifiers.register.establishers.company._
-import identifiers.register.establishers.company.director.DirectorDetailsId
-import models.register.establishers.company.director.DirectorDetails
 import models.{AddressYears, CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
@@ -120,17 +118,16 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: DataCacheCo
   }
 
   private def addDirectors(mode: Mode, index: Int, answers: UserAnswers): Option[NavigateTo] = {
-    val directors = answers
-      .getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index))
-      .getOrElse(Nil)
+    val directors = answers.allDirectorsAfterDelete(index)
 
     if (directors.isEmpty) {
-      NavigateTo.save(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(mode, index, 0))
+      NavigateTo.save(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(
+        mode, index, answers.allDirectors(index).size))
     }
     else if (directors.lengthCompare(appConfig.maxDirectors) < 0) {
       answers.get(AddCompanyDirectorsId(index)) match {
         case Some(true) =>
-          NavigateTo.save(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(mode, index, directors.length))
+          NavigateTo.save(controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(mode, index, answers.allDirectors(index).size))
         case Some(false) =>
           NavigateTo.save(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index))
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())

@@ -16,72 +16,13 @@
 
 package viewmodels
 
-import controllers.register._
-import models.register.establishers.EstablisherKind
-import models.register.establishers.company.director.DirectorDetails
-import models.register.trustees.TrusteeKind
-import models.{Index, NormalMode}
-
 import scala.language.implicitConversions
 
 //noinspection MutatorLikeMethodIsParameterless
-case class EditableItem(index: Int, name: String, deleteLink: String, editLink: String) {
+case class EditableItem(index:Int,  name: String, isDeleted:Boolean , editLink: String, deleteLink: String) {
   def deleteLinkId: String = s"$id-delete"
 
   def editLinkId: String = s"$id-edit"
 
   def id: String = s"person-$index"
-}
-
-object EditableItem {
-
-  implicit def indexedCompanyDirectors(directors: (Int, Seq[DirectorDetails])): Seq[EditableItem] = {
-    directors._2.zipWithIndex.map {
-      case (director, index) =>
-        EditableItem(
-          index,
-          director.directorName,
-          establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(directors._1, index).url,
-          establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, directors._1, Index(index)).url
-        )
-    }
-  }
-
-  implicit def fromEntityDetails(entity: Seq[(String, String, EntityKind)]): Seq[EditableItem] = entity.zipWithIndex.map {
-    case ((entityName, changeUrl, entityKind), index) =>
-      entityKind match {
-        case EntityKind.Establisher =>
-          val establisherKind = changeUrl match {
-            case url if changeUrl == establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
-            => EstablisherKind.Company
-            case url if changeUrl == establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, index).url
-            => EstablisherKind.Indivdual
-            case _ => throw new IllegalArgumentException(s"Cannot determine establisher kind: $entityName")
-          }
-
-          EditableItem(
-            index,
-            entityName,
-            establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(index, establisherKind).url,
-            changeUrl
-          )
-
-        case EntityKind.Trustee =>
-          val trusteeKind = changeUrl match {
-            case url if changeUrl == trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
-            => TrusteeKind.Company
-            case url if changeUrl == trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, index).url
-            => TrusteeKind.Individual
-            case _ => throw new IllegalArgumentException(s"Cannot determine trustee kind: $entityName")
-          }
-
-          EditableItem(
-            index,
-            entityName,
-            trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(Index(index), trusteeKind).url,
-            changeUrl
-          )
-        case _ => throw new IllegalArgumentException(s"Cannot determine entity kind: $entityKind")
-      }
-  }
 }

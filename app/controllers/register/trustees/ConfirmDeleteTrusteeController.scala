@@ -20,10 +20,9 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.SchemeDetailsId
+import identifiers.register.trustees.ConfirmDeleteTrusteeId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.{ConfirmDeleteTrusteeId, TrusteesId}
 import javax.inject.Inject
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual}
@@ -48,40 +47,61 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { schemeDetails =>
-        trusteeName(index, trusteeKind) match {
-          case Right(trusteeName) => Future.successful(
-            Ok(
-              confirmDeleteTrustee(
-                appConfig,
-                schemeDetails.schemeName,
-                trusteeName,
-                postCall(index, trusteeKind)
-              )
-            )
-          )
-          case Left(result) => result
-        }
-      }
+      getDeletableTrustee(index, trusteeKind, request.userAnswers) map {
+        trustee =>
+          if (trustee.isDeleted) {
+            Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(index, trusteeKind)))
+          } else {
+            retrieveSchemeName {
+              schemeName =>
+                Future.successful(
+                  Ok(
+                    confirmDeleteTrustee(
+                      appConfig,
+                      schemeName,
+                      trustee.name,
+                      routes.ConfirmDeleteTrusteeController.onSubmit(index, trusteeKind)
+                    )
+                  )
+                )
+            }
+          }
+      } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
   }
 
   def onSubmit(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      dataCacheConnector.remove(request.externalId, TrusteesId(index)).map { json =>
-        Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, UserAnswers(json)))
+      deleteTrustee(trusteeKind, index) match {
+        case Right(futureUserAnswers) =>
+          futureUserAnswers.map { userAnswers =>
+            Redirect(navigator.nextPage(ConfirmDeleteTrusteeId, NormalMode, userAnswers))
+          }
+        case Left(result) => result
       }
   }
 
-  private def trusteeName(index: Index, trusteeKind: TrusteeKind)(implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
+  private def deleteTrustee(trusteeKind: TrusteeKind, trusteeIndex: Index)(implicit dataRequest: DataRequest[AnyContent]) = {
     trusteeKind match {
-      case Company => CompanyDetailsId(index).retrieve.right.map(_.companyName)
-      case Individual => TrusteeDetailsId(index).retrieve.right.map(_.fullName)
-      case invalid => Left(Future.successful(BadRequest(s"Invalid trustee kind $invalid")))
+      case Company =>
+        CompanyDetailsId(trusteeIndex).retrieve.right.map { companyDetails =>
+          dataCacheConnector.save(CompanyDetailsId(trusteeIndex), companyDetails.copy(isDeleted = true))
+        }
+      case Individual =>
+        TrusteeDetailsId(trusteeIndex).retrieve.right.map { establisherDetails =>
+          dataCacheConnector.save(TrusteeDetailsId(trusteeIndex), establisherDetails.copy(isDeleted = true))
+        }
+      case _ =>
+        Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
     }
   }
 
-  private def postCall(index: Index, trusteeKind: TrusteeKind) = {
-    routes.ConfirmDeleteTrusteeController.onSubmit(index, trusteeKind)
-  }
+  private case class DeletableTrustee(name: String, isDeleted: Boolean)
 
+  private def getDeletableTrustee(index: Index, trusteeKind: TrusteeKind, userAnswers: UserAnswers): Option[DeletableTrustee] = {
+    trusteeKind match {
+      case Individual => userAnswers.get(TrusteeDetailsId(index)).map(details => DeletableTrustee(details.fullName, details.isDeleted))
+      case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableTrustee(details.companyName, details.isDeleted))
+      case _ => None
+    }
+  }
 }

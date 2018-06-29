@@ -23,12 +23,10 @@ import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.{SchemeDetailsId, SchemeReviewId}
 import javax.inject.Inject
-import models.register.establishers.EstablisherKind
-import models.register.establishers.EstablisherKind.{Company, Indivdual}
 import models.register.{SchemeDetails, SchemeType}
 import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Enumerable, Navigator}
@@ -48,8 +46,8 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       (SchemeDetailsId and EstablisherKindId(0)).retrieve.right.map {
         case schemeDetails ~ establisherKind =>
-          val establishers = request.userAnswers.allEstablishers.map(_._1)
-          val trustees = request.userAnswers.allTrustees.map(_._1)
+          val establishers = request.userAnswers.allEstablishersAfterDelete.map(_.name)
+          val trustees = request.userAnswers.allTrusteesAfterDelete.map(_.name)
 
           Future.successful(Ok(schemeReview(appConfig, schemeDetails.schemeName, establishers, trustees,
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode),

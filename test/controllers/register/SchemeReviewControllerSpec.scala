@@ -23,14 +23,11 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
-import models.register.establishers.individual.EstablisherDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{CheckMode, CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
-import play.api.Configuration
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -92,7 +89,7 @@ object SchemeReviewControllerSpec extends ControllerSpecBase {
     "establishers" -> Json.arr(
       Json.obj(
         EstablisherKindId.toString -> "individual",
-        EstablisherDetailsId.toString -> EstablisherDetails("establisher", None, "name", LocalDate.now())
+        EstablisherDetailsId.toString -> PersonDetails("establisher", None, "name", LocalDate.now())
       )
     ),
     "trustees" -> Json.arr(

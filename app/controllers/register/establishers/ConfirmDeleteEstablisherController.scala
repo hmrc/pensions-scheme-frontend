@@ -20,10 +20,9 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.ConfirmDeleteEstablisherId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.establishers.{ConfirmDeleteEstablisherId, EstablishersId}
 import javax.inject.Inject
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind._
@@ -48,46 +47,67 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     requireData: DataRequiredAction
                                                   ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad(establisherIndex: Index, establisherKind: EstablisherKind): Action[AnyContent] =
+  def onPageLoad(index: Index, establisherKind: EstablisherKind): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        SchemeDetailsId.retrieve.right.map {
-          schemeDetails =>
-            establisherName(establisherIndex, establisherKind) match {
-              case Right(establisherName) =>
-                Future.successful(
-                  Ok(
-                    confirmDeleteEstablisher(
-                      appConfig,
-                      schemeDetails.schemeName,
-                      establisherName,
-                      routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex),
-                      routes.AddEstablisherController.onPageLoad(NormalMode)
+        getDeletableEstablisher(index, establisherKind, request.userAnswers) map {
+          establisher =>
+            if (establisher.isDeleted) {
+              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(index, establisherKind)))
+            } else {
+              retrieveSchemeName {
+                schemeName =>
+                  Future.successful(
+                    Ok(
+                      confirmDeleteEstablisher(
+                        appConfig,
+                        schemeName,
+                        establisher.name,
+                        routes.ConfirmDeleteEstablisherController.onSubmit(index, establisherKind),
+                        routes.AddEstablisherController.onPageLoad(NormalMode)
+                      )
                     )
                   )
-                )
-              case Left(result) => result
+              }
             }
-        }
+        } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
 
 
-  def onSubmit(establisherIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(establisherIndex: Index, establisherKind: EstablisherKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      dataCacheConnector.remove(request.externalId, EstablishersId(establisherIndex)).map {
-        json =>
-          Redirect(navigator.nextPage(ConfirmDeleteEstablisherId, NormalMode, UserAnswers(json)))
+      deleteEstablisher(establisherKind, establisherIndex) match {
+        case Right(futureUserAnswers) =>
+          futureUserAnswers.map { userAnswers =>
+            Redirect(navigator.nextPage(ConfirmDeleteEstablisherId, NormalMode, userAnswers))
+          }
+        case Left(result) =>
+          result
       }
   }
 
-  private def establisherName(establisherIndex: Index, establisherKind: EstablisherKind)
-                             (implicit dataRequest: DataRequest[AnyContent]): Either[Future[Result], String] = {
+  private def deleteEstablisher(establisherKind: EstablisherKind, establisherIndex: Index)(implicit dataRequest: DataRequest[AnyContent]) = {
     establisherKind match {
-      case Company => CompanyDetailsId(establisherIndex).retrieve.right.map(_.companyName)
-      case Indivdual => EstablisherDetailsId(establisherIndex).retrieve.right.map(_.fullName)
-      case Partnership => Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
-      case _ => Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
+      case Company =>
+        CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
+          dataCacheConnector.save(CompanyDetailsId(establisherIndex), companyDetails.copy(isDeleted = true))
+        }
+      case Indivdual =>
+        EstablisherDetailsId(establisherIndex).retrieve.right.map { establisherDetails =>
+          dataCacheConnector.save(EstablisherDetailsId(establisherIndex), establisherDetails.copy(isDeleted = true))
+        }
+      case _ =>
+        Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
     }
   }
 
+  private case class DeletableEstablisher(name: String, isDeleted: Boolean)
+
+  private def getDeletableEstablisher(index: Index, establisherKind: EstablisherKind, userAnswers: UserAnswers): Option[DeletableEstablisher] = {
+    establisherKind match {
+      case Indivdual => userAnswers.get(EstablisherDetailsId(index)).map(details => DeletableEstablisher(details.fullName, details.isDeleted))
+      case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableEstablisher(details.companyName, details.isDeleted))
+      case _ => None
+    }
+  }
 }

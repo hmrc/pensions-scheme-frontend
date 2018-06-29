@@ -19,9 +19,9 @@
 @import controllers.register.establishers.routes
 @import models.Mode
 @import utils.Constants._
-@import viewmodels.EntityKind
+@import viewmodels.EditableItem
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establishers: Seq[(String, String)], schemeName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establishers: Seq[EditableItem], schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__establishers__add__title"),
@@ -44,7 +44,7 @@
 
             @components.heading(headingKey = "messages__establishers__add__title", secondaryHeaderKey = Some(schemeName))
 
-            @components.editable_item_list(establishers.map(e => (e._1, e._2, EntityKind.Establisher)))
+            @components.editable_item_list(establishers)
 
             @components.input_yes_no(
                 field = form("value"),

@@ -73,7 +73,6 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
         }
         catch {
           case e: TableDrivenPropertyCheckFailedException =>
-            println(s"Invalid routes: ${e.toString}")
             throw e
         }
 
@@ -106,7 +105,6 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
         }
         catch {
           case e: TableDrivenPropertyCheckFailedException =>
-            println(s"Invalid routes: ${e.toString}")
             throw e
         }
 

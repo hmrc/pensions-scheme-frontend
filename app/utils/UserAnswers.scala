@@ -16,21 +16,23 @@
 
 package utils
 
+import controllers.register.establishers
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.CompanyDetails
 import models.person.PersonDetails
 import models.register._
-import models.register.establishers.individual.EstablisherDetails
+import models.register.establishers.company.director.DirectorDetails
+import models.{CompanyDetails, Index, NormalMode}
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
-
+import viewmodels.EditableItem
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
@@ -74,27 +76,46 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       .flatMap(json => id.cleanup(None, UserAnswers(json)))
   }
 
-  def allEstablishers: Seq[(String, String)] = {
+  def allEstablishers: Seq[EditableItem] = {
+    val nameReads: Reads[EntityDetails] = {
 
-    val nameReads: Reads[EntityDetails] =  {
+      val individualName: Reads[EntityDetails] = (__ \ EstablisherDetailsId.toString)
+        .read[PersonDetails]
+        .map(details => EstablisherIndividualName(details.fullName, details.isDeleted))
 
-      val individualName: Reads[EntityDetails] =
-        (__ \ EstablisherDetailsId.toString).read[EstablisherDetails]
-          .map(details => EstablisherIndividualName(s"${details.firstName} ${details.lastName}"))
-
-      val companyName: Reads[EntityDetails] =
-        (__ \ CompanyDetailsId.toString).read[CompanyDetails]
-          .map(details => EstablisherCompanyName(details.companyName))
+      val companyName: Reads[EntityDetails] = (__ \ CompanyDetailsId.toString)
+        .read[CompanyDetails]
+        .map(details => EstablisherCompanyName(details.companyName, details.isDeleted))
 
       individualName orElse companyName
     }
 
-    getAll[EntityDetails](JsPath \ EstablishersId.toString)(nameReads).map(
-      _.zipWithIndex.map {
-        case (name, id) =>
-          name.route(id, None)
-      }
-    ).getOrElse(Seq.empty)
+    getAll[EntityDetails](JsPath \ EstablishersId.toString)(nameReads).map {
+      case (entityDetails) =>
+        entityDetails.map { entity =>
+          entity.route(entityDetails.indexOf(entity), None)
+        }
+    }.getOrElse(Seq.empty)
+  }
+
+  def allEstablishersAfterDelete: Seq[EditableItem] = {
+    allEstablishers.filterNot(_.isDeleted)
+  }
+
+  def allDirectors(establisherIndex: Int): Seq[EditableItem] = {
+    getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(establisherIndex)).map{
+      case details =>
+        details.map{ director =>
+          val directorIndex = details.indexOf(director)
+          EditableItem(directorIndex, director.directorName, director.isDeleted,
+            establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode,establisherIndex, Index(directorIndex)).url,
+            establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(establisherIndex, directorIndex).url)
+        }
+    }.getOrElse(Seq.empty)
+  }
+
+  def allDirectorsAfterDelete(establisherIndex: Int): Seq[EditableItem] = {
+    allDirectors(establisherIndex).filterNot(_.isDeleted)
   }
 
   private def traverse[A](seq: Seq[JsResult[A]]): JsResult[Seq[A]] = {
@@ -108,34 +129,49 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         })
       case s =>
         s.collect {
-          case e @ JsError(_) =>
+          case e@JsError(_) =>
             e
         }.reduceLeft(JsError.merge)
     }
   }
 
-  def allTrustees: Seq[(String, String)] = {
-
-    val nameReads: Reads[EntityDetails] =  {
+  def allTrustees: Seq[EditableItem] = {
+    val nameReads: Reads[EntityDetails] = {
 
       val individualName: Reads[EntityDetails] = (__ \ TrusteeDetailsId.toString)
         .read[PersonDetails]
-        .map(details => TrusteeIndividualName(details.fullName))
+        .map(details => TrusteeIndividualName(details.fullName, details.isDeleted))
 
       val companyName: Reads[EntityDetails] = (__ \ identifiers.register.trustees.company.CompanyDetailsId.toString)
         .read[CompanyDetails]
-        .map(details => TrusteeCompanyName(details.companyName))
+        .map(details => TrusteeCompanyName(details.companyName, details.isDeleted))
 
       individualName orElse companyName
     }
-
     getAll[EntityDetails](JsPath \ TrusteesId.toString)(nameReads).map {
-      _.zipWithIndex.map {
-        case (name, id) =>
-          name.route(id, None)
-      }
+      case (entityDetails) =>
+        entityDetails.map { entity =>
+          entity.route(entityDetails.indexOf(entity), None)
+        }
     }.getOrElse(Seq.empty)
+  }
 
+  def allTrusteesAfterDelete: Seq[EditableItem] = {
+    allTrustees.filterNot(_.isDeleted)
+  }
+
+  def establishersCount: Int = {
+    (json \ EstablishersId.toString).validate[JsArray] match {
+      case JsSuccess(establisherArray, _) => establisherArray.value.size
+      case _ => 0
+    }
+  }
+
+  def trusteesCount: Int = {
+    (json \ TrusteesId.toString).validate[JsArray] match {
+      case JsSuccess(trusteesArray, _) => trusteesArray.value.size
+      case _ => 0
+    }
   }
 
   def hasCompanies: Boolean = {
@@ -148,8 +184,8 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   def upsert[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)
-                                                        (fn: UserAnswers => Future[Result])
-                                                        (implicit writes: Writes[id.Data]): Future[Result] = {
+                                                (fn: UserAnswers => Future[Result])
+                                                (implicit writes: Writes[id.Data]): Future[Result] = {
     this
       .set(id)(value)
       .fold(

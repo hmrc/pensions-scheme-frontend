@@ -67,11 +67,11 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
       case Some(false) =>
         NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
       case Some(true) =>
-        NavigateTo.save(TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.length))
+        NavigateTo.save(TrusteeKindController.onPageLoad(NormalMode, answers.trusteesCount))
       case None if trusteesLengthCompare >= 0 =>
         NavigateTo.save(MoreThanTenTrusteesController.onPageLoad(NormalMode))
       case None =>
-        NavigateTo.save(TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.length))
+        NavigateTo.save(TrusteeKindController.onPageLoad(NormalMode, answers.trusteesCount))
     }
   }
 

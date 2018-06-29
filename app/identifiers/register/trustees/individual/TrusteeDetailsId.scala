@@ -17,12 +17,20 @@
 package identifiers.register.trustees.individual
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteesId}
 import models.person.PersonDetails
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 
 case class TrusteeDetailsId(index: Int) extends TypedIdentifier[PersonDetails] {
   override def path: JsPath = TrusteesId(index).path \ TrusteeDetailsId.toString
+
+  override def cleanup(value: Option[PersonDetails], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    userAnswers.allTrusteesAfterDelete.lengthCompare(10) match {
+      case lengthCompare if lengthCompare <= 0 => userAnswers.remove(MoreThanTenTrusteesId)
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 object TrusteeDetailsId {

@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.play.views.html._
 @import models.Mode
 @import models.register.establishers.company.director.DirectorDetails
+@import viewmodels.EditableItem
 
 @(
     appConfig: FrontendAppConfig,
@@ -26,7 +27,7 @@
     mode: Mode,
     establisherIndex: Int,
     companyName: String,
-    directors: Seq[DirectorDetails]
+    directors: Seq[EditableItem]
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -46,7 +47,7 @@
             @components.paragraph_text(messages("messages__addCompanyDirectors_lede"))
             @components.submit_button("messages__addCompanyDirectors_add_director")
         } else {
-            @components.editable_item_list((establisherIndex, directors))
+            @components.editable_item_list(directors)
 
             @if(directors.size < appConfig.maxDirectors) {
                 @components.input_yes_no(

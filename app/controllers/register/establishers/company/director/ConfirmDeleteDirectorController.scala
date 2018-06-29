@@ -48,25 +48,33 @@ class ConfirmDeleteDirectorController @Inject()(
     implicit request =>
       (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
         case company ~ director =>
-          Future.successful(
-            Ok(
-              confirmDeleteDirector(
-                appConfig,
-                company.companyName,
-                director.directorName,
-                routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
-                AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
+          director.isDeleted match {
+            case false =>
+              Future.successful(
+                Ok(
+                  confirmDeleteDirector(
+                    appConfig,
+                    company.companyName,
+                    director.directorName,
+                    routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
+                    AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
+                  )
+                )
               )
-            )
-          )
+            case true =>
+              Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, directorIndex)))
+          }
       }
   }
 
   def onSubmit(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      dataCacheConnector.remove(request.externalId, DirectorId(establisherIndex, directorIndex)).map {
-        json =>
-          Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, UserAnswers(json)))
+      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
+        case directorDetails =>
+          dataCacheConnector.save(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true)).map {
+            userAnswers =>
+              Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers))
+          }
       }
   }
 }
