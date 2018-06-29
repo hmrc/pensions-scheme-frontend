@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees
+package identifiers.register.trustees.company
 
-import identifiers.register.trustees.company.CompanyDetailsId
+import identifiers.register.trustees.MoreThanTenTrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.CompanyDetails
 import models.person.PersonDetails
@@ -25,7 +25,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
 
-class TrusteesIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class CompanyDetailsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
   private def individualTrustee(index: Int) = PersonDetails(
     s"test-trustee-$index",
@@ -50,7 +50,7 @@ class TrusteesIdSpec extends WordSpec with MustMatchers with OptionValues with E
 
     "One trustee is deleted from a set of 10 while the `more than ten trustees` flag was set to yes" when {
 
-      val result: UserAnswers = answers.remove(TrusteesId(1)).asOpt.value
+      val result: UserAnswers = answers.remove(CompanyDetailsId(1)).asOpt.value
 
       "remove the data for `More than 10 trustees`" in {
         result.get(MoreThanTenTrusteesId) mustNot be(defined)
