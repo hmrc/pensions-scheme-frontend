@@ -19,11 +19,9 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import identifiers.LastPageId
 import identifiers.register._
 import models.register.{SchemeDetails, SchemeType}
 import models.{CheckMode, Mode, NormalMode}
-import play.api.mvc.Call
 import utils.{Navigator, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
@@ -32,7 +30,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {
       case ContinueRegistrationId =>
-        continueRegistrationRoutes(from.userAnswers)
+        NavigateTo.dontSave(controllers.routes.WhatYouWillNeedController.onPageLoad())
       case WhatYouWillNeedId =>
         NavigateTo.dontSave(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
       case SchemeDetailsId =>
@@ -167,13 +165,6 @@ class RegisterNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
         case _ =>
           NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
       }
-    }
-  }
-
-  private def continueRegistrationRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
-    userAnswers.get(LastPageId) match {
-      case Some(lastPage) => NavigateTo.dontSave(Call(lastPage.method, lastPage.url))
-      case _ => NavigateTo.dontSave(controllers.routes.WhatYouWillNeedController.onPageLoad())
     }
   }
 

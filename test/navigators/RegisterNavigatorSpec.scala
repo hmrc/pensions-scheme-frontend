@@ -38,7 +38,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     ("Id",                          "User Answers",       "Next Page (Normal Mode)",              "Save (NM)",  "Next Page (Check Mode)",             "Save (CM)"),
     // Start - continue or what you will need
     (ContinueRegistrationId,        emptyAnswers,         whatYouWillNeed,                        false,        None,                                 false),
-    (ContinueRegistrationId,        savedLastPage,        lastPage,                               false,        None,                                 false),
+    (ContinueRegistrationId,        savedLastPage,        whatYouWillNeed,                        false,        None,                                 false),
     (WhatYouWillNeedId,             emptyAnswers,         schemeDetails(NormalMode),              false,        None,                                 false),
 
     // Scheme registration
@@ -126,7 +126,6 @@ object RegisterNavigatorSpec {
 
   private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
   private def adviserDetails = controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
-  private def establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
 
