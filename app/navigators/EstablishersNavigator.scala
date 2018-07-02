@@ -43,11 +43,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: DataCacheConnector
   private def addEstablisherRoutes(value: Option[Boolean], answers: UserAnswers): Option[NavigateTo] = {
     value match {
       case Some(false) =>
-        if (answers.allTrustees.nonEmpty) {
-          NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
-        } else {
           navigateBasedOnSchemeDetails(answers)
-        }
       case Some(true) =>
         NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount))
       case None =>
@@ -60,11 +56,18 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: DataCacheConnector
       case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
         NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
       case Some(SchemeDetails(_, _)) =>
-        answers.get(HaveAnyTrusteesId) match {
-          case None =>
-            NavigateTo.save(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode))
+        answers.allTrusteesAfterDelete.isEmpty match {
+          case false =>
+            NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
           case _ =>
-            NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
+            answers.get(HaveAnyTrusteesId) match {
+              case Some(true) =>
+                NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
+              case Some(false) =>
+                NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
+              case _ =>
+                NavigateTo.save(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode))
+            }
         }
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())

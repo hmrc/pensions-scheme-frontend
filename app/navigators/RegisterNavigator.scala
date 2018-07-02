@@ -154,18 +154,8 @@ class RegisterNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
   }
 
   private def checkYourAnswersRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
-    if (userAnswers.allEstablishers.isEmpty) {
       NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
-    } else if (userAnswers.allTrustees.nonEmpty) {
-      NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
-    } else {
-      userAnswers.get(SchemeDetailsId) match {
-        case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
-          NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
-        case _ =>
-          NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
-      }
-    }
+
   }
 
 }
