@@ -63,8 +63,8 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
 
     //Check your answers - jump off to establishers
     (CheckYourAnswersId,            noEstablishers,       addEstablisher,                         true,         None,                                 false),
-    (CheckYourAnswersId,            hasEstablishers,      schemeReview,                           true,         None,                                 false),
-    (CheckYourAnswersId,            needsTrustees,        addTrustee,                             true,         None,                                 false),
+    (CheckYourAnswersId,            hasEstablishers,      addEstablisher,                         true,         None,                                 false),
+    (CheckYourAnswersId,            needsTrustees,        addEstablisher,                         true,         None,                                 false),
 
     // Review, declarations, success - return from establishers
     (SchemeReviewId,                hasCompanies,         declarationDormant,                     true,         None,                                 false),

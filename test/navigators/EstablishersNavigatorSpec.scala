@@ -40,10 +40,11 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
     ("Id",                          "User Answers",                     "Next Page (Normal Mode)",  "Save (NM)",   "Next Page (Check Mode)",  "Save (CM)"),
     (AddEstablisherId(None),        emptyAnswers,                         establisherKind,           true,          None: Option[Call],       false),
     (AddEstablisherId(Some(true)),  addEstablishersTrue,                  establisherKind,           true,          None: Option[Call],       false),
-    (AddEstablisherId(Some(false)), haveTrustee,                          schemeReview,              true,          None: Option[Call],       false),
+    (AddEstablisherId(Some(false)), haveTrustee,                          addTrustee,              true,          None: Option[Call],       false),
     (AddEstablisherId(Some(false)), addEstablishersFalseWithSingleTrust,  addTrustee,                true,          None: Option[Call],       false),
     (AddEstablisherId(Some(false)), addEstablishersFalseWithBodyCorporate,haveAnyTrustee,            true,          None: Option[Call],       false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseHaveTrusteeTrue,  schemeReview,              true,          None: Option[Call],       false),
+    (AddEstablisherId(Some(false)), addEstablishersFalseHaveTrusteeTrue,  addTrustee,              true,          None: Option[Call],       false),
+    (AddEstablisherId(Some(false)), addEstablishersFalseHaveTrusteeFalse, schemeReview,              true,          None: Option[Call],       false),
     (AddEstablisherId(Some(false)), addEstablishersFalseWithNoScheme,     expired,                   false,         None: Option[Call],       false),
     (EstablisherKindId(0),          company,                              companyDetails,            true,          None: Option[Call],       false),
     (EstablisherKindId(0),          individual,                           individualDetails,         true,          None,                     false),
@@ -66,6 +67,7 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private val haveTrustee = UserAnswers(Json.obj(AddEstablisherId.toString -> "true")).
+    set(SchemeDetailsId)(SchemeDetails("test scheme", SchemeType.SingleTrust)).asOpt.value.
     set(TrusteeDetailsId(0))(PersonDetails("first", None, "last", LocalDate.now)).asOpt.value
   private val addEstablishersFalseWithSingleTrust = UserAnswers(Json.obj(AddEstablisherId.toString -> "false")).
     set(SchemeDetailsId)(SchemeDetails("test scheme", SchemeType.SingleTrust)).asOpt.value
@@ -73,6 +75,8 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
     set(SchemeDetailsId)(SchemeDetails("test scheme", SchemeType.BodyCorporate)).asOpt.value
   private val addEstablishersFalseHaveTrusteeTrue = UserAnswers(Json.obj(AddEstablisherId.toString -> "false")).
     set(SchemeDetailsId)(SchemeDetails("test scheme", SchemeType.BodyCorporate)).asOpt.value.set(HaveAnyTrusteesId)(true).asOpt.value
+  private val addEstablishersFalseHaveTrusteeFalse = UserAnswers(Json.obj(AddEstablisherId.toString -> "false")).
+    set(SchemeDetailsId)(SchemeDetails("test scheme", SchemeType.BodyCorporate)).asOpt.value.set(HaveAnyTrusteesId)(false).asOpt.value
   private val company = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Company).asOpt.value
   private val individual = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Indivdual).asOpt.value
   private val addEstablishersTrue = UserAnswers(Json.obj(AddEstablisherId.toString -> "true"))
