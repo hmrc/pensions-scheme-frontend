@@ -33,6 +33,7 @@ import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
 import viewmodels.EditableItem
+
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
@@ -91,7 +92,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
     }
 
     getAll[EntityDetails](JsPath \ EstablishersId.toString)(nameReads).map {
-      case (entityDetails) =>
+      entityDetails =>
         entityDetails.map { entity =>
           entity.route(entityDetails.indexOf(entity), None)
         }
@@ -103,12 +104,12 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   def allDirectors(establisherIndex: Int): Seq[EditableItem] = {
-    getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(establisherIndex)).map{
-      case details =>
-        details.map{ director =>
+    getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
+      details =>
+        details.map { director =>
           val directorIndex = details.indexOf(director)
           EditableItem(directorIndex, director.directorName, director.isDeleted,
-            establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode,establisherIndex, Index(directorIndex)).url,
+            establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, establisherIndex, Index(directorIndex)).url,
             establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(establisherIndex, directorIndex).url)
         }
     }.getOrElse(Seq.empty)
@@ -149,7 +150,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       individualName orElse companyName
     }
     getAll[EntityDetails](JsPath \ TrusteesId.toString)(nameReads).map {
-      case (entityDetails) =>
+      entityDetails =>
         entityDetails.map { entity =>
           entity.route(entityDetails.indexOf(entity), None)
         }
