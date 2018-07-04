@@ -1,0 +1,60 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import play.api.mvc.AnyContent
+@import config.FrontendAppConfig
+@import models.requests.DataRequest
+@import viewmodels.EditableItem
+
+@(appConfig: FrontendAppConfig, entities: Seq[EditableItem])(implicit request: DataRequest[AnyContent], messages: Messages)
+
+<div class="form-group">
+    <ul id="people" class="govuk-check-your-answers form-group cya-questions-long">
+        @for(entity <- entities) {
+        <li>
+            <div class="cya-question">
+                <h2 id="@entity.id" class="bold std-text">@entity.name</h2>
+            </div>
+
+            @if(entity.isComplete){
+
+            <div class="cya-status status">
+                <span class="complete">COMPLETE</span>
+            </div>
+
+            } else {
+
+            <div class="cya-status status">
+                <span class="rejected">INCOMPLETE</span>
+            </div>
+
+            }
+
+            <div>
+                <a id="@entity.deleteLinkId" href="@entity.deleteLink">
+                    @messages("site.delete")
+                </a>
+            </div>
+
+            <div>
+                <a id="@entity.editLinkId" href="@entity.editLink">
+                    @messages("site.edit")
+                </a>
+            </div>
+        </li>
+        }
+    </ul>
+</div>

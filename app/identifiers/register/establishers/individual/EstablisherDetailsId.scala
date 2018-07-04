@@ -17,9 +17,11 @@
 package identifiers.register.establishers.individual
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
+import models.requests.DataRequest
 import play.api.libs.json.JsPath
+import play.api.mvc.AnyContent
 
 case class EstablisherDetailsId(index: Int) extends TypedIdentifier[PersonDetails] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherDetailsId.toString
@@ -27,4 +29,7 @@ case class EstablisherDetailsId(index: Int) extends TypedIdentifier[PersonDetail
 
 object EstablisherDetailsId {
   override lazy val toString: String = "establisherDetails"
+
+  def isComplete(index: Int)(implicit request: DataRequest[AnyContent]): Option[Boolean] =
+    request.userAnswers.get[Boolean](JsPath \ EstablishersId(index) \ IsEstablisherCompleteId.toString)
 }
