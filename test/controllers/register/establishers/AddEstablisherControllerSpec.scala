@@ -20,9 +20,18 @@ import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
-import models.NormalMode
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import models.person.PersonDetails
+import models.register.SchemeDetails
+import models.register.SchemeType.SingleTrust
+import models.register.establishers.EstablisherKind
+import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
@@ -31,22 +40,7 @@ import views.html.register.establishers.addEstablisher
 
 class AddEstablisherControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
-
-  val formProvider = new AddEstablisherFormProvider()
-  val form = formProvider(Seq.empty)
-  val schemeName = "Test Scheme Name"
-  val day: Int = LocalDate.now().getDayOfMonth
-  val month: Int = LocalDate.now().getMonthOfYear
-  val year: Int = LocalDate.now().getYear - 20
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddEstablisherController =
-    new AddEstablisherController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
-
-  def viewAsString(form: Form[_] = form, allEstablishers: Seq[EditableItem] = Seq.empty): String = addEstablisher(frontendAppConfig,
-    form, NormalMode, allEstablishers, schemeName)(fakeRequest, messages).toString
+  import AddEstablisherControllerSpec._
 
   "AddEstablisher Controller" must {
 
@@ -57,6 +51,28 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString()
     }
 
+    "not populate the view on a GET when the question has previously been answered" in {
+      val getRelevantData = individualEstablisherDataRetrieval
+
+      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+      contentAsString(result) mustBe viewAsString(form, Seq(johnDoe))
+    }
+
+    "populate the view with establishers when they exist" in {
+      val establishersAsEntities = Seq(johnDoe, testLtd)
+      val getRelevantData = establisherWithDeletedDataRetrieval
+      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+
+      contentAsString(result) mustBe viewAsString(form, establishersAsEntities)
+    }
+
+    "exclude the deleted establishers from the list" in {
+      val getRelevantData = establisherWithDeletedDataRetrieval
+      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
+
+      contentAsString(result) mustBe viewAsString(form, Seq(johnDoe, testLtd))
+    }
+
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
@@ -64,6 +80,28 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "redirect to the next page when no establishers exist and the user submits" in {
+      val result = controller().onSubmit(NormalMode)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "redirect to Session Expired for a GET if no existing data is found" in {
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "redirect to Session Expired for a POST if no existing data is found" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
@@ -76,4 +114,92 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(boundForm)
     }
   }
+}
+
+object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
+
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  private val schemeName = "Test Scheme Name"
+
+  private val formProvider = new AddEstablisherFormProvider()
+  private val form = formProvider(Seq.empty)
+
+  protected def fakeNavigator() = new FakeNavigator(desiredRoute = onwardRoute)
+
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddEstablisherController =
+    new AddEstablisherController(
+      frontendAppConfig,
+      messagesApi,
+      FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
+
+  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[EditableItem] = Seq.empty): String =
+    addEstablisher(
+      frontendAppConfig,
+      form,
+      NormalMode,
+      allEstablishers,
+      schemeName
+    )(fakeRequest, messages).toString
+
+  private val day = LocalDate.now().getDayOfMonth
+  private val month = LocalDate.now().getMonthOfYear
+  private val year = LocalDate.now().getYear - 20
+
+  private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day))
+  private val johnDoe = EditableItem(
+    index = 0,
+    name = "John Doe",
+    isDeleted = false,
+    editLink = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, index = 0).url,
+    deleteLink = routes.ConfirmDeleteEstablisherController.onPageLoad(index = 0, establisherKind = EstablisherKind.Indivdual).url
+  )
+
+  private val companyDetails = CompanyDetails("Test Ltd", None, None)
+  private val testLtd = EditableItem(
+    index = 1,
+    name = "Test Ltd",
+    isDeleted = false,
+    editLink = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index = 1).url,
+    deleteLink = routes.ConfirmDeleteEstablisherController.onPageLoad(index = 1, establisherKind = EstablisherKind.Company).url
+  )
+
+  private val deletedEstablisher = personDetails.copy(isDeleted = true)
+
+  private def individualEstablisherDataRetrieval: FakeDataRetrievalAction = {
+    val validData = Json.obj(
+      SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          EstablisherDetailsId.toString -> personDetails
+        )
+      )
+    )
+    new FakeDataRetrievalAction(Some(validData))
+  }
+
+  private def establisherWithDeletedDataRetrieval: FakeDataRetrievalAction = {
+    val validData = Json.obj(
+      SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          EstablisherDetailsId.toString -> personDetails
+        ),
+        Json.obj(
+          CompanyDetailsId.toString -> companyDetails
+        ),
+        Json.obj(
+          EstablisherDetailsId.toString -> deletedEstablisher
+        )
+      )
+    )
+    new FakeDataRetrievalAction(Some(validData))
+  }
+
 }
