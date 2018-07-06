@@ -26,7 +26,7 @@ import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import utils._
-import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.{CheckYourAnswers, CompanyRegistrationNumberCYA}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
@@ -111,8 +111,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   private def answerSections(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
 
-    val crnRows = CheckYourAnswers
-      .companyRegistrationNumber("messages__checkYourAnswers__trustees__company__crn")
+    val crnRows = CompanyRegistrationNumberCYA[CompanyRegistrationNumberId]("messages__checkYourAnswers__trustees__company__crn")
+      .companyRegistrationNumber
       .row(CompanyRegistrationNumberId(index))(companyRegistrationNumberRoute, request.userAnswers)
 
     val utrRows = CheckYourAnswers

@@ -32,7 +32,187 @@ trait CheckYourAnswers[I <: TypedIdentifier.PathDependent] {
   def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow]
 }
 
+case class NinoCYA[I <: TypedIdentifier[Nino]](label: String = "messages__trusteeNino_question_cya_label") {
+
+  def apply()(implicit rds: Reads[Nino]): CheckYourAnswers[I] =
+    nino
+
+  def nino(implicit rds: Reads[Nino]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) =
+        userAnswers.get(id) match {
+          case Some(Nino.Yes(nino)) => Seq(
+            AnswerRow(
+              label,
+              Seq(s"${Nino.Yes}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__trusteeNino_nino_cya_label",
+              Seq(nino),
+              false,
+              changeUrl
+            )
+          )
+          case Some(Nino.No(reason)) => Seq(
+            AnswerRow(
+              label,
+              Seq(s"${Nino.No}"),
+              false, changeUrl
+            ),
+            AnswerRow(
+              "messages__trusteeNino_reason_cya_label",
+              Seq(reason),
+              false,
+              changeUrl
+            ))
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
+
+}
+
+case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistrationNumber]](label: String = "messages__company__cya__crn_yes_no") {
+
+  def apply()(implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] =
+    companyRegistrationNumber
+
+  def companyRegistrationNumber(implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = {
+
+        userAnswers.get(id) match {
+          case Some(CompanyRegistrationNumber.Yes(crn)) => Seq(
+            AnswerRow(
+              label,
+              Seq(s"${CompanyRegistrationNumber.Yes}"),
+              true,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__common__crn",
+              Seq(s"$crn"),
+              true,
+              changeUrl
+            ))
+          case Some(CompanyRegistrationNumber.No(reason)) => Seq(
+            AnswerRow(
+              label,
+              Seq(s"${CompanyRegistrationNumber.No}"),
+              true,
+              changeUrl),
+            AnswerRow(
+              "messages__company__cya__crn_no_reason",
+              Seq(s"$reason"),
+              true,
+              changeUrl
+            ))
+          case _ => Seq.empty[AnswerRow]
+        }
+      }
+    }
+  }
+
+}
+
+case class SchemeDetailsCYA[I <: TypedIdentifier[SchemeDetails]](
+                                                                  nameLabel: String = "messages__scheme_details__name_label",
+                                                                  typeLabel: String = "messages__scheme_details__type_legend_short"
+                                                                ) {
+
+  def apply()(implicit rds: Reads[SchemeDetails]): CheckYourAnswers[I] =
+    schemeDetails
+
+  def schemeDetails(implicit rds: Reads[SchemeDetails]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
+
+        userAnswers.get(id).map {
+          schemeDetails =>
+
+            Seq(AnswerRow(
+              nameLabel,
+              Seq(s"${schemeDetails.schemeName}"),
+              false,
+              changeUrl
+            ),
+              AnswerRow(
+                typeLabel,
+                Seq(s"messages__scheme_details__type_${schemeDetails.schemeType}"),
+                true,
+                changeUrl
+              )
+            )
+        }.getOrElse(Seq.empty[AnswerRow])
+      }
+    }
+  }
+}
+
+case class BankDetailsCYA[I <: TypedIdentifier[UKBankDetails]](
+                           bankNameLabel: String = "messages__uk_bank_account_details__bank_name",
+                           accountNameLabel: String = "messages__uk_bank_account_details__account_name",
+                           sortCodeLabel: String = "messages__uk_bank_account_details__sort_code",
+                           accountNumberLabel: String = "messages__uk_bank_account_details__account_number",
+                           dateLabel: String = "bankAccountDate.checkYourAnswersLabel"
+                         ) {
+
+  def apply()(implicit rds: Reads[UKBankDetails]): CheckYourAnswers[I] =
+    bankDetails
+
+  def bankDetails(implicit rds: Reads[UKBankDetails]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map {
+        bankDetails =>
+          Seq(
+            AnswerRow(
+              bankNameLabel,
+              Seq(s"${bankDetails.bankName}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              accountNameLabel,
+              Seq(s"${bankDetails.accountName}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              sortCodeLabel,
+              Seq(s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              accountNumberLabel,
+              Seq(s"${bankDetails.accountNumber}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              dateLabel,
+              Seq(s"${DateHelper.formatDate(bankDetails.date)}"),
+              false,
+              changeUrl
+            )
+          )
+      }.getOrElse(Seq.empty[AnswerRow])
+    }
+  }
+
+}
+
 object CheckYourAnswers {
+
+  implicit def nino[I <: TypedIdentifier[Nino]](implicit rds: Reads[Nino]): CheckYourAnswers[I] = NinoCYA()()
+
+  implicit def companyRegistrationNumber[I <: TypedIdentifier[CompanyRegistrationNumber]](implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] = CompanyRegistrationNumberCYA()()
+
+  implicit def schemeDetails[I <: TypedIdentifier[SchemeDetails]](implicit rds: Reads[SchemeDetails]): CheckYourAnswers[I] = SchemeDetailsCYA()()
+
+  implicit def defaultBankDetails[I <: TypedIdentifier[UKBankDetails]](implicit rds: Reads[UKBankDetails]): CheckYourAnswers[I] = BankDetailsCYA()()
 
   implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -173,22 +353,6 @@ object CheckYourAnswers {
     }
   }
 
-  implicit def defaultSchemeDetails[I <: TypedIdentifier[SchemeDetails]](implicit rds: Reads[SchemeDetails]): CheckYourAnswers[I] = {
-    val nameLabel = "messages__scheme_details__name_label"
-    val typeLabel = "messages__scheme_details__type_legend_short"
-    schemeDetails(nameLabel, typeLabel)
-  }
-
-  implicit def defaultBankDetails[I <: TypedIdentifier[UKBankDetails]](implicit rds: Reads[UKBankDetails]): CheckYourAnswers[I] = {
-    val bankNameLabel = "messages__uk_bank_account_details__bank_name"
-    val accountNameLabel = "messages__uk_bank_account_details__account_name"
-    val sortCodeLabel = "messages__uk_bank_account_details__sort_code"
-    val accountNumberLabel = "messages__uk_bank_account_details__account_number"
-    val dateLabel = "bankAccountDate.checkYourAnswersLabel"
-
-    bankDetails(bankNameLabel, accountNameLabel, sortCodeLabel, accountNumberLabel, dateLabel)
-  }
-
   implicit def defaultBenefitsInsurer[I <: TypedIdentifier[BenefitsInsurer]](implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] = {
     val nameLabel = "messages__benefits_insurance__name"
     val policyLabel = "messages__benefits_insurance__policy"
@@ -204,10 +368,6 @@ object CheckYourAnswers {
     companyDetails(nameLabel, vatLabel, payeLabel)
   }
 
-  implicit def defaultCompanyRegistrationNumber[I <: TypedIdentifier[CompanyRegistrationNumber]](implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] = {
-    companyRegistrationNumber("messages__company__cya__crn_yes_no")
-  }
-
   implicit def defaultUniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] = {
     uniqueTaxReference("messages__establisher_individual_utr_question_cya_label")
   }
@@ -219,83 +379,6 @@ object CheckYourAnswers {
   implicit def defaultAddressYears[I <: TypedIdentifier[AddressYears]](implicit rds: Reads[AddressYears]): CheckYourAnswers[I] = {
     addressYears("messages__establisher_address_years__title")
   }
-
-  implicit def defaultNino[I <: TypedIdentifier[Nino]](implicit rds: Reads[Nino]): CheckYourAnswers[I] = {
-    nino("messages__trusteeNino_question_cya_label")
-  }
-
-  def bankDetails[I <: TypedIdentifier[UKBankDetails]](
-                                                        bankNameLabel: String,
-                                                        accountNameLabel: String,
-                                                        sortCodeLabel: String,
-                                                        accountNumberLabel: String,
-                                                        dateLabel: String
-                                                      )(implicit rds: Reads[UKBankDetails]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
-        bankDetails =>
-          Seq(
-            AnswerRow(
-              bankNameLabel,
-              Seq(s"${bankDetails.bankName}"),
-              false,
-              changeUrl
-            ),
-            AnswerRow(
-              accountNameLabel,
-              Seq(s"${bankDetails.accountName}"),
-              false,
-              changeUrl
-            ),
-            AnswerRow(
-              sortCodeLabel,
-              Seq(s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}"),
-              false,
-              changeUrl
-            ),
-            AnswerRow(
-              accountNumberLabel,
-              Seq(s"${bankDetails.accountNumber}"),
-              false,
-              changeUrl
-            ),
-            AnswerRow(
-              dateLabel,
-              Seq(s"${DateHelper.formatDate(bankDetails.date)}"),
-              false,
-              changeUrl
-            )
-          )
-      }.getOrElse(Seq.empty[AnswerRow])
-    }
-  }
-
-  def schemeDetails[I <: TypedIdentifier[SchemeDetails]](nameLabel: String, typeLabel: String)
-                                                        (implicit rds: Reads[SchemeDetails]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = {
-
-        userAnswers.get(id).map {
-          schemeDetails =>
-
-            Seq(AnswerRow(
-              nameLabel,
-              Seq(s"${schemeDetails.schemeName}"),
-              false,
-              changeUrl
-            ),
-              AnswerRow(
-                typeLabel,
-                Seq(s"messages__scheme_details__type_${schemeDetails.schemeType}"),
-                true,
-                changeUrl
-              )
-            )
-        }.getOrElse(Seq.empty[AnswerRow])
-      }
-    }
-  }
-
 
   def benefitsInsurer[I <: TypedIdentifier[BenefitsInsurer]](nameLabel: String,policyLabel: String)
                                                             (implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] = {
@@ -429,78 +512,6 @@ object CheckYourAnswers {
           true,
           changeUrl
         ))).getOrElse(Seq.empty[AnswerRow])
-    }
-  }
-
-  def nino[I <: TypedIdentifier[Nino]](label: String)(implicit rds: Reads[Nino]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) =
-        userAnswers.get(id) match {
-          case Some(Nino.Yes(nino)) => Seq(
-            AnswerRow(
-              label,
-              Seq(s"${Nino.Yes}"),
-              false,
-              changeUrl
-            ),
-            AnswerRow(
-              "messages__trusteeNino_nino_cya_label",
-              Seq(nino),
-              false,
-              changeUrl
-            )
-          )
-          case Some(Nino.No(reason)) => Seq(
-            AnswerRow(
-              label,
-              Seq(s"${Nino.No}"),
-              false, changeUrl
-            ),
-            AnswerRow(
-              "messages__trusteeNino_reason_cya_label",
-              Seq(reason),
-              false,
-              changeUrl
-            ))
-          case _ => Seq.empty[AnswerRow]
-        }
-    }
-  }
-
-  def companyRegistrationNumber[I <: TypedIdentifier[CompanyRegistrationNumber]](label: String)
-                                                                                (implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = {
-
-        userAnswers.get(id) match {
-          case Some(CompanyRegistrationNumber.Yes(crn)) => Seq(
-            AnswerRow(
-              label,
-              Seq(s"${CompanyRegistrationNumber.Yes}"),
-              true,
-              changeUrl
-            ),
-            AnswerRow(
-              "messages__common__crn",
-              Seq(s"$crn"),
-              true,
-              changeUrl
-            ))
-          case Some(CompanyRegistrationNumber.No(reason)) => Seq(
-            AnswerRow(
-              label,
-              Seq(s"${CompanyRegistrationNumber.No}"),
-              true,
-              changeUrl),
-            AnswerRow(
-              "messages__company__cya__crn_no_reason",
-              Seq(s"$reason"),
-              true,
-              changeUrl
-            ))
-          case _ => Seq.empty[AnswerRow]
-        }
-      }
     }
   }
 

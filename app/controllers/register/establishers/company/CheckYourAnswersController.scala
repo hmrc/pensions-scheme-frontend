@@ -34,14 +34,15 @@ import utils.annotations.EstablishersCompany
 
 import scala.concurrent.Future
 
-class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         checkYourAnswersFactory: CheckYourAnswersFactory,
-                                         @EstablishersCompany navigator: Navigator)
-                                          extends FrontendController with Retrievals with I18nSupport {
+class CheckYourAnswersController @Inject()(
+                                            appConfig: FrontendAppConfig,
+                                            override val messagesApi: MessagesApi,
+                                            authenticate: AuthAction,
+                                            getData: DataRetrievalAction,
+                                            requireData: DataRequiredAction,
+                                            checkYourAnswersFactory: CheckYourAnswersFactory,
+                                            @EstablishersCompany navigator: Navigator
+                                          ) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
