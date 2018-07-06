@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.individual
+package utils.checkyouranswers
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
-import models.person.PersonDetails
 import models.requests.DataRequest
-import play.api.libs.json.JsPath
+import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
+import viewmodels.AnswerRow
 
-case class EstablisherDetailsId(index: Int) extends TypedIdentifier[PersonDetails] {
-  override def path: JsPath = EstablishersId(index).path \ EstablisherDetailsId.toString
+import scala.language.implicitConversions
+
+trait Ops[A] {
+  def row(changeUrl: String)(implicit request: DataRequest[AnyContent], reads: Reads[A]): Seq[AnswerRow]
 }
 
-object EstablisherDetailsId {
-  override lazy val toString: String = "establisherDetails"
-
-  def isComplete(index: Int)(implicit request: DataRequest[AnyContent]): Option[Boolean] =
-    request.userAnswers.get[Boolean](JsPath \ EstablishersId(index) \ IsEstablisherCompleteId.toString)
+object Ops {
+  implicit def toOps[I <: TypedIdentifier.PathDependent](id: I)(implicit ev: CheckYourAnswers[I]): Ops[id.Data] =
+    new Ops[id.Data] {
+      override def row(changeUrl: String)(implicit request: DataRequest[AnyContent], reads: Reads[id.Data]): Seq[AnswerRow] =
+        ev.row(id)(changeUrl, request.userAnswers)
+    }
 }

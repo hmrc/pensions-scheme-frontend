@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{CheckYourAnswersFactory, Navigator}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
-import utils.CheckYourAnswers.Ops._
+import utils.checkyouranswers.Ops._
 import utils.annotations.EstablishersCompany
 
 import scala.concurrent.Future

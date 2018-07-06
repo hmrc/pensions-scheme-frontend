@@ -27,7 +27,7 @@ import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.CheckYourAnswers.Ops._
+import utils.checkyouranswers.Ops._
 import utils.annotations.TrusteesCompany
 import utils.{CheckYourAnswersFactory, CountryOptions, Navigator}
 import viewmodels.{AnswerSection, Message}

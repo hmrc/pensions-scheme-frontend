@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package identifiers.register
+package identifiers.register.establishers
 
-import identifiers._
-import models.address.Address
-import utils.CountryOptions
-import utils.checkyouranswers.CheckYourAnswers
+import identifiers.TypedIdentifier
+import play.api.libs.json.JsPath
 
-case object InsurerAddressId extends TypedIdentifier[Address] { self =>
-  override def toString: String = "insurerAddress"
+case class IsEstablisherCompleteId(index: Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = JsPath \ EstablishersId(index) \ IsEstablisherCompleteId.toString
+}
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] =
-    CheckYourAnswers.address("messages__benefits_insurance_addr__cya_label")
+object IsEstablisherCompleteId {
+  def collectionPath: JsPath = JsPath \ "establishers" \\ IsEstablisherCompleteId.toString
+  override def toString: String = "isEstabliserComplete"
 }

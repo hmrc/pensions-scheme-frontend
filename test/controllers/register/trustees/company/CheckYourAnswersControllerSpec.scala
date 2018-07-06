@@ -26,7 +26,8 @@ import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import utils._
-import utils.CheckYourAnswers.Ops._
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 

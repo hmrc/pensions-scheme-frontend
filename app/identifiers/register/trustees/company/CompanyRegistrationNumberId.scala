@@ -20,7 +20,7 @@ import identifiers._
 import identifiers.register.trustees.TrusteesId
 import models.CompanyRegistrationNumber
 import play.api.libs.json.JsPath
-import utils.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers
 
 case class CompanyRegistrationNumberId(index: Int) extends TypedIdentifier[CompanyRegistrationNumber] {
   override def path: JsPath = TrusteesId(index).path \ CompanyRegistrationNumberId.toString

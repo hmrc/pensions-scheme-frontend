@@ -16,6 +16,10 @@
 
 package viewmodels
 
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import models.requests.DataRequest
+import play.api.mvc.AnyContent
+
 import scala.language.implicitConversions
 
 //noinspection MutatorLikeMethodIsParameterless
@@ -25,4 +29,6 @@ case class EditableItem(index:Int,  name: String, isDeleted:Boolean , editLink: 
   def editLinkId: String = s"$id-edit"
 
   def id: String = s"person-$index"
+
+  def isComplete(implicit request: DataRequest[AnyContent]): Option[Boolean] = EstablisherDetailsId.isComplete(index)
 }

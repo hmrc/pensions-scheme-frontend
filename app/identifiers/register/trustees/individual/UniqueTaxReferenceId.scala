@@ -20,7 +20,7 @@ import identifiers._
 import identifiers.register.trustees.TrusteesId
 import models.UniqueTaxReference
 import play.api.libs.json.JsPath
-import utils.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers
 
 case class UniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
   override def path: JsPath = TrusteesId(index).path \ UniqueTaxReferenceId.toString
