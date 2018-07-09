@@ -223,6 +223,40 @@ case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "
 
 }
 
+case class AddressCYA[I <: TypedIdentifier[Address]](label: String = "messages__common__cya__address") {
+
+  def apply()(implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
+    address
+
+  def address(implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = {
+
+        def addressAnswer(address: Address): Seq[String] = {
+          val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
+          Seq(
+            Some(s"${address.addressLine1},"),
+            Some(s"${address.addressLine2},"),
+            address.addressLine3.map(line3 => s"$line3,"),
+            address.addressLine4.map(line4 => s"$line4,"),
+            address.postcode.map(postCode => s"$postCode,"),
+            Some(country)
+          ).flatten
+        }
+
+        userAnswers.get(id).map { address =>
+          Seq(AnswerRow(
+            label,
+            addressAnswer(address),
+            false, changeUrl
+          ))
+        }.getOrElse(Seq.empty[AnswerRow])
+      }
+    }
+  }
+
+}
+
 object CheckYourAnswers {
 
   implicit def nino[I <: TypedIdentifier[Nino]](implicit rds: Reads[Nino]): CheckYourAnswers[I] = NinoCYA()()
@@ -234,6 +268,8 @@ object CheckYourAnswers {
   implicit def bankDetails[I <: TypedIdentifier[UKBankDetails]](implicit rds: Reads[UKBankDetails]): CheckYourAnswers[I] = BankDetailsCYA()()
 
   implicit def addressYears[I <: TypedIdentifier[AddressYears]](implicit rds: Reads[AddressYears]): CheckYourAnswers[I] = AddressYearsCYA()()
+
+  implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = AddressCYA()()
 
   implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -393,10 +429,6 @@ object CheckYourAnswers {
     uniqueTaxReference("messages__establisher_individual_utr_question_cya_label")
   }
 
-  implicit def defaultAddress[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = {
-    address("messages__common__cya__address")
-  }
-
   def benefitsInsurer[I <: TypedIdentifier[BenefitsInsurer]](nameLabel: String,policyLabel: String)
                                                             (implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -490,33 +522,6 @@ object CheckYourAnswers {
             ))
           case _ => Seq.empty[AnswerRow]
         }
-    }
-  }
-
-  def address[I <: TypedIdentifier[Address]](label: String)(implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = {
-
-        def addressAnswer(address: Address): Seq[String] = {
-          val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
-          Seq(
-            Some(s"${address.addressLine1},"),
-            Some(s"${address.addressLine2},"),
-            address.addressLine3.map(line3 => s"$line3,"),
-            address.addressLine4.map(line4 => s"$line4,"),
-            address.postcode.map(postCode => s"$postCode,"),
-            Some(country)
-          ).flatten
-        }
-
-        userAnswers.get(id).map { address =>
-          Seq(AnswerRow(
-            label,
-            addressAnswer(address),
-            false, changeUrl
-          ))
-        }.getOrElse(Seq.empty[AnswerRow])
-      }
     }
   }
 
