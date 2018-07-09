@@ -26,7 +26,7 @@ import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import utils._
-import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CompanyRegistrationNumberCYA}
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CompanyRegistrationNumberCYA, UniqueTaxReferenceCYA}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
@@ -115,8 +115,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       .companyRegistrationNumber
       .row(CompanyRegistrationNumberId(index))(companyRegistrationNumberRoute, request.userAnswers)
 
-    val utrRows = CheckYourAnswers
-      .uniqueTaxReference("messages__checkYourAnswers__trustees__company__utr")
+    val utrRows = UniqueTaxReferenceCYA[CompanyUniqueTaxReferenceId]("messages__checkYourAnswers__trustees__company__utr")
+      .uniqueTaxReference
       .row(CompanyUniqueTaxReferenceId(index))(companyUniqueTaxReferenceRoute, request.userAnswers)
 
     val companyDetailsSection = AnswerSection(

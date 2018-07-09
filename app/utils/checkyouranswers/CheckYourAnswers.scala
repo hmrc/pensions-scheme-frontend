@@ -289,6 +289,94 @@ case class BenefitsInsurerCYA[I <: TypedIdentifier[BenefitsInsurer]](
 
 }
 
+case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](label: String = "messages__establisher_individual_utr_question_cya_label") {
+
+  def apply()(implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] =
+    uniqueTaxReference
+
+  def uniqueTaxReference(implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) =
+        userAnswers.get(id) match {
+          case Some(UniqueTaxReference.Yes(utr)) => Seq(
+            AnswerRow(
+              label,
+              Seq(s"${UniqueTaxReference.Yes}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__establisher_individual_utr_cya_label",
+              Seq(utr),
+              false,
+              changeUrl
+            )
+          )
+          case Some(UniqueTaxReference.No(reason)) => Seq(
+            AnswerRow(
+              label,
+              Seq(s"${UniqueTaxReference.No}"),
+              false, changeUrl
+            ),
+            AnswerRow(
+              "messages__establisher_individual_utr_reason_cya_label",
+              Seq(reason),
+              false,
+              changeUrl
+            ))
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
+
+}
+
+case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
+                                                                    nameLabel: String = "messages__common__cya__name",
+                                                                    vatLabel: String = "messages__common__cya__vat",
+                                                                    payeLabel: String = "messages__common__cya__paye"
+                                                                  ) {
+
+  def apply()(implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] =
+    companyDetails
+
+  def companyDetails(implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map {
+          companyDetails =>
+
+            val nameRow = AnswerRow(
+              nameLabel,
+              Seq(s"${companyDetails.companyName}"),
+              false,
+              changeUrl
+            )
+
+            val withVat = companyDetails.vatNumber.fold(Seq(nameRow)) { vat =>
+              Seq(nameRow, AnswerRow(
+                vatLabel,
+                Seq(s"$vat"),
+                false,
+                changeUrl
+              ))
+            }
+
+            companyDetails.payeNumber.fold(withVat) { paye =>
+              withVat :+ AnswerRow(
+                payeLabel,
+                Seq(s"$paye"),
+                false,
+                changeUrl
+              )
+            }
+
+        }.getOrElse(Seq.empty[AnswerRow])
+    }
+  }
+
+}
+
 object CheckYourAnswers {
 
   implicit def nino[I <: TypedIdentifier[Nino]](implicit rds: Reads[Nino]): CheckYourAnswers[I] = NinoCYA()()
@@ -305,28 +393,9 @@ object CheckYourAnswers {
 
   implicit def benefitsInsurer[I <: TypedIdentifier[BenefitsInsurer]](implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] = BenefitsInsurerCYA()()
 
-  implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map {
-          string =>
-            Seq(AnswerRow(
-              s"${id.toString}.checkYourAnswersLabel",
-              Seq(retrieveStringAnswer(id, string)),
-              answerIsMessageKey = false,
-              changeUrl
-            ))
-        }.getOrElse(Seq.empty[AnswerRow])
-    }
-  }
+  implicit def uniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] = UniqueTaxReferenceCYA()()
 
-  private def retrieveStringAnswer[I](id: I, stringValue: String)(implicit countryOptions: CountryOptions): String = {
-    id match {
-      case SchemeEstablishedCountryId =>
-        countryOptions.options.find(_.value == stringValue).map(_.label).getOrElse(stringValue)
-      case _ => stringValue
-    }
-  }
+  implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]](implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = CompanyDetailsCYA()()
 
   implicit def boolean[I <: TypedIdentifier[Boolean]](implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -444,87 +513,26 @@ object CheckYourAnswers {
     }
   }
 
-  implicit def defaultCompanyDetails[I <: TypedIdentifier[CompanyDetails]](implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = {
-    val nameLabel = "messages__common__cya__name"
-    val vatLabel = "messages__common__cya__vat"
-    val payeLabel = "messages__common__cya__paye"
-
-    companyDetails(nameLabel, vatLabel, payeLabel)
-  }
-
-  implicit def defaultUniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] = {
-    uniqueTaxReference("messages__establisher_individual_utr_question_cya_label")
-  }
-
-  def companyDetails[I <: TypedIdentifier[CompanyDetails]](nameLabel: String, vatLabel: String, payeLabel: String)
-                                                          (implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = {
+  implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id).map {
-          companyDetails =>
-
-            val nameRow = AnswerRow(
-              nameLabel,
-              Seq(s"${companyDetails.companyName}"),
-              false,
+          string =>
+            Seq(AnswerRow(
+              s"${id.toString}.checkYourAnswersLabel",
+              Seq(retrieveStringAnswer(id, string)),
+              answerIsMessageKey = false,
               changeUrl
-            )
-
-            val withVat = companyDetails.vatNumber.fold(Seq(nameRow)) { vat =>
-              Seq(nameRow, AnswerRow(
-                vatLabel,
-                Seq(s"$vat"),
-                false,
-                changeUrl
-              ))
-            }
-
-            companyDetails.payeNumber.fold(withVat) { paye =>
-              withVat :+ AnswerRow(
-                payeLabel,
-                Seq(s"$paye"),
-                false,
-                changeUrl
-              )
-            }
-
+            ))
         }.getOrElse(Seq.empty[AnswerRow])
     }
   }
 
-
-  def uniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](label: String)(implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) =
-        userAnswers.get(id) match {
-          case Some(UniqueTaxReference.Yes(utr)) => Seq(
-            AnswerRow(
-              label,
-              Seq(s"${UniqueTaxReference.Yes}"),
-              false,
-              changeUrl
-            ),
-            AnswerRow(
-              "messages__establisher_individual_utr_cya_label",
-              Seq(utr),
-              false,
-              changeUrl
-            )
-          )
-          case Some(UniqueTaxReference.No(reason)) => Seq(
-            AnswerRow(
-              label,
-              Seq(s"${UniqueTaxReference.No}"),
-              false, changeUrl
-            ),
-            AnswerRow(
-              "messages__establisher_individual_utr_reason_cya_label",
-              Seq(reason),
-              false,
-              changeUrl
-            ))
-          case _ => Seq.empty[AnswerRow]
-        }
+  private def retrieveStringAnswer[I](id: I, stringValue: String)(implicit countryOptions: CountryOptions): String = {
+    id match {
+      case SchemeEstablishedCountryId =>
+        countryOptions.options.find(_.value == stringValue).map(_.label).getOrElse(stringValue)
+      case _ => stringValue
     }
   }
 

@@ -20,7 +20,7 @@ import identifiers._
 import identifiers.register.trustees.TrusteesId
 import models.UniqueTaxReference
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.{CheckYourAnswers, UniqueTaxReferenceCYA}
 
 case class UniqueTaxReferenceId(index: Int) extends TypedIdentifier[UniqueTaxReference] {
   override def path: JsPath = TrusteesId(index).path \ UniqueTaxReferenceId.toString
@@ -30,5 +30,5 @@ object UniqueTaxReferenceId {
   override def toString: String = "uniqueTaxReference"
 
   implicit val cya: CheckYourAnswers[UniqueTaxReferenceId] =
-    CheckYourAnswers.uniqueTaxReference("messages__trusteeUtr_question_cya_label")
+    UniqueTaxReferenceCYA("messages__trusteeUtr_question_cya_label")()
 }
