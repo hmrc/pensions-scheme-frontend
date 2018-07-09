@@ -107,7 +107,7 @@ trait Constraints {
   protected def schemeTypeConstraint(invalidKey: String): Constraint[String] = {
 
     val validSchemeTypes: Seq[String] = Seq(SchemeType.SingleTrust.toString,
-      SchemeType.GroupLifeDeath.toString, SchemeType.BodyCorporate.toString, "other")
+      SchemeType.GroupLifeDeath.toString, SchemeType.BodyCorporate.toString, SchemeType.MasterTrust.toString, "other")
 
     Constraint {
       case schemeType if validSchemeTypes.contains(schemeType) => Valid
