@@ -42,5 +42,5 @@ object TrusteeAddressYearsId {
   override def toString: String = "trusteeAddressYears"
 
   implicit val cya: CheckYourAnswers[TrusteeAddressYearsId] =
-    AddressYearsCYA("messages__trusteeAddressYears_cya_label").addressYears
+    AddressYearsCYA("messages__trusteeAddressYears_cya_label")()
 }

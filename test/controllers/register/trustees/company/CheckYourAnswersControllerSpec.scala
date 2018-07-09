@@ -26,8 +26,8 @@ import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import utils._
-import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CompanyRegistrationNumberCYA, UniqueTaxReferenceCYA}
 import utils.checkyouranswers.Ops._
+import utils.checkyouranswers.{AddressYearsCYA, CompanyRegistrationNumberCYA, UniqueTaxReferenceCYA}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -111,12 +111,10 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   private def answerSections(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
 
-    val crnRows = CompanyRegistrationNumberCYA[CompanyRegistrationNumberId]("messages__checkYourAnswers__trustees__company__crn")
-      .companyRegistrationNumber
+    val crnRows = CompanyRegistrationNumberCYA[CompanyRegistrationNumberId]("messages__checkYourAnswers__trustees__company__crn")()
       .row(CompanyRegistrationNumberId(index))(companyRegistrationNumberRoute, request.userAnswers)
 
-    val utrRows = UniqueTaxReferenceCYA[CompanyUniqueTaxReferenceId]("messages__checkYourAnswers__trustees__company__utr")
-      .uniqueTaxReference
+    val utrRows = UniqueTaxReferenceCYA[CompanyUniqueTaxReferenceId]("messages__checkYourAnswers__trustees__company__utr")()
       .row(CompanyUniqueTaxReferenceId(index))(companyUniqueTaxReferenceRoute, request.userAnswers)
 
     val companyDetailsSection = AnswerSection(
@@ -126,8 +124,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       utrRows
     )
 
-    val addressYearsRows = AddressYearsCYA[CompanyAddressYearsId]("messages__checkYourAnswers__trustees__company__address_years")
-      .addressYears
+    val addressYearsRows = AddressYearsCYA[CompanyAddressYearsId]("messages__checkYourAnswers__trustees__company__address_years")()
       .row(CompanyAddressYearsId(index))(companyAddressYearsRoute, request.userAnswers)
 
     val contactDetailsSection = AnswerSection(

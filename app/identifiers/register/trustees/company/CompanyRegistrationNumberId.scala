@@ -30,5 +30,5 @@ object CompanyRegistrationNumberId {
   override def toString: String = "companyRegistrationNumber"
 
   implicit val cya: CheckYourAnswers[CompanyRegistrationNumberId] =
-    CompanyRegistrationNumberCYA("messages__checkYourAnswers__trustees__company__crn").companyRegistrationNumber
+    CompanyRegistrationNumberCYA("messages__checkYourAnswers__trustees__company__crn")()
 }
