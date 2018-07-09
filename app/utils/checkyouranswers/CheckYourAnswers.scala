@@ -257,6 +257,38 @@ case class AddressCYA[I <: TypedIdentifier[Address]](label: String = "messages__
 
 }
 
+case class BenefitsInsurerCYA[I <: TypedIdentifier[BenefitsInsurer]](
+                                                                      nameLabel: String = "messages__benefits_insurance__name",
+                                                                      policyLabel: String = "messages__benefits_insurance__policy"
+                                                                    ) {
+
+  def apply()(implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] =
+    benefitsInsurer
+
+  def benefitsInsurer(implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+        benefitsInsurer =>
+          Seq(
+            AnswerRow(
+              nameLabel,
+              Seq(s"${benefitsInsurer.companyName}"),
+              false,
+              changeUrl
+            ),
+            AnswerRow(
+              policyLabel,
+              Seq(s"${benefitsInsurer.policyNumber}"),
+              false,
+              changeUrl
+            )
+          )
+      }.getOrElse(Seq.empty[AnswerRow])
+    }
+  }
+
+}
+
 object CheckYourAnswers {
 
   implicit def nino[I <: TypedIdentifier[Nino]](implicit rds: Reads[Nino]): CheckYourAnswers[I] = NinoCYA()()
@@ -270,6 +302,8 @@ object CheckYourAnswers {
   implicit def addressYears[I <: TypedIdentifier[AddressYears]](implicit rds: Reads[AddressYears]): CheckYourAnswers[I] = AddressYearsCYA()()
 
   implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = AddressCYA()()
+
+  implicit def benefitsInsurer[I <: TypedIdentifier[BenefitsInsurer]](implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] = BenefitsInsurerCYA()()
 
   implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -410,13 +444,6 @@ object CheckYourAnswers {
     }
   }
 
-  implicit def defaultBenefitsInsurer[I <: TypedIdentifier[BenefitsInsurer]](implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] = {
-    val nameLabel = "messages__benefits_insurance__name"
-    val policyLabel = "messages__benefits_insurance__policy"
-
-    benefitsInsurer(nameLabel, policyLabel)
-  }
-
   implicit def defaultCompanyDetails[I <: TypedIdentifier[CompanyDetails]](implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = {
     val nameLabel = "messages__common__cya__name"
     val vatLabel = "messages__common__cya__vat"
@@ -428,30 +455,6 @@ object CheckYourAnswers {
   implicit def defaultUniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] = {
     uniqueTaxReference("messages__establisher_individual_utr_question_cya_label")
   }
-
-  def benefitsInsurer[I <: TypedIdentifier[BenefitsInsurer]](nameLabel: String,policyLabel: String)
-                                                            (implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
-        benefitsInsurer =>
-          Seq(
-            AnswerRow(
-              nameLabel,
-              Seq(s"${benefitsInsurer.companyName}"),
-              false,
-              changeUrl
-            ),
-            AnswerRow(
-              policyLabel,
-              Seq(s"${benefitsInsurer.policyNumber}"),
-              false,
-              changeUrl
-            )
-          )
-      }.getOrElse(Seq.empty[AnswerRow])
-    }
-  }
-
 
   def companyDetails[I <: TypedIdentifier[CompanyDetails]](nameLabel: String, vatLabel: String, payeLabel: String)
                                                           (implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = {
