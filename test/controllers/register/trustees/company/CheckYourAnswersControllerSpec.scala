@@ -26,7 +26,7 @@ import models.requests.DataRequest
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import utils._
-import utils.checkyouranswers.{CheckYourAnswers, CompanyRegistrationNumberCYA}
+import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers, CompanyRegistrationNumberCYA}
 import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
@@ -126,8 +126,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       utrRows
     )
 
-    val addressYearsRows = CheckYourAnswers
-      .addressYears("messages__checkYourAnswers__trustees__company__address_years")
+    val addressYearsRows = AddressYearsCYA[CompanyAddressYearsId]("messages__checkYourAnswers__trustees__company__address_years")
+      .addressYears
       .row(CompanyAddressYearsId(index))(companyAddressYearsRoute, request.userAnswers)
 
     val contactDetailsSection = AnswerSection(
