@@ -47,10 +47,10 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
     "display the correct column headers when there are schemes to display" in {
       val actual = view(frontendAppConfig, fullList)
 
-      actual must haveElementWithText("schemeName", messages("messages__listSchemes__column_schemeName"))
-      actual must haveElementWithText("srn", messages("messages__listSchemes__column_srn"))
-      actual must haveElementWithText("pstr", messages("messages__listSchemes__column_pstr"))
-      actual must haveElementWithText("schemeStatus", messages("messages__listSchemes__column_status"))
+      actual must haveElementWithText("schemeNameHeader1", messages("messages__listSchemes__column_schemeName"))
+      actual must haveElementWithText("srnHeader2", messages("messages__listSchemes__column_srn"))
+      actual must haveElementWithText("pstrHeader1", messages("messages__listSchemes__column_pstr"))
+      actual must haveElementWithText("statusHeader1", messages("messages__listSchemes__column_status"))
     }
 
     "display the correct rows when there are schemes to display" in {
@@ -163,7 +163,7 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       "schemes have never been opened" in {
         val actual = asDocument(view(frontendAppConfig, noPSTRSchemeList).apply())
 
-        assertRenderedById(actual, "srn")
+        assertRenderedById(actual, "srnHeader2")
         assertRenderedById(actual, "srn-2-0")
       }
     }
@@ -181,7 +181,7 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       "schemes have been opened" in {
         val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
 
-        assertRenderedById(actual, "pstr")
+        assertRenderedById(actual, "pstrHeader1")
         assertRenderedById(actual, "pstr-1-0")
       }
     }
@@ -199,7 +199,7 @@ class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
       "schemes have been opened" in {
         val actual = asDocument(view(frontendAppConfig, PSTRSchemeList).apply())
 
-        assertRenderedById(actual, "schemeDate")
+        assertRenderedById(actual, "schemeDateHeader1")
         assertRenderedById(actual, "schemeDate-1-0")
       }
     }

@@ -18,6 +18,26 @@
 
 @(schemes: List[SchemeDetail], listHeading: String, listId: String, schemeOpened: Boolean)(implicit messages: Messages)
 
+@schemeNameHeaderID = @{
+    s"schemeNameHeader$listId"
+}
+
+@srnHeaderID = @{
+    s"srnHeader$listId"
+}
+
+@pstrHeaderID = @{
+    s"pstrHeader$listId"
+}
+
+@statusHeaderID = @{
+    s"statusHeader$listId"
+}
+
+@schemeDateHeaderID = @{
+    s"schemeDateHeader$listId"
+}
+
 @schemeNameId(index: Int) = @{
     s"schemeName-$listId-$index"
 }
@@ -83,24 +103,24 @@
 <div id="schemeList-@{listId}">
     <div class="grid-row" aria-hidden="true">
         <div class="column-two-sixths table-header">
-            <p id="schemeName" class="heading-small">@messages("messages__listSchemes__column_schemeName")</p>
+            <p id="@schemeNameHeaderID" class="heading-small">@messages("messages__listSchemes__column_schemeName")</p>
         </div>
         @if(!schemeOpened) {
             <div class="column-two-sixths table-header">
-                <p id="srn" class="heading-small">@messages("messages__listSchemes__column_srn")</p>
+                <p id="@srnHeaderID" class="heading-small">@messages("messages__listSchemes__column_srn")</p>
             </div>
         }
         @if(schemeOpened) {
             <div class="column-two-sixths table-header">
-                <p id="pstr" class="heading-small">@messages("messages__listSchemes__column_pstr")</p>
+                <p id="@pstrHeaderID" class="heading-small">@messages("messages__listSchemes__column_pstr")</p>
             </div>
         }
         <div class="@if(schemeOpened){column-one-sixth}else{column-two-sixths} table-header">
-            <p id="schemeStatus" class="heading-small">@messages("messages__listSchemes__column_status")</p>
+            <p id="@statusHeaderID" class="heading-small">@messages("messages__listSchemes__column_status")</p>
         </div>
         @if(schemeOpened) {
             <div class="column-one-sixth table-header">
-                <p id="schemeDate" class="heading-small">@messages("messages__listSchemes__column_date")</p>
+                <p id="@schemeDateHeaderID" class="heading-small">@messages("messages__listSchemes__column_date")</p>
             </div>
         }
     </div>
