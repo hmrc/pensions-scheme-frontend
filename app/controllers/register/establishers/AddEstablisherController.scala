@@ -29,6 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
 import utils.annotations.Establishers
+import viewmodels.EditableItem
 import views.html.register.establishers.addEstablisher
 
 import scala.concurrent.Future
@@ -47,8 +48,11 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       retrieveSchemeName {
         schemeName =>
           val establishers = request.userAnswers.allEstablishersAfterDelete
+          val y = establishers.map(
+            x => EditableItem(x.index, x.name, x.isDeleted, x.editLink, x.deleteLink)
+          )
           Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
-            establishers, schemeName)))
+            y, schemeName)))
       }
   }
 
@@ -57,10 +61,13 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       retrieveSchemeName {
         schemeName =>
           val establishers = request.userAnswers.allEstablishersAfterDelete
+          val y = establishers.map(
+            x => EditableItem(x.index, x.name, x.isDeleted, x.editLink, x.deleteLink)
+          )
           formProvider(establishers).bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
-                establishers, schemeName))),
+                y, schemeName))),
             value =>
               Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers)))
           )

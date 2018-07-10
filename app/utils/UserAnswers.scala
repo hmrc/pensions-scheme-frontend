@@ -18,8 +18,8 @@ package utils
 
 import controllers.register.establishers
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.trustees.TrusteesId
@@ -33,7 +33,9 @@ import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
 import viewmodels.EditableItem
+import play.api.libs.functional.syntax._
 
+import scala.annotation.tailrec
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
@@ -77,29 +79,57 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       .flatMap(json => id.cleanup(None, UserAnswers(json)))
   }
 
-  def allEstablishers: Seq[EditableItem] = {
-    val nameReads: Reads[EntityDetails] = {
-
-      val individualName: Reads[EntityDetails] = (__ \ EstablisherDetailsId.toString)
-        .read[PersonDetails]
-        .map(details => EstablisherIndividualName(details.fullName, details.isDeleted))
-
-      val companyName: Reads[EntityDetails] = (__ \ CompanyDetailsId.toString)
-        .read[CompanyDetails]
-        .map(details => EstablisherCompanyName(details.companyName, details.isDeleted))
-
-      individualName orElse companyName
+  def readEntities[T](entities: Seq[JsValue], reads: Int => Reads[T]): JsResult[Seq[T]] = {
+    @tailrec
+    def recur(result: JsResult[Seq[T]], entities: Seq[(JsValue, Int)]): JsResult[Seq[T]] = {
+      result match {
+        case JsSuccess(results, _) =>
+          entities match {
+            case Seq(h, t @ _*) => reads(h._2).reads(h._1) match {
+              case JsSuccess(item, _) => recur(JsSuccess(results :+ item), t)
+              case error @ JsError(_) => error
+            }
+            case _ => result
+          }
+        case error: JsError => error
+      }
     }
-
-    getAll[EntityDetails](JsPath \ EstablishersId.toString)(nameReads).map {
-      entityDetails =>
-        entityDetails.map { entity =>
-          entity.route(entityDetails.indexOf(entity), None)
-        }
-    }.getOrElse(Seq.empty)
+    recur(JsSuccess(Nil), entities.zipWithIndex)
   }
 
-  def allEstablishersAfterDelete: Seq[EditableItem] = {
+  val readsEstablishers: Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
+    private def readsIndividual(index: Int): Reads[Establisher[_]] = (
+      (JsPath \ EstablisherDetailsId.toString).read[PersonDetails] and
+        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
+      )((details, isComplete) =>
+      EstablisherIndividualEntity(EstablisherDetailsId(index), details.fullName, details.isDeleted, isComplete.getOrElse(false))
+    )
+
+    private def readsCompany(index: Int): Reads[Establisher[_]] = (
+      (JsPath \ EstablisherCompanyDetailsId.toString).read[CompanyDetails] and
+        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
+      )((details, isComplete) =>
+      EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), details.companyName, details.isDeleted, isComplete.getOrElse(false))
+    )
+    override def reads(json: JsValue): JsResult[Seq[Establisher[_]]] = {
+      json \ EstablishersId.toString match {
+        case JsDefined(JsArray(establishers)) => readEntities(establishers, index => readsIndividual(index) orElse readsCompany(index))
+        case _ => JsSuccess(Nil)
+      }
+    }
+  }
+
+  def allEstablishers: Seq[Establisher[_]] = {
+    json.validate(readsEstablishers).fold(
+      invalid => {
+        Logger.warn(s"reading establisher for add establisher encountered a problem $invalid")
+        Seq.empty
+      },
+      valid => valid
+    )
+  }
+
+  def allEstablishersAfterDelete: Seq[Establisher[_]] = {
     allEstablishers.filterNot(_.isDeleted)
   }
 
