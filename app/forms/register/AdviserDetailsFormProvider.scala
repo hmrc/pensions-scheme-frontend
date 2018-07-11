@@ -25,20 +25,18 @@ import models.register.AdviserDetails
 
 class AdviserDetailsFormProvider @Inject() extends EmailMapping with PhoneNumberMapping {
 
-  val nameLength: Int = 107
-
   def apply(): Form[AdviserDetails] = Form(
     mapping(
       "adviserName" -> text("messages__adviserDetails__error__name_required")
-        .verifying(
-          firstError(
-            maxLength(
-              nameLength,
-              "messages__adviserDetails__error__adviser_name_length"
-            ),
-            safeText("messages__adviserDetails__error__adviser_name_invalid")
-          )
-        ),
+      .verifying(
+        firstError(
+          maxLength(
+            AdviserDetailsFormProvider.nameLength,
+            "messages__adviserDetails__error__adviser_name_length"
+          ),
+          adviserName("messages__adviserDetails__error__adviser_name_invalid")
+        )
+      ),
 
       "emailAddress" -> emailMapping(
         "messages__error__email",
@@ -52,4 +50,9 @@ class AdviserDetailsFormProvider @Inject() extends EmailMapping with PhoneNumber
       )
     )(AdviserDetails.apply)(AdviserDetails.unapply)
   )
+
+}
+
+object AdviserDetailsFormProvider {
+  val nameLength: Int = 255
 }
