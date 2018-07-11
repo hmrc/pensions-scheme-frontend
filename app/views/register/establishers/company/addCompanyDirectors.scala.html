@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.play.views.html._
 @import models.Mode
 @import models.register.establishers.company.director.DirectorDetails
-@import models.register.Entity
+@import models.register.DirectorEntity
 
 @(
     appConfig: FrontendAppConfig,
@@ -27,7 +27,7 @@
     mode: Mode,
     establisherIndex: Int,
     companyName: String,
-    directors: Seq[Entity[_]]
+    directors: Seq[DirectorEntity]
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
