@@ -20,6 +20,8 @@ import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
+import models.NormalMode
+import models.register.Establisher
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
@@ -39,6 +41,21 @@ import views.html.register.establishers.addEstablisher
 class AddEstablisherControllerSpec extends ControllerSpecBase {
 
   import AddEstablisherControllerSpec._
+
+  val formProvider = new AddEstablisherFormProvider()
+  val form = formProvider(Seq.empty)
+  val schemeName = "Test Scheme Name"
+  val day: Int = LocalDate.now().getDayOfMonth
+  val month: Int = LocalDate.now().getMonthOfYear
+  val year: Int = LocalDate.now().getYear - 20
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddEstablisherController =
+    new AddEstablisherController(frontendAppConfig, messagesApi, FakeDataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+
+  def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty): String = addEstablisher(frontendAppConfig,
+    form, NormalMode, allEstablishers, schemeName)(fakeRequest, messages).toString
 
   "AddEstablisher Controller" must {
 
