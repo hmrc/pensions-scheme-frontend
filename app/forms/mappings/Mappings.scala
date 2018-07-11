@@ -18,7 +18,7 @@ package forms.mappings
 
 import org.joda.time.LocalDate
 import play.api.data.Forms.{of, _}
-import play.api.data.{FieldMapping,  Mapping}
+import play.api.data.{FieldMapping, Mapping}
 import utils.Enumerable
 
 import scala.util.Try
@@ -46,8 +46,7 @@ trait Mappings extends Formatters with Constraints {
 
   protected def dateMapping(invalidKey: String): Mapping[LocalDate] = {
 
-    def toLocalDate(date: (String, String, String)): LocalDate =
-    {
+    def toLocalDate(date: (String, String, String)): LocalDate = {
       date match {
         case (day, month, year) =>
           new LocalDate(year.toInt, month.toInt, day.toInt)
@@ -61,8 +60,11 @@ trait Mappings extends Formatters with Constraints {
     def validateDate(date: (String, String, String)): Boolean =
       Try(toLocalDate(date)).isSuccess
 
-    tuple("day" -> text(invalidKey),
+    tuple(
+      "day" -> text(invalidKey),
       "month" -> text(invalidKey),
-      "year" -> text(invalidKey)).verifying(invalidKey, validateDate(_)).transform(toLocalDate, fromLocalDate)
+      "year" -> text(invalidKey))
+      .verifying(invalidKey, validateDate(_))
+      .transform(toLocalDate, fromLocalDate)
   }
 }

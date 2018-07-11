@@ -104,14 +104,18 @@ class AddressFormProviderSpec extends FormBehaviours with FormSpec with AddressB
         form,
         "addressLine3",
         "messages__error__address_line_3_length",
-        "messages__error__address_line_3_invalid"
+        "messages__error__address_line_3_invalid",
+        validData,
+        (address: Address) => address.addressLine3
       )
 
       behave like formWithOptionalAddressField(
         form,
         "addressLine4",
         "messages__error__address_line_4_length",
-        "messages__error__address_line_4_invalid"
+        "messages__error__address_line_4_invalid",
+        validData,
+        (address: Address) => address.addressLine4
       )
     }
   }
