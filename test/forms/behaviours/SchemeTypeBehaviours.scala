@@ -29,7 +29,8 @@ trait SchemeTypeBehaviours extends FormSpec with SchemeTypeMapping with Generato
     ("type", "value"),
     (SchemeType.SingleTrust, "single"),
     (SchemeType.BodyCorporate, "corp"),
-    (SchemeType.GroupLifeDeath, "group")
+    (SchemeType.GroupLifeDeath, "group"),
+    (SchemeType.MasterTrust, "master")
   )
 
   def formWithSchemeType(testForm: Form[SchemeType],

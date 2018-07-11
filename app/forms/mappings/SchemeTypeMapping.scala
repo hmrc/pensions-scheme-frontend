@@ -17,7 +17,7 @@
 package forms.mappings
 
 import models.register.SchemeType
-import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, Other, SingleTrust}
+import models.register.SchemeType.{BodyCorporate, GroupLifeDeath, MasterTrust, Other, SingleTrust}
 import play.api.data.Forms.tuple
 import play.api.data.Mapping
 import uk.gov.voa.play.form.ConditionalMappings.mandatoryIfEqual
@@ -44,7 +44,8 @@ trait SchemeTypeMapping extends Formatters with Constraints with Mappings {
       val mappings: Map[String, SchemeType] = Seq(
         SingleTrust,
         GroupLifeDeath,
-        BodyCorporate
+        BodyCorporate,
+        MasterTrust
       ).map(v => (v.toString, v)).toMap
 
       schemeTypeTuple match {
