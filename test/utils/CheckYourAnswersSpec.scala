@@ -30,7 +30,7 @@ import play.api.libs.json._
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
-import utils.CheckYourAnswers.Ops._
+import utils.checkyouranswers.Ops._
 import viewmodels.AnswerRow
 
 import scala.language.implicitConversions
