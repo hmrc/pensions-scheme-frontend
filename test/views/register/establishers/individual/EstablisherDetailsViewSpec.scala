@@ -17,7 +17,7 @@
 package views.register.establishers.individual
 
 import controllers.register.establishers.individual.routes
-import forms.register.IndividualDetailsFormProvider
+import forms.register.PersonDetailsFormProvider
 import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
@@ -30,7 +30,7 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   val messageKeyPrefix = "establisher_individual"
 
-  override val form = new IndividualDetailsFormProvider()()
+  override val form = new PersonDetailsFormProvider()()
 
   val schemeName = "test scheme name"
 

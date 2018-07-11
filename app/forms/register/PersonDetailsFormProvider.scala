@@ -21,7 +21,7 @@ import models.person.PersonDetails
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 
-class IndividualDetailsFormProvider extends Mappings {
+class PersonDetailsFormProvider extends Mappings {
 
   val nameMaxLength = 35
 
