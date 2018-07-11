@@ -21,6 +21,7 @@ import org.joda.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.domain.Nino
 import utils.{CountryOptions, NameMatching}
+import scala.language.implicitConversions
 
 trait Constraints {
   val regexPostcode = """^[A-Za-z]{1,2}[0-9][0-9A-Za-z]?[ ]?[0-9][A-Za-z]{2}$"""
@@ -154,6 +155,12 @@ trait Constraints {
           .find(_.value == input)
           .map(_ => Valid)
           .getOrElse(Invalid(errorKey))
+    }
+
+  implicit def convertToOptionalConstraint[T](constraint: Constraint[T]): Constraint[Option[T]] =
+    Constraint {
+      case Some(t) => constraint.apply(t)
+      case _ => Valid
     }
 
   protected def emailAddressRestrictive(errorKey: String): Constraint[String] = regexp(regexEmailRestrictive, errorKey)
