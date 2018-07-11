@@ -16,6 +16,7 @@
 
 package views.behaviours
 
+import config.FrontendAppConfig
 import models.register.Entity
 import views.ViewSpecBase
 
@@ -23,7 +24,7 @@ trait EntityListBehaviours {
   this: ViewSpecBase =>
 
   // scalastyle:off method.length
-  def entityList(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]]): Unit = {
+  def entityList(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]], appConfig: FrontendAppConfig): Unit = {
     "behave like a list of items" must {
       "not show the list if there are no items" in {
         val doc = asDocument(emptyView())
@@ -46,6 +47,19 @@ trait EntityListBehaviours {
           val name = doc.select(s"#person-${item.index}")
           name.size mustBe 1
           name.first.text mustBe item.name
+        }
+      }
+
+      if(appConfig.completeFlagEnabled) {
+        "display the status for each person" in {
+          val doc = asDocument(nonEmptyView())
+          items.foreach { item =>
+            val link = doc.select(s"#person-${item.index}-status")
+            val expectedResult = if (item.isCompleted) "COMPLETE" else "INCOMPLETE"
+
+            link.size mustBe 1
+            link.first.text mustBe expectedResult
+          }
         }
       }
 

@@ -16,6 +16,7 @@
 
 package views.register.establishers
 
+import config.FrontendAppConfig
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
@@ -24,6 +25,8 @@ import models.register.Establisher
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
+import play.api.inject.Injector
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import utils.UserAnswers
 import views.behaviours.{EntityListBehaviours, QuestionViewBehaviours}
@@ -67,6 +70,10 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
   private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
     addEstablisher(frontendAppConfig, form, NormalMode, establishers, schemeName)(fakeRequest, messages)
 
+  override lazy val app = new GuiceApplicationBuilder().configure(
+    "features.is-complete" -> false
+  ).build()
+
   "AddEstablisher view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
@@ -87,7 +94,7 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
       }
     }
 
-    behave like entityList(createView(), createView(establishers), establishers)
+    behave like entityList(createView(), createView(establishers), establishers, frontendAppConfig)
 
     "display all the partially added establisher names with yes/No buttons" in {
       val doc = asDocument(createView(establishers)())

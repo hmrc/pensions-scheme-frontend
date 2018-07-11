@@ -19,11 +19,12 @@ package controllers.register.establishers.company.director
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.company._
+import identifiers.register.establishers.company.director.IsDirectorCompleteId
 import models.{CheckMode, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{CheckYourAnswersFactory, CountryOptions, DateHelper, FakeNavigator, InputOption}
+import utils.{CheckYourAnswersFactory, CountryOptions, DateHelper, FakeNavigator, FakeSectionComplete, InputOption, SectionCompleteImpl}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -56,7 +57,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CheckYourAnswersController =
     new director.CheckYourAnswersController(frontendAppConfig, messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, checkYourAnswersFactory)
+      dataRetrievalAction, new DataRequiredActionImpl, checkYourAnswersFactory, FakeSectionComplete)
 
   def viewAsString(): String = check_your_answers(frontendAppConfig, answers, Some(testSchemeName), postUrl)(fakeRequest, messages).toString
 
@@ -80,6 +81,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "mark director as complete on submit" in {
+      val result = controller().onSubmit(establisherIndex, directorIndex)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+      FakeSectionComplete.verify(IsDirectorCompleteId(establisherIndex, directorIndex), true)
     }
   }
 }

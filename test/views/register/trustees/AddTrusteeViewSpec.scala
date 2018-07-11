@@ -16,6 +16,7 @@
 
 package views.register.trustees
 
+import config.FrontendAppConfig
 import controllers.register.trustees.routes
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.company.CompanyDetailsId
@@ -25,6 +26,8 @@ import models.register.{Trustee, TrusteeIndividualEntity}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
+import play.api.inject.Injector
+import play.api.inject.guice.GuiceApplicationBuilder
 import utils.UserAnswers
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.trustees.addTrustee
@@ -63,6 +66,10 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
 
   private def createViewUsingForm(trustees: Seq[Trustee[_]] = Seq.empty) = (form: Form[Boolean]) =>
     addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages)
+
+  override lazy val app = new GuiceApplicationBuilder().configure(
+    "features.is-complete" -> false
+  ).build()
 
   "AddTrustee view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
@@ -104,7 +111,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
       }
     }
 
-    behave like entityList(createView(), createView(trustees), trustees)
+    behave like entityList(createView(), createView(trustees), trustees, frontendAppConfig)
     "display all the partially added trustee names with yes/No buttons if the maximum trustees are not added yet" in {
       val doc = asDocument(createView(trustees)())
       doc.select("#value-yes").size() mustEqual 1
