@@ -20,8 +20,9 @@ import org.scalatest.{Matchers, WordSpec}
 import play.api.data.validation.{Invalid, Valid}
 import utils.{CountryOptions, InputOption}
 
-class ConstraintsSpec extends WordSpec with Matchers with Constraints with RegexBehaviourSpec {
+// scalastyle:off magic.number
 
+class ConstraintsSpec extends WordSpec with Matchers with Constraints with RegexBehaviourSpec {
 
   "firstError" must {
 
@@ -324,4 +325,28 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
 
     behave like regexWithValidAndInvalidExamples(postCode, validPostCode, invalidPostCode, invalidMsg, regexPostcode)
   }
+
+  "adviserName" must {
+
+    val validText = Table(
+      "text",
+      "abcd",
+      "ABCD",
+      "ab'cd",
+      "ab-cd",
+      "ab cd"
+    )
+
+    val invalidText = Table(
+      "text",
+      "1234",
+      "abc123",
+      "a&b"
+    )
+
+    val invalidMsg = "Invalid text"
+
+    behave like regexWithValidAndInvalidExamples(adviserName, validText, invalidText, invalidMsg, adviserNameRegex)
+  }
+
 }
