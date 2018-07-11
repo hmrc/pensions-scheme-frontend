@@ -94,7 +94,7 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
       }
     }
 
-    behave like entityList(createView(), createView(establishers), establishers)
+    behave like entityList(createView(), createView(establishers), establishers, frontendAppConfig)
 
     "display all the partially added establisher names with yes/No buttons" in {
       val doc = asDocument(createView(establishers)())
