@@ -57,7 +57,7 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val pensionAdministratorGovUkLink = runModeConfiguration.underlying.getString("urls.pensionAdministratorGovUkLink")
   lazy val pensionPractitionerGovUkLink = runModeConfiguration.underlying.getString("urls.pensionPractitionerGovUkLink")
   lazy val govUkLink = runModeConfiguration.underlying.getString("urls.govUkLink")
-  lazy val languageTranslationEnabled = runModeConfiguration.getBoolean("microservice.services.features.welsh-translation").getOrElse(true)
+  lazy val languageTranslationEnabled = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy"))
@@ -68,5 +68,6 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val maxDirectors: Int = loadConfig("company.maxDirectors").toInt
   lazy val maxTrustees: Int = loadConfig("maxTrustees").toInt
   lazy val daysDataSaved: Int = loadConfig("daysDataSaved").toInt
-  lazy val allowPartnerships: Boolean = loadConfigOrDefault("allowPartnerships", "false").toBoolean
+  lazy val allowPartnerships: Boolean = loadConfigOrDefault("features.allowPartnerships", "false").toBoolean
+  lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
 }

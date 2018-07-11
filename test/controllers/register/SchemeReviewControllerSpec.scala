@@ -23,6 +23,7 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
@@ -47,27 +48,29 @@ class SchemeReviewControllerSpec extends ControllerSpecBase {
         val result = controller(getRelevantData).onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(establisherIndvUrl, trusteeSingleTrustUrl, establisherIndv, trustees)
+        contentAsString(result) mustBe viewAsString(establisherIndvUrl, haveAnyTrusteeUrl, establisherIndv, trustees)
       }
 
-      "return OK, the correct view and the correct Edit Urls for Trustees and establishers for Single Trust/BodyCorporate" in {
-        val validData: JsObject = Json.obj(
-          SchemeDetailsId.toString ->
-            SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-          "establishers" -> Json.arr(
-            Json.obj(
-              EstablisherKindId.toString -> "company",
-              CompanyDetailsId.toString -> CompanyDetails("establisher", None, None)
+      Seq(SchemeType.SingleTrust, SchemeType.MasterTrust).foreach { schemeType =>
+        s"return OK, the correct view and the correct Edit Urls for Trustees and establishers for ${schemeType.toString}" in {
+          val validData: JsObject = Json.obj(
+            SchemeDetailsId.toString ->
+              SchemeDetails("Test Scheme Name", schemeType),
+            "establishers" -> Json.arr(
+              Json.obj(
+                EstablisherKindId.toString -> "company",
+                CompanyDetailsId.toString -> CompanyDetails("establisher", None, None)
+              )
             )
           )
-        )
-        val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-        val result = controller(getRelevantData).onPageLoad()(fakeRequest)
+          val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+          val result = controller(getRelevantData).onPageLoad()(fakeRequest)
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(
-          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode),
-          trusteeSingleTrustUrl)
+          status(result) mustBe OK
+          contentAsString(result) mustBe viewAsString(
+            controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode),
+            addTrusteeUrl)
+        }
       }
     }
 
@@ -92,6 +95,7 @@ object SchemeReviewControllerSpec extends ControllerSpecBase {
         EstablisherDetailsId.toString -> PersonDetails("establisher", None, "name", LocalDate.now())
       )
     ),
+    HaveAnyTrusteesId.toString -> false,
     "trustees" -> Json.arr(
       Json.obj(
         TrusteeDetailsId.toString -> PersonDetails("trustee", None, "name", LocalDate.now())
@@ -109,7 +113,7 @@ object SchemeReviewControllerSpec extends ControllerSpecBase {
   val establisherIndvUrl: Call = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
   val establisherCompanyUrl: Call = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
 
-  private val trusteeSingleTrustUrl = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode)
+  private val addTrusteeUrl = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode)
   private val haveAnyTrusteeUrl = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData):

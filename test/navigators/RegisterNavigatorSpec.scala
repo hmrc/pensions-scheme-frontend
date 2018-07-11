@@ -78,7 +78,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
 
   "RegisterNavigator" must {
     appRunning()
-    val navigator = testNavigator()
+    val navigator = new RegisterNavigator(FakeDataCacheConnector, frontendAppConfig)
     behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
@@ -130,12 +130,5 @@ object RegisterNavigatorSpec {
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
-
-  private def testNavigator(isEstablisherRestricted: Boolean = false): RegisterNavigator = {
-    val application = new GuiceApplicationBuilder()
-      .configure(Configuration("microservice.services.features.restrict-establisher" -> isEstablisherRestricted))
-    val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-    new RegisterNavigator(FakeDataCacheConnector, appConfig)
-  }
 
 }

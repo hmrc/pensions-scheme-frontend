@@ -20,6 +20,7 @@ import play.api.data.Form
 import controllers.register.routes
 import forms.register.SchemeDetailsFormProvider
 import models.NormalMode
+import models.register.SchemeType.MasterTrust
 import models.register.{SchemeDetails, SchemeType}
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
@@ -35,6 +36,14 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+
+  private def schemeOptions = {
+    if (frontendAppConfig.allowMasterTrust) {
+      SchemeType.options
+    } else {
+      SchemeType.options.filterNot(_.value == MasterTrust.toString)
+    }
+  }
 
   "SchemeDetails view" must {
 
@@ -52,18 +61,19 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- SchemeType.options) {
+
+        for (option <- schemeOptions) {
           assertContainsRadioButton(doc, s"schemeType_type-${option.value}", "schemeType.type", option.value, isChecked = false)
         }
       }
 
-      for (option <- SchemeType.options) {
+      for (option <- schemeOptions) {
         s"rendered with a value of '${option.value}'" must {
           s"have the '${option.value}' radio button selected" in {
             val doc = asDocument(createViewUsingForm(form.bind(Map("schemeType.type" -> s"${option.value}"))))
             assertContainsRadioButton(doc, s"schemeType_type-${option.value}", "schemeType.type", option.value, isChecked = true)
 
-            for (unselectedOption <- SchemeType.options.filterNot(o => o == option)) {
+            for (unselectedOption <- schemeOptions.filterNot(o => o == option)) {
               assertContainsRadioButton(doc, s"schemeType_type-${unselectedOption.value}", "schemeType.type", unselectedOption.value, isChecked = false)
             }
           }
