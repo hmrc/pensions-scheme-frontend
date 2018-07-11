@@ -16,17 +16,18 @@
 
 package views.register.establishers.company
 
-import play.api.data.Form
 import controllers.register.establishers.company.routes
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
-import views.behaviours.{EditableItemListBehaviours, YesNoViewBehaviours}
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.NormalMode
+import models.register.DirectorEntity
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
-import viewmodels.EditableItem
+import play.api.data.Form
+import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.establishers.company.addCompanyDirectors
 
-class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemListBehaviours {
+class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
 
   private val establisherIndex = 1
   private val companyName = "MyCo Ltd"
@@ -38,14 +39,12 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemL
   // scalastyle:on magic.number
 
   val messageKeyPrefix = "addCompanyDirectors"
-  private def deleteDirectorLink(index: Int, establisherIndex: Int) = controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(establisherIndex, index).url
-  private def editDirectorLink(index: Int, establisherIndex: Int) = controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, establisherIndex, index).url
 
   val form = new AddCompanyDirectorsFormProvider()()
-  private val johnDoeEditableItem = EditableItem(0, johnDoe.directorName, false, editDirectorLink(0, 0), deleteDirectorLink(0, 0))
-  private val joeBloggsEditableItem = EditableItem(1, joeBloggs.directorName, false, editDirectorLink(1, 0), deleteDirectorLink(1, 0))
+  private val johnDoeEditableItem = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.directorName, isDeleted = false, isCompleted = false)
+  private val joeBloggsEditableItem = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.directorName, isDeleted = false, isCompleted = false)
 
-  private def createView(directors: Seq[EditableItem] = Nil) =
+  private def createView(directors: Seq[DirectorEntity] = Nil) =
     () =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -56,7 +55,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemL
         directors
       )(fakeRequest, messages)
 
-  private def createViewUsingForm(directors: Seq[EditableItem] = Nil) =
+  private def createViewUsingForm(directors: Seq[DirectorEntity] = Nil) =
     (form: Form[_]) =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -100,9 +99,9 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemL
       submit.first().text() mustBe messages("messages__addCompanyDirectors_add_director")
     }
 
-    val directors: Seq[EditableItem] = Seq(johnDoeEditableItem, joeBloggsEditableItem)
+    val directors: Seq[DirectorEntity] = Seq(johnDoeEditableItem, joeBloggsEditableItem)
 
-    behave like editableItemList(createView(), createView(directors), (directors))
+    behave like entityList(createView(), createView(directors), directors)
 
     "show the Continue button when there are directors" in {
       val doc = asDocument(createViewUsingForm(Seq(johnDoeEditableItem))(form))

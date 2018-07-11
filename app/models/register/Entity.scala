@@ -81,7 +81,7 @@ case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId,
   override def index: Int = id.index
 }
 
-case class TrusteeIndividualEntity(id: TrusteeDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Establisher[TrusteeDetailsId] {
+case class TrusteeIndividualEntity(id: TrusteeDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Trustee[TrusteeDetailsId] {
   override def editLink: String =
     controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, id.index).url
 

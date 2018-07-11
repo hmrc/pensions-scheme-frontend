@@ -23,6 +23,7 @@ import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.company.{AddCompanyDirectorsId, CompanyDetailsId}
+import models.register.DirectorEntity
 import models.register.establishers.company.director.DirectorDetails
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
@@ -30,7 +31,6 @@ import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._
 import utils.{FakeNavigator, Navigator, UserAnswers}
-import viewmodels.EditableItem
 import views.html.register.establishers.company.addCompanyDirectors
 
 class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
@@ -59,7 +59,7 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form, directors: Seq[EditableItem] = Nil) =
+  private def viewAsString(form: Form[_] = form, directors: Seq[DirectorEntity] = Nil) =
     addCompanyDirectors(
       frontendAppConfig,
       form,
@@ -90,9 +90,6 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
     )
   }
 
-  private def deleteDirectorLink(index: Int, establisherIndex: Int) = controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(establisherIndex, index).url
-  private def editDirectorLink(index: Int, establisherIndex: Int) = controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, establisherIndex, index).url
-
   "AddCompanyDirectors Controller" must {
 
     "return OK and the correct view for a GET" in {
@@ -110,7 +107,8 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
           val getRelevantData = new FakeDataRetrievalAction(Some(userAnswers.json))
           val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex)(fakeRequest)
 
-          contentAsString(result) mustBe viewAsString(form, Seq(EditableItem(0, johnDoe.directorName, false, editDirectorLink(0, 0), deleteDirectorLink(0, 0))))
+          contentAsString(result) mustBe viewAsString(form,
+            Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.directorName, isDeleted = false, isCompleted = false)))
         }
     }
 
@@ -138,7 +136,8 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       val result = controller(getRelevantData).onSubmit(NormalMode, establisherIndex)(postRequest)
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm, Seq(EditableItem(0, johnDoe.directorName, false, editDirectorLink(0, 0), deleteDirectorLink(0, 0))))
+      contentAsString(result) mustBe viewAsString(boundForm,
+        Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.directorName, isDeleted = false, isCompleted = false)))
     }
 
     "not save the answer when directors exist and valid data is submitted" in {
@@ -170,8 +169,8 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
 
     "populate the view with directors when they exist" in {
       val directors = Seq(johnDoe, joeBloggs)
-      val directorsViewModel = Seq(EditableItem(0, johnDoe.directorName, false, editDirectorLink(0, 0), deleteDirectorLink(0, 0)),
-        EditableItem(1, joeBloggs.directorName, false, editDirectorLink(1, 0), deleteDirectorLink(1, 0)))
+      val directorsViewModel = Seq(DirectorEntity(DirectorDetailsId(0, 0), johnDoe.directorName, isDeleted = false, isCompleted = false),
+        DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.directorName, isDeleted = false, isCompleted = false))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(directors: _*)))
       val result = controller(getRelevantData).onPageLoad(NormalMode, establisherIndex)(fakeRequest)
 

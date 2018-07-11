@@ -17,19 +17,19 @@
 @import play.api.mvc.AnyContent
 @import config.FrontendAppConfig
 @import models.requests.DataRequest
-@import viewmodels.EditableItem
+@import models.register.Entity
 
-@(appConfig: FrontendAppConfig, entities: Seq[EditableItem])(implicit request: DataRequest[AnyContent], messages: Messages)
+@(appConfig: FrontendAppConfig, entities: Seq[Entity[_]])(implicit request: DataRequest[AnyContent], messages: Messages)
 
 <div class="form-group">
     <ul id="people" class="govuk-check-your-answers form-group cya-questions-long">
         @for(entity <- entities) {
         <li>
             <div class="cya-question">
-                <h2 id="@entity.id" class="bold std-text">@entity.name</h2>
+                <h2 id="person-@{entity.index}" class="bold std-text">@entity.name</h2>
             </div>
 
-            @if(entity.isComplete){
+            @if(entity.isCompleted){
 
             <div class="cya-status status">
                 <span class="complete">COMPLETE</span>
@@ -44,13 +44,13 @@
             }
 
             <div>
-                <a id="@entity.deleteLinkId" href="@entity.deleteLink">
+                <a id="person-@{entity.index}-delete" href="@entity.deleteLink">
                     @messages("site.delete")
                 </a>
             </div>
 
             <div>
-                <a id="@entity.editLinkId" href="@entity.editLink">
+                <a id="person-@{entity.index}-edit" href="@entity.editLink">
                     @messages("site.edit")
                 </a>
             </div>
