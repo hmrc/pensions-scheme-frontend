@@ -31,9 +31,7 @@
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
-    appConfig.completeFlagEnabled & directors.foldLeft(true) { (_, director) =>
-        !director.isCompleted
-    }
+        appConfig.completeFlagEnabled & directors.exists(!_.isCompleted)
 }
 
 @main_template(

@@ -24,9 +24,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establishers: Seq[Establisher[_]], schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
-    appConfig.completeFlagEnabled & establishers.foldLeft(true) { (_, establisher) =>
-        !establisher.isCompleted
-    }
+        appConfig.completeFlagEnabled & establishers.exists(!_.isCompleted)
 }
 
 @main_template(
