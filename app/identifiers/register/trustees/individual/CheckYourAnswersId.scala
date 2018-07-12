@@ -20,10 +20,6 @@ import identifiers.Identifier
 import identifiers.register.trustees.TrusteesId
 import play.api.libs.json.JsPath
 
-case class CheckYourAnswersId(index: Int) extends Identifier {
-  override def path: JsPath = TrusteesId(index).path \ CheckYourAnswersId.toString
-}
-
-object CheckYourAnswersId {
+case object CheckYourAnswersId extends Identifier {
   override def toString: String = "checkYourAnswers"
 }

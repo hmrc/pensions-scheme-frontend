@@ -16,22 +16,22 @@
 
 package controllers.register.trustees.individual
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.SchemeDetailsId
+import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.individual._
+import javax.inject.Inject
 import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Navigator}
 import utils.annotations.TrusteesIndividual
+import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, Navigator, SectionComplete}
 import viewmodels.{AnswerSection, Message}
 import views.html.check_your_answers
-
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
@@ -41,6 +41,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requiredData: DataRequiredAction,
+                                           sectionComplete: SectionComplete,
                                            implicit val countryOptions: CountryOptions
                                           ) extends FrontendController with Retrievals with I18nSupport {
 
@@ -76,8 +77,10 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData) {
+  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))
+      sectionComplete.setComplete(IsTrusteeCompleteId(index), request.userAnswers).map { _ =>
+        Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
+      }
   }
 }

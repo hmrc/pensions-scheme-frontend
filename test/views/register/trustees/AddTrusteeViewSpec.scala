@@ -16,7 +16,6 @@
 
 package views.register.trustees
 
-import config.FrontendAppConfig
 import controllers.register.trustees.routes
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.company.CompanyDetailsId
@@ -26,7 +25,6 @@ import models.register.{Trustee, TrusteeIndividualEntity}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.inject.Injector
 import play.api.inject.guice.GuiceApplicationBuilder
 import utils.UserAnswers
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
@@ -68,7 +66,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
     addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages)
 
   override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.is-complete" -> false
+    "features.is-complete" -> true
   ).build()
 
   "AddTrustee view" must {
@@ -95,6 +93,11 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
       "show the add trustee text" in {
         val doc = asDocument(createView()())
         doc must haveDynamicText(s"messages__${messageKeyPrefix}__lede")
+      }
+
+      "do not disable the submit button" in {
+        val doc = asDocument(createView()())
+        doc.getElementById("submit").hasAttr("disabled") mustBe false
       }
     }
 

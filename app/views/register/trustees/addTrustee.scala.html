@@ -22,6 +22,10 @@
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, trustees: Seq[Trustee[_]])(implicit request: Request[_], messages: Messages)
 
+@disableSubmission = @{
+    appConfig.completeFlagEnabled & trustees.exists(!_.isCompleted)
+}
+
 @main_template(
     title = messages("messages__addTrustee__title"),
     appConfig = appConfig,
@@ -41,7 +45,11 @@
 
         } else {
 
-            @components.editable_item_list(trustees)
+            @if(appConfig.completeFlagEnabled){
+                @components.entity_list(trustees)
+            } else {
+                @components.editable_item_list(trustees)
+            }
 
             @if(trustees.size < appConfig.maxTrustees) {
                 @components.input_yes_no(
@@ -60,7 +68,7 @@
 
         }
 
-        @components.submit_button("site.save_and_continue")
+        @components.submit_button("site.save_and_continue", disableSubmission)
 
     }
 }
