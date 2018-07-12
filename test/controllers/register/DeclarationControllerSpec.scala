@@ -27,7 +27,9 @@ import models.CompanyDetails
 import models.person.PersonDetails
 import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
+import org.scalatest.prop.Configuration
 import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.{FakeNavigator, UserAnswers}
@@ -39,25 +41,39 @@ class DeclarationControllerSpec extends ControllerSpecBase {
 
   "Declaration Controller" must {
 
-    "return OK and the correct view for a GET for individual journey" in {
-      val result = controller(individual).onPageLoad()(fakeRequest)
+    "return OK and the correct view" when {
+      "individual journey" in {
+        val result = controller(individual).onPageLoad()(fakeRequest)
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false)
-    }
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false)
+      }
+      "non-dormant company establisher" in {
+        val result = controller(nonDormantCompany).onPageLoad()(fakeRequest)
 
-    "return OK and the correct view for a GET for non-dormant company establisher" in {
-      val result = controller(nonDormantCompany).onPageLoad()(fakeRequest)
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false)
+      }
+      "dormant company establisher" in {
+        val result = controller(dormantCompany).onPageLoad()(fakeRequest)
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false)
-    }
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
+      }
+      "master trust" in {
 
-    "return OK and the correct view for a GET for dormant company establisher" in {
-      val result = controller(dormantCompany).onPageLoad()(fakeRequest)
+        val data = new FakeDataRetrievalAction(Some(UserAnswers()
+          .set(SchemeDetailsId)(SchemeDetails("Test Scheme Name", SchemeType.MasterTrust))
+          .asOpt
+          .value
+          .json
+        ))
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
+        val result = controller(data).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false, showMasterTrustDeclaration = true)
+      }
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -69,45 +85,54 @@ class DeclarationControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "return a Bad Request and errors when invalid data is submitted in individual journey" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+    "return a Bad Request and errors" when {
+      "invalid data is submitted in individual journey" in {
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+        val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val result = controller(individual).onSubmit()(postRequest)
+        val result = controller(individual).onSubmit()(postRequest)
 
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm, isCompany = false, isDormant = false)
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm, isCompany = false, isDormant = false)
+      }
+      "invalid data is submitted in company journey" in {
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+        val boundForm = form.bind(Map("value" -> "invalid value"))
+
+        val result = controller(nonDormantCompany).onSubmit()(postRequest)
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm, isCompany = true, isDormant = false)
+      }
     }
 
-    "return a Bad Request and errors when invalid data is submitted in company journey" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+    "redirect to Session Expired" when {
+      "no existing data is found" when {
+        "GET" in {
+          val result = controller(dontGetAnyData).onPageLoad()(fakeRequest)
 
-      val result = controller(nonDormantCompany).onSubmit()(postRequest)
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+        "POST" in {
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
+          val result = controller(dontGetAnyData).onSubmit()(postRequest)
 
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm, isCompany = true, isDormant = false)
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+      }
     }
 
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad()(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
-      val result = controller(dontGetAnyData).onSubmit()(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
   }
 
 }
 
 object DeclarationControllerSpec extends ControllerSpecBase {
+
+  override lazy val app = new GuiceApplicationBuilder()
+    .configure(Map("features.allowMasterTrust" -> true))
+    .build()
 
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -127,13 +152,14 @@ object DeclarationControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean): String =
+  private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean, showMasterTrustDeclaration: Boolean = false): String =
     declaration(
       frontendAppConfig,
       form,
       schemeName,
       isCompany,
-      isDormant
+      isDormant,
+      showMasterTrustDeclaration
     )(fakeRequest, messages).toString
 
   private val individual =
