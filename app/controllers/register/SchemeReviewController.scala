@@ -51,15 +51,13 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
 
           Future.successful(Ok(schemeReview(appConfig, schemeDetails.schemeName, establishers, trustees,
             controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode),
-            trusteeEditUrl(schemeDetails, request.userAnswers.get(HaveAnyTrusteesId)))))
+            trusteeEditUrl(request.userAnswers.get(HaveAnyTrusteesId)))))
       }
   }
 
-  private def trusteeEditUrl(schemeDetails: SchemeDetails, haveAnyTrustees: Option[Boolean]) = {
-    (schemeDetails.schemeType, haveAnyTrustees) match {
-      case (SchemeType.SingleTrust, _) =>
-        controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode)
-      case (_, Some(false)) =>
+  private def trusteeEditUrl(haveAnyTrustees: Option[Boolean]) = {
+    haveAnyTrustees match {
+      case Some(false) =>
         controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
       case _ =>
         controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode)

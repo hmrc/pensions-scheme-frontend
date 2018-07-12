@@ -52,8 +52,9 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: DataCacheConnector
   }
 
   private def navigateBasedOnSchemeDetails(answers: UserAnswers): Option[NavigateTo] = {
+    val listOfSchemeTypeTrusts: Seq[SchemeType] = Seq(SchemeType.SingleTrust, SchemeType.MasterTrust)
     answers.get(SchemeDetailsId) match {
-      case Some(SchemeDetails(_, schemeType)) if schemeType == SchemeType.SingleTrust =>
+      case Some(SchemeDetails(_, schemeType)) if listOfSchemeTypeTrusts.contains(schemeType) =>
         NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
       case Some(SchemeDetails(_, _)) =>
         answers.allTrusteesAfterDelete.isEmpty match {

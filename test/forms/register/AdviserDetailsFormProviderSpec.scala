@@ -27,7 +27,7 @@ class AdviserDetailsFormProviderSpec extends  StringFieldBehaviours with Constra
 
 
   val form = new AdviserDetailsFormProvider()()
-  val nameLength: Int = 107
+  val nameLength: Int = AdviserDetailsFormProvider.nameLength
 
   ".adviserName" must {
     val fieldName = "adviserName"
@@ -39,7 +39,7 @@ class AdviserDetailsFormProviderSpec extends  StringFieldBehaviours with Constra
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(regexSafeText)
+      RegexpGen.from(adviserNameRegex)
     )
 
     behave like fieldWithMaxLength(
@@ -58,8 +58,8 @@ class AdviserDetailsFormProviderSpec extends  StringFieldBehaviours with Constra
     behave like fieldWithRegex(
       form,
       fieldName,
-      "{invalid}",
-      error = FormError(fieldName, invalidKey, Seq(regexSafeText))
+      "1234",
+      error = FormError(fieldName, invalidKey, Seq(adviserNameRegex))
     )
   }
 

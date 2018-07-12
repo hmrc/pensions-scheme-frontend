@@ -28,9 +28,9 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
   val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
-  def createView = () => declaration(frontendAppConfig, form, schemeName, true, false)(fakeRequest, messages)
-  def createViewDynamic(isCompany: Boolean = true, isDormant: Boolean = false) = () => declaration(frontendAppConfig, form, schemeName, isCompany, isDormant)(fakeRequest, messages)
-  def createViewUsingForm = (form: Form[_]) => declaration(frontendAppConfig, form, schemeName, false, false)(fakeRequest, messages)
+  def createView = () => declaration(frontendAppConfig, form, schemeName, true, false, true)(fakeRequest, messages)
+  def createViewDynamic(isCompany: Boolean = true, isDormant: Boolean = false, showMasterTrustDeclaration: Boolean = true) = () => declaration(frontendAppConfig, form, schemeName, isCompany, isDormant, showMasterTrustDeclaration)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => declaration(frontendAppConfig, form, schemeName, false, false, true)(fakeRequest, messages)
 
   "Declaration view" must {
     behave like normalPage(

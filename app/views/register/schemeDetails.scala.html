@@ -19,8 +19,17 @@
 @import controllers.register.routes._
 @import models.Mode
 @import models.register._
+@import models.register.SchemeType.MasterTrust
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+
+@schemeOptions = @{
+    if(appConfig.allowMasterTrust){
+        SchemeType.options
+    } else {
+        SchemeType.options.filterNot(_.value == MasterTrust.toString)
+    }
+}
 
 @main_template(
     title = messages("messages__scheme_details__title"),
@@ -44,7 +53,7 @@
         @components.input_radio(
             field = form("schemeType.type"),
             legend = messages("messages__scheme_details__type_legend"),
-            inputs = SchemeType.options
+            inputs = schemeOptions
         )
 
         @components.input_text(
