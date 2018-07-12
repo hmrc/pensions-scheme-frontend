@@ -23,6 +23,12 @@
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establishers: Seq[Establisher[_]], schemeName: String)(implicit request: Request[_], messages: Messages)
 
+@disableSubmission = @{
+    appConfig.completeFlagEnabled & establishers.foldLeft(true) { (_, establisher) =>
+        !establisher.isCompleted
+    }
+}
+
 @main_template(
     title = messages("messages__establishers__add__title"),
     appConfig = appConfig,
@@ -44,7 +50,11 @@
 
             @components.heading(headingKey = "messages__establishers__add__title", secondaryHeaderKey = Some(schemeName))
 
-            @components.editable_item_list(establishers)
+            @if(appConfig.completeFlagEnabled){
+                @components.entity_list(establishers)
+            } else {
+                @components.editable_item_list(establishers)
+            }
 
             @components.input_yes_no(
                 field = form("value"),
@@ -54,6 +64,6 @@
             )
         }
 
-        @components.submit_button("messages__common__continue")
+        @components.submit_button("messages__common__continue", disableSubmission)
     }
 }

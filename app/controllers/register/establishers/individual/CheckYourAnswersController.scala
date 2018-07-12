@@ -16,52 +16,56 @@
 
 package controllers.register.establishers.individual
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.individual.{CheckYourAnswersId, UniqueTaxReferenceId}
+import javax.inject.Inject
 import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{CheckYourAnswersFactory, Navigator}
+import utils.annotations.EstablishersIndividual
+import utils.checkyouranswers.Ops._
+import utils.{CheckYourAnswersFactory, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
-import utils.checkyouranswers.Ops._
-import utils.annotations.EstablishersIndividual
 
 import scala.concurrent.Future
 
-class CheckYourAnswersController @Inject() (appConfig: FrontendAppConfig,
-                                            override val messagesApi: MessagesApi,
-                                            authenticate: AuthAction,
-                                            getData: DataRetrievalAction,
-                                            requiredData: DataRequiredAction,
-                                            checkYourAnswersFactory: CheckYourAnswersFactory,
-                                            @EstablishersIndividual navigator: Navigator) extends FrontendController with Retrievals with I18nSupport {
+class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requiredData: DataRequiredAction,
+                                           checkYourAnswersFactory: CheckYourAnswersFactory,
+                                           sectionComplete: SectionComplete,
+                                           @EstablishersIndividual navigator: Navigator) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-        val checkYourAnswerHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
-        val sections = Seq(
-          AnswerSection(None, checkYourAnswerHelper.establisherDetails(index.id) ++
-          checkYourAnswerHelper.establisherNino(index.id) ++ UniqueTaxReferenceId(index).row(
-            routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url
-          ) ++
-          checkYourAnswerHelper.address(index) ++ checkYourAnswerHelper.addressYears(index) ++
-          checkYourAnswerHelper.previousAddress(index) ++
-          checkYourAnswerHelper.contactDetails(index))
-        )
-        Future.successful(Ok(check_your_answers(appConfig, sections, Some(schemeName), routes.CheckYourAnswersController.onSubmit(index))))
+          val checkYourAnswerHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
+          val sections = Seq(
+            AnswerSection(None, checkYourAnswerHelper.establisherDetails(index.id) ++
+              checkYourAnswerHelper.establisherNino(index.id) ++ UniqueTaxReferenceId(index).row(
+              routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url
+            ) ++
+              checkYourAnswerHelper.address(index) ++ checkYourAnswerHelper.addressYears(index) ++
+              checkYourAnswerHelper.previousAddress(index) ++
+              checkYourAnswerHelper.contactDetails(index))
+          )
+          Future.successful(Ok(check_your_answers(appConfig, sections, Some(schemeName), routes.CheckYourAnswersController.onSubmit(index))))
       }
   }
 
-  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData) {
+  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
+      sectionComplete.setComplete(IsEstablisherCompleteId(index), request.userAnswers).map { _ =>
+        Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
+      }
   }
 
 }

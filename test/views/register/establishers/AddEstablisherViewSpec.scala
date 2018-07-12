@@ -71,7 +71,7 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
     addEstablisher(frontendAppConfig, form, NormalMode, establishers, schemeName)(fakeRequest, messages)
 
   override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.is-complete" -> false
+    "features.is-complete" -> true
   ).build()
 
   "AddEstablisher view" must {

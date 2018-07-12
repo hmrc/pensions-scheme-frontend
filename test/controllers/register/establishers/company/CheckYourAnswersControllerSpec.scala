@@ -18,10 +18,11 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import identifiers.register.establishers.IsEstablisherCompleteId
 import models.{CheckMode, Index}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{CheckYourAnswersFactory, CountryOptions, FakeNavigator, InputOption}
+import utils.{CheckYourAnswersFactory, CountryOptions, FakeNavigator, FakeSectionComplete, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -70,7 +71,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       checkYourAnswersFactory,
-      new FakeNavigator(onwardRoute)
+      new FakeNavigator(onwardRoute),
+      FakeSectionComplete
     )
 
   def viewAsString(): String =
@@ -101,6 +103,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "mark establisher as complete on submit" in {
+      val result = controller().onSubmit(index)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+      FakeSectionComplete.verify(IsEstablisherCompleteId(index), true)
     }
   }
 
