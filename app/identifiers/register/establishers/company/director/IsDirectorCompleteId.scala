@@ -17,15 +17,17 @@
 package identifiers.register.establishers.company.director
 
 import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
 import play.api.libs.json.JsPath
 
 case class IsDirectorCompleteId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = JsPath \ DirectorId(establisherIndex, directorIndex) \ IsDirectorCompleteId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ IsDirectorCompleteId.toString
 }
 
 object IsDirectorCompleteId {
   override def toString: String = "isDirectorComplete"
 }
+
 
 
 
