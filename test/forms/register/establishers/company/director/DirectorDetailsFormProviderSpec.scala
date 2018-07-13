@@ -30,7 +30,7 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours with Constraints {
   val year = LocalDate.now().getYear
 
   val validData: Map[String, String] = Map(
-    "firstName" -> "testFirstName",
+    "firstName" -> "testFirstName Name",
     "lastName" -> "testLastName",
     "middleName"->"testMiddleName",
     "date.day" -> s"$day",
@@ -43,7 +43,7 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours with Constraints {
   val date = new LocalDate(year, month, day)
 
   "DirectorDetails form" must {
-    behave like questionForm(DirectorDetails("testFirstName", Some("testMiddleName"), "testLastName",date))
+    behave like questionForm(DirectorDetails("testFirstName Name", Some("testMiddleName"), "testLastName",date))
 
     behave like formWithMandatoryTextFields(
       Field("firstName", Required -> "messages__error__first_name"),
@@ -80,7 +80,7 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours with Constraints {
     checkForError(form, data, expectedError)
   }
 
-  Seq("-sfy gAFD", "‘GHJ=GJG", "SDSAF^*NJ", "^*", "first name").foreach { name =>
+  Seq("‘GHJ=GJG", "SDSAF^*NJ", "^*").foreach { name =>
     s"fail to bind when the first name $name is invalid" in {
       val data = validData + ("firstName" -> name)
 
@@ -89,7 +89,7 @@ class DirectorDetailsFormProviderSpec extends FormBehaviours with Constraints {
     }
   }
 
-  Seq("SDSAF^*NJ", "^*", "first name").foreach { name =>
+  Seq("SDSAF^*NJ", "^*").foreach { name =>
     s"fail to bind when the middle name $name is invalid" in {
       val data = validData + ("middleName" -> name)
 
