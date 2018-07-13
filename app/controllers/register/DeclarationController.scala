@@ -25,6 +25,7 @@ import identifiers.register.{DeclarationDormantId, DeclarationId, SchemeDetailsI
 import javax.inject.Inject
 import models.NormalMode
 import models.register.DeclarationDormant.{No, Yes}
+import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -70,12 +71,15 @@ class DeclarationController @Inject()(
     SchemeDetailsId.retrieve.right.map { details =>
       val isCompany = request.userAnswers.hasCompanies
       request.userAnswers.get(DeclarationDormantId) match {
-        case Some(Yes) => Future.successful(status(declaration(appConfig, form, details.schemeName, isCompany, isDormant = true)))
-        case Some(No) => Future.successful(status(declaration(appConfig, form, details.schemeName, isCompany, isDormant = false)))
-        case None if !isCompany => Future.successful(status(declaration(appConfig, form, details.schemeName, isCompany, isDormant = false)))
+        case Some(Yes) => Future.successful(status(declaration(appConfig, form, details.schemeName, isCompany, isDormant = true, showMasterTrustDeclaration)))
+        case Some(No) => Future.successful(status(declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)))
+        case None if !isCompany => Future.successful(status(declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)))
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
       }
     }
   }
+
+  private def showMasterTrustDeclaration(implicit request: DataRequest[AnyContent]): Boolean =
+    appConfig.allowMasterTrust & request.userAnswers.get(SchemeDetailsId).map(_.schemeType).contains(MasterTrust)
 
 }

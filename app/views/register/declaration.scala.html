@@ -19,7 +19,7 @@
 @import controllers.register.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_], schemeName: String, isCompany: Boolean, isDormant: Boolean)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], schemeName: String, isCompany: Boolean, isDormant: Boolean, showMasterTrustDeclaration: Boolean)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__declaration__title"),
@@ -52,9 +52,11 @@
             <li>
                 @components.paragraph_text(messages("messages__declaration__statement3"))
             </li>
-            <li>
-                @components.paragraph_text(messages("messages__declaration__statement4"))
-            </li>
+            @if(showMasterTrustDeclaration){
+                <li>
+                    @components.paragraph_text(messages("messages__declaration__statement4"))
+                </li>
+            }
             <li>
                 @components.paragraph_text(messages("messages__declaration__statement5"))
             </li>
@@ -63,6 +65,9 @@
             </li>
             <li>
                 @components.paragraph_text(messages("messages__declaration__statement7"))
+            </li>
+            <li>
+                @components.paragraph_text(messages("messages__declaration__statement8"))
             </li>
         </ol>
 
