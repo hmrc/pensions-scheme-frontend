@@ -20,7 +20,7 @@ import identifiers.TypedIdentifier
 import play.api.libs.json.JsPath
 
 case class IsTrusteeCompleteId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = JsPath \ TrusteesId(index) \ IsTrusteeCompleteId.toString
+  override def path: JsPath = TrusteesId(index).path \ IsTrusteeCompleteId.toString
 }
 
 object IsTrusteeCompleteId {

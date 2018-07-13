@@ -68,7 +68,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
     addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages)
 
   override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.is-complete" -> false
+    "features.is-complete" -> true
   ).build()
 
   "AddTrustee view" must {
@@ -95,6 +95,11 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
       "show the add trustee text" in {
         val doc = asDocument(createView()())
         doc must haveDynamicText(s"messages__${messageKeyPrefix}__lede")
+      }
+
+      "do not disable the submit button" in {
+        val doc = asDocument(createView()())
+        doc.getElementById("submit").hasAttr("disabled") mustBe false
       }
     }
 

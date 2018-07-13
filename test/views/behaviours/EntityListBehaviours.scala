@@ -61,6 +61,12 @@ trait EntityListBehaviours {
             link.first.text mustBe expectedResult
           }
         }
+
+        "disable the submit button if any of the items is incomplete" in {
+          val doc = asDocument(nonEmptyView())
+          doc.getElementById("submit").hasAttr("disabled") mustBe true
+        }
+
       }
 
       "display the delete link for each person" in {
