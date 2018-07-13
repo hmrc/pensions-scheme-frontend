@@ -16,31 +16,54 @@
 
 package forms.register
 
-import forms.mappings.Mappings
+import forms.mappings.{Mappings, Transforms}
+import javax.inject.Inject
 import models.person.PersonDetails
 import play.api.data.Form
-import play.api.data.Forms.{mapping, optional}
+import play.api.data.Forms._
 
-class PersonDetailsFormProvider extends Mappings {
-
-  val nameMaxLength = 35
+class PersonDetailsFormProvider @Inject() extends Mappings with Transforms {
 
   def apply(): Form[PersonDetails] = Form(
     mapping(
-      "firstName" -> text("messages__error__first_name").verifying(returnOnFirstFailure(
-        maxLength(nameMaxLength, "messages__error__first_name_length"),
-        regexp(regexName, "messages__error__first_name_invalid"))
-      ),
-      "middleName" -> optional(text("messages__error__middle_name").verifying(returnOnFirstFailure(
-        maxLength(nameMaxLength, "messages__error__middle_name_length"),
-        regexp(regexName, "messages__error__middle_name_invalid"))
-      )),
-      "lastName" -> text("messages__error__last_name").verifying(returnOnFirstFailure(
-        maxLength(nameMaxLength, "messages__error__last_name_length"),
-        regexp(regexName, "messages__error__last_name_invalid"))
-      ),
-      "date" -> dateMapping("messages__error__date").verifying(futureDate("messages__error__date_future"))
+      "firstName" ->
+        text(errorKey = "messages__error__first_name")
+          .verifying(
+            firstError(
+              maxLength(PersonDetailsFormProvider.firstNameLength,
+                errorKey = "messages__error__first_name_length"
+              ),
+              name(errorKey = "messages__error__first_name_invalid")
+            )
+          ),
+      "middleName" ->
+        optionalText()
+          .verifying(
+            firstError(
+              maxLength(PersonDetailsFormProvider.middleNameLength,
+                errorKey = "messages__error__middle_name_length"
+              ),
+              name(errorKey = "messages__error__middle_name_invalid")
+            )
+          ),
+      "lastName" ->
+        text(errorKey = "messages__error__last_name")
+          .verifying(
+            firstError(
+              maxLength(PersonDetailsFormProvider.lastNameLength,
+                errorKey = "messages__error__last_name_length"
+              ),
+              name(errorKey = "messages__error__last_name_invalid")
+            )
+          ),
+      "date" -> dateMapping("messages__error__date", "error.invalid_date")
+        .verifying(futureDate("messages__error__date_future"))
     )(PersonDetails.applyDelete)(PersonDetails.unapplyDelete)
   )
+}
 
+object PersonDetailsFormProvider {
+  val firstNameLength: Int = 35
+  val middleNameLength: Int = 35
+  val lastNameLength: Int = 35
 }

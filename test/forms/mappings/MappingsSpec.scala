@@ -22,6 +22,7 @@ import org.scalacheck.Gen
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.data.{Form, FormError}
+import play.api.data.Forms._
 import utils.Enumerable
 import wolfendale.scalacheck.regexp.RegexpGen
 
@@ -253,29 +254,98 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
   }
 
   "date" must {
-    val testForm: Form[LocalDate] = Form("date"->dateMapping("messages__error__date"))
+    case class TestClass (date: LocalDate)
 
-    "bind a valid date" in {
-      val result = testForm.bind(Map("date.day" -> "1", "date.month" -> "5", "date.year" -> LocalDate.now().getYear.toString))
-      result.get mustEqual new LocalDate(LocalDate.now().getYear, 5, 1)
+    val testForm = Form(
+      mapping(
+        "date" -> dateMapping("messages__error__date", "error.invalid_date")
+      )(TestClass.apply)(TestClass.unapply)
+    )
+
+    // scalastyle:off magic.number
+    val testDate = new LocalDate(1862, 6, 9)
+    // scalastyle:on magic.number
+
+    "bind valid data" in {
+      val result = testForm.bind(
+        Map(
+          "date.day" -> testDate.getDayOfMonth.toString,
+          "date.month" -> testDate.getMonthOfYear.toString,
+          "date.year" -> testDate.getYear.toString
+        )
+      )
+
+      result.errors.size mustBe 0
+      result.get.date mustBe testDate
     }
 
-    "not bind an invalid Date" in {
-      val result = testForm.bind(Map("date.day" -> "31", "date.month" -> "2", "date.year" -> LocalDate.now().getYear.toString))
-      result.errors mustEqual Seq(FormError("date", "messages__error__date"))
+    "not bind blank data" in {
+      val result = testForm.bind(
+        Map(
+          "date.day" -> "",
+          "date.month" -> "",
+          "date.year" -> ""
+        )
+      )
+
+      result.errors.size mustBe 3
+      result.errors must contain allOf(
+        FormError("date.day", "error.date.day_blank"),
+        FormError("date.month", "error.date.month_blank"),
+        FormError("date.year", "error.date.year_blank")
+      )
     }
 
-    "not bind an empty Map" in {
-      val result = testForm.bind(Map.empty[String, String])
-      result.errors mustEqual Seq(FormError("date.day", "messages__error__date"),
-        FormError("date.month", "messages__error__date"), FormError("date.year", "messages__error__date"))
+    "not bind non-numeric input" in {
+      val result = testForm.bind(
+        Map(
+          "date.day" -> "A",
+          "date.month" -> "B",
+          "date.year" -> "C"
+        )
+      )
+
+      result.errors.size mustBe 3
+      result.errors must contain allOf(
+        FormError("date.day", "error.date.day_invalid"),
+        FormError("date.month", "error.date.month_invalid"),
+        FormError("date.year", "error.date.year_invalid")
+      )
     }
 
-    "unbind a valid date" in {
-      val result = testForm.fill(new LocalDate(LocalDate.now().getYear, 6, 1))
-      result.apply("date.day").value.value mustEqual "1"
-      result.apply("date.month").value.value mustEqual "6"
-      result.apply("date.year").value.value mustEqual LocalDate.now().getYear.toString
+    "not bind invalid day" in {
+      val result = testForm.bind(
+        Map(
+          "date.day" -> "0",
+          "date.month" -> testDate.getMonthOfYear.toString,
+          "date.year" -> testDate.getYear.toString
+        )
+      )
+
+      result.errors.size mustBe 1
+      result.errors must contain(FormError("date", "error.invalid_date"))
+    }
+
+    "not bind invalid month" in {
+      val result = testForm.bind(
+        Map(
+          "date.day" -> testDate.getDayOfMonth.toString,
+          "date.month" -> "0",
+          "date.year" -> testDate.getYear.toString
+        )
+      )
+
+      result.errors.size mustBe 1
+      result.errors must contain(FormError("date", "error.invalid_date"))
+    }
+
+    "fill correctly from model" in {
+      val testClass = TestClass(testDate)
+      val result = testForm.fill(testClass)
+
+      result("date.day").value.value mustBe "9"
+      result("date.month").value.value mustBe "6"
+      result("date.year").value.value mustBe "1862"
     }
   }
 }

@@ -22,7 +22,7 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index}
 import org.joda.time.LocalDate
@@ -47,7 +47,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
   val companyName = "test company name"
   val directors = Seq("director a", "director b", "director c")
   def director(lastName: String): JsObject = Json.obj(
-    DirectorDetailsId.toString -> DirectorDetails("director", None, lastName, LocalDate.now())
+    DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now())
   )
 
   val validData: JsObject = Json.obj(

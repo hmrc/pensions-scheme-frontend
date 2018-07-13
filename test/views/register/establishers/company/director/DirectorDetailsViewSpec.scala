@@ -16,15 +16,16 @@
 
 package views.register.establishers.company.director
 
+import forms.register.PersonDetailsFormProvider
+import models.person.PersonDetails
 import play.api.data.{Form, FormError}
-import forms.register.establishers.company.director.DirectorDetailsFormProvider
 import models.{Index, NormalMode}
-import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
+import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.company.director.directorDetails
 
-class DirectorDetailsViewSpec extends QuestionViewBehaviours[DirectorDetails] {
+class DirectorDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   val messageKeyPrefix = "directorDetails"
 
@@ -33,15 +34,17 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[DirectorDetails] {
 
   val companyName="Company Name"
 
-  override val form = new DirectorDetailsFormProvider()()
+  override val form = new PersonDetailsFormProvider()()
 
-  def createView = () => directorDetails(frontendAppConfig, form, NormalMode,establisherIndex,directorIndex,companyName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () =>
+    directorDetails(frontendAppConfig, form, NormalMode,establisherIndex,directorIndex,companyName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => directorDetails(frontendAppConfig, form, NormalMode,establisherIndex,directorIndex,companyName)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    directorDetails(frontendAppConfig, form, NormalMode,establisherIndex,directorIndex,companyName)(fakeRequest, messages)
 
-  val day = LocalDate.now().getDayOfMonth
-  val year = LocalDate.now().getYear
-  val month = LocalDate.now().getMonthOfYear
+  private val day = LocalDate.now().getDayOfMonth
+  private val year = LocalDate.now().getYear
+  private val month = LocalDate.now().getMonthOfYear
 
   val validData: Map[String, String] = Map(
     "firstName" -> "testFirstName",

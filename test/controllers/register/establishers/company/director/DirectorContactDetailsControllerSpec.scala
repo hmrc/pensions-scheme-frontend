@@ -23,7 +23,7 @@ import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorContactDetailsId, DirectorDetailsId}
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.{ContactDetails, _}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -81,7 +81,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
-              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
+              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
             DirectorContactDetailsId.toString ->
               ContactDetails("test@test.com", "123456789"))
         )
@@ -96,7 +96,7 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
-              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now)
+              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now)
           )
         )
       )

@@ -23,12 +23,12 @@ import controllers.register.establishers.company.routes.AddCompanyDirectorsContr
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.libs.json._
-import utils.FakeNavigator
 import play.api.test.Helpers._
+import utils.FakeNavigator
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
@@ -93,9 +93,9 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
   private val directorName = "John Doe"
   private lazy val postCall = routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex)
   private lazy val cancelCall = AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
-  private val directorDetails = DirectorDetails("John", None, "Doe", LocalDate.now(), false)
+  private val directorDetails = PersonDetails("John", None, "Doe", LocalDate.now(), false)
 
-  private def testData(directors: DirectorDetails = directorDetails) = Json.obj(
+  private def testData(directors: PersonDetails = directorDetails) = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
@@ -109,7 +109,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
     )
   )
 
-  val directorDeleted = directorDetails.copy(isDeleted = true)
+  val directorDeleted: PersonDetails = directorDetails.copy(isDeleted = true)
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 

@@ -16,17 +16,15 @@
 
 package views.register.establishers.company
 
-import config.FrontendAppConfig
 import controllers.register.establishers.company.routes
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.NormalMode
+import models.person.PersonDetails
 import models.register.DirectorEntity
-import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
+import play.api.Application
 import play.api.data.Form
-
-import play.api.inject.Injector
 import play.api.inject.guice.GuiceApplicationBuilder
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.establishers.company.addCompanyDirectors
@@ -38,17 +36,17 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   private val maxDirectors = frontendAppConfig.maxDirectors
 
   // scalastyle:off magic.number
-  private val johnDoe = DirectorDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
-  private val joeBloggs = DirectorDetails("Joe", None, "Bloggs", new LocalDate(1969, 7, 16))
+  private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
+  private val joeBloggs = PersonDetails("Joe", None, "Bloggs", new LocalDate(1969, 7, 16))
   // scalastyle:on magic.number
 
   val messageKeyPrefix = "addCompanyDirectors"
 
   val form = new AddCompanyDirectorsFormProvider()()
-  private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.directorName, isDeleted = false, isCompleted = false)
-  private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.directorName, isDeleted = false, isCompleted = true)
+  private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
+  private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
 
-  override lazy val app = new GuiceApplicationBuilder().configure(
+  override lazy val app: Application = new GuiceApplicationBuilder().configure(
     "features.is-complete" -> true
   ).build()
 

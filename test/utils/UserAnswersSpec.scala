@@ -28,7 +28,6 @@ import models.person.PersonDetails
 import models.register._
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual}
-import models.register.establishers.company.director.DirectorDetails
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.Individual
 import org.joda.time.LocalDate
@@ -176,10 +175,10 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
 
     "return a map of director names, edit links, delete links and isComplete flag" in {
       val userAnswers = UserAnswers()
-        .set(DirectorDetailsId(0, 0))(DirectorDetails("First", None, "Last", LocalDate.now))
+        .set(DirectorDetailsId(0, 0))(PersonDetails("First", None, "Last", LocalDate.now))
         .flatMap(_.set(IsDirectorCompleteId(0, 0))(true))
         .flatMap(_.set(IsDirectorCompleteId(0, 1))(false))
-        .flatMap(_.set(DirectorDetailsId(0, 1))(DirectorDetails("First1", None, "Last1", LocalDate.now))).get
+        .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First1", None, "Last1", LocalDate.now))).get
 
       val directorEntities = Seq(
         DirectorEntity(DirectorDetailsId(0, 0), "First Last", isDeleted = false, isCompleted = true),
@@ -196,8 +195,8 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
 
     "return a map of director names, edit links and delete links after one of the directors is deleted" in {
       val userAnswers = UserAnswers()
-        .set(DirectorDetailsId(0, 0))(DirectorDetails("First", None, "Last", LocalDate.now, isDeleted = true))
-        .flatMap(_.set(DirectorDetailsId(0, 1))(DirectorDetails("First1", None, "Last1", LocalDate.now))).get
+        .set(DirectorDetailsId(0, 0))(PersonDetails("First", None, "Last", LocalDate.now, isDeleted = true))
+        .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("First1", None, "Last1", LocalDate.now))).get
 
       val directorEntities = Seq(
         DirectorEntity(DirectorDetailsId(0, 1), "First1 Last1", isDeleted = false, isCompleted = false))

@@ -24,10 +24,10 @@ import connectors.DataCacheConnector
 import controllers.actions._
 import config.FrontendAppConfig
 import controllers.Retrievals
-import forms.register.establishers.company.director.DirectorDetailsFormProvider
+import forms.register.PersonDetailsFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.{Index, Mode}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersCompanyDirector
@@ -44,7 +44,7 @@ class DirectorDetailsController @Inject() (
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: DirectorDetailsFormProvider
+                                        formProvider: PersonDetailsFormProvider
                                       ) extends FrontendController with Retrievals with I18nSupport {
 
   private val form = formProvider()
@@ -53,7 +53,7 @@ class DirectorDetailsController @Inject() (
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
-          val preparedForm = request.userAnswers.get[DirectorDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
+          val preparedForm = request.userAnswers.get[PersonDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
             case None => form
             case Some(value) => form.fill(value)
           }
@@ -69,9 +69,9 @@ class DirectorDetailsController @Inject() (
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex,companyDetails.companyName)))
             ,
-            (value) =>
+            value =>
               dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
-                Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, new UserAnswers(cacheMap))))
+                Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, UserAnswers(cacheMap))))
           )
         }
     }
