@@ -32,7 +32,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__investment_regulated__title", secondaryHeaderKey = Some(name))
+        @components.headingDynamic(headingKey=messages("messages__investment_regulated__title"), secondaryHeaderKey = Some(components.hyphen(name).toString))
 
         @components.input_yes_no(
             field = form("value"),

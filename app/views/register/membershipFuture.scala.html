@@ -33,7 +33,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__membership__title", secondaryHeaderKey = Some(name))
+        @components.headingDynamic(headingKey=messages("messages__membership__title"), secondaryHeaderKey = Some(components.hyphen(name).toString))
 
         @components.input_radio(
             field = form("value"),
