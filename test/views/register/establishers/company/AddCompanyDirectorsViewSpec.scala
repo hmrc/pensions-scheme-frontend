@@ -16,6 +16,7 @@
 
 package views.register.establishers.company
 
+import config.FrontendAppConfig
 import controllers.register.establishers.company.routes
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.company.director.DirectorDetailsId
@@ -24,6 +25,8 @@ import models.register.DirectorEntity
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import play.api.data.Form
+import play.api.inject.Injector
+import play.api.inject.guice.GuiceApplicationBuilder
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.establishers.company.addCompanyDirectors
 
@@ -41,8 +44,12 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   val messageKeyPrefix = "addCompanyDirectors"
 
   val form = new AddCompanyDirectorsFormProvider()()
-  private val johnDoeEditableItem = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.directorName, isDeleted = false, isCompleted = false)
-  private val joeBloggsEditableItem = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.directorName, isDeleted = false, isCompleted = false)
+  private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.directorName, isDeleted = false, isCompleted = false)
+  private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.directorName, isDeleted = false, isCompleted = true)
+
+  override lazy val app = new GuiceApplicationBuilder().configure(
+    "features.is-complete" -> true
+  ).build()
 
   private def createView(directors: Seq[DirectorEntity] = Nil) =
     () =>
@@ -75,7 +82,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
     behave like pageWithSecondaryHeader(createView(), companyName)
 
     behave like yesNoPage(
-      createViewUsingForm(Seq(johnDoeEditableItem)),
+      createViewUsingForm(Seq(johnDoeEntity)),
       messageKeyPrefix,
       routes.AddCompanyDirectorsController.onSubmit(NormalMode, 0).url,
       legendKey = "add_more",
@@ -99,24 +106,24 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
       submit.first().text() mustBe messages("messages__addCompanyDirectors_add_director")
     }
 
-    val directors: Seq[DirectorEntity] = Seq(johnDoeEditableItem, joeBloggsEditableItem)
+    val directors: Seq[DirectorEntity] = Seq(johnDoeEntity, joeBloggsEntity)
 
-    behave like entityList(createView(), createView(directors), directors)
+    behave like entityList(createView(), createView(directors), directors, frontendAppConfig)
 
     "show the Continue button when there are directors" in {
-      val doc = asDocument(createViewUsingForm(Seq(johnDoeEditableItem))(form))
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity))(form))
       val submit = doc.select("button#submit")
       submit.size() mustBe 1
       submit.first().text() mustBe messages("site.save_and_continue")
     }
 
     "not show the yes no inputs if there are 10 or more directors" in {
-      val doc = asDocument(createViewUsingForm(Seq.fill(maxDirectors)(johnDoeEditableItem))(form))
+      val doc = asDocument(createViewUsingForm(Seq.fill(maxDirectors)(johnDoeEntity))(form))
       doc.select("legend > span").size() mustBe 0
     }
 
     "show the maximum number of directors message when there are 10 or more directors" in {
-      val doc = asDocument(createView(Seq.fill(maxDirectors)(johnDoeEditableItem))())
+      val doc = asDocument(createView(Seq.fill(maxDirectors)(johnDoeEntity))())
       doc must haveDynamicText("messages__addCompanyDirectors_at_maximum")
       doc must haveDynamicText("messages__addCompanyDirectors_tell_us_if_you_have_more")
     }

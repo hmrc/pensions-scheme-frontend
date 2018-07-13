@@ -20,13 +20,13 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company
-import identifiers.register.establishers.company.director.CheckYourAnswersId
+import identifiers.register.establishers.company.director.{CheckYourAnswersId, IsDirectorCompleteId}
 import javax.inject.Inject
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{CheckYourAnswersFactory, Navigator}
+import utils.{CheckYourAnswersFactory, Navigator, SectionComplete}
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.AnswerSection
 import views.html.check_your_answers
@@ -35,12 +35,13 @@ import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
-                                          @EstablishersCompanyDirector navigator: Navigator,
+                                           @EstablishersCompanyDirector navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
-                                           checkYourAnswersFactory: CheckYourAnswersFactory)
-                                          extends FrontendController with Retrievals with I18nSupport {
+                                           checkYourAnswersFactory: CheckYourAnswersFactory,
+                                           sectionComplete: SectionComplete)
+  extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(companyIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
@@ -64,15 +65,17 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
         Future.successful(Ok(check_your_answers(
           appConfig,
-          Seq(companyDirectorDetails,companyDirectorContactDetails),
+          Seq(companyDirectorDetails, companyDirectorContactDetails),
           Some(schemeName),
           company.director.routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex)))
         )
       }
   }
 
-  def onSubmit(companyIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onSubmit(companyIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), NormalMode, request.userAnswers))
+      sectionComplete.setComplete(IsDirectorCompleteId(companyIndex, directorIndex), request.userAnswers).map { _ =>
+        Redirect(navigator.nextPage(CheckYourAnswersId(companyIndex, directorIndex), NormalMode, request.userAnswers))
+      }
   }
 }

@@ -19,30 +19,23 @@
 @import models.requests.DataRequest
 @import models.register.Entity
 
-@(appConfig: FrontendAppConfig, entities: Seq[Entity[_]])(implicit request: DataRequest[AnyContent], messages: Messages)
+@(entities: Seq[Entity[_]])(implicit messages: Messages)
 
 <div class="form-group">
-    <ul id="people" class="govuk-check-your-answers form-group cya-questions-long">
+    <ul id="items" class="govuk-check-your-answers form-group cya-questions-long">
         @for(entity <- entities) {
         <li>
             <div class="cya-question">
                 <h2 id="person-@{entity.index}" class="bold std-text">@entity.name</h2>
             </div>
 
-            @if(entity.isCompleted){
-
-            <div class="cya-status status">
-                <span class="complete">COMPLETE</span>
+            <div id="person-@{entity.index}-status" class="cya-status status">
+                @if(entity.isCompleted){
+                    <span class="complete">COMPLETE</span>
+                } else {
+                    <span class="rejected">INCOMPLETE</span>
+                }
             </div>
-
-            } else {
-
-            <div class="cya-status status">
-                <span class="rejected">INCOMPLETE</span>
-            </div>
-
-            }
-
             <div>
                 <a id="person-@{entity.index}-delete" href="@entity.deleteLink">
                     @messages("site.delete")

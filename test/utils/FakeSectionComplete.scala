@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company.director
+package utils
 
+import connectors.FakeDataCacheConnector
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import play.api.libs.json.JsPath
+import models.requests.DataRequest
+import play.api.mvc.AnyContent
+import uk.gov.hmrc.http.HeaderCarrier
 
-case class IsDirectorCompleteId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ IsDirectorCompleteId.toString
+import scala.concurrent.{ExecutionContext, Future}
+
+object FakeSectionComplete extends SectionComplete with FakeDataCacheConnector {
+
+  override def setComplete(id: TypedIdentifier[Boolean], userAnswers: UserAnswers)
+                          (implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers] = {
+    save("cacheId", id, true) map UserAnswers
+  }
+
 }
-
-object IsDirectorCompleteId {
-  override def toString: String = "isDirectorComplete"
-}
-
-
-
-

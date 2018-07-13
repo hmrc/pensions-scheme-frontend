@@ -30,6 +30,12 @@
     directors: Seq[DirectorEntity]
 )(implicit request: Request[_], messages: Messages)
 
+@disableSubmission = @{
+    appConfig.completeFlagEnabled & directors.foldLeft(true) { (_, director) =>
+        !director.isCompleted
+    }
+}
+
 @main_template(
     title = messages("messages__addCompanyDirectors__title"),
     appConfig = appConfig,
@@ -47,7 +53,11 @@
             @components.paragraph_text(messages("messages__addCompanyDirectors_lede"))
             @components.submit_button("messages__addCompanyDirectors_add_director")
         } else {
-            @components.editable_item_list(directors)
+            @if(appConfig.completeFlagEnabled){
+                @components.entity_list(directors)
+            } else {
+                @components.editable_item_list(directors)
+            }
 
             @if(directors.size < appConfig.maxDirectors) {
                 @components.input_yes_no(
@@ -61,7 +71,7 @@
                 @components.paragraph_text(messages("messages__addCompanyDirectors_tell_us_if_you_have_more"))
             }
 
-            @components.submit_button("site.save_and_continue")
+            @components.submit_button("site.save_and_continue", disableSubmission)
         }
 
     }
