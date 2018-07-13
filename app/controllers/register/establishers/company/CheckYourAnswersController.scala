@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.{CheckYourAnswersId, CompanyDetailsId, CompanyRegistrationNumberId, IsCompanyCompleteId}
 import javax.inject.Inject
 import models.{CheckMode, Index, NormalMode}

@@ -34,45 +34,20 @@ import views.html.register.establishers.company.companyReview
 
 class CompanyReviewControllerSpec extends ControllerSpecBase {
 
+  import CompanyReviewControllerSpec._
+
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CompanyReviewController =
     new CompanyReviewController(frontendAppConfig, messagesApi, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, FakeSectionComplete)
 
-  val index = Index(0)
-  val invalIndex= 10
-  val invalidIndex = Index(invalIndex)
-  val schemeName = "Test Scheme Name"
-  val companyName = "test company name"
-  val directors = Seq("director a", "director b", "director c")
-  def director(lastName: String): JsObject = Json.obj(
-    DirectorDetailsId.toString -> DirectorDetails("director", None, lastName, LocalDate.now()),
-    IsDirectorCompleteId.toString -> true
-  )
-
-  val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails(schemeName, SchemeType.SingleTrust),
-    EstablishersId.toString -> Json.arr(
-      Json.obj(
-        CompanyDetailsId.toString ->
-          CompanyDetails(companyName, Some("123456"), Some("abcd")),
-        IsCompanyCompleteId.toString -> true,
-
-        "director" -> Json.arr(
-          director("a"), director("b"), director("c")
-        )
-      )
-    )
-  )
-
-  def viewAsString(): String = companyReview(frontendAppConfig, index, schemeName, companyName, directors)(fakeRequest, messages).toString
+  def viewAsString(): String = companyReview(frontendAppConfig, index, schemeName, companyName, directorNames)(fakeRequest, messages).toString
 
   "CompanyReview Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
       val result = controller(getRelevantData).onPageLoad(index)(fakeRequest)
 
       status(result) mustBe OK
@@ -80,7 +55,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to session expired page on a GET when the index is not valid" ignore {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
       val result = controller(getRelevantData).onPageLoad(invalidIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -93,7 +68,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
     }
 
     "set establisher as complete when company is complete and all directors are completed on submit" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
       val result = controller(getRelevantData).onSubmit(index)(fakeRequest)
       status(result) mustBe SEE_OTHER
       FakeSectionComplete.verify(IsEstablisherCompleteId(0), true)
@@ -106,16 +81,11 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
           SchemeDetails(schemeName, SchemeType.SingleTrust),
         EstablishersId.toString -> Json.arr(
           Json.obj(
-            CompanyDetailsId.toString ->
-              CompanyDetails(companyName, Some("123456"), Some("abcd")),
-
-            "director" -> Json.arr(
-              director("a"), director("b"), director("c")
-            )
+            CompanyDetailsId.toString -> companyDetails,
+            "director" -> directors
           )
         )
       )
-
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onSubmit(index)(fakeRequest)
       status(result) mustBe SEE_OTHER
@@ -124,26 +94,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
 
     "not set establisher as complete when company is complete but directors are not complete" in {
       FakeSectionComplete.reset()
-      val validData: JsObject = Json.obj(
-        SchemeDetailsId.toString ->
-          SchemeDetails(schemeName, SchemeType.SingleTrust),
-        EstablishersId.toString -> Json.arr(
-          Json.obj(
-            CompanyDetailsId.toString ->
-              CompanyDetails(companyName, Some("123456"), Some("abcd")),
-            IsCompanyCompleteId.toString -> true,
-            "director" -> Json.arr(
-              director("a"), director("b"),
-              Json.obj(
-                DirectorDetailsId.toString -> DirectorDetails("director", None, "c", LocalDate.now()),
-                IsDirectorCompleteId.toString -> false
-              )
-            )
-          )
-        )
-      )
-
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData(Seq(director("a"), director("b"), director("c", isComplete = false)))))
       val result = controller(getRelevantData).onSubmit(index)(fakeRequest)
       status(result) mustBe SEE_OTHER
       FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
@@ -151,6 +102,35 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
   }
 }
 
+object CompanyReviewControllerSpec {
+  val index = Index(0)
+  val invalIndex = 10
+  val invalidIndex = Index(invalIndex)
+  val schemeName = "Test Scheme Name"
+  val companyName = "test company name"
+  val directorNames = Seq("director a", "director b", "director c")
+  val companyDetails = CompanyDetails(companyName, Some("123456"), Some("abcd"))
+
+  def director(lastName: String, isComplete: Boolean = true): JsObject = Json.obj(
+    DirectorDetailsId.toString -> DirectorDetails("director", None, lastName, LocalDate.now()),
+    IsDirectorCompleteId.toString -> isComplete
+  )
+
+  val directors = Seq(director("a"), director("b"), director("c"))
+
+  def validData(inDirectors: Seq[JsObject] = directors): JsObject = Json.obj(
+    SchemeDetailsId.toString ->
+      SchemeDetails(schemeName, SchemeType.SingleTrust),
+    EstablishersId.toString -> Json.arr(
+      Json.obj(
+        CompanyDetailsId.toString -> companyDetails,
+        IsCompanyCompleteId.toString -> true,
+
+        "director" -> inDirectors
+      )
+    )
+  )
+}
 
 
 

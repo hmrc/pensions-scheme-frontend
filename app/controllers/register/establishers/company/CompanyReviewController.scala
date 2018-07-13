@@ -62,7 +62,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
         }
       }
       else {
-          Future.successful(Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers)))
+        Future.successful(Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers)))
       }
   }
 
