@@ -21,17 +21,15 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.person.PersonDetails
 import models.register.SchemeType.SingleTrust
 import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity, SchemeDetails}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
-import play.api.Application
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -39,9 +37,6 @@ import utils.FakeNavigator
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherControllerSpec extends ControllerSpecBase {
-
-  override lazy val app: Application = new GuiceApplicationBuilder(
-  ).configure("features.is-complete" -> "true").build()
 
   import AddEstablisherControllerSpec._
 
@@ -58,11 +53,11 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       val getRelevantData = individualEstablisherDataRetrieval
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
-      contentAsString(result) mustBe viewAsString(form, Seq(johnDoe()))
+      contentAsString(result) mustBe viewAsString(form, Seq(johnDoe))
     }
 
     "populate the view with establishers when they exist" in {
-      val establishersAsEntities = Seq(johnDoe(), testLtd())
+      val establishersAsEntities = Seq(johnDoe, testLtd)
       val getRelevantData = establisherWithDeletedDataRetrieval
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
@@ -73,7 +68,7 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       val getRelevantData = establisherWithDeletedDataRetrieval
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form, Seq(johnDoe(), testLtd()))
+      contentAsString(result) mustBe viewAsString(form, Seq(johnDoe, testLtd))
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -116,36 +111,6 @@ class AddEstablisherControllerSpec extends ControllerSpecBase {
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
-
-    "disable submit button when an establisher is not complete" in {
-      def validData: FakeDataRetrievalAction = {
-        val validData = Json.obj(
-          SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
-          EstablishersId.toString -> Json.arr(
-            Json.obj(
-              EstablisherDetailsId.toString -> personDetails,
-              IsEstablisherCompleteId.toString -> true
-            ),
-            Json.obj(
-              CompanyDetailsId.toString -> companyDetails,
-              IsEstablisherCompleteId.toString -> false
-            ),
-            Json.obj(
-              EstablisherDetailsId.toString -> deletedEstablisher
-            )
-          )
-        )
-        new FakeDataRetrievalAction(Some(validData))
-      }
-
-      val result = controller(validData).onPageLoad(NormalMode)(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString(
-        disableSubmission = true,
-        allEstablishers = Seq(johnDoe(), testLtd(isComplete = false))
-      )
-    }
   }
 }
 
@@ -172,14 +137,12 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty,
-                           disableSubmission: Boolean = false): String =
+  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty): String =
     addEstablisher(
       frontendAppConfig,
       form,
       NormalMode,
       allEstablishers,
-      disableSubmission,
       schemeName
     )(fakeRequest, messages).toString
 
@@ -188,21 +151,19 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
   private val year = LocalDate.now().getYear - 20
 
   private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day))
-
-  private def johnDoe(index: Int = 0, isComplete: Boolean = true) = EstablisherIndividualEntity(
-    id = EstablisherDetailsId(index),
-    name = "John Doe",
-    isDeleted = false,
-    isCompleted = isComplete
+  private val johnDoe = EstablisherIndividualEntity(
+    EstablisherDetailsId(0),
+    "John Doe",
+    false,
+    false
   )
 
   private val companyDetails = CompanyDetails("Test Ltd", None, None)
-
-  private def testLtd(index: Int = 1, isComplete: Boolean = true) = EstablisherCompanyEntity(
-    id = CompanyDetailsId(index),
-    name = "Test Ltd",
-    isDeleted = false,
-    isCompleted = isComplete
+  private val testLtd = EstablisherCompanyEntity(
+    CompanyDetailsId(1),
+    "Test Ltd",
+    false,
+    false
   )
 
   private val deletedEstablisher = personDetails.copy(isDeleted = true)
@@ -212,8 +173,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
       EstablishersId.toString -> Json.arr(
         Json.obj(
-          EstablisherDetailsId.toString -> personDetails,
-          IsEstablisherCompleteId.toString -> true
+          EstablisherDetailsId.toString -> personDetails
         )
       )
     )
@@ -225,12 +185,10 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
       EstablishersId.toString -> Json.arr(
         Json.obj(
-          EstablisherDetailsId.toString -> personDetails,
-          IsEstablisherCompleteId.toString -> true
+          EstablisherDetailsId.toString -> personDetails
         ),
         Json.obj(
-          CompanyDetailsId.toString -> companyDetails,
-          IsEstablisherCompleteId.toString -> true
+          CompanyDetailsId.toString -> companyDetails
         ),
         Json.obj(
           EstablisherDetailsId.toString -> deletedEstablisher

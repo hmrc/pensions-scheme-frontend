@@ -18,6 +18,7 @@ package controllers.register.trustees.company
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.company._
 import models._
 import models.address.Address
@@ -67,6 +68,12 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         val result=controller().onSubmit(index)(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
+      }
+
+      "mark trustee company as complete" in {
+        val result = controller().onSubmit(index)(fakeRequest)
+        status(result) mustBe SEE_OTHER
+        FakeSectionComplete.verify(IsTrusteeCompleteId(index), true)
       }
     }
 
@@ -157,7 +164,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       new CheckYourAnswersFactory(fakeCountryOptions),
       fakeCountryOptions,
-      new FakeNavigator(onwardRoute)
+      new FakeNavigator(onwardRoute),
+      FakeSectionComplete
     )
 
 }

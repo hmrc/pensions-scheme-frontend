@@ -18,6 +18,7 @@ package controllers.register.trustees.individual
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import identifiers.register.trustees.IsTrusteeCompleteId
 import models.{CheckMode, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
@@ -54,6 +55,12 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
       }
+
+      "mark trustee individual as complete" in {
+        val result = controller().onSubmit(firstIndex)(fakeRequest)
+        status(result) mustBe SEE_OTHER
+        FakeSectionComplete.verify(IsTrusteeCompleteId(firstIndex), true)
+      }
     }
   }
 }
@@ -83,6 +90,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
+      FakeSectionComplete,
       new FakeCountryOptions
     )
 

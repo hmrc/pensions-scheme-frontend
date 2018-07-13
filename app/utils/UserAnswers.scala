@@ -153,7 +153,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   def allDirectors(establisherIndex: Int): Seq[DirectorEntity] = {
-getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
+    getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
       details =>
         details.map { director =>
           val directorIndex = details.indexOf(director)
