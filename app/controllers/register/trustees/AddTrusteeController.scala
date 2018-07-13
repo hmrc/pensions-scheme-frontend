@@ -33,7 +33,6 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
 import utils.annotations.Trustees
-import viewmodels.EditableItem
 import views.html.register.trustees.addTrustee
 
 import scala.concurrent.Future

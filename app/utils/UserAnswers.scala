@@ -16,24 +16,25 @@
 
 package utils
 
-import controllers.register.establishers
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
+import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.trustees.TrusteesId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteesId}
+import models.CompanyDetails
 import models.person.PersonDetails
 import models.register._
 import models.register.establishers.company.director.DirectorDetails
-import models.{CompanyDetails, Index, NormalMode}
 import play.api.Logger
+import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results._
-import viewmodels.EditableItem
 
+import scala.annotation.tailrec
 import scala.concurrent.Future
 import scala.language.implicitConversions
 
@@ -77,48 +78,6 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       .flatMap(json => id.cleanup(None, UserAnswers(json)))
   }
 
-  def allEstablishers: Seq[EditableItem] = {
-    val nameReads: Reads[EntityDetails] = {
-
-      val individualName: Reads[EntityDetails] = (__ \ EstablisherDetailsId.toString)
-        .read[PersonDetails]
-        .map(details => EstablisherIndividualName(details.fullName, details.isDeleted))
-
-      val companyName: Reads[EntityDetails] = (__ \ CompanyDetailsId.toString)
-        .read[CompanyDetails]
-        .map(details => EstablisherCompanyName(details.companyName, details.isDeleted))
-
-      individualName orElse companyName
-    }
-
-    getAll[EntityDetails](JsPath \ EstablishersId.toString)(nameReads).map {
-      entityDetails =>
-        entityDetails.map { entity =>
-          entity.route(entityDetails.indexOf(entity), None)
-        }
-    }.getOrElse(Seq.empty)
-  }
-
-  def allEstablishersAfterDelete: Seq[EditableItem] = {
-    allEstablishers.filterNot(_.isDeleted)
-  }
-
-  def allDirectors(establisherIndex: Int): Seq[EditableItem] = {
-    getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
-      details =>
-        details.map { director =>
-          val directorIndex = details.indexOf(director)
-          EditableItem(directorIndex, director.directorName, director.isDeleted,
-            establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, establisherIndex, Index(directorIndex)).url,
-            establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(establisherIndex, directorIndex).url)
-        }
-    }.getOrElse(Seq.empty)
-  }
-
-  def allDirectorsAfterDelete(establisherIndex: Int): Seq[EditableItem] = {
-    allDirectors(establisherIndex).filterNot(_.isDeleted)
-  }
-
   private def traverse[A](seq: Seq[JsResult[A]]): JsResult[Seq[A]] = {
     seq match {
       case s if s.forall(_.isSuccess) =>
@@ -136,28 +95,111 @@ case class UserAnswers(json: JsValue = Json.obj()) {
     }
   }
 
-  def allTrustees: Seq[EditableItem] = {
-    val nameReads: Reads[EntityDetails] = {
-
-      val individualName: Reads[EntityDetails] = (__ \ TrusteeDetailsId.toString)
-        .read[PersonDetails]
-        .map(details => TrusteeIndividualName(details.fullName, details.isDeleted))
-
-      val companyName: Reads[EntityDetails] = (__ \ identifiers.register.trustees.company.CompanyDetailsId.toString)
-        .read[CompanyDetails]
-        .map(details => TrusteeCompanyName(details.companyName, details.isDeleted))
-
-      individualName orElse companyName
+  def readEntities[T](entities: Seq[JsValue], reads: Int => Reads[T]): JsResult[Seq[T]] = {
+    @tailrec
+    def recur(result: JsResult[Seq[T]], entities: Seq[(JsValue, Int)]): JsResult[Seq[T]] = {
+      result match {
+        case JsSuccess(results, _) =>
+          entities match {
+            case Seq(h, t@_*) => reads(h._2).reads(h._1) match {
+              case JsSuccess(item, _) => recur(JsSuccess(results :+ item), t)
+              case error@JsError(_) => error
+            }
+            case _ => result
+          }
+        case error: JsError => error
+      }
     }
-    getAll[EntityDetails](JsPath \ TrusteesId.toString)(nameReads).map {
-      entityDetails =>
-        entityDetails.map { entity =>
-          entity.route(entityDetails.indexOf(entity), None)
+
+    recur(JsSuccess(Nil), entities.zipWithIndex)
+  }
+
+  val readEstablishers: Reads[Seq[Establisher[_]]] = new Reads[Seq[Establisher[_]]] {
+    private def readsIndividual(index: Int): Reads[Establisher[_]] = (
+      (JsPath \ EstablisherDetailsId.toString).read[PersonDetails] and
+        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
+      ) ((details, isComplete) =>
+      EstablisherIndividualEntity(EstablisherDetailsId(index), details.fullName, details.isDeleted, isComplete.getOrElse(false))
+    )
+
+    private def readsCompany(index: Int): Reads[Establisher[_]] = (
+      (JsPath \ EstablisherCompanyDetailsId.toString).read[CompanyDetails] and
+        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
+      ) ((details, isComplete) =>
+      EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), details.companyName, details.isDeleted, isComplete.getOrElse(false))
+    )
+
+    override def reads(json: JsValue): JsResult[Seq[Establisher[_]]] = {
+      json \ EstablishersId.toString match {
+        case JsDefined(JsArray(establishers)) =>
+          readEntities(establishers, index => readsIndividual(index) orElse readsCompany(index))
+        case _ => JsSuccess(Nil)
+      }
+    }
+  }
+
+  def allEstablishers: Seq[Establisher[_]] = {
+    json.validate[Seq[Establisher[_]]](readEstablishers) match {
+      case JsSuccess(establishers, _) =>
+        establishers
+      case JsError(errors) =>
+        Logger.warn(s"Invalid json while reading all the establishers for addEstablisher: $errors")
+        Nil
+    }
+  }
+
+  def allEstablishersAfterDelete: Seq[Establisher[_]] = {
+    allEstablishers.filterNot(_.isDeleted)
+  }
+
+  def allDirectors(establisherIndex: Int): Seq[DirectorEntity] = {
+    getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
+      details =>
+        details.map { director =>
+          val directorIndex = details.indexOf(director)
+          val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
+          DirectorEntity(DirectorDetailsId(establisherIndex, directorIndex), director.directorName, director.isDeleted, isComplete)
         }
     }.getOrElse(Seq.empty)
   }
 
-  def allTrusteesAfterDelete: Seq[EditableItem] = {
+  def allDirectorsAfterDelete(establisherIndex: Int): Seq[DirectorEntity] = {
+    allDirectors(establisherIndex).filterNot(_.isDeleted)
+  }
+
+  val readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
+    private def readsIndividual(index: Int): Reads[Trustee[_]] = (
+      (JsPath \ TrusteeDetailsId.toString).read[PersonDetails] and
+        (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean]
+      ) ((details, isComplete) => TrusteeIndividualEntity(TrusteeDetailsId(index), details.fullName, details.isDeleted, isComplete.getOrElse(false))
+    )
+
+    private def readsCompany(index: Int): Reads[Trustee[_]] = (
+      (JsPath \ CompanyDetailsId.toString).read[CompanyDetails] and
+        (JsPath \ IsTrusteeCompleteId.toString).readNullable[Boolean]
+      ) ((details, isComplete) => TrusteeCompanyEntity(CompanyDetailsId(index), details.companyName, details.isDeleted, isComplete.getOrElse(false))
+    )
+
+    override def reads(json: JsValue): JsResult[Seq[Trustee[_]]] = {
+      json \ TrusteesId.toString match {
+        case JsDefined(JsArray(trustees)) =>
+          readEntities(trustees, index => readsIndividual(index) orElse readsCompany(index))
+        case _ => JsSuccess(Nil)
+      }
+    }
+  }
+
+  def allTrustees: Seq[Trustee[_]] = {
+    json.validate[Seq[Trustee[_]]](readTrustees) match {
+      case JsSuccess(trustees, _) =>
+        trustees
+      case JsError(errors) =>
+        Logger.warn(s"Invalid json while reading all the trustees for addTrustees: $errors")
+        Nil
+    }
+  }
+
+  def allTrusteesAfterDelete: Seq[Trustee[_]] = {
     allTrustees.filterNot(_.isDeleted)
   }
 

@@ -25,9 +25,8 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models.person.PersonDetails
-import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
-import models.register.establishers.EstablisherKind
+import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity, SchemeDetails}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -35,7 +34,6 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
-import viewmodels.EditableItem
 import views.html.register.establishers.addEstablisher
 
 class AddEstablisherControllerSpec extends ControllerSpecBase {
@@ -139,7 +137,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[EditableItem] = Seq.empty): String =
+  private def viewAsString(form: Form[_] = form, allEstablishers: Seq[Establisher[_]] = Seq.empty): String =
     addEstablisher(
       frontendAppConfig,
       form,
@@ -153,21 +151,19 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
   private val year = LocalDate.now().getYear - 20
 
   private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day))
-  private val johnDoe = EditableItem(
-    index = 0,
-    name = "John Doe",
-    isDeleted = false,
-    editLink = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, index = 0).url,
-    deleteLink = routes.ConfirmDeleteEstablisherController.onPageLoad(index = 0, establisherKind = EstablisherKind.Indivdual).url
+  private val johnDoe = EstablisherIndividualEntity(
+    EstablisherDetailsId(0),
+    "John Doe",
+    false,
+    false
   )
 
   private val companyDetails = CompanyDetails("Test Ltd", None, None)
-  private val testLtd = EditableItem(
-    index = 1,
-    name = "Test Ltd",
-    isDeleted = false,
-    editLink = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index = 1).url,
-    deleteLink = routes.ConfirmDeleteEstablisherController.onPageLoad(index = 1, establisherKind = EstablisherKind.Company).url
+  private val testLtd = EstablisherCompanyEntity(
+    CompanyDetailsId(1),
+    "Test Ltd",
+    false,
+    false
   )
 
   private val deletedEstablisher = personDetails.copy(isDeleted = true)

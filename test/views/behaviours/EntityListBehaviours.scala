@@ -16,14 +16,14 @@
 
 package views.behaviours
 
-import viewmodels.EditableItem
+import models.register.Entity
 import views.ViewSpecBase
 
-trait EditableItemListBehaviours {
+trait EntityListBehaviours {
   this: ViewSpecBase =>
 
   // scalastyle:off method.length
-  def editableItemList(emptyView: View, nonEmptyView: View, items: Seq[EditableItem]): Unit = {
+  def entityList(emptyView: View, nonEmptyView: View, items: Seq[Entity[_]]): Unit = {
     "behave like a list of items" must {
       "not show the list if there are no items" in {
         val doc = asDocument(emptyView())
@@ -43,7 +43,7 @@ trait EditableItemListBehaviours {
       "display the correct details for each person" in {
         val doc = asDocument(nonEmptyView())
         items.foreach { item =>
-          val name = doc.select(s"#${item.id}")
+          val name = doc.select(s"#person-${item.index}")
           name.size mustBe 1
           name.first.text mustBe item.name
         }
@@ -52,7 +52,7 @@ trait EditableItemListBehaviours {
       "display the delete link for each person" in {
         val doc = asDocument(nonEmptyView())
         items.foreach { item =>
-          val link = doc.select(s"#${item.deleteLinkId}")
+          val link = doc.select(s"#person-${item.index}-delete")
           link.size mustBe 1
           link.first.text mustBe messages("site.delete")
           link.first.attr("href") mustBe item.deleteLink
@@ -62,7 +62,7 @@ trait EditableItemListBehaviours {
       "display the edit link for each person" in {
         val doc = asDocument(nonEmptyView())
         items.foreach { item =>
-          val link = doc.select(s"#${item.editLinkId}")
+          val link = doc.select(s"#person-${item.index}-edit")
           link.size mustBe 1
           link.first.text mustBe messages("site.edit")
           link.first.attr("href") mustBe item.editLink

@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package viewmodels
+package identifiers.register.establishers.company.director
 
-import identifiers.register.establishers.individual.EstablisherDetailsId
-import models.requests.DataRequest
-import play.api.mvc.AnyContent
+import identifiers.TypedIdentifier
+import play.api.libs.json.JsPath
 
-import scala.language.implicitConversions
-
-//noinspection MutatorLikeMethodIsParameterless
-case class EditableItem(index:Int,  name: String, isDeleted:Boolean , editLink: String, deleteLink: String) {
-  def deleteLinkId: String = s"$id-delete"
-
-  def editLinkId: String = s"$id-edit"
-
-  def id: String = s"person-$index"
-
-  def isComplete(implicit request: DataRequest[AnyContent]): Option[Boolean] = EstablisherDetailsId.isComplete(index)
+case class IsDirectorCompleteId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = JsPath \ DirectorId(establisherIndex, directorIndex) \ IsDirectorCompleteId.toString
 }
+
+object IsDirectorCompleteId {
+  override def toString: String = "isDirectorComplete"
+}
+
+
+

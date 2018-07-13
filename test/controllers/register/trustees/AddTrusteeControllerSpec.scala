@@ -25,9 +25,8 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
+import models.register._
 import models.register.trustees.TrusteeKind
-import models.register.trustees.TrusteeKind.{Company, Individual}
-import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -35,7 +34,6 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
 import utils.FakeNavigator
-import viewmodels.EditableItem
 import views.html.register.trustees.addTrustee
 
 class AddTrusteeControllerSpec extends ControllerSpecBase {
@@ -54,9 +52,10 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   val formProvider = new AddTrusteeFormProvider()
   val schemeName = "Test Scheme Name"
 
-  lazy val trusteeCompanyA: EditableItem = EditableItem(0, "Trustee Company A", false, editTrusteeCompanyRoute(0), deleteTrusteeRoute(0, Company))
-  lazy val trusteeCompanyB: EditableItem = EditableItem(1, "Trustee Company B", false, editTrusteeCompanyRoute(1), deleteTrusteeRoute(1, Company))
-  lazy val trusteeIndividual: EditableItem = EditableItem(2, "Trustee Individual", false, editTrusteeIndividualRoute(2), deleteTrusteeRoute(2, Individual))
+  lazy val trusteeCompanyA: TrusteeCompanyEntity = TrusteeCompanyEntity(CompanyDetailsId(0), "Trustee Company A", isDeleted = false, isCompleted = false)
+  lazy val trusteeCompanyB: TrusteeCompanyEntity = TrusteeCompanyEntity(CompanyDetailsId(1), "Trustee Company B", isDeleted = false, isCompleted = false)
+  lazy val trusteeIndividual: TrusteeIndividualEntity = TrusteeIndividualEntity(TrusteeDetailsId(2), "Trustee Individual",
+    isDeleted = false, isCompleted = false)
 
   lazy val allTrustees = Seq(trusteeCompanyA, trusteeCompanyB, trusteeIndividual)
 
@@ -83,7 +82,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
     new AddTrusteeController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form, trustees: Seq[EditableItem] = Seq.empty): String =
+  def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
     addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages).toString
 
   val testAnswer = "answer"
