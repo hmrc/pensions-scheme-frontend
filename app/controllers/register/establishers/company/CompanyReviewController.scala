@@ -20,16 +20,15 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.company.director.DirectorDetailsId
-import identifiers.register.establishers.company.{CompanyDetailsId, CompanyReviewId}
+import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.company.{CompanyDetailsId, CompanyReviewId, IsCompanyCompleteId}
 import javax.inject.Inject
-import models.register.establishers.company.director.DirectorDetails
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
 import utils.annotations.EstablishersCompany
+import utils.{Navigator, SectionComplete}
 import views.html.register.establishers.company.companyReview
 
 import scala.concurrent.Future
@@ -39,7 +38,8 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
                                         @EstablishersCompany navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction) extends FrontendController with I18nSupport with Retrievals {
+                                        requireData: DataRequiredAction,
+                                        sectionComplete: SectionComplete) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
@@ -51,9 +51,19 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers))
+      val allDirectorsCompleted = request.userAnswers.allDirectorsAfterDelete(index).count(!_.isCompleted) == 0
+      val isCompanyComplete = request.userAnswers.get(IsCompanyCompleteId(index)).getOrElse(false)
+
+      if (allDirectorsCompleted & isCompanyComplete) {
+        sectionComplete.setComplete(IsEstablisherCompleteId(index), request.userAnswers).map { _ =>
+          Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers))
+        }
+      }
+      else {
+          Future.successful(Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers)))
+      }
   }
 
 }

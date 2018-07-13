@@ -21,7 +21,7 @@ import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.IsEstablisherCompleteId
-import identifiers.register.establishers.company.{CheckYourAnswersId, CompanyDetailsId, CompanyRegistrationNumberId}
+import identifiers.register.establishers.company.{CheckYourAnswersId, CompanyDetailsId, CompanyRegistrationNumberId, IsCompanyCompleteId}
 import javax.inject.Inject
 import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -77,7 +77,7 @@ class CheckYourAnswersController @Inject()(
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      sectionComplete.setComplete(IsEstablisherCompleteId(index), request.userAnswers).map { _ =>
+      sectionComplete.setComplete(IsCompanyCompleteId(index), request.userAnswers).map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))
       }
   }

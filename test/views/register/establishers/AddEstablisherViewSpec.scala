@@ -64,11 +64,11 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
 
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
-  private def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty,
+  private def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty, false,
     schemeName)(fakeRequest, messages)
 
   private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, establishers, schemeName)(fakeRequest, messages)
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers, false, schemeName)(fakeRequest, messages)
 
   override lazy val app = new GuiceApplicationBuilder().configure(
     "features.is-complete" -> true

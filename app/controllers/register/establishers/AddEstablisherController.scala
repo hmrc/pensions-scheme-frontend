@@ -21,9 +21,12 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
-import identifiers.register.establishers.AddEstablisherId
+import identifiers.register.establishers.{AddEstablisherId, IsEstablisherCompleteId}
+import identifiers.register.establishers.company.CompanyDetailsId
 import javax.inject.Inject
 import models.Mode
+import models.register.Establisher
+import models.requests.DataRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -47,8 +50,18 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       retrieveSchemeName {
         schemeName =>
           val establishers = request.userAnswers.allEstablishersAfterDelete
-          Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
-            establishers, schemeName)))
+          Future.successful(
+            Ok(
+              addEstablisher(
+                appConfig,
+                formProvider(establishers),
+                mode,
+                establishers,
+                disableSubmission(establishers, appConfig),
+                schemeName
+              )
+            )
+          )
       }
   }
 
@@ -59,11 +72,26 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
           val establishers = request.userAnswers.allEstablishersAfterDelete
           formProvider(establishers).bindFromRequest().fold(
             formWithErrors =>
-              Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
-                establishers, schemeName))),
+              Future.successful(
+                BadRequest(
+                  addEstablisher(
+                    appConfig,
+                    formWithErrors,
+                    mode,
+                    establishers,
+                    disableSubmission(establishers, appConfig),
+                    schemeName
+                  )
+                )
+              ),
             value =>
               Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers)))
           )
       }
+  }
+
+  def disableSubmission(establishers: Seq[Establisher[_]], appConfig: FrontendAppConfig)(implicit request: DataRequest[AnyContent]): Boolean = {
+    appConfig.completeFlagEnabled &
+      establishers.exists(!_.isCompleted)
   }
 }

@@ -21,11 +21,14 @@
 @import utils.Constants._
 @import models.register.Establisher
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establishers: Seq[Establisher[_]], schemeName: String)(implicit request: Request[_], messages: Messages)
-
-@disableSubmission = @{
-        appConfig.completeFlagEnabled & establishers.exists(!_.isCompleted)
-}
+@(
+    appConfig: FrontendAppConfig,
+    form: Form[_],
+    mode: Mode,
+    establishers: Seq[Establisher[_]],
+    disableSubmission: Boolean,
+    schemeName: String
+)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__establishers__add__title"),

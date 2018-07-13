@@ -19,6 +19,7 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.company.IsCompanyCompleteId
 import models.{CheckMode, Index}
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -105,11 +106,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "mark establisher as complete on submit" in {
+    "mark company as complete on submit" in {
       val result = controller().onSubmit(index)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
-      FakeSectionComplete.verify(IsEstablisherCompleteId(index), true)
+      FakeSectionComplete.verify(IsCompanyCompleteId(index), true)
     }
   }
 
