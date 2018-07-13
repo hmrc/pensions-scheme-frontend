@@ -16,6 +16,7 @@
 
 package views.register.establishers.company
 
+import config.FrontendAppConfig
 import controllers.register.establishers.company.routes
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
 import identifiers.register.establishers.company.director.DirectorDetailsId
@@ -24,6 +25,8 @@ import models.register.DirectorEntity
 import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import play.api.data.Form
+
+import play.api.inject.Injector
 import play.api.inject.guice.GuiceApplicationBuilder
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.establishers.company.addCompanyDirectors

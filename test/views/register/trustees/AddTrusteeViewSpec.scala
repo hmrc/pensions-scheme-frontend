@@ -16,6 +16,7 @@
 
 package views.register.trustees
 
+import config.FrontendAppConfig
 import controllers.register.trustees.routes
 import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.trustees.company.CompanyDetailsId
@@ -25,6 +26,7 @@ import models.register.{Trustee, TrusteeIndividualEntity}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
+import play.api.inject.Injector
 import play.api.inject.guice.GuiceApplicationBuilder
 import utils.UserAnswers
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
