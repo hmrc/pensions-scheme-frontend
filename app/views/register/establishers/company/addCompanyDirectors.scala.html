@@ -41,7 +41,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__addCompanyDirectors__heading", secondaryHeaderKey=Some(companyName))
+        @components.headingDynamic(headingKey=messages("messages__addCompanyDirectors__heading"), secondaryHeaderKey = Some(components.hyphen(companyName).toString))
 
         @if(directors.isEmpty) {
             @components.paragraph_text(messages("messages__addCompanyDirectors_lede"))
