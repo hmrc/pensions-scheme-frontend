@@ -28,7 +28,6 @@ import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.CompanyDetails
 import models.person.PersonDetails
-import models.register.establishers.company.director.DirectorDetails
 import models.register.{AdviserDetails, SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
@@ -104,7 +103,7 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
             CompanyDetails("test company name", Some("123456"), Some("abcd")),
           "director" -> Json.arr(
             Json.obj(
-              DirectorDetailsId.toString -> DirectorDetails("first", Some("middle"), "last",
+              DirectorDetailsId.toString -> PersonDetails("first", Some("middle"), "last",
                 new LocalDate(1990, 2, 2))
             )
           )

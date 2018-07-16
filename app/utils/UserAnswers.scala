@@ -27,7 +27,7 @@ import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteesId}
 import models.CompanyDetails
 import models.person.PersonDetails
 import models.register._
-import models.register.establishers.company.director.DirectorDetails
+import models.{CompanyDetails, Index, NormalMode}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -153,12 +153,12 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   def allDirectors(establisherIndex: Int): Seq[DirectorEntity] = {
-    getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
+    getAllRecursive[PersonDetails](DirectorDetailsId.collectionPath(establisherIndex)).map {
       details =>
         details.map { director =>
           val directorIndex = details.indexOf(director)
           val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
-          DirectorEntity(DirectorDetailsId(establisherIndex, directorIndex), director.directorName, director.isDeleted, isComplete)
+          DirectorEntity(DirectorDetailsId(establisherIndex, directorIndex), director.fullName, director.isDeleted, isComplete)
         }
     }.getOrElse(Seq.empty)
   }

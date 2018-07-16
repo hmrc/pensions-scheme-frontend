@@ -17,7 +17,7 @@
 package views.register.establishers.company.director
 
 import forms.register.establishers.company.director.DirectorAddressYearsFormProvider
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.{AddressYears, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -30,7 +30,7 @@ class DirectorAddressYearsViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "director_address_years"
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
-  val director = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
+  val director = PersonDetails("first", Some("middle"), "last", LocalDate.now())
 
   val form = new DirectorAddressYearsFormProvider()()
 
@@ -40,7 +40,7 @@ class DirectorAddressYearsViewSpec extends ViewBehaviours {
     NormalMode,
     establisherIndex,
     directorIndex,
-    director.directorName
+    director.fullName
   )(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorAddressYears(
@@ -49,13 +49,13 @@ class DirectorAddressYearsViewSpec extends ViewBehaviours {
     NormalMode,
     establisherIndex,
     directorIndex,
-    director.directorName
+    director.fullName
   )(fakeRequest, messages)
 
   "CompanyDirectorAddressYears view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithSecondaryHeader(createView, director.directorName)
+    behave like pageWithSecondaryHeader(createView, director.fullName)
 
     behave like pageWithBackLink(createView)
   }

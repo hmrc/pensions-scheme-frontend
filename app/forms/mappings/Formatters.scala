@@ -29,13 +29,31 @@ trait Formatters {
   private[mappings] def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
-      data.get(key) match {
-        case None | Some("") => Left(Seq(FormError(key, errorKey)))
-        case Some(s) => Right(s)
-      }
+      data
+        .get(key)
+        .map(standardiseText)
+        .filter(_.lengthCompare(0) > 0)
+        .toRight(Seq(FormError(key, errorKey)))
 
     override def unbind(key: String, value: String): Map[String, String] =
       Map(key -> value)
+  }
+
+  private[mappings] val optionalStringFormatter: Formatter[Option[String]] = new Formatter[Option[String]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
+      Right(
+        data
+          .get(key)
+          .map(standardiseText)
+          .filter(_.lengthCompare(0) > 0)
+      )
+
+    override def unbind(key: String, value: Option[String]): Map[String, String] =
+      Map(key -> value.getOrElse(""))
+  }
+
+  private def standardiseText(s: String): String = {
+    s.replaceAll("""\s{1,}""", " ").trim
   }
 
   private[mappings] def booleanFormatter(requiredKey: String, invalidKey: String): Formatter[Boolean] =

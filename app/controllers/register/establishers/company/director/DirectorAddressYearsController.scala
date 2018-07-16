@@ -47,7 +47,7 @@ class DirectorAddressYearsController @Inject()(
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { directorDetails =>
-        get(DirectorAddressYearsId(establisherIndex, directorIndex), form, viewModel(mode, establisherIndex, directorIndex, directorDetails.directorName))
+        get(DirectorAddressYearsId(establisherIndex, directorIndex), form, viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName))
       }
   }
 
@@ -58,7 +58,7 @@ class DirectorAddressYearsController @Inject()(
           DirectorAddressYearsId(establisherIndex, directorIndex),
           mode,
           form,
-          viewModel(mode, establisherIndex, directorIndex, directorDetails.directorName)
+          viewModel(mode, establisherIndex, directorIndex, directorDetails.fullName)
         )
       }
   }

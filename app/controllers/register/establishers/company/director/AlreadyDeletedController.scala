@@ -44,7 +44,7 @@ class AlreadyDeletedController @Inject()(
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
         case details =>
-            Future.successful(Ok(alreadyDeleted(appConfig, vm(establisherIndex, details.directorName))))
+            Future.successful(Ok(alreadyDeleted(appConfig, vm(establisherIndex, details.fullName))))
           }
 
   }

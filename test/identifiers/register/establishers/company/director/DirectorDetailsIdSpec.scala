@@ -19,7 +19,7 @@ package identifiers.register.establishers.company.director
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, OtherDirectorsId}
 import models.CompanyDetails
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
@@ -31,19 +31,19 @@ class DirectorDetailsIdSpec extends WordSpec with MustMatchers with OptionValues
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails("TestCompanyName", Some("123456"), Some("abcd")),
     "director" -> Json.arr(
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("John", None, "One", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("John", None, "Two", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("John", None, "Three", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("John", None, "Four", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("John", None, "Five", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("John", None, "Six", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("John", None, "Seven", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("John", None, "Eight", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("John", None, "Nine", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("Tim", None, "Ten", LocalDate.now(), isDeleted = true)),
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("Tim", None, "Eleven", LocalDate.now(), isDeleted = true)),
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("Tim", None, "Twelve", LocalDate.now(), isDeleted = true)),
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("John", None, "Thirteen", LocalDate.now()))
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "One", LocalDate.now())),
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Two", LocalDate.now())),
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Three", LocalDate.now())),
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Four", LocalDate.now())),
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Five", LocalDate.now())),
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Six", LocalDate.now())),
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Seven", LocalDate.now())),
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Eight", LocalDate.now())),
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Nine", LocalDate.now())),
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("Tim", None, "Ten", LocalDate.now(), isDeleted = true)),
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("Tim", None, "Eleven", LocalDate.now(), isDeleted = true)),
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("Tim", None, "Twelve", LocalDate.now(), isDeleted = true)),
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Thirteen", LocalDate.now()))
     )
   ))))
 
@@ -52,7 +52,7 @@ class DirectorDetailsIdSpec extends WordSpec with MustMatchers with OptionValues
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails("TestCompanyName", Some("123456"), Some("abcd")),
         "director" -> Json.arr(
-      Json.obj(DirectorDetailsId.toString -> DirectorDetails("John", None, "One", LocalDate.now()))
+      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "One", LocalDate.now()))
     )
   ))))
 

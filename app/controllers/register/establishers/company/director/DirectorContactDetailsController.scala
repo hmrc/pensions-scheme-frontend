@@ -46,7 +46,7 @@ class DirectorContactDetailsController @Inject()(
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
         director =>
-          get(DirectorContactDetailsId(establisherIndex, directorIndex), form, viewmodel(mode, establisherIndex, directorIndex, director.directorName))
+          get(DirectorContactDetailsId(establisherIndex, directorIndex), form, viewmodel(mode, establisherIndex, directorIndex, director.fullName))
       }
   }
 
@@ -54,7 +54,7 @@ class DirectorContactDetailsController @Inject()(
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
         director =>
-          post(DirectorContactDetailsId(establisherIndex, directorIndex), mode, form, viewmodel(mode, establisherIndex, directorIndex, director.directorName))
+          post(DirectorContactDetailsId(establisherIndex, directorIndex), mode, form, viewmodel(mode, establisherIndex, directorIndex, director.fullName))
       }
   }
 

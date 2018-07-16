@@ -20,10 +20,8 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyReviewId}
 import javax.inject.Inject
-import models.register.establishers.company.director.DirectorDetails
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
