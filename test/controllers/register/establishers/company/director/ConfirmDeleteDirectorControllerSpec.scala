@@ -21,16 +21,16 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
-import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyCompleteId}
+import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import models.register.{SchemeDetails, SchemeType}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.register.establishers.company.director.DirectorDetails
+import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.libs.json._
-import utils.{FakeNavigator, FakeSectionComplete}
 import play.api.test.Helpers._
+import utils.{FakeNavigator, FakeSectionComplete}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {

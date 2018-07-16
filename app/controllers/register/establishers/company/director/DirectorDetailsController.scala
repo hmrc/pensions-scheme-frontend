@@ -25,31 +25,33 @@ import controllers.actions._
 import config.FrontendAppConfig
 import controllers.Retrievals
 import forms.register.establishers.company.director.DirectorDetailsFormProvider
+import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.DirectorDetailsId
+import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId}
 import models.register.establishers.company.director.DirectorDetails
-import models.{Index, Mode}
+import models.{Index, Mode, NormalMode}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.company.director.directorDetails
 
 import scala.concurrent.Future
 
-class DirectorDetailsController @Inject() (
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        @EstablishersCompanyDirector navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: DirectorDetailsFormProvider
-                                      ) extends FrontendController with Retrievals with I18nSupport {
+class DirectorDetailsController @Inject()(
+                                           appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           dataCacheConnector: DataCacheConnector,
+                                           @EstablishersCompanyDirector navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           formProvider: DirectorDetailsFormProvider,
+                                           sectionComplete: SectionComplete
+                                         ) extends FrontendController with Retrievals with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode,establisherIndex:Index, directorIndex:Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
@@ -61,17 +63,29 @@ class DirectorDetailsController @Inject() (
         }
     }
 
-  def onSubmit(mode: Mode,establisherIndex:Index,directorIndex:Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex,companyDetails.companyName)))
+              Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, companyDetails.companyName)))
             ,
             (value) =>
-              dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
-                Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, new UserAnswers(cacheMap))))
+              dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).flatMap {
+                cacheMap =>
+                  val userAnswers = new UserAnswers(cacheMap)
+                  val allDirectors = request.userAnswers.allDirectorsAfterDelete(establisherIndex)
+                  val allDirectorsCompleted = allDirectors.count(_.isCompleted) == allDirectors.size
+
+                  if (allDirectorsCompleted) {
+                    Future.successful(Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers)))
+                  } else {
+                    sectionComplete.setCompleteFlag(IsEstablisherCompleteId(establisherIndex), request.userAnswers, false).map { _ =>
+                      Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers))
+                    }
+                  }
+              }
           )
         }
     }

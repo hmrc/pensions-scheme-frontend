@@ -30,7 +30,7 @@ import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.{FakeNavigator, FakeSectionComplete}
 import views.html.register.establishers.company.director.directorDetails
 
 //scalastyle:off magic.number
@@ -57,7 +57,8 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider)
+      formProvider,
+      FakeSectionComplete)
 
   def viewAsString(form: Form[_] = form): String = directorDetails(
     frontendAppConfig,
