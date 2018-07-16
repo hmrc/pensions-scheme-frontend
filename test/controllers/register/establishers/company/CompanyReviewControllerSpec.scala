@@ -99,6 +99,24 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
       FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
     }
+
+    "not set establisher as complete when company is complete but directors are not present" in {
+      FakeSectionComplete.reset()
+      val validData: JsObject = Json.obj(
+        SchemeDetailsId.toString ->
+          SchemeDetails(schemeName, SchemeType.SingleTrust),
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            CompanyDetailsId.toString -> companyDetails,
+            IsCompanyCompleteId.toString -> true
+          )
+        )
+      )
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val result = controller(getRelevantData).onSubmit(index)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      FakeSectionComplete.verifyNot(IsEstablisherCompleteId(0))
+    }
   }
 }
 

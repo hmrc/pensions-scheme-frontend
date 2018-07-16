@@ -43,7 +43,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      (SchemeDetailsId and CompanyDetailsId(index)).retrieve.right.map{
+      (SchemeDetailsId and CompanyDetailsId(index)).retrieve.right.map {
         case schemeDetails ~ companyDetails =>
           val directors: Seq[String] = request.userAnswers.allDirectorsAfterDelete(index).map(_.name)
 
@@ -53,7 +53,9 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val allDirectorsCompleted = request.userAnswers.allDirectorsAfterDelete(index).count(!_.isCompleted) == 0
+      val allDirectors = request.userAnswers.allDirectorsAfterDelete(index)
+      val allDirectorsCompleted = allDirectors.nonEmpty & (allDirectors.count(!_.isCompleted) == 0)
+
       val isCompanyComplete = request.userAnswers.get(IsCompanyCompleteId(index)).getOrElse(false)
 
       if (allDirectorsCompleted & isCompanyComplete) {
