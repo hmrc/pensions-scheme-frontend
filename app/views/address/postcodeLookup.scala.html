@@ -41,12 +41,12 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(headingKey = viewmodel.heading, secondaryHeaderKey = viewmodel.subHeading)
+        @components.headingDynamic(headingKey=messages(viewmodel.heading), secondaryHeaderKey = viewmodel.subHeading.map{components.hyphen(_).toString})
+
 
         @viewmodel.hint.map{ hint =>
             <p>@hint.resolve</p>
         }
-
         <p>@Html(viewmodel.enterPostcode.withArgs(openLink, closeLink))</p>
 
         @components.input_text(
