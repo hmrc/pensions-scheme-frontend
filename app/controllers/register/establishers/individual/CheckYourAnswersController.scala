@@ -63,7 +63,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      sectionComplete.setComplete(IsEstablisherCompleteId(index), request.userAnswers).map { _ =>
+      sectionComplete.setCompleteFlag(IsEstablisherCompleteId(index), request.userAnswers, true).map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
       }
   }

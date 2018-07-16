@@ -24,12 +24,13 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
+import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId, DirectorId}
+import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId, DirectorId, IsDirectorCompleteId}
 import models.{Index, NormalMode}
 import play.api.mvc.{Action, AnyContent}
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 import scala.concurrent.Future
@@ -41,7 +42,8 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  @EstablishersCompanyDirector navigator: Navigator,
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
-                                                 requireData: DataRequiredAction
+                                                 requireData: DataRequiredAction,
+                                                 sectionComplete: SectionComplete
                                                ) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -71,9 +73,16 @@ class ConfirmDeleteDirectorController @Inject()(
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
         case directorDetails =>
-          dataCacheConnector.save(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true)).map {
+          dataCacheConnector.save(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true)).flatMap {
             userAnswers =>
-              Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers))
+              if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
+                sectionComplete.setCompleteFlag(IsEstablisherCompleteId(establisherIndex), request.userAnswers, false).map { _ =>
+                  Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers))
+                }
+              } else {
+                Future.successful(Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers)))
+              }
+
           }
       }
   }

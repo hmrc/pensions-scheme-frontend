@@ -31,21 +31,21 @@ import scala.concurrent._
 @ImplementedBy(classOf[SectionCompleteImpl])
 trait SectionComplete {
 
-  def setComplete(id: TypedIdentifier[Boolean], userAnswers: UserAnswers)
-                 (implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers]
+  def setCompleteFlag(id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
+                     (implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers]
 }
 
 class SectionCompleteImpl @Inject()(dataCacheConnector: DataCacheConnector, appConfig: FrontendAppConfig) extends SectionComplete {
 
-  override def setComplete(id: TypedIdentifier[Boolean], userAnswers: UserAnswers)
+  override def setCompleteFlag(id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
                           (implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers] = {
 
-    userAnswers.set(id)(true).fold(
+    userAnswers.set(id)(value).fold(
       invalid => Future.failed(JsResultException(invalid)),
       valid => Future.successful(valid)
     )
 
-    dataCacheConnector.save(request.externalId, id, true) map UserAnswers
-
+    dataCacheConnector.save(request.externalId, id, value) map UserAnswers
   }
+
 }

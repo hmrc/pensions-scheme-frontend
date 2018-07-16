@@ -27,7 +27,7 @@ import models.register.establishers.company.director.DirectorDetails
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.libs.json._
-import utils.FakeNavigator
+import utils.{FakeNavigator, FakeSectionComplete}
 import play.api.test.Helpers._
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
@@ -121,7 +121,8 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      FakeSectionComplete
     )
 
   private def viewAsString() = confirmDeleteDirector(
