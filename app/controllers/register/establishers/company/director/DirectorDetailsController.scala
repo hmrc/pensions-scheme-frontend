@@ -16,21 +16,21 @@
 
 package controllers.register.establishers.company.director
 
-import javax.inject.Inject
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
 import config.FrontendAppConfig
+import connectors.DataCacheConnector
 import controllers.Retrievals
+import controllers.actions._
 import forms.register.establishers.company.director.DirectorDetailsFormProvider
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.DirectorDetailsId
+import javax.inject.Inject
 import models.register.establishers.company.director.DirectorDetails
-import models.{Index, Mode, NormalMode}
+import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
 import utils.{Navigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.company.director.directorDetails
@@ -75,13 +75,13 @@ class DirectorDetailsController @Inject()(
               dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).flatMap {
                 cacheMap =>
                   val userAnswers = new UserAnswers(cacheMap)
-                  val allDirectors = request.userAnswers.allDirectorsAfterDelete(establisherIndex)
+                  val allDirectors = userAnswers.allDirectorsAfterDelete(establisherIndex)
                   val allDirectorsCompleted = allDirectors.count(_.isCompleted) == allDirectors.size
 
                   if (allDirectorsCompleted) {
                     Future.successful(Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers)))
                   } else {
-                    sectionComplete.setCompleteFlag(IsEstablisherCompleteId(establisherIndex), request.userAnswers, false).map { _ =>
+                    sectionComplete.setCompleteFlag(IsEstablisherCompleteId(establisherIndex), userAnswers, false).map { _ =>
                       Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers))
                     }
                   }
