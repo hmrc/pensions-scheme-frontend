@@ -32,7 +32,8 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(headingKey = "messages__establisher_individual__title", secondaryHeaderKey = Some(schemeName))
+        @components.headingDynamic(headingKey=messages("messages__establisher_individual__title"), secondaryHeaderKey = Some(components.hyphen(schemeName).toString))
+
 
         @components.person_details(form)
 
