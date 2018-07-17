@@ -16,36 +16,41 @@
 
 package views.register.establishers.company
 
-import play.api.data.Form
 import controllers.register.establishers.company.routes
 import forms.register.establishers.company.AddCompanyDirectorsFormProvider
-import views.behaviours.{EditableItemListBehaviours, YesNoViewBehaviours}
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.NormalMode
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
+import models.register.DirectorEntity
 import org.joda.time.LocalDate
-import viewmodels.EditableItem
+import play.api.Application
+import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
+import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.establishers.company.addCompanyDirectors
 
-class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemListBehaviours {
+class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
 
   private val establisherIndex = 1
   private val companyName = "MyCo Ltd"
   private val maxDirectors = frontendAppConfig.maxDirectors
 
   // scalastyle:off magic.number
-  private val johnDoe = DirectorDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
-  private val joeBloggs = DirectorDetails("Joe", None, "Bloggs", new LocalDate(1969, 7, 16))
+  private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
+  private val joeBloggs = PersonDetails("Joe", None, "Bloggs", new LocalDate(1969, 7, 16))
   // scalastyle:on magic.number
 
   val messageKeyPrefix = "addCompanyDirectors"
-  private def deleteDirectorLink(index: Int, establisherIndex: Int) = controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(establisherIndex, index).url
-  private def editDirectorLink(index: Int, establisherIndex: Int) = controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, establisherIndex, index).url
 
   val form = new AddCompanyDirectorsFormProvider()()
-  private val johnDoeEditableItem = EditableItem(0, johnDoe.directorName, false, editDirectorLink(0, 0), deleteDirectorLink(0, 0))
-  private val joeBloggsEditableItem = EditableItem(1, joeBloggs.directorName, false, editDirectorLink(1, 0), deleteDirectorLink(1, 0))
+  private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
+  private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
 
-  private def createView(directors: Seq[EditableItem] = Nil) =
+  override lazy val app: Application = new GuiceApplicationBuilder().configure(
+    "features.is-complete" -> true
+  ).build()
+
+  private def createView(directors: Seq[DirectorEntity] = Nil) =
     () =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -56,7 +61,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemL
         directors
       )(fakeRequest, messages)
 
-  private def createViewUsingForm(directors: Seq[EditableItem] = Nil) =
+  private def createViewUsingForm(directors: Seq[DirectorEntity] = Nil) =
     (form: Form[_]) =>
       addCompanyDirectors(
         frontendAppConfig,
@@ -76,7 +81,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemL
     behave like pageWithSecondaryHeader(createView(), companyName)
 
     behave like yesNoPage(
-      createViewUsingForm(Seq(johnDoeEditableItem)),
+      createViewUsingForm(Seq(johnDoeEntity)),
       messageKeyPrefix,
       routes.AddCompanyDirectorsController.onSubmit(NormalMode, 0).url,
       legendKey = "add_more",
@@ -93,6 +98,11 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemL
       doc must haveDynamicText("messages__addCompanyDirectors_lede")
     }
 
+    "do not disable the submit button if there are no directors" in {
+      val doc = asDocument(createView()())
+      doc.getElementById("submit").hasAttr("disabled") mustBe false
+    }
+
     "show the Add a Director button when there are no directors" in {
       val doc = asDocument(createView()())
       val submit = doc.select("button#submit")
@@ -100,24 +110,24 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EditableItemL
       submit.first().text() mustBe messages("messages__addCompanyDirectors_add_director")
     }
 
-    val directors: Seq[EditableItem] = Seq(johnDoeEditableItem, joeBloggsEditableItem)
+    val directors: Seq[DirectorEntity] = Seq(johnDoeEntity, joeBloggsEntity)
 
-    behave like editableItemList(createView(), createView(directors), (directors))
+    behave like entityList(createView(), createView(directors), directors, frontendAppConfig)
 
     "show the Continue button when there are directors" in {
-      val doc = asDocument(createViewUsingForm(Seq(johnDoeEditableItem))(form))
+      val doc = asDocument(createViewUsingForm(Seq(johnDoeEntity))(form))
       val submit = doc.select("button#submit")
       submit.size() mustBe 1
       submit.first().text() mustBe messages("site.save_and_continue")
     }
 
     "not show the yes no inputs if there are 10 or more directors" in {
-      val doc = asDocument(createViewUsingForm(Seq.fill(maxDirectors)(johnDoeEditableItem))(form))
+      val doc = asDocument(createViewUsingForm(Seq.fill(maxDirectors)(johnDoeEntity))(form))
       doc.select("legend > span").size() mustBe 0
     }
 
     "show the maximum number of directors message when there are 10 or more directors" in {
-      val doc = asDocument(createView(Seq.fill(maxDirectors)(johnDoeEditableItem))())
+      val doc = asDocument(createView(Seq.fill(maxDirectors)(johnDoeEntity))())
       doc must haveDynamicText("messages__addCompanyDirectors_at_maximum")
       doc must haveDynamicText("messages__addCompanyDirectors_tell_us_if_you_have_more")
     }

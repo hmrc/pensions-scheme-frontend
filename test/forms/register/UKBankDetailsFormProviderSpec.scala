@@ -58,9 +58,9 @@ class UKBankDetailsFormProviderSpec extends FormBehaviours with Constraints with
       Field("accountName", Required -> "messages__error__account_name"),
       Field("sortCode", Required -> "messages__error__sort_code"),
       Field("accountNumber", Required -> "messages__error__account_number"),
-      Field("date.day", Required -> "messages__error__date"),
-      Field("date.month", Required -> "messages__error__date"),
-      Field("date.year", Required -> "messages__error__date")
+      Field("date.day", Required -> "error.date.day_blank"),
+      Field("date.month", Required -> "error.date.month_blank"),
+      Field("date.year", Required -> "error.date.year_blank")
     )
 
     behave like formWithSortCode(

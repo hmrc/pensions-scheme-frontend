@@ -23,7 +23,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models._
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
@@ -75,9 +75,9 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 //noinspection MutatorLikeMethodIsParameterless
 object EstablishersCompanyNavigatorSpec extends OptionValues {
 
-  private val johnDoe = DirectorDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
+  private val johnDoe = PersonDetails("John", None, "Doe", new LocalDate(1862, 6, 9))
 
-  private def validData(directors: DirectorDetails*) = {
+  private def validData(directors: PersonDetails*) = {
     Json.obj(
       EstablishersId.toString -> Json.arr(
         Json.obj(

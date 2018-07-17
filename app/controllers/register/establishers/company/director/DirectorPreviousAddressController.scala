@@ -64,7 +64,7 @@ class DirectorPreviousAddressController @Inject()(
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
-              secondaryHeader = Some(director.directorName)
+              secondaryHeader = Some(director.fullName)
             )
         }
     }

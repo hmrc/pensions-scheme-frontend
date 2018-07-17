@@ -16,7 +16,7 @@
 
 package views.register.trustees.individual
 
-import forms.register.IndividualDetailsFormProvider
+import forms.register.PersonDetailsFormProvider
 import models.{Index, NormalMode}
 import models.person.PersonDetails
 import play.api.data.Form
@@ -31,7 +31,7 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   val firstIndex = Index(0)
 
-  override val form = new IndividualDetailsFormProvider()()
+  override val form = new PersonDetailsFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () => trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, "Test Scheme Name")(fakeRequest, messages)
 

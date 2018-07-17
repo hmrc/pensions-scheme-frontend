@@ -19,14 +19,14 @@ package identifiers.register.establishers.company.director
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.OtherDirectorsId
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 
-case class DirectorDetailsId(establisherIndex:Int,directorIndex:Int) extends TypedIdentifier[DirectorDetails] {
+case class DirectorDetailsId(establisherIndex:Int,directorIndex:Int) extends TypedIdentifier[PersonDetails] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorDetailsId.toString
 
-  override def cleanup(value: Option[DirectorDetails], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+  override def cleanup(value: Option[PersonDetails], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.allDirectorsAfterDelete(this.establisherIndex).lengthCompare(10) match {
       case lengthCompare if lengthCompare <= 0 => userAnswers.remove(OtherDirectorsId(this.establisherIndex))
       case _ => super.cleanup(value, userAnswers)

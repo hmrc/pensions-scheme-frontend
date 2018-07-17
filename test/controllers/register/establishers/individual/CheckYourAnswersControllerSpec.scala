@@ -18,6 +18,7 @@ package controllers.register.establishers.individual
 
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.ControllerSpecBase
+import identifiers.register.establishers.IsEstablisherCompleteId
 import models.{CheckMode, Index}
 import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, redirectLocation, status}
@@ -58,6 +59,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       checkYourAnswersFactory,
+      FakeSectionComplete,
       new FakeNavigator(onwardRoute)
     )
 
@@ -89,6 +91,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "mark establisher as complete on submit" in {
+      val result = controller().onSubmit(firstIndex)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+      FakeSectionComplete.verify(IsEstablisherCompleteId(firstIndex), true)
     }
 
   }

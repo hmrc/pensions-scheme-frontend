@@ -28,7 +28,7 @@ import forms.address.AddressFormProvider
 import identifiers.register.adviser.AdviserAddressId
 import models.NormalMode
 import models.address.Address
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -50,7 +50,7 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
   val year: Int = LocalDate.now().getYear
 
   val date = new LocalDate(year, month, day)
-  val director = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
+  val director = PersonDetails("first", Some("middle"), "last", LocalDate.now())
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))

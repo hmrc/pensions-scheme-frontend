@@ -20,15 +20,17 @@ import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import models.register.establishers.company.director.DirectorDetails
+import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import models.person.PersonDetails
+import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.libs.json._
-import utils.FakeNavigator
 import play.api.test.Helpers._
+import utils.{FakeNavigator, FakeSectionComplete}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
@@ -81,6 +83,29 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
+
+    "set the establisher as not complete when directors are deleted" in {
+      FakeSectionComplete.reset()
+      val validData: JsObject = Json.obj(
+        SchemeDetailsId.toString ->
+          SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
+            "director" -> Json.arr(
+              Json.obj(
+                DirectorDetailsId.toString ->
+                  PersonDetails("John", None, "Doe", LocalDate.now(), true)
+              )
+            )
+          )
+        )
+      )
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+      val result = controller(getRelevantData).onSubmit(establisherIndex, directorIndex)(fakeRequest)
+      status(result) mustBe SEE_OTHER
+      FakeSectionComplete.verify(IsEstablisherCompleteId(0), false)
+    }
   }
 
 }
@@ -93,9 +118,9 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
   private val directorName = "John Doe"
   private lazy val postCall = routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex)
   private lazy val cancelCall = AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
-  private val directorDetails = DirectorDetails("John", None, "Doe", LocalDate.now(), false)
+  private val directorDetails = PersonDetails("John", None, "Doe", LocalDate.now(), false)
 
-  private def testData(directors: DirectorDetails = directorDetails) = Json.obj(
+  private def testData(directors: PersonDetails = directorDetails) = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
@@ -109,7 +134,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
     )
   )
 
-  val directorDeleted = directorDetails.copy(isDeleted = true)
+  val directorDeleted: PersonDetails = directorDetails.copy(isDeleted = true)
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
@@ -121,7 +146,8 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl
+      new DataRequiredActionImpl,
+      FakeSectionComplete
     )
 
   private def viewAsString() = confirmDeleteDirector(

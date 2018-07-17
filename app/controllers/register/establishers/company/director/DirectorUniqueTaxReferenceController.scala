@@ -52,9 +52,9 @@ class DirectorUniqueTaxReferenceController @Inject()(
     implicit request =>
       DirectorDetailsId(establisherIndex,directorIndex).retrieve.right.flatMap { director =>
         DirectorUniqueTaxReferenceId(establisherIndex, directorIndex).retrieve.right.map{ value =>
-          Future.successful(Ok(directorUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, directorIndex, director.directorName)))
+          Future.successful(Ok(directorUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, directorIndex, director.fullName)))
         }.left.map{ _ =>
-          Future.successful(Ok(directorUniqueTaxReference(appConfig, form, mode, establisherIndex, directorIndex, director.directorName)))
+          Future.successful(Ok(directorUniqueTaxReference(appConfig, form, mode, establisherIndex, directorIndex, director.fullName)))
         }
       }
   }
@@ -65,7 +65,7 @@ class DirectorUniqueTaxReferenceController @Inject()(
       DirectorDetailsId(establisherIndex,directorIndex).retrieve.right.map { director =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, directorIndex,director.directorName))),
+            Future.successful(BadRequest(directorUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, directorIndex,director.fullName))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,
