@@ -16,34 +16,27 @@
 
 package views.register.establishers
 
-import controllers.register.establishers.routes
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models.person.PersonDetails
+import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import utils.UserAnswers
-import viewmodels.EditableItem
-import views.behaviours.{EditableItemListBehaviours, QuestionViewBehaviours}
+import views.behaviours.{EntityListBehaviours, QuestionViewBehaviours}
 import views.html.register.establishers.addEstablisher
 
-class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] with EditableItemListBehaviours {
-
-  private val onwardRoute = routes.AddEstablisherController.onPageLoad(NormalMode).url
+class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] with EntityListBehaviours {
 
   private def companyUrl(index: Int) = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index).url
-
-  private def individualUrl(index: Int) = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url
 
   private val messageKeyPrefix = "establishers__add"
 
   private val schemeName = "Test scheme name"
-
-  private val establisherCompany = "Establisher Company" -> companyUrl(0)
-  private val establisherIndividual = "John Doe" -> individualUrl(0)
 
   private val companyDetails = CompanyDetails(
     "Establisher Company",
@@ -65,18 +58,22 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
       .asOpt
       .value
 
-  private val establishers = userAnswers.allEstablishers
+  private val johnDoe = EstablisherIndividualEntity(EstablisherDetailsId(0), "John Doe", false, false)
+  private val testCompany = EstablisherCompanyEntity(CompanyDetailsId(1), "Establisher Company", false, true)
+
+  private val establishers = Seq(johnDoe, testCompany)
 
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
   private def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty,
     schemeName)(fakeRequest, messages)
 
-  private def createView(establishers: Seq[EditableItem] = Seq.empty): () => HtmlFormat.Appendable = () =>
+  private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
     addEstablisher(frontendAppConfig, form, NormalMode, establishers, schemeName)(fakeRequest, messages)
 
-  private def createViewUsingForm(establishers: Seq[EditableItem] = Seq.empty): Form[Boolean] => HtmlFormat.Appendable = (form: Form[Boolean]) =>
-    addEstablisher(frontendAppConfig, form, NormalMode, establishers, schemeName)(fakeRequest, messages)
+  override lazy val app = new GuiceApplicationBuilder().configure(
+    "features.is-complete" -> true
+  ).build()
 
   "AddEstablisher view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
@@ -96,9 +93,14 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
         val doc = asDocument(createView())
         doc must haveDynamicText("messages__establishers__add_hint")
       }
+
+      "do not disable the submit button" in {
+        val doc = asDocument(createView())
+        doc.getElementById("submit").hasAttr("disabled") mustBe false
+      }
     }
 
-    behave like editableItemList(createView(), createView(establishers), establishers)
+    behave like entityList(createView(), createView(establishers), establishers, frontendAppConfig)
 
     "display all the partially added establisher names with yes/No buttons" in {
       val doc = asDocument(createView(establishers)())

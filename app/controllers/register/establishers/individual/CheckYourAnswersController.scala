@@ -16,30 +16,32 @@
 
 package controllers.register.establishers.individual
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.individual.{CheckYourAnswersId, UniqueTaxReferenceId}
+import javax.inject.Inject
 import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{CheckYourAnswersFactory, Navigator}
+import utils.annotations.EstablishersIndividual
+import utils.checkyouranswers.Ops._
+import utils.{CheckYourAnswersFactory, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
-import utils.checkyouranswers.Ops._
-import utils.annotations.EstablishersIndividual
 
 import scala.concurrent.Future
 
-class CheckYourAnswersController @Inject() (appConfig: FrontendAppConfig,
-                                            override val messagesApi: MessagesApi,
-                                            authenticate: AuthAction,
-                                            getData: DataRetrievalAction,
-                                            requiredData: DataRequiredAction,
-                                            checkYourAnswersFactory: CheckYourAnswersFactory,
-                                            @EstablishersIndividual navigator: Navigator) extends FrontendController with Retrievals with I18nSupport {
+class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requiredData: DataRequiredAction,
+                                           checkYourAnswersFactory: CheckYourAnswersFactory,
+                                           sectionComplete: SectionComplete,
+                                           @EstablishersIndividual navigator: Navigator) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
@@ -59,9 +61,11 @@ class CheckYourAnswersController @Inject() (appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData) {
+  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
+      sectionComplete.setCompleteFlag(IsEstablisherCompleteId(index), request.userAnswers, true).map { _ =>
+        Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
+      }
   }
 
 }

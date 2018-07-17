@@ -14,25 +14,26 @@
  * limitations under the License.
  *@
 
-@import viewmodels.EditableItem
-@(items: Seq[EditableItem])(implicit messages: Messages)
+@import models.register.Entity
+
+@(items: Seq[Entity[_]])(implicit messages: Messages)
 
 <div class="form-group">
     <ul id="items" class="govuk-check-your-answers form-group cya-questions-long">
         @for(item <- items) {
         <li>
             <div class="cya-question">
-                <h2 id="@item.id" class="bold std-text">@item.name</h2>
+                <h2 id="person-@{item.index}" class="bold std-text">@item.name</h2>
             </div>
 
             <div class="cya-change">
-                <a id="@item.deleteLinkId" href="@item.deleteLink">
+                <a id="person-@{item.index}-delete" href="@item.deleteLink">
                     @messages("site.delete")
                 </a>
             </div>
 
             <div class="cya-change">
-                <a id="@item.editLinkId" href="@item.editLink">
+                <a id="person-@{item.index}-edit" href="@item.editLink">
                     @messages("site.edit")
                 </a>
             </div>

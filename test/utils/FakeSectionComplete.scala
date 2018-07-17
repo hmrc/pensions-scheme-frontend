@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers
+package utils
 
+import connectors.FakeDataCacheConnector
 import identifiers.TypedIdentifier
-import play.api.libs.json.JsPath
+import models.requests.DataRequest
+import play.api.mvc.AnyContent
+import uk.gov.hmrc.http.HeaderCarrier
 
-case class IsEstablisherCompleteId(index: Int) extends TypedIdentifier[Boolean] {
-  override def path: JsPath = EstablishersId(index).path \ IsEstablisherCompleteId.toString
-}
+import scala.concurrent.{ExecutionContext, Future}
 
-object IsEstablisherCompleteId {
-  override def toString: String = "isEstablisherComplete"
+object FakeSectionComplete extends SectionComplete with FakeDataCacheConnector {
+
+  override def setCompleteFlag(id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean = true)
+                              (implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers] = {
+    save("cacheId", id, value) map UserAnswers
+  }
+
 }

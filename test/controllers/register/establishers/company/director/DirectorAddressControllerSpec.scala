@@ -28,7 +28,7 @@ import forms.address.AddressFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorDetailsId}
 import models.address.Address
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
@@ -55,7 +55,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
   val year: Int = LocalDate.now().getYear
 
   val date = new LocalDate(year, month, day)
-  val director = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
+  val director = PersonDetails("first", Some("middle"), "last", LocalDate.now())
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
@@ -101,7 +101,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
             countryOptions.options,
             Message(controller.title),
             Message(controller.heading),
-            secondaryHeader = Some(director.directorName),
+            secondaryHeader = Some(director.fullName),
             Some(Message(controller.hint))
           )
 
@@ -205,7 +205,7 @@ class DirectorAddressControllerSpec extends ControllerSpecBase with MockitoSugar
                 AddressEvent(
                   FakeAuthAction.externalId,
                   AddressAction.LookupChanged,
-                  s"Company Director Address: ${director.directorName}",
+                  s"Company Director Address: ${director.fullName}",
                   address
                 )
               )

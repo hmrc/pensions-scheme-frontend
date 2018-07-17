@@ -19,7 +19,7 @@ package controllers.register.trustees.individual
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.IndividualDetailsFormProvider
+import forms.register.PersonDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
@@ -43,7 +43,7 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
   val month: Int = LocalDate.now().getMonthOfYear
   val year: Int = LocalDate.now().getYear - 20
 
-  val formProvider = new IndividualDetailsFormProvider()
+  val formProvider = new PersonDetailsFormProvider()
   val form = formProvider()
 
   val personDetails = PersonDetails("Firstname", Some("Middle"), "Last", LocalDate.now())

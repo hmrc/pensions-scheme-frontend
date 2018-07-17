@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.IndividualDetailsFormProvider
+import forms.register.PersonDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.individual.TrusteeDetailsId
@@ -45,7 +45,7 @@ class TrusteeDetailsController @Inject() (
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
-                                           formProvider: IndividualDetailsFormProvider
+                                           formProvider: PersonDetailsFormProvider
                                       ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()

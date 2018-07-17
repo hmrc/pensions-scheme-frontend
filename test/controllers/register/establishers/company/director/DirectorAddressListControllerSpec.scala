@@ -23,7 +23,7 @@ import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, Fak
 import forms.address.AddressListFormProvider
 import identifiers.register.establishers.company.director.{DirectorAddressPostcodeLookupId, DirectorDetailsId}
 import models.address.TolerantAddress
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.inject.bind
@@ -37,7 +37,7 @@ import views.html.address.addressList
 
 class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
 
-  private val directorDetails = DirectorDetails("Joe", None, "Bloggs", LocalDate.now())
+  private val directorDetails = PersonDetails("Joe", None, "Bloggs", LocalDate.now())
 
   private val addresses = Seq(
     TolerantAddress(
@@ -189,7 +189,7 @@ class DirectorAddressListControllerSpec extends ControllerSpecBase with CSRFRequ
       routes.DirectorAddressListController.onSubmit(NormalMode, Index(0), Index(0)),
       routes.DirectorAddressController.onPageLoad(NormalMode, Index(0), Index(0)),
       addresses,
-      subHeading = Some(Message(directorDetails.directorName))
+      subHeading = Some(Message(directorDetails.fullName))
     )
   }
 

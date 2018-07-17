@@ -16,44 +16,46 @@
 
 package controllers.register.establishers.company.director
 
-import javax.inject.Inject
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import connectors.DataCacheConnector
-import controllers.actions._
 import config.FrontendAppConfig
+import connectors.DataCacheConnector
 import controllers.Retrievals
-import forms.register.establishers.company.director.DirectorDetailsFormProvider
+import controllers.actions._
+import forms.register.PersonDetailsFormProvider
+import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import models.register.establishers.company.director.DirectorDetails
+import javax.inject.Inject
+import models.person.PersonDetails
 import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.company.director.directorDetails
 
 import scala.concurrent.Future
 
-class DirectorDetailsController @Inject() (
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        @EstablishersCompanyDirector navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: DirectorDetailsFormProvider
-                                      ) extends FrontendController with Retrievals with I18nSupport {
+class DirectorDetailsController @Inject()(
+                                           appConfig: FrontendAppConfig,
+                                           override val messagesApi: MessagesApi,
+                                           dataCacheConnector: DataCacheConnector,
+                                           @EstablishersCompanyDirector navigator: Navigator,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           formProvider: PersonDetailsFormProvider,
+                                           sectionComplete: SectionComplete
+                                         ) extends FrontendController with Retrievals with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode,establisherIndex:Index, directorIndex:Index): Action[AnyContent] =
+  def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
-          val preparedForm = request.userAnswers.get[DirectorDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
+          val preparedForm = request.userAnswers.get[PersonDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
             case None => form
             case Some(value) => form.fill(value)
           }
@@ -61,17 +63,29 @@ class DirectorDetailsController @Inject() (
         }
     }
 
-  def onSubmit(mode: Mode,establisherIndex:Index,directorIndex:Index): Action[AnyContent] =
+  def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex,companyDetails.companyName)))
+              Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, companyDetails.companyName)))
             ,
-            (value) =>
-              dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).map(cacheMap =>
-                Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, new UserAnswers(cacheMap))))
+            value =>
+              dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).flatMap {
+                cacheMap =>
+                  val userAnswers = UserAnswers(cacheMap)
+                  val allDirectors = userAnswers.allDirectorsAfterDelete(establisherIndex)
+                  val allDirectorsCompleted = allDirectors.count(_.isCompleted) == allDirectors.size
+
+                  if (allDirectorsCompleted) {
+                    Future.successful(Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers)))
+                  } else {
+                    sectionComplete.setCompleteFlag(IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
+                      Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers))
+                    }
+                  }
+              }
           )
         }
     }

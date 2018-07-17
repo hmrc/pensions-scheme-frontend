@@ -23,11 +23,11 @@ import forms.register.establishers.company.director.DirectorNinoFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorNinoId}
-import play.api.libs.json.{JsObject, Json}
 import models._
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import org.joda.time.LocalDate
 import play.api.data.Form
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
@@ -38,6 +38,7 @@ import views.html.register.establishers.company.director.directorNino
 class DirectorNinoControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
   val companyName = "test company name"
   val formProvider = new DirectorNinoFormProvider()
   val form = formProvider()
@@ -53,7 +54,7 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
-              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
+              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
             DirectorNinoId.toString ->
               Nino.Yes("CS700100A")
           )
@@ -69,7 +70,7 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
-              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
+              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
             DirectorNinoId.toString ->
               Nino.Yes("CS700100A")
           )
@@ -85,7 +86,7 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
-              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now)
+              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now)
           )
         )
       )
@@ -97,7 +98,7 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = directorNino(frontendAppConfig, form, NormalMode,
-    establisherIndex, directorIndex,directorName)(fakeRequest, messages).toString
+    establisherIndex, directorIndex, directorName)(fakeRequest, messages).toString
 
   "DirectorNino Controller" must {
 

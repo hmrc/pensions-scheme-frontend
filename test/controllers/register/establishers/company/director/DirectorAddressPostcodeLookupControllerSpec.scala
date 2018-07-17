@@ -23,7 +23,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import org.mockito.Matchers
@@ -45,6 +45,7 @@ import scala.concurrent.Future
 class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with CSRFRequest {
 
   def onwardRoute: Call = routes.DirectorAddressPostcodeLookupController.onSubmit(NormalMode, estIndex, dirIndex)
+
   def manualInputCall: Call = routes.DirectorAddressController.onPageLoad(NormalMode, estIndex, dirIndex)
 
   val formProvider = new PostCodeLookupFormProvider()
@@ -68,14 +69,14 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
   )
 
   val company = CompanyDetails(companyName, None, None)
-  val director = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
+  val director = PersonDetails("first", Some("middle"), "last", LocalDate.now())
 
   lazy val viewmodel = PostcodeLookupViewModel(
     onwardRoute,
     manualInputCall,
     Message("messages__directorAddressPostcodeLookup__title"),
     Message("messages__directorAddressPostcodeLookup__heading"),
-    Some(director.directorName),
+    Some(director.fullName),
     Some(Message("messages__directorAddressPostcodeLookup__lede"))
   )
 
@@ -94,7 +95,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
-      )){ implicit app =>
+      )) { implicit app =>
 
         val request = addToken(FakeRequest(call)
           .withHeaders("Csrf-Token" -> "nocheck"))
@@ -134,7 +135,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),
         bind[DataRequiredAction].to(new DataRequiredActionImpl),
         bind[PostCodeLookupFormProvider].to(formProvider)
-      )){ app =>
+      )) { app =>
 
         val result = route(app, fakeRequest).get
 

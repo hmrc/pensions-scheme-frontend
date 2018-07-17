@@ -21,13 +21,14 @@ import org.joda.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.domain.Nino
 import utils.{CountryOptions, NameMatching}
+import scala.language.implicitConversions
 
 trait Constraints {
   val regexPostcode = """^[A-Za-z]{1,2}[0-9][0-9A-Za-z]?[ ]?[0-9][A-Za-z]{2}$"""
   val regexPostCodeNonUk = """^([0-9]+-)*[0-9]+$"""
   val regexSortCode: String = """\d{6,}""".r.toString()
   val regexUtr = """^\d{10}$"""
-  val regexName = """^[a-zA-Z\u00C0-\u00FF'‘’\u2014\u2013\u2010\u002d]{1,35}$"""
+  val regexName = """^[a-zA-Z\u00C0-\u00FF '‘’\u2014\u2013\u2010\u002d]{1,35}$"""
   val regexAccountNo = """[0-9]*"""
   val regexEmailRestrictive: String = "^(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"" +
     "(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")" +
@@ -154,6 +155,12 @@ trait Constraints {
           .find(_.value == input)
           .map(_ => Valid)
           .getOrElse(Invalid(errorKey))
+    }
+
+  implicit def convertToOptionalConstraint[T](constraint: Constraint[T]): Constraint[Option[T]] =
+    Constraint {
+      case Some(t) => constraint.apply(t)
+      case _ => Valid
     }
 
   protected def emailAddressRestrictive(errorKey: String): Constraint[String] = regexp(regexEmailRestrictive, errorKey)
