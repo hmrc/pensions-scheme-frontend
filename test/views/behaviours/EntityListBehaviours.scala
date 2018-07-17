@@ -66,7 +66,6 @@ trait EntityListBehaviours {
           val doc = asDocument(nonEmptyView())
           doc.getElementById("submit").hasAttr("disabled") mustBe true
         }
-
       }
 
       "display the delete link for each person" in {

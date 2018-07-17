@@ -21,7 +21,17 @@
 @import utils.Constants._
 @import models.register.Establisher
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establishers: Seq[Establisher[_]], schemeName: String)(implicit request: Request[_], messages: Messages)
+@(
+    appConfig: FrontendAppConfig,
+    form: Form[_],
+    mode: Mode,
+    establishers: Seq[Establisher[_]],
+    schemeName: String
+)(implicit request: Request[_], messages: Messages)
+
+@disableSubmission = @{
+    appConfig.completeFlagEnabled & establishers.exists(!_.isCompleted)
+}
 
 @main_template(
     title = messages("messages__establishers__add__title"),
@@ -44,7 +54,11 @@
 
             @components.heading(headingKey = "messages__establishers__add__title", secondaryHeaderKey = Some(schemeName))
 
-            @components.editable_item_list(establishers)
+            @if(appConfig.completeFlagEnabled){
+                @components.entity_list(establishers)
+            } else {
+                @components.editable_item_list(establishers)
+            }
 
             @components.input_yes_no(
                 field = form("value"),
@@ -54,6 +68,6 @@
             )
         }
 
-        @components.submit_button("messages__common__continue")
+        @components.submit_button("messages__common__continue", disableSubmission)
     }
 }

@@ -16,21 +16,21 @@
 
 package controllers.register.establishers.company
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.company.{CheckYourAnswersId, CompanyDetailsId, CompanyRegistrationNumberId}
+import identifiers.register.establishers.company.{CheckYourAnswersId, CompanyDetailsId, CompanyRegistrationNumberId, IsCompanyCompleteId}
+import javax.inject.Inject
 import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{CheckYourAnswersFactory, Navigator}
+import utils.annotations.EstablishersCompany
+import utils.checkyouranswers.Ops._
+import utils.{CheckYourAnswersFactory, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
-import utils.checkyouranswers.Ops._
-import utils.annotations.EstablishersCompany
 
 import scala.concurrent.Future
 
@@ -41,7 +41,8 @@ class CheckYourAnswersController @Inject()(
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             checkYourAnswersFactory: CheckYourAnswersFactory,
-                                            @EstablishersCompany navigator: Navigator
+                                            @EstablishersCompany navigator: Navigator,
+                                            sectionComplete: SectionComplete
                                           ) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -66,16 +67,18 @@ class CheckYourAnswersController @Inject()(
 
         Future.successful(Ok(check_your_answers(
           appConfig,
-          Seq(companyDetails,companyContactDetails),
+          Seq(companyDetails, companyContactDetails),
           Some(schemeDetails.schemeName),
           routes.CheckYourAnswersController.onSubmit(index)))
         )
       }
   }
 
-  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))
+      sectionComplete.setCompleteFlag(IsCompanyCompleteId(index), request.userAnswers, true).map { _ =>
+        Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))
+      }
   }
 
 }
