@@ -21,14 +21,14 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorDetailsFormProvider
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.register.establishers.company.director.DirectorDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
-import org.mockito.Matchers._
+import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
@@ -198,11 +198,12 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val userAnswers = UserAnswers(validData)
       when(mockDataCacheConnector.save(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
-      when(mockSectionComplete.setCompleteFlag(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(userAnswers))
+      when(mockSectionComplete.setCompleteFlag(eqTo(IsEstablisherCompleteId(0)),
+        eqTo(userAnswers), eqTo(false))(any(), any(), any())).thenReturn(Future.successful(userAnswers))
 
       val result = controller(getRelevantData).onSubmit(NormalMode, firstEstablisherIndex,firstDirectorIndex)(postRequest)
       status(result) mustBe SEE_OTHER
-      verify(mockSectionComplete, times(1)).setCompleteFlag(any(), any(), any())(any(), any(), any())
+      verify(mockSectionComplete, times(1)).setCompleteFlag(eqTo(IsEstablisherCompleteId(0)), eqTo(userAnswers), eqTo(false))(any(), any(), any())
     }
   }
 }
