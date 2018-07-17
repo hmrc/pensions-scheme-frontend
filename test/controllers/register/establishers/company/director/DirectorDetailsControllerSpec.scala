@@ -16,27 +16,27 @@
 
 package controllers.register.establishers.company.director
 
-import connectors.{DataCacheConnector, FakeDataCacheConnector}
+import connectors.DataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorDetailsFormProvider
 import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.register.establishers.company.director.DirectorDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
+import org.mockito.Matchers._
+import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{FakeNavigator, FakeSectionComplete, SectionComplete, UserAnswers}
+import utils.{FakeNavigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.company.director.directorDetails
-import org.mockito.Mockito._
-import org.mockito.Matchers._
 
 import scala.concurrent.Future
 
