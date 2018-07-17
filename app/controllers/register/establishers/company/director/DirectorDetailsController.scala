@@ -20,12 +20,12 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.company.director.DirectorDetailsFormProvider
+import forms.register.PersonDetailsFormProvider
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import javax.inject.Inject
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -45,7 +45,7 @@ class DirectorDetailsController @Inject()(
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
-                                           formProvider: DirectorDetailsFormProvider,
+                                           formProvider: PersonDetailsFormProvider,
                                            sectionComplete: SectionComplete
                                          ) extends FrontendController with Retrievals with I18nSupport {
 
@@ -55,7 +55,7 @@ class DirectorDetailsController @Inject()(
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
         CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
-          val preparedForm = request.userAnswers.get[DirectorDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
+          val preparedForm = request.userAnswers.get[PersonDetails](DirectorDetailsId(establisherIndex, directorIndex)) match {
             case None => form
             case Some(value) => form.fill(value)
           }
@@ -71,17 +71,17 @@ class DirectorDetailsController @Inject()(
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, companyDetails.companyName)))
             ,
-            (value) =>
+            value =>
               dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).flatMap {
                 cacheMap =>
-                  val userAnswers = new UserAnswers(cacheMap)
+                  val userAnswers = UserAnswers(cacheMap)
                   val allDirectors = userAnswers.allDirectorsAfterDelete(establisherIndex)
                   val allDirectorsCompleted = allDirectors.count(_.isCompleted) == allDirectors.size
 
                   if (allDirectorsCompleted) {
                     Future.successful(Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers)))
                   } else {
-                    sectionComplete.setCompleteFlag(IsEstablisherCompleteId(establisherIndex), userAnswers, false).map { _ =>
+                    sectionComplete.setCompleteFlag(IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
                       Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers))
                     }
                   }

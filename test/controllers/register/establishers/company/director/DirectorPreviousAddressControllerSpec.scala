@@ -27,7 +27,7 @@ import forms.address.AddressFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressId}
 import models.address.Address
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
@@ -48,7 +48,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
   val establisherIndex = Index(0)
   val directorIndex = Index(0)
 
-  val directorDetails = DirectorDetails("first", Some("middle"), "last", LocalDate.now())
+  val directorDetails = PersonDetails("first", Some("middle"), "last", LocalDate.now())
 
   val countryOptions = new CountryOptions(
     Seq(InputOption("GB", "GB"))
@@ -87,7 +87,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
             countryOptions.options,
             controller.title,
             controller.heading,
-            secondaryHeader = Some(directorDetails.directorName)
+            secondaryHeader = Some(directorDetails.fullName)
           )
 
           val request = addToken(
@@ -190,7 +190,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
                 AddressEvent(
                   FakeAuthAction.externalId,
                   AddressAction.LookupChanged,
-                  s"Company Director Previous Address: ${directorDetails.directorName}",
+                  s"Company Director Previous Address: ${directorDetails.fullName}",
                   address
                 )
               )

@@ -23,7 +23,6 @@ import models._
 import models.address.Address
 import models.person.PersonDetails
 import models.register.establishers.EstablisherKind
-import models.register.establishers.company.director.DirectorDetails
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
@@ -147,8 +146,8 @@ object EstablisherKindIdSpec extends OptionValues with Enumerable.Implicits {
     .flatMap(_.set(CompanyPreviousAddressId(0))(Address("", "", None, None, None, "")))
     .flatMap(_.set(CompanyContactDetailsId(0))(ContactDetails("", "")))
     .flatMap(_.set(EstablisherDetailsId(0))(PersonDetails("", None, "", LocalDate.now)))
-    .flatMap(_.set(DirectorDetailsId(0, 0))(DirectorDetails("dir1", None, "", LocalDate.now)))
-    .flatMap(_.set(DirectorDetailsId(0, 1))(DirectorDetails("dir2", None, "", LocalDate.now)))
+    .flatMap(_.set(DirectorDetailsId(0, 0))(PersonDetails("dir1", None, "", LocalDate.now)))
+    .flatMap(_.set(DirectorDetailsId(0, 1))(PersonDetails("dir2", None, "", LocalDate.now)))
     .asOpt.value
 
   val establisherIndividual = UserAnswers(Json.obj())

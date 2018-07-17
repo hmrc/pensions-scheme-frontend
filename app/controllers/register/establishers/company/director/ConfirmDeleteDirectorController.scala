@@ -57,7 +57,7 @@ class ConfirmDeleteDirectorController @Inject()(
                   confirmDeleteDirector(
                     appConfig,
                     company.companyName,
-                    director.directorName,
+                    director.fullName,
                     routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
                     AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
                   )

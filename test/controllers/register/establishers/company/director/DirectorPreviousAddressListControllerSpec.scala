@@ -23,7 +23,7 @@ import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, Fak
 import forms.address.AddressListFormProvider
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.inject.bind
@@ -37,7 +37,7 @@ import views.html.address.addressList
 
 class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
 
-  private val directorDetails = DirectorDetails("Joe", None, "Bloggs", LocalDate.now())
+  private val directorDetails = PersonDetails("Joe", None, "Bloggs", LocalDate.now())
 
   val previousAddressTitle = "Select the previous address"
   val previousAddressHeading = "Select the previous address"
@@ -196,7 +196,7 @@ class DirectorPreviousAddressListControllerSpec extends ControllerSpecBase with 
       addresses,
       title = previousAddressTitle,
       heading = previousAddressHeading,
-      subHeading = Some(Message(directorDetails.directorName))
+      subHeading = Some(Message(directorDetails.fullName))
     )
   }
 

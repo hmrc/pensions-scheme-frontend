@@ -19,7 +19,7 @@ package controllers.register.establishers.individual
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.IndividualDetailsFormProvider
+import forms.register.PersonDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models._
@@ -37,7 +37,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new IndividualDetailsFormProvider()
+  val formProvider = new PersonDetailsFormProvider()
 
   val form = formProvider()
   val schemeName = "Test Scheme Name"

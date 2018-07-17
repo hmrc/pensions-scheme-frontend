@@ -20,8 +20,8 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorId}
 import identifiers.register.establishers.individual._
+import models.person.PersonDetails
 import models.register.establishers.EstablisherKind
-import models.register.establishers.company.director.DirectorDetails
 import play.api.libs.json.{JsPath, JsResult, JsSuccess}
 import utils.UserAnswers
 
@@ -29,9 +29,9 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
   override def path: JsPath = EstablishersId(index).path \ EstablisherKindId.toString
 
   private def removeAllDirectors(userAnswers: UserAnswers): JsResult[UserAnswers] = {
-    userAnswers.getAllRecursive[DirectorDetails](DirectorDetailsId.collectionPath(index)) match {
-      case Some(allDirectors) if (allDirectors.nonEmpty) =>
-        userAnswers.remove(DirectorId(index, 0)).flatMap(removeAllDirectors(_))
+    userAnswers.getAllRecursive[PersonDetails](DirectorDetailsId.collectionPath(index)) match {
+      case Some(allDirectors) if allDirectors.nonEmpty =>
+        userAnswers.remove(DirectorId(index, 0)).flatMap(removeAllDirectors)
       case _ =>
         JsSuccess(userAnswers)
     }
@@ -49,7 +49,7 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
           .flatMap(_.remove(CompanyPreviousAddressPostcodeLookupId(index)))
           .flatMap(_.remove(CompanyPreviousAddressId(index)))
           .flatMap(_.remove(CompanyContactDetailsId(index)))
-          .flatMap(removeAllDirectors(_))
+          .flatMap(removeAllDirectors)
 
       case Some(EstablisherKind.Company) =>
         userAnswers.remove(EstablisherDetailsId(index))

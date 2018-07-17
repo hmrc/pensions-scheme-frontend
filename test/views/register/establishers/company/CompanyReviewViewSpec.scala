@@ -17,13 +17,10 @@
 package views.register.establishers.company
 
 import controllers.register.establishers.company.routes
-import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.CompanyDetailsId
+
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import models.register.establishers.company.director.DirectorDetails
-import models.register.{SchemeDetails, SchemeType}
-import models.{CheckMode, CompanyDetails, Index}
+import models.person.PersonDetails
+import models.{CheckMode, Index}
 import org.joda.time.LocalDate
 import org.jsoup.Jsoup
 import play.api.libs.json.{JsObject, Json}
@@ -41,11 +38,11 @@ class CompanyReviewViewSpec extends ViewBehaviours {
   val tenDirectors = Seq("director a", "director b", "director c", "director d", "director e",
     "director f", "director g", "director h", "director i", "director j")
   def director(lastName: String): JsObject = Json.obj(
-    DirectorDetailsId.toString -> DirectorDetails("director", None, lastName, LocalDate.now())
+    DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now())
   )
 
-  def createView: (() => HtmlFormat.Appendable) = () => companyReview(frontendAppConfig, index, schemeName, companyName, directors)(fakeRequest, messages)
-  def createSecView: (() => HtmlFormat.Appendable) = () => companyReview(frontendAppConfig, index, schemeName, companyName, tenDirectors)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, schemeName, companyName, directors)(fakeRequest, messages)
+  def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, schemeName, companyName, tenDirectors)(fakeRequest, messages)
 
   "CompanyReview view" must {
     behave like normalPage(

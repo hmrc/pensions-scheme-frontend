@@ -16,8 +16,7 @@
 
 package forms.mappings
 
-import play.api.data.Forms.optional
-import play.api.data.{FormError, Forms, Mapping}
+import play.api.data.{FormError, Mapping}
 import utils.CountryOptions
 
 trait AddressMapping extends Mappings with Transforms {
@@ -40,18 +39,16 @@ trait AddressMapping extends Mappings with Transforms {
   }
 
   def optionalAddressLineMapping(keyLength: String, keyInvalid: String): Mapping[Option[String]] = {
-    optional(
-      Forms.text
-        .verifying(
-          firstError(
-            maxLength(
-              maxAddressLineLength,
-              keyLength
-            ),
-            addressLine(keyInvalid)
-          )
+    optionalText()
+      .verifying(
+        firstError(
+          maxLength(
+            maxAddressLineLength,
+            keyLength
+          ),
+          addressLine(keyInvalid)
         )
-    )
+      )
   }
 
   private[mappings] def postCodeTransform(value: String): String = {

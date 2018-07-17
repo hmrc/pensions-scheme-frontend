@@ -24,7 +24,7 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
@@ -95,7 +95,7 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
             "director" -> Json.arr(
               Json.obj(
                 DirectorDetailsId.toString ->
-                  DirectorDetails("John", None, "Doe", LocalDate.now(), true)
+                  PersonDetails("John", None, "Doe", LocalDate.now(), true)
               )
             )
           )
@@ -118,9 +118,9 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
   private val directorName = "John Doe"
   private lazy val postCall = routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex)
   private lazy val cancelCall = AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
-  private val directorDetails = DirectorDetails("John", None, "Doe", LocalDate.now(), false)
+  private val directorDetails = PersonDetails("John", None, "Doe", LocalDate.now(), false)
 
-  private def testData(directors: DirectorDetails = directorDetails) = Json.obj(
+  private def testData(directors: PersonDetails = directorDetails) = Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails(companyName, None, None),
@@ -134,7 +134,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
     )
   )
 
-  val directorDeleted = directorDetails.copy(isDeleted = true)
+  val directorDeleted: PersonDetails = directorDetails.copy(isDeleted = true)
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 

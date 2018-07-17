@@ -19,10 +19,10 @@ package controllers.register.establishers.company
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
-import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyCompleteId}
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
-import models.register.establishers.company.director.DirectorDetails
+import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyCompleteId}
+import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index}
 import org.joda.time.LocalDate
@@ -130,7 +130,7 @@ object CompanyReviewControllerSpec {
   val companyDetails = CompanyDetails(companyName, Some("123456"), Some("abcd"))
 
   def director(lastName: String, isComplete: Boolean = true): JsObject = Json.obj(
-    DirectorDetailsId.toString -> DirectorDetails("director", None, lastName, LocalDate.now()),
+    DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now()),
     IsDirectorCompleteId.toString -> isComplete
   )
 

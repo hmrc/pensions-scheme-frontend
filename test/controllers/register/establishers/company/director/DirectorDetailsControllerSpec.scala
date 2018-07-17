@@ -19,12 +19,12 @@ package controllers.register.establishers.company.director
 import connectors.DataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.establishers.company.director.DirectorDetailsFormProvider
+import forms.register.PersonDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import models.register.establishers.company.director.DirectorDetails
+import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
@@ -86,7 +86,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
             "director" -> Json.arr(
               Json.obj(
                 DirectorDetailsId.toString ->
-                  DirectorDetails("First Name",Some("Middle Name"), "Last Name", new LocalDate(year, month, day))
+                  PersonDetails("First Name", Some("Middle Name"), "Last Name", new LocalDate(year, month, day))
               )
             )
           )
@@ -96,7 +96,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstEstablisherIndex,firstDirectorIndex)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(DirectorDetails("First Name",Some("Middle Name"), "Last Name", new LocalDate(year, month, day))))
+      contentAsString(result) mustBe viewAsString(form.fill(PersonDetails("First Name", Some("Middle Name"), "Last Name", new LocalDate(year, month, day))))
     }
 
     "redirect to the next page when valid data is submitted" in {
@@ -189,7 +189,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
             "director" -> Json.arr(
               Json.obj(
                 DirectorDetailsId.toString ->
-                  DirectorDetails("First Name",Some("Middle Name"), "Last Name", new LocalDate(year, month, day))
+                  PersonDetails("First Name",Some("Middle Name"), "Last Name", new LocalDate(year, month, day))
               )
             )
           )
@@ -211,7 +211,7 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
 object DirectorDetailsControllerSpec extends MockitoSugar {
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new DirectorDetailsFormProvider()
+  val formProvider = new PersonDetailsFormProvider()
   val form = formProvider()
 
   val firstEstablisherIndex = Index(0)

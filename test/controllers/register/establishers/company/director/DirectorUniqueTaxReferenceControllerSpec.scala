@@ -23,9 +23,8 @@ import forms.register.establishers.company.director.DirectorUniqueTaxReferenceFo
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorUniqueTaxReferenceId}
-import models._
-import models.register.establishers.company.director.DirectorDetails
-import models.UniqueTaxReference
+import models.{UniqueTaxReference, _}
+import models.person.PersonDetails
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -54,7 +53,7 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
-              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
+              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now),
             DirectorUniqueTaxReferenceId.toString ->
               UniqueTaxReference.Yes("1234567891")
           )
@@ -83,7 +82,7 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
         "director" -> Json.arr(
           Json.obj(
             DirectorDetailsId.toString ->
-              DirectorDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now)
+              PersonDetails("First Name", Some("Middle Name"), "Last Name", LocalDate.now)
           )
         )
       )
@@ -108,7 +107,7 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       form,
       NormalMode,
       establisherIndex,
-      directorIndex,directorName
+      directorIndex, directorName
     )(fakeRequest, messages).toString
 
   "DirectorUniqueTaxReference Controller" must {
