@@ -36,8 +36,10 @@
 
         @components.error_summary(form.errors)
 
-        @components.headingDynamic(headingKey=messages("messages__companyRegistrationNumber__heading"), secondaryHeaderKey = Some(components.hyphen(companyName).toString))
-
+        @components.headingDynamic(
+            headingKey=messages("messages__companyRegistrationNumber__heading"),
+            secondaryHeaderKey = Some(components.hyphen(companyName).toString)
+        )
 
         @components.fieldSet(
             field = form("companyRegistrationNumber.hasCrn"),

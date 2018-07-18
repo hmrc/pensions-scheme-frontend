@@ -43,7 +43,10 @@
         @components.back_link()
         @if(establishers.isEmpty) {
 
-        @components.headingDynamic(headingKey=messages("messages__establishers__add__title"), secondaryHeaderKey = Some(components.hyphen(schemeName).toString))
+        @components.headingDynamic(
+            headingKey=messages("messages__establishers__add__title"),
+            secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
+        )
 
             <p>@messages("messages__establishers__add_hint")</p>
 
@@ -51,7 +54,10 @@
 
             @components.error_summary(form.errors)
 
-            @components.headingDynamic(headingKey=messages("messages__establishers__add__title"), secondaryHeaderKey = Some(components.hyphen(schemeName).toString))
+            @components.headingDynamic(
+                headingKey=messages("messages__establishers__add__title"),
+                secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
+            )
 
 
             @if(appConfig.completeFlagEnabled){

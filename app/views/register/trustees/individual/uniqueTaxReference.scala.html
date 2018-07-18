@@ -36,8 +36,10 @@
 
         @components.error_summary(form.errors)
 
-        @components.headingDynamic(headingKey=messages("messages__trustee__uniqueTaxReference__heading"), secondaryHeaderKey = Some(components.hyphen(trusteeName).toString))
-
+        @components.headingDynamic(
+            headingKey=messages("messages__trustee__uniqueTaxReference__heading"),
+            secondaryHeaderKey = Some(components.hyphen(trusteeName).toString)
+        )
 
         @components.fieldSet(
             field = form("uniqueTaxReference.hasUtr"),

@@ -34,7 +34,10 @@
 
         @components.error_summary(form.errors)
 
-        @components.headingDynamic(headingKey=messages("messages__benefits_insurance_addr__title"), secondaryHeaderKey = Some(components.hyphen(schemeName).toString))
+        @components.headingDynamic(
+            headingKey=messages("messages__benefits_insurance_addr__title"),
+            secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
+        )
 
         <p>@messages("messages__common__company_address_hint")</p>
 

@@ -29,7 +29,10 @@
     @helpers.form(action = postCall, 'autoComplete -> "off") {
         @components.back_link()
 
-     @components.headingDynamic(headingKey=components.hyphen((Message("messages__confirmDeleteEstablisher__heading").withArgs(establisherName))).toString, secondaryHeaderKey = Some(components.hyphen(schemeName).toString))
+     @components.headingDynamic(
+            headingKey=components.hyphen((Message("messages__confirmDeleteEstablisher__heading").withArgs(establisherName))).toString,
+            secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
+     )
 
         <span class="form-hint">@messages("messages__confirmDeleteEstablisher__hint")</span>
 

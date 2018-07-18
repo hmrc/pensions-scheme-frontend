@@ -29,7 +29,10 @@
     bodyClasses = None) {
 
     @helpers.form(action = postUrl, 'autoComplete -> "off") {
-        @components.headingDynamic(headingKey = components.hyphen(messages("checkYourAnswers.heading")).toString, secondaryHeaderKey = secondaryHeader.map{x=>components.hyphen(messages(x)).toString})
+        @components.headingDynamic(
+                headingKey = components.hyphen(messages("checkYourAnswers.heading")).toString,
+                secondaryHeaderKey = secondaryHeader.map{x=>components.hyphen(messages(x)).toString}
+        )
 
         @for((section, i) <- answerSections.zipWithIndex){
             @{

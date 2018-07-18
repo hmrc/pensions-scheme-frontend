@@ -32,7 +32,10 @@
 
         @components.error_summary(form.errors)
 
-        @components.headingDynamic(headingKey=messages(viewModel.heading), secondaryHeaderKey = viewModel.subHeading.map{components.hyphen(_).toString})
+        @components.headingDynamic(
+            headingKey=messages(viewModel.heading),
+            secondaryHeaderKey = viewModel.subHeading.map{components.hyphen(_).toString}
+        )
 
         <p>
             @viewModel.selectAddress.resolve

@@ -32,7 +32,10 @@
 
         @components.error_summary(form.errors)
 
-        @components.headingDynamic(headingKey=messages("messages__scheme_country__title"), secondaryHeaderKey = Some(components.hyphen(schemeName).toString))
+        @components.headingDynamic(
+            headingKey=messages("messages__scheme_country__title"),
+            secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
+        )
 
         @components.select(field = form("value"),
             label = messages("messages__scheme_country__title"),
