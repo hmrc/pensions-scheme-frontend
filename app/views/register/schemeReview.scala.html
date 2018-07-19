@@ -30,7 +30,7 @@
 
     @helpers.form(action = SchemeReviewController.onSubmit(), 'autoComplete -> "off") {
 
-        @components.headingDynamic(
+        @components.headingNew(
             headingKey=messages("messages__schemeReview__heading"),
             secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
         )

@@ -28,7 +28,7 @@
     @helpers.form(action = postCall, 'autoComplete -> "off") {
         @components.back_link()
 
-        @components.headingDynamic(
+        @components.headingNew(
             headingKey=components.hyphen((messages("messages__confirmDeleteDirector__heading").format(directorName))).toString,
             secondaryHeaderKey = Some(components.hyphen(companyName).toString)
         )
