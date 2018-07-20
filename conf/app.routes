@@ -28,3 +28,6 @@ POST       /discard                                     controllers.DeleteScheme
 GET        /you-need-to-register                        controllers.YouNeedToRegisterController.onPageLoad()
 
 GET        /continue-registration                       controllers.ContinueRegistrationController.continue()
+
+GET        /user-research-details                       controllers.UserResearchDetailsController.onPageLoad()
+POST       /user-research-details                       controllers.UserResearchDetailsController.onSubmit()

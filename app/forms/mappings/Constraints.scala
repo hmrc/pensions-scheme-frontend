@@ -183,4 +183,7 @@ trait Constraints {
 
   protected def adviserName(errorKey: String): Constraint[String] = regexp(adviserNameRegex, errorKey)
 
+  protected def userResearchName(errorKey: String): Constraint[String] = regexp(regexName, errorKey)
+
+
 }
