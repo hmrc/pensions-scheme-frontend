@@ -35,13 +35,23 @@ class UserResearchDetailsViewSpec extends QuestionViewBehaviours[UserResearchDet
 
   "UserResearchContactDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, "p1", "p2", "p3")
+    behave like normalPage(
+      createView,
+      messageKeyPrefix,
+      s"messages__${messageKeyPrefix}__heading",
+      "_p1",
+      s"_p2",
+      s"_p3"
+    )
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.routes.UserResearchDetailsController.onSubmit().url, "name", "email")
-
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.register.adviser.routes.AdviserDetailsController.onSubmit(NormalMode).url,
-      "adviserName", "emailAddress", "phoneNumber")
+    behave like pageWithTextFields(
+      createViewUsingForm,
+      messageKeyPrefix,
+      controllers.routes.UserResearchDetailsController.onSubmit().url,
+      "name",
+      "email"
+    )
   }
 }

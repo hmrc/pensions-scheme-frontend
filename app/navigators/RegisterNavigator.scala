@@ -19,6 +19,7 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
+import identifiers.UserResearchDetailsId
 import identifiers.register._
 import models.register.{SchemeDetails, SchemeType}
 import models.{CheckMode, Mode, NormalMode}
@@ -71,6 +72,8 @@ class RegisterNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
         NavigateTo.save(controllers.register.routes.DeclarationDutiesController.onPageLoad())
       case DeclarationDutiesId =>
         declarationDutiesRoutes(from.userAnswers)
+      case UserResearchDetailsId =>
+        NavigateTo.save(controllers.routes.SchemesOverviewController.onPageLoad())
       case _ => None
     }
 
