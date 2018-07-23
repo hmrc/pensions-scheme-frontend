@@ -17,7 +17,7 @@
 package views
 
 import forms.UserResearchDetailsFormProvider
-import models.{NormalMode, UserResearchDetails}
+import models.UserResearchDetails
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
@@ -25,7 +25,7 @@ import views.html.userResearchDetails
 
 class UserResearchDetailsViewSpec extends QuestionViewBehaviours[UserResearchDetails] {
 
-  val messageKeyPrefix = "userResearchContactDetails"
+  val messageKeyPrefix = "userResearchDetails"
 
   override val form = new UserResearchDetailsFormProvider()()
 

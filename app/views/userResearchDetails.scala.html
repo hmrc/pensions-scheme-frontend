@@ -22,7 +22,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__userResearchContactDetails__title"),
+    title = messages("messages__userResearchDetails__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -32,22 +32,22 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__userResearchContactDetails__heading")
+        @components.heading("messages__userResearchDetails__heading")
 
-        <p>@messages("messages__userResearchContactDetails__p1")</p>
+        <p>@messages("messages__userResearchDetails__p1")</p>
 
-        <p>@messages("messages__userResearchContactDetails__p2")</p>
+        <p>@messages("messages__userResearchDetails__p2")</p>
 
-        <p>@messages("messages__userResearchContactDetails__p3")</p>
+        <p>@messages("messages__userResearchDetails__p3")</p>
 
         @components.input_text(
             field = form("name"),
-            label = messages("messages__userResearchContactDetails__name")
+            label = messages("messages__userResearchDetails__name")
         )
 
         @components.input_text(
             field = form("email"),
-            label = messages("messages__userResearchContactDetails__email")
+            label = messages("messages__userResearchDetails__email")
         )
 
         @components.submit_button()
