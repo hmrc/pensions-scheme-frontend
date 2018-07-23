@@ -158,7 +158,12 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         details.map { director =>
           val directorIndex = details.indexOf(director)
           val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
-          DirectorEntity(DirectorDetailsId(establisherIndex, directorIndex), director.fullName, director.isDeleted, isComplete)
+          DirectorEntity(
+            DirectorDetailsId(establisherIndex, directorIndex),
+            director.fullName,
+            director.isDeleted,
+            isComplete
+          )
         }
     }.getOrElse(Seq.empty)
   }
