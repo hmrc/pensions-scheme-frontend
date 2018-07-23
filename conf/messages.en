@@ -23,7 +23,7 @@ messages__common__firstname = First name
 messages__common__lastname = Last name
 messages__common__middlename = Middle name (optional)
 messages__common__dob = Date of birth
-messages__common__dob__hint = Example 30 09 1990
+messages__common__dob__hint = For example 30 9 1990
 messages__common__day = Day
 messages__common__month = Month
 messages__common__year = Year
@@ -217,7 +217,7 @@ messages__uk_bank_account_details__sort_code = Sort code
 messages__uk_bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
 messages__uk_bank_account_details__account_number = Account number
 messages__uk_bank_account_details__date_bank_account = Approximate date the account was opened
-messages__common__dob__hint = Example 30 09 1990
+messages__common__dob__hint = For example 30 9 1990
 
 messages__error__bank_name = Enter the bank name
 messages__error__account_name = Enter the account name
