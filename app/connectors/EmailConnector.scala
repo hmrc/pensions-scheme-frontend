@@ -33,7 +33,8 @@ case object EmailNotSent extends EmailStatus
 
 @ImplementedBy (classOf[EmailConnectorImpl])
 trait EmailConnector {
-  def sendEmail(emailAddress: String, templateName: String, params: Map[String, String])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus]
+  def sendEmail(emailAddress: String, templateName: String, params: Map[String, String])
+               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus]
 }
 
 @Singleton
@@ -53,10 +54,16 @@ class EmailConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) 
         case ACCEPTED =>
           Logger.info("Email sent successfully.")
           EmailSent
-        case _ =>
-          Logger.warn("Email not sent.")
+        case status =>
+          Logger.warn(s"Email not sent. Failure with response status $status")
           EmailNotSent
       }
-    }
+    } recoverWith logExceptions
+  }
+
+  private def logExceptions: PartialFunction[Throwable, Future[EmailStatus]] = {
+        case (t: Throwable) =>
+            Logger.warn("Unable to connect to Email Service", t)
+            Future.successful(EmailNotSent)
   }
 }
