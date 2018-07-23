@@ -44,7 +44,9 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
       "_manage__text",
       "_manage__link",
       "_continue__link",
-      "_delete__link"
+      "_delete__link",
+      "_UR__text",
+      "_UR__link"
     )
 
     "have link to view all schemes" in {
@@ -80,6 +82,11 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
     "have link for delete registration" in {
       Jsoup.parse(createView().toString()).select("a[id=delete-registration]") must
         haveLink(controllers.routes.DeleteSchemeController.onPageLoad.url)
+    }
+
+    "have link for user research participation" in {
+      Jsoup.parse(createView().toString()).select("a[id=user-research]") must
+        haveLink(controllers.routes.UserResearchDetailsController.onPageLoad.url)
     }
 
   }
