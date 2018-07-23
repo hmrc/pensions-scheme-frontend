@@ -38,8 +38,8 @@ class UserResearchDetailsViewSpec extends QuestionViewBehaviours[UserResearchDet
     behave like normalPage(
       createView,
       messageKeyPrefix,
-      s"messages__${messageKeyPrefix}__heading",
-      "_p1",
+      messages(s"messages__${messageKeyPrefix}__heading"),
+      s"_p1",
       s"_p2",
       s"_p3"
     )

@@ -19,5 +19,5 @@ package identifiers
 import models.UserResearchDetails
 
 case object UserResearchDetailsId extends TypedIdentifier[UserResearchDetails] {
-  override def toString: String = "userResearchContactDetails"
+  override def toString: String = "userResearchDetails"
 }

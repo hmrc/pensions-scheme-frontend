@@ -711,8 +711,8 @@ messages__alreadyDeleted__text = This page no longer exists.
 
 messages__alreadyDeleted__establisher_title = You have already deleted this establisher
 
-messages__userResearchDetails__title = Enter Contact Details
-messages__userResearchDetails__heading = Enter your contact details
+messages__userResearchDetails__title = Enter your details
+messages__userResearchDetails__heading = Enter your details
 messages__userResearchDetails__name = Full name
 messages__userResearchDetails__email = Email address
 messages__userResearchDetails__checkYourAnswersLabel = userResearchContactDetails
