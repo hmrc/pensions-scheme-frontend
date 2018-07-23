@@ -17,7 +17,7 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.{DataCacheConnector, PensionsSchemeConnector}
+import connectors.{DataCacheConnector, EmailConnector, PensionsSchemeConnector}
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationDutiesFormProvider
@@ -43,7 +43,8 @@ class DeclarationDutiesController @Inject()(
                                              getData: DataRetrievalAction,
                                              requireData: DataRequiredAction,
                                              formProvider: DeclarationDutiesFormProvider,
-                                             pensionsSchemeConnector: PensionsSchemeConnector
+                                             pensionsSchemeConnector: PensionsSchemeConnector,
+                                             emailConnector: EmailConnector
                                            ) extends FrontendController with I18nSupport with Retrievals with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -71,8 +72,10 @@ class DeclarationDutiesController @Inject()(
               case true =>
                 dataCacheConnector.save(request.externalId, DeclarationDutiesId, true).flatMap { cacheMap =>
                   pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id).flatMap { submissionResponse =>
-                    dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).map { cacheMap =>
-                      Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
+                    dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).flatMap { cacheMap =>
+                      emailConnector.sendEmail("", "pods_psa_register", Map("srn" -> submissionResponse.schemeReferenceNumber)).map { _ =>
+                        Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
+                      }
                     }
                   }
                 }

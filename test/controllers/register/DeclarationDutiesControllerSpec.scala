@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import connectors.{FakeDataCacheConnector, PensionsSchemeConnector}
+import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationDutiesFormProvider
@@ -50,9 +50,17 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase {
     }
   }
 
+  private val fakeEmailConnector = new EmailConnector {
+    override def sendEmail
+    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
+      Future.successful(EmailSent)
+    }
+  }
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): DeclarationDutiesController =
     new DeclarationDutiesController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider, fakePensionsSchemeConnector)
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider, fakePensionsSchemeConnector, fakeEmailConnector)
 
   def viewAsString(form: Form[_] = form): String = declarationDuties(frontendAppConfig, form, "Test Scheme Name")(fakeRequest, messages).toString
 

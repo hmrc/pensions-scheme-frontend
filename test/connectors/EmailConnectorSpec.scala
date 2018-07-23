@@ -19,7 +19,7 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.{AsyncFlatSpec, Matchers, OptionValues}
 import play.api.http.Status
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
 class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
@@ -47,22 +47,36 @@ class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper
 
   }
 
-  it should "return EmailNotSent for a BAD REQUEST response" in {
+  it should "return EmailNotSent for a service unavailable response" in {
 
     server.stubFor(
       post(urlEqualTo(emailUrl))
         .willReturn(
-          badRequest
-            .withHeader("Content-Type", "application/json")
-
+          serviceUnavailable()
         )
     )
 
     val connector = injector.instanceOf[EmailConnector]
 
-    recoverToSucceededIf[BadRequestException] {
-      connector.sendEmail(invalidEmailString, templateId, params)
-    }
+    connector.sendEmail(validEmailString, templateId, params).map( response =>
+      response shouldBe notSentResponse
+    )
+  }
+
+  it should "return EmailNotSent for a no content response" in {
+
+    server.stubFor(
+      post(urlEqualTo(emailUrl))
+        .willReturn(
+          noContent()
+        )
+    )
+
+    val connector = injector.instanceOf[EmailConnector]
+
+    connector.sendEmail(validEmailString, templateId, params).map( response =>
+      response shouldBe notSentResponse
+    )
   }
 
 }
