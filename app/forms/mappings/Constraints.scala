@@ -29,6 +29,7 @@ trait Constraints {
   val regexSortCode: String = """\d{6,}""".r.toString()
   val regexUtr = """^\d{10}$"""
   val regexName = """^[a-zA-Z\u00C0-\u00FF '‘’\u2014\u2013\u2010\u002d]{1,35}$"""
+  val regexUserResearch = """^[a-zA-Z\u00C0-\u00FF '‘’\u2014\u2013\u2010\u002d]{1,70}$"""
   val regexAccountNo = """[0-9]*"""
   val regexEmailRestrictive: String = "^(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"" +
     "(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")" +
@@ -183,7 +184,7 @@ trait Constraints {
 
   protected def adviserName(errorKey: String): Constraint[String] = regexp(adviserNameRegex, errorKey)
 
-  protected def userResearchName(errorKey: String): Constraint[String] = regexp(regexName, errorKey)
+  protected def userResearchName(errorKey: String): Constraint[String] = regexp(regexUserResearch, errorKey)
 
 
 }

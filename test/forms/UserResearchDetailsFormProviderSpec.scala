@@ -55,7 +55,7 @@ class UserResearchDetailsFormProviderSpec extends StringFieldBehaviours with Ema
       form,
       fieldName,
       "1234",
-      FormError(fieldName, invalidKey, Seq(regexName))
+      FormError(fieldName, invalidKey, Seq(regexUserResearch))
     )
 
   }
