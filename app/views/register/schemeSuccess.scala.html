@@ -20,7 +20,7 @@
 @import org.joda.time.LocalDate
 @import utils.DateHelper
 
-@(appConfig: FrontendAppConfig, schemeName: Option[String], currentDate: LocalDate, applicationNumber: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, schemeName: Option[String], currentDate: LocalDate, applicationNumber: String, showMasterTrustContent: Boolean)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__complete__title"),
@@ -34,6 +34,14 @@
         <p class="font-large">@DateHelper.formatDate(currentDate)</p>
     </div>
 
+    @if(showMasterTrustContent) {
+        <p>@messages("messages__complete__application_number_is", applicationNumber)</p>
+        <h2 class="heading-large">@messages("messages__complete__what_happens_next")</h2>
+        <p>@messages("messages__complete__contact_regulator_start") <a id="regulator-contact" href="http://www.thepensionsregulator.gov.uk/contact-us.aspx">@messages("messages__complete__contact_regulator_link")</a> @messages("messages__complete__contact_regulator_authorisation")</p>
+        <p>@messages("messages__complete__not_registered_yet")</p>
+        <p>@messages("messages__complete__decision")</p>
+        <p>@messages("messages__complete__copy_3")</p>
+    } else {
     <h2 class="heading-large">@messages("messages__common__what_you_need_to_know")</h2>
 
     <ul class="list list-bullet">
@@ -43,6 +51,7 @@
         <li>@messages("messages__complete__copy_3")</li>
         <li>@messages("messages__complete__register_pensions_regulator")</li>
     </ul>
+    }
 
     @helpers.form(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
         @components.submit_button("messages__complete__finish")

@@ -61,7 +61,8 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       frontendAppConfig,
       Some("test scheme name"),
       LocalDate.now(),
-      submissionReferenceNumber
+      submissionReferenceNumber,
+      showMasterTrustContent = false
     )(fakeRequest, messages).toString
 
   appRunning()

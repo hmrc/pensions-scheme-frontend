@@ -22,6 +22,8 @@ import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
 import javax.inject.Inject
+import models.register.SchemeType.MasterTrust
+import models.requests.DataRequest
 import org.joda.time.LocalDate
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -50,11 +52,16 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
             case Failure(t: Throwable) => Logger.warn("Could not remove scheme data following successful submission.", t)
           }
 
-          Future.successful(Ok(schemeSuccess(
-            appConfig,
-            schemeName,
-            LocalDate.now(),
-            submissionReferenceNumber.schemeReferenceNumber))
+          Future.successful(
+            Ok(
+              schemeSuccess(
+                appConfig,
+                schemeName,
+                LocalDate.now(),
+                submissionReferenceNumber.schemeReferenceNumber,
+                showMasterTrustContent
+              )
+            )
           )
       }
   }
@@ -64,4 +71,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
       Redirect(controllers.routes.LogoutController.onPageLoad())
   }
 
+
+  private def showMasterTrustContent(implicit request: DataRequest[AnyContent]): Boolean =
+    appConfig.allowMasterTrust & request.userAnswers.get(SchemeDetailsId).map(_.schemeType).contains(MasterTrust)
 }
