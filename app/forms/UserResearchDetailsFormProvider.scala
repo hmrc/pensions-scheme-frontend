@@ -47,6 +47,6 @@ class UserResearchDetailsFormProvider @Inject() extends EmailMapping {
 }
 
 object UserResearchDetailsFormProvider {
-  val nameLength: Int = 70
+  val nameLength: Int = 160
 }
 
