@@ -36,8 +36,14 @@ sealed trait Entity[ID] {
 }
 
 case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Entity[DirectorDetailsId] {
-  override def editLink: String =
-    controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, id.establisherIndex, id.directorIndex).url
+  override def editLink: String = {
+    if (isCompleted){
+      controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(id.establisherIndex, id.directorIndex).url
+    }
+    else{
+      controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, id.establisherIndex, id.directorIndex).url
+    }
+  }
 
   override def deleteLink: String =
     controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(id.establisherIndex, id.directorIndex).url
@@ -49,8 +55,14 @@ sealed trait Establisher[T] extends Entity[T]
 
 case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId,
                                     name: String, isDeleted: Boolean, isCompleted: Boolean) extends Establisher[EstablisherCompanyDetailsId] {
-  override def editLink: String =
-    controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id.index).url
+  override def editLink: String = {
+    if (isCompleted) {
+      controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(id.index).url
+    }
+    else {
+      controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id.index).url
+    }
+  }
 
   override def deleteLink: String =
     controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(id.index, EstablisherKind.Company).url
@@ -60,8 +72,14 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId,
 
 case class EstablisherIndividualEntity(id: EstablisherDetailsId,
                                        name: String, isDeleted: Boolean, isCompleted: Boolean) extends Establisher[EstablisherDetailsId] {
-  override def editLink: String =
-    controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, id.index).url
+  override def editLink: String = {
+    if(isCompleted){
+      controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(id.index).url
+    }
+    else{
+      controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, id.index).url
+    }
+  }
 
   override def deleteLink: String =
     controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(id.index, EstablisherKind.Indivdual).url
@@ -73,8 +91,14 @@ sealed trait Trustee[T] extends Entity[T]
 
 case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId,
                                 name: String, isDeleted: Boolean, isCompleted: Boolean) extends Trustee[TrusteeCompanyDetailsId] {
-  override def editLink: String =
-    controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id.index).url
+  override def editLink: String = {
+    if(isCompleted){
+      controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(id.index).url
+    }
+    else {
+      controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id.index).url
+    }
+  }
 
   override def deleteLink: String =
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id.index, TrusteeKind.Company).url
@@ -83,8 +107,14 @@ case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId,
 }
 
 case class TrusteeIndividualEntity(id: TrusteeDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Trustee[TrusteeDetailsId] {
-  override def editLink: String =
-    controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id.index).url
+  override def editLink: String = {
+    if(isCompleted){
+      controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(id.index).url
+    }
+    else{
+      controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id.index).url
+    }
+  }
 
   override def deleteLink: String =
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id.index, TrusteeKind.Individual).url
