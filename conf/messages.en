@@ -684,6 +684,8 @@ messages__schemesOverview__continue__lastDate = You last entered details about t
 messages__schemesOverview__continue__deleteDate = You have until {0} to finish this registration before the details are deleted.
 messages__schemesOverview__continue__link = Continue registering this scheme
 messages__schemesOverview__delete__link = Delete this scheme and start a new registration
+messages__schemesOverview__UR__text = We want to hear from people who would like to help improve this service by sharing their feedback and testing new features.
+messages__schemesOverview__UR__link = Let us know if you would like to help improve this service.
 
 messages__deleteScheme__title = Are you sure you want to delete {0} scheme?
 messages__deleteScheme__heading = Are you sure you want to delete {0} scheme?
@@ -710,3 +712,15 @@ messages__alreadyDeleted__lede = You have already confirmed deletion of {0}.
 messages__alreadyDeleted__text = This page no longer exists.
 
 messages__alreadyDeleted__establisher_title = You have already deleted this establisher
+
+messages__userResearchDetails__title = Enter your details
+messages__userResearchDetails__heading = Enter your details
+messages__userResearchDetails__name = Full name
+messages__userResearchDetails__email = Email address
+messages__userResearchDetails__checkYourAnswersLabel = userResearchContactDetails
+messages__userResearchDetails__p1 = We want to hear from people who would like to help improve this service by sharing their feedback and testing new features.
+messages__userResearchDetails__p2 = We will contact you by email with more details.
+messages__userResearchDetails__p3 = We will use this information to contact you about your schemes. You can enter a group or individual email.
+messages__userResearchDetails__error_name_required = Enter your full name
+messages__userResearchDetails__error_name_length = The name cannot be more than 70 characters
+messages__userResearchDetails__error_name_invalid = The name contains invalid characters
