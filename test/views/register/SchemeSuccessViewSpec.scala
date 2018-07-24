@@ -31,8 +31,23 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
 
   val testScheme = "test scheme name"
 
-  def createView: () => HtmlFormat.Appendable = () => schemeSuccess(frontendAppConfig, Some(testScheme),
-    LocalDate.now(), submissionReferenceNumber)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () =>
+    schemeSuccess(
+      frontendAppConfig,
+      Some(testScheme),
+      LocalDate.now(),
+      submissionReferenceNumber,
+      showMasterTrustContent = false
+    )(fakeRequest, messages)
+
+  def createMasterTrustView: () => HtmlFormat.Appendable = () =>
+    schemeSuccess(
+      frontendAppConfig,
+      Some(testScheme),
+      LocalDate.now(),
+      submissionReferenceNumber,
+      showMasterTrustContent = true
+    )(fakeRequest, messages)
 
   "SchemeSuccess view" must {
 
@@ -44,6 +59,25 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
     }
 
     behave like pageWithSubmitButton(createView)
+
+  }
+
+  "SchemeSuccess view when a master trust" must {
+
+    behave like normalPage(createMasterTrustView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", testScheme),
+      "_what_happens_next",
+      "_contact_regulator_start",
+      "_contact_regulator_authorisation",
+      "_not_registered_yet",
+      "_decision",
+      "_copy_3"
+    )
+
+    "have dynamic text for application number" in {
+      Jsoup.parse(createMasterTrustView().toString()) must haveDynamicText("messages__complete__application_number_is", submissionReferenceNumber)
+    }
+
+    behave like pageWithSubmitButton(createMasterTrustView)
 
   }
 

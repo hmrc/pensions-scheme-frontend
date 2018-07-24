@@ -210,6 +210,14 @@ messages__complete__copy_3 = If the scheme administrator does not meet the crite
 messages__complete__register_pensions_regulator = If your scheme has more than 2 members you need to register with the Pensions Regulator
 messages__complete__finish = Finish and sign out
 
+
+messages__complete__contact_regulator_start = You must
+messages__complete__contact_regulator_link = contact the Pensions Regulator
+messages__complete__contact_regulator_authorisation =  to receive authorisation to register this scheme as a master trust.
+messages__complete__what_happens_next = What happens next
+messages__complete__not_registered_yet = The scheme has not been registered yet. HMRC will decide if the registration can be completed.
+messages__complete__decision = HMRC will consider this registration and make a decision when authorisation has been received from the Pensions Regulator. You might be contacted for more details to support this registration.
+
 messages__uk_bank_account_details__title = Bank account details
 messages__uk_bank_account_details__bank_name = Bank name
 messages__uk_bank_account_details__account_name = Account name
