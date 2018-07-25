@@ -22,6 +22,9 @@ import controllers.actions._
 import forms.register.DeclarationDutiesFormProvider
 import identifiers.register.{DeclarationDutiesId, SchemeDetailsId}
 import models.register.{SchemeDetails, SchemeSubmissionResponse, SchemeType}
+import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -32,7 +35,7 @@ import views.html.register.declarationDuties
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationDutiesControllerSpec extends ControllerSpecBase {
+class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -50,17 +53,33 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase {
     }
   }
 
-  private val fakeEmailConnector = new EmailConnector {
-    override def sendEmail
-    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty)
-    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
-      Future.successful(EmailSent)
-    }
-  }
+//  private val fakeEmailConnector = new EmailConnector {
+//    override def sendEmail
+//    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty)
+//    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
+//      Future.successful(EmailSent)
+//    }
+//  }
+
+  private lazy val fakeEmailConnector = mock[EmailConnector]
+
+//  object PSANameCacheConnector extends PSANameCacheConnector (
+//    frontendAppConfig,
+//    mock[WSClient],
+//    injector.instanceOf[ApplicationCrypto]
+//  ) with FakeDataCacheConnector {
+//    override def fetch[I <: TypedIdentifier[_]](cacheId: String, id: I)
+//                                                (implicit
+//                                                 ec: ExecutionContext,
+//                                                 hc: HeaderCarrier
+//                                                ): Future[Option[[JsValue]] =
+//      Future.successful(Some(JsString("email@test.com")))
+//  }
+  private lazy val psaNameCacheConnector = mock[PSANameCacheConnector]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): DeclarationDutiesController =
     new DeclarationDutiesController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider, fakePensionsSchemeConnector, fakeEmailConnector)
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider, fakePensionsSchemeConnector, fakeEmailConnector, psaNameCacheConnector)
 
   def viewAsString(form: Form[_] = form): String = declarationDuties(frontendAppConfig, form, "Test Scheme Name")(fakeRequest, messages).toString
 
@@ -85,6 +104,17 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form.fill(true))
     }
 
+
+    "return the email address of PSA when valid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+      val result = controller().onSubmit(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+      verify(psaNameCacheConnector, times(1)).fetch(any())(any(),any())
+    }
+
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
@@ -92,6 +122,15 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "send an email when valid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+      val result = controller().onSubmit(postRequest)
+
+      verify(fakeEmailConnector, times(1)).sendEmail(any(), any(), any())(any(),any())
+
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
