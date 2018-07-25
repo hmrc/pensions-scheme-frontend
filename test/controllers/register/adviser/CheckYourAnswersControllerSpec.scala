@@ -16,11 +16,14 @@
 
 package controllers.register.adviser
 
-import connectors.{FakeDataCacheConnector, PensionsSchemeConnector}
+import connectors.{EmailConnector, FakeDataCacheConnector, PSANameCacheConnector, PensionsSchemeConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import models.CheckMode
 import models.register.SchemeSubmissionResponse
+import org.mockito.Matchers._
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -59,7 +62,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   }
 }
 
-object CheckYourAnswersControllerSpec extends ControllerSpecBase {
+object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSugar{
   val schemeName = "Test Scheme Name"
   lazy val adviserDetailsRoute: String = routes.AdviserDetailsController.onPageLoad(CheckMode).url
   lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit()
@@ -83,6 +86,9 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     }
   }
 
+  private lazy val fakePSANameCacheConnector = mock[PSANameCacheConnector]
+  private lazy val fakeEmailConnector = mock[EmailConnector]
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
@@ -93,7 +99,9 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
       new FakeCountryOptions,
-      fakePensionsSchemeConnector
+      fakePensionsSchemeConnector,
+      fakeEmailConnector,
+      fakePSANameCacheConnector
     )
 
   lazy val viewAsString: String = check_your_answers(
