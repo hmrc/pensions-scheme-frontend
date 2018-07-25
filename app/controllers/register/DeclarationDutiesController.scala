@@ -17,13 +17,14 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.{DataCacheConnector, EmailConnector, PensionsSchemeConnector}
+import connectors._
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationDutiesFormProvider
 import identifiers.register.{DeclarationDutiesId, SubmissionReferenceNumberId}
 import javax.inject.Inject
-import models.NormalMode
+import models.{NormalMode, PSAName}
+import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -44,7 +45,8 @@ class DeclarationDutiesController @Inject()(
                                              requireData: DataRequiredAction,
                                              formProvider: DeclarationDutiesFormProvider,
                                              pensionsSchemeConnector: PensionsSchemeConnector,
-                                             emailConnector: EmailConnector
+                                             emailConnector: EmailConnector,
+                                             psaNameCacheConnector: PSANameCacheConnector
                                            ) extends FrontendController with I18nSupport with Retrievals with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -73,7 +75,7 @@ class DeclarationDutiesController @Inject()(
                 dataCacheConnector.save(request.externalId, DeclarationDutiesId, true).flatMap { cacheMap =>
                   pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id).flatMap { submissionResponse =>
                     dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).flatMap { cacheMap =>
-                      emailConnector.sendEmail("", "pods_psa_register", Map("srn" -> submissionResponse.schemeReferenceNumber)).map { _ =>
+                      sendEmail(submissionResponse.schemeReferenceNumber).map { _ =>
                         Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
                       }
                     }
@@ -86,4 +88,23 @@ class DeclarationDutiesController @Inject()(
           )
       }
   }
+
+  private def sendEmail(srn: String)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
+    psaNameCacheConnector.fetch(request.externalId).flatMap {
+
+      case Some(value) =>
+        val email = value.as[PSAName].psaEmail
+        emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrn(srn)))
+
+      case _ => Future.successful(EmailNotSent)
+    }
+  }
+
+  /*Format srn number to have a space after first 6 digits before inserting it into email */
+  private def formatSrn(srn: String): String = {
+    //noinspection ScalaStyle
+    val (start, end) = srn.splitAt(6)
+    start + ' ' + end
+  }
+
 }

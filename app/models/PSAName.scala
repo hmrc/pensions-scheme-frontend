@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.Json
 
-case class PSAName(psaName: String)
+case class PSAName(psaName: String, psaEmail: String)
 
 object PSAName{
   implicit val format = Json.format[PSAName]
