@@ -16,16 +16,20 @@
 
 package controllers.register.adviser
 
-import connectors.{EmailConnector, FakeDataCacheConnector, PSANameCacheConnector, PensionsSchemeConnector}
+import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
+import identifiers.TypedIdentifier
 import models.CheckMode
 import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
+import play.api.libs.json.{JsValue, Json}
+import play.api.libs.ws.WSClient
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeCountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, Message}
@@ -86,8 +90,34 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
     }
   }
 
-  private lazy val fakePSANameCacheConnector = mock[PSANameCacheConnector]
-  private lazy val fakeEmailConnector = mock[EmailConnector]
+  private val fakeEmailConnector = new EmailConnector {
+    override def sendEmail
+    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
+      Future.successful(EmailSent)
+    }
+  }
+
+  object fakePsaNameCacheConnector extends PSANameCacheConnector(
+    frontendAppConfig,
+    mock[WSClient],
+    injector.instanceOf[ApplicationCrypto]
+  ) with FakeDataCacheConnector {
+
+    override def fetch(cacheId: String)(implicit
+                                        ec: ExecutionContext,
+                                        hc: HeaderCarrier): Future[Option[JsValue]] = Future.successful(Some(Json.obj("psaName" -> "Test",
+      "psaEmail" -> "email@test.com")))
+
+    override def upsert(cacheId: String, value: JsValue)
+                       (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = Future.successful(value)
+
+    override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+                                                (implicit
+                                                 ec: ExecutionContext,
+                                                 hc: HeaderCarrier
+                                                ): Future[JsValue] = ???
+  }
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
     new CheckYourAnswersController(
@@ -101,7 +131,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       new FakeCountryOptions,
       fakePensionsSchemeConnector,
       fakeEmailConnector,
-      fakePSANameCacheConnector
+      fakePsaNameCacheConnector
     )
 
   lazy val viewAsString: String = check_your_answers(
