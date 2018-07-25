@@ -16,11 +16,14 @@
 
 package controllers
 
+import audit.UserResearchEvent
+import audit.testdoubles.StubSuccessfulAuditService
 import connectors.FakeDataCacheConnector
 import controllers.actions._
 import forms.UserResearchDetailsFormProvider
 import identifiers.UserResearchDetailsId
 import models.UserResearchDetails
+import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -28,16 +31,20 @@ import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.userResearchDetails
 
-class UserResearchDetailsControllerSpec extends ControllerSpecBase {
+class UserResearchDetailsControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new UserResearchDetailsFormProvider()
   val form = formProvider()
+  val fakeAuditService = new StubSuccessfulAuditService()
+  val name = "test name"
+  val email = "test@test.com"
+
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): UserResearchDetailsController =
     new UserResearchDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
-      dataRetrievalAction, new DataRequiredActionImpl, formProvider)
+      dataRetrievalAction, new DataRequiredActionImpl, formProvider, fakeAuditService)
 
   def viewAsString(form: Form[_] = form): String = userResearchDetails(frontendAppConfig, form)(fakeRequest, messages).toString
 
@@ -91,6 +98,30 @@ class UserResearchDetailsControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "send User Research Audit event when valid data is submitted" in {
+
+      val validData = Json.obj(UserResearchDetailsId.toString -> UserResearchDetails(name, email))
+      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("name", name), ("email", email))
+
+      fakeAuditService.reset()
+
+      val result = controller(getRelevantData).onSubmit()(postRequest)
+
+
+      whenReady(result) {
+        _ =>
+          fakeAuditService.verifySent(
+            UserResearchEvent(
+              FakeAuthAction.externalId,
+              "test name",
+              "test@test.com"
+            )
+          )
+      }
     }
   }
 }

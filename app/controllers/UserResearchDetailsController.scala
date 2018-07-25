@@ -16,6 +16,7 @@
 
 package controllers
 
+import audit.{AuditService, UserResearchEvent}
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
@@ -41,8 +42,9 @@ class UserResearchDetailsController @Inject()(
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
-                                               formProvider: UserResearchDetailsFormProvider
-                                      ) extends FrontendController with I18nSupport {
+                                               formProvider: UserResearchDetailsFormProvider,
+                                               auditService: AuditService
+) extends FrontendController with I18nSupport {
 
   private val form = formProvider()
 
@@ -60,9 +62,11 @@ class UserResearchDetailsController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(userResearchDetails(appConfig, formWithErrors))),
-        value =>
+        value => {
+          auditService.sendEvent(UserResearchEvent.userResearchAgreementSchemeEvent(request.externalId, value.name, value.email))
           dataCacheConnector.save(request.externalId, UserResearchDetailsId, value).map(cacheMap =>
             Redirect(navigator.nextPage(UserResearchDetailsId, NormalMode, UserAnswers(cacheMap))))
-    )
+        }
+      )
   }
 }
