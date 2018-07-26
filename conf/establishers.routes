@@ -246,3 +246,8 @@ GET        /:establisherIndex/partnership/other-partners                        
 POST       /:establisherIndex/partnership/other-partners                                                       controllers.register.establishers.partnership.OtherPartnersController.onSubmit(mode:Mode=NormalMode,establisherIndex:Index)
 GET        /:establisherIndex/partnership/change-other-partners                                                controllers.register.establishers.partnership.OtherPartnersController.onPageLoad(mode:Mode=CheckMode, establisherIndex:Index)
 POST       /:establisherIndex/partnership/change-other-partners                                                controllers.register.establishers.partnership.OtherPartnersController.onSubmit(mode:Mode=CheckMode,establisherIndex:Index)
+
+GET        /:index/partnership/partnership-address-results                                                  controllers.register.establishers.partnership.PartnershipAddressListController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/partnership-address-results                                                  controllers.register.establishers.partnership.PartnershipAddressListController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-partnership-address-results                                           controllers.register.establishers.partnership.PartnershipAddressListController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-partnership-address-results                                           controllers.register.establishers.partnership.PartnershipAddressListController.onSubmit(mode: Mode = CheckMode, index: Index)
