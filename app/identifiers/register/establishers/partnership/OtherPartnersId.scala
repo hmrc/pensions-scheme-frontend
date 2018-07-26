@@ -16,16 +16,15 @@
 
 package identifiers.register.establishers.partnership
 
-import identifiers.TypedIdentifier
+import identifiers._
 import identifiers.register.establishers.EstablishersId
-import models.PartnershipDetails
 import play.api.libs.json.JsPath
 
-case class PartnershipDetailsId(index: Int) extends TypedIdentifier[PartnershipDetails] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipDetailsId.toString
+case class OtherPartnersId(index:Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = EstablishersId(index).path \ OtherPartnersId.toString
 }
 
-object PartnershipDetailsId {
-  override lazy val toString: String = "partnershipDetails"
+object OtherPartnersId{
+  override lazy val toString: String = "otherPartners"
 }
 

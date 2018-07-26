@@ -211,3 +211,8 @@ GET        /:establisherIndex/company/director/:directorIndex/already-deleted   
 
 GET        /:index/individual/already-deleted                                                               controllers.register.establishers.AlreadyDeletedController.onPageLoad(index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual)
 GET        /:index/company/already-deleted                                                                  controllers.register.establishers.AlreadyDeletedController.onPageLoad(index: Index, establisherKind: EstablisherKind = EstablisherKind.Company)
+
+GET        /:establisherIndex/partnership/other-partners                                                       controllers.register.establishers.partnership.OtherPartnersController.onPageLoad(mode:Mode=NormalMode, establisherIndex:Index)
+POST       /:establisherIndex/partnership/other-partners                                                       controllers.register.establishers.partnership.OtherPartnersController.onSubmit(mode:Mode=NormalMode,establisherIndex:Index)
+GET        /:establisherIndex/partnership/change-other-partners                                                controllers.register.establishers.partnership.OtherPartnersController.onPageLoad(mode:Mode=CheckMode, establisherIndex:Index)
+POST       /:establisherIndex/partnership/change-other-partners                                                controllers.register.establishers.partnership.OtherPartnersController.onSubmit(mode:Mode=CheckMode,establisherIndex:Index)

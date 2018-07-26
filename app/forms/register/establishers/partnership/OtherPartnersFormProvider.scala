@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.partnership
+package forms.register.establishers.partnership
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import models.PartnershipDetails
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-case class PartnershipDetailsId(index: Int) extends TypedIdentifier[PartnershipDetails] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipDetailsId.toString
+class OtherPartnersFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__otherPartners__error__required")
+    )
 }
-
-object PartnershipDetailsId {
-  override lazy val toString: String = "partnershipDetails"
-}
-
