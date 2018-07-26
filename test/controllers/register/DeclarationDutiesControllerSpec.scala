@@ -23,10 +23,10 @@ import controllers.actions._
 import forms.register.DeclarationDutiesFormProvider
 import identifiers.TypedIdentifier
 import identifiers.register.{DeclarationDutiesId, SchemeDetailsId}
-import models.PSAName
 import models.register.{SchemeDetails, SchemeSubmissionResponse, SchemeType}
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json._
@@ -40,7 +40,7 @@ import views.html.register.declarationDuties
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSugar with CSRFRequest {
+class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -128,7 +128,6 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
     }
 
     "redirect to the next page when valid data is submitted" in {
-
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
       val result = controller().onSubmit(postRequest)
@@ -140,15 +139,16 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
     "send an email when valid data is submitted" in {
       reset(mockEmailConnector)
 
-      when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"),
-        eqTo(Map("srn" -> validSchemeSubmissionResponse.schemeReferenceNumber)))(any(), any()))
+      when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any())(any(), any()))
         .thenReturn(Future.successful(EmailSent))
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      controller(mockEmailConnector).onSubmit(postRequest)
-      verify(mockEmailConnector, times(1)).sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"),
-        eqTo(Map("srn" -> "S12345 67890")))(any(), any())
 
+      whenReady(controller(mockEmailConnector).onSubmit(postRequest)) {
+        _ =>
+          verify(mockEmailConnector, times(1)).sendEmail(eqTo("email@test.com"),
+            eqTo("pods_scheme_register"), eqTo(Map("srn" -> "S12345 67890")))(any(), any())
+      }
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

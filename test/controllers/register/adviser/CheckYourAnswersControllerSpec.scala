@@ -22,8 +22,9 @@ import controllers.actions._
 import identifiers.TypedIdentifier
 import models.CheckMode
 import models.register.SchemeSubmissionResponse
-import org.mockito.Matchers._
+import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSClient
@@ -37,7 +38,7 @@ import views.html.check_your_answers
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   import CheckYourAnswersControllerSpec._
 
@@ -55,6 +56,21 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
+    "send an email when valid data is submitted" in {
+      reset(mockEmailConnector)
+
+      when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any())(any(), any()))
+        .thenReturn(Future.successful(EmailSent))
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+      whenReady(controller(emailConnector = mockEmailConnector).onSubmit(postRequest)) {
+        _ =>
+          verify(mockEmailConnector, times(1)).sendEmail(eqTo("email@test.com"),
+            eqTo("pods_scheme_register"), eqTo(Map("srn" -> "S12345 67890")))(any(), any())
+      }
     }
 
     "redirect to the next page on a POST request" in {
@@ -80,7 +96,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  private val validSchemeSubmissionResponse = SchemeSubmissionResponse("test-scheme-id")
+  private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
 
   private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
     override def registerScheme
@@ -89,6 +105,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       Future.successful(validSchemeSubmissionResponse)
     }
   }
+
+  private val mockEmailConnector = mock[EmailConnector]
 
   private val fakeEmailConnector = new EmailConnector {
     override def sendEmail
@@ -119,7 +137,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
                                                 ): Future[JsValue] = ???
   }
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
+                 emailConnector: EmailConnector = fakeEmailConnector): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -130,7 +149,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       new FakeNavigator(onwardRoute),
       new FakeCountryOptions,
       fakePensionsSchemeConnector,
-      fakeEmailConnector,
+      emailConnector,
       fakePsaNameCacheConnector
     )
 
