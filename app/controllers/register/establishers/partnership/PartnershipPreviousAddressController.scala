@@ -29,7 +29,7 @@ import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import utils.annotations.EstablishersPartnership
+import utils.annotations.EstablisherPartnership
 import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
@@ -38,7 +38,7 @@ class PartnershipPreviousAddressController @Inject()(
                                                   val appConfig: FrontendAppConfig,
                                                   val messagesApi: MessagesApi,
                                                   val dataCacheConnector: DataCacheConnector,
-                                                  @EstablishersPartnership val navigator: Navigator,
+                                                  @EstablisherPartnership val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
@@ -50,7 +50,6 @@ class PartnershipPreviousAddressController @Inject()(
   private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__partnershipPreviousAddress__title"
   private[controllers] val heading: Message = "messages__partnershipPreviousAddress__heading"
-  private[controllers] val hint: Message = "messages__partnershipAddress__lede"
 
   protected val form: Form[Address] = formProvider()
 
@@ -64,7 +63,6 @@ class PartnershipPreviousAddressController @Inject()(
               countryOptions.options,
               title = Message(title),
               heading = Message(heading),
-              hint = Some(Message(hint)),
               secondaryHeader = Some(details.name)
             )
         }

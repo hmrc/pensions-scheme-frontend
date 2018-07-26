@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import utils.Navigator
-import utils.annotations.EstablishersPartnership
+import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
@@ -37,7 +37,7 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
                                                                 override val messagesApi: MessagesApi,
                                                                 override val cacheConnector: DataCacheConnector,
                                                                 override val addressLookupConnector: AddressLookupConnector,
-                                                                @EstablishersPartnership override val navigator: Navigator,
+                                                                @EstablisherPartnership override val navigator: Navigator,
                                                                 authenticate: AuthAction,
                                                                 getData: DataRetrievalAction,
                                                                 requireData: DataRequiredAction,
@@ -67,6 +67,7 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
+        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>in onPageLoad")
         viewmodel(index, mode).retrieve.right map get
     }
 

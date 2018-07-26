@@ -25,4 +25,7 @@ case class PartnershipDetailsId(index: Int) extends TypedIdentifier[PartnershipD
   override def path: JsPath = EstablishersId(index).path \ PartnershipDetailsId.toString
 }
 
+object PartnershipDetailsId {
+  override lazy val toString: String = "partnershipDetails"
+}
 
