@@ -211,3 +211,8 @@ GET        /:establisherIndex/company/director/:directorIndex/already-deleted   
 
 GET        /:index/individual/already-deleted                                                               controllers.register.establishers.AlreadyDeletedController.onPageLoad(index: Index, establisherKind: EstablisherKind = EstablisherKind.Indivdual)
 GET        /:index/company/already-deleted                                                                  controllers.register.establishers.AlreadyDeletedController.onPageLoad(index: Index, establisherKind: EstablisherKind = EstablisherKind.Company)
+
+GET         /:index/partnership/unique-taxpayer-reference                                                   controllers.register.establishers.partnership.PartnershipUniqueTaxReferenceController.onPageLoad(mode:Mode=NormalMode, index:Index)
+POST        /:index/partnership/unique-taxpayer-reference                                                   controllers.register.establishers.partnership.PartnershipUniqueTaxReferenceController.onSubmit(mode:Mode=NormalMode, index:Index)
+GET         /:index/partnership/change-unique-taxpayer-reference                                                   controllers.register.establishers.partnership.PartnershipUniqueTaxReferenceController.onPageLoad(mode:Mode=CheckMode, index:Index)
+POST        /:index/partnership/change-unique-taxpayer-reference                                                   controllers.register.establishers.partnership.PartnershipUniqueTaxReferenceController.onSubmit(mode:Mode=CheckMode, index:Index)
