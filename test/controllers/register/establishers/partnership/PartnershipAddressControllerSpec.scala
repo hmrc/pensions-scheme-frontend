@@ -77,10 +77,10 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
       ManualAddressViewModel(
         routes.PartnershipAddressController.onSubmit(NormalMode, firstIndex),
         options,
-        Message(""),
-        Message(""),
+        Message("messages__partnershipAddress__title"),
+        Message("messages__partnershipAddress__heading"),
         Some(partnershipName),
-        Some(Message(""))
+        Some(Message("messages__partnershipAddress__lede"))
       )
     )(fakeRequest, messages).toString
 

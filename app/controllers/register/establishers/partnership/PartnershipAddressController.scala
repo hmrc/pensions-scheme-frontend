@@ -48,9 +48,9 @@ class PartnershipAddressController @Inject()(
                                         ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.PartnershipAddressController.onSubmit _
-  private[controllers] val title: Message = ""
-  private[controllers] val heading: Message = ""
-  private[controllers] val hint: Message = ""
+  private[controllers] val title: Message = "messages__partnershipAddress__title"
+  private[controllers] val heading: Message = "messages__partnershipAddress__heading"
+  private[controllers] val hint: Message = "messages__partnershipAddress__lede"
 
   protected val form: Form[Address] = formProvider()
 
