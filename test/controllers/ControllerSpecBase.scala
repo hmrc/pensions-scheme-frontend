@@ -24,9 +24,10 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.CompanyDetails
+import models.{CompanyDetails, PartnershipDetails}
 import models.person.PersonDetails
 import models.register.{AdviserDetails, SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
@@ -75,6 +76,19 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         Json.obj(
           CompanyDetailsId.toString ->
             CompanyDetails("test company name", Some("123456"), Some("abcd"))
+        )
+      )
+    ))
+  )
+
+  def getMandatoryEstablisherPartnership: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      SchemeDetailsId.toString ->
+        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          PartnershipDetailsId.toString ->
+            PartnershipDetails("test partnership name")
         )
       )
     ))
