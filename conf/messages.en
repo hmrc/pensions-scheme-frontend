@@ -751,3 +751,6 @@ messages__partnershipPreviousAddressPostcodeLookup__checkYourAnswersLabel = Prev
 
 messages__partnershipPreviousAddress__title = Enter the partnership’s previous address
 messages__partnershipPreviousAddress__heading = Enter the partnership’s previous address
+
+messages__establisher_partnership_contact_details__title = Enter the partnership’s contact details
+messages__establisher_partnership_contact_details__heading = Enter the partnership’s contact details
