@@ -67,7 +67,6 @@ class PartnershipPreviousAddressPostcodeLookupController @Inject()(
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
-        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>in onPageLoad")
         viewmodel(index, mode).retrieve.right map get
     }
 
