@@ -23,6 +23,7 @@ import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
+import forms.register.establishers.partnership.PartnershipUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.partnership.PartnershipUniqueTaxReferenceID
 import models.{Index, Mode, UniqueTaxReference}
 import play.api.data.Form
@@ -43,7 +44,7 @@ class PartnershipUniqueTaxReferenceController @Inject()(
                                                      @EstablishersCompany navigator: Navigator,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
-                                                     formProvider: CompanyUniqueTaxReferenceFormProvider
+                                                     formProvider: PartnershipUniqueTaxReferenceFormProvider
                                                   ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
