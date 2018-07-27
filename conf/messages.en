@@ -740,3 +740,7 @@ messages__partnershipAddress__lede = This is usually the registered business add
 messages__partnershipPostcodeLookup__title = Enter the partnership’s postcode
 messages__partnershipPostcodeLookup__heading = Enter the partnership’s postcode
 messages__partnershipPostcodeLookup__hint = This is usually the registered business address but you can enter any address you have for this scheme establisher.
+
+messages__partnershipAddressYears__title = How long has the partnership been at this address?
+messages__partnershipAddressYears__heading = How long has the partnership been at this address?
+messages__partnershipAddressYears__error = Select how long the partnership has been at the current address
