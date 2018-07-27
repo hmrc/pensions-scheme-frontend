@@ -30,7 +30,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.EstablishersCompany
+import utils.annotations.EstablisherPartnership
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.partnership.partnershipUniqueTaxReference
 
@@ -41,7 +41,7 @@ class PartnershipUniqueTaxReferenceController @Inject()(
                                                      override val messagesApi: MessagesApi,
                                                      dataCacheConnector: DataCacheConnector,
                                                      authenticate: AuthAction,
-                                                     @EstablishersCompany navigator: Navigator,
+                                                     @EstablisherPartnership navigator: Navigator,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
                                                      formProvider: PartnershipUniqueTaxReferenceFormProvider
