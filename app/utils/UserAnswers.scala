@@ -20,6 +20,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
@@ -170,6 +171,26 @@ case class UserAnswers(json: JsValue = Json.obj()) {
 
   def allDirectorsAfterDelete(establisherIndex: Int): Seq[DirectorEntity] = {
     allDirectors(establisherIndex).filterNot(_.isDeleted)
+  }
+
+  def allPartners(establisherIndex: Int): Seq[EstablisherPartnerEntity] = {
+    getAllRecursive[PersonDetails](PartnerDetailsId.collectionPath(establisherIndex)).map {
+      details =>
+        details.map { partner =>
+          val partnerIndex = details.indexOf(partner)
+          val isComplete = get(IsPartnerCompleteId(establisherIndex, partnerIndex)).getOrElse(false)
+          EstablisherPartnerEntity(
+            PartnerDetailsId(establisherIndex, partnerIndex),
+            partner.fullName,
+            partner.isDeleted,
+            isComplete
+          )
+        }
+    }.getOrElse(Seq.empty)
+  }
+
+  def allPartnersAfterDelete(establisherIndex: Int): Seq[EstablisherPartnerEntity] = {
+    allPartners(establisherIndex).filterNot(_.isDeleted)
   }
 
   val readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {

@@ -732,3 +732,13 @@ messages__userResearchDetails__p3 = We will use this information to contact you 
 messages__userResearchDetails__error_name_required = Enter your full name
 messages__userResearchDetails__error_name_length = The name cannot be more than 160 characters
 messages__userResearchDetails__error_name_invalid = The name contains invalid characters
+
+messages__addPartners__title = Partners
+messages__addPartners__heading = Partners
+messages__addPartners__checkYourAnswersLabel = Partners
+messages__addPartners__error__required = You must make a selection
+messages__addPartners_add_more = Do you want to add another partner?
+messages__addPartners_lede = You must tell us about all your partners. You can add up to 10 using the digital service.
+messages__addPartners_add_partner = Add a partner
+messages__addPartners_at_maximum = You have added the maximum number of partners.
+messages__addPartners_tell_us_if_you_have_more = You can tell us on the next page if you have more to add.

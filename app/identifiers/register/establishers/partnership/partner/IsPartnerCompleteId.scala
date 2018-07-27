@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.partnership
+package identifiers.register.establishers.partnership.partner
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import models.PartnershipDetails
 import play.api.libs.json.JsPath
 
-case class PartnershipDetailsId(index: Int) extends TypedIdentifier[PartnershipDetails] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipDetailsId.toString
+case class IsPartnerCompleteId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ IsPartnerCompleteId.toString
 }
 
-object PartnershipDetailsId {
-  override lazy val toString: String = "partnershipDetails"
+object IsPartnerCompleteId {
+  override def toString: String = "isPartnerComplete"
 }
+
+
+
+
