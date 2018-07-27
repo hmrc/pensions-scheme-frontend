@@ -222,6 +222,26 @@ POST       /:index/partnership/partnership-address                              
 GET        /:index/partnership/change-partnership-address                                                   controllers.register.establishers.partnership.PartnershipPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/partnership/change-partnership-address                                                   controllers.register.establishers.partnership.PartnershipPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index: Index)
 
+GET        /:index/partnership/partnership-address-manual                                                   controllers.register.establishers.partnership.PartnershipAddressController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/partnership-address-manual                                                   controllers.register.establishers.partnership.PartnershipAddressController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-partnership-address-manual                                            controllers.register.establishers.partnership.PartnershipAddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-partnership-address-manual                                            controllers.register.establishers.partnership.PartnershipAddressController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/partnership/previous-address                                                    controllers.register.establishers.partnership.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/previous-address                                                    controllers.register.establishers.partnership.PartnershipPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-previous-address                                             controllers.register.establishers.partnership.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-previous-address                                             controllers.register.establishers.partnership.PartnershipPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/partnership/previous-address-results                                            controllers.register.establishers.partnership.PartnershipPreviousAddressListController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/previous-address-results                                            controllers.register.establishers.partnership.PartnershipPreviousAddressListController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-previous-address-results                                     controllers.register.establishers.partnership.PartnershipPreviousAddressListController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-previous-address-results                                     controllers.register.establishers.partnership.PartnershipPreviousAddressListController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/partnership/previous-address-manual                                             controllers.register.establishers.partnership.PartnershipPreviousAddressController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/previous-address-manual                                             controllers.register.establishers.partnership.PartnershipPreviousAddressController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-previous-address-manual                                      controllers.register.establishers.partnership.PartnershipPreviousAddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-previous-address-manual                                      controllers.register.establishers.partnership.PartnershipPreviousAddressController.onSubmit(mode: Mode = CheckMode, index: Index)
+
 GET        /:establisherIndex/partnership/other-partners                                                       controllers.register.establishers.partnership.OtherPartnersController.onPageLoad(mode:Mode=NormalMode, establisherIndex:Index)
 POST       /:establisherIndex/partnership/other-partners                                                       controllers.register.establishers.partnership.OtherPartnersController.onSubmit(mode:Mode=NormalMode,establisherIndex:Index)
 GET        /:establisherIndex/partnership/change-other-partners                                                controllers.register.establishers.partnership.OtherPartnersController.onPageLoad(mode:Mode=CheckMode, establisherIndex:Index)
