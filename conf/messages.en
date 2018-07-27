@@ -733,6 +733,14 @@ messages__userResearchDetails__error_name_required = Enter your full name
 messages__userResearchDetails__error_name_length = The name cannot be more than 160 characters
 messages__userResearchDetails__error_name_invalid = The name contains invalid characters
 
+messages__partnershipAddress__title = Enter the partnership’s address
+messages__partnershipAddress__heading = Enter the partnership’s address
+messages__partnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this scheme establisher.
+
+messages__partnershipPostcodeLookup__title = Enter the partnership’s postcode
+messages__partnershipPostcodeLookup__heading = Enter the partnership’s postcode
+messages__partnershipPostcodeLookup__hint = This is usually the registered business address but you can enter any address you have for this scheme establisher.
+
 messages__otherPartners__title=Do you need to tell us about other partners?
 messages__otherPartners__heading=Do you need to tell us about other partners?
 messages__otherPartners__lede=You do not have to add them now. We may contact you if we need this information.
