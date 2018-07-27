@@ -20,7 +20,8 @@ import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
-import models.CompanyDetails
+import identifiers.register.establishers.partnership.PartnershipDetailsId
+import models.{CompanyDetails, PartnershipDetails}
 import models.register.{SchemeDetails, SchemeType}
 import models.requests.DataRequest
 import org.scalatest.EitherValues
@@ -78,6 +79,25 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
       status(result) must be(OK)
     }
   }
+
+  "retrievePartnershipName" must {
+    "reach the intended result when partnershipName is found" in {
+
+      val validData = Json.obj(
+        EstablishersId.toString -> Json.arr(
+          Json.obj(
+            PartnershipDetailsId.toString -> PartnershipDetails("test name")
+          ))
+      )
+
+      implicit val request: DataRequest[AnyContent] = dataRequest(validData)
+
+      val result = controller.retrieveCompanyName(0)(success)
+
+      status(result) must be(OK)
+    }
+  }
+
 
   "retrieveSchemeName" must {
     "reach the intended result when schemeName is found" in {

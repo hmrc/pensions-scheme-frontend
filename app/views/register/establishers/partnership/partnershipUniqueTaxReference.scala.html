@@ -26,7 +26,7 @@
 }
 
 @main_template(
-    title = messages(""),
+    title = messages("messages__establisher__has_sautr__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -53,7 +53,7 @@
         field = form("uniqueTaxReference.utr"),
         label = messages("messages__director_sautr"),
         groupClass = Some("js-hidden panel panel-border-narrow"),
-        hint = Some(messages("messages__error__no_sautr_partnership"))
+        hint = Some(messages("messages__director_sautr_hint_format"))
         )
 
         @components.radio(
@@ -65,7 +65,7 @@
 
         @components.input_text(
         field = form("uniqueTaxReference.reason"),
-        label = messages("messages__establisher__no_ct_utr"),
+        label = messages("messages__hint__no_sautr_partnership"),
         groupClass = Some("js-hidden panel panel-border-narrow")
         )
     }
