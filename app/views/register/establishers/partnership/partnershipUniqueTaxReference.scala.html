@@ -34,12 +34,12 @@
 
     @components.error_summary(form.errors)
 
-    @components.heading(headingKey = "messages__establisher__has_ct_utr__title", secondaryHeaderKey = Some(partnershipName))
+    @components.heading(headingKey = "messages__establisher__has_sautr__title", secondaryHeaderKey = Some(partnershipName))
 
     @components.fieldSet(
         field = form("uniqueTaxReference.hasUtr"),
-        legend = "messages__establisher__has_ct_utr__title",
-        hint = Some("messages__establisher__ct_utr_hint_what"),
+        legend = "messages__establisher__has_sautr__title",
+        hint = Some("messages__company__sautr_hint_what"),
         hiddenLegend = true
     ){
         @components.radio(
@@ -51,9 +51,9 @@
 
         @components.input_text(
         field = form("uniqueTaxReference.utr"),
-        label = messages("messages__establisher__ct_utr"),
+        label = messages("messages__director_sautr"),
         groupClass = Some("js-hidden panel panel-border-narrow"),
-        hint = Some(messages("messages__establisher__ct_utr_hint_format"))
+        hint = Some(messages("messages__error__no_sautr_partnership"))
         )
 
         @components.radio(

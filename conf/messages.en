@@ -81,6 +81,8 @@ messages__error__address_line_4_invalid = The fourth line of the address contain
 messages__error_country_required = Enter a country
 messages__error_country_invalid = Enter a valid country
 
+messages__error__no_sautr_partnership = Tell us why the partnership does not have a Unique Taxpayer Reference number
+
 messages__common__cya__name = Name
 messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
@@ -277,6 +279,7 @@ messages__establishers__add_legend = What kind of scheme establisher are you add
 messages__establisher__has_sautr__title = Does the establisher have a Self Assessment Unique Taxpayer Reference number (SAUTR)?
 messages__establisher__no_sautr = Tell us why the establisher does not have a SAUTR
 messages__error__has_sautr_establisher = Select yes if the establisher has a SAUTR
+messages__establisher__sa_utr = Self Assessment Unique Taxpayer Reference number
 
 messages__establisher_individual_contact_details__title = Enter the scheme establisher’s contact details
 messages__establisher_individual_contact_details__heading = Enter the scheme establisher’s contact details
