@@ -63,7 +63,7 @@ class PartnershipContactDetailsController @Inject()(
     postCall = routes.PartnershipContactDetailsController.onSubmit(mode, index),
     title = Message("messages__establisher_partnership_contact_details__title"),
     heading = Message("messages__establisher_partnership_contact_details__heading"),
-    body = Message("messages__contact_details__body"),
+    body = Message("messages__establisher_partnership_contact_details__body"),
     subHeading = Some(partnershipName)
   )
 }

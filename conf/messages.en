@@ -754,3 +754,4 @@ messages__partnershipPreviousAddress__heading = Enter the partnership’s previo
 
 messages__establisher_partnership_contact_details__title = Enter the partnership’s contact details
 messages__establisher_partnership_contact_details__heading = Enter the partnership’s contact details
+messages__establisher_partnership_contact_details__body = These details will be used if we need to contact someone in the company about the pension scheme.

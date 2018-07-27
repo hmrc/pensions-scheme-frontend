@@ -241,3 +241,8 @@ GET        /:index/partnership/previous-address-manual                          
 POST       /:index/partnership/previous-address-manual                                             controllers.register.establishers.partnership.PartnershipPreviousAddressController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/partnership/change-previous-address-manual                                      controllers.register.establishers.partnership.PartnershipPreviousAddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/partnership/change-previous-address-manual                                      controllers.register.establishers.partnership.PartnershipPreviousAddressController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/partnership/contact-details                                                                  controllers.register.establishers.partnership.PartnershipContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/contact-details                                                                  controllers.register.establishers.partnership.PartnershipContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-contact-details                                                           controllers.register.establishers.partnership.PartnershipContactDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-contact-details                                                           controllers.register.establishers.partnership.PartnershipContactDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
