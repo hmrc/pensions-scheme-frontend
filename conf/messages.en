@@ -751,3 +751,8 @@ messages__partnershipPreviousAddressPostcodeLookup__checkYourAnswersLabel = Prev
 
 messages__partnershipPreviousAddress__title = Enter the partnership’s previous address
 messages__partnershipPreviousAddress__heading = Enter the partnership’s previous address
+
+messages__otherPartners__title=Do you need to tell us about other partners?
+messages__otherPartners__heading=Do you need to tell us about other partners?
+messages__otherPartners__lede=You do not have to add them now. We may contact you if we need this information.
+messages__otherPartners__error__required=Select yes if you need to tell us about other partners
