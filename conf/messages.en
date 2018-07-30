@@ -773,3 +773,10 @@ messages__partnershipVat__heading = Does the partnership have a VAT registration
 messages__establisher_partnership_contact_details__title = Enter the partnership’s contact details
 messages__establisher_partnership_contact_details__heading = Enter the partnership’s contact details
 messages__establisher_partnership_contact_details__body = These details will be used if we need to contact someone in the company about the pension scheme.
+
+messages__partnershipDetails__title = Enter the partnership’s name
+messages__partnershipDetails__heading = Enter the partnership’s name
+messages__partnershipDetails__label = Enter the partnership’s name
+messages__partnershipDetails__error__required = Enter a name
+messages__partnershipDetails__error_too_long = Enter a name using 160 characters or less
+messages__partnershipDetails__invalid = Enter a valid name
