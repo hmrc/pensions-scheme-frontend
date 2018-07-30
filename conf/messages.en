@@ -83,9 +83,6 @@ messages__error__address_line_4_invalid = The fourth line of the address contain
 messages__error_country_required = Enter a country
 messages__error_country_invalid = Enter a valid country
 
-messages__hint__no_sautr_partnership = Tell us why the partnership does not have a Unique Taxpayer Reference number
-messages__error__no_sa_utr_establisher = You need to tell us why the establisher does not have a SAUTR
-
 messages__common__cya__name = Name
 messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
@@ -787,8 +784,9 @@ messages__partnershipDetails__invalid = Enter a valid name
 
 messages__establisher_partnership_has_utr__title = Does the partnership have a Self Assessment Unique Taxpayer Reference number?
 messages__establisher_partnership_utr_hint_format=A Unique Taxpayer Reference number is 10 numbers.
+messages__hint__no_utr_partnership = Tell us why the partnership does not have a Unique Taxpayer Reference number
 messages__error__has_utr_establisher_partnership=Select whether the partnership has a UTR
 messages__error__utr=Enter a UTR
 messages__error__utr_no_utr_establisher=Enter a reason for not having a UTR
-messages__error__utr_invalid=Enter a UTR using only numbers
+messages__error__utr_invalid=Enter a UTR using only 10 numbers
 messages__error__no_utr_length=Enter a reason for not having a UTR using 160 characters or less

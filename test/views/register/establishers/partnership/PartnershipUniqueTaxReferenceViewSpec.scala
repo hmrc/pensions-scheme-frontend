@@ -86,7 +86,7 @@ class PartnershipUniqueTaxReferenceViewSpec extends ViewBehaviours {
         val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" ->
           expectedValue))))
         doc must haveLabelAndValue("uniqueTaxReference_reason", messages(
-          "messages__hint__no_sautr_partnership"), expectedValue)
+          "messages__hint__no_utr_partnership"), expectedValue)
       }
     }
   }
