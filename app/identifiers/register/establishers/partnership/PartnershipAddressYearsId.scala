@@ -19,11 +19,22 @@ package identifiers.register.establishers.partnership
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.AddressYears
-import play.api.libs.json.JsPath
-import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
+import play.api.libs.json.{JsPath, JsResult}
+import utils.UserAnswers
 
-case class PartnershipAddressYearsId (index: Int) extends TypedIdentifier[AddressYears] {
+case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipAddressYearsId.toString
+
+  override def cleanup(value: Option[AddressYears], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(AddressYears.OverAYear) =>
+        userAnswers.remove(
+          PartnershipPreviousAddressPostcodeLookupId(this.index)).flatMap(_.remove(
+          PartnershipPreviousAddressId(this.index))
+        )
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }
 
 object PartnershipAddressYearsId {
