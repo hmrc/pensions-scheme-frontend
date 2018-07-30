@@ -337,7 +337,7 @@ messages__error__vat_required = Enter a VAT number
 messages__error__vat_invalid = Enter a VAT number using either 9 numbers only or GB followed by 9 numbers
 messages__error__has_vat_establisher = Select whether the partnership has a VAT number
 messages__error__paye_required = Enter an employer PAYE number
-messages__error__paye_length = Enter an employer PAYE number using 13 characters or less
+messages__error__paye_length = Enter an employer PAYE number using 16 characters or less
 messages__error__paye_invalid = Enter an employer PAYE number using only numbers, letters or a forward slash
 messages__error__has_paye_establisher = Select whether the partnership has an employer PAYE number
 
