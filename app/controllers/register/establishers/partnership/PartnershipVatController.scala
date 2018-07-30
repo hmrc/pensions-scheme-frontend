@@ -27,7 +27,7 @@ import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import utils.Navigator
-import utils.annotations.EstablishersPartnership
+import utils.annotations.EstablisherPartnership
 import viewmodels.{Message, VatViewModel}
 
 
@@ -35,7 +35,7 @@ class PartnershipVatController @Inject()(
                                           override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           override val cacheConnector: DataCacheConnector,
-                                          @EstablishersPartnership override val navigator: Navigator,
+                                          @EstablisherPartnership override val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,

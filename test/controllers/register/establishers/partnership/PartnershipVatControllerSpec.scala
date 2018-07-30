@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.annotations.EstablishersPartnership
+import utils.annotations.EstablisherPartnership
 import utils.{FakeNavigator, Navigator}
 import viewmodels.{Message, VatViewModel}
 import views.html.vat
@@ -86,7 +86,7 @@ object PartnershipVatControllerSpec extends PartnershipVatControllerSpec {
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].toInstance(getMandatoryEstablisherPartnership),
-      bind(classOf[Navigator]).qualifiedWith(classOf[EstablishersPartnership]).toInstance(new FakeNavigator(onwardRoute)),
+      bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(new FakeNavigator(onwardRoute)),
       bind[DataCacheConnector].toInstance(FakeDataCacheConnector)
     )) {
       app =>
