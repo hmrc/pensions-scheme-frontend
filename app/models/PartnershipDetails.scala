@@ -22,5 +22,13 @@ import play.api.libs.functional.syntax._
 case class PartnershipDetails(name: String, isDeleted: Boolean = false)
 
 object PartnershipDetails {
-  implicit val format = Json.format[PartnershipDetails]
+  implicit val format: OFormat[PartnershipDetails] = Json.format[PartnershipDetails]
+
+  def applyDelete(name: String): PartnershipDetails = {
+    PartnershipDetails(name)
+  }
+
+  def unapplyDelete(partnershipDetails: PartnershipDetails): Option[String] = {
+    Some(partnershipDetails.name)
+  }
 }
