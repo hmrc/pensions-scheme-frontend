@@ -261,3 +261,8 @@ GET        /:index/partnership/vat-number                                       
 POST       /:index/partnership/vat-number                                                                   controllers.register.establishers.partnership.PartnershipVatController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/partnership/change-vat-number                                                            controllers.register.establishers.partnership.PartnershipVatController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/partnership/change-vat-number                                                            controllers.register.establishers.partnership.PartnershipVatController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/partnership/contact-details                                                                  controllers.register.establishers.partnership.PartnershipContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/contact-details                                                                  controllers.register.establishers.partnership.PartnershipContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-contact-details                                                           controllers.register.establishers.partnership.PartnershipContactDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-contact-details                                                           controllers.register.establishers.partnership.PartnershipContactDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
