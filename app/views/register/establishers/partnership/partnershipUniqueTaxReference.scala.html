@@ -26,7 +26,7 @@
 }
 
 @main_template(
-    title = messages("messages__establisher__has_sautr__title"),
+    title = messages("messages__establisher_partnership_has_utr__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -34,11 +34,11 @@
 
     @components.error_summary(form.errors)
 
-    @components.heading(headingKey = "messages__establisher__has_sautr__title", secondaryHeaderKey = Some(partnershipName))
+    @components.heading(headingKey = "messages__establisher_partnership_has_utr__title", secondaryHeaderKey = Some(partnershipName))
 
     @components.fieldSet(
         field = form("uniqueTaxReference.hasUtr"),
-        legend = "messages__establisher__has_sautr__title",
+        legend = "messages__establisher_partnership_has_utr__title",
         hint = Some("messages__company__sautr_hint_what"),
         hiddenLegend = true
     ){
@@ -51,9 +51,9 @@
 
         @components.input_text(
         field = form("uniqueTaxReference.utr"),
-        label = messages("messages__director_sautr"),
+        label = messages("messages__common__utr"),
         groupClass = Some("js-hidden panel panel-border-narrow"),
-        hint = Some(messages("messages__director_sautr_hint_format"))
+        hint = Some(messages("messages__establisher_partnership_utr_hint_format"))
         )
 
         @components.radio(

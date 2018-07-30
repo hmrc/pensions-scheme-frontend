@@ -26,7 +26,7 @@ import views.html.register.establishers.partnership.partnershipUniqueTaxReferenc
 
 class PartnershipUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "establisher__has_ct_utr"
+  val messageKeyPrefix = "establisher_partnership_has_utr"
 
   val form: Form[_] = new PartnershipUniqueTaxReferenceFormProvider().apply()
 
@@ -41,7 +41,7 @@ class PartnershipUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   "PartnershipUniqueTaxReference view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__establisher__has_sautr__title"))
+    behave like normalPage(createView, messageKeyPrefix, messages("messages__establisher_partnership_has_utr__title"))
 
   }
 
@@ -74,9 +74,9 @@ class PartnershipUniqueTaxReferenceViewSpec extends ViewBehaviours {
         val expectedValue = "1234567891"
         val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" ->
           expectedValue))))
-        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__establisher__sa_utr")} ${
+        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__common__utr")} ${
           messages(
-            "messages__company__sautr_hint_what")
+            "messages__establisher_partnership_utr_hint_format")
         }",
           expectedValue)
       }
@@ -86,7 +86,7 @@ class PartnershipUniqueTaxReferenceViewSpec extends ViewBehaviours {
         val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "false", "uniqueTaxReference.reason" ->
           expectedValue))))
         doc must haveLabelAndValue("uniqueTaxReference_reason", messages(
-          "messages__error__no_sautr_establisher"), expectedValue)
+          "messages__hint__no_sautr_partnership"), expectedValue)
       }
     }
   }

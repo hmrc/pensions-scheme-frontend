@@ -84,7 +84,6 @@ messages__error_country_invalid = Enter a valid country
 messages__hint__no_sautr_partnership = Tell us why the partnership does not have a Unique Taxpayer Reference number
 messages__error__no_sa_utr_establisher = You need to tell us why the establisher does not have a SAUTR
 
-
 messages__common__cya__name = Name
 messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
@@ -749,3 +748,7 @@ messages__partnershipPostcodeLookup__hint = This is usually the registered busin
 messages__partnershipAddressYears__title = How long has the partnership been at this address?
 messages__partnershipAddressYears__heading = How long has the partnership been at this address?
 messages__partnershipAddressYears__error = Select how long the partnership has been at the current address
+
+messages__establisher_partnership_has_utr__title = Does the partnership have a Self Assessment Unique Taxpayer Reference number?
+messages__establisher_partnership_utr_hint_format=A Unique Taxpayer Reference number is 10 numbers.
+

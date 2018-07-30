@@ -92,7 +92,7 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
 
       implicit val request: DataRequest[AnyContent] = dataRequest(validData)
 
-      val result = controller.retrieveCompanyName(0)(success)
+      val result = controller.retrievePartnershipName(0)(success)
 
       status(result) must be(OK)
     }
