@@ -80,10 +80,17 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
 
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(PartnershipDetails("test company name")))
+      contentAsString(result) mustBe viewAsString(form.fill(PartnershipDetails("test partnership name")))
     }
 
-    "redirect to session expired page on a GET when the index is not valid" ignore {
+    "redirect to session expired page on a GET when the index is not valid" in {
+      val validData = Json.obj(
+        "establishers" -> Json.arr(
+          Json.obj(
+            PartnershipDetailsId.toString -> PartnershipDetails("test name")
+          )
+        )
+      )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
@@ -91,7 +98,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("name", "test company name"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("partnershipName", "test partnership name"))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 

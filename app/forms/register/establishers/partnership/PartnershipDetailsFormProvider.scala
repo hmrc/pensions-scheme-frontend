@@ -28,7 +28,7 @@ class PartnershipDetailsFormProvider  @Inject() extends Mappings with Transforms
 
   def apply(): Form[PartnershipDetails] = Form(
     mapping(
-      "name" -> text(errorKey = "messages__partnershipDetails__error__required")
+      "partnershipName" -> text(errorKey = "messages__partnershipDetails__error__required")
         .verifying(
           firstError(
             maxLength(

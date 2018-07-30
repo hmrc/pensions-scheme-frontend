@@ -30,7 +30,7 @@ class PartnershipDetailsFormProviderSpec extends StringFieldBehaviours with Cons
 
   "PartnershipDetailsFormProvider" must {
 
-    val fieldName = "name"
+    val fieldName = "partnershipName"
     val requiredKey = "messages__partnershipDetails__error__required"
     val lengthKey = "messages__partnershipDetails__error_too_long"
     val invalidKey = "messages__partnershipDetails__invalid"
