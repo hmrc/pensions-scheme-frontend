@@ -71,4 +71,5 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val allowPartnerships: Boolean = loadConfigOrDefault("features.allowPartnerships", "false").toBoolean
   lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
   lazy val completeFlagEnabled: Boolean = runModeConfiguration.getBoolean("features.is-complete").getOrElse(true)
+  lazy val emailApiUrl: String = baseUrl("email")
 }

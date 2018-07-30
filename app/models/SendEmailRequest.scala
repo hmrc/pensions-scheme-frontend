@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.partnership
+package models
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import models.address.Address
-import play.api.libs.json.JsPath
-import views.html.index
+import play.api.libs.json._
 
-case class PartnershipAddressId(index: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipAddressId.toString
-}
+case class SendEmailRequest(to: List[String], templateId: String, parameters: Map[String, String], force: Boolean)
 
-object PartnershipAddressId {
-  override def toString: String = "partnershipAddress"
+object SendEmailRequest {
+  implicit val format = Json.format[SendEmailRequest]
 }

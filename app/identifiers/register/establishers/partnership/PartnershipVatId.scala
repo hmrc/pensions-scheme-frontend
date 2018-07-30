@@ -16,16 +16,17 @@
 
 package identifiers.register.establishers.partnership
 
-import identifiers.TypedIdentifier
+import identifiers._
 import identifiers.register.establishers.EstablishersId
-import models.address.Address
+import models.Vat
 import play.api.libs.json.JsPath
-import views.html.index
 
-case class PartnershipAddressId(index: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipAddressId.toString
+case class PartnershipVatId(index: Int) extends TypedIdentifier[Vat] {
+  override def path: JsPath = EstablishersId(index).path \ PartnershipVatId.toString
 }
 
-object PartnershipAddressId {
-  override def toString: String = "partnershipAddress"
+object PartnershipVatId {
+  override def toString: String = "partnershipVat"
 }
+
+

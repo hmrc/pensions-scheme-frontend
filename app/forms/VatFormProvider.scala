@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.partnership
+package forms
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import models.address.Address
-import play.api.libs.json.JsPath
-import views.html.index
+import forms.mappings.VatMapping
+import javax.inject.Inject
+import models.Vat
+import play.api.data.Form
 
-case class PartnershipAddressId(index: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipAddressId.toString
-}
+class VatFormProvider @Inject() extends VatMapping {
 
-object PartnershipAddressId {
-  override def toString: String = "partnershipAddress"
+  def apply(): Form[Vat] =
+    Form(
+      "vat" -> vatMapping(
+        requiredKey = "messages__error__has_vat_establisher",
+        vatLengthKey = "messages__error__vat_length"
+      )
+    )
 }

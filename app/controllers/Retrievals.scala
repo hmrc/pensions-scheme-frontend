@@ -52,7 +52,6 @@ trait Retrievals {
     }
   }
 
-
   private[controllers] def retrieveSchemeName(f: String => Future[Result])
                                              (implicit request: DataRequest[AnyContent]): Future[Result] = {
     retrieve[SchemeDetails](SchemeDetailsId) { schemeDetails =>

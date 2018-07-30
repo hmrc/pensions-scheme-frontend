@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.partnership
+package forms.mappings
 
-import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
-import models.address.Address
-import play.api.libs.json.JsPath
-import views.html.index
+import play.api.data.{Forms, Mapping}
 
-case class PartnershipAddressId(index: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipAddressId.toString
+trait VatMappingString extends Mappings with Transforms {
+
+  def vatMapping(keyVatLength: String, keyVatInvalid: String    ): Mapping[String] = {
+    Forms.text
+      .transform(vatRegistrationNumberTransform, noTransform)
+      .verifying(
+        firstError(
+          maxLength(VatMappingString.maxVatLength, keyVatLength),
+          vatRegistrationNumber(keyVatInvalid))
+      )
+  }
+
 }
 
-object PartnershipAddressId {
-  override def toString: String = "partnershipAddress"
+object VatMappingString {
+  val maxVatLength = 9
 }

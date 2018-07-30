@@ -18,10 +18,10 @@ package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
-import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
@@ -31,23 +31,21 @@ import utils.Navigator
 import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
-import identifiers.register.establishers.partnership.PartnershipPostcodeLookupId
 
-class PartnershipPostcodeLookupController @Inject()(
-                                                     override val appConfig: FrontendAppConfig,
-                                                     override val messagesApi: MessagesApi,
-                                                     override val cacheConnector: DataCacheConnector,
-                                                     override val addressLookupConnector: AddressLookupConnector,
-                                                     @EstablisherPartnership override val navigator: Navigator,
-                                                     authenticate: AuthAction,
-                                                     getData: DataRetrievalAction,
-                                                     requireData: DataRequiredAction,
-                                                     formProvider: PostCodeLookupFormProvider
-                                                   ) extends PostcodeLookupController {
+class PartnershipPreviousAddressPostcodeLookupController @Inject()(
+                                                                override val appConfig: FrontendAppConfig,
+                                                                override val messagesApi: MessagesApi,
+                                                                override val cacheConnector: DataCacheConnector,
+                                                                override val addressLookupConnector: AddressLookupConnector,
+                                                                @EstablisherPartnership override val navigator: Navigator,
+                                                                authenticate: AuthAction,
+                                                                getData: DataRetrievalAction,
+                                                                requireData: DataRequiredAction,
+                                                                formProvider: PostCodeLookupFormProvider
+                                                              ) extends PostcodeLookupController {
 
-  private val title: Message = "messages__partnershipPostcodeLookup__title"
-  private val heading: Message = "messages__partnershipPostcodeLookup__heading"
-  private val hint: Message = "messages__partnershipPostcodeLookup__hint"
+  private val title: Message = "messages__partnershipPreviousAddressPostcodeLookup__title"
+  private val heading: Message = "messages__partnershipPreviousAddressPostcodeLookup__title"
 
   protected val form: Form[String] = formProvider()
 
@@ -57,12 +55,11 @@ class PartnershipPostcodeLookupController @Inject()(
         PartnershipDetailsId(index).retrieve.right.map {
           details =>
             PostcodeLookupViewModel(
-              routes.PartnershipPostcodeLookupController.onSubmit(mode, index),
-              routes.PartnershipAddressController.onPageLoad(mode, index),
+              routes.PartnershipPreviousAddressPostcodeLookupController.onSubmit(mode, index),
+              routes.PartnershipPreviousAddressController.onPageLoad(mode, index),
               title = Message(title),
               heading = Message(heading),
-              subHeading = Some(details.name),
-              hint = Some(Message(hint))
+              subHeading = Some(details.name)
             )
         }
     }
@@ -78,7 +75,7 @@ class PartnershipPostcodeLookupController @Inject()(
       implicit request =>
         viewmodel(index, mode).retrieve.right.map {
           vm =>
-            post(PartnershipPostcodeLookupId(index), vm, mode)
+            post(PartnershipPreviousAddressPostcodeLookupId(index), vm, mode)
         }
     }
 }

@@ -103,6 +103,12 @@ package object utils {
       answers.set(establishers.company.director.DirectorPreviousAddressListId(establisherId, directorId))(selectedAddress).asOpt.value
     }
 
+    // Establishers partnership
+
+    def establishersPartnershipPreviousAddress(index: Int, address: Address): UserAnswers = {
+      answers.set(establishers.partnership.PartnershipPreviousAddressId(index))(address).asOpt.value
+    }
+
     // Trustees company
     def trusteesCompanyAddress(index: Int, address: Address): UserAnswers = {
       answers.set(trustees.company.CompanyAddressId(index))(address).asOpt.value
