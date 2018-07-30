@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package navigators
+package viewmodels
 
-import com.google.inject.Inject
-import config.FrontendAppConfig
-import connectors.DataCacheConnector
-import utils.Navigator
+import play.api.mvc.Call
 
-class EstablishersPartnershipNavigator  @Inject()(val dataCacheConnector: DataCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
-
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case _ => None
-  }
-
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case _ => None
-  }
-}
+case class PayeViewModel(
+                          postCall: Call,
+                          title: Message,
+                          heading: Message,
+                          hint: Option[Message] = None,
+                          subHeading: Option[Message] = None
+                        )
