@@ -54,17 +54,26 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
     "display answers" in {
 
-
       val request = FakeDataRequest(partnershipAnswers)
       val result = controller(partnershipAnswers.dataRetrievalAction).onPageLoad(firstIndex)(request)
 
       status(result) mustBe OK
-//      contentAsString(result) mustBe viewAsString(answerSections(request))
+
+      val content = contentAsString(result)
+
+      content must include(messages("messages__partnership__checkYourAnswers__partnership_details"))
+      content must include(messages("messages__partnership__checkYourAnswers__partnership_contact_details"))
     }
 
-  }
+    "redirect to Session Expired when establisher name cannot be retrieved" in {
 
-  "redirect to Session Expired when establisher name cannot be retrieved" in {
+      val request = FakeDataRequest(partnershipAnswers)
+      val result = controller().onPageLoad(firstIndex)(request)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+
+    }
 
   }
 

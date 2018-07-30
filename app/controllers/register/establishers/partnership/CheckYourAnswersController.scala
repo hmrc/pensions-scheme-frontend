@@ -19,12 +19,18 @@ package controllers.register.establishers.partnership
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 import javax.inject.{Inject, Singleton}
 import models.Index
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.EstablisherPartnership
 import utils.{Navigator, SectionComplete}
+import viewmodels.{AnswerRow, AnswerSection}
+import views.html.check_your_answers
+
+import scala.concurrent.Future
 
 @Singleton
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
@@ -33,12 +39,32 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            getData: DataRetrievalAction,
                                            requiredData: DataRequiredAction,
                                            sectionComplete: SectionComplete,
-                                           navigator: Navigator
+                                           @EstablisherPartnership navigator: Navigator
                                           ) extends FrontendController with Retrievals with I18nSupport {
 
-  def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData) {
+  def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      Ok
+
+      PartnershipDetailsId(index).retrieve.right.map { details =>
+
+        val partnershipDetails = AnswerSection(
+          Some("messages__partnership__checkYourAnswers__partnership_details"),
+          Seq.empty[AnswerRow]
+        )
+
+        val partnershipContactDetails = AnswerSection(
+          Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
+          Seq.empty[AnswerRow]
+        )
+
+        Future.successful(Ok(check_your_answers(
+          appConfig,
+          Seq(partnershipDetails, partnershipContactDetails),
+          Some(details.name),
+          routes.CheckYourAnswersController.onSubmit(index)
+        )))
+
+      }
   }
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData) {
