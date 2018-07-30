@@ -47,6 +47,8 @@ messages__common__address4 = Address line 4 (optional)
 messages__common__country = Country
 messages__common__previous_address = Previous Address
 messages__common__trustee_secondary_header = Trustees for {0}
+messages__common__vat__hint = This has 9 characters and is issued by HMRC. It might start with GB. For example, GB123456789.
+
 
 messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__common__postcode_lookup__address_postcode = Postcode
@@ -86,6 +88,7 @@ messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
 messages__common__cya__vat = VAT registration number
 messages__common__cya__paye = PAYE employer reference number
+
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -323,13 +326,16 @@ messages__company_address_years__title = How long has the company been at this a
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
 messages__common__vat = VAT Registration number (optional)
+messages__common__vat_yes = VAT Registration number
 messages__common__vat_hint = This number issued by HMRC. It is 9 numbers, with "GB" sometimes added at the start, for example GB123456789
 messages__common__paye = PAYE number (optional)
 messages__common__paye_hint = A PAYE reference number has the format 123/A56789
 messages__error__company_name = Enter the company name
 messages__error__vat_length = The VAT Registration number cannot be more than 9 characters
-messages__error__vat_invalid = Enter a valid VAT Registration number
+messages__error__vat_required = Enter the VAT registration number
+messages__error__vat_invalid = Enter a valid VAT Registration number in the format GB123456789
 messages__error__paye_length = The PAYE number cannot be more than 13 characters
+messages__error__has_vat_establisher = Select yes if the establisher has a VAT Registration number
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the residential address for this person.
@@ -732,3 +738,34 @@ messages__userResearchDetails__p3 = We will use this information to contact you 
 messages__userResearchDetails__error_name_required = Enter your full name
 messages__userResearchDetails__error_name_length = The name cannot be more than 160 characters
 messages__userResearchDetails__error_name_invalid = The name contains invalid characters
+
+messages__partnershipAddress__title = Enter the partnership’s address
+messages__partnershipAddress__heading = Enter the partnership’s address
+messages__partnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this scheme establisher.
+
+messages__partnershipPostcodeLookup__title = Enter the partnership’s postcode
+messages__partnershipPostcodeLookup__heading = Enter the partnership’s postcode
+messages__partnershipPostcodeLookup__hint = This is usually the registered business address but you can enter any address you have for this scheme establisher.
+
+messages__partnershipAddress__title = Enter the partnership’s address
+messages__partnershipAddress__heading = Enter the partnership’s address
+messages__partnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this scheme establisher.
+
+messages__partnershipPreviousAddressPostcodeLookup__title = Enter the partnership’s previous postcode
+messages__partnershipPreviousAddressPostcodeLookup__heading = Enter the partnership’s previous postcode
+messages__partnershipPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous address
+
+messages__partnershipPreviousAddress__title = Enter the partnership’s previous address
+messages__partnershipPreviousAddress__heading = Enter the partnership’s previous address
+
+messages__otherPartners__title=Do you need to tell us about other partners?
+messages__otherPartners__heading=Do you need to tell us about other partners?
+messages__otherPartners__lede=You do not have to add them now. We may contact you if we need this information.
+messages__otherPartners__error__required=Select yes if you need to tell us about other partners
+
+messages__partnershipAddressYears__title = How long has the partnership been at this address?
+messages__partnershipAddressYears__heading = How long has the partnership been at this address?
+messages__partnershipAddressYears__error = Select how long the partnership has been at the current address
+
+messages__partnershipVat__title = Does the partnership have a VAT registration number?
+messages__partnershipVat__heading = Does the partnership have a VAT registration number?
