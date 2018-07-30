@@ -17,9 +17,7 @@
 package forms
 
 import javax.inject.Inject
-
-import forms.mappings.Mappings
-import forms.mappings.{Mappings, PayeMapping, Transforms, VatMapping}
+import forms.mappings._
 import play.api.data.Form
 import play.api.data.Forms._
 import models.CompanyDetails
@@ -27,7 +25,7 @@ import play.api.data.Forms._
 import play.api.data.{Form, Forms}
 
 
-class CompanyDetailsFormProvider @Inject() extends Mappings with PayeMapping with VatMapping with Transforms {
+class CompanyDetailsFormProvider @Inject() extends Mappings with PayeMapping with VatMappingString with Transforms {
 
   val companyNameLength: Int = 160
 

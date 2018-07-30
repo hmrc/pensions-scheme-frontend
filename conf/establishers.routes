@@ -217,10 +217,10 @@ POST       /:index/partnership/establishers-address-manual                      
 GET        /:index/partnership/change-establishers-address-manual                                            controllers.register.establishers.partnership.PartnershipAddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/partnership/change-establishers-address-manual                                            controllers.register.establishers.partnership.PartnershipAddressController.onSubmit(mode: Mode = CheckMode, index: Index)
 
-GET        /:index/partnership/partnership-address                                                          controllers.register.establishers.partnership.PartnershipPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index: Index)
-POST       /:index/partnership/partnership-address                                                          controllers.register.establishers.partnership.PartnershipPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index: Index)
-GET        /:index/partnership/change-partnership-address                                                   controllers.register.establishers.partnership.PartnershipPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index: Index)
-POST       /:index/partnership/change-partnership-address                                                   controllers.register.establishers.partnership.PartnershipPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index: Index)
+GET        /:index/partnership/establishers-address                                                          controllers.register.establishers.partnership.PartnershipPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/establishers-address                                                          controllers.register.establishers.partnership.PartnershipPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-establishers-address                                                   controllers.register.establishers.partnership.PartnershipPostcodeLookupController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-establishers-address                                                   controllers.register.establishers.partnership.PartnershipPostcodeLookupController.onSubmit(mode: Mode = CheckMode, index: Index)
 
 GET        /:index/partnership/partnership-address-manual                                                   controllers.register.establishers.partnership.PartnershipAddressController.onPageLoad(mode: Mode = NormalMode, index: Index)
 POST       /:index/partnership/partnership-address-manual                                                   controllers.register.establishers.partnership.PartnershipAddressController.onSubmit(mode: Mode = NormalMode, index: Index)
@@ -241,6 +241,26 @@ GET        /:index/partnership/previous-address-manual                          
 POST       /:index/partnership/previous-address-manual                                             controllers.register.establishers.partnership.PartnershipPreviousAddressController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/partnership/change-previous-address-manual                                      controllers.register.establishers.partnership.PartnershipPreviousAddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/partnership/change-previous-address-manual                                      controllers.register.establishers.partnership.PartnershipPreviousAddressController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:establisherIndex/partnership/other-partners                                                       controllers.register.establishers.partnership.OtherPartnersController.onPageLoad(mode:Mode=NormalMode, establisherIndex:Index)
+POST       /:establisherIndex/partnership/other-partners                                                       controllers.register.establishers.partnership.OtherPartnersController.onSubmit(mode:Mode=NormalMode,establisherIndex:Index)
+GET        /:establisherIndex/partnership/change-other-partners                                                controllers.register.establishers.partnership.OtherPartnersController.onPageLoad(mode:Mode=CheckMode, establisherIndex:Index)
+POST       /:establisherIndex/partnership/change-other-partners                                                controllers.register.establishers.partnership.OtherPartnersController.onSubmit(mode:Mode=CheckMode,establisherIndex:Index)
+
+GET        /:index/partnership/establishers-address-results                                                  controllers.register.establishers.partnership.PartnershipAddressListController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/establishers-address-results                                                  controllers.register.establishers.partnership.PartnershipAddressListController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-establishers-address-results                                           controllers.register.establishers.partnership.PartnershipAddressListController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-establishers-address-results                                           controllers.register.establishers.partnership.PartnershipAddressListController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/partnership/how-long-at-address                                                          controllers.register.establishers.partnership.PartnershipAddressYearsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/how-long-at-address                                                          controllers.register.establishers.partnership.PartnershipAddressYearsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-how-long-at-address                                                   controllers.register.establishers.partnership.PartnershipAddressYearsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-how-long-at-address                                                   controllers.register.establishers.partnership.PartnershipAddressYearsController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/partnership/vat-number                                                                   controllers.register.establishers.partnership.PartnershipVatController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/vat-number                                                                   controllers.register.establishers.partnership.PartnershipVatController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-vat-number                                                            controllers.register.establishers.partnership.PartnershipVatController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-vat-number                                                            controllers.register.establishers.partnership.PartnershipVatController.onSubmit(mode: Mode = CheckMode, index: Index)
 
 GET        /:index/partnership/contact-details                                                                  controllers.register.establishers.partnership.PartnershipContactDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index)
 POST       /:index/partnership/contact-details                                                                  controllers.register.establishers.partnership.PartnershipContactDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)

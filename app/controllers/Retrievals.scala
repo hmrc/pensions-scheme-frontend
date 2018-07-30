@@ -20,7 +20,8 @@ import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import models.CompanyDetails
+import identifiers.register.establishers.partnership.PartnershipDetailsId
+import models.{CompanyDetails, PartnershipDetails}
 import models.person.PersonDetails
 import models.register.SchemeDetails
 import models.requests.DataRequest
@@ -40,6 +41,14 @@ trait Retrievals {
                                               (implicit request: DataRequest[AnyContent]): Future[Result] = {
     retrieve[CompanyDetails](CompanyDetailsId(index)) { companyDetails =>
       f(companyDetails.companyName)
+    }
+  }
+
+  private[controllers] def retrievePartnershipName(index: Int)
+                                              (f: String => Future[Result])
+                                              (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    retrieve[PartnershipDetails](PartnershipDetailsId(index)) { partnershipDetails =>
+      f(partnershipDetails.name)
     }
   }
 
