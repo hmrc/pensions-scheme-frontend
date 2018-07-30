@@ -20,12 +20,12 @@ import forms.behaviours.UtrBehaviour
 
 class PartnershipUniqueTaxReferenceFormProviderSpec extends UtrBehaviour {
 
-  val requiredKey = "messages__error__has_sautr_establisher"
-  val requiredUtrKey = "messages__error__sautr"
-  val requiredReasonKey = "messages__error__no_sa_utr_establisher"
-  val invalidUtrKey = "messages__error__sautr_invalid"
-  val maxLengthReasonKey = "messages__error__no_sautr_length"
-  val invalidReasonKey = "messages__error__no_sautr_invalid"
+  val requiredKey = "messages__error__has_utr_establisher_partnership"
+  val requiredUtrKey = "messages__error__utr"
+  val requiredReasonKey = "messages__error__utr_no_sa_utr_establisher"
+  val invalidUtrKey = "messages__error__utr_invalid"
+  val maxLengthReasonKey = "messages__error__no_utr_length"
+  val invalidReasonKey = "messages__error__utr_invalid"
 
   val formProvider = new PartnershipUniqueTaxReferenceFormProvider()
 

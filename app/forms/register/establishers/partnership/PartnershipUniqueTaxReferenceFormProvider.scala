@@ -26,10 +26,12 @@ class PartnershipUniqueTaxReferenceFormProvider @Inject()() extends UtrMapping {
 
   def apply(): Form[UniqueTaxReference] = Form(
     "uniqueTaxReference" -> uniqueTaxReferenceMapping(
-      requiredKey = "messages__error__has_sautr_establisher",
-      requiredUtrKey = "messages__error__sautr",
-      requiredReasonKey = "messages__error__no_sa_utr_establisher",
-      invalidUtrKey = "messages__error__sautr_invalid"
+      requiredKey = "messages__error__has_utr_establisher_partnership",
+      requiredUtrKey = "messages__error__utr",
+      requiredReasonKey = "messages__error__utr_no_utr_establisher",
+      maxLengthReasonKey="messages__error__no_utr_length",
+      invalidUtrKey = "messages__error__utr_invalid",
+      invalidReasonKey="messages__error__utr_invalid"
     )
   )
 }
