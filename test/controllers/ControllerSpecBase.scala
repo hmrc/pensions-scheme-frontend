@@ -101,19 +101,6 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
       EstablishersId.toString -> Json.arr(
         Json.obj(
           PartnershipDetailsId.toString ->
-            PartnershipDetails("test partnership name", false)
-        )
-      )
-    ))
-  )
-
-  def getMandatoryEstablisherPartnership: FakeDataRetrievalAction = new FakeDataRetrievalAction(
-    Some(Json.obj(
-      SchemeDetailsId.toString ->
-        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-      EstablishersId.toString -> Json.arr(
-        Json.obj(
-          PartnershipDetailsId.toString ->
             PartnershipDetails("test partnership name")
         )
       )
