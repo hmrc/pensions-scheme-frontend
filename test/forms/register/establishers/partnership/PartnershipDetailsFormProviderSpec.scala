@@ -16,13 +16,13 @@
 
 package forms.register.establishers.partnership
 
-import forms.behaviours.{PayeBehaviours, StringFieldBehaviours, VatBehaviours}
+import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
 import org.scalatest.OptionValues
 import play.api.data.FormError
 import wolfendale.scalacheck.regexp.RegexpGen
 
-class PartnershipDetailsFormProviderSpec extends StringFieldBehaviours with Constraints with OptionValues with PayeBehaviours with VatBehaviours {
+class PartnershipDetailsFormProviderSpec extends StringFieldBehaviours with Constraints with OptionValues {
 
   val form = new PartnershipDetailsFormProvider()()
 
