@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package identifiers.register.establishers.partnership
 
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.ContactDetails
+import play.api.libs.json.JsPath
 
-case class PartnershipDetails(name: String, isDeleted: Boolean = false)
-
-object PartnershipDetails {
-  implicit val format: OFormat[PartnershipDetails] = Json.format[PartnershipDetails]
-
-  def applyDelete(name: String): PartnershipDetails = {
-    PartnershipDetails(name)
-  }
-
-  def unapplyDelete(partnershipDetails: PartnershipDetails): Option[String] = {
-    Some(partnershipDetails.name)
-  }
+case class PartnershipContactDetailsId(index: Int) extends TypedIdentifier[ContactDetails] {
+  override def path: JsPath = EstablishersId(index).path \ PartnershipContactDetailsId.toString
 }
+
+object PartnershipContactDetailsId {
+  override def toString: String = "partnershipContactDetails"
+}
+
