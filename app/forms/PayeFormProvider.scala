@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package navigators
+package forms
 
-import com.google.inject.Inject
-import config.FrontendAppConfig
-import connectors.DataCacheConnector
-import utils.Navigator
+import forms.mappings.PayeMapping
+import javax.inject.Inject
+import models.Paye
+import play.api.data.Form
 
-class EstablishersPartnershipNavigator  @Inject()(val dataCacheConnector: DataCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+class PayeFormProvider @Inject() extends PayeMapping {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case _ => None
-  }
-
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case _ => None
-  }
+  def apply(): Form[Paye] =
+    Form(
+      "paye" -> payeMapping()
+    )
 }

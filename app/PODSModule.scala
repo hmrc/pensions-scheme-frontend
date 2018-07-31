@@ -17,7 +17,7 @@
 import com.google.inject.AbstractModule
 import connectors.{DataCacheConnector, PSANameCacheConnector}
 import navigators._
-import utils.annotations._
+import utils.annotations.{EstablishersPartner, _}
 import utils.Navigator
 
 class PODSModule extends AbstractModule {
@@ -68,6 +68,10 @@ class PODSModule extends AbstractModule {
     bind(classOf[Navigator])
       .annotatedWith(classOf[EstablishersCompanyDirector])
       .to(classOf[EstablishersCompanyDirectorNavigator])
+
+    bind(classOf[Navigator])
+      .annotatedWith(classOf[EstablishersPartner])
+      .to(classOf[EstablishersPartnerNavigator])
 
   }
 

@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package navigators
+package forms.register
 
-import com.google.inject.Inject
-import config.FrontendAppConfig
-import connectors.DataCacheConnector
-import utils.Navigator
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-class EstablishersPartnershipNavigator  @Inject()(val dataCacheConnector: DataCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+class AddPartnersFormProvider @Inject() extends Mappings {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case _ => None
-  }
-
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case _ => None
-  }
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__addPartners__error__required")
+    )
 }

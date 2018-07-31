@@ -16,25 +16,30 @@
 
 package forms.mappings
 
-import forms.behaviours.PayeBehaviours
-import play.api.data.{Form, Mapping}
+import forms.behaviours.{PayeBehaviours, StringFieldBehaviours}
+import models.Paye
+import play.api.data.Form
 
-class PayeMappingSpec extends PayeBehaviours {
+class PayeMappingSpec extends PayeBehaviours with StringFieldBehaviours{
 
-  "Paye mapping" should {
-    val fieldName = "paye"
-    val keyPayeLength = "error.length"
-    val keyPayeInvalid = "error.invalid"
+  "A form with Paye Number" should {
+    val mapping = payeMapping()
 
-    val mapping: Mapping[String] = payeMapping(keyPayeLength, keyPayeInvalid)
-    val form: Form[String] = Form(fieldName -> mapping)
+    val testForm: Form[Paye] = Form("paye" -> mapping)
+    val rawData = Map("paye.hasPaye" -> "true", "paye.paye" -> " 123\\/4567898765 ")
+    val expectedData = Paye.Yes("1234567898765")
 
-    behave like formWithPayeField(
-      form,
-      fieldName,
-      keyPayeLength,
-      keyPayeInvalid
+    behave like formWithPaye(
+      testForm,
+      requiredKey = "messages__error__has_paye_establisher",
+      keyPayeRequired = "messages__error__paye_required",
+      keyPayeLength = "messages__error__paye_length"
+    )
+
+    behave like formWithTransform[Paye](
+      testForm,
+      rawData,
+      expectedData
     )
   }
-
 }

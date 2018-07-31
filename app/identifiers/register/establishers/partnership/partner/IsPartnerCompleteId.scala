@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package navigators
+package identifiers.register.establishers.partnership.partner
 
-import com.google.inject.Inject
-import config.FrontendAppConfig
-import connectors.DataCacheConnector
-import utils.Navigator
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import play.api.libs.json.JsPath
 
-class EstablishersPartnershipNavigator  @Inject()(val dataCacheConnector: DataCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
-
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case _ => None
-  }
-
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case _ => None
-  }
+case class IsPartnerCompleteId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ IsPartnerCompleteId.toString
 }
+
+object IsPartnerCompleteId {
+  override def toString: String = "isPartnerComplete"
+}
+
+
+
+

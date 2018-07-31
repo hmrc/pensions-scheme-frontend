@@ -276,3 +276,13 @@ GET         /:index/partnership/unique-taxpayer-reference                       
 POST        /:index/partnership/unique-taxpayer-reference                                                   controllers.register.establishers.partnership.PartnershipUniqueTaxReferenceController.onSubmit(mode:Mode=NormalMode, index:Index)
 GET         /:index/partnership/change-unique-taxpayer-reference                                                   controllers.register.establishers.partnership.PartnershipUniqueTaxReferenceController.onPageLoad(mode:Mode=CheckMode, index:Index)
 POST        /:index/partnership/change-unique-taxpayer-reference                                                   controllers.register.establishers.partnership.PartnershipUniqueTaxReferenceController.onSubmit(mode:Mode=CheckMode, index:Index)
+
+GET        /:index/partnership/paye-number                                                                   controllers.register.establishers.partnership.PartnershipPayeController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/paye-number                                                                   controllers.register.establishers.partnership.PartnershipPayeController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-paye-number                                                            controllers.register.establishers.partnership.PartnershipPayeController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-paye-number                                                            controllers.register.establishers.partnership.PartnershipPayeController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/partnership/partners                                                                        controllers.register.establishers.partnership.AddPartnersController.onPageLoad(index: Index)
+POST       /:index/partnership/partners                                                                        controllers.register.establishers.partnership.AddPartnersController.onSubmit(index: Index)
+GET        /:index/partnership/change-partners                                                                 controllers.register.establishers.partnership.AddPartnersController.onPageLoad(index: Index)
+POST       /:index/partnership/change-partners                                                                 controllers.register.establishers.partnership.AddPartnersController.onSubmit(index: Index)

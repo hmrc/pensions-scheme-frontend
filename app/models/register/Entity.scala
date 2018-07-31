@@ -19,6 +19,7 @@ package models.register
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
+import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.NormalMode
@@ -85,6 +86,22 @@ case class EstablisherIndividualEntity(id: EstablisherDetailsId,
     controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(id.index, EstablisherKind.Indivdual).url
 
   override def index: Int = id.index
+}
+
+case class EstablisherPartnerEntity(id: PartnerDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Entity[PartnerDetailsId] {
+  override def editLink: String = {
+    if (isCompleted){
+      controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(id.establisherIndex).url
+    }
+    else{
+      controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(id.establisherIndex).url
+    }
+  }
+
+  override def deleteLink: String =
+    controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(id.establisherIndex).url
+
+  override def index: Int = id.partnerIndex
 }
 
 sealed trait Trustee[T] extends Entity[T]
