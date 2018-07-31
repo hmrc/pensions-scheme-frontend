@@ -28,12 +28,15 @@
     bodyClasses = None) {
 
     @helpers.form(action = BenefitsInsurerController.onSubmit(mode), 'autoComplete -> "off") {
-
         @components.back_link()
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__benefits_insurance__title", secondaryHeaderKey = Some(name))
+        @components.headingNew(
+            headingKey=messages("messages__benefits_insurance__title"),
+            secondaryHeaderKey = Some(components.hyphen(name).toString)
+        )
+
 
         @components.input_text(
             field = form("companyName"),

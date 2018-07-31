@@ -26,7 +26,11 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @components.heading("messages__companyReview__heading", secondaryHeaderKey = Some("messages__companyReview__secondaryHeading__partial"), subSecHeader = Some(schemeName))
+    @components.headingNew(
+        headingKey= messages("messages__companyReview__heading"),
+        secondaryHeaderKey = Some(messages("messages__companyReview__secondaryHeading__partial")),
+        subSecHeader = Some(components.hyphen(schemeName).toString)
+    )
 
     @components.review_section(
         heading = companyName,

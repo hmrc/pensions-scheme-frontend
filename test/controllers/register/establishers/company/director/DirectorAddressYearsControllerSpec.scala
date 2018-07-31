@@ -137,7 +137,6 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
-
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {

@@ -29,9 +29,9 @@
 
     @components.back_link()
 
-    @components.heading(
-        Message("messages__confirmDeleteTrustee__heading").withArgs(trusteeName),
-        secondaryHeaderKey = Some(schemeName)
+    @components.headingNew(
+        headingKey=components.hyphen((Message("messages__confirmDeleteTrustee__heading").withArgs(trusteeName))).toString,
+        secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
     )
 
     @helpers.form(action = postCall, 'autoComplete -> "off") {

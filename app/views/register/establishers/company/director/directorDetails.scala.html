@@ -32,7 +32,10 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__directorDetails__heading",secondaryHeaderKey = Some(companyName))
+        @components.headingNew(
+            headingKey=messages("messages__directorDetails__heading"),
+            secondaryHeaderKey = Some(components.hyphen(companyName).toString)
+        )
 
         @components.input_text(
            field = form("firstName"),

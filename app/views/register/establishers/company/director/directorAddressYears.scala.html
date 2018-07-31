@@ -33,7 +33,10 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__director_address_years__heading", secondaryHeaderKey = Some(directorName))
+        @components.headingNew(
+            headingKey=messages("messages__director_address_years__heading"),
+            secondaryHeaderKey = Some(components.hyphen(directorName).toString)
+        )
 
         @components.input_radio(
             field = form("value"),

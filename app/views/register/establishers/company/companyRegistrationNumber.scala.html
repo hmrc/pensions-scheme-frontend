@@ -37,7 +37,11 @@
 
             @components.error_summary(form.errors)
 
-            @components.heading(headingKey="messages__company__has_crn",secondaryHeaderKey=Some(companyName))
+            @components.headingNew(
+                headingKey=messages("messages__company__has_crn"),
+                secondaryHeaderKey = Some(components.hyphen(companyName).toString)
+            )
+
 
             @components.fieldSet(
                 field = form("companyRegistrationNumber.hasCrn"),
