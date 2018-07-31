@@ -35,9 +35,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   val firstIndex = Index(0)
   val partnershipName = "PartnershipName"
-
   val schemeName = "testScheme"
-
   val partnershipAnswers = UserAnswers()
     .set(SchemeDetailsId)(SchemeDetails(schemeName, SingleTrust))
     .flatMap(_.set(PartnershipDetailsId(firstIndex))(PartnershipDetails(partnershipName)))
@@ -49,7 +47,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
     .asOpt.value
 
   implicit val request = FakeDataRequest(partnershipAnswers)
-
   implicit val countryOptions = new FakeCountryOptions()
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
@@ -107,6 +104,15 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+
+    }
+
+    "redirect to Add Partners page on submit" in {
+
+      val result = controller().onSubmit(firstIndex)(request)
+
+      status(result) mustBe 303
+      redirectLocation(result) mustBe Some(routes.AddPartnersController.onPageLoad(firstIndex).url)
 
     }
 
