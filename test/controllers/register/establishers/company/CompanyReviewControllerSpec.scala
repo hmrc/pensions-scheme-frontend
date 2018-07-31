@@ -54,7 +54,7 @@ class CompanyReviewControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect to session expired page on a GET when the index is not valid" ignore {
+    "redirect to session expired page on a GET when the index is not valid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData()))
       val result = controller(getRelevantData).onPageLoad(invalidIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
