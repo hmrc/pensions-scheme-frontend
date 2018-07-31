@@ -62,7 +62,18 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       val content = contentAsString(result)
 
       content must include(messages("messages__partnership__checkYourAnswers__partnership_details"))
-      content must include(messages("messages__partnership__checkYourAnswers__partnership_contact_details"))
+        .and(include(messages("messages__partnership__checkYourAnswers__partnership_contact_details")))
+        .and(include(messages("messages__common__cya__name")))
+        .and(include(messages("messages__common__cya__vat")))
+        .and(include(messages("messages__common__cya__paye")))
+        .and(include(messages("messages__partnership__checkYourAnswers__utr")))
+        .and(include(messages("messages__common__utr")))
+        .and(include(messages("messages__common__cya__address")))
+        .and(include(messages("messages__partnership__checkYourAnswers__addressYears")))
+        .and(include(messages("messages__common__cya__previous_address")))
+        .and(include(messages("messages__common__cya__email")))
+        .and(include(messages("messages__common__cya__email")))
+        .and(include(messages("messages__common__cya__phone")))
     }
 
     "redirect to Session Expired when establisher name cannot be retrieved" in {

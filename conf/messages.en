@@ -88,7 +88,8 @@ messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
 messages__common__cya__vat = VAT registration number
 messages__common__cya__paye = PAYE employer reference number
-
+messages__common__cya__email = Email address
+messages__common__cya__phone = Phone number
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -787,6 +788,8 @@ messages__partnershipDetails__invalid = Enter a valid name
 
 messages__partnership__checkYourAnswers__partnership_details = Partnership details
 messages__partnership__checkYourAnswers__partnership_contact_details = Partnership contact details
+messages__partnership__checkYourAnswers__utr = Does the partnership have a Self Assessment Unique Taxpayer Reference number?
+messages__partnership__checkYourAnswers__addressYears = How long has the partnership been at this address?
 
 messages__partnershipPaye__title = Does the partnership have a PAYE employer reference number?
 messages__partnershipPaye__heading = Does the partnership have a PAYE employer reference number?
