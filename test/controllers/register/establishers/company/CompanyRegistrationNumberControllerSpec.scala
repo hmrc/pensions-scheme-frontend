@@ -89,7 +89,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form.fill(CompanyRegistrationNumber.Yes("1234567")))
     }
 
-    "redirect to session expired page on a GET when the index is not valid" ignore {
+    "redirect to session expired page on a GET when the index is not valid" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
