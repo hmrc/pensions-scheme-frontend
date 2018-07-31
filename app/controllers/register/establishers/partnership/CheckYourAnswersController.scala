@@ -22,15 +22,15 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.partnership._
 import javax.inject.{Inject, Singleton}
-import models.{CheckMode, Index, NormalMode}
+import models.{CheckMode, Index}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablisherPartnership
-import utils.{CountryOptions, Navigator, SectionComplete}
-import viewmodels.{AnswerRow, AnswerSection, Message}
-import views.html.check_your_answers
 import utils.checkyouranswers.Ops._
+import utils.{CountryOptions, Navigator, SectionComplete}
+import viewmodels.{AnswerSection, Message}
+import views.html.check_your_answers
 
 import scala.concurrent.Future
 
@@ -79,9 +79,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       }
   }
 
-  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData) {
+  def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      Redirect(routes.AddPartnersController.onPageLoad(index))
+      sectionComplete.setCompleteFlag(IsPartnershipCompleteId(index), request.userAnswers, value = true) map { _ =>
+        Redirect(routes.AddPartnersController.onPageLoad(index))
+      }
   }
 
 }

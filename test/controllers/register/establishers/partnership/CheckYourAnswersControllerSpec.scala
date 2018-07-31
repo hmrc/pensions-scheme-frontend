@@ -107,13 +107,17 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
     }
 
-    "redirect to Add Partners page on submit" in {
+    "redirect to Add Partners page on submit" which {
+      "marks partnership as complete on submit" in {
 
-      val result = controller().onSubmit(firstIndex)(request)
+        val result = controller().onSubmit(firstIndex)(request)
 
-      status(result) mustBe 303
-      redirectLocation(result) mustBe Some(routes.AddPartnersController.onPageLoad(firstIndex).url)
+        status(result) mustBe 303
+        redirectLocation(result) mustBe Some(routes.AddPartnersController.onPageLoad(firstIndex).url)
 
+        FakeSectionComplete.verify(IsPartnershipCompleteId(firstIndex), true)
+
+      }
     }
 
   }
