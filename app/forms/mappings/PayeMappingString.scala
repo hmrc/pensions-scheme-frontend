@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package navigators
+package forms.mappings
 
-import com.google.inject.Inject
-import config.FrontendAppConfig
-import connectors.DataCacheConnector
-import utils.Navigator
+import play.api.data.{Forms, Mapping}
 
-class EstablishersPartnershipNavigator  @Inject()(val dataCacheConnector: DataCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+trait PayeMappingString extends Mappings with Transforms{
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case _ => None
+  def payeMapping(keyPayeLength: String, keyPayeInvalid: String): Mapping[String] = {
+    Forms.text.transform(payeTransform, noTransform).
+      verifying(
+      firstError(
+        maxLength(PayeMappingString.maxPayeLength, keyPayeLength),
+        payeEmployerReferenceNumber(keyPayeInvalid))
+    )
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case _ => None
-  }
+}
+
+object PayeMappingString{
+  val maxPayeLength = 16
 }

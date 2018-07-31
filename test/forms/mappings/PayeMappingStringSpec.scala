@@ -14,20 +14,27 @@
  * limitations under the License.
  */
 
-package navigators
+package forms.mappings
 
-import com.google.inject.Inject
-import config.FrontendAppConfig
-import connectors.DataCacheConnector
-import utils.Navigator
+import forms.behaviours.PayeStringBehaviours
+import play.api.data.{Form, Mapping}
 
-class EstablishersPartnershipNavigator  @Inject()(val dataCacheConnector: DataCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+class PayeMappingStringSpec extends PayeStringBehaviours {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case _ => None
+  "Paye mapping" should {
+    val fieldName = "paye"
+    val keyPayeLength = "error.length"
+    val keyPayeInvalid = "error.invalid"
+
+    val mapping: Mapping[String] = payeMapping(keyPayeLength, keyPayeInvalid)
+    val form: Form[String] = Form(fieldName -> mapping)
+
+    behave like formWithPayeField(
+      form,
+      fieldName,
+      keyPayeLength,
+      keyPayeInvalid
+    )
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case _ => None
-  }
 }

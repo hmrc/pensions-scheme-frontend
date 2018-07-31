@@ -329,13 +329,17 @@ messages__common__vat = VAT Registration number (optional)
 messages__common__vat_yes = VAT Registration number
 messages__common__vat_hint = This number issued by HMRC. It is 9 numbers, with "GB" sometimes added at the start, for example GB123456789
 messages__common__paye = PAYE number (optional)
-messages__common__paye_hint = A PAYE reference number has the format 123/A56789
+messages__common__paye_label = PAYE employer reference number
+messages__common__paye_hint = This is issued by HMRC. For example, 123/AB56789.
 messages__error__company_name = Enter the company name
-messages__error__vat_length = The VAT Registration number cannot be more than 9 characters
-messages__error__vat_required = Enter the VAT registration number
-messages__error__vat_invalid = Enter a valid VAT Registration number in the format GB123456789
-messages__error__paye_length = The PAYE number cannot be more than 13 characters
-messages__error__has_vat_establisher = Select yes if the establisher has a VAT Registration number
+messages__error__vat_length = Enter a VAT number using either 9 numbers only or GB followed by 9 numbers
+messages__error__vat_required = Enter a VAT number
+messages__error__vat_invalid = Enter a VAT number using either 9 numbers only or GB followed by 9 numbers
+messages__error__has_vat_establisher = Select whether the partnership has a VAT number
+messages__error__paye_required = Enter an employer PAYE number
+messages__error__paye_length = Enter an employer PAYE number using 16 characters or less
+messages__error__paye_invalid = Enter an employer PAYE number using only numbers, letters or a forward slash
+messages__error__has_paye_establisher = Select whether the partnership has an employer PAYE number
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the residential address for this person.
@@ -769,3 +773,17 @@ messages__partnershipAddressYears__error = Select how long the partnership has b
 
 messages__partnershipVat__title = Does the partnership have a VAT registration number?
 messages__partnershipVat__heading = Does the partnership have a VAT registration number?
+
+messages__establisher_partnership_contact_details__title = Enter the partnership’s contact details
+messages__establisher_partnership_contact_details__heading = Enter the partnership’s contact details
+messages__establisher_partnership_contact_details__body = These details will be used if we need to contact someone in the company about the pension scheme.
+
+messages__partnershipDetails__title = Enter the partnership’s name
+messages__partnershipDetails__heading = Enter the partnership’s name
+messages__partnershipDetails__label = Enter the partnership’s name
+messages__partnershipDetails__error__required = Enter a name
+messages__partnershipDetails__error_too_long = Enter a name using 160 characters or less
+messages__partnershipDetails__invalid = Enter a valid name
+
+messages__partnershipPaye__title = Does the partnership have a PAYE employer reference number?
+messages__partnershipPaye__heading = Does the partnership have a PAYE employer reference number?
