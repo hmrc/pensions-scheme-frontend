@@ -1,4 +1,4 @@
-# Pension Administrator Frontend
+# Pension Scheme Frontend
 
 This microservice provides the user interface for Pension Scheme Administrators to register their Pension Schemes.
 
