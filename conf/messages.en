@@ -23,7 +23,7 @@ messages__common__firstname = First name
 messages__common__lastname = Last name
 messages__common__middlename = Middle name (optional)
 messages__common__dob = Date of birth
-messages__common__dob__hint = Example 30 09 1990
+messages__common__dob__hint = For example 30 9 1990
 messages__common__day = Day
 messages__common__month = Month
 messages__common__year = Year
@@ -47,6 +47,8 @@ messages__common__address4 = Address line 4 (optional)
 messages__common__country = Country
 messages__common__previous_address = Previous Address
 messages__common__trustee_secondary_header = Trustees for {0}
+messages__common__vat__hint = This has 9 characters and is issued by HMRC. It might start with GB. For example, GB123456789.
+
 
 messages__common__postcode_lookup__enter_postcode = Enter the postcode, or if you have an overseas address, {0} enter the address manually {1}
 messages__common__postcode_lookup__address_postcode = Postcode
@@ -86,6 +88,7 @@ messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
 messages__common__cya__vat = VAT registration number
 messages__common__cya__paye = PAYE employer reference number
+
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -210,6 +213,14 @@ messages__complete__copy_3 = If the scheme administrator does not meet the crite
 messages__complete__register_pensions_regulator = If your scheme has more than 2 members you need to register with the Pensions Regulator
 messages__complete__finish = Finish and sign out
 
+
+messages__complete__contact_regulator_start = You must
+messages__complete__contact_regulator_link = contact the Pensions Regulator
+messages__complete__contact_regulator_authorisation =  to receive authorisation to register this scheme as a master trust.
+messages__complete__what_happens_next = What happens next
+messages__complete__not_registered_yet = The scheme has not been registered yet. HMRC will decide if the registration can be completed.
+messages__complete__decision = HMRC will consider this registration and make a decision when authorisation has been received from the Pensions Regulator. You might be contacted for more details to support this registration.
+
 messages__uk_bank_account_details__title = Bank account details
 messages__uk_bank_account_details__bank_name = Bank name
 messages__uk_bank_account_details__account_name = Account name
@@ -217,7 +228,7 @@ messages__uk_bank_account_details__sort_code = Sort code
 messages__uk_bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
 messages__uk_bank_account_details__account_number = Account number
 messages__uk_bank_account_details__date_bank_account = Approximate date the account was opened
-messages__common__dob__hint = Example 30 09 1990
+messages__common__dob__hint = For example 30 9 1990
 
 messages__error__bank_name = Enter the bank name
 messages__error__account_name = Enter the account name
@@ -315,13 +326,20 @@ messages__company_address_years__title = How long has the company been at this a
 messages__common__company_details__title = Company details
 messages__common__company_name = Company name
 messages__common__vat = VAT Registration number (optional)
+messages__common__vat_yes = VAT Registration number
 messages__common__vat_hint = This number issued by HMRC. It is 9 numbers, with "GB" sometimes added at the start, for example GB123456789
 messages__common__paye = PAYE number (optional)
-messages__common__paye_hint = A PAYE reference number has the format 123/A56789
+messages__common__paye_label = PAYE employer reference number
+messages__common__paye_hint = This is issued by HMRC. For example, 123/AB56789.
 messages__error__company_name = Enter the company name
-messages__error__vat_length = The VAT Registration number cannot be more than 9 characters
-messages__error__vat_invalid = Enter a valid VAT Registration number
-messages__error__paye_length = The PAYE number cannot be more than 13 characters
+messages__error__vat_length = Enter a VAT number using either 9 numbers only or GB followed by 9 numbers
+messages__error__vat_required = Enter a VAT number
+messages__error__vat_invalid = Enter a VAT number using either 9 numbers only or GB followed by 9 numbers
+messages__error__has_vat_establisher = Select whether the partnership has a VAT number
+messages__error__paye_required = Enter an employer PAYE number
+messages__error__paye_length = Enter an employer PAYE number using 16 characters or less
+messages__error__paye_invalid = Enter an employer PAYE number using only numbers, letters or a forward slash
+messages__error__has_paye_establisher = Select whether the partnership has an employer PAYE number
 
 messages__establisher_individual_address__title = Establisher’s address
 messages__establisher_individual_address_lede = This is usually the residential address for this person.
@@ -684,6 +702,8 @@ messages__schemesOverview__continue__lastDate = You last entered details about t
 messages__schemesOverview__continue__deleteDate = You have until {0} to finish this registration before the details are deleted.
 messages__schemesOverview__continue__link = Continue registering this scheme
 messages__schemesOverview__delete__link = Delete this scheme and start a new registration
+messages__schemesOverview__UR__text = We want to hear from people who would like to help improve this service by sharing their feedback and testing new features.
+messages__schemesOverview__UR__link = Let us know if you would like to help improve this service.
 
 messages__deleteScheme__title = Are you sure you want to delete {0} scheme?
 messages__deleteScheme__heading = Are you sure you want to delete {0} scheme?
@@ -710,3 +730,68 @@ messages__alreadyDeleted__lede = You have already confirmed deletion of {0}.
 messages__alreadyDeleted__text = This page no longer exists.
 
 messages__alreadyDeleted__establisher_title = You have already deleted this establisher
+
+messages__userResearchDetails__title = Enter your details
+messages__userResearchDetails__heading = Enter your details
+messages__userResearchDetails__name = Full name
+messages__userResearchDetails__email = Email address
+messages__userResearchDetails__checkYourAnswersLabel = userResearchContactDetails
+messages__userResearchDetails__p1 = We want to hear from people who would like to help improve this service by sharing their feedback and testing new features.
+messages__userResearchDetails__p2 = We will contact you by email with more details.
+messages__userResearchDetails__p3 = We will use this information to contact you about your schemes. You can enter a group or individual email.
+messages__userResearchDetails__error_name_required = Enter your full name
+messages__userResearchDetails__error_name_length = The name cannot be more than 160 characters
+messages__userResearchDetails__error_name_invalid = The name contains invalid characters
+
+messages__partnershipAddress__title = Enter the partnership’s address
+messages__partnershipAddress__heading = Enter the partnership’s address
+messages__partnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this scheme establisher.
+
+messages__partnershipPostcodeLookup__title = Enter the partnership’s postcode
+messages__partnershipPostcodeLookup__heading = Enter the partnership’s postcode
+messages__partnershipPostcodeLookup__hint = This is usually the registered business address but you can enter any address you have for this scheme establisher.
+
+messages__partnershipAddress__title = Enter the partnership’s address
+messages__partnershipAddress__heading = Enter the partnership’s address
+messages__partnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this scheme establisher.
+
+messages__partnershipPreviousAddressPostcodeLookup__title = Enter the partnership’s previous postcode
+messages__partnershipPreviousAddressPostcodeLookup__heading = Enter the partnership’s previous postcode
+messages__partnershipPreviousAddressPostcodeLookup__checkYourAnswersLabel = Previous address
+
+messages__partnershipPreviousAddress__title = Enter the partnership’s previous address
+messages__partnershipPreviousAddress__heading = Enter the partnership’s previous address
+
+messages__otherPartners__title=Do you need to tell us about other partners?
+messages__otherPartners__heading=Do you need to tell us about other partners?
+messages__otherPartners__lede=You do not have to add them now. We may contact you if we need this information.
+messages__otherPartners__error__required=Select yes if you need to tell us about other partners
+
+messages__partnershipAddressYears__title = How long has the partnership been at this address?
+messages__partnershipAddressYears__heading = How long has the partnership been at this address?
+messages__partnershipAddressYears__error = Select how long the partnership has been at the current address
+
+messages__partnershipVat__title = Does the partnership have a VAT registration number?
+messages__partnershipVat__heading = Does the partnership have a VAT registration number?
+
+messages__establisher_partnership_contact_details__title = Enter the partnership’s contact details
+messages__establisher_partnership_contact_details__heading = Enter the partnership’s contact details
+messages__establisher_partnership_contact_details__body = These details will be used if we need to contact someone in the company about the pension scheme.
+
+messages__partnershipDetails__title = Enter the partnership’s name
+messages__partnershipDetails__heading = Enter the partnership’s name
+messages__partnershipDetails__label = Enter the partnership’s name
+messages__partnershipDetails__error__required = Enter a name
+messages__partnershipDetails__error_too_long = Enter a name using 160 characters or less
+messages__partnershipDetails__invalid = Enter a valid name
+
+messages__partnershipPaye__title = Does the partnership have a PAYE employer reference number?
+messages__partnershipPaye__heading = Does the partnership have a PAYE employer reference number?
+
+messages__addPartners__title = Add partners
+messages__addPartners__heading = Add partners
+messages__addPartners__error__required = You must make a selection
+messages__addPartners_add_more = Do you want to add another partner?
+messages__addPartners_lede = You must tell us about all your partners.
+messages__addPartners_add_partner = Add a partner
+messages__addPartners_at_maximum = You have added the maximum number of partners.

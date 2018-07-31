@@ -71,9 +71,21 @@ class DeclarationController @Inject()(
     SchemeDetailsId.retrieve.right.map { details =>
       val isCompany = request.userAnswers.hasCompanies
       request.userAnswers.get(DeclarationDormantId) match {
-        case Some(Yes) => Future.successful(status(declaration(appConfig, form, details.schemeName, isCompany, isDormant = true, showMasterTrustDeclaration)))
-        case Some(No) => Future.successful(status(declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)))
-        case None if !isCompany => Future.successful(status(declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)))
+        case Some(Yes) => Future.successful(
+          status(
+            declaration(appConfig, form, details.schemeName, isCompany, isDormant = true, showMasterTrustDeclaration)
+          )
+        )
+        case Some(No) => Future.successful(
+          status(
+            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)
+          )
+        )
+        case None if !isCompany => Future.successful(
+          status(
+            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)
+          )
+        )
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
       }
     }

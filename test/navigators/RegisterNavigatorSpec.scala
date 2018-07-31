@@ -19,6 +19,7 @@ package navigators
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.FakeDataCacheConnector
+import identifiers.UserResearchDetailsId
 import identifiers.register._
 import models._
 import models.register.{SchemeDetails, SchemeType}
@@ -73,7 +74,10 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (DeclarationId,                 emptyAnswers,         declarationDuties,                      true,         None,                                 false),
     (DeclarationDutiesId,           dutiesTrue,           schemeSuccess,                          false,        None,                                 false),
     (DeclarationDutiesId,           dutiesFalse,          adviserDetails,                         true,         None,                                 false),
-    (DeclarationDutiesId,           emptyAnswers,         expired,                                false,        None,                                 false)
+    (DeclarationDutiesId,           emptyAnswers,         expired,                                false,        None,                                 false),
+
+    // User Research page - return to SchemeOverview
+    (UserResearchDetailsId,         emptyAnswers,         schemeOverview,                         true,         None,                                 false)
   )
 
   "RegisterNavigator" must {
@@ -128,6 +132,7 @@ object RegisterNavigatorSpec {
   private def adviserDetails = controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
+  private def schemeOverview = controllers.routes.SchemesOverviewController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 

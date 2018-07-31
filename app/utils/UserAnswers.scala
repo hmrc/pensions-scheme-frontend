@@ -20,6 +20,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
@@ -27,7 +28,6 @@ import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteesId}
 import models.CompanyDetails
 import models.person.PersonDetails
 import models.register._
-import models.{CompanyDetails, Index, NormalMode}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -158,13 +158,38 @@ case class UserAnswers(json: JsValue = Json.obj()) {
         details.map { director =>
           val directorIndex = details.indexOf(director)
           val isComplete = get(IsDirectorCompleteId(establisherIndex, directorIndex)).getOrElse(false)
-          DirectorEntity(DirectorDetailsId(establisherIndex, directorIndex), director.fullName, director.isDeleted, isComplete)
+          DirectorEntity(
+            DirectorDetailsId(establisherIndex, directorIndex),
+            director.fullName,
+            director.isDeleted,
+            isComplete
+          )
         }
     }.getOrElse(Seq.empty)
   }
 
   def allDirectorsAfterDelete(establisherIndex: Int): Seq[DirectorEntity] = {
     allDirectors(establisherIndex).filterNot(_.isDeleted)
+  }
+
+  def allPartners(establisherIndex: Int): Seq[EstablisherPartnerEntity] = {
+    getAllRecursive[PersonDetails](PartnerDetailsId.collectionPath(establisherIndex)).map {
+      details =>
+        details.map { partner =>
+          val partnerIndex = details.indexOf(partner)
+          val isComplete = get(IsPartnerCompleteId(establisherIndex, partnerIndex)).getOrElse(false)
+          EstablisherPartnerEntity(
+            PartnerDetailsId(establisherIndex, partnerIndex),
+            partner.fullName,
+            partner.isDeleted,
+            isComplete
+          )
+        }
+    }.getOrElse(Seq.empty)
+  }
+
+  def allPartnersAfterDelete(establisherIndex: Int): Seq[EstablisherPartnerEntity] = {
+    allPartners(establisherIndex).filterNot(_.isDeleted)
   }
 
   val readTrustees: Reads[Seq[Trustee[_]]] = new Reads[Seq[Trustee[_]]] {
