@@ -19,16 +19,18 @@ package controllers.register.establishers.partnership
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
-import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.partnership._
 import javax.inject.{Inject, Singleton}
-import models.Index
+import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablisherPartnership
-import utils.{Navigator, SectionComplete}
-import viewmodels.{AnswerRow, AnswerSection}
+import utils.{CountryOptions, Navigator, SectionComplete}
+import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
+import utils.checkyouranswers.Ops._
 
 import scala.concurrent.Future
 
@@ -39,28 +41,36 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            getData: DataRetrievalAction,
                                            requiredData: DataRequiredAction,
                                            sectionComplete: SectionComplete,
-                                           @EstablisherPartnership navigator: Navigator
+                                           @EstablisherPartnership navigator: Navigator,
+                                           implicit val countryOptions: CountryOptions
                                           ) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
 
-      PartnershipDetailsId(index).retrieve.right.map { details =>
+      SchemeDetailsId.retrieve.right.map { details =>
 
         val partnershipDetails = AnswerSection(
           Some("messages__partnership__checkYourAnswers__partnership_details"),
-          Seq.empty[AnswerRow]
+          Seq(
+            PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(CheckMode, index).url)
+          ).flatten
         )
 
         val partnershipContactDetails = AnswerSection(
           Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
-          Seq.empty[AnswerRow]
+          Seq(
+            PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(CheckMode, index).url),
+            PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(CheckMode, index).url),
+            PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(CheckMode, index).url),
+            PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(CheckMode, index).url)
+          ).flatten
         )
 
         Future.successful(Ok(check_your_answers(
           appConfig,
           Seq(partnershipDetails, partnershipContactDetails),
-          Some(details.name),
+          Some(Message("messages__establishers__secondaryHeading", details.schemeName)),
           routes.CheckYourAnswersController.onSubmit(index)
         )))
 

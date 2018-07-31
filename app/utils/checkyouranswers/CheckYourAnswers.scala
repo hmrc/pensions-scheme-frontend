@@ -168,6 +168,79 @@ object CheckYourAnswers {
     }
   }
 
+  implicit def partnershipDetails[I <: TypedIdentifier[PartnershipDetails]](implicit rds: Reads[PartnershipDetails]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map{ partnershipDetails =>
+        Seq(
+          AnswerRow(
+            "messages__common__cya__name",
+            Seq(partnershipDetails.name),
+            false,
+            changeUrl
+          )
+        )
+      } getOrElse Seq.empty[AnswerRow]
+    }
+  }
+
+  implicit def paye[I <: TypedIdentifier[Paye]](implicit r: Reads[Paye]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map{
+          case Paye.Yes(paye) => Seq(
+            AnswerRow(
+              "messages__common__cya__paye",
+              Seq("site.yes"),
+              true,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__common__cya__paye",
+              Seq(paye),
+              false,
+              changeUrl
+            )
+          )
+          case Paye.No => Seq(
+            AnswerRow(
+              "commom.paye.label",
+              Seq("site.no"),
+              true,
+              changeUrl
+            ))
+        } getOrElse Seq.empty[AnswerRow]
+    }
+  }
+
+  implicit def vat[I <: TypedIdentifier[Vat]](implicit r: Reads[Vat]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map{
+          case Vat.Yes(vat) => Seq(
+            AnswerRow(
+              "messages__common__cya__vat",
+              Seq("site.yes"),
+              true,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__common__cya__vat",
+              Seq(vat),
+              false,
+              changeUrl
+            )
+          )
+          case Vat.No => Seq(
+            AnswerRow(
+              "common.vatRegistrationNumber.checkYourAnswersLabel",
+              Seq("site.no"),
+              true,
+              changeUrl
+            ))
+        } getOrElse Seq.empty[AnswerRow]
+    }
+  }
+
   implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

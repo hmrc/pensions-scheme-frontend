@@ -18,12 +18,19 @@ package controllers.register.establishers.partnership
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
+import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership._
 import models.AddressYears.UnderAYear
 import models.address.Address
+import models.person.PersonDetails
+import models.register.SchemeType.SingleTrust
+import models.register.{SchemeDetails, SchemeType}
 import models.{ContactDetails, Index, PartnershipDetails, Vat}
 import play.api.test.Helpers._
 import utils._
+import viewmodels.Message
+import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
@@ -38,13 +45,17 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       FakeSectionComplete,
-      FakeNavigator
+      FakeNavigator,
+      new FakeCountryOptions()
     )
 
   "CheckYourAnswersController" must {
 
+    val schemeName = "testScheme"
+
     val partnershipAnswers = UserAnswers()
-      .set(PartnershipDetailsId(firstIndex))(PartnershipDetails(partnershipName))
+      .set(SchemeDetailsId)(SchemeDetails(schemeName, SingleTrust))
+      .flatMap(_.set(PartnershipDetailsId(firstIndex))(PartnershipDetails(partnershipName)))
       .flatMap(_.set(PartnershipVatId(firstIndex))(Vat.No))
       .flatMap(_.set(PartnershipAddressId(firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
       .flatMap(_.set(PartnershipAddressYearsId(firstIndex))(UnderAYear))
@@ -57,23 +68,16 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       val request = FakeDataRequest(partnershipAnswers)
       val result = controller(partnershipAnswers.dataRetrievalAction).onPageLoad(firstIndex)(request)
 
+      lazy val viewAsString: String = check_your_answers(
+        frontendAppConfig,
+        Seq.empty,
+        Some(Message("messages__establishers__secondaryHeading", schemeName)),
+        routes.CheckYourAnswersController.onSubmit(firstIndex)
+      )(fakeRequest, messages).toString
+
       status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString
 
-      val content = contentAsString(result)
-
-      content must include(messages("messages__partnership__checkYourAnswers__partnership_details"))
-        .and(include(messages("messages__partnership__checkYourAnswers__partnership_contact_details")))
-        .and(include(messages("messages__common__cya__name")))
-        .and(include(messages("messages__common__cya__vat")))
-        .and(include(messages("messages__common__cya__paye")))
-        .and(include(messages("messages__partnership__checkYourAnswers__utr")))
-        .and(include(messages("messages__common__utr")))
-        .and(include(messages("messages__common__cya__address")))
-        .and(include(messages("messages__partnership__checkYourAnswers__addressYears")))
-        .and(include(messages("messages__common__cya__previous_address")))
-        .and(include(messages("messages__common__cya__email")))
-        .and(include(messages("messages__common__cya__email")))
-        .and(include(messages("messages__common__cya__phone")))
     }
 
     "redirect to Session Expired when establisher name cannot be retrieved" in {
