@@ -37,7 +37,10 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__addTrustee__heading", secondaryHeaderKey = Some(schemeName))
+        @components.headingNew(
+            headingKey=messages("messages__addTrustee__heading"),
+            secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
+        )
 
         @if(trustees.isEmpty) {
 

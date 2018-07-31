@@ -28,9 +28,9 @@
     @helpers.form(action = postCall, 'autoComplete -> "off") {
         @components.back_link()
 
-        @components.heading(
-            messages("messages__confirmDeleteDirector__heading").format(directorName),
-            secondaryHeaderKey = Some(companyName)
+        @components.headingNew(
+            headingKey=components.hyphen((messages("messages__confirmDeleteDirector__heading").format(directorName))).toString,
+            secondaryHeaderKey = Some(components.hyphen(companyName).toString)
         )
 
         @components.submit_button("site.confirm")

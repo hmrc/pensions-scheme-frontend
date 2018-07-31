@@ -41,10 +41,12 @@
     @helpers.form(action = routes.AddEstablisherController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
-
         @if(establishers.isEmpty) {
 
-            @components.heading(headingKey = "messages__establishers__add__title", secondaryHeaderKey = Some(schemeName))
+        @components.headingNew(
+            headingKey=messages("messages__establishers__add__title"),
+            secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
+        )
 
             <p>@messages("messages__establishers__add_hint")</p>
 
@@ -52,7 +54,11 @@
 
             @components.error_summary(form.errors)
 
-            @components.heading(headingKey = "messages__establishers__add__title", secondaryHeaderKey = Some(schemeName))
+            @components.headingNew(
+                headingKey=messages("messages__establishers__add__title"),
+                secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
+            )
+
 
             @if(appConfig.completeFlagEnabled){
                 @components.entity_list(establishers)
