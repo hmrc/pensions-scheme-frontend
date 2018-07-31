@@ -55,7 +55,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           Seq(
             PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(CheckMode, index).url),
             PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(CheckMode, index).url),
-            PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(CheckMode, index).url)
+            PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(CheckMode, index).url),
+            PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, index).url)
           ).flatten
         )
 
