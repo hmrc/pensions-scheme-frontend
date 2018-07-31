@@ -28,7 +28,6 @@ import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteesId}
 import models.CompanyDetails
 import models.person.PersonDetails
 import models.register._
-import models.{CompanyDetails, Index, NormalMode}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._

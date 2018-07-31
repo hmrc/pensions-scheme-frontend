@@ -25,7 +25,7 @@ import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
 import models.person.PersonDetails
 import models.register.EstablisherPartnerEntity
-import models.{Index, NormalMode, PartnershipDetails}
+import models.{Index, PartnershipDetails}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json._

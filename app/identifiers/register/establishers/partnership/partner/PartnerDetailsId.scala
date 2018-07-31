@@ -18,10 +18,8 @@ package identifiers.register.establishers.partnership.partner
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.OtherDirectorsId
 import models.person.PersonDetails
-import play.api.libs.json.{JsPath, JsResult}
-import utils.UserAnswers
+import play.api.libs.json.JsPath
 
 case class PartnerDetailsId(establisherIndex:Int, partnerIndex:Int) extends TypedIdentifier[PersonDetails] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerDetailsId.toString
