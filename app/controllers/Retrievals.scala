@@ -45,11 +45,11 @@ trait Retrievals {
   }
 
   private[controllers] def retrievePartnershipName(index: Int)
-                                                (f: String => Future[Result])
-                                                (implicit request: DataRequest[AnyContent]): Future[Result] = {
-        retrieve[PartnershipDetails](PartnershipDetailsId(index)) { partnershipDetails =>
-            f(partnershipDetails.name)
-          }
+                                              (f: String => Future[Result])
+                                              (implicit request: DataRequest[AnyContent]): Future[Result] = {
+    retrieve[PartnershipDetails](PartnershipDetailsId(index)) { partnershipDetails =>
+      f(partnershipDetails.name)
+    }
   }
 
   private[controllers] def retrieveSchemeName(f: String => Future[Result])
