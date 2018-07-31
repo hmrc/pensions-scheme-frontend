@@ -53,7 +53,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         val partnershipDetails = AnswerSection(
           Some("messages__partnership__checkYourAnswers__partnership_details"),
           Seq(
-            PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(CheckMode, index).url)
+            PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(CheckMode, index).url),
+            PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(CheckMode, index).url),
+            PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(CheckMode, index).url)
           ).flatten
         )
 
