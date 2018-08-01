@@ -168,6 +168,21 @@ object CheckYourAnswers {
     }
   }
 
+  implicit def partnershipDetails[I <: TypedIdentifier[PartnershipDetails]](implicit rds: Reads[PartnershipDetails]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map{ partnershipDetails =>
+        Seq(
+          AnswerRow(
+            "messages__common__cya__name",
+            Seq(partnershipDetails.name),
+            false,
+            changeUrl
+          )
+        )
+      } getOrElse Seq.empty[AnswerRow]
+    }
+  }
+
   implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =

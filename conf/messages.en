@@ -88,7 +88,8 @@ messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
 messages__common__cya__vat = VAT registration number
 messages__common__cya__paye = PAYE employer reference number
-
+messages__common__cya__email = Email address
+messages__common__cya__phone = Phone number
 
 messages__index__title = pensions-scheme-frontend
 messages__index__guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
@@ -522,7 +523,6 @@ messages__otherDirectors__heading=Do you need to tell us about other directors?
 messages__otherDirectors__lede=You do not have to add them now. We may contact you if we need this information.
 messages__otherDirectors__error__required=You must make a selection
 
-
 messages_cya_secondary_header = Register a new pension scheme
 messages__scheme_benefits_section=Scheme benefits
 membership.checkYourAnswersLabel = Current membership
@@ -795,6 +795,13 @@ messages__error__utr_no_utr_establisher=Enter a reason for not having a UTR
 messages__error__utr_invalid=Enter a UTR using only 10 numbers
 messages__error__no_utr_length=Enter a reason for not having a UTR using 160 characters or less
 
+messages__partnership__checkYourAnswers__partnership_details = Partnership details
+messages__partnership__checkYourAnswers__partnership_contact_details = Partnership contact details
+messages__partnership__checkYourAnswers__vat = Does the partnership have a VAT registration number?
+messages__partnership__checkYourAnswers__paye = Does the partnership have a PAYE employer reference number?
+messages__partnership__checkYourAnswers__utr = Does the partnership have a Self Assessment Unique Taxpayer Reference number?
+messages__partnership__checkYourAnswers__addressYears = How long has the partnership been at this address?
+
 messages__partnershipPaye__title = Does the partnership have a PAYE employer reference number?
 messages__partnershipPaye__heading = Does the partnership have a PAYE employer reference number?
 
@@ -805,3 +812,5 @@ messages__addPartners_add_more = Do you want to add another partner?
 messages__addPartners_lede = You must tell us about all your partners.
 messages__addPartners_add_partner = Add a partner
 messages__addPartners_at_maximum = You have added the maximum number of partners.
+
+messages__establishers__secondaryHeading = Establishers for {0}

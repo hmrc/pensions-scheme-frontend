@@ -16,20 +16,15 @@
 
 package identifiers.register.establishers.partnership
 
-import identifiers._
+import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import models.address.Address
+import models.Index
 import play.api.libs.json.JsPath
-import utils.CountryOptions
-import utils.checkyouranswers.AddressCYA
 
-case class PartnershipPreviousAddressId(index: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipPreviousAddressId.toString
+case class IsPartnershipCompleteId(index: Index) extends TypedIdentifier[Boolean] {
+  override def path: JsPath = EstablishersId(index).path \ IsPartnershipCompleteId.toString
 }
 
-object PartnershipPreviousAddressId {
-  override def toString: String = "partnershipPreviousAddress"
-
-  implicit def cya(implicit countryOptions: CountryOptions) = AddressCYA[PartnershipPreviousAddressId]("messages__common__cya__previous_address")()
-
+object IsPartnershipCompleteId {
+  override def toString: String = "isPartnershipCompleteId"
 }

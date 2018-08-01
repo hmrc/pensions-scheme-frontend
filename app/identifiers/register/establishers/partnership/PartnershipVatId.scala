@@ -19,7 +19,10 @@ package identifiers.register.establishers.partnership
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Vat
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, Reads}
+import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import viewmodels.AnswerRow
 
 case class PartnershipVatId(index: Int) extends TypedIdentifier[Vat] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipVatId.toString
@@ -27,6 +30,36 @@ case class PartnershipVatId(index: Int) extends TypedIdentifier[Vat] {
 
 object PartnershipVatId {
   override def toString: String = "partnershipVat"
+
+  implicit def vat[I <: TypedIdentifier[Vat]](implicit r: Reads[Vat]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map{
+          case Vat.Yes(vat) => Seq(
+            AnswerRow(
+              "messages__partnership__checkYourAnswers__vat",
+              Seq("site.yes"),
+              true,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__common__cya__vat",
+              Seq(vat),
+              false,
+              changeUrl
+            )
+          )
+          case Vat.No => Seq(
+            AnswerRow(
+              "messages__partnership__checkYourAnswers__vat",
+              Seq("site.no"),
+              true,
+              changeUrl
+            ))
+        } getOrElse Seq.empty[AnswerRow]
+    }
+  }
+
 }
 
 
