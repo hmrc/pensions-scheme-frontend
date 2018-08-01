@@ -289,3 +289,8 @@ GET        /:index/partnership/partners                                         
 POST       /:index/partnership/partners                                                                        controllers.register.establishers.partnership.AddPartnersController.onSubmit(index: Index)
 GET        /:index/partnership/change-partners                                                                 controllers.register.establishers.partnership.AddPartnersController.onPageLoad(index: Index)
 POST       /:index/partnership/change-partners                                                                 controllers.register.establishers.partnership.AddPartnersController.onSubmit(index: Index)
+
+GET        /:establisherIndex/partnership/partner/:partnerIndex/national-insurance-number                     controllers.register.establishers.partnership.partner.PartnerNinoController.onPageLoad(mode: Mode = NormalMode, establisherIndex: Index, partnerIndex: Index)
+POST       /:establisherIndex/partnership/partner/:partnerIndex/national-insurance-number                     controllers.register.establishers.partnership.partner.PartnerNinoController.onSubmit(mode: Mode = NormalMode, establisherIndex: Index, partnerIndex: Index)
+GET        /:establisherIndex/partnership/partner/:partnerIndex/change-national-insurance-number              controllers.register.establishers.partnership.partner.PartnerNinoController.onPageLoad(mode: Mode = CheckMode, establisherIndex: Index, partnerIndex: Index)
+POST       /:establisherIndex/partnership/partner/:partnerIndex/change-national-insurance-number              controllers.register.establishers.partnership.partner.PartnerNinoController.onSubmit(mode: Mode = CheckMode, establisherIndex: Index, partnerIndex: Index)
