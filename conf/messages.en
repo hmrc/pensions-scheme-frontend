@@ -496,7 +496,6 @@ messages__checkYourAnswers__trustees__company__crn = Does the trustee have a Com
 messages__checkYourAnswers__trustees__company__utr = Does the trustee have a Unique Taxpayer Reference number?
 messages__checkYourAnswers__trustees__company__address_years = How long has the company been at this address?
 
-
 messages__directorPreviousAddressPostcodeLookup__title = Director’s previous address
 messages__directorPreviousAddressPostcodeLookup__heading = Director’s previous address
 messages__directorPreviousAddressPostcodeLookup__lede = This is usually the director’s residential address.
@@ -844,3 +843,7 @@ messages__partnerPreviousAddress__heading = Enter the partner’s previous addre
 messages__partnerPreviousAddressPostcodeLookup__title = Enter the partner’s previous postcode
 messages__partnerPreviousAddressPostcodeLookup__heading = Enter the partner’s previous postcode
 messages__partnerPreviousAddressPostcodeLookup__lede = This is usually the residential address for this person.
+
+messages__partner_address_years__title = How long has the partner lived at this address?
+messages__partner_address_years__heading = How long has the partner lived at this address?
+messages__partner_address_years__cya = How long has the partner lived at this address?
