@@ -822,3 +822,12 @@ messages__partner_nino__title = Does the partner have a National Insurance numbe
 messages__partner_no_nino = Tell us why the partner does not have a National Insurance number
 messages__error__has_nino_partner = Select yes if the partner has a National Insurance number
 messages__error__no_nino_partner = You need to tell us why the partner does not have a National Insurance number
+
+messages__partner_has_sautr__title = Does the partner have a Self Assessment Unique Taxpayer Reference number?
+messages__partner_sautr = Unique Taxpayer Reference number
+messages__partner_no_sautr = Tell us why the partner does not have a Self Assessment Unique Taxpayer Reference number
+messages__partnership__partner_has_sautr_establisher = Select yes if the partner has a Self Assessment Unique Taxpayer Reference number
+messages__partnership__sautr_hint_what = This is issued by HMRC for Self Assessment.
+messages__partner_sautr_hint_format = A Unique Taxpayer Reference number is 10 numbers.
+messages__error__has_sautr_partner = Select yes if the partner has a Unique Taxpayer Reference number
+messages__error__no_sautr_partner = Tell us why the partner does not have a Unique Taxpayer Reference number
