@@ -32,7 +32,10 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__contractofinsurance_pension_scheme__title", secondaryHeaderKey = Some(name))
+        @components.headingNew(
+            headingKey=messages("messages__contractofinsurance_pension_scheme__title"),
+            secondaryHeaderKey = Some(components.hyphen(name).toString)
+        )
 
         <p>@messages("messages__contractofinsurance_pension_scheme__copy")<p>
 

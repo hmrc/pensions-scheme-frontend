@@ -35,9 +35,12 @@
 
     @components.error_summary(form.errors)
 
-    @components.heading(headingKey = "messages__establisher__has_ct_utr__title", secondaryHeaderKey = Some(companyName))
+    @components.headingNew(
+        headingKey=messages("messages__establisher__has_ct_utr__title"),
+        secondaryHeaderKey = Some(components.hyphen(companyName).toString)
+    )
 
-    @components.fieldSet(
+        @components.fieldSet(
         field = form("uniqueTaxReference.hasUtr"),
         legend = "messages__establisher__has_ct_utr__title",
         hint = Some("messages__establisher__ct_utr_hint_what"),

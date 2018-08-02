@@ -19,7 +19,10 @@ package identifiers.register.establishers.partnership
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Paye
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsPath, Reads}
+import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import viewmodels.AnswerRow
 
 case class PartnershipPayeId(index: Int) extends TypedIdentifier[Paye] {
   override def path: JsPath = EstablishersId(index).path \ PartnershipPayeId.toString
@@ -27,4 +30,35 @@ case class PartnershipPayeId(index: Int) extends TypedIdentifier[Paye] {
 
 object PartnershipPayeId {
   override def toString: String = "partnershipPaye"
+
+
+  implicit def paye[I <: TypedIdentifier[Paye]](implicit r: Reads[Paye]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map{
+          case Paye.Yes(paye) => Seq(
+            AnswerRow(
+              "messages__partnership__checkYourAnswers__paye",
+              Seq("site.yes"),
+              true,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__common__cya__paye",
+              Seq(paye),
+              false,
+              changeUrl
+            )
+          )
+          case Paye.No => Seq(
+            AnswerRow(
+              "messages__partnership__checkYourAnswers__paye",
+              Seq("site.no"),
+              true,
+              changeUrl
+            ))
+        } getOrElse Seq.empty[AnswerRow]
+    }
+  }
+
 }

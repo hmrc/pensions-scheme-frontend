@@ -26,14 +26,16 @@
     title = messages("messages__scheme_country__title"),
     appConfig = appConfig,
     bodyClasses = None) {
-
     @helpers.form(action = SchemeEstablishedCountryController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.back_link()
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__scheme_country__title", secondaryHeaderKey = Some(schemeName))
+        @components.headingNew(
+            headingKey=messages("messages__scheme_country__title"),
+            secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
+        )
 
         @components.select(field = form("value"),
             label = messages("messages__scheme_country__title"),

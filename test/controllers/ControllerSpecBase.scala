@@ -25,16 +25,17 @@ import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.{CompanyDetails, PartnershipDetails}
 import models.person.PersonDetails
 import models.register.{AdviserDetails, SchemeDetails, SchemeType}
+import models.{CompanyDetails, PartnershipDetails}
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
-import utils.{DateHelper, Enumerable, MapFormats}
+import utils.{Enumerable, MapFormats}
 
-trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapFormats{
+trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapFormats {
 
   val cacheMapId = "id"
 
@@ -58,15 +59,15 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
 
   def getMandatoryTrustee: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(
     Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-    "trustees" -> Json.arr(
-      Json.obj(
-        TrusteeDetailsId.toString ->
-          PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
+      SchemeDetailsId.toString ->
+        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+      "trustees" -> Json.arr(
+        Json.obj(
+          TrusteeDetailsId.toString ->
+            PersonDetails("Test", Some("Trustee"), "Name", LocalDate.now)
+        )
       )
-    )
-  )))
+    )))
 
   def getMandatoryTrusteeCompany: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
@@ -126,11 +127,30 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
     ))
   )
 
+  def getMandatoryEstablisherPartner: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      SchemeDetailsId.toString ->
+        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          PartnershipDetailsId.toString ->
+            PartnershipDetails("test partnership name"),
+          "partner" -> Json.arr(
+            Json.obj(
+              PartnerDetailsId.toString -> PersonDetails("first", Some("middle"), "last",
+                new LocalDate(1990, 2, 2))
+            )
+          )
+        )
+      )
+    ))
+  )
+
   def getMandatoryAdviser: FakeDataRetrievalAction = new FakeDataRetrievalAction(
     Some(Json.obj(
       SchemeDetailsId.toString ->
         SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-      AdviserDetailsId.toString->
+      AdviserDetailsId.toString ->
         AdviserDetails("name", "email", "phone")
     ))
   )
