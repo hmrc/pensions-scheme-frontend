@@ -822,3 +822,6 @@ messages__partner_nino__title = Does the partner have a National Insurance numbe
 messages__partner_no_nino = Tell us why the partner does not have a National Insurance number
 messages__error__has_nino_partner = Select yes if the partner has a National Insurance number
 messages__error__no_nino_partner = You need to tell us why the partner does not have a National Insurance number
+
+messages__partnerDetails__title = Enter the partner’s details
+messages__partnerDetails__heading = Enter the partner’s details
