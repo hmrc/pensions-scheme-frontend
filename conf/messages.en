@@ -847,3 +847,11 @@ messages__partnerPreviousAddressPostcodeLookup__lede = This is usually the resid
 messages__partner_address_years__title = How long has the partner lived at this address?
 messages__partner_address_years__heading = How long has the partner lived at this address?
 messages__partner_address_years__cya = How long has the partner lived at this address?
+
+messages__partnerAddressPostcodeLookup__title = Enter the partner’s postcode
+messages__partnerAddressPostcodeLookup__heading = Enter the partner’s postcode
+messages__partnerAddressPostcodeLookup__lede = This is usually the residential address for this person.
+
+messages__partnerAddress__title = Enter the partner’s address
+messages__partnerAddress__heading = Enter the partner’s address
+messages__partnerAddress__lede = This is usually the residential address for this person.
