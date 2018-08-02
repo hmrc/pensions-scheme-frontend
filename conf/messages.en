@@ -724,6 +724,7 @@ messages__youNeedToRegister__button = Register as a pension scheme administrator
 messages__youNeedToRegister__govUk__link = Exit to GOV.UK
 
 messages__alreadyDeleted__director_title = You have already deleted this director
+messages__alreadyDeleted__partner_title = You have already deleted this partner
 messages__alreadyDeleted__trustee_title = You have already deleted this trustee
 messages__alreadyDeleted__heading = You have already deleted {0}
 messages__alreadyDeleted__lede = You have already confirmed deletion of {0}.
@@ -859,3 +860,6 @@ messages__partner__cya__contact__details_heading = Contact details for partner
 messages__partner_nino_question_cya_label = Does the partner have a National Insurance number?
 messages__partner_utr_question_cya_label = Does the partner have a Self Assessment Unique Taxpayer Reference number?
 messages__partner_address_years_question_cya_label = How long has the partner lived at this address?
+
+messages__confirmDeletePartner__title = Confirm deletion
+messages__confirmDeletePartner__heading = Are you sure you want to delete {0}?

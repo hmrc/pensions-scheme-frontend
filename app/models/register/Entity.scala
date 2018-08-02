@@ -99,7 +99,7 @@ case class EstablisherPartnerEntity(id: PartnerDetailsId, name: String, isDelete
   }
 
   override def deleteLink: String =
-    controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(id.establisherIndex).url
+    controllers.register.establishers.partnership.partner.routes.ConfirmDeletePartnerController.onPageLoad(id.establisherIndex, id.partnerIndex).url
 
   override def index: Int = id.partnerIndex
 }
