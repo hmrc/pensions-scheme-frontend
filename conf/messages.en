@@ -837,3 +837,10 @@ messages__error__no_sautr_partner = Tell us why the partner does not have a Uniq
 messages__partner_contact__title = Enter the partner’s contact details
 messages__partner_contact__heading = Enter the partner’s contact details
 messages__partner_contact__body = These details will be used if we need to contact the partner about the pension scheme.
+
+messages__partnerPreviousAddress__title = Enter the partner’s previous address
+messages__partnerPreviousAddress__heading = Enter the partner’s previous address
+
+messages__partnerPreviousAddressPostcodeLookup__title = Enter the partner’s previous postcode
+messages__partnerPreviousAddressPostcodeLookup__heading = Enter the partner’s previous postcode
+messages__partnerPreviousAddressPostcodeLookup__lede = This is usually the residential address for this person.
