@@ -104,13 +104,21 @@ class RegisterNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
       case SecuredBenefitsId =>
         securedBenefitsRoutes(CheckMode, from.userAnswers)
       case BenefitsInsurerId =>
-        NavigateTo.save(checkYourAnswers)
+        benefitsInsurerRoutes(from.userAnswers)
       case UKBankAccountId =>
         uKBankAccountRoutes(CheckMode, from.userAnswers)
       case UKBankDetailsId =>
         NavigateTo.save(checkYourAnswers)
       case _ => None
     }
+
+  private def benefitsInsurerRoutes(answers: UserAnswers): Option[NavigateTo] = {
+    if(answers.get(InsurerAddressId).nonEmpty) {
+      NavigateTo.save(checkYourAnswers)
+    } else {
+      NavigateTo.save(controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(CheckMode))
+    }
+  }
 
   private def securedBenefitsRoutes(mode: Mode, answers: UserAnswers): Option[NavigateTo] = {
     (answers.get(SecuredBenefitsId), mode) match {
