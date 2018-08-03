@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import play.api.mvc.Call
+@import viewmodels.Message
 
 @(appConfig: FrontendAppConfig, partnershipName: String, partnerName: String, postCall: Call, cancelCall: Call)(implicit request: Request[_], messages: Messages)
 
@@ -29,7 +30,7 @@
         @components.back_link()
 
         @components.headingNew(
-            headingKey=components.hyphen((messages("messages__confirmDeletePartner__heading").format(partnerName))).toString,
+            headingKey = components.hyphen((Message("messages__confirmDeletePartner__heading").withArgs(partnerName))).toString,
             secondaryHeaderKey = Some(components.hyphen(partnershipName).toString)
         )
 

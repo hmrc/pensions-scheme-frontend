@@ -19,6 +19,7 @@ package views.register.establishers.partnership.partner
 import controllers.register.establishers.partnership.partner.routes.ConfirmDeletePartnerController
 import controllers.register.establishers.partnership.routes.AddPartnersController
 import play.twirl.api.HtmlFormat
+import viewmodels.Message
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
@@ -41,7 +42,7 @@ class ConfirmDeletePartnerViewSpec extends ViewBehaviours {
     )(fakeRequest, messages)
 
   "ConfirmDeleteDirector view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading").format("John Doe"))
+    behave like normalPage(createView, messageKeyPrefix, Message(s"messages__${messageKeyPrefix}__heading").withArgs("John Doe"))
 
     behave like pageWithBackLink(createView)
 
