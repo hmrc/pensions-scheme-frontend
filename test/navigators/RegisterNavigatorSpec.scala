@@ -22,6 +22,7 @@ import connectors.FakeDataCacheConnector
 import identifiers.UserResearchDetailsId
 import identifiers.register._
 import models._
+import models.address.Address
 import models.register.{SchemeDetails, SchemeType}
 import org.scalatest.MustMatchers
 import play.api.Configuration
@@ -53,7 +54,8 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (SecuredBenefitsId,             securedBenefitsTrue,  benefitsInsurer(NormalMode),            true,         Some(benefitsInsurer(CheckMode)),     true),
     (SecuredBenefitsId,             securedBenefitsFalse, uKBankAccount(NormalMode),              true,         Some(checkYourAnswers),               true),
     (SecuredBenefitsId,             emptyAnswers,         expired,                                false,        Some(expired),                        false),
-    (BenefitsInsurerId,             emptyAnswers,         insurerPostCodeLookup(NormalMode),      true,         Some(checkYourAnswers),               true),
+    (BenefitsInsurerId,             emptyAnswers,         insurerPostCodeLookup(NormalMode),      true,         Some(insurerPostCodeLookup(CheckMode)), true),
+    (BenefitsInsurerId,             insurerAddress,       insurerPostCodeLookup(NormalMode),      true,         Some(checkYourAnswers),               true),
     (InsurerPostCodeLookupId,       emptyAnswers,         insurerAddressList(NormalMode),         true,         Some(insurerAddressList(CheckMode)),  true),
     (InsurerAddressListId,          emptyAnswers,         insurerAddress(NormalMode),             true,         Some(insurerAddress(CheckMode)),      true),
     (InsurerAddressId,              emptyAnswers,         uKBankAccount(NormalMode),              true,         Some(checkYourAnswers),               true),
@@ -105,6 +107,7 @@ object RegisterNavigatorSpec {
   private val hasEstablishers = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.GroupLifeDeath))
   private val needsTrustees = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.SingleTrust))
   private val savedLastPage = UserAnswers().lastPage(LastPage(lastPage.method, lastPage.url))
+  private val insurerAddress = UserAnswers().insurerAddress(Address("line-1", "line-2", None, None, None, "GB"))
 
   private def benefits(mode: Mode) = controllers.register.routes.BenefitsController.onPageLoad(mode)
   private def benefitsInsurer(mode: Mode) = controllers.register.routes.BenefitsInsurerController.onPageLoad(mode)

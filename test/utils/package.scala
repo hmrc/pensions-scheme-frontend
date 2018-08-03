@@ -40,6 +40,10 @@ package object utils {
       answers.set(SecuredBenefitsId)(securedBenefits).asOpt.value
     }
 
+    def insurerAddress(address: Address): UserAnswers = {
+      answers.set(InsurerAddressId)(address).asOpt.value
+    }
+
     def ukBankAccount(ukBankAccount: Boolean): UserAnswers = {
       answers.set(UKBankAccountId)(ukBankAccount).asOpt.value
     }
