@@ -347,3 +347,8 @@ POST       /:establisherIndex/partnership/partner/:partnerIndex/change-partners-
 
 GET        /:establisherIndex/partnership/partner/:partnerIndex/check-your-answers                            controllers.register.establishers.partnership.partner.CheckYourAnswersController.onPageLoad(establisherIndex: Index, partnerIndex: Index)
 POST       /:establisherIndex/partnership/partner/:partnerIndex/check-your-answers                            controllers.register.establishers.partnership.partner.CheckYourAnswersController.onSubmit(establisherIndex: Index, partnerIndex: Index)
+
+GET        /:establisherIndex/partnership/partner/:partnerIndex/partners-confirm-delete                     controllers.register.establishers.partnership.partner.ConfirmDeletePartnerController.onPageLoad(establisherIndex: Index, partnerIndex: Index)
+POST       /:establisherIndex/partnership/partner/:partnerIndex/partners-confirm-delete                      controllers.register.establishers.partnership.partner.ConfirmDeletePartnerController.onSubmit(establisherIndex: Index, partnerIndex: Index)
+
+GET        /:establisherIndex/partnership/partner/:partnerIndex/already-deleted                               controllers.register.establishers.partnership.partner.AlreadyDeletedController.onPageLoad(establisherIndex: Index, partnerIndex: Index)
