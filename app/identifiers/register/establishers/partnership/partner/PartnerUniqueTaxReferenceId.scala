@@ -20,6 +20,7 @@ import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.UniqueTaxReference
 import play.api.libs.json.JsPath
+import utils.checkyouranswers.{CheckYourAnswers, NinoCYA, UniqueTaxReferenceCYA}
 
 case class PartnerUniqueTaxReferenceId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[UniqueTaxReference] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \PartnerUniqueTaxReferenceId.toString
@@ -27,6 +28,9 @@ case class PartnerUniqueTaxReferenceId(establisherIndex: Int, partnerIndex: Int)
 
 object PartnerUniqueTaxReferenceId {
   override def toString: String = "partnerUniqueTaxReference"
+
+  implicit val cya: CheckYourAnswers[PartnerUniqueTaxReferenceId] =
+    UniqueTaxReferenceCYA("messages__partner_utr_question_cya_label")()
 }
 
 

@@ -16,22 +16,14 @@
 
 package identifiers.register.establishers.partnership.partner
 
-import identifiers._
+import identifiers.Identifier
 import identifiers.register.establishers.EstablishersId
-import models.AddressYears
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.{AddressYearsCYA, CheckYourAnswers}
 
-case class PartnerAddressYearsId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[AddressYears] {
-
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerAddressYearsId.toString
-  
+case class CheckYourAnswersId(establisherIndex: Int, partnerIndex: Int) extends Identifier {
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ CheckYourAnswersId.toString
 }
 
-object PartnerAddressYearsId {
-  override lazy val toString: String = "partnerAddressYears"
-
-  implicit val cya: CheckYourAnswers[PartnerAddressYearsId] =
-    AddressYearsCYA[PartnerAddressYearsId]("messages__partner_address_years_question_cya_label")()
+object CheckYourAnswersId {
+  override def toString: String = "checkYourAnswers"
 }
-
