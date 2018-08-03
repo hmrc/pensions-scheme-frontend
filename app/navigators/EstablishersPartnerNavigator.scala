@@ -20,8 +20,9 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.register.establishers.partnership.partner._
+import identifiers.register.establishers.partnership.AddPartnersId
 import identifiers.register.establishers.partnership.partner._
-import models.{AddressYears, CheckMode, NormalMode}
+import models.{AddressYears, CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: DataCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
@@ -30,6 +31,8 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: DataCacheCo
     NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(establisherIndex, partnerIndex))
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
+    case AddPartnersId(establisherIndex) =>
+      addPartnerRoutes(NormalMode, establisherIndex, from.userAnswers)
     case PartnerDetailsId(establisherIndex, partnerIndex) =>
       NavigateTo.save(routes.PartnerNinoController.onPageLoad(NormalMode, establisherIndex, partnerIndex))
     case PartnerNinoId(establisherIndex, partnerIndex) =>
@@ -61,6 +64,8 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: DataCacheCo
   }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
+    case AddPartnersId(establisherIndex) =>
+      addPartnerRoutes(CheckMode, establisherIndex, from.userAnswers)
     case PartnerDetailsId(establisherIndex, partnerIndex) =>
       checkYourAnswers(establisherIndex, partnerIndex)(from.userAnswers)
     case PartnerNinoId(establisherIndex, partnerIndex) =>
@@ -105,6 +110,28 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: DataCacheCo
         NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(establisherIndex, partnerIndex))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def addPartnerRoutes(mode: Mode, index: Int, answers: UserAnswers): Option[NavigateTo] = {
+    val partners = answers.allPartnersAfterDelete(index)
+
+    if (partners.isEmpty) {
+      NavigateTo.save(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(
+        mode, index, answers.allPartners(index).size))
+    }
+    else if (partners.lengthCompare(appConfig.maxPartners) < 0) {
+      answers.get(AddPartnersId(index)) match {
+        case Some(true) =>
+          NavigateTo.save(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(mode,
+            index, answers.allPartners(index).size))
+        case Some(false) =>
+          NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad()) //TODO: Replace with Review page
+        case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+      }
+    }
+    else {
+      NavigateTo.save(controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, index))
     }
   }
 }

@@ -24,6 +24,10 @@ import play.api.libs.json.Json
 import utils.UserAnswers
 import controllers.register.establishers.partnership.partner._
 import identifiers.Identifier
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
+import models.person.PersonDetails
+import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
 import play.api.mvc.Call
@@ -35,6 +39,11 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
   private val navigator = new EstablishersPartnerNavigator(FakeDataCacheConnector, frontendAppConfig)
   private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                      "User Answers",         "Next Page (Normal Mode)",              "Save (NM)",      "Next Page (Check Mode)",             "Save (CM)"),
+    (AddPartnersId(0),                             emptyAnswers,          partnerDetails(0, NormalMode),        true,         Some(partnerDetails(0, CheckMode)),      true),
+    (AddPartnersId(0),                             addPartnersTrue,       partnerDetails(1, NormalMode),        true,         Some(partnerDetails(1, CheckMode)),      true),
+    (AddPartnersId(0),                             addPartnersFalse,      sessionExpired,                         false,         Some(sessionExpired),                      false),
+    (AddPartnersId(0),                             addOnePartner,           sessionExpired,                        false,        Some(sessionExpired),                     false),
+    (AddPartnersId(0),                             addPartnersMoreThan10, otherPartners(NormalMode),            true,         Some(otherPartners(CheckMode)),          true),
     (PartnerDetailsId(0, 0),                       emptyAnswers,           partnerNino(NormalMode),               true,             Some(checkYourAnswers),                     true),
     (PartnerNinoId(0, 0),                          emptyAnswers,           partnerUtr(NormalMode),                true,             Some(checkYourAnswers),                     true),
     (PartnerUniqueTaxReferenceId(0, 0),            emptyAnswers,           partnerAddressPostcode(NormalMode),    true,             Some(checkYourAnswers),                     true),
@@ -66,15 +75,32 @@ object EstablishersPartnerNavigatorSpec extends OptionValues {
   private val emptyAnswers = UserAnswers(Json.obj())
   val establisherIndex = Index(0)
   val partnerIndex = Index(0)
+  private val johnDoe = PersonDetails("John", None, "Doe", LocalDate.now())
 
   val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(PartnerAddressYearsId(establisherIndex, partnerIndex))(AddressYears.OverAYear).asOpt.value
   val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(PartnerAddressYearsId(establisherIndex, partnerIndex))(AddressYears.UnderAYear).asOpt.value
 
+  private def validData(partners: PersonDetails*) = {
+    Json.obj(
+      EstablishersId.toString -> Json.arr(
+        Json.obj(
+          PartnershipDetailsId.toString -> PartnershipDetails("test partnership name", false),
+          "partner" -> partners.map(d => Json.obj(PartnerDetailsId.toString -> Json.toJson(d)))
+        )
+      )
+    )
+  }
+
+  private val addPartnersTrue = UserAnswers(validData(johnDoe)).set(AddPartnersId(0))(true).asOpt.value
+  private val addPartnersFalse = UserAnswers(validData(johnDoe)).set(AddPartnersId(0))(false).asOpt.value
+  private val addPartnersMoreThan10 = UserAnswers(validData(Seq.fill(10)(johnDoe): _*))
+  private val addOnePartner = UserAnswers(validData(johnDoe))
+
   private def partnerNino(mode: Mode) = routes.PartnerNinoController.onPageLoad(mode, establisherIndex, partnerIndex)
 
-  private def partnerDetails(mode: Mode) = routes.PartnerDetailsController.onPageLoad(mode, partnerIndex, establisherIndex)
+  private def partnerDetails(partnerIndex: Index = Index(0), mode: Mode) = routes.PartnerDetailsController.onPageLoad(mode, 0, partnerIndex)
 
   private def partnerUtr(mode: Mode) = routes.PartnerUniqueTaxReferenceController.onPageLoad(mode, partnerIndex, establisherIndex)
 
@@ -99,4 +125,6 @@ object EstablishersPartnerNavigatorSpec extends OptionValues {
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def addPartners = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(establisherIndex)
+
+  private def otherPartners(mode: Mode) = controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, 0)
 }
