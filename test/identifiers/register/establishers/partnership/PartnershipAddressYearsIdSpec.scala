@@ -17,7 +17,7 @@
 package identifiers.register.establishers.partnership
 
 import models.AddressYears
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
@@ -30,6 +30,7 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
       .set(PartnershipAddressYearsId(0))(AddressYears.UnderAYear)
       .flatMap(_.set(PartnershipPreviousAddressPostcodeLookupId(0))(Seq.empty))
       .flatMap(_.set(PartnershipPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
+      .flatMap(_.set(PartnershipPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
       .asOpt.value
 
     "`AddressYears` is set to `OverAYear`" when {
@@ -42,6 +43,10 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
 
       "remove the data for `PreviousAddress`" in {
         result.get(PartnershipPreviousAddressId(0)) mustNot be(defined)
+      }
+
+      "remove the data for `PreviousAddressList`" in {
+        result.get(PartnershipPreviousAddressListId(0)) mustNot be(defined)
       }
     }
 
@@ -56,6 +61,10 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
       "not remove the data for `PreviousAddress`" in {
         result.get(PartnershipPreviousAddressId(0)) mustBe defined
       }
+
+      "not remove the data for `PreviousAddressList`" in {
+        result.get(PartnershipPreviousAddressListId(0)) mustBe defined
+      }
     }
 
     "`AddressYears` is removed" when {
@@ -68,6 +77,10 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
 
       "not remove the data for `PreviousAddress`" in {
         result.get(PartnershipPreviousAddressId(0)) mustBe defined
+      }
+
+      "not remove the data for `PreviousAddressList`" in {
+        result.get(PartnershipPreviousAddressListId(0)) mustBe defined
       }
     }
   }

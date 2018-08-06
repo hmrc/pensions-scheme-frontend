@@ -32,6 +32,7 @@ case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
         userAnswers
           .remove(CompanyPreviousAddressPostcodeLookupId(this.index))
           .flatMap(_.remove(CompanyPreviousAddressId(this.index)))
+          .flatMap(_.remove(CompanyPreviousAddressListId(this.index)))
       case _ => super.cleanup(value, userAnswers)
     }
   }

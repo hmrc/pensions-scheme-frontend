@@ -32,6 +32,7 @@ case class PartnerAddressYearsId(establisherIndex: Int, partnerIndex: Int) exten
       case Some(AddressYears.OverAYear) =>
         userAnswers.remove(PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex))
           .flatMap(_.remove(PartnerPreviousAddressId(establisherIndex, partnerIndex)))
+          .flatMap(_.remove(PartnerPreviousAddressListId(establisherIndex, partnerIndex)))
       case _ => super.cleanup(value, userAnswers)
     }
   }

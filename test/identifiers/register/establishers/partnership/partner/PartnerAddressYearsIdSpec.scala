@@ -17,77 +17,71 @@
 package identifiers.register.establishers.partnership.partner
 
 import models.AddressYears
-import models.address.TolerantAddress
-import org.scalatest.{Matchers, OptionValues, WordSpec}
-import utils.UserAnswers
+import models.address.{Address, TolerantAddress}
+import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import play.api.libs.json.Json
+import utils.{Enumerable, UserAnswers}
 
-class PartnerAddressYearsIdSpec extends WordSpec with Matchers with OptionValues {
+class PartnerAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
-  import PartnerAddressYearsIdSpec._
+  "Cleanup" must {
 
-  "PartnerAddressYearsId cleanup" when {
+    val answers = UserAnswers(Json.obj())
+      .set(PartnerAddressYearsId(0, 0))(AddressYears.UnderAYear)
+      .flatMap(_.set(PartnerPreviousAddressPostcodeLookupId(0, 0))(Seq.empty))
+      .flatMap(_.set(PartnerPreviousAddressId(0, 0))(Address("foo", "bar", None, None, None, "GB")))
+      .flatMap(_.set(PartnerPreviousAddressListId(0, 0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+      .asOpt.value
 
-    "AddressYears is set to 'over a year'" must {
-      "remove the data for PartnerPreviousAddressPostcodeLookupId" in {
-        val newAnswers = userAnswers.set(addressYearsId)(AddressYears.OverAYear).asOpt.value
-        newAnswers.get(previousAddressPostcodeLookupId) shouldNot be(defined)
+    "`AddressYears` is set to `OverAYear`" when {
+
+      val result: UserAnswers = answers.set(PartnerAddressYearsId(0, 0))(AddressYears.OverAYear).asOpt.value
+
+      "remove the data for `PreviousPostCodeLookup`" in {
+        result.get(PartnerPreviousAddressPostcodeLookupId(0, 0)) mustNot be(defined)
       }
 
-      "remove the data for PartnerPreviousAddressId" in {
-        val newAnswers = userAnswers.set(addressYearsId)(AddressYears.OverAYear).asOpt.value
-        newAnswers.get(previousAddressId) shouldNot be(defined)
+      "remove the data for `PreviousAddress`" in {
+        result.get(PartnerPreviousAddressId(0, 0)) mustNot be(defined)
+      }
+
+      "remove the data for `PreviousAddressList`" in {
+        result.get(PartnerPreviousAddressListId(0, 0)) mustNot be(defined)
       }
     }
 
-    "AddressYears is set to 'under a year'" must {
-      "not remove the data for PartnerPreviousAddressPostcodeLookupId" in {
-        val newAnswers = userAnswers.set(addressYearsId)(AddressYears.UnderAYear).asOpt.value
-        newAnswers.get(previousAddressPostcodeLookupId) should be(defined)
+    "`AddressYears` is set to `UnderAYear`" when {
+
+      val result: UserAnswers = answers.set(PartnerAddressYearsId(0, 0))(AddressYears.UnderAYear).asOpt.value
+
+      "not remove the data for `PreviousPostCodeLookup`" in {
+        result.get(PartnerPreviousAddressPostcodeLookupId(0, 0)) mustBe defined
       }
 
-      "not remove the data for PartnerPreviousAddressId" in {
-        val newAnswers = userAnswers.set(addressYearsId)(AddressYears.UnderAYear).asOpt.value
-        newAnswers.get(previousAddressId) should be(defined)
+      "not remove the data for `PreviousAddress`" in {
+        result.get(PartnerPreviousAddressId(0, 0)) mustBe defined
+      }
+
+      "not remove the data for `PreviousAddressList`" in {
+        result.get(PartnerPreviousAddressListId(0, 0)) mustBe defined
       }
     }
 
-    "AddressYears is removed" must {
-      "not remove the data for PartnerPreviousAddressPostcodeLookupId" in {
-        val newAnswers = userAnswers.remove(addressYearsId).asOpt.value
-        newAnswers.get(previousAddressPostcodeLookupId) should be(defined)
+    "`AddressYears` is removed" when {
+
+      val result: UserAnswers = answers.remove(PartnerAddressYearsId(0, 0)).asOpt.value
+
+      "not remove the data for `PreviousPostCodeLookup`" in {
+        result.get(PartnerPreviousAddressPostcodeLookupId(0, 0)) mustBe defined
       }
 
-      "not remove the data for PartnerPreviousAddressId" in {
-        val newAnswers = userAnswers.remove(addressYearsId).asOpt.value
-        newAnswers.get(previousAddressId) should be(defined)
+      "not remove the data for `PreviousAddress`" in {
+        result.get(PartnerPreviousAddressId(0, 0)) mustBe defined
+      }
+
+      "not remove the data for `PreviousAddressList`" in {
+        result.get(PartnerPreviousAddressListId(0, 0)) mustBe defined
       }
     }
   }
-
-}
-
-object PartnerAddressYearsIdSpec extends OptionValues {
-
-  private val establisherIndex = 0
-  private val partnerIndex = 0
-
-  private val previousAddressPostcodeLookupId = PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex)
-  private val previousAddressId = PartnerPreviousAddressId(establisherIndex, partnerIndex)
-  private val addressYearsId = PartnerAddressYearsId(establisherIndex, partnerIndex)
-
-  private val address = TolerantAddress(
-    Some("test-address-line1"),
-    Some("test-address-line2"),
-    None,
-    None,
-    None,
-    Some("test-country")
-  )
-
-  private val userAnswers = UserAnswers()
-    .set(addressYearsId)(AddressYears.UnderAYear)
-    .flatMap(_.set(previousAddressPostcodeLookupId)(Seq(address)))
-    .flatMap(_.set(previousAddressId)(address.toAddress))
-    .asOpt.value
-
 }
