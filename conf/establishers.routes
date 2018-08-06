@@ -352,3 +352,6 @@ GET        /:establisherIndex/partnership/partner/:partnerIndex/partners-confirm
 POST       /:establisherIndex/partnership/partner/:partnerIndex/partners-confirm-delete                      controllers.register.establishers.partnership.partner.ConfirmDeletePartnerController.onSubmit(establisherIndex: Index, partnerIndex: Index)
 
 GET        /:establisherIndex/partnership/partner/:partnerIndex/already-deleted                               controllers.register.establishers.partnership.partner.AlreadyDeletedController.onPageLoad(establisherIndex: Index, partnerIndex: Index)
+
+GET        /:index/partnership/review                                                                           controllers.register.establishers.partnership.PartnershipReviewController.onPageLoad(index: Index)
+POST       /:index/partnership/review                                                                           controllers.register.establishers.partnership.PartnershipReviewController.onSubmit(index: Index)
