@@ -863,3 +863,11 @@ messages__partner_address_years_question_cya_label = How long has the partner li
 
 messages__confirmDeletePartner__title = Confirm deletion
 messages__confirmDeletePartner__heading = Are you sure you want to delete {0}?
+
+messages__partnershipReview__title = Review the partnership details
+messages__partnershipReview__heading = Review the partnership details
+messages__partnershipReview__secondaryHeading__partial = Establishers for
+messages__partnershipReview__partnership__editLink = Edit partnership details
+messages__partnershipReview__partners__heading = Partners
+messages__partnershipReview__partners__editLink = Add, delete or edit partners
+messages__partnershipReview__partners__changeLink = Change partners
