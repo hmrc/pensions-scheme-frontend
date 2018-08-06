@@ -20,6 +20,8 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.company._
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorId}
 import identifiers.register.establishers.individual._
+import identifiers.register.establishers.partnership._
+import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerId}
 import models.person.PersonDetails
 import models.register.establishers.EstablisherKind
 import play.api.libs.json.{JsPath, JsResult, JsSuccess}
@@ -27,6 +29,21 @@ import utils.UserAnswers
 
 case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind] {
   override def path: JsPath = EstablishersId(index).path \ EstablisherKindId.toString
+
+  override def cleanup(value: Option[EstablisherKind], userAnswers: UserAnswers): JsResult[UserAnswers] =
+    value match {
+      case Some(EstablisherKind.Indivdual) =>
+        removeAllCompany(userAnswers)
+        removeAllPartnership(userAnswers)
+      case Some(EstablisherKind.Company) =>
+        removeAllIndividual(userAnswers)
+        removeAllPartnership(userAnswers)
+      case Some(EstablisherKind.Partnership) =>
+        removeAllCompany(userAnswers)
+        removeAllIndividual(userAnswers)
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
 
   private def removeAllDirectors(userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.getAllRecursive[PersonDetails](DirectorDetailsId.collectionPath(index)) match {
@@ -37,34 +54,55 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
     }
   }
 
-  override def cleanup(value: Option[EstablisherKind], userAnswers: UserAnswers): JsResult[UserAnswers] =
-    value match {
-      case Some(EstablisherKind.Indivdual) =>
-        userAnswers.remove(CompanyDetailsId(index))
-          .flatMap(_.remove(CompanyRegistrationNumberId(index)))
-          .flatMap(_.remove(CompanyUniqueTaxReferenceId(index)))
-          .flatMap(_.remove(CompanyPostCodeLookupId(index)))
-          .flatMap(_.remove(CompanyAddressId(index)))
-          .flatMap(_.remove(CompanyAddressYearsId(index)))
-          .flatMap(_.remove(CompanyPreviousAddressPostcodeLookupId(index)))
-          .flatMap(_.remove(CompanyPreviousAddressId(index)))
-          .flatMap(_.remove(CompanyContactDetailsId(index)))
-          .flatMap(removeAllDirectors)
-
-      case Some(EstablisherKind.Company) =>
-        userAnswers.remove(EstablisherDetailsId(index))
-          .flatMap(_.remove(EstablisherNinoId(index)))
-          .flatMap(_.remove(UniqueTaxReferenceId(index)))
-          .flatMap(_.remove(PostCodeLookupId(index)))
-          .flatMap(_.remove(AddressId(index)))
-          .flatMap(_.remove(AddressYearsId(index)))
-          .flatMap(_.remove(PreviousPostCodeLookupId(index)))
-          .flatMap(_.remove(PreviousAddressId(index)))
-          .flatMap(_.remove(ContactDetailsId(index)))
-
+  private def removeAllPartners(userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    userAnswers.getAllRecursive[PersonDetails](PartnerDetailsId.collectionPath(index)) match {
+      case Some(allPartners) if allPartners.nonEmpty =>
+        userAnswers.remove(PartnerId(index, 0)).flatMap(removeAllDirectors)
       case _ =>
-        super.cleanup(value, userAnswers)
+        JsSuccess(userAnswers)
     }
+  }
+
+  private def removeAllCompany(userAnswers: UserAnswers) = {
+    userAnswers.remove(CompanyDetailsId(index))
+      .flatMap(_.remove(CompanyRegistrationNumberId(index)))
+      .flatMap(_.remove(CompanyUniqueTaxReferenceId(index)))
+      .flatMap(_.remove(CompanyPostCodeLookupId(index)))
+      .flatMap(_.remove(CompanyAddressId(index)))
+      .flatMap(_.remove(CompanyAddressYearsId(index)))
+      .flatMap(_.remove(CompanyPreviousAddressPostcodeLookupId(index)))
+      .flatMap(_.remove(CompanyPreviousAddressId(index)))
+      .flatMap(_.remove(CompanyContactDetailsId(index)))
+      .flatMap(removeAllDirectors)
+  }
+
+  private def removeAllPartnership(userAnswers: UserAnswers) = {
+    userAnswers.remove(PartnershipDetailsId(index))
+      .flatMap(_.remove(PartnershipVatId(index)))
+      .flatMap(_.remove(PartnershipPayeId(index)))
+      .flatMap(_.remove(PartnershipUniqueTaxReferenceID(index)))
+      .flatMap(_.remove(PartnershipPostcodeLookupId(index)))
+      .flatMap(_.remove(PartnershipAddressListId(index)))
+      .flatMap(_.remove(PartnershipAddressId(index)))
+      .flatMap(_.remove(PartnershipAddressYearsId(index)))
+      .flatMap(_.remove(PartnershipPreviousAddressPostcodeLookupId(index)))
+      .flatMap(_.remove(PartnershipPreviousAddressListId(index)))
+      .flatMap(_.remove(PartnershipPreviousAddressId(index)))
+      .flatMap(_.remove(PartnershipContactDetailsId(index)))
+      .flatMap(removeAllPartners)
+  }
+
+  private def removeAllIndividual(userAnswers: UserAnswers) = {
+    userAnswers.remove(EstablisherDetailsId(index))
+      .flatMap(_.remove(EstablisherNinoId(index)))
+      .flatMap(_.remove(UniqueTaxReferenceId(index)))
+      .flatMap(_.remove(PostCodeLookupId(index)))
+      .flatMap(_.remove(AddressId(index)))
+      .flatMap(_.remove(AddressYearsId(index)))
+      .flatMap(_.remove(PreviousPostCodeLookupId(index)))
+      .flatMap(_.remove(PreviousAddressId(index)))
+      .flatMap(_.remove(ContactDetailsId(index)))
+  }
 }
 
 object EstablisherKindId {
