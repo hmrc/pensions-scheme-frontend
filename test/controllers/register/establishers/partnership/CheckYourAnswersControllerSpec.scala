@@ -49,6 +49,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   implicit val request = FakeDataRequest(partnershipAnswers)
   implicit val countryOptions = new FakeCountryOptions()
+  private val onwardRoute = routes.AddPartnersController.onPageLoad(firstIndex)
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
     new CheckYourAnswersController(
@@ -58,7 +59,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       FakeSectionComplete,
-      FakeNavigator,
+      new FakeNavigator(onwardRoute),
       countryOptions
     )
 
@@ -97,7 +98,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString
-
     }
 
     "redirect to Session Expired when establisher name cannot be retrieved" in {
@@ -106,7 +106,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-
     }
 
     "redirect to Add Partners page on submit" which {
@@ -115,13 +114,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         val result = controller().onSubmit(firstIndex)(request)
 
         status(result) mustBe 303
-        redirectLocation(result) mustBe Some(routes.AddPartnersController.onPageLoad(firstIndex).url)
+        redirectLocation(result) mustBe Some(onwardRoute.url)
 
         FakeSectionComplete.verify(IsPartnershipCompleteId(firstIndex), true)
-
       }
     }
-
   }
 
 }

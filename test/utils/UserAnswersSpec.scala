@@ -19,15 +19,16 @@ package utils
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteesId}
-import models.CompanyDetails
+import models.{CompanyDetails, PartnershipDetails}
 import models.person.PersonDetails
 import models.register._
 import models.register.establishers.EstablisherKind
-import models.register.establishers.EstablisherKind.{Company, Indivdual}
+import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.Individual
 import org.joda.time.LocalDate
@@ -51,12 +52,17 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
             EstablisherDetailsId.toString ->
               PersonDetails("my", None, "name", LocalDate.now),
             IsEstablisherCompleteId.toString -> false
+          ),
+          Json.obj(
+            PartnershipDetailsId.toString ->
+              PartnershipDetails("my partnership name"),
+            IsEstablisherCompleteId.toString -> false
           )
         )
       )
       val userAnswers = UserAnswers(json)
       val allEstablisherEntities = Seq(establisherEntity("my company", 0, Company, isComplete = true),
-        establisherEntity("my name", 1, Indivdual))
+        establisherEntity("my name", 1, Indivdual), establisherEntity("my partnership name", 2, Partnership))
 
       userAnswers.allEstablishers mustEqual allEstablisherEntities
     }
@@ -369,8 +375,10 @@ object UserAnswersSpec {
     establisherKind match {
       case Indivdual =>
         EstablisherIndividualEntity(EstablisherDetailsId(index), name, isDeleted = false, isCompleted = isComplete)
-      case _ =>
+      case Company =>
         EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), name, isDeleted = false, isCompleted = isComplete)
+      case _ =>
+        EstablisherPartnershipEntity(PartnershipDetailsId(index), name, isDeleted = false, isCompleted = isComplete)
     }
   }
 

@@ -19,6 +19,7 @@ package models.register
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
@@ -50,6 +51,22 @@ case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolea
     controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController.onPageLoad(id.establisherIndex, id.directorIndex).url
 
   override def index: Int = id.directorIndex
+}
+
+case class PartnerEntity(id: PartnerDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Entity[PartnerDetailsId] {
+  override def editLink: String = {
+    if (isCompleted){
+      controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(id.establisherIndex, id.partnerIndex).url
+    }
+    else{
+      controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(NormalMode, id.establisherIndex, id.partnerIndex).url
+    }
+  }
+
+  override def deleteLink: String =
+    controllers.register.establishers.partnership.partner.routes.ConfirmDeletePartnerController.onPageLoad(id.establisherIndex, id.partnerIndex).url
+
+  override def index: Int = id.partnerIndex
 }
 
 sealed trait Establisher[T] extends Entity[T]
@@ -88,20 +105,21 @@ case class EstablisherIndividualEntity(id: EstablisherDetailsId,
   override def index: Int = id.index
 }
 
-case class EstablisherPartnerEntity(id: PartnerDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Entity[PartnerDetailsId] {
+case class EstablisherPartnershipEntity(id: PartnershipDetailsId,
+                                        name: String, isDeleted: Boolean, isCompleted: Boolean) extends Establisher[PartnershipDetailsId] {
   override def editLink: String = {
-    if (isCompleted){
-      controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(id.establisherIndex, id.partnerIndex).url
+    if (isCompleted) {
+      controllers.register.establishers.partnership.routes.CheckYourAnswersController.onPageLoad(id.index).url
     }
-    else{
-      controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(NormalMode, id.establisherIndex, id.partnerIndex).url
+    else {
+      controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, id.index).url
     }
   }
 
   override def deleteLink: String =
-    controllers.register.establishers.partnership.partner.routes.ConfirmDeletePartnerController.onPageLoad(id.establisherIndex, id.partnerIndex).url
+    controllers.register.establishers.routes.ConfirmDeleteEstablisherController.onPageLoad(id.index, EstablisherKind.Partnership).url
 
-  override def index: Int = id.partnerIndex
+  override def index: Int = id.index
 }
 
 sealed trait Trustee[T] extends Entity[T]

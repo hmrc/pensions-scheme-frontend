@@ -20,12 +20,13 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.director.{DirectorDetailsId, IsDirectorCompleteId}
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteesId}
-import models.CompanyDetails
+import models.{CompanyDetails, PartnershipDetails}
 import models.person.PersonDetails
 import models.register._
 import play.api.Logger
@@ -129,10 +130,17 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       EstablisherCompanyEntity(EstablisherCompanyDetailsId(index), details.companyName, details.isDeleted, isComplete.getOrElse(false))
     )
 
+    private def readsPartnership(index: Int): Reads[Establisher[_]] = (
+      (JsPath \ PartnershipDetailsId.toString).read[PartnershipDetails] and
+        (JsPath \ IsEstablisherCompleteId.toString).readNullable[Boolean]
+      ) ((details, isComplete) =>
+      EstablisherPartnershipEntity(PartnershipDetailsId(index), details.name, details.isDeleted, isComplete.getOrElse(false))
+    )
+
     override def reads(json: JsValue): JsResult[Seq[Establisher[_]]] = {
       json \ EstablishersId.toString match {
         case JsDefined(JsArray(establishers)) =>
-          readEntities(establishers, index => readsIndividual(index) orElse readsCompany(index))
+          readEntities(establishers, index => readsIndividual(index) orElse readsCompany(index) orElse readsPartnership(index))
         case _ => JsSuccess(Nil)
       }
     }
@@ -172,13 +180,13 @@ case class UserAnswers(json: JsValue = Json.obj()) {
     allDirectors(establisherIndex).filterNot(_.isDeleted)
   }
 
-  def allPartners(establisherIndex: Int): Seq[EstablisherPartnerEntity] = {
+  def allPartners(establisherIndex: Int): Seq[PartnerEntity] = {
     getAllRecursive[PersonDetails](PartnerDetailsId.collectionPath(establisherIndex)).map {
       details =>
         details.map { partner =>
           val partnerIndex = details.indexOf(partner)
           val isComplete = get(IsPartnerCompleteId(establisherIndex, partnerIndex)).getOrElse(false)
-          EstablisherPartnerEntity(
+          PartnerEntity(
             PartnerDetailsId(establisherIndex, partnerIndex),
             partner.fullName,
             partner.isDeleted,
@@ -188,7 +196,7 @@ case class UserAnswers(json: JsValue = Json.obj()) {
     }.getOrElse(Seq.empty)
   }
 
-  def allPartnersAfterDelete(establisherIndex: Int): Seq[EstablisherPartnerEntity] = {
+  def allPartnersAfterDelete(establisherIndex: Int): Seq[PartnerEntity] = {
     allPartners(establisherIndex).filterNot(_.isDeleted)
   }
 
