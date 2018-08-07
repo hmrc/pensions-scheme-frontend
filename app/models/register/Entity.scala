@@ -91,10 +91,10 @@ case class EstablisherIndividualEntity(id: EstablisherDetailsId,
 case class EstablisherPartnerEntity(id: PartnerDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Entity[PartnerDetailsId] {
   override def editLink: String = {
     if (isCompleted){
-      controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(id.establisherIndex).url
+      controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(id.establisherIndex, id.partnerIndex).url
     }
     else{
-      controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(id.establisherIndex).url
+      controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(NormalMode, id.establisherIndex, id.partnerIndex).url
     }
   }
 
