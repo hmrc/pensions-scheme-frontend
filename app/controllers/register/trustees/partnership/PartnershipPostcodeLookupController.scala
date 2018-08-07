@@ -16,6 +16,68 @@
 
 package controllers.register.trustees.partnership
 
-class PartnershipPostcodeLookupController {
+import config.FrontendAppConfig
+import connectors.{AddressLookupConnector, DataCacheConnector}
+import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.address.PostcodeLookupController
+import forms.address.PostCodeLookupFormProvider
+import identifiers.register.trustees.partnership.{PartnershipDetailsId, PartnershipPostcodeLookupId}
+import javax.inject.Inject
+import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent}
+import utils.Navigator
+import utils.annotations.TrusteesPartnership
+import viewmodels.Message
+import viewmodels.address.PostcodeLookupViewModel
 
+class PartnershipPostcodeLookupController @Inject()(
+                                                     override val appConfig: FrontendAppConfig,
+                                                     override val messagesApi: MessagesApi,
+                                                     override val cacheConnector: DataCacheConnector,
+                                                     override val addressLookupConnector: AddressLookupConnector,
+                                                     @TrusteesPartnership override val navigator: Navigator,
+                                                     authenticate: AuthAction,
+                                                     getData: DataRetrievalAction,
+                                                     requireData: DataRequiredAction,
+                                                     formProvider: PostCodeLookupFormProvider
+                                                   ) extends PostcodeLookupController {
+
+  private val title: Message = "messages__partnershipPostcodeLookup__title"
+  private val heading: Message = "messages__partnershipPostcodeLookup__heading"
+  private val hint: Message = "messages__trusteePartnershipPostcodeLookup__hint"
+
+  protected val form: Form[String] = formProvider()
+
+  private def viewmodel(index: Int, mode: Mode): Retrieval[PostcodeLookupViewModel] =
+    Retrieval {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            PostcodeLookupViewModel(
+              routes.PartnershipPostcodeLookupController.onSubmit(mode, index),
+              routes.PartnershipAddressController.onPageLoad(mode, index),
+              title = Message(title),
+              heading = Message(heading),
+              subHeading = Some(details.name),
+              hint = Some(Message(hint))
+            )
+        }
+    }
+
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode).retrieve.right map get
+    }
+
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] =
+    (authenticate andThen getData andThen requireData).async {
+      implicit request =>
+        viewmodel(index, mode).retrieve.right.map {
+          vm =>
+            post(PartnershipPostcodeLookupId(index), vm, mode)
+        }
+    }
 }

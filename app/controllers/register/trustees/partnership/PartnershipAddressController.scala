@@ -16,6 +16,81 @@
 
 package controllers.register.trustees.partnership
 
-class PartnershipAddressController {
+import audit.AuditService
+import config.FrontendAppConfig
+import connectors.DataCacheConnector
+import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import controllers.address.ManualAddressController
+import forms.address.AddressFormProvider
+import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId}
+import javax.inject.Inject
+import models.address.Address
+import models.{Index, Mode}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
+import utils.annotations.TrusteesPartnership
+import utils.{CountryOptions, Navigator}
+import viewmodels.Message
+import viewmodels.address.ManualAddressViewModel
+
+class PartnershipAddressController @Inject()(
+                                              val appConfig: FrontendAppConfig,
+                                              val messagesApi: MessagesApi,
+                                              val dataCacheConnector: DataCacheConnector,
+                                              @TrusteesPartnership val navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction,
+                                              val formProvider: AddressFormProvider,
+                                              val countryOptions: CountryOptions,
+                                              val auditService: AuditService
+                                            ) extends ManualAddressController with I18nSupport {
+
+  private[controllers] val postCall = routes.PartnershipAddressController.onSubmit _
+  private[controllers] val title: Message = "messages__trusteePartnershipAddress__title"
+  private[controllers] val heading: Message = "messages__trusteePartnershipAddress__heading"
+  private[controllers] val hint: Message = "messages__trusteePartnershipAddress__lede"
+
+  protected val form: Form[Address] = formProvider()
+
+  private def viewmodel(index: Int, mode: Mode): Retrieval[ManualAddressViewModel] =
+    Retrieval {
+      implicit request =>
+        PartnershipDetailsId(index).retrieve.right.map {
+          details =>
+            ManualAddressViewModel(
+              postCall(mode, Index(index)),
+              countryOptions.options,
+              title = Message(title),
+              heading = Message(heading),
+              hint = Some(Message(hint)),
+              secondaryHeader = Some(details.name)
+            )
+        }
+    }
+
+  def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+    implicit request =>
+      viewmodel(index, mode).retrieve.right.map {
+        vm =>
+          get(PartnershipAddressId(index), PartnershipAddressListId(index), vm)
+      }
+  }
+
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+    implicit request =>
+      viewmodel(index, mode).retrieve.right.map {
+        vm =>
+          post(PartnershipAddressId(index), PartnershipAddressListId(index), vm, mode, context(vm))
+      }
+  }
+
+  private def context(viewModel: ManualAddressViewModel): String = {
+    viewModel.secondaryHeader match {
+      case Some(name) => s"Trustee Partnership Address: $name"
+      case _ => "Trustee Partnership Address"
+    }
+  }
 
 }
