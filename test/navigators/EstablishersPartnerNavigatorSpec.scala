@@ -41,9 +41,9 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
     ("Id",                                      "User Answers",         "Next Page (Normal Mode)",              "Save (NM)",      "Next Page (Check Mode)",             "Save (CM)"),
     (AddPartnersId(0),                             emptyAnswers,          partnerDetails(0, NormalMode),        true,         Some(partnerDetails(0, CheckMode)),      true),
     (AddPartnersId(0),                             addPartnersTrue,       partnerDetails(1, NormalMode),        true,         Some(partnerDetails(1, CheckMode)),      true),
-    (AddPartnersId(0),                             addPartnersFalse,      sessionExpired,                         false,         Some(sessionExpired),                      false),
-    (AddPartnersId(0),                             addOnePartner,           sessionExpired,                        false,        Some(sessionExpired),                     false),
-    (AddPartnersId(0),                             addPartnersMoreThan10, otherPartners(NormalMode),            true,         Some(otherPartners(CheckMode)),          true),
+    (AddPartnersId(0),                             addPartnersFalse,      partnershipReview,                          true,         Some(partnershipReview),                      true),
+    (AddPartnersId(0),                             addOnePartner,         sessionExpired,                             false,        Some(sessionExpired),                     false),
+    (AddPartnersId(0),                             addPartnersMoreThan10, otherPartners(NormalMode),                  true,         Some(otherPartners(CheckMode)),          true),
     (PartnerDetailsId(0, 0),                       emptyAnswers,           partnerNino(NormalMode),               true,             Some(checkYourAnswers),                     true),
     (PartnerNinoId(0, 0),                          emptyAnswers,           partnerUtr(NormalMode),                true,             Some(checkYourAnswers),                     true),
     (PartnerUniqueTaxReferenceId(0, 0),            emptyAnswers,           partnerAddressPostcode(NormalMode),    true,             Some(checkYourAnswers),                     true),
@@ -125,6 +125,8 @@ object EstablishersPartnerNavigatorSpec extends OptionValues {
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def addPartners = controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(establisherIndex)
+
+  private def partnershipReview = controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(establisherIndex)
 
   private def otherPartners(mode: Mode) = controllers.register.establishers.partnership.routes.OtherPartnersController.onPageLoad(mode, 0)
 }

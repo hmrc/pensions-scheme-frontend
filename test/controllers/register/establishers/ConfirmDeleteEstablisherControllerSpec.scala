@@ -23,11 +23,12 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 import models.person.PersonDetails
 import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
 import models.register.establishers.EstablisherKind
-import models.{CompanyDetails, Index, NormalMode}
+import models.{CompanyDetails, Index, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import play.api.test.Helpers._
@@ -81,20 +82,20 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       FakeDataCacheConnector.verify(CompanyDetailsId(Index(1)), companyDetails.copy(isDeleted = true))
     }
 
+    "delete the establisher partnership on a POST" in {
+      val data = new FakeDataRetrievalAction(Some(testData))
+      val result = controller(data).onSubmit(Index(2), EstablisherKind.Partnership)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      FakeDataCacheConnector.verify(PartnershipDetailsId(Index(2)), partnershipDetails.copy(isDeleted = true))
+    }
+
     "redirect to the next page on a successful POST" in {
       val data = new FakeDataRetrievalAction(Some(testData))
       val result = controller(data).onSubmit(establisherIndex, establisherKind)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
-    }
-
-    "redirect to SessionExpired if the establisher kind is Partnership" in {
-      val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onPageLoad(establisherIndex, EstablisherKind.Partnership)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
@@ -127,6 +128,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private lazy val cancelCall = routes.AddEstablisherController.onPageLoad(NormalMode)
   private val personDetails = PersonDetails("John", None, "Doe", new LocalDate(year, month, day))
   private val companyDetails = CompanyDetails("Test Ltd", None, None)
+  private val partnershipDetails = PartnershipDetails("Test Partnership Ltd")
   private val deletedEstablisher = personDetails.copy(isDeleted = true)
 
   private val testData = Json.obj(
@@ -137,6 +139,9 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       ),
       Json.obj(
         CompanyDetailsId.toString -> companyDetails
+      ),
+      Json.obj(
+        PartnershipDetailsId.toString -> partnershipDetails
       ),
       Json.obj(
         EstablisherDetailsId.toString -> deletedEstablisher
