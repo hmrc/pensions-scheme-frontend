@@ -112,7 +112,7 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
     "redirect to next page on POST request" which {
       "saves partner address" in {
 
-        val onwardCall = controllers.routes.IndexController.onPageLoad()
+        val onwardCall = controllers.register.establishers.partnership.partner.routes.PartnerContactDetailsController.onPageLoad(NormalMode, establisherIndex, partnerIndex)
 
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),

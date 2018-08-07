@@ -24,7 +24,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
 import models.person.PersonDetails
-import models.register.EstablisherPartnerEntity
+import models.register.PartnerEntity
 import models.{Index, PartnershipDetails}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -64,7 +64,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
   private val postUrl: Call = routes.AddPartnersController.onSubmit(establisherIndex)
 
-  private def viewAsString(form: Form[_] = form, partners: Seq[EstablisherPartnerEntity] = Nil) =
+  private def viewAsString(form: Form[_] = form, partners: Seq[PartnerEntity] = Nil) =
     addPartners(
       frontendAppConfig,
       form,
@@ -111,7 +111,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
           val result = controller(getRelevantData).onPageLoad(establisherIndex)(fakeRequest)
 
           contentAsString(result) mustBe viewAsString(form,
-            Seq(EstablisherPartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)))
+            Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)))
         }
     }
 
@@ -140,7 +140,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm,
-        Seq(EstablisherPartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)))
+        Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)))
     }
 
     "not save the answer when directors exist and valid data is submitted" in {
@@ -180,8 +180,8 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
 
     "populate the view with partners when they exist" in {
       val partners = Seq(johnDoe, joeBloggs)
-      val partnersViewModel = Seq(EstablisherPartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false),
-        EstablisherPartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false))
+      val partnersViewModel = Seq(PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false),
+        PartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = false))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData(partners: _*)))
       val result = controller(getRelevantData).onPageLoad(establisherIndex)(fakeRequest)
 

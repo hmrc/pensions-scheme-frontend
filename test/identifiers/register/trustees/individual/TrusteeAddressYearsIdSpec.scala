@@ -17,7 +17,7 @@
 package identifiers.register.trustees.individual
 
 import models.AddressYears
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
@@ -30,6 +30,7 @@ class TrusteeAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       .set(TrusteeAddressYearsId(0))(AddressYears.UnderAYear)
       .flatMap(_.set(IndividualPreviousAddressPostCodeLookupId(0))(Seq.empty))
       .flatMap(_.set(TrusteePreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
+      .flatMap(_.set(TrusteePreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
       .asOpt.value
 
     "`AddressYears` is set to `UnderAYear`" when {
@@ -42,6 +43,10 @@ class TrusteeAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
 
       "remove the data for `PreviousAddress`" in {
         result.get(TrusteePreviousAddressId(0)) mustNot be(defined)
+      }
+
+      "remove the data for `PreviousAddressList`" in {
+        result.get(TrusteePreviousAddressListId(0)) mustNot be(defined)
       }
     }
 
@@ -56,6 +61,10 @@ class TrusteeAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       "not remove the data for `PreviousAddress`" in {
         result.get(TrusteePreviousAddressId(0)) mustBe defined
       }
+
+      "not remove the data for `PreviousAddressList`" in {
+        result.get(TrusteePreviousAddressListId(0)) mustBe defined
+      }
     }
 
     "`AddressYears` is removed" when {
@@ -68,6 +77,10 @@ class TrusteeAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
 
       "not remove the data for `PreviousAddress`" in {
         result.get(TrusteePreviousAddressId(0)) mustBe defined
+      }
+
+      "not remove the data for `PreviousAddressList`" in {
+        result.get(TrusteePreviousAddressListId(0)) mustBe defined
       }
     }
   }

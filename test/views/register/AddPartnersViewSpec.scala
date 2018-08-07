@@ -20,7 +20,7 @@ import controllers.register.establishers.partnership.routes
 import forms.register.AddPartnersFormProvider
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import models.person.PersonDetails
-import models.register.EstablisherPartnerEntity
+import models.register.PartnerEntity
 import org.joda.time.LocalDate
 import play.api.Application
 import play.api.data.Form
@@ -44,14 +44,14 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   private val postUrl: Call = routes.AddPartnersController.onSubmit(establisherIndex)
 
   val form = new AddPartnersFormProvider()()
-  private val johnDoeEntity = EstablisherPartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
-  private val joeBloggsEntity = EstablisherPartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
+  private val johnDoeEntity = PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
+  private val joeBloggsEntity = PartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
 
   override lazy val app: Application = new GuiceApplicationBuilder().configure(
     "features.is-complete" -> true
   ).build()
 
-  private def createView(partners: Seq[EstablisherPartnerEntity] = Nil) =
+  private def createView(partners: Seq[PartnerEntity] = Nil) =
     () =>
       addPartners(
         frontendAppConfig,
@@ -62,7 +62,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         postUrl
       )(fakeRequest, messages)
 
-  private def createViewUsingForm(partners: Seq[EstablisherPartnerEntity] = Nil) =
+  private def createViewUsingForm(partners: Seq[PartnerEntity] = Nil) =
     (form: Form[_]) =>
       addPartners(
         frontendAppConfig,
@@ -111,7 +111,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
       submit.first().text() mustBe messages("messages__addPartners_add_partner")
     }
 
-    val partners: Seq[EstablisherPartnerEntity] = Seq(johnDoeEntity, joeBloggsEntity)
+    val partners: Seq[PartnerEntity] = Seq(johnDoeEntity, joeBloggsEntity)
 
     behave like entityList(createView(), createView(partners), partners, frontendAppConfig)
 

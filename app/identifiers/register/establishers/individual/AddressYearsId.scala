@@ -32,15 +32,12 @@ case class AddressYearsId(index: Int) extends TypedIdentifier[AddressYears] {
         userAnswers
           .remove(PreviousPostCodeLookupId(this.index))
           .flatMap(_.remove(PreviousAddressId(this.index)))
+          .flatMap(_.remove(PreviousAddressListId(this.index)))
       case _ => super.cleanup(value, userAnswers)
     }
   }
-
 }
 
 object AddressYearsId {
-
-  override lazy val toString: String =
-    "addressYears"
-
+  override lazy val toString: String = "addressYears"
 }

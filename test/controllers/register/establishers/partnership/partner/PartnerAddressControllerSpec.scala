@@ -127,7 +127,7 @@ class PartnerAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
     "redirect to next page on POST request" which {
       "save address" in {
 
-        val onwardCall = controllers.routes.IndexController.onPageLoad()
+        val onwardCall = controllers.register.establishers.partnership.partner.routes.PartnerAddressYearsController.onPageLoad(NormalMode, Index(0), Index(0))
 
         val address = Address(
           addressLine1 = "value 1",

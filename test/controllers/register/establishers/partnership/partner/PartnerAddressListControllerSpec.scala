@@ -121,7 +121,7 @@ class PartnerAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
     "redirect to the next page on POST of valid data" in {
 
-      val onwardCall = controllers.routes.IndexController.onPageLoad()
+      val onwardCall = controllers.register.establishers.partnership.partner.routes.PartnerAddressController.onPageLoad(NormalMode, Index(0), Index(0))
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
