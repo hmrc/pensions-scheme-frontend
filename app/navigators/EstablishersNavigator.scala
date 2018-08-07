@@ -81,6 +81,8 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: DataCacheConnector
         NavigateTo.save(controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index))
       case Some(EstablisherKind.Indivdual) =>
         NavigateTo.save(controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, index))
+      case Some(EstablisherKind.Partnership) =>
+        NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, index))
       case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

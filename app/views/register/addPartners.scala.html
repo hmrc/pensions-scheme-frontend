@@ -17,14 +17,14 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import models.Mode
-@import models.register.EstablisherPartnerEntity
+@import models.register.PartnerEntity
 
 @(
     appConfig: FrontendAppConfig,
     form: Form[_],
     establisherIndex: Int,
     partnershipName: String,
-    partners: Seq[EstablisherPartnerEntity],
+    partners: Seq[PartnerEntity],
     postUrl: Call
 )(implicit request: Request[_], messages: Messages)
 

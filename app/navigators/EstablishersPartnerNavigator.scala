@@ -126,7 +126,7 @@ class EstablishersPartnerNavigator @Inject()(val dataCacheConnector: DataCacheCo
           NavigateTo.save(controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(mode,
             index, answers.allPartners(index).size))
         case Some(false) =>
-          NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad()) //TODO: Replace with Review page
+          NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(index))
         case _ => NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
       }
     }

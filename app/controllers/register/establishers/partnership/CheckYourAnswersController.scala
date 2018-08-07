@@ -22,7 +22,7 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.partnership._
 import javax.inject.{Inject, Singleton}
-import models.{CheckMode, Index}
+import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -83,7 +83,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(IsPartnershipCompleteId(index), request.userAnswers, value = true) map { _ =>
-        Redirect(routes.AddPartnersController.onPageLoad(index))
+        Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))
       }
   }
 

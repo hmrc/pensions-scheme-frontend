@@ -23,6 +23,7 @@ import controllers.actions._
 import identifiers.register.establishers.ConfirmDeleteEstablisherId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind._
@@ -96,6 +97,10 @@ class ConfirmDeleteEstablisherController @Inject()(
         EstablisherDetailsId(establisherIndex).retrieve.right.map { establisherDetails =>
           dataCacheConnector.save(EstablisherDetailsId(establisherIndex), establisherDetails.copy(isDeleted = true))
         }
+      case Partnership =>
+        PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
+          dataCacheConnector.save(PartnershipDetailsId(establisherIndex), partnershipDetails.copy(isDeleted = true))
+        }
       case _ =>
         Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
     }
@@ -107,6 +112,7 @@ class ConfirmDeleteEstablisherController @Inject()(
     establisherKind match {
       case Indivdual => userAnswers.get(EstablisherDetailsId(index)).map(details => DeletableEstablisher(details.fullName, details.isDeleted))
       case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableEstablisher(details.companyName, details.isDeleted))
+      case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details => DeletableEstablisher(details.name, details.isDeleted))
       case _ => None
     }
   }
