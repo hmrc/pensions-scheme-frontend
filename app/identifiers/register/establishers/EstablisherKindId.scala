@@ -34,13 +34,16 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
     value match {
       case Some(EstablisherKind.Indivdual) =>
         removeAllCompany(userAnswers)
-        removeAllPartnership(userAnswers)
+          .flatMap(removeAllPartnership(_))
+
       case Some(EstablisherKind.Company) =>
         removeAllIndividual(userAnswers)
-        removeAllPartnership(userAnswers)
+          .flatMap(removeAllPartnership(_))
+
       case Some(EstablisherKind.Partnership) =>
         removeAllCompany(userAnswers)
-        removeAllIndividual(userAnswers)
+          .flatMap(removeAllIndividual(_))
+
       case _ =>
         super.cleanup(value, userAnswers)
     }
@@ -54,29 +57,32 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
     }
   }
 
+  private def removeAllCompany(userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    userAnswers.remove(CompanyDetailsId(index))
+      .flatMap(_.remove(CompanyRegistrationNumberId(index)))
+      .flatMap(_.remove(CompanyUniqueTaxReferenceId(index)))
+      .flatMap(_.remove(CompanyPostCodeLookupId(index)))
+      .flatMap(_.remove(CompanyAddressListId(index)))
+      .flatMap(_.remove(CompanyAddressId(index)))
+      .flatMap(_.remove(CompanyAddressYearsId(index)))
+      .flatMap(_.remove(CompanyPreviousAddressPostcodeLookupId(index)))
+      .flatMap(_.remove(CompanyPreviousAddressListId(index)))
+      .flatMap(_.remove(CompanyPreviousAddressId(index)))
+      .flatMap(_.remove(CompanyContactDetailsId(index)))
+      .flatMap(_.remove(IsCompanyCompleteId(index)))
+      .flatMap(removeAllDirectors)
+  }
+
   private def removeAllPartners(userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.getAllRecursive[PersonDetails](PartnerDetailsId.collectionPath(index)) match {
       case Some(allPartners) if allPartners.nonEmpty =>
-        userAnswers.remove(PartnerId(index, 0)).flatMap(removeAllDirectors)
+        userAnswers.remove(PartnerId(index, 0)).flatMap(removeAllPartners)
       case _ =>
         JsSuccess(userAnswers)
     }
   }
 
-  private def removeAllCompany(userAnswers: UserAnswers) = {
-    userAnswers.remove(CompanyDetailsId(index))
-      .flatMap(_.remove(CompanyRegistrationNumberId(index)))
-      .flatMap(_.remove(CompanyUniqueTaxReferenceId(index)))
-      .flatMap(_.remove(CompanyPostCodeLookupId(index)))
-      .flatMap(_.remove(CompanyAddressId(index)))
-      .flatMap(_.remove(CompanyAddressYearsId(index)))
-      .flatMap(_.remove(CompanyPreviousAddressPostcodeLookupId(index)))
-      .flatMap(_.remove(CompanyPreviousAddressId(index)))
-      .flatMap(_.remove(CompanyContactDetailsId(index)))
-      .flatMap(removeAllDirectors)
-  }
-
-  private def removeAllPartnership(userAnswers: UserAnswers) = {
+  private def removeAllPartnership(userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.remove(PartnershipDetailsId(index))
       .flatMap(_.remove(PartnershipVatId(index)))
       .flatMap(_.remove(PartnershipPayeId(index)))
@@ -89,14 +95,16 @@ case class EstablisherKindId(index: Int) extends TypedIdentifier[EstablisherKind
       .flatMap(_.remove(PartnershipPreviousAddressListId(index)))
       .flatMap(_.remove(PartnershipPreviousAddressId(index)))
       .flatMap(_.remove(PartnershipContactDetailsId(index)))
+      .flatMap(_.remove(IsPartnershipCompleteId(index)))
       .flatMap(removeAllPartners)
   }
 
-  private def removeAllIndividual(userAnswers: UserAnswers) = {
+  private def removeAllIndividual(userAnswers: UserAnswers): JsResult[UserAnswers] = {
     userAnswers.remove(EstablisherDetailsId(index))
       .flatMap(_.remove(EstablisherNinoId(index)))
       .flatMap(_.remove(UniqueTaxReferenceId(index)))
       .flatMap(_.remove(PostCodeLookupId(index)))
+      .flatMap(_.remove(AddressListId(index)))
       .flatMap(_.remove(AddressId(index)))
       .flatMap(_.remove(AddressYearsId(index)))
       .flatMap(_.remove(PreviousPostCodeLookupId(index)))
