@@ -167,6 +167,12 @@ package object utils {
       answers.set(trustees.individual.TrusteePreviousAddressListId(index))(selectedAddress).asOpt.value
     }
 
+    // Trustees partnerships
+
+    def trusteesPartnershipPreviousAddress(index: Int, address: Address): UserAnswers = {
+      answers.set(trustees.partnership.PartnershipPreviousAddressId(index))(address).asOpt.value
+    }
+
     //Advisers
     def advisersAddress(address: Address): UserAnswers = {
       answers.set(adviser.AdviserAddressId)(address).asOpt.value
