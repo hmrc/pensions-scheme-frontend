@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.partnership
+package forms.register
 
-import forms.mappings.{Mappings, PayeMapping, Transforms, VatMapping}
+import forms.mappings.{Mappings, Transforms}
 import javax.inject.Inject
-import models.{CompanyDetails, PartnershipDetails}
+import models.PartnershipDetails
 import play.api.data.Form
-import play.api.data.Forms.{mapping, optional}
+import play.api.data.Forms.mapping
 
 class PartnershipDetailsFormProvider  @Inject() extends Mappings with Transforms {
 
