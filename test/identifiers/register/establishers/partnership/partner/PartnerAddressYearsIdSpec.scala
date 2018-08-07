@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.company
+package identifiers.register.establishers.partnership.partner
 
 import models.AddressYears
 import models.address.{Address, TolerantAddress}
@@ -22,65 +22,65 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.{Enumerable, UserAnswers}
 
-class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+class PartnerAddressYearsIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
 
   "Cleanup" must {
 
     val answers = UserAnswers(Json.obj())
-      .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear)
-      .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
-      .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
-      .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+      .set(PartnerAddressYearsId(0, 0))(AddressYears.UnderAYear)
+      .flatMap(_.set(PartnerPreviousAddressPostcodeLookupId(0, 0))(Seq.empty))
+      .flatMap(_.set(PartnerPreviousAddressId(0, 0))(Address("foo", "bar", None, None, None, "GB")))
+      .flatMap(_.set(PartnerPreviousAddressListId(0, 0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
       .asOpt.value
 
     "`AddressYears` is set to `OverAYear`" when {
 
-      val result: UserAnswers = answers.set(CompanyAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
+      val result: UserAnswers = answers.set(PartnerAddressYearsId(0, 0))(AddressYears.OverAYear).asOpt.value
 
       "remove the data for `PreviousPostCodeLookup`" in {
-        result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustNot be(defined)
+        result.get(PartnerPreviousAddressPostcodeLookupId(0, 0)) mustNot be(defined)
       }
 
       "remove the data for `PreviousAddress`" in {
-        result.get(CompanyPreviousAddressId(0)) mustNot be(defined)
+        result.get(PartnerPreviousAddressId(0, 0)) mustNot be(defined)
       }
 
       "remove the data for `PreviousAddressList`" in {
-        result.get(CompanyPreviousAddressListId(0)) mustNot be(defined)
+        result.get(PartnerPreviousAddressListId(0, 0)) mustNot be(defined)
       }
     }
 
     "`AddressYears` is set to `UnderAYear`" when {
 
-      val result: UserAnswers = answers.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+      val result: UserAnswers = answers.set(PartnerAddressYearsId(0, 0))(AddressYears.UnderAYear).asOpt.value
 
       "not remove the data for `PreviousPostCodeLookup`" in {
-        result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustBe defined
+        result.get(PartnerPreviousAddressPostcodeLookupId(0, 0)) mustBe defined
       }
 
       "not remove the data for `PreviousAddress`" in {
-        result.get(CompanyPreviousAddressId(0)) mustBe defined
+        result.get(PartnerPreviousAddressId(0, 0)) mustBe defined
       }
 
       "not remove the data for `PreviousAddressList`" in {
-        result.get(CompanyPreviousAddressListId(0)) mustBe defined
+        result.get(PartnerPreviousAddressListId(0, 0)) mustBe defined
       }
     }
 
     "`AddressYears` is removed" when {
 
-      val result: UserAnswers = answers.remove(CompanyAddressYearsId(0)).asOpt.value
+      val result: UserAnswers = answers.remove(PartnerAddressYearsId(0, 0)).asOpt.value
 
       "not remove the data for `PreviousPostCodeLookup`" in {
-        result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustBe defined
+        result.get(PartnerPreviousAddressPostcodeLookupId(0, 0)) mustBe defined
       }
 
       "not remove the data for `PreviousAddress`" in {
-        result.get(CompanyPreviousAddressId(0)) mustBe defined
+        result.get(PartnerPreviousAddressId(0, 0)) mustBe defined
       }
 
       "not remove the data for `PreviousAddressList`" in {
-        result.get(CompanyPreviousAddressListId(0)) mustBe defined
+        result.get(PartnerPreviousAddressListId(0, 0)) mustBe defined
       }
     }
   }

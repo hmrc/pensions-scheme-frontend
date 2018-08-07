@@ -30,9 +30,9 @@ case class TrusteeAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
     value match {
       case Some(AddressYears.OverAYear) =>
         userAnswers.remove(
-          IndividualPreviousAddressPostCodeLookupId(this.index)).flatMap(_.remove(
-          TrusteePreviousAddressId(this.index))
-        )
+          IndividualPreviousAddressPostCodeLookupId(this.index))
+          .flatMap(_.remove(TrusteePreviousAddressId(this.index)))
+          .flatMap(_.remove(TrusteePreviousAddressListId(this.index)))
       case _ => super.cleanup(value, userAnswers)
     }
   }
