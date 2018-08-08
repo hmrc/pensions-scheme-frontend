@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.partnership
+package forms.register.trustees.partnership
 
 import forms.behaviours.UtrBehaviour
 

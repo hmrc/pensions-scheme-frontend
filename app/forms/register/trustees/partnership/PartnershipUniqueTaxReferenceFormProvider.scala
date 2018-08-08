@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package forms.register.establishers.partnership
-
-import javax.inject.Inject
+package forms.register.trustees.partnership
 
 import forms.mappings.UtrMapping
+import javax.inject.Inject
 import models.UniqueTaxReference
 import play.api.data.Form
 

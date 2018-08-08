@@ -40,7 +40,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
     .set(SchemeDetailsId)(SchemeDetails(schemeName, SingleTrust))
     .flatMap(_.set(PartnershipDetailsId(firstIndex))(PartnershipDetails(partnershipName)))
     .flatMap(_.set(PartnershipVatId(firstIndex))(Vat.No))
-    //.flatMap(_.set(PartnershipUniqueTaxReferenceID(firstIndex))(UniqueTaxReference.Yes("0987654321")))
+    .flatMap(_.set(PartnershipUniqueTaxReferenceId(firstIndex))(UniqueTaxReference.Yes("0987654321")))
     .flatMap(_.set(PartnershipAddressId(firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
     .flatMap(_.set(PartnershipAddressYearsId(firstIndex))(UnderAYear))
     .flatMap(_.set(PartnershipPreviousAddressId(firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "US")))
@@ -72,8 +72,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         Seq(
           PartnershipDetailsId(firstIndex).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, firstIndex).url),
           PartnershipVatId(firstIndex).row(routes.PartnershipVatController.onPageLoad(CheckMode, firstIndex).url),
-          PartnershipPayeId(firstIndex).row(routes.PartnershipPayeController.onPageLoad(CheckMode, firstIndex).url)//,
-          //PartnershipUniqueTaxReferenceID(firstIndex).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url)
+          PartnershipPayeId(firstIndex).row(routes.PartnershipPayeController.onPageLoad(CheckMode, firstIndex).url),
+          PartnershipUniqueTaxReferenceId(firstIndex).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url)
         ).flatten
       )
 

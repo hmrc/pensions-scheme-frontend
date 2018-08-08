@@ -174,6 +174,11 @@ POST       /:index/partnership/trustee-details                           control
 GET        /:index/partnership/change-trustee-details                    controllers.register.trustees.partnership.TrusteeDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/partnership/change-trustee-details                    controllers.register.trustees.partnership.TrusteeDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
 
+GET        /:index/partnership/unique-taxpayer-reference                 controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/unique-taxpayer-reference                 controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-unique-taxpayer-reference          controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-unique-taxpayer-reference          controllers.register.trustees.partnership.PartnershipUniqueTaxReferenceController.onSubmit(mode: Mode = CheckMode, index: Index)
+
 GET        /:index/partnership/trustee-address-manual                   controllers.register.trustees.partnership.PartnershipAddressController.onPageLoad(mode: Mode = NormalMode, index:Index)
 POST       /:index/partnership/trustee-address-manual                   controllers.register.trustees.partnership.PartnershipAddressController.onSubmit(mode: Mode = NormalMode, index:Index)
 GET        /:index/partnership/change-trustee-address-manual            controllers.register.trustees.partnership.PartnershipAddressController.onPageLoad(mode: Mode = CheckMode, index:Index)
