@@ -82,15 +82,8 @@ class PartnershipAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(PartnershipAddressId(index), PartnershipAddressListId(index), vm, mode, context(vm))
+          val context = s"Trustee Partnership Address: ${vm.secondaryHeader.get}"
+          post(PartnershipAddressId(index), PartnershipAddressListId(index), vm, mode, context)
       }
   }
-
-  private def context(viewModel: ManualAddressViewModel): String = {
-    viewModel.secondaryHeader match {
-      case Some(name) => s"Trustee Partnership Address: $name"
-      case _ => "Trustee Partnership Address"
-    }
-  }
-
 }
