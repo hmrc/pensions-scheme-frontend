@@ -776,9 +776,9 @@ messages__partnershipAddressYears__error = Select how long the partnership has b
 messages__partnershipVat__title = Does the partnership have a VAT registration number?
 messages__partnershipVat__heading = Does the partnership have a VAT registration number?
 
-messages__establisher_partnership_contact_details__title = Enter the partnership’s contact details
-messages__establisher_partnership_contact_details__heading = Enter the partnership’s contact details
-messages__establisher_partnership_contact_details__body = These details will be used if we need to contact someone in the company about the pension scheme.
+messages__partnership_contact_details__title = Enter the partnership’s contact details
+messages__partnership_contact_details__heading = Enter the partnership’s contact details
+messages__partnership_contact_details__body = These details will be used if we need to contact someone in the company about the pension scheme.
 
 messages__partnershipDetails__title = Enter the partnership’s name
 messages__partnershipDetails__heading = Enter the partnership’s name

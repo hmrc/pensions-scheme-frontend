@@ -30,15 +30,15 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.partnership
+package controllers.register.trustees.partnership
 
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.partnership.{PartnershipContactDetailsId, PartnershipDetailsId}
+import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.partnership.{PartnershipContactDetailsId, PartnershipDetailsId}
 import models._
 import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
@@ -69,7 +69,7 @@ class PartnershipContactDetailsControllerSpec extends ControllerSpecBase {
     subHeading = Some(partnershipName)
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherPartnership): PartnershipContactDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrusteePartnership): PartnershipContactDetailsController =
     new PartnershipContactDetailsController(
       new FakeNavigator(desiredRoute = onwardRoute),
       frontendAppConfig,
@@ -91,16 +91,16 @@ class PartnershipContactDetailsControllerSpec extends ControllerSpecBase {
   val validData: JsObject = Json.obj(
     SchemeDetailsId.toString ->
       SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-    EstablishersId.toString -> Json.arr(
+    TrusteesId.toString -> Json.arr(
       Json.obj(
         PartnershipDetailsId.toString ->
-          PartnershipDetails("test partnership name", false),
+          PartnershipDetails("test partnership name"),
         PartnershipContactDetailsId.toString ->
           ContactDetails("test@test.com", "123456789")
       ),
       Json.obj(
         PartnershipDetailsId.toString ->
-          PartnershipDetails("test", false)
+          PartnershipDetails("test")
       )
     )
   )
