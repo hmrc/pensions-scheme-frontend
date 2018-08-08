@@ -18,13 +18,13 @@ package identifiers.register.trustees.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
-import models.address.TolerantAddress
-import play.api.libs.json.{JsPath, __}
+import models.Paye
+import play.api.libs.json.JsPath
 
-case class PartnershipPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[TolerantAddress]] {
-  override def path: JsPath = __ \ TrusteesId.toString \ index \ PartnershipPostcodeLookupId.toString
+case class PartnershipPayeId(index: Int) extends TypedIdentifier[Paye] {
+  override def path: JsPath = TrusteesId(index).path \ PartnershipPayeId.toString
 }
 
-object PartnershipPostcodeLookupId {
-  override def toString: String = "partnershipPostcodeLookup"
+object PartnershipPayeId {
+  override def toString: String = "partnershipPaye"
 }
