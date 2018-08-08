@@ -21,7 +21,7 @@ import identifiers.register.trustees.TrusteesId
 import models.address.TolerantAddress
 import play.api.libs.json.{JsPath, __}
 
-class PartnershipPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[TolerantAddress]] {
+case class PartnershipPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[TolerantAddress]] {
   override def path: JsPath = __ \ TrusteesId.toString \ index \ PartnershipPostcodeLookupId.toString
 }
 
