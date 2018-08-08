@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package views.register.establishers.partnership
+package views.register.trustees.partnership
 
-import forms.register.establishers.partnership.PartnershipUniqueTaxReferenceFormProvider
+import forms.register.trustees.partnership.PartnershipUniqueTaxReferenceFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.establishers.partnership.partnershipUniqueTaxReference
+import views.html.register.trustees.partnership.partnershipUniqueTaxReference
 
 class PartnershipUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
