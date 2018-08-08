@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees.partnership
+package identifiers.register.establishers.partnership.partner
 
 import identifiers.TypedIdentifier
-import identifiers.register.trustees.TrusteesId
-import models.address.TolerantAddress
-import play.api.libs.json.{JsPath, __}
+import identifiers.register.establishers.EstablishersId
+import play.api.libs.json.JsPath
 
-case class PartnershipPostcodeLookupId(index: Int) extends TypedIdentifier[Seq[TolerantAddress]] {
-  override def path: JsPath = __ \ TrusteesId.toString \ index \ PartnershipPostcodeLookupId.toString
+case class PartnerId(establisherIndex:Int, partnerIndex:Int) extends TypedIdentifier[Nothing] {
+  override def path: JsPath = EstablishersId(establisherIndex).path \ PartnerId.toString \ partnerIndex
 }
 
-object PartnershipPostcodeLookupId {
-  override def toString: String = "partnershipPostcodeLookup"
+object PartnerId {
+  override def toString: String = "partner"
 }
+
+

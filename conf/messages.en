@@ -751,6 +751,7 @@ messages__partnershipAddress__lede = This is usually the registered business add
 messages__partnershipPostcodeLookup__title = Enter the partnership’s postcode
 messages__partnershipPostcodeLookup__heading = Enter the partnership’s postcode
 messages__partnershipPostcodeLookup__hint = This is usually the registered business address but you can enter any address you have for this scheme establisher.
+messages__trusteePartnershipPostcodeLookup__hint = This is usually the registered business address but you can enter any address you have for this trustee.
 
 messages__partnershipAddress__title = Enter the partnership’s address
 messages__partnershipAddress__heading = Enter the partnership’s address
@@ -775,9 +776,9 @@ messages__partnershipAddressYears__error = Select how long the partnership has b
 messages__partnershipVat__title = Does the partnership have a VAT registration number?
 messages__partnershipVat__heading = Does the partnership have a VAT registration number?
 
-messages__establisher_partnership_contact_details__title = Enter the partnership’s contact details
-messages__establisher_partnership_contact_details__heading = Enter the partnership’s contact details
-messages__establisher_partnership_contact_details__body = These details will be used if we need to contact someone in the company about the pension scheme.
+messages__partnership_contact_details__title = Enter the partnership’s contact details
+messages__partnership_contact_details__heading = Enter the partnership’s contact details
+messages__partnership_contact_details__body = These details will be used if we need to contact someone in the company about the pension scheme.
 
 messages__partnershipDetails__title = Enter the partnership’s name
 messages__partnershipDetails__heading = Enter the partnership’s name
@@ -871,3 +872,9 @@ messages__partnershipReview__partnership__editLink = Edit partnership details
 messages__partnershipReview__partners__heading = Partners
 messages__partnershipReview__partners__editLink = Add, delete or edit partners
 messages__partnershipReview__partners__changeLink = Change partners
+
+messages__checkYourAnswers__trustees__partnership__address_years = How long has the partnership been at this address?
+
+messages__trusteePartnershipAddress__title = Enter the partnership’s address
+messages__trusteePartnershipAddress__heading = Enter the partnership’s address
+messages__trusteePartnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
