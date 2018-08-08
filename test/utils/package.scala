@@ -167,7 +167,18 @@ package object utils {
       answers.set(trustees.individual.TrusteePreviousAddressListId(index))(selectedAddress).asOpt.value
     }
 
-    // Trustees partnerships
+    //Trustee Partnership
+    def trusteePartnershipDetails(index: Int, partnershipDetails: PartnershipDetails): UserAnswers = {
+      answers.set(trustees.partnership.PartnershipDetailsId(index))(partnershipDetails).asOpt.value
+    }
+
+    def trusteePartnershipAddress(index: Int, address: Address): UserAnswers = {
+      answers.set(trustees.partnership.PartnershipAddressId(index))(address).asOpt.value
+    }
+
+    def trusteePartnershipAddressList(index: Int, address: TolerantAddress): UserAnswers = {
+      answers.set(trustees.partnership.PartnershipAddressListId(index))(address).asOpt.value
+    }
 
     def trusteesPartnershipPreviousAddress(index: Int, address: Address): UserAnswers = {
       answers.set(trustees.partnership.PartnershipPreviousAddressId(index))(address).asOpt.value
