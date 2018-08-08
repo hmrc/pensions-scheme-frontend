@@ -815,6 +815,7 @@ messages__addPartners_add_partner = Add a partner
 messages__addPartners_at_maximum = You have added the maximum number of partners.
 
 messages__establishers__secondaryHeading = Establishers for {0}
+messages__trustees__secondaryHeading = Trustees for {0}
 
 messages__partner_nino_reason_cya_label = Reason the partner does not have a National Insurance number
 messages__partner_nino__title = Does the partner have a National Insurance number?

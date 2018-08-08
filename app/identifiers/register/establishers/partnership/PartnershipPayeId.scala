@@ -30,35 +30,4 @@ case class PartnershipPayeId(index: Int) extends TypedIdentifier[Paye] {
 
 object PartnershipPayeId {
   override def toString: String = "partnershipPaye"
-
-
-  implicit def paye[I <: TypedIdentifier[Paye]](implicit r: Reads[Paye]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map{
-          case Paye.Yes(paye) => Seq(
-            AnswerRow(
-              "messages__partnership__checkYourAnswers__paye",
-              Seq("site.yes"),
-              true,
-              changeUrl
-            ),
-            AnswerRow(
-              "messages__common__cya__paye",
-              Seq(paye),
-              false,
-              changeUrl
-            )
-          )
-          case Paye.No => Seq(
-            AnswerRow(
-              "messages__partnership__checkYourAnswers__paye",
-              Seq("site.no"),
-              true,
-              changeUrl
-            ))
-        } getOrElse Seq.empty[AnswerRow]
-    }
-  }
-
 }
