@@ -49,6 +49,7 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
     (AddEstablisherId(Some(false)), addEstablishersFalseWithNoScheme,     expired,                   false,         None: Option[Call],       false),
     (EstablisherKindId(0),          company,                              companyDetails,            true,          None: Option[Call],       false),
     (EstablisherKindId(0),          individual,                           individualDetails,         true,          None,                     false),
+    (EstablisherKindId(0),          partnership,                          partnershipDetails,        true,          None: Option[Call],       false),
     (EstablisherKindId(0),          emptyAnswers,                         expired,                   false,         None,                     false),
     (ConfirmDeleteEstablisherId,    emptyAnswers,                         addEstablisher,            true,          None,                     false)
   )
@@ -82,6 +83,7 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
     set(SchemeDetailsId)(SchemeDetails("test scheme", SchemeType.BodyCorporate)).asOpt.value.set(HaveAnyTrusteesId)(false).asOpt.value
   private val company = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Company).asOpt.value
   private val individual = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Indivdual).asOpt.value
+  private val partnership = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Partnership).asOpt.value
   private val addEstablishersTrue = UserAnswers(Json.obj(AddEstablisherId.toString -> "true"))
   private val addEstablishersFalseWithNoScheme = UserAnswers(Json.obj(AddEstablisherId.toString -> "false"))
 
@@ -90,6 +92,8 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
   private def companyDetails = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0)
 
   private def individualDetails = controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0)
+
+  private def partnershipDetails = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 0)
 
   private def establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
   private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)

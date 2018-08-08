@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package views.register.establishers.partnership
+package views.register.trustees
 
-import controllers.register.establishers.partnership.routes
 import forms.register.PartnershipDetailsFormProvider
 import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.establishers.partnership.partnershipDetails
+import views.html.register.trustees.partnership.partnershipDetails
+import controllers.register.trustees.partnership._
 
 class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetails] {
 
@@ -44,7 +44,9 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
 
     behave like pageWithBackLink(createView)
 
+    behave like pageWithSecondaryHeader(createView, messages("messages__common__trustee_secondary_header", schemeName))
+
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
-      routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex).url, "partnershipName")
+      routes.TrusteeDetailsController.onSubmit(NormalMode, firstIndex).url, "partnershipName")
   }
 }

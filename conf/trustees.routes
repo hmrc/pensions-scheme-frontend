@@ -163,3 +163,21 @@ GET        /:index/partnership/previous-address-manual                          
 POST       /:index/partnership/previous-address-manual                                                      controllers.register.trustees.partnership.PartnershipPreviousAddressController.onSubmit(mode: Mode = NormalMode, index: Index)
 GET        /:index/partnership/change-previous-address-manual                                               controllers.register.trustees.partnership.PartnershipPreviousAddressController.onPageLoad(mode: Mode = CheckMode, index: Index)
 POST       /:index/partnership/change-previous-address-manual                                               controllers.register.trustees.partnership.PartnershipPreviousAddressController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+GET        /:index/partnership/trustee-details                           controllers.register.trustees.partnership.TrusteeDetailsController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/trustee-details                           controllers.register.trustees.partnership.TrusteeDetailsController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-trustee-details                    controllers.register.trustees.partnership.TrusteeDetailsController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-trustee-details                    controllers.register.trustees.partnership.TrusteeDetailsController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+
+GET        /:index/partnership/paye-number                              controllers.register.trustees.partnership.PartnershipPayeController.onPageLoad(mode: Mode = NormalMode, index: Index)
+POST       /:index/partnership/paye-number                              controllers.register.trustees.partnership.PartnershipPayeController.onSubmit(mode: Mode = NormalMode, index: Index)
+GET        /:index/partnership/change-paye-number                       controllers.register.trustees.partnership.PartnershipPayeController.onPageLoad(mode: Mode = CheckMode, index: Index)
+POST       /:index/partnership/change-paye-number                       controllers.register.trustees.partnership.PartnershipPayeController.onSubmit(mode: Mode = CheckMode, index: Index)
+
+
+GET        /:index/partnership/vat-number                               controllers.register.trustees.partnership.PartnershipVatController.onPageLoad(mode: Mode = NormalMode,index:Index)
+POST       /:index/partnership/vat-number                               controllers.register.trustees.partnership.PartnershipVatController.onSubmit(mode: Mode = NormalMode,index:Index)
+GET        /:index/partnership/change-vat-number                        controllers.register.trustees.partnership.PartnershipVatController.onPageLoad(mode: Mode = CheckMode,index:Index)
+POST       /:index/partnership/change-vat-number                        controllers.register.trustees.partnership.PartnershipVatController.onSubmit(mode: Mode = CheckMode,index:Index)
+
