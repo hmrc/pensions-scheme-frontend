@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
-  private lazy val onwardRoute = controllers.routes.LogoutController.onPageLoad()
+  private lazy val onwardRoute = controllers.routes.SchemesOverviewController.onPageLoad()
 
   val submissionReferenceNumber="XX123456789132"
 
