@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.partnership
+package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.Retrievals
 import controllers.actions._
 import forms.ContactDetailsFormProvider
-import identifiers.register.establishers.partnership.{PartnershipContactDetailsId, PartnershipDetailsId}
+import identifiers.register.trustees.partnership.{PartnershipContactDetailsId, PartnershipDetailsId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent}
 import utils._
-import utils.annotations.EstablisherPartnership
+import utils.annotations.TrusteesPartnership
 import viewmodels.{ContactDetailsViewModel, Message}
 
 class PartnershipContactDetailsController @Inject()(
-                                                 @EstablisherPartnership override val navigator: Navigator,
+                                                 @TrusteesPartnership override val navigator: Navigator,
                                                  override val appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  override val cacheConnector: DataCacheConnector,
