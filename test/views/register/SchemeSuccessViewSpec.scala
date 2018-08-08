@@ -69,6 +69,10 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
       Jsoup.parse(createView().toString()).select("a[id=feedback]") must haveLink(feedbackLink)
     }
 
+    "have a link to 'print this screen'" in {
+      Jsoup.parse(createView().toString()) must haveLinkOnClick("window.print();return false;", "print-this-page-link")
+    }
+
     behave like pageWithSubmitButton(createView)
 
   }

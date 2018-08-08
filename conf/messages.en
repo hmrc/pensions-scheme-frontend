@@ -115,6 +115,7 @@ site.cancel = Cancel
 site.agree_and_continue = Agree and continue
 site.go_back = Go back
 site.signOut = Sign out
+site.printThisPage = Print this page
 
 messages__unauthorised__title = You can’t access this service with this account
 

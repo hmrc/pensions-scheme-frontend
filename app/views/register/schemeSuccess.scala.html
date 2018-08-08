@@ -25,6 +25,7 @@
 
 @appealLink = {<a id="tribunal-appeal" href="@appConfig.appealLink">@messages("messages__complete__appeal_link")</a>}
 @pensionsRegulatorLink = {<a id="regulator-contact" href="@appConfig.pensionsRegulatorLink">@messages("messages__complete__pension_regulator_link")</a>}
+@printThisPageLink = {<a id="print-this-page-link" onclick="window.print();return false;" href="#">@messages("site.printThisPage")</a>}
 
 @main_template(
     title = messages("messages__complete__title"),
@@ -51,6 +52,10 @@
         <h2 class="heading-large">@messages("messages__complete__master_trust_heading")</h2>
         <p>@Html(Message("messages__complete__pension_regulator").withArgs(pensionsRegulatorLink))</p>
     }
+
+    <div class="print-page">
+        @printThisPageLink
+    </div>
 
     @helpers.form(action = routes.SchemeSuccessController.onSubmit, 'autoComplete -> "off") {
         @components.submit_button("messages__complete__return")
