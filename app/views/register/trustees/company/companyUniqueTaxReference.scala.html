@@ -33,6 +33,8 @@
 
         @helpers.form(action = CompanyUniqueTaxReferenceController.onSubmit(mode, index), 'autoComplete -> "off") {
 
+            @components.back_link()
+
             @components.error_summary(form.errors)
 
             @components.headingNew(

@@ -14,45 +14,43 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.partnership
+package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.PartnershipDetailsFormProvider
-import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.EstablisherPartnership
+import utils.annotations.TrusteesPartnership
 import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.establishers.partnership.partnershipDetails
+import views.html.register.trustees.partnership.partnershipDetails
 
 import scala.concurrent.Future
 
-class PartnershipDetailsController @Inject()(
-                                              appConfig: FrontendAppConfig,
-                                              override val messagesApi: MessagesApi,
-                                              dataCacheConnector: DataCacheConnector,
-                                              @EstablisherPartnership navigator: Navigator,
-                                              authenticate: AuthAction,
-                                              getData: DataRetrievalAction,
-                                              requireData: DataRequiredAction,
-                                              formProvider: PartnershipDetailsFormProvider
-                                            ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
-
+class TrusteeDetailsController @Inject()(
+                                          appConfig: FrontendAppConfig,
+                                          override val messagesApi: MessagesApi,
+                                          dataCacheConnector: DataCacheConnector,
+                                          @TrusteesPartnership navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          formProvider: PartnershipDetailsFormProvider
+                                        ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
         schemeName =>
-          val redirectResult = request.userAnswers
-            .get(PartnershipDetailsId(index)) match {
+          val redirectResult = request.userAnswers.get(PartnershipDetailsId(index)) match {
             case None =>
               Ok(partnershipDetails(appConfig, form, mode, index, schemeName))
             case Some(value) =>
