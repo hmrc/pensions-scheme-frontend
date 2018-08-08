@@ -28,21 +28,21 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.EstablishersCompany
+import utils.annotations.EstablisherPartnership
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.partnership.otherPartners
 
 import scala.concurrent.Future
 
 class OtherPartnersController @Inject()(
-                                          appConfig: FrontendAppConfig,
-                                          override val messagesApi: MessagesApi,
-                                          dataCacheConnector: DataCacheConnector,
-                                          @EstablishersCompany navigator: Navigator,
-                                          authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
-                                          requireData: DataRequiredAction,
-                                          formProvider: OtherPartnersFormProvider
+                                         appConfig: FrontendAppConfig,
+                                         override val messagesApi: MessagesApi,
+                                         dataCacheConnector: DataCacheConnector,
+                                         @EstablisherPartnership navigator: Navigator,
+                                         authenticate: AuthAction,
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         formProvider: OtherPartnersFormProvider
                                         ) extends FrontendController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()

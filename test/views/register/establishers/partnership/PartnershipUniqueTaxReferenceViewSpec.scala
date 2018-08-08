@@ -43,6 +43,7 @@ class PartnershipUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
     behave like normalPage(createView, messageKeyPrefix, messages("messages__establisher_partnership_has_utr__title"))
 
+    behave like pageWithBackLink(createView)
   }
 
   "PartnershipUniqueTaxReference view" when {

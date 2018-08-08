@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package controllers.register.establishers.partnership
+package controllers.register.trustees.partnership
 
 import connectors.FakeDataCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.{Index, NormalMode, PartnershipDetails}
+import identifiers.register.trustees.TrusteesId
+import identifiers.register.trustees.partnership.PartnershipDetailsId
 import models.register.{SchemeDetails, SchemeType}
+import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
-import views.html.register.establishers.partnership.partnershipDetails
+import views.html.register.trustees.partnership.partnershipDetails
 
-class PartnershipDetailsControllerSpec extends ControllerSpecBase {
+class TrusteeDetailsControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -42,8 +42,8 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(3)
   val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): PartnershipDetailsController =
-    new PartnershipDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): TrusteeDetailsController =
+    new TrusteeDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = partnershipDetails(
@@ -57,7 +57,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
   val validData: JsObject = Json.obj(
     SchemeDetailsId.toString ->
       SchemeDetails(schemeName, SchemeType.SingleTrust),
-    EstablishersId.toString -> Json.arr(
+    TrusteesId.toString -> Json.arr(
       Json.obj(
         PartnershipDetailsId.toString ->
           PartnershipDetails("test partnership name")
@@ -66,7 +66,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
 
   )
 
-  "CompanyDetails Controller" must {
+  "TrusteeDetails Controller" must {
 
     "return OK and the correct view for a GET when scheme name is present" in {
       val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
@@ -85,7 +85,7 @@ class PartnershipDetailsControllerSpec extends ControllerSpecBase {
 
     "redirect to session expired page on a GET when the index is not valid" in {
       val validData = Json.obj(
-        "establishers" -> Json.arr(
+        "trustees" -> Json.arr(
           Json.obj(
             PartnershipDetailsId.toString -> PartnershipDetails("test name")
           )
