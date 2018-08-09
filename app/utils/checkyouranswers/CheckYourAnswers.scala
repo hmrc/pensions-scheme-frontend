@@ -198,6 +198,64 @@ object CheckYourAnswers {
     }
   }
 
+  implicit def vat[I <: TypedIdentifier[Vat]](implicit r: Reads[Vat]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map{
+          case Vat.Yes(vat) => Seq(
+            AnswerRow(
+              "messages__partnership__checkYourAnswers__vat",
+              Seq("site.yes"),
+              true,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__common__cya__vat",
+              Seq(vat),
+              false,
+              changeUrl
+            )
+          )
+          case Vat.No => Seq(
+            AnswerRow(
+              "messages__partnership__checkYourAnswers__vat",
+              Seq("site.no"),
+              true,
+              changeUrl
+            ))
+        } getOrElse Seq.empty[AnswerRow]
+    }
+  }
+
+  implicit def paye[I <: TypedIdentifier[Paye]](implicit r: Reads[Paye]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map{
+          case Paye.Yes(paye) => Seq(
+            AnswerRow(
+              "messages__partnership__checkYourAnswers__paye",
+              Seq("site.yes"),
+              true,
+              changeUrl
+            ),
+            AnswerRow(
+              "messages__common__cya__paye",
+              Seq(paye),
+              false,
+              changeUrl
+            )
+          )
+          case Paye.No => Seq(
+            AnswerRow(
+              "messages__partnership__checkYourAnswers__paye",
+              Seq("site.no"),
+              true,
+              changeUrl
+            ))
+        } getOrElse Seq.empty[AnswerRow]
+    }
+  }
+
   private def retrieveStringAnswer[I](id: I, stringValue: String)(implicit countryOptions: CountryOptions): String = {
     id match {
       case SchemeEstablishedCountryId =>

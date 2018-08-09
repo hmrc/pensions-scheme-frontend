@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.partnership
+package identifiers.register.trustees.partnership
 
-import identifiers._
-import identifiers.register.establishers.EstablishersId
-import models.Vat
-import play.api.libs.json.{JsPath, Reads}
-import utils.UserAnswers
-import utils.checkyouranswers.CheckYourAnswers
-import viewmodels.AnswerRow
+import identifiers.TypedIdentifier
+import identifiers.register.trustees.TrusteesId
+import models.UniqueTaxReference
+import play.api.libs.json.JsPath
 
-case class PartnershipVatId(index: Int) extends TypedIdentifier[Vat] {
-  override def path: JsPath = EstablishersId(index).path \ PartnershipVatId.toString
+case class PartnershipUniqueTaxReferenceId (index: Int) extends TypedIdentifier[UniqueTaxReference] {
+  override def path: JsPath = TrusteesId(index).path \ PartnershipUniqueTaxReferenceId.toString
 }
 
-object PartnershipVatId {
-  override def toString: String = "partnershipVat"
+object PartnershipUniqueTaxReferenceId {
+  override def toString: String = "partnershipUniqueTaxReference"
 }
 
 
