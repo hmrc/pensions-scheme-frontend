@@ -94,7 +94,7 @@ class DeclarationDutiesController @Inject()(
 
       case Some(value) =>
         val email = value.as[PSAName].psaEmail
-        emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrn(srn)))
+        emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrn(srn)))
 
       case _ => Future.successful(EmailNotSent)
     }
