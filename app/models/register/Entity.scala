@@ -23,6 +23,7 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import models.NormalMode
 import models.register.establishers.EstablisherKind
 import models.register.trustees.TrusteeKind
@@ -153,6 +154,23 @@ case class TrusteeIndividualEntity(id: TrusteeDetailsId, name: String, isDeleted
 
   override def deleteLink: String =
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id.index, TrusteeKind.Individual).url
+
+  override def index: Int = id.index
+}
+
+case class TrusteePartnershipEntity(id: TrusteePartnershipDetailsId,
+                                name: String, isDeleted: Boolean, isCompleted: Boolean) extends Trustee[TrusteePartnershipDetailsId] {
+  override def editLink: String = {
+    if(isCompleted){
+      controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(id.index).url
+    }
+    else {
+      controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, id.index).url
+    }
+  }
+
+  override def deleteLink: String =
+    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id.index, TrusteeKind.Company).url
 
   override def index: Int = id.index
 }

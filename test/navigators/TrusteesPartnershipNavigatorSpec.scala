@@ -37,7 +37,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
     (PartnershipDetailsId(0),                    emptyAnswers,              partnershipVat(NormalMode),                  true,         Some(checkYourAnswers),         true),
     (PartnershipVatId(0),                        emptyAnswers,              partnershipPaye(NormalMode),                 true,         Some(checkYourAnswers),         true),
     (PartnershipPayeId(0),                       emptyAnswers,              partnershipUtr(NormalMode),                  true,         Some(checkYourAnswers),         true),
-    (PartnershipUniqueTaxReferenceID(0),         emptyAnswers,              partnershipPostcodeLookup(NormalMode),       true,         Some(checkYourAnswers),         true),
+    (PartnershipUniqueTaxReferenceId(0),         emptyAnswers,              partnershipPostcodeLookup(NormalMode),       true,         Some(checkYourAnswers),         true),
     (PartnershipPostcodeLookupId(0),             emptyAnswers,              partnershipAddressList(NormalMode),          true,         Some(partnershipAddressList(CheckMode)),true),
     (PartnershipAddressListId(0),                emptyAnswers,              partnershipAddress(NormalMode),              true,         Some(partnershipAddress(CheckMode)),true),
     (PartnershipAddressId(0),                    emptyAnswers,              partnershipAddressYears(NormalMode),         true,         Some(checkYourAnswers),         true),
