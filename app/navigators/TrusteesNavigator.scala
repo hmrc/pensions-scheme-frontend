@@ -81,6 +81,8 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
         NavigateTo.save(controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, index))
       case Some(TrusteeKind.Individual) =>
         NavigateTo.save(controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, index))
+      case Some(TrusteeKind.Partnership) =>
+        NavigateTo.save(controllers.register.trustees.partnership.routes.TrusteeDetailsController.onPageLoad(NormalMode, index))
       case _ =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

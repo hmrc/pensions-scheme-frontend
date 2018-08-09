@@ -37,7 +37,7 @@ import views.html.address.addressList
 
 class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFRequest {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  def onwardRoute: Call = routes.PartnershipAddressController.onPageLoad(NormalMode, 0)
 
   private val partnershipDetails = PartnershipDetails("test partnership name")
 

@@ -25,6 +25,8 @@ import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteI
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.partnership.IsPartnershipCompleteId
+import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteesId}
 import models.{CompanyDetails, PartnershipDetails}
 import models.person.PersonDetails
@@ -213,10 +215,16 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       ) ((details, isComplete) => TrusteeCompanyEntity(CompanyDetailsId(index), details.companyName, details.isDeleted, isComplete.getOrElse(false))
     )
 
+    private def readsPartnership(index: Int): Reads[Trustee[_]] = (
+      (JsPath \ TrusteePartnershipDetailsId.toString).read[PartnershipDetails] and
+        (JsPath \ IsPartnershipCompleteId.toString).readNullable[Boolean]
+      ) ((details, isComplete) => TrusteePartnershipEntity(TrusteePartnershipDetailsId(index), details.name, details.isDeleted, isComplete.getOrElse(false))
+    )
+
     override def reads(json: JsValue): JsResult[Seq[Trustee[_]]] = {
       json \ TrusteesId.toString match {
         case JsDefined(JsArray(trustees)) =>
-          readEntities(trustees, index => readsIndividual(index) orElse readsCompany(index))
+          readEntities(trustees, index => readsIndividual(index) orElse readsCompany(index) orElse readsPartnership(index))
         case _ => JsSuccess(Nil)
       }
     }
