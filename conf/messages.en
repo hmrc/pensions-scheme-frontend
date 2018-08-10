@@ -206,7 +206,7 @@ messages__common__over_a_year = More than 12 months
 messages__common_error__current_address_years = Select how long they have been at the current address
 
 messages__common__what_you_need_to_know = What you need to know
-messages__complete__title = You have finished checking your details
+messages__complete__title = The pension scheme details have been sent to HMRC
 messages__complete__heading = The pension scheme details have been sent to HMRC
 messages__complete__application_number_is = Your submission reference number is {0}.
 messages__complete__email = You have been sent a confirmation email.
