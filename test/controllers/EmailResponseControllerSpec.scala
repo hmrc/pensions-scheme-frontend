@@ -16,27 +16,22 @@
 
 package controllers
 
-import akka.stream.Materializer
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
 
 class EmailResponseControllerSpec extends ControllerSpecBase {
 
+  import EmailResponseControllerSpec._
+
   "EmailResponseController" must {
 
     "respond 200 when given json" in {
 
-      running() { app =>
+      val controller = app.injector.instanceOf[EmailResponseController]
 
-        implicit lazy val mat: Materializer = app.materializer
+      val result = controller.post("id")(fakeRequest.withBody[JsValue](validJson))
 
-        val controller = app.injector.instanceOf[EmailResponseController]
-
-        val result = controller.post("id")(fakeRequest.withBody[JsValue](Json.obj("name" -> "value")))
-
-        status(result) mustBe OK
-
-      }
+      status(result) mustBe OK
 
     }
 
