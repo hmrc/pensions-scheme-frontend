@@ -75,4 +75,6 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
   lazy val completeFlagEnabled: Boolean = runModeConfiguration.getBoolean("features.is-complete").getOrElse(true)
   lazy val emailApiUrl: String = baseUrl("email")
+  lazy val emailTemplateId: String = loadConfig("email.templateId")
+  lazy val emailSendForce: Boolean = runModeConfiguration.getBoolean("email.force").getOrElse(false)
 }

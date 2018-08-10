@@ -16,13 +16,21 @@
 
 package controllers.register.adviser
 
-import connectors.{FakeDataCacheConnector, PensionsSchemeConnector}
+import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
+import identifiers.TypedIdentifier
 import models.CheckMode
 import models.register.SchemeSubmissionResponse
+import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.Mockito._
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.mockito.MockitoSugar
+import play.api.libs.json.{JsValue, Json}
+import play.api.libs.ws.WSClient
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeCountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, Message}
@@ -30,7 +38,7 @@ import views.html.check_your_answers
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFutures {
 
   import CheckYourAnswersControllerSpec._
 
@@ -50,6 +58,21 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
+    "send an email when valid data is submitted" in {
+      reset(mockEmailConnector)
+
+      when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any())(any(), any()))
+        .thenReturn(Future.successful(EmailSent))
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+      whenReady(controller(emailConnector = mockEmailConnector).onSubmit(postRequest)) {
+        _ =>
+          verify(mockEmailConnector, times(1)).sendEmail(eqTo("email@test.com"),
+            eqTo("pods_scheme_register"), eqTo(Map("srn" -> "S12345 67890")))(any(), any())
+      }
+    }
+
     "redirect to the next page on a POST request" in {
       val result = controller().onSubmit()(fakeRequest)
 
@@ -59,7 +82,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   }
 }
 
-object CheckYourAnswersControllerSpec extends ControllerSpecBase {
+object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSugar{
   val schemeName = "Test Scheme Name"
   lazy val adviserDetailsRoute: String = routes.AdviserDetailsController.onPageLoad(CheckMode).url
   lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit()
@@ -73,7 +96,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  private val validSchemeSubmissionResponse = SchemeSubmissionResponse("test-scheme-id")
+  private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
 
   private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
     override def registerScheme
@@ -83,7 +106,39 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     }
   }
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
+  private val mockEmailConnector = mock[EmailConnector]
+
+  private val fakeEmailConnector = new EmailConnector {
+    override def sendEmail
+    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
+      Future.successful(EmailSent)
+    }
+  }
+
+  object fakePsaNameCacheConnector extends PSANameCacheConnector(
+    frontendAppConfig,
+    mock[WSClient],
+    injector.instanceOf[ApplicationCrypto]
+  ) with FakeDataCacheConnector {
+
+    override def fetch(cacheId: String)(implicit
+                                        ec: ExecutionContext,
+                                        hc: HeaderCarrier): Future[Option[JsValue]] = Future.successful(Some(Json.obj("psaName" -> "Test",
+      "psaEmail" -> "email@test.com")))
+
+    override def upsert(cacheId: String, value: JsValue)
+                       (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = Future.successful(value)
+
+    override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+                                                (implicit
+                                                 ec: ExecutionContext,
+                                                 hc: HeaderCarrier
+                                                ): Future[JsValue] = ???
+  }
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
+                 emailConnector: EmailConnector = fakeEmailConnector): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -93,7 +148,9 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
       new FakeCountryOptions,
-      fakePensionsSchemeConnector
+      fakePensionsSchemeConnector,
+      emailConnector,
+      fakePsaNameCacheConnector
     )
 
   lazy val viewAsString: String = check_your_answers(
