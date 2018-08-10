@@ -115,6 +115,7 @@ site.cancel = Cancel
 site.agree_and_continue = Agree and continue
 site.go_back = Go back
 site.signOut = Sign out
+site.printThisPage = Print this page
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -205,22 +206,21 @@ messages__common__over_a_year = More than 12 months
 messages__common_error__current_address_years = Select how long they have been at the current address
 
 messages__common__what_you_need_to_know = What you need to know
-messages__complete__title = Your application has been successfully submitted
-messages__complete__heading = Your application to register {0} has been successfully submitted
-messages__complete__application_number_is = Your submission reference number is {0}. This is not your Pension Scheme Tax Reference number (PSTR).
-messages__complete__copy_1 = Your scheme is not yet registered. HMRC will consider your application and make a decision.
-messages__complete__copy_2 = We may contact you and request further information to support your application.
-messages__complete__copy_3 = If the scheme administrator does not meet the criteria to be a fit and proper person we may refuse your application.
-messages__complete__register_pensions_regulator = If your scheme has more than 2 members you need to register with the Pensions Regulator
-messages__complete__finish = Finish and sign out
-
-
-messages__complete__contact_regulator_start = You must
-messages__complete__contact_regulator_link = contact the Pensions Regulator
-messages__complete__contact_regulator_authorisation =  to receive authorisation to register this scheme as a master trust.
+messages__complete__title = The pension scheme details have been sent to HMRC
+messages__complete__heading = The pension scheme details have been sent to HMRC
+messages__complete__application_number_is = Your submission reference number is {0}.
+messages__complete__email = You have been sent a confirmation email.
 messages__complete__what_happens_next = What happens next
-messages__complete__not_registered_yet = The scheme has not been registered yet. HMRC will decide if the registration can be completed.
-messages__complete__decision = HMRC will consider this registration and make a decision when authorisation has been received from the Pensions Regulator. You might be contacted for more details to support this registration.
+messages__complete__copy_1 = The scheme has not been registered yet. HMRC will review the details and decide if the scheme can be registered. You will receive a pension scheme tax reference number (PSTR) if the scheme is registered.
+messages__complete__copy_2 = You might be contacted for more details to support this registration.
+messages__complete__copy_3 = There is no time limit for how long it will take HMRC to make a decision. {0} if HMRC decline the application to register the scheme or if a decision has not been made within 6 months.
+messages__complete__appeal_link = You can appeal to a tribunal
+
+messages__complete__master_trust_heading = What you need to do
+messages__complete__pension_regulator_link = You must contact the Pensions Regulator
+messages__complete__pension_regulator = {0} to register the master trust scheme with them. HMRC cannot complete the registration until the Pensions Regulator authorise the scheme.
+messages__complete__return = Return to manage your pension schemes
+messages__complete__feedback = What did you think of this service? (opens in new window or tab)
 
 messages__uk_bank_account_details__title = Bank account details
 messages__uk_bank_account_details__bank_name = Bank name

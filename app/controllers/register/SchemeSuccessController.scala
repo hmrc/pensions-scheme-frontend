@@ -68,7 +68,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      Redirect(controllers.routes.LogoutController.onPageLoad())
+      Redirect(controllers.routes.SchemesOverviewController.onPageLoad())
   }
 
 
