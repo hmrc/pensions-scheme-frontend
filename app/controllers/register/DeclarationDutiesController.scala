@@ -94,14 +94,13 @@ class DeclarationDutiesController @Inject()(
 
       case Some(value) =>
         val email = value.as[PSAName].psaEmail
-        emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrn(srn)))
+        emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)))
 
       case _ => Future.successful(EmailNotSent)
     }
   }
 
-  /*Format srn number to have a space after first 6 digits before inserting it into email */
-  private def formatSrn(srn: String): String = {
+  private def formatSrnForEmail(srn: String): String = {
     //noinspection ScalaStyle
     val (start, end) = srn.splitAt(6)
     start + ' ' + end
