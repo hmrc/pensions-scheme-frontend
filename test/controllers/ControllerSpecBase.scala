@@ -16,6 +16,7 @@
 
 package controllers
 
+import akka.stream.Materializer
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.SchemeDetailsId
@@ -36,6 +37,8 @@ import play.api.libs.json.Json
 import utils.{Enumerable, MapFormats}
 
 trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapFormats {
+
+  implicit val mat: Materializer = app.materializer
 
   val cacheMapId = "id"
 

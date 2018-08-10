@@ -17,15 +17,17 @@
 package controllers
 
 import javax.inject.Inject
-import play.api.mvc.{Action, AnyContent}
+import play.api.libs.json.JsValue
+import play.api.mvc.{Action, BodyParsers}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 class EmailResponseController @Inject()(
 
-                                       ) {
+                                       ) extends FrontendController {
 
-  def post(id: String): Action[AnyContent] = Action {
+  def post(id: String): Action[JsValue] = Action(BodyParsers.parse.json) {
     implicit request =>
-      ???
+      Ok
   }
 
 }

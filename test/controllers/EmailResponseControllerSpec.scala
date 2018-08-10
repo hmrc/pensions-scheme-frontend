@@ -16,6 +16,46 @@
 
 package controllers
 
+import play.api.libs.json.Json
+import play.api.test.Helpers._
+
 class EmailResponseControllerSpec extends ControllerSpecBase {
+
+  import EmailResponseControllerSpec._
+
+  "EmailResponseController" must {
+
+    "respond 200 when posted a valid body of events" in {
+
+      running() { app =>
+
+        val controller = app.injector.instanceOf[EmailResponseController]
+
+        val result = controller.post("id").apply(fakeRequest.withJsonBody(validJson))
+
+        status(result.run()) mustBe OK
+
+      }
+    }
+
+  }
+
+}
+ object EmailResponseControllerSpec {
+
+   val validJson = Json.parse(
+     """{
+       |    "events": [
+       |        {
+       |            "event": "opened",
+       |            "detected": "2015-07-02T08:26:39.035Z"
+       |        },
+       |        {
+       |            "event": "delivered",
+       |            "detected": "2015-07-02T08:25:20.068Z"
+       |        }
+       |    ]
+       |}""".stripMargin
+   )
 
 }
