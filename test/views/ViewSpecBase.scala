@@ -81,6 +81,17 @@ trait ViewSpecBase extends SpecBase {
       )
   }
 
+  def haveLinkOnClick(action: String, linkId: String): Matcher[Document] = Matcher[Document] {
+    document =>
+      val link = document.select(s"a[id=$linkId]")
+      val onClick = link.attr("onClick")
+      MatchResult(
+        onClick == action,
+        s"link $linkId onClick $onClick is not equal to $action",
+        s"link $linkId onClick $onClick is equal to $action"
+      )
+  }
+
   def asDocument(html: Html): Document = Jsoup.parse(html.toString())
 
   def assertEqualsMessage(doc: Document, cssSelector: String, expectedMessageKey: String): Assertion =
