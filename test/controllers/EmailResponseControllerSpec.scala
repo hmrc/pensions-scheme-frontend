@@ -16,46 +16,49 @@
 
 package controllers
 
-import play.api.libs.json.Json
+import akka.stream.Materializer
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
 
 class EmailResponseControllerSpec extends ControllerSpecBase {
 
-  import EmailResponseControllerSpec._
-
   "EmailResponseController" must {
 
-    "respond 200 when posted a valid body of events" in {
+    "respond 200 when given json" in {
 
       running() { app =>
 
+        implicit lazy val mat: Materializer = app.materializer
+
         val controller = app.injector.instanceOf[EmailResponseController]
 
-        val result = controller.post("id").apply(fakeRequest.withJsonBody(validJson))
+        val result = controller.post("id")(fakeRequest.withBody[JsValue](Json.obj("name" -> "value")))
 
-        status(result.run()) mustBe OK
+        status(result) mustBe OK
 
       }
+
     }
 
   }
 
 }
- object EmailResponseControllerSpec {
 
-   val validJson = Json.parse(
-     """{
-       |    "events": [
-       |        {
-       |            "event": "opened",
-       |            "detected": "2015-07-02T08:26:39.035Z"
-       |        },
-       |        {
-       |            "event": "delivered",
-       |            "detected": "2015-07-02T08:25:20.068Z"
-       |        }
-       |    ]
-       |}""".stripMargin
-   )
+object EmailResponseControllerSpec {
+
+  val validJson = Json.parse(
+    """{
+      |    "events": [
+      |        {
+      |            "event": "opened",
+      |            "detected": "2015-07-02T08:26:39.035Z"
+      |        },
+      |        {
+      |            "event": "delivered",
+      |            "detected": "2015-07-02T08:25:20.068Z"
+      |        }
+      |    ]
+      |}""".stripMargin
+  )
 
 }
