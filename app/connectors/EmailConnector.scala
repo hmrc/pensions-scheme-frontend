@@ -62,7 +62,7 @@ class EmailConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) 
   }
 
   private def logExceptions: PartialFunction[Throwable, Future[EmailStatus]] = {
-        case (t: Throwable) =>
+        case t: Throwable =>
             Logger.warn("Unable to connect to Email Service", t)
             Future.successful(EmailNotSent)
   }
