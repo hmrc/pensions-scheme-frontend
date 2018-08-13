@@ -44,6 +44,7 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
           val result = controller.post("id")(fakeRequest.withBody[JsValue](Json.toJson(emailEvents)))
 
           status(result) mustBe OK
+          fakeAuditService.verifySent(audit.EmailEvent("id", Delivered)) mustBe true
 
         }
       }
