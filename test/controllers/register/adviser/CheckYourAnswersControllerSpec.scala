@@ -73,6 +73,17 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
       }
     }
 
+    "not send an email if there is no records for user email" in {
+      reset(mockEmailConnector)
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+      whenReady(controller(emailConnector = mockEmailConnector, psaName = Json.obj("psaName" -> "Test")).onSubmit(postRequest)) {
+        _ =>
+          verify(mockEmailConnector, times(0)).sendEmail(any(),any(),any())(any(), any())
+      }
+    }
+
     "redirect to the next page on a POST request" in {
       val result = controller().onSubmit()(fakeRequest)
 
@@ -116,16 +127,12 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
     }
   }
 
-  object fakePsaNameCacheConnector extends PSANameCacheConnector(
+  case class FakePsaNameCacheConnector(psaName: JsValue) extends PSANameCacheConnector(
     frontendAppConfig,
     mock[WSClient],
     injector.instanceOf[ApplicationCrypto]
   ) with FakeDataCacheConnector {
-
-    override def fetch(cacheId: String)(implicit
-                                        ec: ExecutionContext,
-                                        hc: HeaderCarrier): Future[Option[JsValue]] = Future.successful(Some(Json.obj("psaName" -> "Test",
-      "psaEmail" -> "email@test.com")))
+    override def fetch(cacheId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] = Future.successful(Some(psaName))
 
     override def upsert(cacheId: String, value: JsValue)
                        (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = Future.successful(value)
@@ -137,8 +144,9 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
                                                 ): Future[JsValue] = ???
   }
 
+
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                 emailConnector: EmailConnector = fakeEmailConnector): CheckYourAnswersController =
+                 emailConnector: EmailConnector = fakeEmailConnector, psaName: JsValue = Json.obj("psaName" -> "Test", "psaEmail" -> "email@test.com")): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -150,7 +158,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       new FakeCountryOptions,
       fakePensionsSchemeConnector,
       emailConnector,
-      fakePsaNameCacheConnector
+      FakePsaNameCacheConnector(psaName)
     )
 
   lazy val viewAsString: String = check_your_answers(

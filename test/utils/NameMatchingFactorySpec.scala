@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.FakeDataCacheConnector
 import models.PSAName
 import models.requests.OptionalDataRequest
-import play.api.libs.json.{JsString, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -51,7 +51,7 @@ class NameMatchingFactorySpec extends SpecBase {
     "return an instance of NameMatching" when {
       "PSA name is retrieved" in {
 
-        val result = nameMatchingFactory(Some(Json.toJson(PSAName("My PSA", "test@test.com")))).nameMatching(schemeName)
+        val result = nameMatchingFactory(Some(Json.toJson(PSAName("My PSA", Some("test@test.com"))))).nameMatching(schemeName)
 
         await(result) mustEqual Some(NameMatching("My Scheme Reg", "My PSA"))
 

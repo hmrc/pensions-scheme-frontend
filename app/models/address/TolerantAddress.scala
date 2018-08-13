@@ -16,6 +16,7 @@
 
 package models.address
 
+import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -65,7 +66,6 @@ case class TolerantAddress(addressLine1: Option[String],
 }
 
 object TolerantAddress {
-
   val postCodeLookupAddressReads: Reads[TolerantAddress] = (
     (JsPath \ "address" \ "lines").read[List[String]] and
       (JsPath \ "address" \ "postcode").read[String] and
@@ -76,6 +76,10 @@ object TolerantAddress {
     val linesWithNoAmpersand = lines.map(line => line.replace("&", "and"))
     val addressLines: (Option[String], Option[String], Option[String], Option[String]) = {
       lines.size match {
+        case 0 =>  {
+          Logger.error(s"[NoAddressLinesFoundException]-$postCode,$countryCode")
+          throw new NoAddressLinesFoundException()
+        }
         case 1 => {
           val townOrCounty = getTownOrCounty(town, county, linesWithNoAmpersand)
           (Some(linesWithNoAmpersand(0)), townOrCounty._1, townOrCounty._2, None)
@@ -173,3 +177,6 @@ object TolerantAddress {
     }
   }
 }
+
+final case class NoAddressLinesFoundException() extends Exception("Address with no address lines received")
+
