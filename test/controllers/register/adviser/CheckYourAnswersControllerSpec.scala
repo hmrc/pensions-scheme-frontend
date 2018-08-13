@@ -45,14 +45,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
   "CheckYourAnswers Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller(getMandatoryAdviser, psaName = Json.obj("psaName" -> "Test", "psaEmail" -> "email@test.com")).onPageLoad(fakeRequest)
+      val result = controller(getMandatoryAdviser).onPageLoad(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData, psaName = Json.obj("psaName" -> "Test", "psaEmail" -> "email@test.com")).onPageLoad()(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -66,7 +66,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      whenReady(controller(emailConnector = mockEmailConnector, psaName = Json.obj("psaName" -> "Test", "psaEmail" -> "email@test.com")).onSubmit(postRequest)) {
+      whenReady(controller(emailConnector = mockEmailConnector).onSubmit(postRequest)) {
         _ =>
           verify(mockEmailConnector, times(1)).sendEmail(eqTo("email@test.com"),
             eqTo("pods_scheme_register"), eqTo(Map("srn" -> "S12345 67890")))(any(), any())
@@ -85,7 +85,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
     }
 
     "redirect to the next page on a POST request" in {
-      val result = controller(psaName = Json.obj("psaName" -> "Test", "psaEmail" -> "email@test.com")).onSubmit()(fakeRequest)
+      val result = controller().onSubmit()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -146,7 +146,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
 
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
-                 emailConnector: EmailConnector = fakeEmailConnector, psaName: JsValue): CheckYourAnswersController =
+                 emailConnector: EmailConnector = fakeEmailConnector, psaName: JsValue = Json.obj("psaName" -> "Test", "psaEmail" -> "email@test.com")): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
