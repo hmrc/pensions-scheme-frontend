@@ -57,6 +57,8 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val pensionAdministratorGovUkLink = runModeConfiguration.underlying.getString("urls.pensionAdministratorGovUkLink")
   lazy val pensionPractitionerGovUkLink = runModeConfiguration.underlying.getString("urls.pensionPractitionerGovUkLink")
   lazy val govUkLink = runModeConfiguration.underlying.getString("urls.govUkLink")
+  lazy val appealLink = runModeConfiguration.underlying.getString("urls.appealLink")
+  lazy val pensionsRegulatorLink = runModeConfiguration.underlying.getString("urls.pensionsRegulatorLink")
   lazy val languageTranslationEnabled = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
@@ -73,4 +75,6 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
   lazy val completeFlagEnabled: Boolean = runModeConfiguration.getBoolean("features.is-complete").getOrElse(true)
   lazy val emailApiUrl: String = baseUrl("email")
+  lazy val emailTemplateId: String = loadConfig("email.templateId")
+  lazy val emailSendForce: Boolean = runModeConfiguration.getBoolean("email.force").getOrElse(false)
 }

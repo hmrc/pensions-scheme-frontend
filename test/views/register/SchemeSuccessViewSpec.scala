@@ -16,11 +16,10 @@
 
 package views.register
 
-import controllers.register.routes
 import org.joda.time.LocalDate
-import views.behaviours.ViewBehaviours
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
+import views.behaviours.ViewBehaviours
 import views.html.register.schemeSuccess
 
 class SchemeSuccessViewSpec extends ViewBehaviours {
@@ -30,6 +29,10 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
   val submissionReferenceNumber="XX123456789132"
 
   val testScheme = "test scheme name"
+
+  val appealLink = frontendAppConfig.appealLink
+  val pensionsRegulatorLink = frontendAppConfig.pensionsRegulatorLink
+  val feedbackLink = frontendAppConfig.serviceSignOut
 
   def createView: () => HtmlFormat.Appendable = () =>
     schemeSuccess(
@@ -51,11 +54,23 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
 
   "SchemeSuccess view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", testScheme),
-      "_copy_1", "_copy_2", "_copy_3", "_register_pensions_regulator")
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"),
+      "_email", "_copy_1", "_copy_2")
 
     "have dynamic text for application number" in {
       Jsoup.parse(createView().toString()) must haveDynamicText("messages__complete__application_number_is", submissionReferenceNumber)
+    }
+
+    "have link for appeal to a tribunal" in {
+      Jsoup.parse(createView().toString()).select("a[id=tribunal-appeal]") must haveLink(appealLink)
+    }
+
+    "have link for feedback survey" in {
+      Jsoup.parse(createView().toString()).select("a[id=feedback]") must haveLink(feedbackLink)
+    }
+
+    "have a link to 'print this screen'" in {
+      Jsoup.parse(createView().toString()) must haveLinkOnClick("window.print();return false;", "print-this-page-link")
     }
 
     behave like pageWithSubmitButton(createView)
@@ -64,20 +79,14 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
 
   "SchemeSuccess view when a master trust" must {
 
-    behave like normalPage(createMasterTrustView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", testScheme),
-      "_what_happens_next",
-      "_contact_regulator_start",
-      "_contact_regulator_authorisation",
-      "_not_registered_yet",
-      "_decision",
-      "_copy_3"
+    behave like normalPage(createMasterTrustView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"),
+      "_pension_regulator_link", "_master_trust_heading"
     )
 
-    "have dynamic text for application number" in {
-      Jsoup.parse(createMasterTrustView().toString()) must haveDynamicText("messages__complete__application_number_is", submissionReferenceNumber)
-    }
+    "have link for pensions regulator" in {
 
-    behave like pageWithSubmitButton(createMasterTrustView)
+      Jsoup.parse(createMasterTrustView().toString()).select("a[id=regulator-contact]") must haveLink(pensionsRegulatorLink)
+    }
 
   }
 

@@ -17,12 +17,13 @@
 package controllers.register.adviser
 
 import config.FrontendAppConfig
-import connectors.{DataCacheConnector, PensionsSchemeConnector}
+import connectors._
 import controllers.actions._
 import identifiers.register.SubmissionReferenceNumberId
 import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId}
 import javax.inject.Inject
-import models.{CheckMode, NormalMode}
+import models.requests.DataRequest
+import models.{CheckMode, NormalMode, PSAName}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -32,6 +33,8 @@ import utils.{CountryOptions, Navigator}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
+import scala.concurrent.Future
+
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          dataCacheConnector: DataCacheConnector,
@@ -40,7 +43,9 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                          requireData: DataRequiredAction,
                                          @Adviser navigator: Navigator,
                                          implicit val countryOptions: CountryOptions,
-                                         pensionsSchemeConnector: PensionsSchemeConnector) extends FrontendController with I18nSupport {
+                                         pensionsSchemeConnector: PensionsSchemeConnector,
+                                         emailConnector: EmailConnector,
+                                         psaNameCacheConnector: PSANameCacheConnector) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -62,10 +67,29 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       pensionsSchemeConnector.registerScheme(request.userAnswers, request.psaId.id).flatMap(submissionResponse =>
-        dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).map { _ =>
-          Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
+        dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).flatMap { _ =>
+          sendEmail(submissionResponse.schemeReferenceNumber).map { _ =>
+            Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
+          }
         }
       )
+  }
 
+  private def sendEmail(srn: String)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
+    psaNameCacheConnector.fetch(request.externalId).flatMap {
+
+      case Some(value) =>
+        val email = value.as[PSAName].psaEmail
+        emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrn(srn)))
+
+      case _ => Future.successful(EmailNotSent)
+    }
+  }
+
+  /*Format srn number to have a space after first 6 digits before inserting it into email */
+  private def formatSrn(srn: String): String = {
+    //noinspection ScalaStyle
+    val (start, end) = srn.splitAt(6)
+    start + ' ' + end
   }
 }

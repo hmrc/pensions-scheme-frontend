@@ -51,7 +51,7 @@ class NameMatchingFactorySpec extends SpecBase {
     "return an instance of NameMatching" when {
       "PSA name is retrieved" in {
 
-        val result = nameMatchingFactory(Some(Json.toJson(PSAName("My PSA")))).nameMatching(schemeName)
+        val result = nameMatchingFactory(Some(Json.toJson(PSAName("My PSA", "test@test.com")))).nameMatching(schemeName)
 
         await(result) mustEqual Some(NameMatching("My Scheme Reg", "My PSA"))
 

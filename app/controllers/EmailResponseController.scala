@@ -25,7 +25,7 @@ class EmailResponseController @Inject()(
 
                                        ) extends FrontendController {
 
-  def post(id: String): Action[JsValue] = Action(BodyParsers.parse.json) {
+  def post(id: String): Action[JsValue] = Action(BodyParsers.parse.tolerantJson) {
     implicit request =>
       Ok
   }

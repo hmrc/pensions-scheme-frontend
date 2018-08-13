@@ -38,8 +38,6 @@ import utils.{Enumerable, MapFormats}
 
 trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapFormats {
 
-  implicit val mat: Materializer = app.materializer
-
   val cacheMapId = "id"
 
   def getEmptyData: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj()))
