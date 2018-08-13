@@ -27,9 +27,9 @@ import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
 import play.api.test.Helpers._
 import utils._
+import utils.checkyouranswers.Ops._
 import viewmodels.{AnswerSection, Message}
 import views.html.check_your_answers
-import utils.checkyouranswers.Ops._
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 

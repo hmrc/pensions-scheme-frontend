@@ -62,7 +62,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
         value =>
           nameMatchingFactory.nameMatching(value.schemeName).flatMap {
             case Some(nameMatching) =>
-              if(nameMatching.isMatch){
+              if (nameMatching.isMatch) {
                 Future.successful(BadRequest(schemeDetails(appConfig, form.withError(
                   "schemeName",
                   "messages__error__scheme_name_psa_name_match"

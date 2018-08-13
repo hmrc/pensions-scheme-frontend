@@ -22,7 +22,7 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyPostcodeLookupId}
-import models.address.{Address, TolerantAddress}
+import models.address.TolerantAddress
 import models.{CompanyDetails, Index, NormalMode}
 import play.api.inject.bind
 import play.api.libs.json.Json

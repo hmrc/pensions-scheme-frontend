@@ -36,16 +36,16 @@ import views.html.register.establishers.company.addCompanyDirectors
 
 import scala.concurrent.Future
 
-class AddCompanyDirectorsController @Inject() (
-                                                     appConfig: FrontendAppConfig,
-                                                     override val messagesApi: MessagesApi,
-                                                     dataCacheConnector: DataCacheConnector,
-                                                     @EstablishersCompany navigator: Navigator,
-                                                     authenticate: AuthAction,
-                                                     getData: DataRetrievalAction,
-                                                     requireData: DataRequiredAction,
-                                                     formProvider: AddCompanyDirectorsFormProvider
-                                                   ) extends FrontendController with I18nSupport with Retrievals {
+class AddCompanyDirectorsController @Inject()(
+                                               appConfig: FrontendAppConfig,
+                                               override val messagesApi: MessagesApi,
+                                               dataCacheConnector: DataCacheConnector,
+                                               @EstablishersCompany navigator: Navigator,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               formProvider: AddCompanyDirectorsFormProvider
+                                             ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 

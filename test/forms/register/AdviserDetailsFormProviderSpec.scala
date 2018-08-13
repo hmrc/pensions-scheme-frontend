@@ -23,7 +23,7 @@ import org.scalatest.OptionValues
 import play.api.data.FormError
 import wolfendale.scalacheck.regexp.RegexpGen
 
-class AdviserDetailsFormProviderSpec extends  StringFieldBehaviours with Constraints with OptionValues with EmailBehaviours with PhoneNumberBehaviours {
+class AdviserDetailsFormProviderSpec extends StringFieldBehaviours with Constraints with OptionValues with EmailBehaviours with PhoneNumberBehaviours {
 
 
   val form = new AdviserDetailsFormProvider()()

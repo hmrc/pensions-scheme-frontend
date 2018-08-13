@@ -16,7 +16,6 @@
 
 package controllers.register
 
-import base.CSRFRequest
 import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._

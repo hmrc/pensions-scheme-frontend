@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import identifiers.UserResearchDetailsId
 import identifiers.register._
-import models.register.{SchemeDetails, SchemeType}
 import models.{CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
@@ -113,7 +112,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
     }
 
   private def benefitsInsurerRoutes(answers: UserAnswers): Option[NavigateTo] = {
-    if(answers.get(InsurerAddressId).nonEmpty) {
+    if (answers.get(InsurerAddressId).nonEmpty) {
       NavigateTo.save(checkYourAnswers)
     } else {
       NavigateTo.save(controllers.register.routes.InsurerPostCodeLookupController.onPageLoad(CheckMode))
@@ -165,7 +164,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
   }
 
   private def checkYourAnswersRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
-      NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
+    NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
 
   }
 

@@ -20,16 +20,16 @@ import com.google.inject.Inject
 import identifiers.TypedIdentifier
 import play.api.libs.json._
 import play.api.mvc.Result
+import play.api.mvc.Results._
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.UserAnswers
-import play.api.mvc.Results._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MongoCacheConnector @Inject() (
-                                      val sessionRepository: SessionRepository
-                                    ) extends DataCacheConnector {
+class MongoCacheConnector @Inject()(
+                                     val sessionRepository: SessionRepository
+                                   ) extends DataCacheConnector {
 
   override def save[A, I <: TypedIdentifier[A]](cacheId: String, id: I, value: A)
                                                (implicit
@@ -54,10 +54,10 @@ class MongoCacheConnector @Inject() (
   }
 
   private def modify(cacheId: String, modification: (UserAnswers) => JsResult[UserAnswers])
-                                             (implicit
-                                              ec: ExecutionContext,
-                                              hc: HeaderCarrier
-                                             ): Future[JsValue] = {
+                    (implicit
+                     ec: ExecutionContext,
+                     hc: HeaderCarrier
+                    ): Future[JsValue] = {
 
     sessionRepository().get(cacheId).flatMap {
       json =>
@@ -82,9 +82,10 @@ class MongoCacheConnector @Inject() (
   override def removeAll(cacheId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Result] = {
     sessionRepository().remove(cacheId).map(_ => Ok)
   }
+
   override def lastUpdated(cacheId: String)(implicit
-                                                                ec: ExecutionContext,
-                                                                hc: HeaderCarrier
+                                            ec: ExecutionContext,
+                                            hc: HeaderCarrier
   ): Future[Option[JsValue]] = {
 
     sessionRepository().getValue(cacheId, "lastUpdated")

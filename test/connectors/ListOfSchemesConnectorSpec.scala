@@ -45,7 +45,7 @@ class ListOfSchemesConnectorSpec extends AsyncFlatSpec with Matchers with WireMo
 
     val connector = injector.instanceOf[ListOfSchemesConnector]
 
-    connector.getListOfSchemes(psaId).map( listOfSchemes =>
+    connector.getListOfSchemes(psaId).map(listOfSchemes =>
       listOfSchemes shouldBe expectedResponse
     )
 
@@ -141,18 +141,18 @@ object ListOfSchemesConnectorSpec extends OptionValues {
   private val validResponse =
     Json.stringify(
       Json.obj(
-          "processingDate" ->  "2001-12-17T09:30:47Z",
-          "totalSchemesRegistered" ->  "1",
-          "schemeDetail" ->  Json.arr(
-            Json.obj(
-              "name" ->  "abcdefghi",
-              "referenceNumber" ->  "S1000000456",
-              "schemeStatus" ->  "Pending",
-              "openDate" ->  "2012-10-10",
-              "pstr" ->  "10000678RE",
-              "relationShip" ->  "Primary PSA"
-            )
+        "processingDate" -> "2001-12-17T09:30:47Z",
+        "totalSchemesRegistered" -> "1",
+        "schemeDetail" -> Json.arr(
+          Json.obj(
+            "name" -> "abcdefghi",
+            "referenceNumber" -> "S1000000456",
+            "schemeStatus" -> "Pending",
+            "openDate" -> "2012-10-10",
+            "pstr" -> "10000678RE",
+            "relationShip" -> "Primary PSA"
           )
+        )
       )
     )
 

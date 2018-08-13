@@ -16,15 +16,14 @@
 
 package controllers.register.establishers.individual
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.UniqueTaxReferenceFormProvider
 import identifiers.register.establishers.individual.UniqueTaxReferenceId
-import models.UniqueTaxReference
-import models.{Index, Mode}
+import javax.inject.Inject
+import models.{Index, Mode, UniqueTaxReference}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}

@@ -24,7 +24,9 @@ sealed trait EstablisherKind
 object EstablisherKind {
 
   case object Company extends WithName("company") with EstablisherKind
+
   case object Indivdual extends WithName("individual") with EstablisherKind
+
   case object Partnership extends WithName("partnership") with EstablisherKind
 
   val values: Seq[EstablisherKind] = Seq(

@@ -16,9 +16,8 @@
 
 package forms.register.establishers.partnership
 
-import javax.inject.Inject
-
 import forms.mappings.UtrMapping
+import javax.inject.Inject
 import models.UniqueTaxReference
 import play.api.data.Form
 
@@ -29,9 +28,9 @@ class PartnershipUniqueTaxReferenceFormProvider @Inject()() extends UtrMapping {
       requiredKey = "messages__error__has_utr_partnership",
       requiredUtrKey = "messages__error__utr",
       requiredReasonKey = "messages__error__utr_no_utr",
-      maxLengthReasonKey="messages__error__no_utr_length",
+      maxLengthReasonKey = "messages__error__no_utr_length",
       invalidUtrKey = "messages__error__utr_invalid",
-      invalidReasonKey="messages__error__utr_invalid"
+      invalidReasonKey = "messages__error__utr_invalid"
     )
   )
 }

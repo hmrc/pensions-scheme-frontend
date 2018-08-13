@@ -16,11 +16,10 @@
 
 package forms.register.establishers.company
 
-import javax.inject.Inject
-
 import forms.mappings.UtrMapping
-import play.api.data.Form
+import javax.inject.Inject
 import models.UniqueTaxReference
+import play.api.data.Form
 
 
 class CompanyUniqueTaxReferenceFormProvider @Inject()() extends UtrMapping {

@@ -33,22 +33,22 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
   import EstablishersCompanyDirectorNavigatorSpec._
 
   private def routes(): TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                              "User Answers", "Next Page (Normal Mode)",          "Save (NM)",  "Next Page (Check Mode)",             "Save (CM)"),
-    (DirectorDetailsId(0, 0),                 emptyAnswers,   directorNino(NormalMode),               true,         Some(checkYourAnswers),                   true),
-    (DirectorNinoId(0, 0),                    emptyAnswers,   directorUtr(NormalMode),                true,         Some(checkYourAnswers),                   true),
-    (DirectorUniqueTaxReferenceId(0, 0),      emptyAnswers,   directorAddressPostcode(NormalMode),    true,         Some(checkYourAnswers),                   true),
-    (DirectorAddressPostcodeLookupId(0, 0),   emptyAnswers,   directorAddressList(NormalMode),        true,         Some(directorAddressList(CheckMode)),     true),
-    (DirectorAddressListId(0, 0),             emptyAnswers,   directorAddress(NormalMode),            true,         Some(directorAddress(CheckMode)),         true),
-    (DirectorAddressId(0, 0),                 emptyAnswers,   directorAddressYears(NormalMode),       true,         Some(checkYourAnswers),                   true),
-    (DirectorAddressYearsId(0, 0),            addressYearsOverAYear,   directorContactDetails(NormalMode),true,     Some(checkYourAnswers),                   true),
-    (DirectorAddressYearsId(0, 0),            addressYearsUnderAYear,   directorPreviousAddPostcode(NormalMode),true,Some(directorPreviousAddPostcode(CheckMode)),  true),
-    (DirectorAddressYearsId(0, 0),            emptyAnswers,   sessionExpired,                         false,        Some(sessionExpired),                     false),
-    (DirectorPreviousAddressPostcodeLookupId(0, 0), emptyAnswers,   directorPreviousAddList(NormalMode),true,       Some(directorPreviousAddList(CheckMode)),       true),
-    (DirectorPreviousAddressListId(0, 0),     emptyAnswers,   directorPreviousAddress(NormalMode),    true,         Some(directorPreviousAddress(CheckMode)),       true),
-    (DirectorPreviousAddressId(0, 0),         emptyAnswers,   directorContactDetails(NormalMode),     true,         Some(checkYourAnswers),                   true),
-    (DirectorContactDetailsId(0, 0),          emptyAnswers,   checkYourAnswers,                       true,         Some(checkYourAnswers),                   true),
-    (ConfirmDeleteDirectorId(0),           emptyAnswers,   addCompanyDirectors(NormalMode),        false,        None,                                     false),
-    (CheckYourAnswersId(0, 0),           emptyAnswers,   addCompanyDirectors(NormalMode),        true,        None,                                     true)
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (DirectorDetailsId(0, 0), emptyAnswers, directorNino(NormalMode), true, Some(checkYourAnswers), true),
+    (DirectorNinoId(0, 0), emptyAnswers, directorUtr(NormalMode), true, Some(checkYourAnswers), true),
+    (DirectorUniqueTaxReferenceId(0, 0), emptyAnswers, directorAddressPostcode(NormalMode), true, Some(checkYourAnswers), true),
+    (DirectorAddressPostcodeLookupId(0, 0), emptyAnswers, directorAddressList(NormalMode), true, Some(directorAddressList(CheckMode)), true),
+    (DirectorAddressListId(0, 0), emptyAnswers, directorAddress(NormalMode), true, Some(directorAddress(CheckMode)), true),
+    (DirectorAddressId(0, 0), emptyAnswers, directorAddressYears(NormalMode), true, Some(checkYourAnswers), true),
+    (DirectorAddressYearsId(0, 0), addressYearsOverAYear, directorContactDetails(NormalMode), true, Some(checkYourAnswers), true),
+    (DirectorAddressYearsId(0, 0), addressYearsUnderAYear, directorPreviousAddPostcode(NormalMode), true, Some(directorPreviousAddPostcode(CheckMode)), true),
+    (DirectorAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
+    (DirectorPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, directorPreviousAddList(NormalMode), true, Some(directorPreviousAddList(CheckMode)), true),
+    (DirectorPreviousAddressListId(0, 0), emptyAnswers, directorPreviousAddress(NormalMode), true, Some(directorPreviousAddress(CheckMode)), true),
+    (DirectorPreviousAddressId(0, 0), emptyAnswers, directorContactDetails(NormalMode), true, Some(checkYourAnswers), true),
+    (DirectorContactDetailsId(0, 0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
+    (ConfirmDeleteDirectorId(0), emptyAnswers, addCompanyDirectors(NormalMode), false, None, false),
+    (CheckYourAnswersId(0, 0), emptyAnswers, addCompanyDirectors(NormalMode), true, None, true)
   )
 
   navigator.getClass.getSimpleName must {
@@ -59,7 +59,7 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
 
 }
 
-object EstablishersCompanyDirectorNavigatorSpec extends OptionValues{
+object EstablishersCompanyDirectorNavigatorSpec extends OptionValues {
 
   private val navigator = new EstablishersCompanyDirectorNavigator(FakeDataCacheConnector)
   private val emptyAnswers = UserAnswers(Json.obj())
@@ -67,18 +67,31 @@ object EstablishersCompanyDirectorNavigatorSpec extends OptionValues{
   val directorIndex = Index(0)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+
   private def directorDetails(mode: Mode) = routes.DirectorDetailsController.onPageLoad(mode, directorIndex, establisherIndex)
+
   private def directorNino(mode: Mode) = routes.DirectorNinoController.onPageLoad(mode, directorIndex, establisherIndex)
+
   private def directorUtr(mode: Mode) = routes.DirectorUniqueTaxReferenceController.onPageLoad(mode, directorIndex, establisherIndex)
+
   private def directorContactDetails(mode: Mode) = routes.DirectorContactDetailsController.onPageLoad(mode, directorIndex, establisherIndex)
+
   private def directorAddressPostcode(mode: Mode) = routes.DirectorAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex)
+
   private def directorAddressList(mode: Mode) = routes.DirectorAddressListController.onPageLoad(mode, directorIndex, establisherIndex)
+
   private def directorAddress(mode: Mode) = routes.DirectorAddressController.onPageLoad(mode, directorIndex, establisherIndex)
+
   private def directorAddressYears(mode: Mode) = routes.DirectorAddressYearsController.onPageLoad(mode, directorIndex, establisherIndex)
+
   private def directorPreviousAddPostcode(mode: Mode) = routes.DirectorPreviousAddressPostcodeLookupController.onPageLoad(mode, directorIndex, establisherIndex)
+
   private def directorPreviousAddList(mode: Mode) = routes.DirectorPreviousAddressListController.onPageLoad(mode, directorIndex, establisherIndex)
+
   private def directorPreviousAddress(mode: Mode) = routes.DirectorPreviousAddressController.onPageLoad(mode, directorIndex, establisherIndex)
+
   private def checkYourAnswers = routes.CheckYourAnswersController.onPageLoad(directorIndex, establisherIndex)
+
   private def addCompanyDirectors(mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(
     mode, establisherIndex)
 

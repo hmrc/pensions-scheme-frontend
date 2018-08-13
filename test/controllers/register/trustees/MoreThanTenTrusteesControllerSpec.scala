@@ -39,9 +39,9 @@ class MoreThanTenTrusteesControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val schemeName = "Test Scheme Name"
   val validData: JsObject = Json.obj(
-      SchemeDetailsId.toString ->
-        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-        MoreThanTenTrusteesId.toString -> false
+    SchemeDetailsId.toString ->
+      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    MoreThanTenTrusteesId.toString -> false
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): MoreThanTenTrusteesController =

@@ -98,31 +98,31 @@ class NameMatchingSpec extends WordSpecLike with MustMatchers with OptionValues 
       "second value is the longest" in {
         val nameMatching = NameMatching("AIROOAUTOMOTIVEUK", "AIROOAUTOMOTIVEUKGROUPLIFESCHEME")
 
-        nameMatching.entireWordmatchPercentage(nameMatching.name1,nameMatching.name2) mustEqual 53
+        nameMatching.entireWordmatchPercentage(nameMatching.name1, nameMatching.name2) mustEqual 53
       }
 
       "second value is the longest and none of the words match" in {
         val nameMatching = NameMatching("TTTTTTTT", "AAAAAAAAAAAAAAAAA")
 
-        nameMatching.entireWordmatchPercentage(nameMatching.name1,nameMatching.name2) mustEqual 0
+        nameMatching.entireWordmatchPercentage(nameMatching.name1, nameMatching.name2) mustEqual 0
       }
 
       "first value is the longest" in {
         val nameMatching = NameMatching("AIROOAUTOMOTIVEUKGROUPLIFESCHEME", "AIROOAUTOMOTIVEUK")
 
-        nameMatching.entireWordmatchPercentage(nameMatching.name1,nameMatching.name2) mustEqual 53
+        nameMatching.entireWordmatchPercentage(nameMatching.name1, nameMatching.name2) mustEqual 53
       }
 
       "both values have the same length" in {
         val nameMatching = NameMatching("AIROOAUTOMOTIVEUKGROUPLIFESCHEME", "AIROOAUTOMOTIVEUKGROUPLIFESCHEME")
 
-        nameMatching.entireWordmatchPercentage(nameMatching.name1,nameMatching.name2) mustEqual 100
+        nameMatching.entireWordmatchPercentage(nameMatching.name1, nameMatching.name2) mustEqual 100
       }
 
       "one of the values is empty" in {
         val nameMatching = NameMatching("", "TEST")
 
-        nameMatching.entireWordmatchPercentage(nameMatching.name1,nameMatching.name2) mustEqual 0
+        nameMatching.entireWordmatchPercentage(nameMatching.name1, nameMatching.name2) mustEqual 0
       }
     }
   }

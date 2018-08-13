@@ -16,13 +16,13 @@
 
 package controllers.register
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
 import identifiers.register.{InsurerPostCodeLookupId, SchemeDetailsId}
+import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
@@ -52,19 +52,19 @@ class InsurerPostCodeLookupController @Inject()(val appConfig: FrontendAppConfig
   }
 
   def viewModel(mode: Mode): Retrieval[PostcodeLookupViewModel] =
-  Retrieval {
-    implicit request =>
-    SchemeDetailsId.retrieve.right.map{ schemeDetails =>
-      PostcodeLookupViewModel(
-        postCall(mode),
-        manualCall(mode),
-        Messages("messages__benefits_insurance_addr__title"),
-        "messages__benefits_insurance_addr__title",
-        Some(schemeDetails.schemeName),
-        None
-      )
+    Retrieval {
+      implicit request =>
+        SchemeDetailsId.retrieve.right.map { schemeDetails =>
+          PostcodeLookupViewModel(
+            postCall(mode),
+            manualCall(mode),
+            Messages("messages__benefits_insurance_addr__title"),
+            "messages__benefits_insurance_addr__title",
+            Some(schemeDetails.schemeName),
+            None
+          )
+        }
     }
-  }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
@@ -73,7 +73,7 @@ class InsurerPostCodeLookupController @Inject()(val appConfig: FrontendAppConfig
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      viewModel(mode).retrieve.right.map{ vm =>
+      viewModel(mode).retrieve.right.map { vm =>
         post(InsurerPostCodeLookupId, vm, mode)
       }
   }

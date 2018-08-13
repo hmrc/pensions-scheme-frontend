@@ -35,21 +35,21 @@ import views.html.register.declarationDormant
 import scala.concurrent.Future
 
 class DeclarationDormantController @Inject()(
-                                       appConfig: FrontendAppConfig,
-                                       override val messagesApi: MessagesApi,
-                                       dataCacheConnector: DataCacheConnector,
-                                       @Register navigator: Navigator,
-                                       authenticate: AuthAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: DeclarationDormantFormProvider
-                                     ) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
+                                              appConfig: FrontendAppConfig,
+                                              override val messagesApi: MessagesApi,
+                                              dataCacheConnector: DataCacheConnector,
+                                              @Register navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction,
+                                              formProvider: DeclarationDormantFormProvider
+                                            ) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
 
   private val form = formProvider()
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map{ schemeDetails =>
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
         val preparedForm = request.userAnswers.get(DeclarationDormantId) match {
           case None => form
           case Some(value) => form.fill(value)

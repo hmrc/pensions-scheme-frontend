@@ -43,7 +43,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyUniqueTaxReferenceFormProvider
-                                                  ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                   ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
@@ -51,13 +51,13 @@ class CompanyUniqueTaxReferenceController @Inject()(
     implicit request =>
       retrieveCompanyName(index) {
         companyName =>
-        val redirectResult = request.userAnswers.get(CompanyUniqueTaxReferenceId(index)) match {
-          case None =>
-            Ok(companyUniqueTaxReference(appConfig, form, mode, index, companyName))
-          case Some(value) =>
-            Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, companyName))
-        }
-        Future.successful(redirectResult)
+          val redirectResult = request.userAnswers.get(CompanyUniqueTaxReferenceId(index)) match {
+            case None =>
+              Ok(companyUniqueTaxReference(appConfig, form, mode, index, companyName))
+            case Some(value) =>
+              Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, companyName))
+          }
+          Future.successful(redirectResult)
       }
   }
 

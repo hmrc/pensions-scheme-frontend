@@ -16,13 +16,13 @@
 
 package views
 
+import base.SpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.twirl.api.{Html, HtmlFormat}
-import base.SpecBase
 import org.jsoup.select.Elements
 import org.scalatest.Assertion
 import org.scalatest.matchers.{MatchResult, Matcher}
+import play.twirl.api.{Html, HtmlFormat}
 
 trait ViewSpecBase extends SpecBase {
 
@@ -40,8 +40,8 @@ trait ViewSpecBase extends SpecBase {
 
   def haveDynamicText(messageKey: String, args: Any*): Matcher[Document] = Matcher[Document] {
     document =>
-      val text = messages(messageKey, args:_*)
-       MatchResult(
+      val text = messages(messageKey, args: _*)
+      MatchResult(
         document.toString.contains(text),
         s"text $text is not rendered on the page",
         s"text $text is rendered on the page"
@@ -54,7 +54,7 @@ trait ViewSpecBase extends SpecBase {
       val label = labels.first.text
       val value = document.getElementById(forElement).attr("value")
       MatchResult(
-        label == expectedLabel &&  value == expectedValue,
+        label == expectedLabel && value == expectedValue,
         s"text box with label: $label and value : $value is not correct",
         s"text box has correct label: $label and correct value: $value"
       )
@@ -97,10 +97,10 @@ trait ViewSpecBase extends SpecBase {
   def assertEqualsMessage(doc: Document, cssSelector: String, expectedMessageKey: String): Assertion =
     assertEqualsValue(doc, cssSelector, messages(expectedMessageKey))
 
-  def assertEqualsValue(doc : Document, cssSelector : String, expectedValue: String): Assertion = {
+  def assertEqualsValue(doc: Document, cssSelector: String, expectedValue: String): Assertion = {
     val elements = doc.select(cssSelector)
 
-    if(elements.isEmpty) throw new IllegalArgumentException(s"CSS Selector $cssSelector wasn't rendered.")
+    if (elements.isEmpty) throw new IllegalArgumentException(s"CSS Selector $cssSelector wasn't rendered.")
 
     //<p> HTML elements are rendered out with a carriage return on some pages, so discount for comparison
     assert(elements.first().html().replace("\n", "") == expectedValue)
@@ -112,7 +112,7 @@ trait ViewSpecBase extends SpecBase {
     headers.first.text.replaceAll("\u00a0", " ") mustBe expectedMessage.replaceAll("&nbsp;", " ")
   }
 
-  def assertContainsText(doc:Document, text: String): Assertion = assert(doc.toString.contains(text), "\n\ntext " + text + " was not rendered on the page.\n")
+  def assertContainsText(doc: Document, text: String): Assertion = assert(doc.toString.contains(text), "\n\ntext " + text + " was not rendered on the page.\n")
 
   def assertContainsMessages(doc: Document, expectedMessageKeys: String*): Unit = {
     for (key <- expectedMessageKeys) assertContainsText(doc, messages(key))
@@ -222,7 +222,7 @@ trait ViewSpecBase extends SpecBase {
 
   def haveClassWithSize(className: String, size: Int, id: String = ""): Matcher[View] = Matcher[View] {
     view =>
-      val list = if(id.isEmpty) {
+      val list = if (id.isEmpty) {
         Jsoup.parse(view().toString()).getElementsByClass(className)
       } else {
         val idEls = Jsoup.parse(view().toString()).getElementById(id)

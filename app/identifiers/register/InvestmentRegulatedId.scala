@@ -15,6 +15,7 @@
  */
 
 package identifiers.register
+
 import identifiers._
 
 case object InvestmentRegulatedId extends TypedIdentifier[Boolean] {

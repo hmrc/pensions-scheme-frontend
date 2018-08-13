@@ -65,7 +65,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
     "redirect to next page" when {
       "POST is called" in {
-        val result=controller().onSubmit(index)(fakeRequest)
+        val result = controller().onSubmit(index)(fakeRequest)
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
       }
@@ -127,8 +127,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     val companyDetailsSection = AnswerSection(
       Some("messages__checkYourAnswers__section__company_details"),
       CompanyDetailsId(index).row(companyDetailsRoute) ++
-      crnRows ++
-      utrRows
+        crnRows ++
+        utrRows
     )
 
     val addressYearsRows = AddressYearsCYA[CompanyAddressYearsId]("messages__checkYourAnswers__trustees__company__address_years")()
@@ -137,8 +137,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     val contactDetailsSection = AnswerSection(
       Some("messages__checkYourAnswers__section__contact_details"),
       CompanyAddressId(index).row(companyAddressRoute) ++
-      addressYearsRows ++
-      CompanyPreviousAddressId(index).row(companyPreviousAddressRoute)
+        addressYearsRows ++
+        CompanyPreviousAddressId(index).row(companyPreviousAddressRoute)
     )
 
     Seq(

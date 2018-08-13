@@ -17,8 +17,6 @@
 package identifiers.register.trustees.individual
 
 import identifiers.Identifier
-import identifiers.register.trustees.TrusteesId
-import play.api.libs.json.JsPath
 
 case object CheckYourAnswersId extends Identifier {
   override def toString: String = "checkYourAnswers"

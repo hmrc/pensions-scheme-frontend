@@ -16,20 +16,20 @@
 
 package controllers.register.establishers.company
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
 import identifiers.register.establishers.company.CompanyRegistrationNumberId
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.EstablishersCompany
 import utils._
+import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.companyRegistrationNumber
 
 import scala.concurrent.Future

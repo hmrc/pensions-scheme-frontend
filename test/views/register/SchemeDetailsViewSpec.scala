@@ -16,12 +16,12 @@
 
 package views.register
 
-import play.api.data.Form
 import controllers.register.routes
 import forms.register.SchemeDetailsFormProvider
 import models.NormalMode
 import models.register.SchemeType.MasterTrust
 import models.register.{SchemeDetails, SchemeType}
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.schemeDetails

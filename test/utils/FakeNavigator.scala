@@ -34,7 +34,7 @@ class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigat
   override protected def dataCacheConnector: DataCacheConnector = FakeDataCacheConnector
 
   override def nextPage(id: Identifier, mode: Mode, answers: UserAnswers)
-    (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
+                       (implicit ex: IdentifiedRequest, ec: ExecutionContext, hc: HeaderCarrier): Call = {
     userAnswers = Some(answers)
     desiredRoute
   }

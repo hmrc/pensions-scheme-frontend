@@ -16,9 +16,8 @@
 
 package forms.register
 
-import javax.inject.Inject
-
 import forms.mappings.{Constraints, SchemeTypeMapping}
+import javax.inject.Inject
 import models.register.SchemeDetails
 import play.api.data.Form
 import play.api.data.Forms._

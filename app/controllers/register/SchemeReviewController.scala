@@ -23,7 +23,6 @@ import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.{SchemeDetailsId, SchemeReviewId}
 import javax.inject.Inject
-import models.register.{SchemeDetails, SchemeType}
 import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}

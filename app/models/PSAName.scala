@@ -20,6 +20,6 @@ import play.api.libs.json.Json
 
 case class PSAName(psaName: String, psaEmail: Option[String] = None)
 
-object PSAName{
+object PSAName {
   implicit val format = Json.format[PSAName]
 }

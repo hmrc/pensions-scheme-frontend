@@ -21,9 +21,8 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
 import identifiers.register.SchemeDetailsId
-import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.TrusteesId
-import identifiers.register.trustees.company.CompanyRegistrationNumberId
+import identifiers.register.trustees.company.{CompanyDetailsId, CompanyRegistrationNumberId}
 import models.register.{SchemeDetails, SchemeType}
 import models.{CompanyDetails, CompanyRegistrationNumber, Index, NormalMode}
 import play.api.data.Form
@@ -56,16 +55,16 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
   )
 
   val validData: JsObject = Json.obj(
-      SchemeDetailsId.toString ->
-        SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
-      TrusteesId.toString -> Json.arr(
-        Json.obj(
-          CompanyDetailsId.toString ->
-            CompanyDetails("Test company name", Some("123456"), Some("abcd")),
-          CompanyRegistrationNumberId.toString ->
-            CompanyRegistrationNumber.Yes("1234567")
-        )
+    SchemeDetailsId.toString ->
+      SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+    TrusteesId.toString -> Json.arr(
+      Json.obj(
+        CompanyDetailsId.toString ->
+          CompanyDetails("Test company name", Some("123456"), Some("abcd")),
+        CompanyRegistrationNumberId.toString ->
+          CompanyRegistrationNumber.Yes("1234567")
       )
+    )
   )
 
   def controller(dataRetrievalAction: DataRetrievalAction = getCompanyDetails): CompanyRegistrationNumberController =
@@ -107,7 +106,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber.hasCrn","true"),("companyRegistrationNumber.crn","1234567"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber.hasCrn", "true"), ("companyRegistrationNumber.crn", "1234567"))
 
       val result = controller().onSubmit(NormalMode, index)(postRequest)
 

@@ -19,7 +19,7 @@ package viewmodels
 import play.api.mvc.Call
 
 case class AlreadyDeletedViewModel(
-                                  title: Message,
-                                  deletedEntity: String,
-                                  returnCall: Call
+                                    title: Message,
+                                    deletedEntity: String,
+                                    returnCall: Call
                                   )

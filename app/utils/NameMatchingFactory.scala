@@ -16,9 +16,8 @@
 
 package utils
 
-import javax.inject.Inject
-
 import connectors.DataCacheConnector
+import javax.inject.Inject
 import models.PSAName
 import models.requests.OptionalDataRequest
 import play.api.libs.json.{JsValue, Reads}
@@ -29,8 +28,8 @@ import utils.annotations.PSANameCache
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactory @Inject()(
-                                   @PSANameCache val pSANameCacheConnector: DataCacheConnector
-                                   ){
+                                     @PSANameCache val pSANameCacheConnector: DataCacheConnector
+                                   ) {
   private def retrievePSAName(implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
     pSANameCacheConnector.fetch(request.externalId)
 

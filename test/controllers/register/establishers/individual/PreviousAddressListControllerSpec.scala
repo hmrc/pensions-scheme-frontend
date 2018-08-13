@@ -52,17 +52,17 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
     address("test post code 2")
   )
 
-   def controller(
-                   dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
-                   dataCacheConnector: DataCacheConnector = FakeDataCacheConnector
-                 ): PreviousAddressListController =
-        new PreviousAddressListController(
-          frontendAppConfig, messagesApi,
-          dataCacheConnector,
-          new FakeNavigator(desiredRoute = onwardRoute),
-          FakeAuthAction,
-          dataRetrievalAction,
-          new DataRequiredActionImpl)
+  def controller(
+                  dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
+                  dataCacheConnector: DataCacheConnector = FakeDataCacheConnector
+                ): PreviousAddressListController =
+    new PreviousAddressListController(
+      frontendAppConfig, messagesApi,
+      dataCacheConnector,
+      new FakeNavigator(desiredRoute = onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl)
 
   def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = previousAddresses): String =
     addressList(

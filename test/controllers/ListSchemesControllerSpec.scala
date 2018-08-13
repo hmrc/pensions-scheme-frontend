@@ -61,7 +61,7 @@ object ListSchemesControllerSpec {
   val psaIdNoSchemes: String = "A0000001"
   val psaIdWithSchemes: String = "A0000002"
 
-  val emptySchemes: List[SchemeDetail] =List.empty[SchemeDetail]
+  val emptySchemes: List[SchemeDetail] = List.empty[SchemeDetail]
   val fullSchemes: List[SchemeDetail] =
     List(
       SchemeDetail(
@@ -113,7 +113,7 @@ object ListSchemesControllerSpec {
               )
             )
           case _ =>
-              Future.failed(new Exception(s"No stubbed response in ListOfSchemesConnector for PSA Id $psaId"))
+            Future.failed(new Exception(s"No stubbed response in ListOfSchemesConnector for PSA Id $psaId"))
         }
       }
     }

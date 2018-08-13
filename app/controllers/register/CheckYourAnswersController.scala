@@ -24,8 +24,8 @@ import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.checkyouranswers.Ops._
 import utils.annotations.Register
+import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Enumerable, Navigator}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
@@ -43,7 +43,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val schemeDetailsSection = AnswerSection(
         Some("messages__scheme_details__title"),
-          SchemeDetailsId.row(routes.SchemeDetailsController.onPageLoad(CheckMode).url) ++
+        SchemeDetailsId.row(routes.SchemeDetailsController.onPageLoad(CheckMode).url) ++
           SchemeEstablishedCountryId.row(routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url) ++
           MembershipId.row(routes.MembershipController.onPageLoad(CheckMode).url) ++
           MembershipFutureId.row(routes.MembershipFutureController.onPageLoad(CheckMode).url) ++
@@ -53,7 +53,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val schemeBenefitsSection = AnswerSection(
         Some("messages__scheme_benefits_section"),
-          BenefitsId.row(routes.BenefitsController.onPageLoad(CheckMode).url) ++
+        BenefitsId.row(routes.BenefitsController.onPageLoad(CheckMode).url) ++
           SecuredBenefitsId.row(routes.SecuredBenefitsController.onPageLoad(CheckMode).url) ++
           BenefitsInsurerId.row(routes.BenefitsInsurerController.onPageLoad(CheckMode).url) ++
           InsurerAddressId.row(routes.InsurerAddressController.onPageLoad(CheckMode).url)
@@ -61,7 +61,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val bankAccountSection = AnswerSection(
         Some("messages__uk_bank_account_details__title"),
-          UKBankAccountId.row(routes.UKBankAccountController.onPageLoad(CheckMode).url) ++
+        UKBankAccountId.row(routes.UKBankAccountController.onPageLoad(CheckMode).url) ++
           UKBankDetailsId.row(routes.UKBankDetailsController.onPageLoad(CheckMode).url)
       )
 

@@ -16,11 +16,11 @@
 
 package views.register.establishers.company
 
-import play.api.data.Form
 import controllers.register.establishers.company.routes
 import forms.address.PostCodeLookupFormProvider
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.StringViewBehaviours
 import views.html.register.establishers.company.companyPostCodeLookup

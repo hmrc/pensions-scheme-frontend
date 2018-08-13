@@ -20,7 +20,6 @@ import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import identifiers.TypedIdentifier
-import models.register.{DirectorEntity, Entity}
 import models.requests.DataRequest
 import play.api.libs.json.JsResultException
 import play.api.mvc.AnyContent
@@ -38,7 +37,7 @@ trait SectionComplete {
 class SectionCompleteImpl @Inject()(dataCacheConnector: DataCacheConnector, appConfig: FrontendAppConfig) extends SectionComplete {
 
   override def setCompleteFlag(id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
-                          (implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers] = {
+                              (implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers] = {
 
     userAnswers.set(id)(value).fold(
       invalid => Future.failed(JsResultException(invalid)),

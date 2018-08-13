@@ -16,8 +16,8 @@
 
 package models
 
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 case class CompanyDetails(companyName: String, vatNumber: Option[String], payeNumber: Option[String], isDeleted: Boolean = false)
 

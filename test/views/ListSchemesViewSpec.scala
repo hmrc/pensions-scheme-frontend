@@ -24,7 +24,7 @@ import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.list_schemes
 
-class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours{
+class ListSchemesViewSpec extends ViewSpecBase with ViewBehaviours {
 
   import ListSchemesViewSpec._
 

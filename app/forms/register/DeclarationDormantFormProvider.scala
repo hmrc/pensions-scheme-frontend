@@ -16,10 +16,10 @@
 
 package forms.register
 
-import javax.inject.Inject
 import forms.mappings.Mappings
-import play.api.data.Form
+import javax.inject.Inject
 import models.register.DeclarationDormant
+import play.api.data.Form
 
 class DeclarationDormantFormProvider @Inject() extends Mappings {
 

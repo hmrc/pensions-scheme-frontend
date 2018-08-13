@@ -25,7 +25,7 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.UserAnswers
 
-class PartnerDetailsIdSpec extends WordSpec with MustMatchers with OptionValues{
+class PartnerDetailsIdSpec extends WordSpec with MustMatchers with OptionValues {
   val userAnswersWithTenPartners = UserAnswers(Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
@@ -64,7 +64,7 @@ class PartnerDetailsIdSpec extends WordSpec with MustMatchers with OptionValues{
 
         val result: UserAnswers = userAnswersWithOnePartner
           .set(OtherPartnersId(0))(true).asOpt.value
-          .remove(PartnerDetailsId(0,0)).asOpt.value
+          .remove(PartnerDetailsId(0, 0)).asOpt.value
 
         result.get(OtherPartnersId(0)) must not be defined
 
@@ -74,7 +74,7 @@ class PartnerDetailsIdSpec extends WordSpec with MustMatchers with OptionValues{
 
         val result: UserAnswers = userAnswersWithTenPartners
           .set(OtherPartnersId(0))(true).asOpt.value
-          .remove(PartnerDetailsId(0,0)).asOpt.value
+          .remove(PartnerDetailsId(0, 0)).asOpt.value
 
         result.get(OtherPartnersId(0)) must not be defined
 

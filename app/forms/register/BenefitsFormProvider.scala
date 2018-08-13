@@ -16,9 +16,8 @@
 
 package forms.register
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
+import javax.inject.Inject
 import models.register.Benefits
 import play.api.data.Form
 

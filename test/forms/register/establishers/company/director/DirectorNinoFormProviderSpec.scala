@@ -30,15 +30,15 @@ class DirectorNinoFormProviderSpec extends NinoBehaviours {
   val invalidReasonKey = "messages__error__no_nino_invalid"
   val testForm = new DirectorNinoFormProvider().apply()
 
-    "DirectorNinoFormProviderSpec" should {
+  "DirectorNinoFormProviderSpec" should {
 
-      behave like formWithNino(testForm,
+    behave like formWithNino(testForm,
       requiredKey,
       requiredNinoKey,
       requiredReasonKey,
       reasonLengthKey,
       invalidNinoKey,
       invalidReasonKey
-      )
-    }
+    )
+  }
 }

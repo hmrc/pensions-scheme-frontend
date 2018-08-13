@@ -22,8 +22,8 @@ import controllers.actions._
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyUniqueTaxReferenceId}
-import models.{UniqueTaxReference, _}
 import models.register.{SchemeDetails, SchemeType}
+import models.{UniqueTaxReference, _}
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call

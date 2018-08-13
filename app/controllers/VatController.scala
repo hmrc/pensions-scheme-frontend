@@ -19,8 +19,8 @@ package controllers
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import identifiers.TypedIdentifier
-import models.{Mode, Vat}
 import models.requests.DataRequest
+import models.{Mode, Vat}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
@@ -49,12 +49,12 @@ trait VatController extends FrontendController with Retrievals with I18nSupport 
 
   def post(id: TypedIdentifier[Vat], mode: Mode, form: Form[Vat], viewmodel: VatViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(vat(appConfig, formWithErrors, viewmodel))),
-        value =>
-          cacheConnector.save(request.externalId, id, value).map(cacheMap =>
-            Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap))))
-      )
+    form.bindFromRequest().fold(
+      (formWithErrors: Form[_]) =>
+        Future.successful(BadRequest(vat(appConfig, formWithErrors, viewmodel))),
+      value =>
+        cacheConnector.save(request.externalId, id, value).map(cacheMap =>
+          Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap))))
+    )
   }
 }

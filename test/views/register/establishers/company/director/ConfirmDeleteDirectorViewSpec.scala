@@ -16,8 +16,8 @@
 
 package views.register.establishers.company.director
 
-import controllers.register.establishers.company.routes.AddCompanyDirectorsController
 import controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController
+import controllers.register.establishers.company.routes.AddCompanyDirectorsController
 import models.NormalMode
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.director.confirmDeleteDirector

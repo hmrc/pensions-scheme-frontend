@@ -16,12 +16,11 @@
 
 package views.register.establishers.company.director
 
-import play.api.data.Form
-import controllers.register.establishers.company.director.routes
 import forms.register.establishers.company.director.DirectorNinoFormProvider
-import views.behaviours.ViewBehaviours
 import models.{Index, NormalMode}
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.director.directorNino
 
 class DirectorNinoViewSpec extends ViewBehaviours {
@@ -33,7 +32,7 @@ class DirectorNinoViewSpec extends ViewBehaviours {
   val form = new DirectorNinoFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () => directorNino(frontendAppConfig, form, NormalMode, establisherIndex,
-    directorIndex,directorName)(fakeRequest, messages)
+    directorIndex, directorName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorNino(frontendAppConfig, form, NormalMode,
     establisherIndex, directorIndex, directorName)(fakeRequest, messages)

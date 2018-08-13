@@ -21,9 +21,9 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.{CompanyDetails, PartnershipDetails}
 import models.register.{SchemeDetails, SchemeType}
 import models.requests.DataRequest
+import models.{CompanyDetails, PartnershipDetails}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsValue, Json}

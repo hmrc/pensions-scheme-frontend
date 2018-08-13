@@ -16,9 +16,8 @@
 
 package forms.register.establishers
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
+import javax.inject.Inject
 import models.register.establishers.EstablisherKind
 import play.api.data.Form
 

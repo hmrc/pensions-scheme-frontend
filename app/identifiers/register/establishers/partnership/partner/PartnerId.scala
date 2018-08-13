@@ -20,7 +20,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import play.api.libs.json.JsPath
 
-case class PartnerId(establisherIndex:Int, partnerIndex:Int) extends TypedIdentifier[Nothing] {
+case class PartnerId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Nothing] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ PartnerId.toString \ partnerIndex
 }
 

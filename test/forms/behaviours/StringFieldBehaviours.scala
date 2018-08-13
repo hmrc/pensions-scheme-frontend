@@ -21,10 +21,10 @@ import wolfendale.scalacheck.regexp.RegexpGen
 
 trait StringFieldBehaviours extends FieldBehaviours {
 
-    def fieldWithMaxLength(form: Form[_],
-                           fieldName: String,
-                           maxLength: Int,
-                           lengthError: FormError): Unit = {
+  def fieldWithMaxLength(form: Form[_],
+                         fieldName: String,
+                         maxLength: Int,
+                         lengthError: FormError): Unit = {
 
     s"not bind strings longer than $maxLength characters" in {
 
@@ -48,10 +48,10 @@ trait StringFieldBehaviours extends FieldBehaviours {
   }
 
   def fieldWithTransform[A, B](form: Form[A],
-                            transformName: String,
-                            data: Map[String, String],
-                            expected: B,
-                            actual: A => B): Unit = {
+                               transformName: String,
+                               data: Map[String, String],
+                               expected: B,
+                               actual: A => B): Unit = {
     s"apply field transform $transformName" in {
       val result = form.bind(data)
       result.errors.size shouldBe 0

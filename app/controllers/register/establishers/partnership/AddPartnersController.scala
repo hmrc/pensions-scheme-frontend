@@ -37,17 +37,18 @@ import views.html.register.addPartners
 import scala.concurrent.Future
 
 class AddPartnersController @Inject()(
-                                                     appConfig: FrontendAppConfig,
-                                                     override val messagesApi: MessagesApi,
-                                                     dataCacheConnector: DataCacheConnector,
-                                                     @EstablishersPartner navigator: Navigator,
-                                                     authenticate: AuthAction,
-                                                     getData: DataRetrievalAction,
-                                                     requireData: DataRequiredAction,
-                                                     formProvider: AddPartnersFormProvider
-                                                   ) extends FrontendController with I18nSupport with Retrievals {
+                                       appConfig: FrontendAppConfig,
+                                       override val messagesApi: MessagesApi,
+                                       dataCacheConnector: DataCacheConnector,
+                                       @EstablishersPartner navigator: Navigator,
+                                       authenticate: AuthAction,
+                                       getData: DataRetrievalAction,
+                                       requireData: DataRequiredAction,
+                                       formProvider: AddPartnersFormProvider
+                                     ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
+
   private def postUrl(index: Int): Call = routes.AddPartnersController.onSubmit(index)
 
   def onPageLoad(index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {

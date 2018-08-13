@@ -63,6 +63,6 @@ class CompanyPreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
     behave like pageWithTextFields(
       createViewUsingForm,
       messageKeyPrefix,
-      controllers.register.establishers.company.routes.CompanyPreviousAddressController.onSubmit(NormalMode, index).url,  "addressLine1", "addressLine2", "addressLine3", "addressLine4")
+      controllers.register.establishers.company.routes.CompanyPreviousAddressController.onSubmit(NormalMode, index).url, "addressLine1", "addressLine2", "addressLine3", "addressLine4")
   }
 }

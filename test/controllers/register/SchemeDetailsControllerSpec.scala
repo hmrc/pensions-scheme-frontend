@@ -43,9 +43,9 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
 
   object FakeNameMatchingFactory extends NameMatchingFactory(FakeDataCacheConnector) {
     override def nameMatching(schemeName: String)
-                    (implicit request: OptionalDataRequest[AnyContent],
-                     ec: ExecutionContext,
-                     hc: HeaderCarrier, r: Reads[PSAName]): Future[Option[NameMatching]] = {
+                             (implicit request: OptionalDataRequest[AnyContent],
+                              ec: ExecutionContext,
+                              hc: HeaderCarrier, r: Reads[PSAName]): Future[Option[NameMatching]] = {
       Future.successful(Some(NameMatching("value 1", "My PSA")))
     }
   }

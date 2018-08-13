@@ -16,15 +16,14 @@
 
 package controllers.register.establishers.individual
 
-import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.ControllerSpecBase
+import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.register.establishers.IsEstablisherCompleteId
 import models.{CheckMode, Index}
 import org.joda.time.LocalDate
-import play.api.test.Helpers.{contentAsString, redirectLocation, status}
+import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import utils._
 import viewmodels.{AnswerRow, AnswerSection}
-import play.api.test.Helpers._
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
@@ -46,7 +45,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       "messages__establisher_individual_dob_cya_label",
       Seq(DateHelper.formatDate(LocalDate.now)),
       answerIsMessageKey = false,
-      routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url    )
+      routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
   )
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()

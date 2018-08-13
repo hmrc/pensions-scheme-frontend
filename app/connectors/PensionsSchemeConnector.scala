@@ -22,7 +22,7 @@ import models.register.SchemeSubmissionResponse
 import play.api.Logger
 import play.api.http.Status
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Json}
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, Upstream4xxResponse}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import utils.UserAnswers
 

@@ -16,13 +16,13 @@
 
 package controllers.register.establishers.individual
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.individual.EstablisherNinoFormProvider
 import identifiers.register.establishers.individual.EstablisherNinoId
+import javax.inject.Inject
 import models.{Index, Mode, Nino}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

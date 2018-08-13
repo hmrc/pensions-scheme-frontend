@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
-@ImplementedBy (classOf[ListOfSchemesConnectorImpl])
+@ImplementedBy(classOf[ListOfSchemesConnectorImpl])
 trait ListOfSchemesConnector {
 
   def getListOfSchemes(psaId: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ListOfSchemes]
@@ -42,7 +42,7 @@ class ListOfSchemesConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
     val url = config.listOfSchemesUrl
     val schemeHc = hc.withExtraHeaders("psaId" -> psaId)
     http.GET[HttpResponse](url)(implicitly, schemeHc, implicitly).map { response =>
-        require( response.status == Status.OK)
+      require(response.status == Status.OK)
 
       val json = Json.parse(response.body)
       json.validate[ListOfSchemes] match {
@@ -51,7 +51,7 @@ class ListOfSchemesConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
       }
     } andThen {
       logExceptions
-    } recoverWith{
+    } recoverWith {
       translateExceptions()
     }
   }
@@ -76,7 +76,11 @@ class ListOfSchemesConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
 }
 
 sealed trait ListOfSchemesException extends Exception
+
 case class InvalidPayloadException() extends ListOfSchemesException
+
 case class InvalidCorrelationIdException() extends ListOfSchemesException
+
 case class InternalServerErrorException() extends ListOfSchemesException
+
 case class ServiceUnavailableException() extends ListOfSchemesException

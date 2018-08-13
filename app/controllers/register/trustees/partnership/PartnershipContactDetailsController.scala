@@ -30,15 +30,15 @@ import utils.annotations.TrusteesPartnership
 import viewmodels.{ContactDetailsViewModel, Message}
 
 class PartnershipContactDetailsController @Inject()(
-                                                 @TrusteesPartnership override val navigator: Navigator,
-                                                 override val appConfig: FrontendAppConfig,
-                                                 override val messagesApi: MessagesApi,
-                                                 override val cacheConnector: DataCacheConnector,
-                                                 authenticate: AuthAction,
-                                                 getData: DataRetrievalAction,
-                                                 requireData: DataRequiredAction,
-                                                 formProvider: ContactDetailsFormProvider
-                                               ) extends controllers.ContactDetailsController {
+                                                     @TrusteesPartnership override val navigator: Navigator,
+                                                     override val appConfig: FrontendAppConfig,
+                                                     override val messagesApi: MessagesApi,
+                                                     override val cacheConnector: DataCacheConnector,
+                                                     authenticate: AuthAction,
+                                                     getData: DataRetrievalAction,
+                                                     requireData: DataRequiredAction,
+                                                     formProvider: ContactDetailsFormProvider
+                                                   ) extends controllers.ContactDetailsController {
 
   private val form = formProvider()
 

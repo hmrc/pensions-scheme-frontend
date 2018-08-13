@@ -16,11 +16,11 @@
 
 package views.register
 
-import play.api.data.Form
 import controllers.register.routes
 import forms.register.InvestmentRegulatedFormProvider
-import views.behaviours.YesNoViewBehaviours
 import models.NormalMode
+import play.api.data.Form
+import views.behaviours.YesNoViewBehaviours
 import views.html.register.investmentRegulated
 
 class InvestmentRegulatedViewSpec extends YesNoViewBehaviours {

@@ -19,18 +19,15 @@ package navigators
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
-import identifiers.register.trustees.HaveAnyTrusteesId
-import models.register.{SchemeDetails, SchemeType}
 import models.{AddressYears, CheckMode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 @Singleton
 class EstablishersIndividualNavigator @Inject()(
-                                                  appConfig: FrontendAppConfig,
-                                                  val dataCacheConnector: DataCacheConnector
-                                                ) extends Navigator {
+                                                 appConfig: FrontendAppConfig,
+                                                 val dataCacheConnector: DataCacheConnector
+                                               ) extends Navigator {
 
   private def checkYourAnswers(index: Int)(answers: UserAnswers): Option[NavigateTo] =
     NavigateTo.save(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index))
@@ -67,28 +64,28 @@ class EstablishersIndividualNavigator @Inject()(
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
       case EstablisherDetailsId(index) =>
-      checkYourAnswers(index)(from.userAnswers)
-    case EstablisherNinoId(index) =>
-      checkYourAnswers(index)(from.userAnswers)
-    case UniqueTaxReferenceId(index) =>
-      checkYourAnswers(index)(from.userAnswers)
-    case PostCodeLookupId(index) =>
-      NavigateTo.save(controllers.register.establishers.individual.routes.AddressListController.onPageLoad(CheckMode, index))
-    case AddressListId(index) =>
-      NavigateTo.save(controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index))
-    case AddressId(index) =>
-      checkYourAnswers(index)(from.userAnswers)
-    case AddressYearsId(index) =>
-      addressYearsEditRoutes(index)(from.userAnswers)
-    case PreviousPostCodeLookupId(index) =>
-      NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(CheckMode, index))
-    case PreviousAddressListId(index) =>
-      NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index))
-    case PreviousAddressId(index) =>
-      checkYourAnswers(index)(from.userAnswers)
-    case ContactDetailsId(index) =>
-      checkYourAnswers(index)(from.userAnswers)
-  }
+        checkYourAnswers(index)(from.userAnswers)
+      case EstablisherNinoId(index) =>
+        checkYourAnswers(index)(from.userAnswers)
+      case UniqueTaxReferenceId(index) =>
+        checkYourAnswers(index)(from.userAnswers)
+      case PostCodeLookupId(index) =>
+        NavigateTo.save(controllers.register.establishers.individual.routes.AddressListController.onPageLoad(CheckMode, index))
+      case AddressListId(index) =>
+        NavigateTo.save(controllers.register.establishers.individual.routes.AddressController.onPageLoad(CheckMode, index))
+      case AddressId(index) =>
+        checkYourAnswers(index)(from.userAnswers)
+      case AddressYearsId(index) =>
+        addressYearsEditRoutes(index)(from.userAnswers)
+      case PreviousPostCodeLookupId(index) =>
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressListController.onPageLoad(CheckMode, index))
+      case PreviousAddressListId(index) =>
+        NavigateTo.save(controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(CheckMode, index))
+      case PreviousAddressId(index) =>
+        checkYourAnswers(index)(from.userAnswers)
+      case ContactDetailsId(index) =>
+        checkYourAnswers(index)(from.userAnswers)
+    }
   }
 
   private def addressYearsRoutes(index: Int)(answers: UserAnswers): Option[NavigateTo] = {

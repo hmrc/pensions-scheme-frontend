@@ -18,8 +18,8 @@ package identifiers.register.trustees
 
 import identifiers.register.trustees.company._
 import identifiers.register.trustees.individual._
-import models.address.Address
 import models._
+import models.address.Address
 import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
 import org.joda.time.LocalDate

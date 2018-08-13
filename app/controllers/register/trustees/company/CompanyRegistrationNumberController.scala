@@ -16,14 +16,13 @@
 
 package controllers.register.trustees.company
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.CompanyRegistrationNumberFormProvider
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyRegistrationNumberId}
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -36,15 +35,15 @@ import views.html.register.trustees.company.companyRegistrationNumber
 import scala.concurrent.Future
 
 class CompanyRegistrationNumberController @Inject()(
-                                       appConfig: FrontendAppConfig,
-                                       override val messagesApi: MessagesApi,
-                                       dataCacheConnector: DataCacheConnector,
-                                       @TrusteesCompany navigator: Navigator,
-                                       authenticate: AuthAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: CompanyRegistrationNumberFormProvider
-                                     ) extends FrontendController with I18nSupport with Retrievals {
+                                                     appConfig: FrontendAppConfig,
+                                                     override val messagesApi: MessagesApi,
+                                                     dataCacheConnector: DataCacheConnector,
+                                                     @TrusteesCompany navigator: Navigator,
+                                                     authenticate: AuthAction,
+                                                     getData: DataRetrievalAction,
+                                                     requireData: DataRequiredAction,
+                                                     formProvider: CompanyRegistrationNumberFormProvider
+                                                   ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
@@ -67,7 +66,7 @@ class CompanyRegistrationNumberController @Inject()(
             Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, companyDetails.companyName))),
           (value) =>
             dataCacheConnector.save(request.externalId, CompanyRegistrationNumberId(index), value).map(cacheMap =>
-              Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode,UserAnswers(cacheMap))))
+              Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap))))
         )
       }
   }

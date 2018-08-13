@@ -16,9 +16,8 @@
 
 package forms.register
 
-import javax.inject.Inject
-
 import forms.mappings.BankDetailsMapping
+import javax.inject.Inject
 import models.register.UKBankDetails
 import play.api.data.Form
 import play.api.data.Forms._
@@ -32,13 +31,13 @@ class UKBankDetailsFormProvider @Inject() extends BankDetailsMapping {
     mapping(
       "bankName" ->
         text("messages__error__bank_name").
-        verifying(maxLength(nameMaxLength, "messages__error__bank_name_length")),
+          verifying(maxLength(nameMaxLength, "messages__error__bank_name_length")),
       "accountName" ->
         text("messages__error__account_name").
-        verifying(maxLength(nameMaxLength, "messages__error__account_name_length")),
+          verifying(maxLength(nameMaxLength, "messages__error__account_name_length")),
       "sortCode" ->
         sortCodeMapping("messages__error__sort_code",
-        "messages__error__sort_code_invalid", "messages__error__sort_code_length"),
+          "messages__error__sort_code_invalid", "messages__error__sort_code_length"),
       "accountNumber" ->
         text("messages__error__account_number").
           verifying(returnOnFirstFailure(regexp(regexAccountNo, "messages__error__account_number_invalid"),

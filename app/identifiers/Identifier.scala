@@ -41,6 +41,8 @@ object TypedIdentifier {
 
   trait PathDependent extends Identifier {
     type Data
+
     def cleanup(value: Option[Data], userAnswers: UserAnswers): JsResult[UserAnswers] = JsSuccess(userAnswers)
   }
+
 }

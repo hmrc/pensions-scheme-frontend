@@ -17,8 +17,8 @@
 package forms.mappings
 
 import models.register.SortCode
-import play.api.data.{FormError, Forms, Mapping}
 import play.api.data.format.Formatter
+import play.api.data.{FormError, Forms, Mapping}
 
 trait BankDetailsMapping extends Mappings {
 
@@ -33,7 +33,7 @@ trait BankDetailsMapping extends Mappings {
         baseFormatter.bind(key, data)
           .right.map(_.trim.replaceAll("[ -]", ""))
           .right.flatMap {
-          case str if !str.matches(regexSortCode)  =>
+          case str if !str.matches(regexSortCode) =>
             Left(Seq(FormError(key, invalidKey)))
           case str if str.trim.replaceAll("[- ]", "").length > 6 =>
             Left(Seq(FormError(key, maxErrorKey)))

@@ -25,10 +25,10 @@ import views.ViewSpecBase
 trait ViewBehaviours extends ViewSpecBase {
 
   def normalPageWithTitle(view: () => HtmlFormat.Appendable,
-                 messageKeyPrefix: String,
-                 title: String,
-                 pageHeader: String,
-                 expectedGuidanceKeys: String*): Unit = {
+                          messageKeyPrefix: String,
+                          title: String,
+                          pageHeader: String,
+                          expectedGuidanceKeys: String*): Unit = {
 
     "behave like a normal page" when {
       "rendered" must {

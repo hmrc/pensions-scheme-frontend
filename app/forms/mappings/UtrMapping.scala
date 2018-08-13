@@ -33,10 +33,11 @@ trait UtrMapping extends Mappings with Transforms {
   Mapping[UniqueTaxReference] = {
 
     val reasonMaxLength = 160
+
     def fromUniqueTaxReference(utr: UniqueTaxReference): (Boolean, Option[String], Option[String]) = {
       utr match {
         case UniqueTaxReference.Yes(utrNo) => (true, Some(utrNo), None)
-        case UniqueTaxReference.No(reason) =>  (false, None, Some(reason))
+        case UniqueTaxReference.No(reason) => (false, None, Some(reason))
       }
     }
 
