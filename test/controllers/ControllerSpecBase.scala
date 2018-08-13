@@ -16,7 +16,6 @@
 
 package controllers
 
-import akka.stream.Materializer
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.register.SchemeDetailsId

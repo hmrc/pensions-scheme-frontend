@@ -16,10 +16,13 @@
 
 package controllers
 
+import audit.AuditService
+import audit.testdoubles.StubSuccessfulAuditService
 import controllers.model.{Delivered, EmailEvent, EmailEvents}
 import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
+import play.api.inject.bind
 
 class EmailResponseControllerSpec extends ControllerSpecBase {
 
@@ -27,14 +30,23 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
 
   "EmailResponseController" must {
 
-    "respond OK when given EmailEvents" in {
+    val fakeAuditService = new StubSuccessfulAuditService()
 
-      val controller = app.injector.instanceOf[EmailResponseController]
+    "respond OK when given EmailEvents" which {
+      "will send events to audit service" in {
 
-      val result = controller.post("id")(fakeRequest.withBody[JsValue](Json.toJson(emailEvents)))
+        running(_.overrides(
+          bind[AuditService].to(fakeAuditService)
+        )) { app =>
 
-      status(result) mustBe OK
+          val controller = app.injector.instanceOf[EmailResponseController]
 
+          val result = controller.post("id")(fakeRequest.withBody[JsValue](Json.toJson(emailEvents)))
+
+          status(result) mustBe OK
+
+        }
+      }
     }
 
   }
