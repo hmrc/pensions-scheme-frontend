@@ -17,15 +17,47 @@
 package controllers.model
 
 import org.joda.time.DateTime
+import play.api.libs.json.{JsPath, Json, Reads}
+import utils.{Enumerable, WithName}
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 sealed trait Event
 
-object Sent extends Event
-object Delivered extends Event
-object PermanentBounce extends Event
-object Opened extends Event
-object Complained extends Event
+object Event extends Enumerable.Implicits {
+
+  override def toString: String = super.toString.toLowerCase
+
+  implicit val enumerable: Enumerable[Event] = Enumerable(
+    Seq(Sent, Delivered, PermanentBounce, Opened, Complained).map(v => v.toString -> v): _*
+  )
+
+}
+
+case object Sent extends WithName("sent") with Event
+case object Delivered extends WithName("delivered") with Event
+case object PermanentBounce extends WithName("permanentBounce") with Event
+case object Opened extends WithName("opened") with Event
+case object Complained extends WithName("complained") with Event
 
 case class EmailEvent(event: Event, detected: DateTime)
 
+object EmailEvent {
+
+  import uk.gov.hmrc.http.controllers.RestFormats.dateTimeWrite
+
+  implicit val read: Reads[EmailEvent] = {
+    ((JsPath \ "event").read[Event] and ((JsPath \ "detected").read[String] map DateTime.parse))(EmailEvent.apply _)
+  }
+
+  implicit val write: Writes[EmailEvent] = (
+    (JsPath \ "event").write[Event] and (JsPath \ "detected").write[DateTime]
+  ) ( emailEvent => (emailEvent.event, emailEvent.detected) )
+
+}
+
 case class EmailEvents(events: Seq[EmailEvent])
+
+object EmailEvents {
+  implicit val format = Json.format[EmailEvents]
+}
