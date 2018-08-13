@@ -16,6 +16,8 @@
 
 package controllers
 
+import controllers.model.{Delivered, EmailEvent, EmailEvents}
+import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
 
@@ -25,11 +27,11 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
 
   "EmailResponseController" must {
 
-    "respond 200 when given json" in {
+    "respond OK when given EmailEvents" in {
 
       val controller = app.injector.instanceOf[EmailResponseController]
 
-      val result = controller.post("id")(fakeRequest.withBody[JsValue](validJson))
+      val result = controller.post("id")(fakeRequest.withBody[JsValue](Json.toJson(emailEvents)))
 
       status(result) mustBe OK
 
@@ -37,23 +39,22 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
 
   }
 
+  "respond with BAD_REQUEST when not given EmailEvents" in {
+
+    val controller = app.injector.instanceOf[EmailResponseController]
+
+    val result = controller.post("id")(fakeRequest.withBody[JsValue](validJson))
+
+    status(result) mustBe BAD_REQUEST
+
+  }
+
 }
 
 object EmailResponseControllerSpec {
 
-  val validJson = Json.parse(
-    """{
-      |    "events": [
-      |        {
-      |            "event": "opened",
-      |            "detected": "2015-07-02T08:26:39.035Z"
-      |        },
-      |        {
-      |            "event": "delivered",
-      |            "detected": "2015-07-02T08:25:20.068Z"
-      |        }
-      |    ]
-      |}""".stripMargin
-  )
+  val emailEvents = EmailEvents(Seq(EmailEvent(Delivered, DateTime.now())))
+
+  val validJson = Json.obj("name" -> "value")
 
 }

@@ -16,6 +16,7 @@
 
 package controllers
 
+import controllers.model.EmailEvents
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, BodyParsers}
@@ -27,7 +28,10 @@ class EmailResponseController @Inject()(
 
   def post(id: String): Action[JsValue] = Action(BodyParsers.parse.tolerantJson) {
     implicit request =>
-      Ok
+      request.body.validate[EmailEvents].fold(
+        invalid => BadRequest,
+        valid => Ok
+      )
   }
 
 }
