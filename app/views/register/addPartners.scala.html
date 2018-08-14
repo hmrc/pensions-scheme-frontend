@@ -43,7 +43,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__addPartners__heading", secondaryHeaderKey=Some(partnershipName))
+        @components.heading(messages("messages__addPartners__heading").toString, secondaryHeaderKey=Some(partnershipName))
 
         @if(partners.isEmpty) {
             @components.paragraph_text(messages("messages__addPartners_lede"))

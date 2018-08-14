@@ -42,7 +42,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__scheme_details__title", secondaryHeaderKey = Some(messages("messages_cya_secondary_header")))
+        @components.heading(messages("messages__scheme_details__title").toString, secondaryHeaderKey = Some(messages("messages_cya_secondary_header").toString)))
 
         @components.input_text(
             field = form("schemeName"),

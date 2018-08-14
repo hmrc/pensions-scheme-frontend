@@ -28,7 +28,8 @@
 
     @helpers.form(action = WhatYouWillNeedController.onSubmit, 'autoComplete -> "off") {
 
-        @components.heading(headingKey = "messages__what_you_will_need__title", secondaryHeaderKey = Some("messages_cya_secondary_header"))
+        @components.heading(headingKey = messages("messages__what_you_will_need__title").toString,
+                            secondaryHeaderKey = Some(messages("messages_cya_secondary_header").toString))
 
         <p>@messages("messages__what_you_will_need__lede")</p>
         <ul class="list list-bullet">

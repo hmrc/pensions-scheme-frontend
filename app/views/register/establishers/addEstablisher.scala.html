@@ -43,7 +43,7 @@
         @components.back_link()
         @if(establishers.isEmpty) {
 
-        @components.headingNew(
+        @components.heading(
             headingKey=messages("messages__establishers__add__title"),
             secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
         )
@@ -54,7 +54,7 @@
 
             @components.error_summary(form.errors)
 
-            @components.headingNew(
+            @components.heading(
                 headingKey=messages("messages__establishers__add__title"),
                 secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
             )

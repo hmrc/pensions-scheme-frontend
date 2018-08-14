@@ -40,7 +40,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__select_the_previous_address__title", secondaryHeaderKey = Some(companyName))
+        @components.heading(messages("messages__select_the_previous_address__title").toString, secondaryHeaderKey = Some(companyName))
 
         <p>
             @messages("messages__common__select_address")
