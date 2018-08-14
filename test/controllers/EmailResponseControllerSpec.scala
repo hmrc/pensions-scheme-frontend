@@ -20,7 +20,7 @@ import audit.AuditService
 import audit.testdoubles.StubSuccessfulAuditService
 import controllers.model.{Delivered, EmailEvent, EmailEvents}
 import org.joda.time.DateTime
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.inject.bind
 
@@ -29,8 +29,6 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
   import EmailResponseControllerSpec._
 
   "EmailResponseController" must {
-
-    val fakeAuditService = new StubSuccessfulAuditService()
 
     "respond OK when given EmailEvents" which {
       "will send events to audit service" in {
@@ -41,7 +39,7 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
 
           val controller = app.injector.instanceOf[EmailResponseController]
 
-          val result = controller.post("id")(fakeRequest.withBody[JsValue](Json.toJson(emailEvents)))
+          val result = controller.post("id")(fakeRequest.withBody(Json.toJson(emailEvents)))
 
           status(result) mustBe OK
           fakeAuditService.verifySent(audit.EmailEvent("id", Delivered)) mustBe true
@@ -54,12 +52,38 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
 
   "respond with BAD_REQUEST when not given EmailEvents" in {
 
-    val controller = app.injector.instanceOf[EmailResponseController]
+    running(_.overrides(
+      bind[AuditService].to(fakeAuditService)
+    )) { app =>
 
-    val result = controller.post("id")(fakeRequest.withBody[JsValue](validJson))
+      fakeAuditService.reset()
 
-    status(result) mustBe BAD_REQUEST
+      val controller = app.injector.instanceOf[EmailResponseController]
 
+      val result = controller.post("id")(fakeRequest.withBody(validJson))
+
+      status(result) mustBe BAD_REQUEST
+      fakeAuditService.verifyNothingSent mustBe true
+
+    }
+
+  }
+
+  "respond with FORBIDDEN when URL contains an id does not match PSAID pattern" in {
+
+    running(_.overrides(
+      bind[AuditService].to(fakeAuditService)
+    )) { app =>
+
+      fakeAuditService.reset()
+
+      val controller = app.injector.instanceOf[EmailResponseController]
+
+      val result = controller.post("id")(fakeRequest.withBody(Json.toJson(emailEvents)))
+
+      status(result) mustBe FORBIDDEN
+      fakeAuditService.verifyNothingSent mustBe true
+    }
   }
 
 }
@@ -67,6 +91,8 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
 object EmailResponseControllerSpec {
 
   val emailEvents = EmailEvents(Seq(EmailEvent(Delivered, DateTime.now())))
+
+  val fakeAuditService = new StubSuccessfulAuditService()
 
   val validJson = Json.obj("name" -> "value")
 

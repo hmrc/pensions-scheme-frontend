@@ -21,16 +21,24 @@ import controllers.model.EmailEvents
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, BodyParsers}
+import uk.gov.hmrc.crypto.{ApplicationCrypto, Crypted}
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 class EmailResponseController @Inject()(
-                                       auditService: AuditService
+                                       auditService: AuditService,
+                                       crypto: ApplicationCrypto
                                        ) extends FrontendController {
 
   def post(id: String): Action[JsValue] = Action(BodyParsers.parse.tolerantJson) {
     implicit request =>
+
+      val decrypted = crypto.QueryParameterCrypto.decrypt(Crypted(id))
+
+      PsaId(decrypted.value)
+
       request.body.validate[EmailEvents].fold(
-        invalid => BadRequest,
+        _ => BadRequest,
         valid => {
           valid.events.foreach{ emailEvent =>
             auditService.sendEvent(EmailEvent(id, emailEvent.event))
