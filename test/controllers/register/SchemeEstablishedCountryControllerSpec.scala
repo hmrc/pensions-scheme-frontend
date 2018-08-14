@@ -39,6 +39,7 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
   val schemeDetails = SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)
 
   def countryOptions: CountryOptions = new CountryOptions(options)
+
   val formProvider = new SchemeEstablishedCountryFormProvider(countryOptions)
   val form = formProvider()
 
@@ -53,7 +54,7 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl,
       formProvider,
       countryOptions
-    ){}
+    ) {}
 
   def viewAsString(form: Form[_] = form): String =
     schemeEstablishedCountry(frontendAppConfig, form, NormalMode, schemeDetails.schemeName, options)(fakeRequest, messages).toString

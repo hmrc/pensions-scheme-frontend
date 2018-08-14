@@ -41,11 +41,11 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
   //scalastyle:off method.length
   //scalastyle:off regex
   def navigatorWithRoutes[A <: Identifier, B <: Option[Call]](
-    navigator: Navigator,
-    dataCacheConnector: FakeDataCacheConnector,
-    routes: TableFor6[A, UserAnswers, Call, Boolean, B, Boolean],
-    describer: UserAnswers => String
-  ): Unit = {
+                                                               navigator: Navigator,
+                                                               dataCacheConnector: FakeDataCacheConnector,
+                                                               routes: TableFor6[A, UserAnswers, Call, Boolean, B, Boolean],
+                                                               describer: UserAnswers => String
+                                                             ): Unit = {
 
     "behave like a navigator" when {
 
@@ -113,6 +113,7 @@ trait NavigatorBehaviour extends PropertyChecks with OptionValues {
     }
 
   }
+
   //scalastyle:on method.length
   //scalastyle:on regex
 

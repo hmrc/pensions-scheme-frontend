@@ -22,8 +22,7 @@ import controllers.actions._
 import forms.register.trustees.company.CompanyUniqueTaxReferenceFormProvider
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId, CompanyUniqueTaxReferenceId}
-import models._
-import models.UniqueTaxReference
+import models.{UniqueTaxReference, _}
 import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}

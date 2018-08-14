@@ -31,9 +31,9 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
   val firstIndex = Index(1)
   val schemeName = "test scheme name"
 
-  def createView = () => companyDetails(frontendAppConfig, form, NormalMode,firstIndex,schemeName)(fakeRequest, messages)
+  def createView = () => companyDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyDetails(frontendAppConfig, form, NormalMode,firstIndex, schemeName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => companyDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages)
 
 
   "CompanyDetails view" must {
@@ -42,6 +42,6 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, company.routes.CompanyDetailsController.onSubmit(NormalMode,firstIndex).url, "companyName", "vatNumber", "payeNumber")
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex).url, "companyName", "vatNumber", "payeNumber")
   }
 }

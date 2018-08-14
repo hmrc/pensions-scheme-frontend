@@ -17,14 +17,15 @@
 package models
 
 import play.api.libs.json._
-import utils.{InputOption}
+import utils.InputOption
 
 sealed trait CompanyRegistrationNumber
 
 object CompanyRegistrationNumber {
 
-  case class Yes(crn:String) extends CompanyRegistrationNumber
-  case class No(reason:String) extends CompanyRegistrationNumber
+  case class Yes(crn: String) extends CompanyRegistrationNumber
+
+  case class No(reason: String) extends CompanyRegistrationNumber
 
   def options: Seq[InputOption] = Seq(
     InputOption("true", "site.yes", Some("companyRegistrationNumber_crn-form")),

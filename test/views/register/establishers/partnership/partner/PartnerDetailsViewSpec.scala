@@ -17,8 +17,8 @@
 package views.register.establishers.partnership.partner
 
 import forms.register.PersonDetailsFormProvider
-import models.{Index, NormalMode}
 import models.person.PersonDetails
+import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.{Form, FormError}
 import play.twirl.api.HtmlFormat

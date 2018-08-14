@@ -17,8 +17,8 @@
 package models.register
 
 import identifiers.register.establishers.company.director.DirectorDetailsId
-import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
+import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
@@ -30,20 +30,26 @@ import models.register.trustees.TrusteeKind
 
 sealed trait Entity[ID] {
   def id: ID
+
   def name: String
+
   def isDeleted: Boolean
+
   def isCompleted: Boolean
+
   def editLink: String
+
   def deleteLink: String
+
   def index: Int
 }
 
 case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Entity[DirectorDetailsId] {
   override def editLink: String = {
-    if (isCompleted){
+    if (isCompleted) {
       controllers.register.establishers.company.director.routes.CheckYourAnswersController.onPageLoad(id.establisherIndex, id.directorIndex).url
     }
-    else{
+    else {
       controllers.register.establishers.company.director.routes.DirectorDetailsController.onPageLoad(NormalMode, id.establisherIndex, id.directorIndex).url
     }
   }
@@ -56,10 +62,10 @@ case class DirectorEntity(id: DirectorDetailsId, name: String, isDeleted: Boolea
 
 case class PartnerEntity(id: PartnerDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Entity[PartnerDetailsId] {
   override def editLink: String = {
-    if (isCompleted){
+    if (isCompleted) {
       controllers.register.establishers.partnership.partner.routes.CheckYourAnswersController.onPageLoad(id.establisherIndex, id.partnerIndex).url
     }
-    else{
+    else {
       controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onPageLoad(NormalMode, id.establisherIndex, id.partnerIndex).url
     }
   }
@@ -92,10 +98,10 @@ case class EstablisherCompanyEntity(id: EstablisherCompanyDetailsId,
 case class EstablisherIndividualEntity(id: EstablisherDetailsId,
                                        name: String, isDeleted: Boolean, isCompleted: Boolean) extends Establisher[EstablisherDetailsId] {
   override def editLink: String = {
-    if(isCompleted){
+    if (isCompleted) {
       controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(id.index).url
     }
-    else{
+    else {
       controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, id.index).url
     }
   }
@@ -128,7 +134,7 @@ sealed trait Trustee[T] extends Entity[T]
 case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId,
                                 name: String, isDeleted: Boolean, isCompleted: Boolean) extends Trustee[TrusteeCompanyDetailsId] {
   override def editLink: String = {
-    if(isCompleted){
+    if (isCompleted) {
       controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(id.index).url
     }
     else {
@@ -144,10 +150,10 @@ case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId,
 
 case class TrusteeIndividualEntity(id: TrusteeDetailsId, name: String, isDeleted: Boolean, isCompleted: Boolean) extends Trustee[TrusteeDetailsId] {
   override def editLink: String = {
-    if(isCompleted){
+    if (isCompleted) {
       controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(id.index).url
     }
-    else{
+    else {
       controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, id.index).url
     }
   }
@@ -159,9 +165,9 @@ case class TrusteeIndividualEntity(id: TrusteeDetailsId, name: String, isDeleted
 }
 
 case class TrusteePartnershipEntity(id: TrusteePartnershipDetailsId,
-                                name: String, isDeleted: Boolean, isCompleted: Boolean) extends Trustee[TrusteePartnershipDetailsId] {
+                                    name: String, isDeleted: Boolean, isCompleted: Boolean) extends Trustee[TrusteePartnershipDetailsId] {
   override def editLink: String = {
-    if(isCompleted){
+    if (isCompleted) {
       controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(id.index).url
     }
     else {

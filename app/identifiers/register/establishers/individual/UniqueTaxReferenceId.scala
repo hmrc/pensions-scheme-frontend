@@ -15,6 +15,7 @@
  */
 
 package identifiers.register.establishers.individual
+
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.UniqueTaxReference

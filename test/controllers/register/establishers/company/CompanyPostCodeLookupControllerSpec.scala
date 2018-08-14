@@ -44,6 +44,7 @@ import scala.concurrent.Future
 class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
   def onwardRoute: Call = routes.CompanyAddressListController.onPageLoad(NormalMode, firstIndex)
+
   def manualInputCall: Call = routes.CompanyAddressController.onPageLoad(NormalMode, firstIndex)
 
   private def fakeAddress(postCode: String) = TolerantAddress(
@@ -65,7 +66,6 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
   val firstIndex = Index(0)
   val companyName: String = "test company name"
-
 
 
   val company = CompanyDetails(companyName, None, None)
@@ -94,8 +94,8 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
       )) {
         implicit app =>
 
-        val request = addToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex))
-          .withHeaders("Csrf-Token" -> "nocheck"))
+          val request = addToken(FakeRequest(routes.CompanyPostCodeLookupController.onPageLoad(NormalMode, firstIndex))
+            .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, request).value
 
@@ -106,7 +106,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
             form,
             viewModel
           )(request, messages).toString
-        }
+      }
     }
 
     "redirect to next page on POST request" in {
@@ -131,15 +131,15 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
       )) {
         implicit app =>
 
-        val fakeRequest = addToken(FakeRequest(call)
-          .withFormUrlEncodedBody("value" -> validPostcode)
-          .withHeaders("Csrf-Token" -> "nocheck"))
+          val fakeRequest = addToken(FakeRequest(call)
+            .withFormUrlEncodedBody("value" -> validPostcode)
+            .withHeaders("Csrf-Token" -> "nocheck"))
 
           val result = route(app, fakeRequest).value
 
           status(result) must be(SEE_OTHER)
           redirectLocation(result).value mustEqual onwardRoute.url
-        }
+      }
     }
   }
 }

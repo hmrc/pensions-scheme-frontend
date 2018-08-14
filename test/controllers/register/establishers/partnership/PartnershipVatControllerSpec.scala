@@ -71,7 +71,9 @@ object PartnershipVatControllerSpec extends PartnershipVatControllerSpec {
 
   val form = new VatFormProvider()()
   val firstIndex = Index(0)
+
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
   val viewModel = VatViewModel(
     routes.PartnershipVatController.onSubmit(NormalMode, firstIndex),
     title = Message("messages__partnershipVat__title"),

@@ -16,10 +16,10 @@
 
 package views.register.trustees
 
-import play.api.data.Form
 import forms.register.trustees.TrusteeKindFormProvider
-import models.{Index, NormalMode}
 import models.register.trustees.TrusteeKind
+import models.{Index, NormalMode}
+import play.api.data.Form
 import views.behaviours.ViewBehaviours
 import views.html.register.trustees.trusteeKind
 
@@ -58,13 +58,13 @@ class TrusteeKindViewSpec extends ViewBehaviours {
       }
     }
 
-    for(option <- trusteeKindOptions) {
+    for (option <- trusteeKindOptions) {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, isChecked = true)
 
-          for(unselectedOption <- trusteeKindOptions.filterNot(o => o == option)) {
+          for (unselectedOption <- trusteeKindOptions.filterNot(o => o == option)) {
             assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, isChecked = false)
           }
         }

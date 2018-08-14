@@ -39,6 +39,7 @@ import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.PayeViewModel
 import views.html.paye
+
 import scala.concurrent.Future
 
 class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {

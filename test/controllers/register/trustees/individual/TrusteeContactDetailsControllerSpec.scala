@@ -99,6 +99,7 @@ class TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
 object TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
 
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
   private val index = Index(0)
 
   private val trustee = PersonDetails(

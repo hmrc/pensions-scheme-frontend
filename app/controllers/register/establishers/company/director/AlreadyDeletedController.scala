@@ -21,10 +21,9 @@ import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import javax.inject.Inject
-import models.requests.DataRequest
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Enumerable
 import viewmodels.{AlreadyDeletedViewModel, Message}
@@ -33,28 +32,27 @@ import views.html.alreadyDeleted
 import scala.concurrent.Future
 
 class AlreadyDeletedController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction
-                                      ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                          appConfig: FrontendAppConfig,
+                                          override val messagesApi: MessagesApi,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction
+                                        ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
         case details =>
-            Future.successful(Ok(alreadyDeleted(appConfig, vm(establisherIndex, details.fullName))))
-          }
+          Future.successful(Ok(alreadyDeleted(appConfig, vm(establisherIndex, details.fullName))))
+      }
 
   }
 
   private def vm(establisherIndex: Index, directorName: String) = AlreadyDeletedViewModel(
-          Message("messages__alreadyDeleted__director_title"),
-          directorName,
-          controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
-        )
-
+    Message("messages__alreadyDeleted__director_title"),
+    directorName,
+    controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
+  )
 
 
 }

@@ -18,7 +18,6 @@ package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
-import controllers.Retrievals
 import controllers.actions._
 import forms.ContactDetailsFormProvider
 import identifiers.register.establishers.partnership.{PartnershipContactDetailsId, PartnershipDetailsId}
@@ -31,15 +30,15 @@ import utils.annotations.EstablisherPartnership
 import viewmodels.{ContactDetailsViewModel, Message}
 
 class PartnershipContactDetailsController @Inject()(
-                                                 @EstablisherPartnership override val navigator: Navigator,
-                                                 override val appConfig: FrontendAppConfig,
-                                                 override val messagesApi: MessagesApi,
-                                                 override val cacheConnector: DataCacheConnector,
-                                                 authenticate: AuthAction,
-                                                 getData: DataRetrievalAction,
-                                                 requireData: DataRequiredAction,
-                                                 formProvider: ContactDetailsFormProvider
-                                               ) extends controllers.ContactDetailsController {
+                                                     @EstablisherPartnership override val navigator: Navigator,
+                                                     override val appConfig: FrontendAppConfig,
+                                                     override val messagesApi: MessagesApi,
+                                                     override val cacheConnector: DataCacheConnector,
+                                                     authenticate: AuthAction,
+                                                     getData: DataRetrievalAction,
+                                                     requireData: DataRequiredAction,
+                                                     formProvider: ContactDetailsFormProvider
+                                                   ) extends controllers.ContactDetailsController {
 
   private val form = formProvider()
 

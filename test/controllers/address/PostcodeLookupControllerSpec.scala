@@ -53,14 +53,14 @@ object PostcodeLookupControllerSpec {
   val postCall: Call = Call("POST", "www.example.com")
   val manualCall: Call = Call("GET", "www.example.com")
 
-  class TestController @Inject() (
-                                   override val appConfig: FrontendAppConfig,
-                                   override val messagesApi: MessagesApi,
-                                   override val cacheConnector: DataCacheConnector,
-                                   override val addressLookupConnector: AddressLookupConnector,
-                                   override val navigator: Navigator,
-                                   formProvider: PostCodeLookupFormProvider
-                                 ) extends PostcodeLookupController {
+  class TestController @Inject()(
+                                  override val appConfig: FrontendAppConfig,
+                                  override val messagesApi: MessagesApi,
+                                  override val cacheConnector: DataCacheConnector,
+                                  override val addressLookupConnector: AddressLookupConnector,
+                                  override val navigator: Navigator,
+                                  formProvider: PostCodeLookupFormProvider
+                                ) extends PostcodeLookupController {
 
     def onPageLoad(viewmodel: PostcodeLookupViewModel, answers: UserAnswers): Future[Result] =
       get(viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
@@ -74,6 +74,7 @@ object PostcodeLookupControllerSpec {
 
     override protected def form: Form[String] = formProvider()
   }
+
 }
 
 class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with MockitoSugar with ScalaFutures with OptionValues {
@@ -150,7 +151,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
         val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
         when(addressConnector.addressLookupByPostCode(eqTo("ZZ1 1ZZ"))(any(), any())) thenReturn
-          Future.failed(new HttpException("Failed",INTERNAL_SERVER_ERROR))
+          Future.failed(new HttpException("Failed", INTERNAL_SERVER_ERROR))
 
         running(_.overrides(
           bind[Navigator].toInstance(FakeNavigator),

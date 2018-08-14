@@ -15,6 +15,7 @@
  */
 
 package identifiers.register.trustees
+
 import identifiers._
 
 case object HaveAnyTrusteesId extends TypedIdentifier[Boolean] {

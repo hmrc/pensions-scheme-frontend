@@ -17,8 +17,8 @@
 package forms.register.trustees
 
 import forms.behaviours.FormBehaviours
-import models.{Field, Invalid, Required}
 import models.register.trustees.TrusteeKind
+import models.{Field, Invalid, Required}
 
 class TrusteeKindFormProviderSpec extends FormBehaviours {
 

@@ -16,12 +16,12 @@
 
 package views.register.trustees
 
-import play.api.data.Form
 import controllers.register.trustees.routes
 import forms.register.trustees.HaveAnyTrusteesFormProvider
-import views.behaviours.YesNoViewBehaviours
 import models.NormalMode
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import views.behaviours.YesNoViewBehaviours
 import views.html.register.trustees.haveAnyTrustees
 
 class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {

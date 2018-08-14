@@ -21,10 +21,10 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.{CompanyDetails, PartnershipDetails}
 import models.person.PersonDetails
 import models.register.SchemeDetails
 import models.requests.DataRequest
+import models.{CompanyDetails, PartnershipDetails}
 import play.api.libs.json.Reads
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -45,8 +45,8 @@ trait Retrievals {
   }
 
   private[controllers] def retrievePartnershipName(index: Int)
-                                              (f: String => Future[Result])
-                                              (implicit request: DataRequest[AnyContent]): Future[Result] = {
+                                                  (f: String => Future[Result])
+                                                  (implicit request: DataRequest[AnyContent]): Future[Result] = {
     retrieve[PartnershipDetails](PartnershipDetailsId(index)) { partnershipDetails =>
       f(partnershipDetails.name)
     }
@@ -114,7 +114,7 @@ trait Retrievals {
       implicit request =>
         request.userAnswers.get(id) match {
           case Some(value) => Right(value)
-          case None        => Left(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
+          case None => Left(Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad())))
         }
     }
 

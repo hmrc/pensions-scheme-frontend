@@ -16,8 +16,8 @@
 
 import connectors.{DataCacheConnector, MicroserviceCacheConnector, MongoCacheConnector}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import play.api.{Configuration, Environment}
 import play.api.inject._
+import play.api.{Configuration, Environment}
 
 class DataCacheModuleSpec extends WordSpec with MustMatchers with OptionValues {
 

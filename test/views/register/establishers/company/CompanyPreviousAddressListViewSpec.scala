@@ -82,7 +82,7 @@ class CompanyPreviousAddressListViewSpec extends ViewBehaviours {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> option.toString))))
           assertContainsRadioButton(doc, s"value-$option", "value", option.toString, true)
 
-          for((_, option) <-addresses.zipWithIndex.filterNot {case (_, falseOption) => falseOption == option }) {
+          for ((_, option) <- addresses.zipWithIndex.filterNot { case (_, falseOption) => falseOption == option }) {
             assertContainsRadioButton(doc, s"value-$option", "value", option.toString, false)
           }
         }

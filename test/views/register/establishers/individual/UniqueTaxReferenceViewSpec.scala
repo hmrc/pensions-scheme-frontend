@@ -17,10 +17,10 @@
 package views.register.establishers.individual
 
 import forms.register.trustees.individual.UniqueTaxReferenceFormProvider
-import play.api.data.Form
-import views.behaviours.ViewBehaviours
 import models.{Index, NormalMode}
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import views.behaviours.ViewBehaviours
 import views.html.register.establishers.individual.uniqueTaxReference
 
 class UniqueTaxReferenceViewSpec extends ViewBehaviours {
@@ -30,7 +30,7 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
   val form = new UniqueTaxReferenceFormProvider()()
 
   val index = Index(1)
-    val establisherName = "test name"
+  val establisherName = "test name"
 
   def createView: () => HtmlFormat.Appendable = () => uniqueTaxReference(frontendAppConfig, form, NormalMode, index, establisherName)(fakeRequest, messages)
 

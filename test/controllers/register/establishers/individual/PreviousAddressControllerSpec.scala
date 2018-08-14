@@ -51,6 +51,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
   def countryOptions: CountryOptions = new CountryOptions(options)
+
   val fakeAuditService = new StubSuccessfulAuditService()
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): PreviousAddressController =

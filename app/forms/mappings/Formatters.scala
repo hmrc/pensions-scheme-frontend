@@ -16,11 +16,9 @@
 
 package forms.mappings
 
-import models.address.Address
 import play.api.data.FormError
 import play.api.data.format.Formatter
 import utils.Enumerable
-import utils.Constants._
 
 import scala.util.control.Exception.nonFatalCatch
 

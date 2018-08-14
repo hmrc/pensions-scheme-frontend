@@ -48,7 +48,7 @@ class MembershipController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-        SchemeDetailsId.retrieve.right.map { schemeDetails =>
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
         val preparedForm = request.userAnswers.get(MembershipId) match {
           case None => form
           case Some(value) => form.fill(value)

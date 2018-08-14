@@ -17,7 +17,6 @@
 package views.register.establishers.company
 
 import controllers.register.establishers.company.routes
-
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.person.PersonDetails
 import models.{CheckMode, Index}
@@ -37,11 +36,13 @@ class CompanyReviewViewSpec extends ViewBehaviours {
   val directors = Seq("director a", "director b", "director c")
   val tenDirectors = Seq("director a", "director b", "director c", "director d", "director e",
     "director f", "director g", "director h", "director i", "director j")
+
   def director(lastName: String): JsObject = Json.obj(
     DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now())
   )
 
   def createView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, schemeName, companyName, directors)(fakeRequest, messages)
+
   def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, schemeName, companyName, tenDirectors)(fakeRequest, messages)
 
   "CompanyReview view" must {
@@ -49,7 +50,7 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       createView,
       messageKeyPrefix,
       messages(s"messages__${messageKeyPrefix}__heading"),
-    "_directors__heading")
+      "_directors__heading")
 
     behave like pageWithSecondaryHeader(
       createView,
@@ -81,9 +82,9 @@ class CompanyReviewViewSpec extends ViewBehaviours {
     }
 
     "contain list of directors" in {
-      for( director <- directors)
+      for (director <- directors)
         Jsoup.parse(createView().toString) must haveDynamicText(director)
-      }
     }
+  }
 
 }

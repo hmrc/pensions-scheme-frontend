@@ -16,21 +16,21 @@
 
 package controllers.register.establishers.company.director
 
-import javax.inject.Inject
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import controllers.actions._
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
+import controllers.actions._
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId, DirectorId, IsDirectorCompleteId}
+import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId}
+import javax.inject.Inject
 import models.{Index, NormalMode}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{Navigator, SectionComplete, UserAnswers}
+import utils.{Navigator, SectionComplete}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
 import scala.concurrent.Future

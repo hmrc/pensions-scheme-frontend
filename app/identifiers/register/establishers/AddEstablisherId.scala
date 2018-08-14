@@ -15,6 +15,7 @@
  */
 
 package identifiers.register.establishers
+
 import identifiers._
 
 case class AddEstablisherId(addAnother: Option[Boolean]) extends Identifier {

@@ -16,13 +16,13 @@
 
 package views.register.trustees
 
+import controllers.register.trustees.partnership._
 import forms.register.PartnershipDetailsFormProvider
 import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.trustees.partnership.partnershipDetails
-import controllers.register.trustees.partnership._
 
 class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetails] {
 

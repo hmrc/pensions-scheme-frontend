@@ -22,7 +22,6 @@ import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAut
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.partnership.{PartnershipAddressYearsId, PartnershipDetailsId}
 import models.{AddressYears, Index, NormalMode, PartnershipDetails}
-import models._
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.test.Helpers._

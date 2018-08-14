@@ -110,6 +110,7 @@ object IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with Mo
       Future.successful(Seq(address))
     }
   }
+
   private def requestResult[T](request: Application => Request[T], test: (Request[_], Future[Result]) => Unit)(implicit writeable: Writeable[T]): Unit = {
     running(_.overrides(
       bind[AuthAction].to(FakeAuthAction),

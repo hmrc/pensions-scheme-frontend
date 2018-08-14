@@ -73,6 +73,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       partners,
       postUrl
     )(fakeRequest, messages).toString
+
   private val partnershipName = "MyCo Ltd"
 
   // scalastyle:off magic.number

@@ -16,8 +16,8 @@
 
 package identifiers.register.establishers.company.director
 
+import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import identifiers.{Identifier, TypedIdentifier}
 import models.address.TolerantAddress
 import play.api.libs.json.JsPath
 

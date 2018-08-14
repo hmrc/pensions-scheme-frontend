@@ -22,22 +22,22 @@ import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import forms.address.AddressYearsFormProvider
 import identifiers.TypedIdentifier
-import models.{AddressYears, NormalMode}
 import models.requests.DataRequest
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import models.{AddressYears, NormalMode}
+import org.mockito.Matchers.{eq => eqTo, _}
+import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.i18n.MessagesApi
+import play.api.inject.bind
 import play.api.mvc.{AnyContent, Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.domain.PsaId
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
-import org.mockito.Mockito._
-import org.mockito.Matchers.{eq => eqTo, _}
-import play.api.inject.bind
-import uk.gov.hmrc.domain.PsaId
 
 import scala.concurrent.Future
 
@@ -45,13 +45,13 @@ object AddressYearsControllerSpec {
 
   object FakeIdentifier extends TypedIdentifier[AddressYears]
 
-  class TestController @Inject() (
-                                   override val appConfig: FrontendAppConfig,
-                                   override val messagesApi: MessagesApi,
-                                   override val cacheConnector: DataCacheConnector,
-                                   override val navigator: Navigator,
-                                   formProvider: AddressYearsFormProvider
-                                 ) extends AddressYearsController {
+  class TestController @Inject()(
+                                  override val appConfig: FrontendAppConfig,
+                                  override val messagesApi: MessagesApi,
+                                  override val cacheConnector: DataCacheConnector,
+                                  override val navigator: Navigator,
+                                  formProvider: AddressYearsFormProvider
+                                ) extends AddressYearsController {
 
     def onPageLoad(viewmodel: AddressYearsViewModel, answers: UserAnswers): Future[Result] = {
       get(FakeIdentifier, formProvider("error"), viewmodel)(DataRequest(FakeRequest(), "cacheId", answers, PsaId("A0000000")))
@@ -61,6 +61,7 @@ object AddressYearsControllerSpec {
       post(FakeIdentifier, NormalMode, formProvider("error"), viewmodel)(DataRequest(fakeRequest, "cacheId", answers, PsaId("A0000000")))
     }
   }
+
 }
 
 class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionValues with ScalaFutures with MockitoSugar {

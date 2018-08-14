@@ -22,7 +22,7 @@ import models.PartnershipDetails
 import play.api.data.Form
 import play.api.data.Forms.mapping
 
-class PartnershipDetailsFormProvider  @Inject() extends Mappings with Transforms {
+class PartnershipDetailsFormProvider @Inject() extends Mappings with Transforms {
 
   val partnerNameLength: Int = 160
 

@@ -23,8 +23,8 @@ import forms.register.establishers.company.director.DirectorUniqueTaxReferenceFo
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorUniqueTaxReferenceId}
-import models.{UniqueTaxReference, _}
 import models.person.PersonDetails
+import models.{UniqueTaxReference, _}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}

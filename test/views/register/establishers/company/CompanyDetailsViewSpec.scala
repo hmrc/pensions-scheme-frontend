@@ -16,15 +16,13 @@
 
 package views.register.establishers.company
 
-import play.api.data.Form
 import controllers.register.establishers.company.routes
 import forms.CompanyDetailsFormProvider
-import models.NormalMode
-import models.CompanyDetails
+import models.{CompanyDetails, Index, NormalMode}
+import play.api.data.Form
+import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.establishers.company.companyDetails
-import models.Index
-import play.twirl.api.HtmlFormat
 
 class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
 

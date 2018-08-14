@@ -21,7 +21,7 @@ import connectors.{AddressLookupConnector, DataCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPostcodeLookupId}
 import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
@@ -31,7 +31,6 @@ import utils.Navigator
 import utils.annotations.EstablisherPartnership
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
-import identifiers.register.establishers.partnership.PartnershipPostcodeLookupId
 
 class PartnershipPostcodeLookupController @Inject()(
                                                      override val appConfig: FrontendAppConfig,

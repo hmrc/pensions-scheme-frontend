@@ -27,8 +27,8 @@ import models.{CheckMode, NormalMode, PSAName}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.checkyouranswers.Ops._
 import utils.annotations.Adviser
+import utils.checkyouranswers.Ops._
 import utils.{CountryOptions, Navigator}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
@@ -36,16 +36,16 @@ import views.html.check_your_answers
 import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
-                                         dataCacheConnector: DataCacheConnector,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         @Adviser navigator: Navigator,
-                                         implicit val countryOptions: CountryOptions,
-                                         pensionsSchemeConnector: PensionsSchemeConnector,
-                                         emailConnector: EmailConnector,
-                                         psaNameCacheConnector: PSANameCacheConnector) extends FrontendController with I18nSupport {
+                                           override val messagesApi: MessagesApi,
+                                           dataCacheConnector: DataCacheConnector,
+                                           authenticate: AuthAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           @Adviser navigator: Navigator,
+                                           implicit val countryOptions: CountryOptions,
+                                           pensionsSchemeConnector: PensionsSchemeConnector,
+                                           emailConnector: EmailConnector,
+                                           psaNameCacheConnector: PSANameCacheConnector) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -79,7 +79,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     psaNameCacheConnector.fetch(request.externalId).flatMap {
       case Some(value) => {
         value.as[PSAName].psaEmail match {
-          case Some(email) => emailConnector.sendEmail(email,"pods_scheme_register", Map("srn" -> formatSrn(srn)))
+          case Some(email) => emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrn(srn)))
           case _ => Future.successful(EmailNotSent)
         }
       }

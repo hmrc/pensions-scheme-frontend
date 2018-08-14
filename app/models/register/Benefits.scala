@@ -23,7 +23,9 @@ sealed trait Benefits
 object Benefits {
 
   case object MoneyPurchase extends WithName("opt1") with Benefits
+
   case object Defined extends WithName("opt2") with Benefits
+
   case object MoneyPurchaseDefinedMix extends WithName("opt3") with Benefits
 
   val values: Seq[Benefits] = Seq(

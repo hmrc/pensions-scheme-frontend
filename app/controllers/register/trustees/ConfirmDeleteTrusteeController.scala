@@ -29,7 +29,7 @@ import models.register.trustees.TrusteeKind.{Company, Individual}
 import models.requests.DataRequest
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
 import utils.{Navigator, UserAnswers}

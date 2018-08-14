@@ -16,12 +16,12 @@
 
 package controllers.register.adviser
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
 import forms.register.AdviserDetailsFormProvider
 import identifiers.register.adviser.AdviserDetailsId
+import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,15 +34,15 @@ import views.html.register.adviser.adviserDetails
 import scala.concurrent.Future
 
 class AdviserDetailsController @Inject()(
-                                        appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
-                                        @Adviser navigator: Navigator,
-                                        authenticate: AuthAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AdviserDetailsFormProvider
-                                      ) extends FrontendController with I18nSupport {
+                                          appConfig: FrontendAppConfig,
+                                          override val messagesApi: MessagesApi,
+                                          dataCacheConnector: DataCacheConnector,
+                                          @Adviser navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          formProvider: AdviserDetailsFormProvider
+                                        ) extends FrontendController with I18nSupport {
 
   private val form = formProvider()
 

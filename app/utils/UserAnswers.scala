@@ -25,12 +25,11 @@ import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteI
 import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.partnership.IsPartnershipCompleteId
-import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
+import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteesId}
-import models.{CompanyDetails, PartnershipDetails}
 import models.person.PersonDetails
 import models.register._
+import models.{CompanyDetails, PartnershipDetails}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._

@@ -24,7 +24,9 @@ sealed trait TrusteeKind
 object TrusteeKind {
 
   case object Company extends WithName("company") with TrusteeKind
+
   case object Individual extends WithName("individual") with TrusteeKind
+
   case object Partnership extends WithName("partnership") with TrusteeKind
 
   val values: Seq[TrusteeKind] = Seq(

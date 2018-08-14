@@ -36,17 +36,17 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private lazy val onwardRoute = controllers.routes.SchemesOverviewController.onPageLoad()
 
-  val submissionReferenceNumber="XX123456789132"
+  val submissionReferenceNumber = "XX123456789132"
 
   private val fakeDataCacheConnector = mock[DataCacheConnector]
 
   val validData: JsObject = Json.obj(
     SchemeDetailsId.toString -> Json.toJson(SchemeDetails("test scheme name", SchemeType.SingleTrust)),
-    SubmissionReferenceNumberId.toString->SchemeSubmissionResponse(submissionReferenceNumber)
+    SubmissionReferenceNumberId.toString -> SchemeSubmissionResponse(submissionReferenceNumber)
   )
 
   private def controller(dataRetrievalAction: DataRetrievalAction =
-                 new FakeDataRetrievalAction(Some(validData))):SchemeSuccessController =
+                         new FakeDataRetrievalAction(Some(validData))): SchemeSuccessController =
     new SchemeSuccessController(
       frontendAppConfig,
       messagesApi,
@@ -75,7 +75,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
       val result = controller().onPageLoad(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
-     verify(fakeDataCacheConnector, times(1)).removeAll(any())(any(), any())
+      verify(fakeDataCacheConnector, times(1)).removeAll(any())(any(), any())
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {

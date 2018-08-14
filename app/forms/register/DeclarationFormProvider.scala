@@ -16,9 +16,8 @@
 
 package forms.register
 
-import javax.inject.Inject
-
 import forms.mappings.CheckboxMapping
+import javax.inject.Inject
 import play.api.data.Form
 
 class DeclarationFormProvider @Inject() extends CheckboxMapping {

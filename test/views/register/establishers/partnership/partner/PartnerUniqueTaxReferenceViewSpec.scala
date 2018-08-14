@@ -33,10 +33,10 @@ class PartnerUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
 
   def createView: () => HtmlFormat.Appendable = () => partnerUniqueTaxReference(frontendAppConfig, form, NormalMode,
-    establisherIndex, partnerIndex,partnerName)(fakeRequest, messages)
+    establisherIndex, partnerIndex, partnerName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => partnerUniqueTaxReference(frontendAppConfig, form,
-    NormalMode, establisherIndex, partnerIndex,partnerName)(fakeRequest, messages)
+    NormalMode, establisherIndex, partnerIndex, partnerName)(fakeRequest, messages)
 
   "PartnershipUniqueTaxReference view" must {
     behave like pageWithSecondaryHeader(createView, "First Name Middle Name Last Name")
@@ -75,8 +75,10 @@ class PartnerUniqueTaxReferenceViewSpec extends ViewBehaviours {
         val expectedValue = "1234567891"
         val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" ->
           expectedValue))))
-        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__partner_sautr")} ${messages(
-          "messages__partner_sautr_hint_format")}",
+        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__partner_sautr")} ${
+          messages(
+            "messages__partner_sautr_hint_format")
+        }",
           expectedValue)
       }
 

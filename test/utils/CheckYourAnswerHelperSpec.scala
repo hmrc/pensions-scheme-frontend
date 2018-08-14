@@ -20,11 +20,10 @@ import base.SpecBase
 import controllers.register.establishers.individual.routes._
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
-import models.address.Address
-import models.UniqueTaxReference.{No, Yes}
-import models.register.{SchemeDetails, SchemeType}
 import models._
+import models.address.Address
 import models.person.PersonDetails
+import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json._
 import viewmodels.AnswerRow
@@ -196,7 +195,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
         Json.obj(SchemeDetailsId.toString -> Json.toJson(
           SchemeDetails("value 1", SchemeType.SingleTrust)),
           "establishers" -> Json.arr(
-            Json.obj(EstablisherDetailsId.toString -> establisherDetails.copy(middleName=None))
+            Json.obj(EstablisherDetailsId.toString -> establisherDetails.copy(middleName = None))
           ))
       )
       val expectedOutput = Seq(

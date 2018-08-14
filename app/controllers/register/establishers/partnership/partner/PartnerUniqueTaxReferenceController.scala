@@ -35,24 +35,24 @@ import views.html.register.establishers.partnership.partner.partnerUniqueTaxRefe
 import scala.concurrent.Future
 
 class PartnerUniqueTaxReferenceController @Inject()(
-                                                             appConfig: FrontendAppConfig,
-                                                             override val messagesApi: MessagesApi,
-                                                             dataCacheConnector: DataCacheConnector,
-                                                             @EstablishersPartner navigator: Navigator,
-                                                             authenticate: AuthAction,
-                                                             getData: DataRetrievalAction,
-                                                             requireData: DataRequiredAction,
-                                                             formProvider: PartnerUniqueTaxReferenceFormProvider
-                                                           ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                     appConfig: FrontendAppConfig,
+                                                     override val messagesApi: MessagesApi,
+                                                     dataCacheConnector: DataCacheConnector,
+                                                     @EstablishersPartner navigator: Navigator,
+                                                     authenticate: AuthAction,
+                                                     getData: DataRetrievalAction,
+                                                     requireData: DataRequiredAction,
+                                                     formProvider: PartnerUniqueTaxReferenceFormProvider
+                                                   ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      PartnerDetailsId(establisherIndex,partnerIndex).retrieve.right.flatMap { partner =>
-        PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex).retrieve.right.map{ value =>
+      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.flatMap { partner =>
+        PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex).retrieve.right.map { value =>
           Future.successful(Ok(partnerUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, partnerIndex, partner.fullName)))
-        }.left.map{ _ =>
+        }.left.map { _ =>
           Future.successful(Ok(partnerUniqueTaxReference(appConfig, form, mode, establisherIndex, partnerIndex, partner.fullName)))
         }
       }
@@ -61,10 +61,10 @@ class PartnerUniqueTaxReferenceController @Inject()(
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      PartnerDetailsId(establisherIndex,partnerIndex).retrieve.right.map { partner =>
+      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partner =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(partnerUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, partnerIndex,partner.fullName))),
+            Future.successful(BadRequest(partnerUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, partner.fullName))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,

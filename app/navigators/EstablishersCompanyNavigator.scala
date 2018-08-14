@@ -52,7 +52,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: DataCacheCo
         NavigateTo.save(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index))
       case AddCompanyDirectorsId(index) =>
         addDirectors(NormalMode, index, from.userAnswers)
-      case OtherDirectorsId(index)=>
+      case OtherDirectorsId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index))
       case CompanyReviewId(_) =>
         NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
@@ -87,7 +87,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: DataCacheCo
         checkYourAnswers(index, from.userAnswers)
       case AddCompanyDirectorsId(index) =>
         addDirectors(CheckMode, index, from.userAnswers)
-      case OtherDirectorsId(index)=>
+      case OtherDirectorsId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index))
       case _ => None
     }

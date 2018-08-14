@@ -19,8 +19,8 @@ package utils
 import base.SpecBase
 import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
-import play.api.test.Helpers._
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.Helpers._
 
 class CountryOptionsSpec extends SpecBase {
 

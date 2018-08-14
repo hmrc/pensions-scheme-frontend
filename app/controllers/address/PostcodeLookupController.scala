@@ -37,8 +37,11 @@ import scala.concurrent.Future
 trait PostcodeLookupController extends FrontendController with Retrievals with I18nSupport {
 
   protected def appConfig: FrontendAppConfig
+
   protected def cacheConnector: DataCacheConnector
+
   protected def addressLookupConnector: AddressLookupConnector
+
   protected def navigator: Navigator
 
   protected def form: Form[String]
@@ -77,7 +80,7 @@ trait PostcodeLookupController extends FrontendController with Retrievals with I
 
     addressLookupConnector.addressLookupByPostCode(postcode).flatMap {
 
-    case Nil => Future.successful(Ok(postcodeLookup(appConfig, formWithError(noResults), viewmodel)))
+      case Nil => Future.successful(Ok(postcodeLookup(appConfig, formWithError(noResults), viewmodel)))
 
       case addresses =>
         cacheConnector.save(

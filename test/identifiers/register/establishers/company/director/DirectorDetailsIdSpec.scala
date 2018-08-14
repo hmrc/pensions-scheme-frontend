@@ -25,36 +25,36 @@ import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
 import utils.UserAnswers
 
-class DirectorDetailsIdSpec extends WordSpec with MustMatchers with OptionValues{
+class DirectorDetailsIdSpec extends WordSpec with MustMatchers with OptionValues {
   val userAnswersWithTenDirectors = UserAnswers(Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails("TestCompanyName", Some("123456"), Some("abcd")),
-    "director" -> Json.arr(
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "One", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Two", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Three", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Four", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Five", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Six", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Seven", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Eight", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Nine", LocalDate.now())),
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("Tim", None, "Ten", LocalDate.now(), isDeleted = true)),
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("Tim", None, "Eleven", LocalDate.now(), isDeleted = true)),
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("Tim", None, "Twelve", LocalDate.now(), isDeleted = true)),
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Thirteen", LocalDate.now()))
-    )
-  ))))
+        "director" -> Json.arr(
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "One", LocalDate.now())),
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Two", LocalDate.now())),
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Three", LocalDate.now())),
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Four", LocalDate.now())),
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Five", LocalDate.now())),
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Six", LocalDate.now())),
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Seven", LocalDate.now())),
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Eight", LocalDate.now())),
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Nine", LocalDate.now())),
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("Tim", None, "Ten", LocalDate.now(), isDeleted = true)),
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("Tim", None, "Eleven", LocalDate.now(), isDeleted = true)),
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("Tim", None, "Twelve", LocalDate.now(), isDeleted = true)),
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "Thirteen", LocalDate.now()))
+        )
+      ))))
 
   val userAnswersWithOneDirector = UserAnswers(Json.obj(
     EstablishersId.toString -> Json.arr(
       Json.obj(
         CompanyDetailsId.toString -> CompanyDetails("TestCompanyName", Some("123456"), Some("abcd")),
         "director" -> Json.arr(
-      Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "One", LocalDate.now()))
-    )
-  ))))
+          Json.obj(DirectorDetailsId.toString -> PersonDetails("John", None, "One", LocalDate.now()))
+        )
+      ))))
 
   "Cleanup" must {
 
@@ -64,7 +64,7 @@ class DirectorDetailsIdSpec extends WordSpec with MustMatchers with OptionValues
 
         val result: UserAnswers = userAnswersWithOneDirector
           .set(OtherDirectorsId(0))(true).asOpt.value
-          .remove(DirectorDetailsId(0,0)).asOpt.value
+          .remove(DirectorDetailsId(0, 0)).asOpt.value
 
         result.get(OtherDirectorsId(0)) must not be defined
 
@@ -74,7 +74,7 @@ class DirectorDetailsIdSpec extends WordSpec with MustMatchers with OptionValues
 
         val result: UserAnswers = userAnswersWithTenDirectors
           .set(OtherDirectorsId(0))(true).asOpt.value
-          .remove(DirectorDetailsId(0,0)).asOpt.value
+          .remove(DirectorDetailsId(0, 0)).asOpt.value
 
         result.get(OtherDirectorsId(0)) must not be defined
 

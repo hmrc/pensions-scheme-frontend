@@ -23,6 +23,7 @@ sealed trait DeclarationDormant
 object DeclarationDormant {
 
   case object No extends WithName("no") with DeclarationDormant
+
   case object Yes extends WithName("yes") with DeclarationDormant
 
   val values: Seq[DeclarationDormant] = Seq(

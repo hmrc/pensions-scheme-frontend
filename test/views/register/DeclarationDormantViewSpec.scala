@@ -16,9 +16,9 @@
 
 package views.register
 
-import play.api.data.Form
 import forms.register.DeclarationDormantFormProvider
 import models.register.DeclarationDormant
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.declarationDormant
@@ -53,13 +53,13 @@ class DeclarationDormantViewSpec extends ViewBehaviours {
       }
     }
 
-    for(option <- DeclarationDormant.options) {
+    for (option <- DeclarationDormant.options) {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
 
-          for(unselectedOption <- DeclarationDormant.options.filterNot(o => o == option)) {
+          for (unselectedOption <- DeclarationDormant.options.filterNot(o => o == option)) {
             assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
           }
         }

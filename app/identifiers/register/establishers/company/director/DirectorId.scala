@@ -18,11 +18,11 @@ package identifiers.register.establishers.company.director
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import identifiers.register.establishers.company.{OtherDirectorsId}
+import identifiers.register.establishers.company.OtherDirectorsId
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 
-case class DirectorId(establisherIndex:Int, directorIndex:Int) extends TypedIdentifier[Nothing] {
+case class DirectorId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[Nothing] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ DirectorId.toString \ directorIndex
 
   override def cleanup(value: Option[Nothing], userAnswers: UserAnswers): JsResult[UserAnswers] = {

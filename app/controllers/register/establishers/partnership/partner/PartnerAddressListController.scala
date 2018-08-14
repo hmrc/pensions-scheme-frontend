@@ -35,14 +35,14 @@ import viewmodels.address.AddressListViewModel
 import scala.concurrent.Future
 
 class PartnerAddressListController @Inject()(
-                                               override val appConfig: FrontendAppConfig,
-                                               override val cacheConnector: DataCacheConnector,
-                                               @EstablishersPartner override val navigator: Navigator,
-                                               override val messagesApi: MessagesApi,
-                                               authenticate: AuthAction,
-                                               getData: DataRetrievalAction,
-                                               requireData: DataRequiredAction
-                                             ) extends AddressListController with Retrievals {
+                                              override val appConfig: FrontendAppConfig,
+                                              override val cacheConnector: DataCacheConnector,
+                                              @EstablishersPartner override val navigator: Navigator,
+                                              override val messagesApi: MessagesApi,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction
+                                            ) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async { implicit request =>

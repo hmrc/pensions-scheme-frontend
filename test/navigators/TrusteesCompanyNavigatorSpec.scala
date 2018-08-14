@@ -20,13 +20,12 @@ import base.SpecBase
 import connectors.FakeDataCacheConnector
 import identifiers.Identifier
 import identifiers.register.trustees.company._
-import models.{AddressYears, CheckMode, Index, Mode, NormalMode}
+import models.{AddressYears, CheckMode, Mode, NormalMode}
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
-import views.html.register.trustees.company._
 
 
 class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
@@ -35,21 +34,21 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
 
   private def routesTrusteeCompany: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
 
-    ("Id",                                      "UserAnswers",          "Next Page (Normal Mode)",              "Save (NM)",  "Next Page (CheckMode)",            "Save (CM)"),
-    (CompanyDetailsId(0),                        emptyAnswers,          companyRegistrationNumber(NormalMode),    true,        Some(checkYourAnswers),                 true),
-    (CompanyRegistrationNumberId(0),             emptyAnswers,          companyUTR(NormalMode),                   true,        Some(checkYourAnswers),                 true),
-    (CompanyUniqueTaxReferenceId(0),             emptyAnswers,          companyPostCodeLookup(NormalMode),        true,        Some(checkYourAnswers),                 true),
-    (CompanyPostcodeLookupId(0),                 emptyAnswers,          companyAddressList(NormalMode),           true,        Some(companyAddressList(CheckMode)),    true),
-    (CompanyAddressListId(0),                    emptyAnswers,          companyManualAddress(NormalMode),         true,        Some(companyManualAddress(CheckMode)),  true),
-    (CompanyAddressId(0),                        emptyAnswers,          companyAddressYears(NormalMode),          true,        Some(checkYourAnswers),                 true),
-    (CompanyAddressYearsId(0),                   addressYearsOverAYear, companyContactDetails,                    true,        Some(checkYourAnswers),                 true),
-    (CompanyAddressYearsId(0),                   addressYearsUnderAYear,prevAddPostCodeLookup(NormalMode),        true,        Some(prevAddPostCodeLookup(CheckMode)), true),
-    (CompanyPreviousAddressPostcodeLookupId(0),  emptyAnswers,          companyPaList(NormalMode),                true,        Some(companyPaList(CheckMode)),         true),
-    (CompanyPreviousAddressListId(0),            emptyAnswers,          companyPreviousAddress(NormalMode),       true,        Some(companyPreviousAddress(CheckMode)),true),
-    (CompanyPreviousAddressId(0),                emptyAnswers,          companyContactDetails,                    true,        Some(checkYourAnswers),                 true),
-    (CompanyContactDetailsId(0),                 emptyAnswers,          checkYourAnswers,                         true,        Some(checkYourAnswers),                 true),
-    (CompanyAddressYearsId(0),                   emptyAnswers,          sessionExpired,                           false,       Some(sessionExpired),                   false),
-    (CheckYourAnswersId,                         emptyAnswers,          addTrustee,                               true,        None,                                 false)
+    ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),
+    (CompanyDetailsId(0), emptyAnswers, companyRegistrationNumber(NormalMode), true, Some(checkYourAnswers), true),
+    (CompanyRegistrationNumberId(0), emptyAnswers, companyUTR(NormalMode), true, Some(checkYourAnswers), true),
+    (CompanyUniqueTaxReferenceId(0), emptyAnswers, companyPostCodeLookup(NormalMode), true, Some(checkYourAnswers), true),
+    (CompanyPostcodeLookupId(0), emptyAnswers, companyAddressList(NormalMode), true, Some(companyAddressList(CheckMode)), true),
+    (CompanyAddressListId(0), emptyAnswers, companyManualAddress(NormalMode), true, Some(companyManualAddress(CheckMode)), true),
+    (CompanyAddressId(0), emptyAnswers, companyAddressYears(NormalMode), true, Some(checkYourAnswers), true),
+    (CompanyAddressYearsId(0), addressYearsOverAYear, companyContactDetails, true, Some(checkYourAnswers), true),
+    (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(NormalMode), true, Some(prevAddPostCodeLookup(CheckMode)), true),
+    (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(NormalMode), true, Some(companyPaList(CheckMode)), true),
+    (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(NormalMode), true, Some(companyPreviousAddress(CheckMode)), true),
+    (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails, true, Some(checkYourAnswers), true),
+    (CompanyContactDetailsId(0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
+    (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
+    (CheckYourAnswersId, emptyAnswers, addTrustee, true, None, false)
   )
 
 
@@ -60,10 +59,11 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     behave like nonMatchingNavigator(navigator)
   }
 }
+
 //noinspection MutatorLikeMethodIsParameterless
 object TrusteesCompanyNavigatorSpec extends OptionValues {
 
-  private val navigator=new TrusteesCompanyNavigator(FakeDataCacheConnector)
+  private val navigator = new TrusteesCompanyNavigator(FakeDataCacheConnector)
 
   private def companyRegistrationNumber(mode: Mode): Call =
     controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, 0)
@@ -92,7 +92,7 @@ object TrusteesCompanyNavigatorSpec extends OptionValues {
 
   private def checkYourAnswers = controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(0)
 
-  private def addTrustee=controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 

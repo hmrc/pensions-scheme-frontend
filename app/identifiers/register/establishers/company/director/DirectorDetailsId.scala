@@ -23,7 +23,7 @@ import models.person.PersonDetails
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
 
-case class DirectorDetailsId(establisherIndex:Int,directorIndex:Int) extends TypedIdentifier[PersonDetails] {
+case class DirectorDetailsId(establisherIndex: Int, directorIndex: Int) extends TypedIdentifier[PersonDetails] {
   override def path: JsPath = EstablishersId(establisherIndex).path \ "director" \ directorIndex \ DirectorDetailsId.toString
 
   override def cleanup(value: Option[PersonDetails], userAnswers: UserAnswers): JsResult[UserAnswers] = {
@@ -34,7 +34,7 @@ case class DirectorDetailsId(establisherIndex:Int,directorIndex:Int) extends Typ
   }
 }
 
-object DirectorDetailsId{
+object DirectorDetailsId {
   def collectionPath(establisherIndex: Int): JsPath =
     EstablishersId(establisherIndex).path \ "director" \\ DirectorDetailsId.toString
 

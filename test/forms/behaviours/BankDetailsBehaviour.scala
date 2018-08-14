@@ -23,13 +23,13 @@ import play.api.data.{Form, FormError}
 
 trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping {
 
-  def formWithSortCode[T](testForm:Form[T],
-                       keyRequired: String,
-                       keyInvalid: String,
-                       keyMaxError: String,
-                       validOtherData: Map[String, String],
-                       getSortCode: (T) => SortCode
-                      ): Unit = {
+  def formWithSortCode[T](testForm: Form[T],
+                          keyRequired: String,
+                          keyInvalid: String,
+                          keyMaxError: String,
+                          validOtherData: Map[String, String],
+                          getSortCode: (T) => SortCode
+                         ): Unit = {
 
 
     "behave like form with SortCode" should {

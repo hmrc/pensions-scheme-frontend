@@ -67,11 +67,13 @@ class PartnershipPayeControllerSpec extends ControllerSpecBase with MustMatchers
 
 }
 
-object PartnershipPayeControllerSpec extends PartnershipPayeControllerSpec{
+object PartnershipPayeControllerSpec extends PartnershipPayeControllerSpec {
 
   val form = new PayeFormProvider()()
   val firstIndex = Index(0)
+
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
   val viewModel = PayeViewModel(
     routes.PartnershipPayeController.onSubmit(NormalMode, firstIndex),
     title = Message("messages__partnershipPaye__title"),

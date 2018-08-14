@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
 import views.behaviours.ViewBehaviours
 import views.html.youNeedToRegister
 
-class YouNeedToRegisterViewSpec @Inject() (appConfig: FrontendAppConfig) extends ViewBehaviours {
+class YouNeedToRegisterViewSpec @Inject()(appConfig: FrontendAppConfig) extends ViewBehaviours {
 
   val messageKeyPrefix = "youNeedToRegister"
 

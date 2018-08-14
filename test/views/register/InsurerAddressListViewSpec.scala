@@ -62,7 +62,7 @@ class InsurerAddressListViewSpec extends ViewBehaviours {
         controllers.register.routes.InsurerAddressController.onPageLoad(NormalMode).url)
     }
 
-    }
+  }
 
   "InsurerAddressList view" when {
     "rendered" must {
@@ -74,13 +74,13 @@ class InsurerAddressListViewSpec extends ViewBehaviours {
       }
     }
 
-    for(option <- addressIndexes) {
+    for (option <- addressIndexes) {
       s"rendered with a value of '$option'" must {
         s"have the '$option' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"$option"))))
           assertContainsRadioButton(doc, s"value-$option", "value", option.toString, true)
 
-          for(unselectedOption <- addressIndexes.filterNot(o => o == option)) {
+          for (unselectedOption <- addressIndexes.filterNot(o => o == option)) {
             assertContainsRadioButton(doc, s"value-$unselectedOption", "value", unselectedOption.toString, false)
           }
         }

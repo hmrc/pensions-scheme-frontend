@@ -18,7 +18,7 @@ package controllers.testOnlyDoNotUseInAppConf
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.{DataCacheConnector, PSANameCacheConnector}
+import connectors.PSANameCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.mappings.Mappings
@@ -29,7 +29,6 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Enumerable
 import views.html.testOnlyDoNotUseInAppConf.testEnrol
-import views.html.whatYouWillNeed
 
 import scala.concurrent.Future
 
@@ -53,7 +52,7 @@ class TestEnrolController @Inject()(
 
   def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>
-    Ok(testEnrol(appConfig,formProvider))
+      Ok(testEnrol(appConfig, formProvider))
   }
 
   def onSubmit(): Action[AnyContent] = (authenticate andThen getData).async {

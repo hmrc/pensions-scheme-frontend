@@ -16,20 +16,20 @@
 
 package controllers.register
 
-import play.api.data.Form
-import play.api.libs.json.Json
-import utils.FakeNavigator
 import connectors.FakeDataCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.test.Helpers._
 import forms.register.MembershipFutureFormProvider
 import identifiers.register.{MembershipFutureId, SchemeDetailsId}
 import models.NormalMode
-import views.html.register.membershipFuture
-import controllers.ControllerSpecBase
-import models.register.{Membership, SchemeDetails}
 import models.register.SchemeType.SingleTrust
+import models.register.{Membership, SchemeDetails}
+import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.test.Helpers._
+import utils.FakeNavigator
+import views.html.register.membershipFuture
 
 class MembershipFutureControllerSpec extends ControllerSpecBase {
 

@@ -22,9 +22,8 @@ import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPostcodeLookupId}
-import models.{Index, NormalMode, PartnershipDetails}
 import models.address.TolerantAddress
-import org.joda.time.LocalDate
+import models.{Index, NormalMode, PartnershipDetails}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -196,7 +195,7 @@ class PartnershipAddressListControllerSpec extends ControllerSpecBase with CSRFR
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
       routes.PartnershipAddressListController.onSubmit(NormalMode, Index(0)),
-      routes.PartnershipAddressController.onPageLoad(NormalMode,Index(0)),
+      routes.PartnershipAddressController.onPageLoad(NormalMode, Index(0)),
       addresses,
       subHeading = Some(Message(partnershipDetails.name))
     )
