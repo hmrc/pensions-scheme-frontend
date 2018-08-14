@@ -35,17 +35,17 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
 class PartnershipPreviousAddressController @Inject()(
-                                                  val appConfig: FrontendAppConfig,
-                                                  val messagesApi: MessagesApi,
-                                                  val dataCacheConnector: DataCacheConnector,
-                                                  @TrusteesPartnership val navigator: Navigator,
-                                                  authenticate: AuthAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  formProvider: AddressFormProvider,
-                                                  val countryOptions: CountryOptions,
-                                                  val auditService: AuditService
-                                                ) extends ManualAddressController with I18nSupport {
+                                                      val appConfig: FrontendAppConfig,
+                                                      val messagesApi: MessagesApi,
+                                                      val dataCacheConnector: DataCacheConnector,
+                                                      @TrusteesPartnership val navigator: Navigator,
+                                                      authenticate: AuthAction,
+                                                      getData: DataRetrievalAction,
+                                                      requireData: DataRequiredAction,
+                                                      formProvider: AddressFormProvider,
+                                                      val countryOptions: CountryOptions,
+                                                      val auditService: AuditService
+                                                    ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.PartnershipPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__partnershipPreviousAddress__title"

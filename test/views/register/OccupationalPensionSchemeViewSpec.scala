@@ -16,12 +16,12 @@
 
 package views.register
 
-import play.api.data.Form
 import controllers.register.routes
 import forms.register.OccupationalPensionSchemeFormProvider
-import views.behaviours.YesNoViewBehaviours
 import models.NormalMode
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import views.behaviours.YesNoViewBehaviours
 import views.html.register.occupationalPensionScheme
 
 class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {

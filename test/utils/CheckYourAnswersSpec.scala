@@ -18,10 +18,10 @@ package utils
 
 import identifiers.TypedIdentifier
 import identifiers.register.SchemeEstablishedCountryId
-import models.address.Address
-import models.register._
 import models._
+import models.address.Address
 import models.person.PersonDetails
+import models.register._
 import models.requests.DataRequest
 import org.joda.time.LocalDate
 import org.scalatest.prop.PropertyChecks

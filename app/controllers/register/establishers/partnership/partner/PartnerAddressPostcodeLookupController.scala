@@ -33,16 +33,16 @@ import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
 class PartnerAddressPostcodeLookupController @Inject()(
-                                                         override val appConfig: FrontendAppConfig,
-                                                         override val messagesApi: MessagesApi,
-                                                         override val cacheConnector: DataCacheConnector,
-                                                         override val addressLookupConnector: AddressLookupConnector,
-                                                         @EstablishersPartner override val navigator: Navigator,
-                                                         authenticate: AuthAction,
-                                                         getData: DataRetrievalAction,
-                                                         requireData: DataRequiredAction,
-                                                         formProvider: PostCodeLookupFormProvider
-                                                       ) extends PostcodeLookupController {
+                                                        override val appConfig: FrontendAppConfig,
+                                                        override val messagesApi: MessagesApi,
+                                                        override val cacheConnector: DataCacheConnector,
+                                                        override val addressLookupConnector: AddressLookupConnector,
+                                                        @EstablishersPartner override val navigator: Navigator,
+                                                        authenticate: AuthAction,
+                                                        getData: DataRetrievalAction,
+                                                        requireData: DataRequiredAction,
+                                                        formProvider: PostCodeLookupFormProvider
+                                                      ) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
 

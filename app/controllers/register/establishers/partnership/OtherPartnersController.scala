@@ -43,7 +43,7 @@ class OtherPartnersController @Inject()(
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: OtherPartnersFormProvider
-                                        ) extends FrontendController with Retrievals with I18nSupport {
+                                       ) extends FrontendController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 

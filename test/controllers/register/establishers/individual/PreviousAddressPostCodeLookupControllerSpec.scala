@@ -35,6 +35,7 @@ import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup
 
 import scala.concurrent.Future
+
 class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
@@ -78,7 +79,7 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
   "PreviousAddress Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode,firstIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()

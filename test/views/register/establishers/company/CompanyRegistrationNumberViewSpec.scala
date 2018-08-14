@@ -29,12 +29,12 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
   val companyName = "test name"
   val form = new CompanyRegistrationNumberFormProvider()()
 
-  def createView = () => companyRegistrationNumber(frontendAppConfig, form, NormalMode,index,companyName)(fakeRequest, messages)
+  def createView = () => companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyRegistrationNumber(frontendAppConfig, form, NormalMode,index,companyName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
 
   "CompanyRegistrationNumber view" must {
-    behave like normalPage(createView, messageKeyPrefix,messages("messages__company__has_crn"))
+    behave like normalPage(createView, messageKeyPrefix, messages("messages__company__has_crn"))
 
     behave like pageWithBackLink(createView)
 
@@ -51,19 +51,19 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
         for (option <- crnOptions) {
-          assertContainsRadioButton(doc, s"companyRegistrationNumber_hasCrn-$option", "companyRegistrationNumber.hasCrn", option, isChecked=false)
+          assertContainsRadioButton(doc, s"companyRegistrationNumber_hasCrn-$option", "companyRegistrationNumber.hasCrn", option, isChecked = false)
         }
       }
     }
 
-    for(option <- crnOptions) {
+    for (option <- crnOptions) {
       s"rendered with a value of '$option'" must {
         s"have the '$option' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("companyRegistrationNumber.hasCrn" -> s"$option"))))
-          assertContainsRadioButton(doc, s"companyRegistrationNumber_hasCrn-$option", "companyRegistrationNumber.hasCrn", option, isChecked=true)
+          assertContainsRadioButton(doc, s"companyRegistrationNumber_hasCrn-$option", "companyRegistrationNumber.hasCrn", option, isChecked = true)
 
-          for(unselectedOption <- crnOptions.filterNot(o => o == option)) {
-            assertContainsRadioButton(doc, s"companyRegistrationNumber_hasCrn-$unselectedOption", "companyRegistrationNumber.hasCrn", unselectedOption,isChecked=false)
+          for (unselectedOption <- crnOptions.filterNot(o => o == option)) {
+            assertContainsRadioButton(doc, s"companyRegistrationNumber_hasCrn-$unselectedOption", "companyRegistrationNumber.hasCrn", unselectedOption, isChecked = false)
           }
         }
       }

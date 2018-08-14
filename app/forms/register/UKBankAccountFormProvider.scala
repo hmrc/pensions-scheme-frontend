@@ -16,8 +16,8 @@
 
 package forms.register
 
-import javax.inject.Inject
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
 
 class UKBankAccountFormProvider @Inject() extends Mappings {

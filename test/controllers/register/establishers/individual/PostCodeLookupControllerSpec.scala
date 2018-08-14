@@ -120,7 +120,7 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
       val boundForm = form.withError(FormError("value", "messages__error__postcode_failed"))
 
       when(fakeAddressLookupConnector.addressLookupByPostCode(Matchers.any())(Matchers.any(), Matchers.any()))
-        .thenReturn(Future.failed(new HttpException("Failed",INTERNAL_SERVER_ERROR)))
+        .thenReturn(Future.failed(new HttpException("Failed", INTERNAL_SERVER_ERROR)))
 
       val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
 

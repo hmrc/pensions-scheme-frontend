@@ -18,7 +18,7 @@ package forms.register.establishers.individual
 
 import forms.behaviours.NinoBehaviours
 
-class EstablisherNinoFormProviderSpec extends NinoBehaviours  {
+class EstablisherNinoFormProviderSpec extends NinoBehaviours {
 
   val requiredKey = "messages__error__has_nino_establisher"
   val requiredNinoKey = "messages__error__nino"

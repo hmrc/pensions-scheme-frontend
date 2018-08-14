@@ -25,16 +25,18 @@ import views.html.check_your_answers
 class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehaviours {
 
   private val messageKeyPrefix = "checkYourAnswers"
+
   private def emptyAnswerSections: Seq[Section] = Nil
+
   private def secondaryHeader: String = "test-secondaryHeader"
 
   def createView: () => HtmlFormat.Appendable = () =>
-      check_your_answers(
-        frontendAppConfig,
-        emptyAnswerSections,
-        Some(secondaryHeader),
-        routes.IndexController.onPageLoad()
-      )(fakeRequest, messages)
+    check_your_answers(
+      frontendAppConfig,
+      emptyAnswerSections,
+      Some(secondaryHeader),
+      routes.IndexController.onPageLoad()
+    )(fakeRequest, messages)
 
   def createViewWithData: (Seq[Section]) => HtmlFormat.Appendable = (sections) =>
     check_your_answers(

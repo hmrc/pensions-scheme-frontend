@@ -20,8 +20,8 @@ import connectors.PSANameCacheConnector
 import controllers.actions._
 import controllers.testOnlyDoNotUseInAppConf.TestEnrolController
 import forms.mappings.Mappings
-import org.mockito.Mockito._
 import org.mockito.Matchers._
+import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json

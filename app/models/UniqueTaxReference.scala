@@ -24,6 +24,7 @@ sealed trait UniqueTaxReference
 object UniqueTaxReference {
 
   case class Yes(utr: String) extends UniqueTaxReference
+
   case class No(reason: String) extends UniqueTaxReference
 
   def options: Seq[InputOption] = Seq(

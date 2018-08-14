@@ -17,7 +17,7 @@
 package identifiers.register
 
 import identifiers.TypedIdentifier
-import models.register.{Membership}
+import models.register.Membership
 
 case object MembershipFutureId extends TypedIdentifier[Membership] {
   override def toString: String = "membershipFuture"

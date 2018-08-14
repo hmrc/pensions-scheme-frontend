@@ -26,7 +26,7 @@ class SchemeSuccessViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "complete"
 
-  val submissionReferenceNumber="XX123456789132"
+  val submissionReferenceNumber = "XX123456789132"
 
   val testScheme = "test scheme name"
 

@@ -24,7 +24,7 @@ import models.{CheckMode, Index, NormalMode}
 import org.joda.time.LocalDate
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.{CheckYourAnswersFactory, CountryOptions, DateHelper, FakeNavigator, FakeSectionComplete, InputOption, SectionCompleteImpl}
+import utils.{CheckYourAnswersFactory, CountryOptions, DateHelper, FakeNavigator, FakeSectionComplete, InputOption}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 

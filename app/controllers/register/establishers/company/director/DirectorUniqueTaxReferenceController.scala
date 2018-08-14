@@ -16,15 +16,14 @@
 
 package controllers.register.establishers.company.director
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.company.director.{DirectorDetailsId, DirectorUniqueTaxReferenceId}
-import models.UniqueTaxReference
-import models.{Index, Mode}
+import javax.inject.Inject
+import models.{Index, Mode, UniqueTaxReference}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -36,24 +35,24 @@ import views.html.register.establishers.company.director.directorUniqueTaxRefere
 import scala.concurrent.Future
 
 class DirectorUniqueTaxReferenceController @Inject()(
-                                                             appConfig: FrontendAppConfig,
-                                                             override val messagesApi: MessagesApi,
-                                                             dataCacheConnector: DataCacheConnector,
-                                                             @EstablishersCompanyDirector navigator: Navigator,
-                                                             authenticate: AuthAction,
-                                                             getData: DataRetrievalAction,
-                                                             requireData: DataRequiredAction,
-                                                             formProvider: DirectorUniqueTaxReferenceFormProvider
-                                                           ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                      appConfig: FrontendAppConfig,
+                                                      override val messagesApi: MessagesApi,
+                                                      dataCacheConnector: DataCacheConnector,
+                                                      @EstablishersCompanyDirector navigator: Navigator,
+                                                      authenticate: AuthAction,
+                                                      getData: DataRetrievalAction,
+                                                      requireData: DataRequiredAction,
+                                                      formProvider: DirectorUniqueTaxReferenceFormProvider
+                                                    ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      DirectorDetailsId(establisherIndex,directorIndex).retrieve.right.flatMap { director =>
-        DirectorUniqueTaxReferenceId(establisherIndex, directorIndex).retrieve.right.map{ value =>
+      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { director =>
+        DirectorUniqueTaxReferenceId(establisherIndex, directorIndex).retrieve.right.map { value =>
           Future.successful(Ok(directorUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, directorIndex, director.fullName)))
-        }.left.map{ _ =>
+        }.left.map { _ =>
           Future.successful(Ok(directorUniqueTaxReference(appConfig, form, mode, establisherIndex, directorIndex, director.fullName)))
         }
       }
@@ -62,10 +61,10 @@ class DirectorUniqueTaxReferenceController @Inject()(
 
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      DirectorDetailsId(establisherIndex,directorIndex).retrieve.right.map { director =>
+      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, directorIndex,director.fullName))),
+            Future.successful(BadRequest(directorUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, directorIndex, director.fullName))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,

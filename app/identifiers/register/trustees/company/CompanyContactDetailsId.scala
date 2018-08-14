@@ -17,15 +17,15 @@
 package identifiers.register.trustees.company
 
 import identifiers.TypedIdentifier
-import play.api.libs.json.JsPath
 import identifiers.register.trustees.TrusteesId
 import models.ContactDetails
+import play.api.libs.json.JsPath
 
 
 case class CompanyContactDetailsId(index: Int) extends TypedIdentifier[ContactDetails] {
   override def path: JsPath = TrusteesId(index).path \ CompanyContactDetailsId.toString
 }
 
- object CompanyContactDetailsId {
+object CompanyContactDetailsId {
   override def toString: String = "companyContactDetails"
 }

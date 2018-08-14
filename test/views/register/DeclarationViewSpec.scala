@@ -29,7 +29,9 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
   def createView = () => declaration(frontendAppConfig, form, schemeName, true, false, true)(fakeRequest, messages)
+
   def createViewDynamic(isCompany: Boolean = true, isDormant: Boolean = false, showMasterTrustDeclaration: Boolean = true) = () => declaration(frontendAppConfig, form, schemeName, isCompany, isDormant, showMasterTrustDeclaration)(fakeRequest, messages)
+
   def createViewUsingForm = (form: Form[_]) => declaration(frontendAppConfig, form, schemeName, false, false, true)(fakeRequest, messages)
 
   "Declaration view" must {
@@ -37,14 +39,14 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
       createView,
       messageKeyPrefix,
       messages(s"messages__${messageKeyPrefix}__title"),
-        "_declare",
-        "_statement1_not_dormant",
-        "_statement2",
-        "_statement3",
-        "_statement4",
-        "_statement5",
-        "_statement6",
-        "_statement7")
+      "_declare",
+      "_statement1_not_dormant",
+      "_statement2",
+      "_statement3",
+      "_statement4",
+      "_statement5",
+      "_statement6",
+      "_statement7")
 
     behave like pageWithSecondaryHeader(createView, schemeName)
 

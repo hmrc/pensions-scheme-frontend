@@ -25,7 +25,6 @@ import models.address.Address
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import play.api.Application
 import play.api.data.Form
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call

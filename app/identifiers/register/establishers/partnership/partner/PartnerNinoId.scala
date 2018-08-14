@@ -15,6 +15,7 @@
  */
 
 package identifiers.register.establishers.partnership.partner
+
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import models.Nino
@@ -22,7 +23,7 @@ import play.api.libs.json.JsPath
 import utils.checkyouranswers.{CheckYourAnswers, NinoCYA}
 
 case class PartnerNinoId(establisherIndex: Int, partnerIndex: Int) extends TypedIdentifier[Nino] {
-  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \PartnerNinoId.toString
+  override def path: JsPath = EstablishersId(establisherIndex).path \ "partner" \ partnerIndex \ PartnerNinoId.toString
 }
 
 object PartnerNinoId {

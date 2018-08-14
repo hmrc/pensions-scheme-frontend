@@ -20,7 +20,6 @@ import base.CSRFRequest
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction}
-import controllers.register.trustees.partnership._
 import forms.PayeFormProvider
 import models.{Index, NormalMode}
 import org.scalatest.MustMatchers
@@ -29,12 +28,11 @@ import play.api.http.Writeable
 import play.api.inject.bind
 import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsString, redirectLocation, route, running, status}
+import play.api.test.Helpers.{contentAsString, redirectLocation, route, running, status, _}
+import utils.annotations.TrusteesPartnership
 import utils.{FakeNavigator, Navigator}
-import utils.annotations.{EstablisherPartnership, TrusteesPartnership}
 import viewmodels.{Message, PayeViewModel}
 import views.html.paye
-import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
@@ -69,11 +67,13 @@ class PartnershipPayeControllerSpec extends ControllerSpecBase with MustMatchers
 
 }
 
-object PartnershipPayeControllerSpec extends PartnershipPayeControllerSpec{
+object PartnershipPayeControllerSpec extends PartnershipPayeControllerSpec {
 
   val form = new PayeFormProvider()()
   val firstIndex = Index(0)
+
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
   val viewModel = PayeViewModel(
     routes.PartnershipPayeController.onSubmit(NormalMode, firstIndex),
     title = Message("messages__partnershipPaye__title"),

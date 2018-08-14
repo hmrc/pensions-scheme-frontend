@@ -17,11 +17,11 @@
 package views.register.establishers.individual
 
 import controllers.register.establishers.individual.routes
-import play.api.data.Form
 import forms.address.AddressListFormProvider
-import models.address.{Address, TolerantAddress}
+import models.address.TolerantAddress
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.individual.addressList

@@ -37,16 +37,16 @@ import views.html.register.trustees.individual.trusteeDetails
 
 import scala.concurrent.Future
 
-class TrusteeDetailsController @Inject() (
-                                           appConfig: FrontendAppConfig,
-                                           override val messagesApi: MessagesApi,
-                                           dataCacheConnector: DataCacheConnector,
-                                           @TrusteesIndividual navigator: Navigator,
-                                           authenticate: AuthAction,
-                                           getData: DataRetrievalAction,
-                                           requireData: DataRequiredAction,
-                                           formProvider: PersonDetailsFormProvider
-                                      ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+class TrusteeDetailsController @Inject()(
+                                          appConfig: FrontendAppConfig,
+                                          override val messagesApi: MessagesApi,
+                                          dataCacheConnector: DataCacheConnector,
+                                          @TrusteesIndividual navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          formProvider: PersonDetailsFormProvider
+                                        ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -70,13 +70,13 @@ class TrusteeDetailsController @Inject() (
             (formWithErrors: Form[_]) =>
               Future.successful(BadRequest(trusteeDetails(appConfig, formWithErrors, mode, index, schemeDetails.schemeName))),
             (value) =>
-                request.userAnswers.upsert(TrusteeDetailsId(index))(value){
-                  _.upsert(TrusteeKindId(index))(Individual){ answers =>
-                    dataCacheConnector.upsert(request.externalId, answers.json).map{ cacheMap =>
-                      Redirect(navigator.nextPage(TrusteeDetailsId(index), mode, new UserAnswers(cacheMap)))
-                    }
+              request.userAnswers.upsert(TrusteeDetailsId(index))(value) {
+                _.upsert(TrusteeKindId(index))(Individual) { answers =>
+                  dataCacheConnector.upsert(request.externalId, answers.json).map { cacheMap =>
+                    Redirect(navigator.nextPage(TrusteeDetailsId(index), mode, new UserAnswers(cacheMap)))
                   }
                 }
+              }
           )
       }
   }

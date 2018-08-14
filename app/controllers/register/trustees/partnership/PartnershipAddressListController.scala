@@ -23,8 +23,8 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
 import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
 import javax.inject.Inject
-import models.{Index, Mode}
 import models.requests.DataRequest
+import models.{Index, Mode}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, Result}
 import utils.Navigator

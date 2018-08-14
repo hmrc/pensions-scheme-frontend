@@ -36,17 +36,17 @@ import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
 class PartnerAddressController @Inject()(
-                                           val appConfig: FrontendAppConfig,
-                                           val messagesApi: MessagesApi,
-                                           val dataCacheConnector: DataCacheConnector,
-                                           @EstablishersPartner val navigator: Navigator,
-                                           authenticate: AuthAction,
-                                           getData: DataRetrievalAction,
-                                           requireData: DataRequiredAction,
-                                           val formProvider: AddressFormProvider,
-                                           val countryOptions: CountryOptions,
-                                           val auditService: AuditService
-                                         ) extends ManualAddressController with I18nSupport {
+                                          val appConfig: FrontendAppConfig,
+                                          val messagesApi: MessagesApi,
+                                          val dataCacheConnector: DataCacheConnector,
+                                          @EstablishersPartner val navigator: Navigator,
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          val formProvider: AddressFormProvider,
+                                          val countryOptions: CountryOptions,
+                                          val auditService: AuditService
+                                        ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = PartnerAddressController.onSubmit _
   private[controllers] val title: Message = "messages__partnerAddress__title"

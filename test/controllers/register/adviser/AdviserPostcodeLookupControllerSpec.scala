@@ -45,7 +45,7 @@ import scala.concurrent.Future
 
 class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures with CSRFRequest with OptionValues {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()//routes.AdviserAddressListController.onPageLoad(NormalMode)
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad() //routes.AdviserAddressListController.onPageLoad(NormalMode)
 
   def manualInputCall: Call = routes.AdviserAddressController.onPageLoad(NormalMode)
 
@@ -72,7 +72,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
     title = Message("messages__adviserPostCodeLookupAddress__title"),
     heading = Message("messages__adviserPostCodeLookupAddress__heading"),
     subHeading = Some(Message("messages__adviserPostCodeLookupAddress__secondary")),
-    enterPostcode=Message("messages__adviserPostCodeLookupAddress__enterPostCode")
+    enterPostcode = Message("messages__adviserPostCodeLookupAddress__enterPostCode")
   )
 
   "Adviser Postcode Controller" must {
@@ -108,7 +108,7 @@ class AdviserPostcodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
     "redirect to next page on POST request" in {
 
-      val call: Call =routes.AdviserPostCodeLookupController.onSubmit(NormalMode)
+      val call: Call = routes.AdviserPostCodeLookupController.onSubmit(NormalMode)
 
       val validPostcode = "ZZ1 1ZZ"
 

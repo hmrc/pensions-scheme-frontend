@@ -21,15 +21,17 @@ import org.joda.time.LocalDate
 import org.scalacheck.Gen
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import play.api.data.{Form, FormError}
 import play.api.data.Forms._
+import play.api.data.{Form, FormError}
 import utils.Enumerable
 import wolfendale.scalacheck.regexp.RegexpGen
 
 object MappingsSpec {
 
   sealed trait Foo
+
   case object Bar extends Foo
+
   case object Baz extends Foo
 
   object Foo {
@@ -39,6 +41,7 @@ object MappingsSpec {
     implicit val fooEnumerable: Enumerable[Foo] =
       Enumerable(values.toSeq.map(v => v.toString -> v): _*)
   }
+
 }
 
 class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Mappings with GeneratorDrivenPropertyChecks with Generators {
@@ -254,7 +257,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
   }
 
   "date" must {
-    case class TestClass (date: LocalDate)
+    case class TestClass(date: LocalDate)
 
     val testForm = Form(
       mapping(

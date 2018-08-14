@@ -16,13 +16,13 @@
 
 package controllers.register
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.InvestmentRegulatedFormProvider
 import identifiers.register.{InvestmentRegulatedId, SchemeDetailsId}
+import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

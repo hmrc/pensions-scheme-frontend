@@ -26,10 +26,10 @@ import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 
 class ContinueRegistrationController @Inject()(
-  authenticate: AuthAction,
-  getData: DataRetrievalAction,
-  @Register navigator: Navigator
-) extends FrontendController {
+                                                authenticate: AuthAction,
+                                                getData: DataRetrievalAction,
+                                                @Register navigator: Navigator
+                                              ) extends FrontendController {
 
   def continue(): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>

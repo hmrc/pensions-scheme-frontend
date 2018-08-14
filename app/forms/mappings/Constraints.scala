@@ -21,6 +21,7 @@ import org.joda.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import uk.gov.hmrc.domain.Nino
 import utils.{CountryOptions, NameMatching}
+
 import scala.language.implicitConversions
 
 trait Constraints {
@@ -96,14 +97,14 @@ trait Constraints {
     }
 
   protected def psaNameMatch(psaName: String, errorKey: String): Constraint[String] = {
-     Constraint {
-       input =>
+    Constraint {
+      input =>
 
-         if (NameMatching(input, psaName).isMatch) {
-           Invalid(errorKey)
-         } else {
-           Valid
-         }
+        if (NameMatching(input, psaName).isMatch) {
+          Invalid(errorKey)
+        } else {
+          Valid
+        }
     }
   }
 
@@ -126,14 +127,14 @@ trait Constraints {
     }
   }
 
-  protected def validNino(invalidKey: String) : Constraint[String] = {
+  protected def validNino(invalidKey: String): Constraint[String] = {
     Constraint {
       case nino if Nino.isValid(nino) => Valid
       case _ => Invalid(invalidKey)
     }
   }
 
-  protected def validCrn(invalidKey: String) : Constraint[String] = {
+  protected def validCrn(invalidKey: String): Constraint[String] = {
     Constraint {
       case crn if crn.matches(regexCrn) => Valid
       case _ => Invalid(invalidKey)
@@ -147,7 +148,7 @@ trait Constraints {
           .map(_.apply(field))
           .filterNot(_ == Valid)
           .headOption.getOrElse(Valid)
-  }
+    }
 
   protected def country(countryOptions: CountryOptions, errorKey: String): Constraint[String] =
     Constraint {

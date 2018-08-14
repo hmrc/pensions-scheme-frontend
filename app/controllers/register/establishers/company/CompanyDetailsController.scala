@@ -53,11 +53,11 @@ class CompanyDetailsController @Inject()(
         schemeName =>
           val redirectResult = request.userAnswers
             .get(CompanyDetailsId(index)) match {
-              case None =>
-                Ok(companyDetails(appConfig, form, mode, index, schemeName))
-              case Some(value) =>
-                Ok(companyDetails(appConfig, form.fill(value), mode, index, schemeName))
-            }
+            case None =>
+              Ok(companyDetails(appConfig, form, mode, index, schemeName))
+            case Some(value) =>
+              Ok(companyDetails(appConfig, form.fill(value), mode, index, schemeName))
+          }
           Future.successful(redirectResult)
       }
   }

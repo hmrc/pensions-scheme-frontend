@@ -140,7 +140,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase with C
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe
-          Some(routes.CompanyPreviousAddressController.onPageLoad(NormalMode,Index(0)).url)
+          Some(routes.CompanyPreviousAddressController.onPageLoad(NormalMode, Index(0)).url)
       }
 
     }

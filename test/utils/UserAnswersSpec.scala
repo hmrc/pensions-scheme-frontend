@@ -24,13 +24,13 @@ import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteI
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteesId}
-import models.{CompanyDetails, PartnershipDetails}
 import models.person.PersonDetails
 import models.register._
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.Individual
+import models.{CompanyDetails, PartnershipDetails}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._

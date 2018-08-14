@@ -17,9 +17,10 @@
 package models.register.establishers.individual
 
 import play.api.libs.json.{Reads, Writes}
+
 import scala.util.Try
 
-case class EstablishersIndividualMap[A](private val data: Map[Int, A]){
+case class EstablishersIndividualMap[A](private val data: Map[Int, A]) {
 
   def get(index: Int): Try[Option[A]] =
     Try {

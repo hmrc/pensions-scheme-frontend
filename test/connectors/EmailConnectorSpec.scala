@@ -41,7 +41,7 @@ class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper
 
     val connector = injector.instanceOf[EmailConnector]
 
-    connector.sendEmail(validEmailString, templateId, params).map( response =>
+    connector.sendEmail(validEmailString, templateId, params).map(response =>
       response shouldBe expectedResponse
     )
 
@@ -58,7 +58,7 @@ class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper
 
     val connector = injector.instanceOf[EmailConnector]
 
-    connector.sendEmail(validEmailString, templateId, params).map( response =>
+    connector.sendEmail(validEmailString, templateId, params).map(response =>
       response shouldBe notSentResponse
     )
   }
@@ -74,7 +74,7 @@ class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper
 
     val connector = injector.instanceOf[EmailConnector]
 
-    connector.sendEmail(validEmailString, templateId, params).map( response =>
+    connector.sendEmail(validEmailString, templateId, params).map(response =>
       response shouldBe notSentResponse
     )
   }

@@ -33,9 +33,9 @@ class OtherPartnersViewSpec extends YesNoViewBehaviours {
 
   val form = new OtherPartnersFormProvider()()
 
-  def createView = () => otherPartners(frontendAppConfig, form, NormalMode, index,partnershipName)(fakeRequest, messages)
+  def createView = () => otherPartners(frontendAppConfig, form, NormalMode, index, partnershipName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => otherPartners(frontendAppConfig, form, NormalMode, index,partnershipName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => otherPartners(frontendAppConfig, form, NormalMode, index, partnershipName)(fakeRequest, messages)
 
   "OtherPartners view" must {
 
@@ -51,7 +51,7 @@ class OtherPartnersViewSpec extends YesNoViewBehaviours {
 
     behave like yesNoPage(createViewUsingForm,
       messageKeyPrefix,
-      routes.OtherPartnersController.onSubmit(NormalMode,index).url,
+      routes.OtherPartnersController.onSubmit(NormalMode, index).url,
       expectedHintKey = Some("_lede")
     )
 

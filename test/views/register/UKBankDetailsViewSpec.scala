@@ -16,13 +16,13 @@
 
 package views.register
 
-import play.api.data.{Form, FormError}
 import controllers.register.routes
 import forms.register.UKBankDetailsFormProvider
 import models.NormalMode
 import models.register.UKBankDetails
 import org.apache.commons.lang3.RandomUtils
 import org.joda.time.LocalDate
+import play.api.data.{Form, FormError}
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.uKBankDetails
 

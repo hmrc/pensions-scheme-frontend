@@ -41,7 +41,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  private val trusteeDetails=PersonDetails("First Name",Some("Second Name"),"Last Name",LocalDate.now())
+  private val trusteeDetails = PersonDetails("First Name", Some("Second Name"), "Last Name", LocalDate.now())
 
   private val addresses = Seq(
     TolerantAddress(
@@ -198,7 +198,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
   private def addressListViewModel(addresses: Seq[TolerantAddress]): AddressListViewModel = {
     AddressListViewModel(
       routes.IndividualAddressListController.onSubmit(NormalMode, Index(0)),
-      routes.TrusteeAddressController.onPageLoad(NormalMode,Index(0)),
+      routes.TrusteeAddressController.onPageLoad(NormalMode, Index(0)),
       addresses,
       subHeading = Some(Message(trusteeDetails.fullName))
     )

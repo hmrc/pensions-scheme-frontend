@@ -16,7 +16,7 @@
 
 package audit
 
-case class UserResearchEvent(externalId: String, name: String, email:String) extends AuditEvent {
+case class UserResearchEvent(externalId: String, name: String, email: String) extends AuditEvent {
 
   override def auditType: String = "URagreementSchemeEvent"
 
@@ -31,10 +31,10 @@ case class UserResearchEvent(externalId: String, name: String, email:String) ext
 object UserResearchEvent {
 
   def userResearchAgreementSchemeEvent(
-                         externalId: String,
-                         name: String,
-                         email: String
-                       ): UserResearchEvent = {
+                                        externalId: String,
+                                        name: String,
+                                        email: String
+                                      ): UserResearchEvent = {
     UserResearchEvent(externalId, name, email)
 
   }

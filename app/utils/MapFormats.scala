@@ -17,11 +17,12 @@
 package utils
 
 import play.api.libs.json._
+
 import scala.util.{Failure, Success, Try}
 
 trait MapFormats {
 
-  implicit def intMapReads[V] (implicit ev: Reads[Map[String, V]]): Reads[Map[Int, V]] = {
+  implicit def intMapReads[V](implicit ev: Reads[Map[String, V]]): Reads[Map[Int, V]] = {
     JsPath.read[Map[String, V]].flatMap {
       m =>
         Try {

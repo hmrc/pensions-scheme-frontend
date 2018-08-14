@@ -15,8 +15,9 @@
  */
 
 package identifiers.register.establishers.company
+
 import identifiers._
 
-case class AddCompanyDirectorsId(index:Int) extends TypedIdentifier[Boolean] {
+case class AddCompanyDirectorsId(index: Int) extends TypedIdentifier[Boolean] {
   override def toString: String = "addCompanyDirectors"
 }

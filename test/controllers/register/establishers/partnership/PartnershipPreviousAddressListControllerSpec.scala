@@ -25,7 +25,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipPreviousAddressPostcodeLookupId
 import models.address.TolerantAddress
 import models.register.{SchemeDetails, SchemeType}
-import models.{PartnershipDetails, Index, NormalMode}
+import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call

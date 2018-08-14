@@ -18,47 +18,49 @@ package navigators
 
 import base.SpecBase
 import connectors.FakeDataCacheConnector
-import identifiers.register.establishers.partnership.partner._
-import models._
-import play.api.libs.json.Json
-import utils.UserAnswers
 import controllers.register.establishers.partnership.partner._
 import identifiers.Identifier
 import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.partnership.partner._
 import identifiers.register.establishers.partnership.{AddPartnersId, PartnershipDetailsId}
+import models._
 import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
+import play.api.libs.json.Json
 import play.api.mvc.Call
+import utils.UserAnswers
 
 class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour {
   //scalastyle:off line.size.limit
   //scalastyle:off magic.number
   import EstablishersPartnerNavigatorSpec._
+
   private val navigator = new EstablishersPartnerNavigator(FakeDataCacheConnector, frontendAppConfig)
+
   private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                      "User Answers",         "Next Page (Normal Mode)",              "Save (NM)",      "Next Page (Check Mode)",             "Save (CM)"),
-    (AddPartnersId(0),                             emptyAnswers,          partnerDetails(0, NormalMode),        true,         Some(partnerDetails(0, CheckMode)),      true),
-    (AddPartnersId(0),                             addPartnersTrue,       partnerDetails(1, NormalMode),        true,         Some(partnerDetails(1, CheckMode)),      true),
-    (AddPartnersId(0),                             addPartnersFalse,      partnershipReview,                          true,         Some(partnershipReview),                      true),
-    (AddPartnersId(0),                             addOnePartner,         sessionExpired,                             false,        Some(sessionExpired),                     false),
-    (AddPartnersId(0),                             addPartnersMoreThan10, otherPartners(NormalMode),                  true,         Some(otherPartners(CheckMode)),          true),
-    (PartnerDetailsId(0, 0),                       emptyAnswers,           partnerNino(NormalMode),               true,             Some(checkYourAnswers),                     true),
-    (PartnerNinoId(0, 0),                          emptyAnswers,           partnerUtr(NormalMode),                true,             Some(checkYourAnswers),                     true),
-    (PartnerUniqueTaxReferenceId(0, 0),            emptyAnswers,           partnerAddressPostcode(NormalMode),    true,             Some(checkYourAnswers),                     true),
-    (PartnerAddressPostcodeLookupId(0, 0),         emptyAnswers,           partnerAddressList(NormalMode),        true,             Some(partnerAddressList(CheckMode)),        true),
-    (PartnerAddressListId(0, 0),                   emptyAnswers,           partnerAddress(NormalMode),            true,             Some(partnerAddress(CheckMode)),            true),
-    (PartnerAddressId(0, 0),                       emptyAnswers,           partnerAddressYears(NormalMode),       true,             Some(checkYourAnswers),                     true),
-    (PartnerAddressYearsId(0, 0),                  addressYearsUnderAYear, partnerPreviousAddPostcode(NormalMode),true,             Some(partnerPreviousAddPostcode(CheckMode)),true),
-    (PartnerAddressYearsId(0, 0),                  addressYearsOverAYear,  partnerContactDetails(NormalMode),     true,             Some(checkYourAnswers),                     true),
-    (PartnerAddressYearsId(0, 0),                  emptyAnswers,           sessionExpired,                        false,            Some(sessionExpired),                       false),
-    (PartnerPreviousAddressPostcodeLookupId(0, 0), emptyAnswers,           partnerPreviousAddList(NormalMode),    true,             Some(partnerPreviousAddList(CheckMode)),    true),
-    (PartnerPreviousAddressListId(0, 0),           emptyAnswers,           partnerPreviousAddress(NormalMode),    true,             Some(partnerPreviousAddress(CheckMode)),    true),
-    (PartnerPreviousAddressId(0, 0),               emptyAnswers,           partnerContactDetails(NormalMode),     true,             Some(checkYourAnswers),                     true),
-    (PartnerContactDetailsId(0, 0),                emptyAnswers,           checkYourAnswers,                      true,             Some(checkYourAnswers),                     true),
-    (ConfirmDeletePartnerId(0),                    emptyAnswers,           addPartners,                           false,             None,                                      false),
-    (CheckYourAnswersId(0, 0),                     emptyAnswers,           addPartners,                           true,             None,                                       true)
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (AddPartnersId(0), emptyAnswers, partnerDetails(0, NormalMode), true, Some(partnerDetails(0, CheckMode)), true),
+    (AddPartnersId(0), addPartnersTrue, partnerDetails(1, NormalMode), true, Some(partnerDetails(1, CheckMode)), true),
+    (AddPartnersId(0), addPartnersFalse, partnershipReview, true, Some(partnershipReview), true),
+    (AddPartnersId(0), addOnePartner, sessionExpired, false, Some(sessionExpired), false),
+    (AddPartnersId(0), addPartnersMoreThan10, otherPartners(NormalMode), true, Some(otherPartners(CheckMode)), true),
+    (PartnerDetailsId(0, 0), emptyAnswers, partnerNino(NormalMode), true, Some(checkYourAnswers), true),
+    (PartnerNinoId(0, 0), emptyAnswers, partnerUtr(NormalMode), true, Some(checkYourAnswers), true),
+    (PartnerUniqueTaxReferenceId(0, 0), emptyAnswers, partnerAddressPostcode(NormalMode), true, Some(checkYourAnswers), true),
+    (PartnerAddressPostcodeLookupId(0, 0), emptyAnswers, partnerAddressList(NormalMode), true, Some(partnerAddressList(CheckMode)), true),
+    (PartnerAddressListId(0, 0), emptyAnswers, partnerAddress(NormalMode), true, Some(partnerAddress(CheckMode)), true),
+    (PartnerAddressId(0, 0), emptyAnswers, partnerAddressYears(NormalMode), true, Some(checkYourAnswers), true),
+    (PartnerAddressYearsId(0, 0), addressYearsUnderAYear, partnerPreviousAddPostcode(NormalMode), true, Some(partnerPreviousAddPostcode(CheckMode)), true),
+    (PartnerAddressYearsId(0, 0), addressYearsOverAYear, partnerContactDetails(NormalMode), true, Some(checkYourAnswers), true),
+    (PartnerAddressYearsId(0, 0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
+    (PartnerPreviousAddressPostcodeLookupId(0, 0), emptyAnswers, partnerPreviousAddList(NormalMode), true, Some(partnerPreviousAddList(CheckMode)), true),
+    (PartnerPreviousAddressListId(0, 0), emptyAnswers, partnerPreviousAddress(NormalMode), true, Some(partnerPreviousAddress(CheckMode)), true),
+    (PartnerPreviousAddressId(0, 0), emptyAnswers, partnerContactDetails(NormalMode), true, Some(checkYourAnswers), true),
+    (PartnerContactDetailsId(0, 0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
+    (ConfirmDeletePartnerId(0), emptyAnswers, addPartners, false, None, false),
+    (CheckYourAnswersId(0, 0), emptyAnswers, addPartners, true, None, true)
   )
 
   navigator.getClass.getSimpleName must {

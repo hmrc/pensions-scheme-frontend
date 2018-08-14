@@ -50,7 +50,7 @@ trait EntityListBehaviours {
         }
       }
 
-      if(appConfig.completeFlagEnabled) {
+      if (appConfig.completeFlagEnabled) {
         "display the status for each person" in {
           val doc = asDocument(nonEmptyView())
           items.foreach { item =>
@@ -89,6 +89,7 @@ trait EntityListBehaviours {
       }
     }
   }
+
   // scalastyle:on method.length
 
 }

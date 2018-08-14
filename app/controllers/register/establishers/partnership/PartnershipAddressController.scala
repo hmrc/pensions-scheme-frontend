@@ -24,8 +24,8 @@ import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
 import identifiers.register.establishers.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId}
 import javax.inject.Inject
-import models.{Index, Mode}
 import models.address.Address
+import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -45,7 +45,7 @@ class PartnershipAddressController @Inject()(
                                               val formProvider: AddressFormProvider,
                                               val countryOptions: CountryOptions,
                                               val auditService: AuditService
-                                        ) extends ManualAddressController with I18nSupport {
+                                            ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.PartnershipAddressController.onSubmit _
   private[controllers] val title: Message = "messages__partnershipAddress__title"

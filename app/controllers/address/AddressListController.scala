@@ -35,8 +35,11 @@ import scala.concurrent.Future
 trait AddressListController extends FrontendController with I18nSupport {
 
   protected def appConfig: FrontendAppConfig
+
   protected def cacheConnector: DataCacheConnector
+
   protected def navigator: Navigator
+
   protected def formProvider: AddressListFormProvider = new AddressListFormProvider()
 
   protected def get(viewModel: AddressListViewModel)

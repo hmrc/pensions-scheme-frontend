@@ -16,9 +16,9 @@
 
 package views.register.trustees.individual
 
-import play.api.data.Form
 import forms.register.trustees.individual.UniqueTaxReferenceFormProvider
-import models.{Index, NormalMode, UniqueTaxReference}
+import models.{Index, NormalMode}
+import play.api.data.Form
 import views.behaviours.ViewBehaviours
 import views.html.register.trustees.individual.uniqueTaxReference
 

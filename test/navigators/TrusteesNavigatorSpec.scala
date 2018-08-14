@@ -37,20 +37,20 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
   import TrusteesNavigatorSpec._
 
   private def routes = Table(
-    ("Id",                          "User Answers",             "Next Page (Normal Mode)",  "Save (NM)",  "Next Page (Check Mode)",   "Save (CM)"),
-    (HaveAnyTrusteesId,             haveAnyTrusteesTrue,        addTrustee,                 true,         None,                       false),
-    (HaveAnyTrusteesId,             haveAnyTrusteesFalse,       schemeReview,               true,         None,                       false),
-    (HaveAnyTrusteesId,             emptyAnswers,               sessionExpired,             false,        None,                       false),
-    (AddTrusteeId,                  addTrusteeTrue(0),          trusteeKind(0),             true,         Some(trusteeKind(0)),       true),
-    (AddTrusteeId,                  addTrusteeTrue(1),          trusteeKind(1),             true,         Some(trusteeKind(1)),       true),
-    (AddTrusteeId,                  emptyAnswers,               trusteeKind(0),             true,         Some(trusteeKind(0)),       true),
-    (AddTrusteeId,                  trustees(10),               moreThanTenTrustees,        true,         Some(moreThanTenTrustees),  true),
-    (AddTrusteeId,                  addTrusteeFalse,            schemeReview,               true,         Some(schemeReview),         true),
-    (MoreThanTenTrusteesId,         emptyAnswers,               schemeReview,               true,         None,                       false),
-    (TrusteeKindId(0),              trusteeKindCompany,         companyDetails,             true,         None,                       false),
-    (TrusteeKindId(0),              trusteeKindIndividual,      trusteeDetails,             true,         None,                       false),
-    (TrusteeKindId(0),              emptyAnswers,               sessionExpired,             false,        None,                       false),
-    (ConfirmDeleteTrusteeId,        emptyAnswers,               addTrustee,                 true,         None,                       false)
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (HaveAnyTrusteesId, haveAnyTrusteesTrue, addTrustee, true, None, false),
+    (HaveAnyTrusteesId, haveAnyTrusteesFalse, schemeReview, true, None, false),
+    (HaveAnyTrusteesId, emptyAnswers, sessionExpired, false, None, false),
+    (AddTrusteeId, addTrusteeTrue(0), trusteeKind(0), true, Some(trusteeKind(0)), true),
+    (AddTrusteeId, addTrusteeTrue(1), trusteeKind(1), true, Some(trusteeKind(1)), true),
+    (AddTrusteeId, emptyAnswers, trusteeKind(0), true, Some(trusteeKind(0)), true),
+    (AddTrusteeId, trustees(10), moreThanTenTrustees, true, Some(moreThanTenTrustees), true),
+    (AddTrusteeId, addTrusteeFalse, schemeReview, true, Some(schemeReview), true),
+    (MoreThanTenTrusteesId, emptyAnswers, schemeReview, true, None, false),
+    (TrusteeKindId(0), trusteeKindCompany, companyDetails, true, None, false),
+    (TrusteeKindId(0), trusteeKindIndividual, trusteeDetails, true, None, false),
+    (TrusteeKindId(0), emptyAnswers, sessionExpired, false, None, false),
+    (ConfirmDeleteTrusteeId, emptyAnswers, addTrustee, true, None, false)
   )
 
   private val navigator = new TrusteesNavigator(FakeDataCacheConnector, frontendAppConfig)
@@ -67,19 +67,31 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private val emptyAnswers = UserAnswers()
+
   private def addTrusteeFalse = emptyAnswers.addTrustee(false)
+
   private def addTrusteeTrue(howMany: Int) = emptyAnswers.addTrustee(true).trustees(howMany)
+
   private def haveAnyTrusteesTrue = emptyAnswers.haveAnyTrustees(true)
+
   private def haveAnyTrusteesFalse = emptyAnswers.haveAnyTrustees(false)
+
   private def trustees(howMany: Int) = emptyAnswers.trustees(howMany)
+
   private def trusteeKindCompany = emptyAnswers.trusteeKind(TrusteeKind.Company)
+
   private def trusteeKindIndividual = emptyAnswers.trusteeKind(TrusteeKind.Individual)
 
   private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+
   private def companyDetails = controllers.register.trustees.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0)
+
   private def moreThanTenTrustees = controllers.register.trustees.routes.MoreThanTenTrusteesController.onPageLoad(NormalMode)
+
   private def schemeReview = controllers.register.routes.SchemeReviewController.onPageLoad()
+
   private def trusteeDetails = controllers.register.trustees.individual.routes.TrusteeDetailsController.onPageLoad(NormalMode, 0)
+
   private def trusteeKind(index: Int) = controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, index)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()

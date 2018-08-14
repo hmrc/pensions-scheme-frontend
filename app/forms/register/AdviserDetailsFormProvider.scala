@@ -16,27 +16,26 @@
 
 package forms.register
 
-import javax.inject.Inject
-
 import forms.mappings.{EmailMapping, PhoneNumberMapping}
+import javax.inject.Inject
+import models.register.AdviserDetails
 import play.api.data.Form
 import play.api.data.Forms._
-import models.register.AdviserDetails
 
 class AdviserDetailsFormProvider @Inject() extends EmailMapping with PhoneNumberMapping {
 
   def apply(): Form[AdviserDetails] = Form(
     mapping(
       "adviserName" -> text("messages__adviserDetails__error__name_required")
-      .verifying(
-        firstError(
-          maxLength(
-            AdviserDetailsFormProvider.nameLength,
-            "messages__adviserDetails__error__adviser_name_length"
-          ),
-          adviserName("messages__adviserDetails__error__adviser_name_invalid")
-        )
-      ),
+        .verifying(
+          firstError(
+            maxLength(
+              AdviserDetailsFormProvider.nameLength,
+              "messages__adviserDetails__error__adviser_name_length"
+            ),
+            adviserName("messages__adviserDetails__error__adviser_name_invalid")
+          )
+        ),
 
       "emailAddress" -> emailMapping(
         "messages__error__email",

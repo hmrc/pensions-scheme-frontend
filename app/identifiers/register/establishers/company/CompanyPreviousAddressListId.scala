@@ -18,7 +18,7 @@ package identifiers.register.establishers.company
 
 import identifiers._
 import identifiers.register.establishers.EstablishersId
-import models.address.{Address, TolerantAddress}
+import models.address.TolerantAddress
 import play.api.libs.json.JsPath
 
 case class CompanyPreviousAddressListId(index: Int) extends TypedIdentifier[TolerantAddress] {

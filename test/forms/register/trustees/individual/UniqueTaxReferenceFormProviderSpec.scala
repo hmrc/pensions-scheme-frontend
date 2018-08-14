@@ -16,9 +16,7 @@
 
 package forms.register.trustees.individual
 
-import forms.behaviours.{FormBehaviours, UtrBehaviour}
-import models.{Field, Invalid, Required}
-import models.UniqueTaxReference
+import forms.behaviours.UtrBehaviour
 
 class UniqueTaxReferenceFormProviderSpec extends UtrBehaviour {
 

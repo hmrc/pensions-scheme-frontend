@@ -80,7 +80,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 
       whenReady(controller(emailConnector = mockEmailConnector, psaName = Json.obj("psaName" -> "Test")).onSubmit(postRequest)) {
         _ =>
-          verify(mockEmailConnector, times(0)).sendEmail(any(),any(),any())(any(), any())
+          verify(mockEmailConnector, times(0)).sendEmail(any(), any(), any())(any(), any())
       }
     }
 
@@ -93,7 +93,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
   }
 }
 
-object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSugar{
+object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSugar {
   val schemeName = "Test Scheme Name"
   lazy val adviserDetailsRoute: String = routes.AdviserDetailsController.onPageLoad(CheckMode).url
   lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit()
@@ -102,7 +102,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       AnswerRow("messages__common__cya__name", Seq("name"), answerIsMessageKey = false, adviserDetailsRoute),
       AnswerRow("messages__adviserDetails__email", Seq("email"), answerIsMessageKey = false, adviserDetailsRoute),
       AnswerRow("messages__adviserDetails__phone", Seq("phone"), answerIsMessageKey = false, adviserDetailsRoute)
-      )
+    )
   )
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()

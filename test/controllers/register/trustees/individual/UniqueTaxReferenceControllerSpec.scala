@@ -53,7 +53,7 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       )
     )
   )
-  
+
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryTrustee) =
     new UniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)

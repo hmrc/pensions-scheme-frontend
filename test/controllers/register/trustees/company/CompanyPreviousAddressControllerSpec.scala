@@ -38,8 +38,8 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, Navigator}
 import utils.annotations.TrusteesCompany
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, InputOption, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
@@ -90,7 +90,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
           val request = addToken(
             FakeRequest(CompanyPreviousAddressController.onPageLoad(NormalMode, firstIndex))
-            .withHeaders("Csrf-Token" -> "nocheck")
+              .withHeaders("Csrf-Token" -> "nocheck")
           )
 
           val result = route(app, request).value

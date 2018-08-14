@@ -18,7 +18,6 @@ package forms.address
 
 import forms.FormSpec
 import forms.behaviours.{AddressBehaviours, FormBehaviours}
-import forms.mappings.AddressMapping
 import models.address.Address
 import utils.FakeCountryOptions
 
