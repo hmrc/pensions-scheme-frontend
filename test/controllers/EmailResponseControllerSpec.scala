@@ -20,8 +20,6 @@ import audit.AuditService
 import audit.testdoubles.StubSuccessfulAuditService
 import controllers.model.{Delivered, EmailEvent, EmailEvents}
 import org.joda.time.DateTime
-import org.scalatest.Assertion
-import play.api.Application
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.inject.bind

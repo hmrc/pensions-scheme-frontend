@@ -79,6 +79,7 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val emailApiUrl: String = baseUrl("email")
   lazy val emailTemplateId: String = loadConfig("email.templateId")
   lazy val emailSendForce: Boolean = runModeConfiguration.getBoolean("email.force").getOrElse(false)
+  lazy val pensionsSchemeFrontend: String = baseUrl("pensions-scheme-frontend")
 
   def encryptionKey(crypto: String): String = loadConfig(s"$crypto.encryption.key")
 }

@@ -28,6 +28,7 @@ import models.{NormalMode, PSAName}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -75,7 +76,7 @@ class DeclarationDutiesController @Inject()(
                 dataCacheConnector.save(request.externalId, DeclarationDutiesId, true).flatMap { cacheMap =>
                   pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id).flatMap { submissionResponse =>
                     dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).flatMap { cacheMap =>
-                      sendEmail(submissionResponse.schemeReferenceNumber).map { _ =>
+                      sendEmail(submissionResponse.schemeReferenceNumber, request.psaId).map { _ =>
                         Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
                       }
                     }
@@ -89,14 +90,13 @@ class DeclarationDutiesController @Inject()(
       }
   }
 
-  private def sendEmail(srn: String)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
+  private def sendEmail(srn: String, psaId: PsaId)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
     psaNameCacheConnector.fetch(request.externalId).flatMap {
-      case Some(value) => {
+      case Some(value) =>
         value.as[PSAName].psaEmail match {
-          case Some(email) => emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)))
+          case Some(email) => emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
           case _ => Future.successful(EmailNotSent)
         }
-      }
 
       case _ => Future.successful(EmailNotSent)
     }
