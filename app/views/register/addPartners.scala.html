@@ -29,7 +29,7 @@
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
-    appConfig.completeFlagEnabled & partners.exists(!_.isCompleted)
+    partners.exists(!_.isCompleted)
 }
 
 @main_template(
@@ -49,11 +49,8 @@
             @components.paragraph_text(messages("messages__addPartners_lede"))
             @components.submit_button("messages__addPartners_add_partner")
         } else {
-            @if(appConfig.completeFlagEnabled){
-                @components.entity_list(partners)
-            } else {
-                @components.editable_item_list(partners)
-            }
+
+            @components.entity_list(partners)
 
             @if(partners.size < appConfig.maxPartners) {
                 @components.input_yes_no(
