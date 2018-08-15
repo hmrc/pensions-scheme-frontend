@@ -25,7 +25,7 @@ import utils.{CountryOptions, NameMatching}
 import scala.language.implicitConversions
 
 trait Constraints {
-  val regexPostcode = """^[A-Za-z]{1,2}[0-9][0-9A-Za-z]?[ ]?[0-9][A-Za-z]{2}$"""
+  val regexPostcode = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
   val regexPostCodeNonUk = """^([0-9]+-)*[0-9]+$"""
   val regexSortCode: String = """\d{6,}""".r.toString()
   val regexUtr = """^\d{10}$"""

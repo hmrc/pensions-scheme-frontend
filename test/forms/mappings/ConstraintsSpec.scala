@@ -303,10 +303,7 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
       "A12 1AB",
       "AB12 1AB",
       "AB1A 1AB",
-      "AB121AB",
-      "aB12 1AB",
-      "Ab12 1AB",
-      "AB1a 1AB"
+      "AB121AB"
     )
 
     val invalidPostCode = Table(
@@ -316,7 +313,10 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
       "ABC2 1AB",
       "AB12 AAB",
       "AB12 11B",
-      "AB12 1A1"
+      "AB12 1A1",
+      "aB12 1AB",
+      "Ab12 1AB",
+      "AB1a 1AB"
     )
 
     val invalidMsg = "Invalid post code"
