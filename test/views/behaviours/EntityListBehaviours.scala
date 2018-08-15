@@ -50,24 +50,22 @@ trait EntityListBehaviours {
         }
       }
 
-      if (appConfig.completeFlagEnabled) {
-        "display the status for each person" in {
-          val doc = asDocument(nonEmptyView())
-          items.foreach { item =>
-            val link = doc.select(s"#person-${item.index}-status")
-            val expectedResult = if (item.isCompleted) "COMPLETE" else "INCOMPLETE"
+      "display the status for each person" in {
+        val doc = asDocument(nonEmptyView())
+        items.foreach { item =>
+          val link = doc.select(s"#person-${item.index}-status")
+          val expectedResult = if (item.isCompleted) "COMPLETE" else "INCOMPLETE"
 
-            link.size mustBe 1
-            link.first.text mustBe expectedResult
-          }
-        }
-
-        "disable the submit button if any of the items is incomplete" in {
-          val doc = asDocument(nonEmptyView())
-          doc.getElementById("submit").hasAttr("disabled") mustBe true
+          link.size mustBe 1
+          link.first.text mustBe expectedResult
         }
       }
 
+      "disable the submit button if any of the items is incomplete" in {
+        val doc = asDocument(nonEmptyView())
+        doc.getElementById("submit").hasAttr("disabled") mustBe true
+      }
+      
       "display the delete link for each person" in {
         val doc = asDocument(nonEmptyView())
         items.foreach { item =>
