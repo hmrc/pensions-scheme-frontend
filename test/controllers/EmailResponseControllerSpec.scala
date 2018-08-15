@@ -20,9 +20,13 @@ import audit.AuditService
 import audit.testdoubles.StubSuccessfulAuditService
 import controllers.model.{Delivered, EmailEvent, EmailEvents}
 import org.joda.time.DateTime
+import org.scalatest.Assertion
+import play.api.Application
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.inject.bind
+import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
+import uk.gov.hmrc.domain.PsaId
 
 class EmailResponseControllerSpec extends ControllerSpecBase {
 
@@ -37,12 +41,14 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
           bind[AuditService].to(fakeAuditService)
         )) { app =>
 
+          val encrypted = app.injector.instanceOf[ApplicationCrypto].QueryParameterCrypto.encrypt(PlainText(psa)).value
+
           val controller = app.injector.instanceOf[EmailResponseController]
 
-          val result = controller.post("id")(fakeRequest.withBody(Json.toJson(emailEvents)))
+          val result = controller.post(encrypted)(fakeRequest.withBody(Json.toJson(emailEvents)))
 
           status(result) mustBe OK
-          fakeAuditService.verifySent(audit.EmailEvent("id", Delivered)) mustBe true
+          fakeAuditService.verifySent(audit.EmailEvent(PsaId(psa), Delivered)) mustBe true
 
         }
       }
@@ -58,9 +64,11 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
 
       fakeAuditService.reset()
 
+      val encrypted = app.injector.instanceOf[ApplicationCrypto].QueryParameterCrypto.encrypt(PlainText(psa)).value
+
       val controller = app.injector.instanceOf[EmailResponseController]
 
-      val result = controller.post("id")(fakeRequest.withBody(validJson))
+      val result = controller.post(encrypted)(fakeRequest.withBody(validJson))
 
       status(result) mustBe BAD_REQUEST
       fakeAuditService.verifyNothingSent mustBe true
@@ -77,18 +85,23 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
 
       fakeAuditService.reset()
 
+      val psa = app.injector.instanceOf[ApplicationCrypto].QueryParameterCrypto.encrypt(PlainText("psa")).value
+
       val controller = app.injector.instanceOf[EmailResponseController]
 
-      val result = controller.post("id")(fakeRequest.withBody(Json.toJson(emailEvents)))
+      val result = controller.post(psa)(fakeRequest.withBody(Json.toJson(emailEvents)))
 
       status(result) mustBe FORBIDDEN
       fakeAuditService.verifyNothingSent mustBe true
+
     }
   }
 
 }
 
 object EmailResponseControllerSpec {
+
+  val psa = "A7654321"
 
   val emailEvents = EmailEvents(Seq(EmailEvent(Delivered, DateTime.now())))
 
