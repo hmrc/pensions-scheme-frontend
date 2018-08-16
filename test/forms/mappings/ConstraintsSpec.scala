@@ -332,14 +332,14 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
       "ABCD",
       "ab'cd",
       "ab-cd",
-      "ab cd"
+      "ab cd",
+      "1234"
     )
 
     val invalidText = Table(
-      "text",
-      "1234",
-      "abc123",
-      "a&b"
+      "test<name",
+      "1234>",
+      ""
     )
 
     val invalidMsg = "Invalid text"
