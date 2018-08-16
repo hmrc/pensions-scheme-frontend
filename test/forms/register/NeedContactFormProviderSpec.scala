@@ -23,8 +23,8 @@ class NeedContactFormProviderSpec extends EmailBehaviours {
 
   val fieldName = "email"
   val keyEmailRequired = "messages__error__email"
-  val keyEmailLength = "contactDetails.error.email.length"
-  val keyEmailInvalid = "contactDetails.error.email.invalid"
+  val keyEmailLength = "messages__error__email_length"
+  val keyEmailInvalid = "messages__error__email_invalid"
 
   val mapping: Mapping[String] = emailMapping(keyEmailRequired, keyEmailLength, keyEmailInvalid)
   val form: Form[String] = Form(fieldName -> mapping)

@@ -25,7 +25,6 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.FakeNavigator
 import views.html.whatYouWillNeed
 
 import scala.concurrent.Future
@@ -33,6 +32,7 @@ import scala.concurrent.Future
 class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def onwardRoute: Call = controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode)
+
   private val fakePsaNameCacheConnector = mock[PSANameCacheConnector]
 
 
@@ -40,47 +40,49 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar
     new WhatYouWillNeedController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      fakePsaNameCacheConnector,
-      new FakeNavigator(onwardRoute)
+      fakePsaNameCacheConnector
     )
 
   def viewAsString(): String = whatYouWillNeed(frontendAppConfig)(fakeRequest, messages).toString
 
-  "WhatYouWillNeed Controller" must {
+  "WhatYouWillNeed Controller" when {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(fakeRequest)
+    "on a GET" must {
+      "return OK and the correct view" in {
+        val result = controller().onPageLoad(fakeRequest)
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString()
+      }
     }
 
-    "redirect to Scheme details page if the email exists on a POST" in {
-      when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
-        Future.successful(Some(Json.obj("psaName" -> "test name", "psaEmail" -> "test@test.com"))))
-      val result = controller().onSubmit(fakeRequest)
+    "on a POST" must {
+      "redirect to Scheme details page if the email exists" in {
+        when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
+          Future.successful(Some(Json.obj("psaName" -> "test name", "psaEmail" -> "test@test.com"))))
+        val result = controller().onSubmit(fakeRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-    }
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(onwardRoute.url)
+      }
 
-    "redirect to Scheme details page if the psa name does not exist on a POST" in {
-      when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
-        Future.successful(None))
-      val result = controller().onSubmit(fakeRequest)
+      "redirect to Scheme details page if the psa name does not exist" in {
+        when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
+          Future.successful(None))
+        val result = controller().onSubmit(fakeRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-    }
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(onwardRoute.url)
+      }
 
-    "redirect to Need Contact page if psaName exists but email does not exist on a POST" in {
-      when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
-        Future.successful(Some(Json.obj("psaName" -> "test name"))))
-      val result = controller().onSubmit(fakeRequest)
+      "redirect to Need Contact page if psaName exists but email does not exist" in {
+        when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
+          Future.successful(Some(Json.obj("psaName" -> "test name"))))
+        val result = controller().onSubmit(fakeRequest)
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.register.routes.NeedContactController.onPageLoad.url)
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.register.routes.NeedContactController.onPageLoad.url)
+      }
     }
   }
-
 }

@@ -27,7 +27,7 @@ trait StringViewBehaviours extends QuestionViewBehaviours[String] {
                  expectedFormAction: String,
                  label: Option[String] = None,
                  expectedHint: Option[String] = None,
-                 attributeKey: String = "value") = {
+                 id: String = "value"): Unit = {
 
     "behave like a page with a string value field" when {
       "rendered" must {
@@ -35,19 +35,19 @@ trait StringViewBehaviours extends QuestionViewBehaviours[String] {
         "contain a label for the value" in {
           val doc = asDocument(createView(form))
           val expectedHintText = expectedHint.map(messages(_))
-          assertContainsLabel(doc, attributeKey, messages(label.getOrElse(s"messages__${messageKeyPrefix}__title")), expectedHintText)
+          assertContainsLabel(doc, id, messages(label.getOrElse(s"messages__${messageKeyPrefix}__title")), expectedHintText)
         }
 
         "contain an input for the value" in {
           val doc = asDocument(createView(form))
-          assertRenderedById(doc, attributeKey)
+          assertRenderedById(doc, id)
         }
       }
 
       "rendered with a valid form" must {
         "include the form's value in the value input" in {
           val doc = asDocument(createView(form.fill(answer)))
-          doc.getElementById(attributeKey).attr("value") mustBe answer
+          doc.getElementById(id).attr("value") mustBe answer
         }
       }
 
@@ -59,7 +59,7 @@ trait StringViewBehaviours extends QuestionViewBehaviours[String] {
         }
 
         "show an error in the value field's label" in {
-          val error = FormError(attributeKey, errorMessage)
+          val error = FormError(id, errorMessage)
           val doc = asDocument(createView(form.withError(error)))
           val errorSpan = doc.getElementsByClass("error-notification").first
           errorSpan.text mustBe messages(errorMessage)

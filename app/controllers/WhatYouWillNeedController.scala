@@ -24,15 +24,12 @@ import models.{NormalMode, PSAName}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
-import utils.annotations.Register
 import views.html.whatYouWillNeed
 
 class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           authenticate: AuthAction,
-                                          psaNameCacheConnector: PSANameCacheConnector,
-                                          @Register navigator: Navigator) extends FrontendController with I18nSupport {
+                                          psaNameCacheConnector: PSANameCacheConnector) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>

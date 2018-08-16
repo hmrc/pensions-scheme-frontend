@@ -16,7 +16,7 @@
 
 package forms.register
 
-import forms.mappings.{Constraints, EmailMapping, Mappings}
+import forms.mappings.{Constraints, EmailMapping}
 import javax.inject.Inject
 import play.api.data.Form
 

@@ -49,35 +49,40 @@ class NeedContactControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   val testEmail = "test@test.com"
 
-  "NeedContact Controller" must {
+  "NeedContact Controller" when {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(fakeRequest)
+    "on a GET" must {
+      "return OK and the correct view" in {
+        val result = controller().onPageLoad(fakeRequest)
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString()
+      }
     }
 
-    "save email and redirect to the Scheme details page when Psa Name exists" in {
-      reset(fakePsaNameCacheConnector)
-      when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(Some(Json.obj("psaName" -> "test name"))))
-      when(fakePsaNameCacheConnector.save(any(), eqTo(PsaEmailId), eqTo(testEmail))(any(), any(), any())).thenReturn(Future.successful(Json.obj()))
+    "on a POST" must {
 
-      val result = controller().onSubmit(fakeRequest.withFormUrlEncodedBody(("email" -> testEmail)))
+      "save the email and redirect to the Scheme details page when Psa Name exists" in {
+        reset(fakePsaNameCacheConnector)
+        when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(Some(Json.obj("psaName" -> "test name"))))
+        when(fakePsaNameCacheConnector.save(any(), eqTo(PsaEmailId), eqTo(testEmail))(any(), any(), any())).thenReturn(Future.successful(Json.obj()))
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-      verify(fakePsaNameCacheConnector, times(1)).save(any(), eqTo(PsaEmailId), eqTo(testEmail))(any(), any(), any())
-    }
+        val result = controller().onSubmit(fakeRequest.withFormUrlEncodedBody(("email" -> testEmail)))
 
-    "don't save the email and redirect to the Scheme details page when psa name does not exist" in {
-      reset(fakePsaNameCacheConnector)
-      when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(None))
-      val result = controller().onSubmit(fakeRequest.withFormUrlEncodedBody(("email" -> testEmail)))
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(onwardRoute.url)
+        verify(fakePsaNameCacheConnector, times(1)).save(any(), eqTo(PsaEmailId), eqTo(testEmail))(any(), any(), any())
+      }
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-      verify(fakePsaNameCacheConnector, never()).save(any(), eqTo(PsaEmailId), eqTo(testEmail))(any(), any(), any())
+      "don't save the email and redirect to the Scheme details page when psa name does not exist" in {
+        reset(fakePsaNameCacheConnector)
+        when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(Future.successful(None))
+        val result = controller().onSubmit(fakeRequest.withFormUrlEncodedBody(("email" -> testEmail)))
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(onwardRoute.url)
+        verify(fakePsaNameCacheConnector, never()).save(any(), eqTo(PsaEmailId), eqTo(testEmail))(any(), any(), any())
+      }
     }
   }
 }

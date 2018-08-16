@@ -41,6 +41,6 @@ class NeedContactViewSpec extends StringViewBehaviours {
       messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = controllers.register.routes.NeedContactController.onSubmit.url,
       label = Some("messages__common__email"),
-      attributeKey = "email")
+      id = "email")
   }
 }
