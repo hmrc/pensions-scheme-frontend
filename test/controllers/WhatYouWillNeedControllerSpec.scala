@@ -16,21 +16,51 @@
 
 package controllers
 
+import connectors.{FakeDataCacheConnector, PSANameCacheConnector}
 import controllers.actions._
+import identifiers.TypedIdentifier
+import org.scalatest.mockito.MockitoSugar
+import play.api.libs.json.{JsValue, Json}
+import play.api.libs.ws.WSClient
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.crypto.ApplicationCrypto
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.FakeNavigator
 import views.html.whatYouWillNeed
 
-class WhatYouWillNeedControllerSpec extends ControllerSpecBase {
+import scala.concurrent.{ExecutionContext, Future}
+
+class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  object fakePsaNameCacheConnector extends PSANameCacheConnector(
+    frontendAppConfig,
+    mock[WSClient],
+    injector.instanceOf[ApplicationCrypto]
+  ) with FakeDataCacheConnector {
+
+    override def fetch(cacheId: String)(implicit
+                                        ec: ExecutionContext,
+                                        hc: HeaderCarrier): Future[Option[JsValue]] = Future.successful(Some(Json.obj("psaName" -> "Test",
+      "psaEmail" -> "email@test.com")))
+
+    override def upsert(cacheId: String, value: JsValue)
+                       (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = Future.successful(value)
+
+    override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+                                                (implicit
+                                                 ec: ExecutionContext,
+                                                 hc: HeaderCarrier
+                                                ): Future[JsValue] = ???
+  }
+
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedController =
     new WhatYouWillNeedController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      dataRetrievalAction,
+      fakePsaNameCacheConnector,
       new FakeNavigator(onwardRoute)
     )
 

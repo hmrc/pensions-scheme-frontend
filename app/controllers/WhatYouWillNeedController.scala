@@ -17,21 +17,21 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.PSANameCacheConnector
 import controllers.actions._
-import identifiers.register.WhatYouWillNeedId
 import javax.inject.Inject
-import models.NormalMode
+import models.{NormalMode, PSAName}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
 import utils.annotations.Register
-import utils.{Navigator, UserAnswers}
 import views.html.whatYouWillNeed
 
 class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           authenticate: AuthAction,
-                                          getData: DataRetrievalAction,
+                                          psaNameCacheConnector: PSANameCacheConnector,
                                           @Register navigator: Navigator) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate {
@@ -39,8 +39,18 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
       Ok(whatYouWillNeed(appConfig))
   }
 
-  def onSubmit: Action[AnyContent] = authenticate {
+  def onSubmit: Action[AnyContent] = authenticate.async {
     implicit request =>
-      Redirect(navigator.nextPage(WhatYouWillNeedId, NormalMode, UserAnswers()))
+      psaNameCacheConnector.fetch(request.externalId).map {
+        case Some(value) =>
+          value.as[PSAName].psaEmail match {
+            case None =>
+              Redirect(controllers.register.routes.NeedContactController.onPageLoad)
+            case _ =>
+              Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
+          }
+        case _ =>
+          Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
+      }
   }
 }
