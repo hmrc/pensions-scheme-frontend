@@ -16,10 +16,8 @@
 
 package views.register
 
-import play.api.data.Form
-import controllers.register.routes
 import forms.register.NeedContactFormProvider
-import models.NormalMode
+import play.api.data.Form
 import views.behaviours.StringViewBehaviours
 import views.html.register.needContact
 
@@ -29,15 +27,20 @@ class NeedContactViewSpec extends StringViewBehaviours {
 
   val form = new NeedContactFormProvider()()
 
-  def createView = () => needContact(frontendAppConfig, form)(fakeRequest, messages)
+  private def createView = () => needContact(frontendAppConfig, form)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[String]) => needContact(frontendAppConfig, form)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[String]) => needContact(frontendAppConfig, form)(fakeRequest, messages)
 
   "NeedContact view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
 
     behave like pageWithBackLink(createView)
 
-    behave like stringPage(createViewUsingForm, messageKeyPrefix, controllers.register.routes.NeedContactController.onSubmit.url)
+    behave like stringPage(
+      createView = createViewUsingForm,
+      messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = controllers.register.routes.NeedContactController.onSubmit.url,
+      label = Some("messages__common__email"),
+      attributeKey = "email")
   }
 }

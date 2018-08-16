@@ -16,44 +16,24 @@
 
 package controllers
 
-import connectors.{FakeDataCacheConnector, PSANameCacheConnector}
+import connectors.PSANameCacheConnector
 import controllers.actions._
-import identifiers.TypedIdentifier
+import models.NormalMode
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
-import play.api.libs.json.{JsValue, Json}
-import play.api.libs.ws.WSClient
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import uk.gov.hmrc.crypto.ApplicationCrypto
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.FakeNavigator
 import views.html.whatYouWillNeed
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
-  object fakePsaNameCacheConnector extends PSANameCacheConnector(
-    frontendAppConfig,
-    mock[WSClient],
-    injector.instanceOf[ApplicationCrypto]
-  ) with FakeDataCacheConnector {
-
-    override def fetch(cacheId: String)(implicit
-                                        ec: ExecutionContext,
-                                        hc: HeaderCarrier): Future[Option[JsValue]] = Future.successful(Some(Json.obj("psaName" -> "Test",
-      "psaEmail" -> "email@test.com")))
-
-    override def upsert(cacheId: String, value: JsValue)
-                       (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = Future.successful(value)
-
-    override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
-                                                (implicit
-                                                 ec: ExecutionContext,
-                                                 hc: HeaderCarrier
-                                                ): Future[JsValue] = ???
-  }
+  def onwardRoute: Call = controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode)
+  private val fakePsaNameCacheConnector = mock[PSANameCacheConnector]
 
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedController =
@@ -75,11 +55,31 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar
       contentAsString(result) mustBe viewAsString()
     }
 
-    "redirect to Scheme details page on a POST" in {
+    "redirect to Scheme details page if the email exists on a POST" in {
+      when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
+        Future.successful(Some(Json.obj("psaName" -> "test name", "psaEmail" -> "test@test.com"))))
       val result = controller().onSubmit(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "redirect to Scheme details page if the psa name does not exist on a POST" in {
+      when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
+        Future.successful(None))
+      val result = controller().onSubmit(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "redirect to Need Contact page if psaName exists but email does not exist on a POST" in {
+      when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
+        Future.successful(Some(Json.obj("psaName" -> "test name"))))
+      val result = controller().onSubmit(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.register.routes.NeedContactController.onPageLoad.url)
     }
   }
 

@@ -28,8 +28,6 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
-import utils.annotations.Register
 import views.html.register.needContact
 
 import scala.concurrent.Future

@@ -20,16 +20,12 @@ import forms.mappings.{Constraints, EmailMapping, Mappings}
 import javax.inject.Inject
 import play.api.data.Form
 
-class NeedContactFormProvider @Inject() extends Mappings with Constraints {
+class NeedContactFormProvider @Inject() extends EmailMapping with Constraints {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("messages__error__email")
-        .verifying(
-          returnOnFirstFailure(
-            maxLength(EmailMapping.maxEmailLength, "messages__error__email_length"),
-            emailAddressRestrictive("messages__error__email_invalid")
-          )
-        )
+      "email" -> emailMapping("messages__error__email",
+        "messages__error__email_length",
+        "messages__error__email_invalid")
     )
 }

@@ -16,29 +16,24 @@
 
 package forms.register
 
-import forms.FormSpec
+import forms.behaviours.EmailBehaviours
+import play.api.data.{Form, Mapping}
 
-class NeedContactFormProviderSpec extends FormSpec {
+class NeedContactFormProviderSpec extends EmailBehaviours {
 
-  val requiredKey = "messages__needContact__error__required"
+  val fieldName = "email"
+  val keyEmailRequired = "messages__error__email"
+  val keyEmailLength = "contactDetails.error.email.length"
+  val keyEmailInvalid = "contactDetails.error.email.invalid"
 
-  "NeedContact Form" must {
+  val mapping: Mapping[String] = emailMapping(keyEmailRequired, keyEmailLength, keyEmailInvalid)
+  val form: Form[String] = Form(fieldName -> mapping)
 
-    val formProvider = new NeedContactFormProvider()
-
-    "bind a string" in {
-      val form = formProvider().bind(Map("value" -> "answer"))
-      form.get shouldBe "answer"
-    }
-
-    "fail to bind a blank value" in {
-      val expectedError = error("value", requiredKey)
-      checkForError(formProvider(), Map("value" -> ""), expectedError)
-    }
-
-    "fail to bind when value is omitted" in {
-      val expectedError = error("value", requiredKey)
-      checkForError(formProvider(), emptyForm, expectedError)
-    }
-  }
+  behave like formWithEmailField(
+    form,
+    fieldName,
+    keyEmailRequired,
+    keyEmailLength,
+    keyEmailInvalid
+  )
 }
