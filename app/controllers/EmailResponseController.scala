@@ -16,18 +16,45 @@
 
 package controllers
 
+import audit.{AuditService, EmailEvent}
+import controllers.model.EmailEvents
 import javax.inject.Inject
 import play.api.libs.json.JsValue
-import play.api.mvc.{Action, BodyParsers}
+import play.api.mvc.{Action, BodyParsers, Result}
+import uk.gov.hmrc.crypto.{ApplicationCrypto, Crypted}
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 class EmailResponseController @Inject()(
-
+                                       auditService: AuditService,
+                                       crypto: ApplicationCrypto
                                        ) extends FrontendController {
 
   def post(id: String): Action[JsValue] = Action(BodyParsers.parse.tolerantJson) {
     implicit request =>
-      Ok
+
+      validatePsaId(id) match {
+        case Left(result) => result
+        case Right(psaId) => request.body.validate[EmailEvents].fold(
+          _ => BadRequest,
+          valid => {
+            valid.events.foreach { emailEvent =>
+              auditService.sendEvent(EmailEvent(psaId, emailEvent.event))
+            }
+            Ok
+          }
+        )
+      }
+
   }
+
+  private def validatePsaId(id: String): Either[Result, PsaId] =
+    try {
+      Right(PsaId {
+        crypto.QueryParameterCrypto.decrypt(Crypted(id)).value
+      })
+    } catch {
+      case _: IllegalArgumentException => Left(Forbidden("Malformed PSAID"))
+    }
 
 }

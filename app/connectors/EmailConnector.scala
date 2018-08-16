@@ -22,6 +22,7 @@ import models.SendEmailRequest
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -36,7 +37,7 @@ case object EmailNotSent extends EmailStatus
 
 @ImplementedBy(classOf[EmailConnectorImpl])
 trait EmailConnector {
-  def sendEmail(emailAddress: String, templateName: String, params: Map[String, String])
+  def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psaId: PsaId)
                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus]
 }
 
@@ -44,11 +45,12 @@ trait EmailConnector {
 class EmailConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends EmailConnector {
 
   lazy val postUrl: String = s"${config.emailApiUrl}/hmrc/email"
+  def callbackUrl(psaId: PsaId): String = s"${config.pensionsSchemeFrontend}/email-response/$psaId"
 
-  override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String])
+  override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId)
                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
 
-    val sendEmailReq = SendEmailRequest(List(emailAddress), templateName, params, force = config.emailSendForce)
+    val sendEmailReq = SendEmailRequest(List(emailAddress), templateName, params, force = config.emailSendForce, callbackUrl(psa))
 
     val jsonData = Json.toJson(sendEmailReq)
 

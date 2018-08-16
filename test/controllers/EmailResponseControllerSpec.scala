@@ -16,8 +16,15 @@
 
 package controllers
 
-import play.api.libs.json.{JsValue, Json}
+import audit.AuditService
+import audit.testdoubles.StubSuccessfulAuditService
+import controllers.model.{Delivered, EmailEvent, EmailEvents}
+import org.joda.time.DateTime
+import play.api.libs.json.Json
 import play.api.test.Helpers._
+import play.api.inject.bind
+import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
+import uk.gov.hmrc.domain.PsaId
 
 class EmailResponseControllerSpec extends ControllerSpecBase {
 
@@ -25,35 +32,79 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
 
   "EmailResponseController" must {
 
-    "respond 200 when given json" in {
+    "respond OK when given EmailEvents" which {
+      "will send events to audit service" in {
+
+        running(_.overrides(
+          bind[AuditService].to(fakeAuditService)
+        )) { app =>
+
+          val encrypted = app.injector.instanceOf[ApplicationCrypto].QueryParameterCrypto.encrypt(PlainText(psa)).value
+
+          val controller = app.injector.instanceOf[EmailResponseController]
+
+          val result = controller.post(encrypted)(fakeRequest.withBody(Json.toJson(emailEvents)))
+
+          status(result) mustBe OK
+          fakeAuditService.verifySent(audit.EmailEvent(PsaId(psa), Delivered)) mustBe true
+
+        }
+      }
+    }
+
+  }
+
+  "respond with BAD_REQUEST when not given EmailEvents" in {
+
+    running(_.overrides(
+      bind[AuditService].to(fakeAuditService)
+    )) { app =>
+
+      fakeAuditService.reset()
+
+      val encrypted = app.injector.instanceOf[ApplicationCrypto].QueryParameterCrypto.encrypt(PlainText(psa)).value
 
       val controller = app.injector.instanceOf[EmailResponseController]
 
-      val result = controller.post("id")(fakeRequest.withBody[JsValue](validJson))
+      val result = controller.post(encrypted)(fakeRequest.withBody(validJson))
 
-      status(result) mustBe OK
+      status(result) mustBe BAD_REQUEST
+      fakeAuditService.verifyNothingSent mustBe true
 
     }
 
+  }
+
+  "respond with FORBIDDEN when URL contains an id does not match PSAID pattern" in {
+
+    running(_.overrides(
+      bind[AuditService].to(fakeAuditService)
+    )) { app =>
+
+      fakeAuditService.reset()
+
+      val psa = app.injector.instanceOf[ApplicationCrypto].QueryParameterCrypto.encrypt(PlainText("psa")).value
+
+      val controller = app.injector.instanceOf[EmailResponseController]
+
+      val result = controller.post(psa)(fakeRequest.withBody(Json.toJson(emailEvents)))
+
+      status(result) mustBe FORBIDDEN
+      fakeAuditService.verifyNothingSent mustBe true
+
+    }
   }
 
 }
 
 object EmailResponseControllerSpec {
 
-  val validJson = Json.parse(
-    """{
-      |    "events": [
-      |        {
-      |            "event": "opened",
-      |            "detected": "2015-07-02T08:26:39.035Z"
-      |        },
-      |        {
-      |            "event": "delivered",
-      |            "detected": "2015-07-02T08:25:20.068Z"
-      |        }
-      |    ]
-      |}""".stripMargin
-  )
+  val psa = "A7654321"
+
+  val emailEvents = EmailEvents(Seq(EmailEvent(Delivered, DateTime.now())))
+
+  val fakeAuditService = new StubSuccessfulAuditService()
+
+  val validJson = Json.obj("name" -> "value")
 
 }

@@ -19,6 +19,7 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.{AsyncFlatSpec, Matchers, OptionValues}
 import play.api.http.Status
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
@@ -41,7 +42,7 @@ class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper
 
     val connector = injector.instanceOf[EmailConnector]
 
-    connector.sendEmail(validEmailString, templateId, params).map(response =>
+    connector.sendEmail(validEmailString, templateId, params, psaId).map(response =>
       response shouldBe expectedResponse
     )
 
@@ -58,7 +59,7 @@ class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper
 
     val connector = injector.instanceOf[EmailConnector]
 
-    connector.sendEmail(validEmailString, templateId, params).map(response =>
+    connector.sendEmail(validEmailString, templateId, params, psaId).map(response =>
       response shouldBe notSentResponse
     )
   }
@@ -74,7 +75,7 @@ class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper
 
     val connector = injector.instanceOf[EmailConnector]
 
-    connector.sendEmail(validEmailString, templateId, params).map(response =>
+    connector.sendEmail(validEmailString, templateId, params, psaId).map(response =>
       response shouldBe notSentResponse
     )
   }
@@ -82,6 +83,8 @@ class EmailConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper
 }
 
 object EmailConnectorSpec extends OptionValues {
+
+  val psaId = PsaId("A7654321")
 
   private val emailUrl = "/hmrc/email"
 
