@@ -879,3 +879,8 @@ messages__checkYourAnswers__trustees__partnership__address_years = How long has 
 messages__trusteePartnershipAddress__title = Enter the partnership’s address
 messages__trusteePartnershipAddress__heading = Enter the partnership’s address
 messages__trusteePartnershipAddress__lede = This is usually the registered business address but you can enter any address you have for this trustee.
+
+messages__needContact__title = What is your email address?
+messages__needContact__heading = What is your email address?
+messages__needContact__hint = We will use this to contact you about your schemes.
+

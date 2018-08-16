@@ -58,7 +58,7 @@ class AdviserDetailsFormProviderSpec extends StringFieldBehaviours with Constrai
     behave like fieldWithRegex(
       form,
       fieldName,
-      "1234",
+      "inavlid<name",
       error = FormError(fieldName, invalidKey, Seq(adviserNameRegex))
     )
   }

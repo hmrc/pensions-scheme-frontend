@@ -38,7 +38,6 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     // Start - continue or what you will need
     (ContinueRegistrationId, emptyAnswers, whatYouWillNeed, false, None, false),
     (ContinueRegistrationId, savedLastPage, whatYouWillNeed, false, None, false),
-    (WhatYouWillNeedId, emptyAnswers, schemeDetails(NormalMode), false, None, false),
 
     // Scheme registration
     (SchemeDetailsId, emptyAnswers, schemeEstablishedCountry(NormalMode), true, Some(checkYourAnswers), true),
@@ -93,6 +92,7 @@ object RegisterNavigatorSpec {
   private val lastPage: Call = Call("GET", "http://www.test.com")
 
   private val emptyAnswers = UserAnswers(Json.obj())
+
   private val securedBenefitsTrue = UserAnswers().securedBenefits(true)
   private val securedBenefitsFalse = UserAnswers().securedBenefits(false)
   private val ukBankAccountTrue = UserAnswers().ukBankAccount(true)
