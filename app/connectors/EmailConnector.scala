@@ -55,7 +55,7 @@ class EmailConnectorImpl @Inject()(
 
     val encryptPsa = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value
 
-    s"${config.pensionsSchemeFrontend}/email-response/$encryptPsa"
+    s"${config.pensionsSchemeFrontend}/register-pension-scheme/email-response/$encryptPsa"
   }
 
   override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId)
