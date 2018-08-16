@@ -29,7 +29,7 @@ trait Constraints {
   val regexPostCodeNonUk = """^([0-9]+-)*[0-9]+$"""
   val regexSortCode: String = """\d{6,}""".r.toString()
   val regexUtr = """^\d{10}$"""
-  val regexName = """^[a-zA-Z &`\-\'\.^]{1,35}$"""
+  val regexName = """^[a-zA-Z &`\-\'\.]{1,35}$"""
   val regexUserResearch ="""^[a-zA-Z\u00C0-\u00FF '‘’\u2014\u2013\u2010\u002d]{1,160}$"""
   val regexAccountNo = """[0-9]*"""
   val regexEmailRestrictive: String = "^(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"" +

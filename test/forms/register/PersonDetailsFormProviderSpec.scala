@@ -25,7 +25,7 @@ import play.api.data.FormError
 import wolfendale.scalacheck.regexp.RegexpGen
 
 class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constraints with Matchers {
-
+  val testRegexName = """^[a-zA-Z &`]{1,35}$"""
   val form = new PersonDetailsFormProvider()()
 
   // scalastyle:off magic.number
@@ -39,11 +39,11 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
     val lengthKey = "messages__error__first_name_length"
     val invalidKey = "messages__error__first_name_invalid"
     val maxLength = PersonDetailsFormProvider.firstNameLength
-    val testRegexName = """^[a-zA-Z &`\-\'\.]{1,35}$"""
+
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(regexName)
+      RegexpGen.from(testRegexName)
     )
 
     behave like fieldWithMaxLength(
@@ -92,7 +92,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(regexName)
+      RegexpGen.from(testRegexName)
     )
 
     behave like fieldWithMaxLength(
@@ -136,7 +136,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(regexName)
+      RegexpGen.from(testRegexName)
     )
 
     behave like fieldWithMaxLength(
