@@ -39,7 +39,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
     val lengthKey = "messages__error__first_name_length"
     val invalidKey = "messages__error__first_name_invalid"
     val maxLength = PersonDetailsFormProvider.firstNameLength
-
+    val testRegexName = """^[a-zA-Z &`\-\'\.]{1,35}$"""
     behave like fieldThatBindsValidData(
       form,
       fieldName,
