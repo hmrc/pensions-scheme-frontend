@@ -43,19 +43,19 @@ class UniqueTaxReferenceController @Inject()(
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
                                               formProvider: UniqueTaxReferenceFormProvider
-                                     ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                            ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.flatMap { details =>
-          UniqueTaxReferenceId(index).retrieve.right.map { value =>
-            Future.successful(Ok(uniqueTaxReference(appConfig, form.fill(value), mode, index, details.fullName)))
-          }.left.map { _ =>
-            Future.successful(Ok(uniqueTaxReference(appConfig, form, mode, index, details.fullName)))
-          }
+        UniqueTaxReferenceId(index).retrieve.right.map { value =>
+          Future.successful(Ok(uniqueTaxReference(appConfig, form.fill(value), mode, index, details.fullName)))
+        }.left.map { _ =>
+          Future.successful(Ok(uniqueTaxReference(appConfig, form, mode, index, details.fullName)))
         }
+      }
   }
 
   def onSubmit(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {

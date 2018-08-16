@@ -17,18 +17,19 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
-import play.api.{Configuration, Environment}
-import play.api.i18n.Lang
 import controllers.routes
+import play.api.i18n.Lang
 import play.api.mvc.Call
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
 
 @Singleton
-class FrontendAppConfig @Inject() (override val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
+class FrontendAppConfig @Inject()(override val runModeConfiguration: Configuration, environment: Environment) extends ServicesConfig {
 
   override protected def mode = environment.mode
 
   private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+
   private def loadConfigOrDefault(key: String, default: String) = runModeConfiguration.getString(key).getOrElse(default)
 
   private lazy val contactHost = runModeConfiguration.getString("contact-frontend.host").getOrElse("")
@@ -48,7 +49,7 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val loginUrl = loadConfig("urls.login")
   lazy val loginContinueUrl = loadConfig("urls.loginContinue")
   lazy val serviceSignOut = loadConfig("urls.logout")
-  lazy val registerSchemeUrl: String =  pensionsSchemeUrl +
+  lazy val registerSchemeUrl: String = pensionsSchemeUrl +
     runModeConfiguration.underlying.getString("urls.registerScheme")
   lazy val registerSchemeAdministratorUrl: String = loadConfig("urls.registerSchemeAdministrator")
   lazy val listOfSchemesUrl: String = pensionsSchemeUrl +
@@ -60,11 +61,13 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val appealLink = runModeConfiguration.underlying.getString("urls.appealLink")
   lazy val pensionsRegulatorLink = runModeConfiguration.underlying.getString("urls.pensionsRegulatorLink")
   lazy val languageTranslationEnabled = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
+
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy"))
 
   def routeToSwitchLanguage: (String => Call) = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
+
   lazy val locationCanonicalList = loadConfig("location.canonical.list")
   lazy val addressLookUp = baseUrl("address-lookup")
   lazy val maxDirectors: Int = loadConfig("company.maxDirectors").toInt
@@ -73,7 +76,6 @@ class FrontendAppConfig @Inject() (override val runModeConfiguration: Configurat
   lazy val daysDataSaved: Int = loadConfig("daysDataSaved").toInt
   lazy val allowPartnerships: Boolean = loadConfigOrDefault("features.allowPartnerships", "false").toBoolean
   lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
-  lazy val completeFlagEnabled: Boolean = runModeConfiguration.getBoolean("features.is-complete").getOrElse(true)
   lazy val emailApiUrl: String = baseUrl("email")
   lazy val emailTemplateId: String = loadConfig("email.templateId")
   lazy val emailSendForce: Boolean = runModeConfiguration.getBoolean("email.force").getOrElse(false)

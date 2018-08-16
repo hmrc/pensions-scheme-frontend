@@ -15,14 +15,15 @@
  */
 
 package identifiers.register.establishers.company
+
 import identifiers._
 import identifiers.register.establishers.EstablishersId
 import play.api.libs.json.JsPath
 
-case class OtherDirectorsId(index:Int) extends TypedIdentifier[Boolean] {
+case class OtherDirectorsId(index: Int) extends TypedIdentifier[Boolean] {
   override def path: JsPath = EstablishersId(index).path \ OtherDirectorsId.toString
 }
 
-object OtherDirectorsId{
+object OtherDirectorsId {
   override lazy val toString: String = "otherDirectors"
 }

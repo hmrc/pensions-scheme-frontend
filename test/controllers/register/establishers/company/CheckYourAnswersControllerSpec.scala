@@ -18,7 +18,6 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.IsCompanyCompleteId
 import models.{CheckMode, Index}
 import play.api.mvc.Call
@@ -34,6 +33,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val testSchemeName = "Test Scheme Name"
 
   val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
+
   def postUrl: Call = routes.CheckYourAnswersController.onSubmit(index)
 
   lazy val answersCD: Seq[AnswerRow] = Seq(

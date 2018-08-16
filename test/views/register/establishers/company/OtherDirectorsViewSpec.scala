@@ -16,11 +16,11 @@
 
 package views.register.establishers.company
 
-import play.api.data.Form
 import controllers.register.establishers.company.routes
 import forms.register.establishers.company.OtherDirectorsFormProvider
-import views.behaviours.YesNoViewBehaviours
 import models.{Index, NormalMode}
+import play.api.data.Form
+import views.behaviours.YesNoViewBehaviours
 import views.html.register.establishers.company.otherDirectors
 
 class OtherDirectorsViewSpec extends YesNoViewBehaviours {
@@ -33,9 +33,9 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
 
   val form = new OtherDirectorsFormProvider()()
 
-  def createView = () => otherDirectors(frontendAppConfig, form, NormalMode, index,companyName)(fakeRequest, messages)
+  def createView = () => otherDirectors(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => otherDirectors(frontendAppConfig, form, NormalMode, index,companyName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => otherDirectors(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
 
   "OtherDirectors view" must {
 
@@ -51,7 +51,7 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
 
     behave like yesNoPage(createViewUsingForm,
       messageKeyPrefix,
-      routes.OtherDirectorsController.onSubmit(NormalMode,index).url,
+      routes.OtherDirectorsController.onSubmit(NormalMode, index).url,
       expectedHintKey = Some("_lede")
     )
 

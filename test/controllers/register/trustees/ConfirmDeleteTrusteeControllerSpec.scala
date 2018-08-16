@@ -21,7 +21,6 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
-import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.CompanyDetails

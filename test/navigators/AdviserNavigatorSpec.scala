@@ -28,12 +28,12 @@ class AdviserNavigatorSpec extends SpecBase with NavigatorBehaviour {
   import AdviserNavigatorSpec._
 
   private def routes() = Table(
-    ("Id",                            "User Answers", "Next Page (Normal Mode)",          "Save (NM)",  "Next Page (Check Mode)",             "Save (CM)"),
-    (AdviserDetailsId,                emptyAnswers,   adviserPostCodeLookup(NormalMode),  true,         Some(checkYourAnswersPage),           true),
-    (AdviserAddressPostCodeLookupId,  emptyAnswers,   adviserAddressList(NormalMode),     true,         Some(adviserAddressList(CheckMode)),  true),
-    (AdviserAddressListId,            emptyAnswers,   adviserAddress(NormalMode),         true,         Some(adviserAddress(CheckMode)),      true),
-    (AdviserAddressId,                emptyAnswers,   checkYourAnswersPage,               true,         Some(checkYourAnswersPage),           true),
-    (CheckYourAnswersId,              emptyAnswers,   schemeSuccess,                      true,         None,                                 true)
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (AdviserDetailsId, emptyAnswers, adviserPostCodeLookup(NormalMode), true, Some(checkYourAnswersPage), true),
+    (AdviserAddressPostCodeLookupId, emptyAnswers, adviserAddressList(NormalMode), true, Some(adviserAddressList(CheckMode)), true),
+    (AdviserAddressListId, emptyAnswers, adviserAddress(NormalMode), true, Some(adviserAddress(CheckMode)), true),
+    (AdviserAddressId, emptyAnswers, checkYourAnswersPage, true, Some(checkYourAnswersPage), true),
+    (CheckYourAnswersId, emptyAnswers, schemeSuccess, true, None, true)
   )
 
   navigator.getClass.getSimpleName must {
@@ -51,9 +51,13 @@ object AdviserNavigatorSpec {
   private val emptyAnswers = UserAnswers(Json.obj())
 
   private def adviserAddress(mode: Mode) = controllers.register.adviser.routes.AdviserAddressController.onPageLoad(mode)
+
   private def adviserAddressList(mode: Mode) = controllers.register.adviser.routes.AdviserAddressListController.onPageLoad(mode)
+
   private def adviserPostCodeLookup(mode: Mode) = controllers.register.adviser.routes.AdviserPostCodeLookupController.onPageLoad(mode)
+
   private def checkYourAnswersPage = controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad()
+
   private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString

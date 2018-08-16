@@ -44,11 +44,11 @@ class SchemesOverviewControllerSpec extends ControllerSpecBase with MockitoSugar
   val deleteDate: String = DateTime.now(DateTimeZone.UTC).plusDays(frontendAppConfig.daysDataSaved).toString(formatter)
 
   def viewAsString(): String = schemesOverview(
-        frontendAppConfig,
-        Some(schemeName),
-        Some(lastDate.toString(formatter)),
-        Some(deleteDate)
-      )(fakeRequest, messages).toString
+    frontendAppConfig,
+    Some(schemeName),
+    Some(lastDate.toString(formatter)),
+    Some(deleteDate)
+  )(fakeRequest, messages).toString
 
   def viewAsStringNewScheme(): String = schemesOverview(frontendAppConfig, None, None, None)(fakeRequest, messages).toString
 

@@ -16,13 +16,13 @@
 
 package controllers.register.establishers.individual
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,15 +34,15 @@ import views.html.register.establishers.individual.establisherDetails
 
 import scala.concurrent.Future
 
-class EstablisherDetailsController @Inject() (
-                                               appConfig: FrontendAppConfig,
-                                               override val messagesApi: MessagesApi,
-                                               dataCacheConnector: DataCacheConnector,
-                                               @EstablishersIndividual navigator: Navigator,
-                                               authenticate: AuthAction,
-                                               getData: DataRetrievalAction,
-                                               requireData: DataRequiredAction,
-                                               formProvider: PersonDetailsFormProvider
+class EstablisherDetailsController @Inject()(
+                                              appConfig: FrontendAppConfig,
+                                              override val messagesApi: MessagesApi,
+                                              dataCacheConnector: DataCacheConnector,
+                                              @EstablishersIndividual navigator: Navigator,
+                                              authenticate: AuthAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction,
+                                              formProvider: PersonDetailsFormProvider
                                             ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -57,7 +57,7 @@ class EstablisherDetailsController @Inject() (
             case Some(value) =>
               Ok(establisherDetails(appConfig, form.fill(value), mode, index, schemeName))
           }
-        Future.successful(redirectResult)
+          Future.successful(redirectResult)
       }
   }
 

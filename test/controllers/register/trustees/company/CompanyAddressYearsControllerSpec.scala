@@ -60,7 +60,7 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = addressYears(frontendAppConfig, form, viewmodel)(fakeRequest, messages).toString
-  
+
   val validData: JsResult[UserAnswers] = UserAnswers()
     .set(CompanyDetailsId(0))(companyDetails)
 

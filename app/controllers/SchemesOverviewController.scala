@@ -16,12 +16,11 @@
 
 package controllers
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
+import javax.inject.Inject
 import models.LastUpdatedDate
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTime, DateTimeZone, LocalDate}
@@ -34,11 +33,11 @@ import views.html.schemesOverview
 import scala.concurrent.Future
 
 class SchemesOverviewController @Inject()(appConfig: FrontendAppConfig,
-                                         override val messagesApi: MessagesApi,
+                                          override val messagesApi: MessagesApi,
                                           dataCacheConnector: DataCacheConnector,
-                                         authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction) extends FrontendController with Retrievals with I18nSupport {
+                                          authenticate: AuthAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
@@ -71,11 +70,13 @@ class SchemesOverviewController @Inject()(appConfig: FrontendAppConfig,
             case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
           }
 
-        }
       }
+  }
 
   private val formatter = DateTimeFormat.forPattern("dd MMMM YYYY")
+
   private def f(dt: LastUpdatedDate, daysToAdd: Int): String = new LocalDate(dt.timestamp).plusDays(daysToAdd).toString(formatter)
+
   private def currentTimestamp: LastUpdatedDate = LastUpdatedDate(DateTime.now(DateTimeZone.UTC).getMillis)
 
 }

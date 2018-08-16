@@ -20,7 +20,7 @@ import identifiers._
 import models.address.TolerantAddress
 
 
-object InsurerPostCodeLookupId extends TypedIdentifier[Seq[TolerantAddress]]  {
+object InsurerPostCodeLookupId extends TypedIdentifier[Seq[TolerantAddress]] {
   override def toString: String = "insurerAddresses"
 }
 

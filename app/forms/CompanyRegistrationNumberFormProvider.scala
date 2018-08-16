@@ -16,11 +16,10 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.CrnMapping
-import play.api.data.Form
+import javax.inject.Inject
 import models.CompanyRegistrationNumber
+import play.api.data.Form
 
 class CompanyRegistrationNumberFormProvider @Inject() extends CrnMapping {
 

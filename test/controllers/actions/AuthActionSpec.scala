@@ -16,17 +16,17 @@
 
 package controllers.actions
 
+import base.SpecBase
+import controllers.routes
 import play.api.mvc.{Action, AnyContent, Controller}
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
-import base.SpecBase
-import controllers.routes
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionSpec extends SpecBase {
 
@@ -124,9 +124,11 @@ object AuthActionSpec {
       stubbedRetrievalResult.map(_.asInstanceOf[A])
     }
   }
+
   private def authRetrievals = Future.successful(new ~(Some("id"), Enrolments(Set())))
 
   class Harness(authAction: AuthAction) extends Controller {
     def onPageLoad(): Action[AnyContent] = authAction { _ => Ok }
   }
+
 }

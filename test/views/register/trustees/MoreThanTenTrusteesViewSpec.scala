@@ -16,11 +16,11 @@
 
 package views.register.trustees
 
-import play.api.data.Form
 import controllers.register.trustees.routes
 import forms.register.trustees.MoreThanTenTrusteesFormProvider
-import views.behaviours.YesNoViewBehaviours
 import models.NormalMode
+import play.api.data.Form
+import views.behaviours.YesNoViewBehaviours
 import views.html.register.trustees.moreThanTenTrustees
 
 class MoreThanTenTrusteesViewSpec extends YesNoViewBehaviours {

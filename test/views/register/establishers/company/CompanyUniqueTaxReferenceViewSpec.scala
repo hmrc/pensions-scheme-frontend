@@ -16,9 +16,9 @@
 
 package views.register.establishers.company
 
-import play.api.data.Form
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import models.{Index, NormalMode}
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.companyUniqueTaxReference
@@ -75,8 +75,10 @@ class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
         val expectedValue = "1234567891"
         val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" ->
           expectedValue))))
-        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__establisher__ct_utr")} ${messages(
-          "messages__establisher__ct_utr_hint_format")}",
+        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__establisher__ct_utr")} ${
+          messages(
+            "messages__establisher__ct_utr_hint_format")
+        }",
           expectedValue)
       }
 

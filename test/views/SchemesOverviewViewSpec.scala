@@ -33,6 +33,7 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
 
   def createView: (() => HtmlFormat.Appendable) = () =>
     schemesOverview(frontendAppConfig, Some(schemeName), Some(lastDate), Some(deleteDate))(fakeRequest, messages)
+
   def createFreshView: (() => HtmlFormat.Appendable) = () => schemesOverview(frontendAppConfig, None, None, None)(fakeRequest, messages)
 
   "SchemesOverview view when a scheme has been partially defined" must {
@@ -113,7 +114,6 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
       Jsoup.parse(createFreshView().toString()).select("a[id=manage-link]") must
         haveLink(frontendAppConfig.pensionSchemeOnlineServiceUrl)
     }
-
 
 
   }

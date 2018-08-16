@@ -55,13 +55,13 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
       }
     }
 
-    for(option <- crnOptions) {
+    for (option <- crnOptions) {
       s"rendered with a value of '$option'" must {
         s"have the '$option' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("companyRegistrationNumber.hasCrn" -> s"$option"))))
           assertContainsRadioButton(doc, s"companyRegistrationNumber_hasCrn-$option", "companyRegistrationNumber.hasCrn", option, true)
 
-          for(unselectedOption <- crnOptions.filterNot(o => o == option)) {
+          for (unselectedOption <- crnOptions.filterNot(o => o == option)) {
             assertContainsRadioButton(doc, s"companyRegistrationNumber_hasCrn-$unselectedOption", "companyRegistrationNumber.hasCrn", unselectedOption, false)
           }
         }

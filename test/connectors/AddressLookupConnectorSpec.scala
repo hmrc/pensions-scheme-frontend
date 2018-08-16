@@ -18,7 +18,6 @@ package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.address.TolerantAddress
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{AsyncWordSpec, MustMatchers, RecoverMethods}
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
@@ -89,10 +88,9 @@ class AddressLookupConnectorSpec extends AsyncWordSpec
             |""".stripMargin
 
 
-
         val tolerantAddressSample = Seq(
-          TolerantAddress(Some("10 Other Place"),Some("Some District"),Some("Anytown"),Some("Somerset"),Some("ZZ1 1ZZ"),Some("UK")),
-          TolerantAddress(Some("2 Other Place"),Some("Some District"),Some("Anytown"),Some("Somerset"),Some("ZZ1 1ZZ"),Some("UK"))
+          TolerantAddress(Some("10 Other Place"), Some("Some District"), Some("Anytown"), Some("Somerset"), Some("ZZ1 1ZZ"), Some("UK")),
+          TolerantAddress(Some("2 Other Place"), Some("Some District"), Some("Anytown"), Some("Somerset"), Some("ZZ1 1ZZ"), Some("UK"))
         )
 
 

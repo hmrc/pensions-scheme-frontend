@@ -44,8 +44,8 @@ class CompanyDetailsIdSpec extends WordSpec with MustMatchers with OptionValues 
 
     val answers = UserAnswers(Json.obj())
       .set(CompanyDetailsId(0))(companyTrustee(0))
-        .flatMap(_.set(TrusteeDetailsId(1))(individualTrustee(1)))
-        .flatMap(_.set(MoreThanTenTrusteesId)(true))
+      .flatMap(_.set(TrusteeDetailsId(1))(individualTrustee(1)))
+      .flatMap(_.set(MoreThanTenTrusteesId)(true))
       .asOpt.value
 
     "One trustee is deleted from a set of 10 while the `more than ten trustees` flag was set to yes" when {

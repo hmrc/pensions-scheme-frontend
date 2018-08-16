@@ -21,13 +21,13 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import identifiers.TypedIdentifier
 import org.scalatest.{AsyncWordSpec, MustMatchers, OptionValues}
 import play.api.libs.json.Json
+import play.api.mvc.Results._
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import utils.WireMockHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import play.api.mvc.Results._
 
 class MicroserviceCacheConnectorSpec extends AsyncWordSpec with MustMatchers with WireMockHelper with OptionValues {
 
@@ -40,6 +40,7 @@ class MicroserviceCacheConnectorSpec extends AsyncWordSpec with MustMatchers wit
   protected implicit val hc: HeaderCarrier = HeaderCarrier()
 
   protected def url(id: String): String = s"/pensions-scheme/journey-cache/scheme/$id"
+
   protected def lastUpdatedUrl(id: String) = s"/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
 
   protected lazy val connector: DataCacheConnector = injector.instanceOf[MicroserviceCacheConnector]
@@ -345,7 +346,7 @@ class MicroserviceCacheConnectorSpec extends AsyncWordSpec with MustMatchers wit
         willReturn(ok)
       )
 
-      connector.removeAll("foo").map{
+      connector.removeAll("foo").map {
         _ mustEqual Ok
       }
     }

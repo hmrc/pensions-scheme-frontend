@@ -16,8 +16,8 @@
 
 package controllers.address
 
-import audit.{AddressAction, AddressEvent, AuditService}
 import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent, AuditService}
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.{DataCacheConnector, FakeDataCacheConnector}
@@ -45,7 +45,7 @@ import scala.concurrent.Future
 
 object ManualAddressControllerSpec {
 
-  val fakeAddressId: TypedIdentifier[Address] = new TypedIdentifier[Address]{
+  val fakeAddressId: TypedIdentifier[Address] = new TypedIdentifier[Address] {
     override def toString = "fakeAddressId"
   }
 

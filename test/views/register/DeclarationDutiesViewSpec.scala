@@ -16,8 +16,8 @@
 
 package views.register
 
-import play.api.data.Form
 import forms.register.DeclarationDutiesFormProvider
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.declarationDuties

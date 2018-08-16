@@ -16,13 +16,13 @@
 
 package views.register.trustees.individual
 
-import forms.register.PersonDetailsFormProvider
-import models.{Index, NormalMode}
-import models.person.PersonDetails
-import play.api.data.Form
-import views.behaviours.QuestionViewBehaviours
 import controllers.register.trustees.individual.routes._
+import forms.register.PersonDetailsFormProvider
+import models.person.PersonDetails
+import models.{Index, NormalMode}
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
+import views.behaviours.QuestionViewBehaviours
 import views.html.register.trustees.individual.trusteeDetails
 
 class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
@@ -36,7 +36,7 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
   def createView: () => HtmlFormat.Appendable = () => trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, "Test Scheme Name")(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, "Test Scheme Name")  (fakeRequest, messages)
+    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, "Test Scheme Name")(fakeRequest, messages)
 
 
   "TrusteeDetails view" must {

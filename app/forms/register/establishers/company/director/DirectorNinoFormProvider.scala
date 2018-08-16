@@ -16,9 +16,8 @@
 
 package forms.register.establishers.company.director
 
-import javax.inject.Inject
-
 import forms.mappings.NinoMapping
+import javax.inject.Inject
 import models.Nino
 import play.api.data.Form
 

@@ -19,7 +19,7 @@ package models.register
 import org.joda.time.LocalDate
 import play.api.libs.json._
 
-case class UKBankDetails (bankName: String, accountName: String, sortCode: SortCode, accountNumber: String, date: LocalDate)
+case class UKBankDetails(bankName: String, accountName: String, sortCode: SortCode, accountNumber: String, date: LocalDate)
 
 object UKBankDetails {
   implicit val format = Json.format[UKBankDetails]

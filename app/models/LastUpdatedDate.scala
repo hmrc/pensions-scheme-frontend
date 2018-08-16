@@ -20,6 +20,6 @@ import play.api.libs.json.Json
 
 case class LastUpdatedDate(timestamp: Long)
 
-object LastUpdatedDate{
+object LastUpdatedDate {
   implicit val format = Json.format[LastUpdatedDate]
 }

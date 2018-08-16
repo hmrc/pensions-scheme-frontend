@@ -20,7 +20,6 @@ import com.google.inject.{Inject, Singleton}
 import connectors.DataCacheConnector
 import identifiers.register.trustees.individual._
 import models.{AddressYears, CheckMode, NormalMode}
-import play.api.mvc.Call
 import utils.{Navigator, UserAnswers}
 
 @Singleton

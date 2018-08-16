@@ -23,8 +23,8 @@ import controllers.actions._
 import forms.register.DeclarationDutiesFormProvider
 import identifiers.register.{DeclarationDutiesId, SubmissionReferenceNumberId}
 import javax.inject.Inject
-import models.{NormalMode, PSAName}
 import models.requests.DataRequest
+import models.{NormalMode, PSAName}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -91,10 +91,12 @@ class DeclarationDutiesController @Inject()(
 
   private def sendEmail(srn: String)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
     psaNameCacheConnector.fetch(request.externalId).flatMap {
-
-      case Some(value) =>
-        val email = value.as[PSAName].psaEmail
-        emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)))
+      case Some(value) => {
+        value.as[PSAName].psaEmail match {
+          case Some(email) => emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)))
+          case _ => Future.successful(EmailNotSent)
+        }
+      }
 
       case _ => Future.successful(EmailNotSent)
     }

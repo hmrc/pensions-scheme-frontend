@@ -16,11 +16,11 @@
 
 package views.register
 
-import play.api.data.Form
 import controllers.register.routes
 import forms.register.BenefitsInsurerFormProvider
 import models.NormalMode
 import models.register.BenefitsInsurer
+import play.api.data.Form
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.benefitsInsurer
 

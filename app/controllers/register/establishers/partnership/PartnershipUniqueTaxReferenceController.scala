@@ -16,15 +16,13 @@
 
 package controllers.register.establishers.partnership
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import forms.register.establishers.partnership.PartnershipUniqueTaxReferenceFormProvider
 import identifiers.register.establishers.partnership.PartnershipUniqueTaxReferenceID
+import javax.inject.Inject
 import models.{Index, Mode, UniqueTaxReference}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -37,15 +35,15 @@ import views.html.register.establishers.partnership.partnershipUniqueTaxReferenc
 import scala.concurrent.Future
 
 class PartnershipUniqueTaxReferenceController @Inject()(
-                                                     appConfig: FrontendAppConfig,
-                                                     override val messagesApi: MessagesApi,
-                                                     dataCacheConnector: DataCacheConnector,
-                                                     authenticate: AuthAction,
-                                                     @EstablisherPartnership navigator: Navigator,
-                                                     getData: DataRetrievalAction,
-                                                     requireData: DataRequiredAction,
-                                                     formProvider: PartnershipUniqueTaxReferenceFormProvider
-                                                  ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                         appConfig: FrontendAppConfig,
+                                                         override val messagesApi: MessagesApi,
+                                                         dataCacheConnector: DataCacheConnector,
+                                                         authenticate: AuthAction,
+                                                         @EstablisherPartnership navigator: Navigator,
+                                                         getData: DataRetrievalAction,
+                                                         requireData: DataRequiredAction,
+                                                         formProvider: PartnershipUniqueTaxReferenceFormProvider
+                                                       ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
@@ -53,13 +51,13 @@ class PartnershipUniqueTaxReferenceController @Inject()(
     implicit request =>
       retrievePartnershipName(index) {
         partnershipName =>
-        val redirectResult = request.userAnswers.get(PartnershipUniqueTaxReferenceID(index)) match {
-          case None =>
-            Ok(partnershipUniqueTaxReference(appConfig, form, mode, index, partnershipName))
-          case Some(value) =>
-            Ok(partnershipUniqueTaxReference(appConfig, form.fill(value), mode, index, partnershipName))
-        }
-        Future.successful(redirectResult)
+          val redirectResult = request.userAnswers.get(PartnershipUniqueTaxReferenceID(index)) match {
+            case None =>
+              Ok(partnershipUniqueTaxReference(appConfig, form, mode, index, partnershipName))
+            case Some(value) =>
+              Ok(partnershipUniqueTaxReference(appConfig, form.fill(value), mode, index, partnershipName))
+          }
+          Future.successful(redirectResult)
       }
   }
 

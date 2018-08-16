@@ -30,7 +30,7 @@
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
-    appConfig.completeFlagEnabled & establishers.exists(!_.isCompleted)
+    establishers.exists(!_.isCompleted)
 }
 
 @main_template(
@@ -59,12 +59,7 @@
                 secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
             )
 
-
-            @if(appConfig.completeFlagEnabled){
-                @components.entity_list(establishers)
-            } else {
-                @components.editable_item_list(establishers)
-            }
+            @components.entity_list(establishers)
 
             @components.input_yes_no(
                 field = form("value"),

@@ -16,11 +16,11 @@
 
 package views.register.establishers.individual
 
-import play.api.data.Form
 import controllers.register.establishers.individual.routes
 import forms.address.PostCodeLookupFormProvider
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.StringViewBehaviours
 import views.html.register.establishers.individual.previousPostCodeLookup
@@ -33,16 +33,16 @@ class PreviousAddressPostCodeLookupViewSpec extends StringViewBehaviours {
   val firstIndex = Index(0)
   val establisherName = "test establisher name"
 
-  def createView: () => HtmlFormat.Appendable = ()=> previousPostCodeLookup(frontendAppConfig, form, NormalMode,firstIndex, establisherName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => previousPostCodeLookup(frontendAppConfig, form, NormalMode, firstIndex, establisherName)(fakeRequest, messages)
 
   def createViewUsingForm = (form: Form[String]) => previousPostCodeLookup(frontendAppConfig, form, NormalMode, firstIndex, establisherName)(fakeRequest, messages)
 
   "PreviousAddress view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"),"lede")
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "lede")
 
     behave like pageWithBackLink(createView)
 
-    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.PreviousAddressPostCodeLookupController.onSubmit(NormalMode,firstIndex).url,
+    behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.PreviousAddressPostCodeLookupController.onSubmit(NormalMode, firstIndex).url,
       Some("messages__common__address_postcode"))
   }
   "have establisher name rendered on the page" in {

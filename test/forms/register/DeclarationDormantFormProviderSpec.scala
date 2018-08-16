@@ -17,8 +17,8 @@
 package forms.register
 
 import forms.behaviours.FormBehaviours
-import models.{Field, Invalid, Required}
 import models.register.DeclarationDormant
+import models.{Field, Invalid, Required}
 
 class DeclarationDormantFormProviderSpec extends FormBehaviours {
 

@@ -21,10 +21,10 @@ import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
 import models.address.TolerantAddress
 import play.api.Logger
+import play.api.http.Status._
 import play.api.libs.json.Reads
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import play.api.http.Status._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -40,7 +40,7 @@ class AddressLookupConnectorImpl @Inject()(http: HttpClient, config: FrontendApp
     http.GET[HttpResponse](addressLookupUrl)(implicitly, schemeHc, implicitly) flatMap {
       case response if response.status equals OK => Future.successful(response.json.as[Seq[TolerantAddress]])
       case response => {
-        val message=s"Address Lookup failed with status ${response.status} Response body :${response.body}"
+        val message = s"Address Lookup failed with status ${response.status} Response body :${response.body}"
         Future.failed(new HttpException(message, response.status))
       }
     } recoverWith logExceptions

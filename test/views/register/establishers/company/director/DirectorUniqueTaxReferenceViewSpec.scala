@@ -16,9 +16,9 @@
 
 package views.register.establishers.company.director
 
-import play.api.data.Form
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import models.{Index, NormalMode}
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.director.directorUniqueTaxReference
@@ -33,10 +33,10 @@ class DirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
 
   def createView: () => HtmlFormat.Appendable = () => directorUniqueTaxReference(frontendAppConfig, form, NormalMode,
-    establisherIndex, directorIndex,directorName)(fakeRequest, messages)
+    establisherIndex, directorIndex, directorName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorUniqueTaxReference(frontendAppConfig, form,
-    NormalMode, establisherIndex, directorIndex,directorName)(fakeRequest, messages)
+    NormalMode, establisherIndex, directorIndex, directorName)(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" must {
     behave like pageWithSecondaryHeader(createView, "First Name Middle Name Last Name")
@@ -75,8 +75,10 @@ class DirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
         val expectedValue = "1234567891"
         val doc = asDocument(createViewUsingForm(form.bind(Map("uniqueTaxReference.hasUtr" -> "true", "uniqueTaxReference.utr" ->
           expectedValue))))
-        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__director_sautr")} ${messages(
-          "messages__director_sautr_hint_format")}",
+        doc must haveLabelAndValue("uniqueTaxReference_utr", s"${messages("messages__director_sautr")} ${
+          messages(
+            "messages__director_sautr_hint_format")
+        }",
           expectedValue)
       }
 

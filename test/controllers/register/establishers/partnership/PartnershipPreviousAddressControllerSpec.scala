@@ -27,7 +27,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPreviousAddressId}
 import models.address.{Address, TolerantAddress}
 import models.register.{SchemeDetails, SchemeType}
-import models.{PartnershipDetails, Index, NormalMode}
+import models.{Index, NormalMode, PartnershipDetails}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.data.Form
 import play.api.libs.json.Json

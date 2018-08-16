@@ -37,7 +37,8 @@ import utils.FakeNavigator
 import views.html.register.schemeReview
 
 class SchemeReviewControllerSpec extends ControllerSpecBase {
- import SchemeReviewControllerSpec._
+
+  import SchemeReviewControllerSpec._
 
   "SchemeReview Controller" when {
 

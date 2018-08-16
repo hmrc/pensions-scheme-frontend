@@ -22,7 +22,7 @@ class IndexSpec extends WordSpecLike with MustMatchers with OptionValues {
 
   "indexPathBindable" must {
     val binder = Index.indexPathBindable
-    
+
     "bind a valid index" in {
       binder.bind("index", "1") mustEqual Right(Index(0))
     }

@@ -37,21 +37,21 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
   import EstablishersNavigatorSpec._
 
   private def routes = Table(
-    ("Id",                          "User Answers",                     "Next Page (Normal Mode)",  "Save (NM)",   "Next Page (Check Mode)",  "Save (CM)"),
-    (AddEstablisherId(None),        emptyAnswers,                         establisherKind,           true,          None: Option[Call],       false),
-    (AddEstablisherId(Some(true)),  addEstablishersTrue,                  establisherKind,           true,          None: Option[Call],       false),
-    (AddEstablisherId(Some(false)), haveTrustee,                          addTrustee,              true,          None: Option[Call],       false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseWithSingleTrust,  addTrustee,                true,          None: Option[Call],       false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseWithMasterTrust,  addTrustee,                true,          None: Option[Call],       false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseWithBodyCorporate,haveAnyTrustee,            true,          None: Option[Call],       false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseHaveTrusteeTrue,  addTrustee,              true,          None: Option[Call],       false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseHaveTrusteeFalse, schemeReview,              true,          None: Option[Call],       false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseWithNoScheme,     expired,                   false,         None: Option[Call],       false),
-    (EstablisherKindId(0),          company,                              companyDetails,            true,          None: Option[Call],       false),
-    (EstablisherKindId(0),          individual,                           individualDetails,         true,          None,                     false),
-    (EstablisherKindId(0),          partnership,                          partnershipDetails,        true,          None: Option[Call],       false),
-    (EstablisherKindId(0),          emptyAnswers,                         expired,                   false,         None,                     false),
-    (ConfirmDeleteEstablisherId,    emptyAnswers,                         addEstablisher,            true,          None,                     false)
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (AddEstablisherId(None), emptyAnswers, establisherKind, true, None: Option[Call], false),
+    (AddEstablisherId(Some(true)), addEstablishersTrue, establisherKind, true, None: Option[Call], false),
+    (AddEstablisherId(Some(false)), haveTrustee, addTrustee, true, None: Option[Call], false),
+    (AddEstablisherId(Some(false)), addEstablishersFalseWithSingleTrust, addTrustee, true, None: Option[Call], false),
+    (AddEstablisherId(Some(false)), addEstablishersFalseWithMasterTrust, addTrustee, true, None: Option[Call], false),
+    (AddEstablisherId(Some(false)), addEstablishersFalseWithBodyCorporate, haveAnyTrustee, true, None: Option[Call], false),
+    (AddEstablisherId(Some(false)), addEstablishersFalseHaveTrusteeTrue, addTrustee, true, None: Option[Call], false),
+    (AddEstablisherId(Some(false)), addEstablishersFalseHaveTrusteeFalse, schemeReview, true, None: Option[Call], false),
+    (AddEstablisherId(Some(false)), addEstablishersFalseWithNoScheme, expired, false, None: Option[Call], false),
+    (EstablisherKindId(0), company, companyDetails, true, None: Option[Call], false),
+    (EstablisherKindId(0), individual, individualDetails, true, None, false),
+    (EstablisherKindId(0), partnership, partnershipDetails, true, None: Option[Call], false),
+    (EstablisherKindId(0), emptyAnswers, expired, false, None, false),
+    (ConfirmDeleteEstablisherId, emptyAnswers, addEstablisher, true, None, false)
   )
 
   private val navigator = new EstablishersNavigator(FakeDataCacheConnector, frontendAppConfig)
@@ -96,8 +96,11 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
   private def partnershipDetails = controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 0)
 
   private def establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
+
   private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
+
   private def haveAnyTrustee = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
 
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()

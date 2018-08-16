@@ -21,7 +21,8 @@ import models.address.Address
 import utils.CountryOptions
 import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 
-case object InsurerAddressId extends TypedIdentifier[Address] { self =>
+case object InsurerAddressId extends TypedIdentifier[Address] {
+  self =>
   override def toString: String = "insurerAddress"
 
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] =

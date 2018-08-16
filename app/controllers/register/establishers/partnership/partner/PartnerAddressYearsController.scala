@@ -33,14 +33,14 @@ import viewmodels.Message
 import viewmodels.address.AddressYearsViewModel
 
 class PartnerAddressYearsController @Inject()(
-                                                val appConfig: FrontendAppConfig,
-                                                val cacheConnector: DataCacheConnector,
-                                                @EstablishersPartner val navigator: Navigator,
-                                                val messagesApi: MessagesApi,
-                                                authenticate: AuthAction,
-                                                getData: DataRetrievalAction,
-                                                requireData: DataRequiredAction
-                                              ) extends AddressYearsController with Retrievals {
+                                               val appConfig: FrontendAppConfig,
+                                               val cacheConnector: DataCacheConnector,
+                                               @EstablishersPartner val navigator: Navigator,
+                                               val messagesApi: MessagesApi,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction
+                                             ) extends AddressYearsController with Retrievals {
 
   private val form = new AddressYearsFormProvider()(Message("messages__common_error__current_address_years"))
 

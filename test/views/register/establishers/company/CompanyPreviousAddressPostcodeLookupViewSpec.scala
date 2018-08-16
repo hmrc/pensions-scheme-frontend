@@ -16,13 +16,13 @@
 
 package views.register.establishers.company
 
+import controllers.register.establishers.company.routes
+import forms.address.PostCodeLookupFormProvider
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
 import play.api.data.Form
 import views.behaviours.StringViewBehaviours
 import views.html.register.establishers.company.companyPreviousAddressPostcodeLookup
-import controllers.register.establishers.company.routes
-import forms.address.PostCodeLookupFormProvider
 
 class CompanyPreviousAddressPostcodeLookupViewSpec extends StringViewBehaviours {
 
@@ -41,7 +41,7 @@ class CompanyPreviousAddressPostcodeLookupViewSpec extends StringViewBehaviours 
     behave like pageWithBackLink(createView)
 
     behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.CompanyPreviousAddressPostcodeLookupController.onSubmit(NormalMode, index).url,
-    Some("messages__common__address_postcode"))
+      Some("messages__common__address_postcode"))
 
     "have company name rendered on the page" in {
       Jsoup.parse(createView().toString()) must haveDynamicText(companyName)

@@ -16,10 +16,10 @@
 
 package views.register.establishers
 
-import play.api.data.Form
 import forms.register.establishers.EstablisherKindFormProvider
 import models.register.establishers.EstablisherKind
 import models.{Index, NormalMode}
+import play.api.data.Form
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.establisherKind
 
@@ -29,11 +29,11 @@ class EstablisherKindViewSpec extends ViewBehaviours {
 
   private val form = new EstablisherKindFormProvider()()
 
-  private val schemeName="test scheme name"
+  private val schemeName = "test scheme name"
 
-  private def createView = () => establisherKind(frontendAppConfig, form, NormalMode,Index(1),schemeName)(fakeRequest, messages)
+  private def createView = () => establisherKind(frontendAppConfig, form, NormalMode, Index(1), schemeName)(fakeRequest, messages)
 
-  private def createViewUsingForm = (form: Form[_]) => establisherKind(frontendAppConfig, form, NormalMode,Index(1),schemeName)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) => establisherKind(frontendAppConfig, form, NormalMode, Index(1), schemeName)(fakeRequest, messages)
 
   private def establisherKindOptions = EstablisherKind.options.filter { option =>
     option.value match {
@@ -58,13 +58,13 @@ class EstablisherKindViewSpec extends ViewBehaviours {
       }
     }
 
-    for(option <- establisherKindOptions) {
+    for (option <- establisherKindOptions) {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, isChecked = true)
 
-          for(unselectedOption <- establisherKindOptions.filterNot(o => o == option)) {
+          for (unselectedOption <- establisherKindOptions.filterNot(o => o == option)) {
             assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, isChecked = false)
           }
         }

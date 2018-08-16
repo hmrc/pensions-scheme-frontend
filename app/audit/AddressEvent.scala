@@ -35,12 +35,12 @@ case class AddressEvent(externalId: String, action: AddressAction.Value, context
 object AddressEvent {
 
   def addressEntryEvent(
-      externalId: String,
-      address: Address,
-      was: Option[Address],
-      selected: Option[TolerantAddress],
-      context: String
-  ): Option[AddressEvent] = {
+                         externalId: String,
+                         address: Address,
+                         was: Option[Address],
+                         selected: Option[TolerantAddress],
+                         context: String
+                       ): Option[AddressEvent] = {
 
     val hasChanged = (address, was) match {
       case (a, Some(w)) if a == w => false
@@ -50,11 +50,11 @@ object AddressEvent {
     if (hasChanged) {
       if (selected.isDefined) {
         val matchesSelected = (address, selected) match {
-          case(a, Some(s)) if s.equalsAddress(a) => true
+          case (a, Some(s)) if s.equalsAddress(a) => true
           case _ => false
         }
 
-        if(matchesSelected) {
+        if (matchesSelected) {
           Some(AddressEvent(externalId, AddressAction.Lookup, context, address))
         }
         else {

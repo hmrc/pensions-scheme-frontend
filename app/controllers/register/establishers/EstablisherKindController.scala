@@ -52,8 +52,8 @@ class EstablisherKindController @Inject()(
       retrieveSchemeName {
         schemeName =>
           val redirectResult = request.userAnswers.get(EstablisherKindId(index)) match {
-            case None => Ok(establisherKind(appConfig, form, mode, index,schemeName))
-            case Some(value) => Ok(establisherKind(appConfig, form.fill(value), mode, index,schemeName))
+            case None => Ok(establisherKind(appConfig, form, mode, index, schemeName))
+            case Some(value) => Ok(establisherKind(appConfig, form.fill(value), mode, index, schemeName))
           }
           Future.successful(redirectResult)
       }
@@ -62,20 +62,20 @@ class EstablisherKindController @Inject()(
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
-        schemeName=>
+        schemeName =>
           form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index,schemeName))),
-          value =>
-            dataCacheConnector.save(
-              request.externalId,
-              EstablisherKindId(index),
-              value
-            ).map {
-              json =>
-                Redirect(navigator.nextPage(EstablisherKindId(index), mode, UserAnswers(json)))
-            }
-        )
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index, schemeName))),
+            value =>
+              dataCacheConnector.save(
+                request.externalId,
+                EstablisherKindId(index),
+                value
+              ).map {
+                json =>
+                  Redirect(navigator.nextPage(EstablisherKindId(index), mode, UserAnswers(json)))
+              }
+          )
       }
   }
 

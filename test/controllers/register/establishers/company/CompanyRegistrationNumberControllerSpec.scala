@@ -70,14 +70,14 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
         CompanyDetailsId.toString ->
           CompanyDetails("test company name", Some("123456"), Some("abcd")),
         CompanyRegistrationNumberId.toString ->
-                 CompanyRegistrationNumber.Yes("1234567")
+          CompanyRegistrationNumber.Yes("1234567")
       )
     )
   )
   "CompanyRegistrationNumber Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(NormalMode,firstIndex)(fakeRequest)
+      val result = controller().onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
@@ -85,7 +85,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode,firstIndex)(fakeRequest)
+      val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
       contentAsString(result) mustBe viewAsString(form.fill(CompanyRegistrationNumber.Yes("1234567")))
     }
 
@@ -97,8 +97,8 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber.hasCrn","true"),("companyRegistrationNumber.crn","1234567"))
-      val result = controller().onSubmit(NormalMode,firstIndex)(postRequest)
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("companyRegistrationNumber.hasCrn", "true"), ("companyRegistrationNumber.crn", "1234567"))
+      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
@@ -106,20 +106,20 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
-      val result = controller().onSubmit(NormalMode,firstIndex)(postRequest)
+      val result = controller().onSubmit(NormalMode, firstIndex)(postRequest)
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode,firstIndex)(fakeRequest)
+      val result = controller(dontGetAnyData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", CompanyRegistrationNumber.options.head.value))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode,firstIndex)(postRequest)
+      val result = controller(dontGetAnyData).onSubmit(NormalMode, firstIndex)(postRequest)
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }

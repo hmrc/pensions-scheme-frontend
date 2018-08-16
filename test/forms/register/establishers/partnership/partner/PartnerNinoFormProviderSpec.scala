@@ -29,15 +29,15 @@ class PartnerNinoFormProviderSpec extends NinoBehaviours {
   val invalidReasonKey = "messages__error__no_nino_invalid"
   val testForm = new PartnerNinoFormProvider().apply()
 
-    "PartnerNinoFormProviderSpec" should {
+  "PartnerNinoFormProviderSpec" should {
 
-      behave like formWithNino(testForm,
+    behave like formWithNino(testForm,
       requiredKey,
       requiredNinoKey,
       requiredReasonKey,
       reasonLengthKey,
       invalidNinoKey,
       invalidReasonKey
-      )
-    }
+    )
+  }
 }

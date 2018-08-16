@@ -27,7 +27,6 @@ import models.CompanyDetails
 import models.person.PersonDetails
 import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
-import org.scalatest.prop.Configuration
 import play.api.data.Form
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call

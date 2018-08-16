@@ -16,12 +16,12 @@
 
 package views.register.establishers.individual
 
-import play.api.data.Form
 import controllers.register.establishers.individual.routes
 import forms.address.AddressFormProvider
-import models.{Index, NormalMode}
 import models.address.Address
+import models.{Index, NormalMode}
 import org.jsoup.Jsoup
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import utils.{CountryOptions, InputOption}
 import views.behaviours.QuestionViewBehaviours

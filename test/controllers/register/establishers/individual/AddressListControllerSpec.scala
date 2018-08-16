@@ -64,16 +64,16 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     )
 
   def viewAsString(form: Form[_] = form, address: Seq[TolerantAddress] = addresses): String =
-      addressList(
-        frontendAppConfig,
-        form,
-        AddressListViewModel(
-          routes.AddressListController.onSubmit(NormalMode, firstIndex),
-          routes.AddressController.onPageLoad(NormalMode, firstIndex),
-          addresses,
-          subHeading = Some(establisherName)
-        )
-      )(fakeRequest, messages).toString
+    addressList(
+      frontendAppConfig,
+      form,
+      AddressListViewModel(
+        routes.AddressListController.onSubmit(NormalMode, firstIndex),
+        routes.AddressController.onPageLoad(NormalMode, firstIndex),
+        addresses,
+        subHeading = Some(establisherName)
+      )
+    )(fakeRequest, messages).toString
 
   def address(postCode: String): TolerantAddress = TolerantAddress(
     Some("address line 1"),
@@ -136,7 +136,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         .onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-        FakeDataCacheConnector.verify(AddressListId(firstIndex), addresses.head.copy(country = Some("GB")))
+      FakeDataCacheConnector.verify(AddressListId(firstIndex), addresses.head.copy(country = Some("GB")))
     }
 
     "return a Bad Request and errors when no data is submitted" in {

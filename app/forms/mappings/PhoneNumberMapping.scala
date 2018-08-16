@@ -18,7 +18,7 @@ package forms.mappings
 
 import play.api.data.Mapping
 
-trait PhoneNumberMapping extends Mappings with Transforms{
+trait PhoneNumberMapping extends Mappings with Transforms {
 
   def phoneNumberMapping(keyPhoneNumberRequired: String, keyPhoneNumberLength: String, keyPhoneNumberInvalid: String): Mapping[String] = {
     text(keyPhoneNumberRequired).transform(standardTextTransform, noTransform)

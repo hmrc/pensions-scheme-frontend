@@ -16,14 +16,13 @@
 
 package controllers.register.trustees.company
 
-import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors.DataCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.company.CompanyUniqueTaxReferenceFormProvider
 import identifiers.register.trustees.company._
+import javax.inject.Inject
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}

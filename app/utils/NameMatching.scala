@@ -38,7 +38,7 @@ case class NameMatching(name1: String, name2: String) {
     NameMatching(f(name1), f(name2))
   }
 
-  private def f(word:String) = specialWords.foldLeft[String](word)((z,i) =>(z.replace(i, "")).replaceAll("\\s{2,}", " ").trim())
+  private def f(word: String) = specialWords.foldLeft[String](word)((z, i) => (z.replace(i, "")).replaceAll("\\s{2,}", " ").trim())
 
   def removeSpecialCharacters: NameMatching = {
     NameMatching(
@@ -55,35 +55,35 @@ case class NameMatching(name1: String, name2: String) {
   }
 
   def lengthCheck: NameMatching = {
-    if(name1.length.equals(0) | name2.length.equals(0)) {
-        this.removeSpaces.convertToUpper
+    if (name1.length.equals(0) | name2.length.equals(0)) {
+      this.removeSpaces.convertToUpper
     } else {
-        this
+      this
     }
   }
 
 
   def shortenLongest: NameMatching = {
-    if (entireWordmatchPercentage(name1,name2) > maximumPermittedWordMatchPercentage) {
+    if (entireWordmatchPercentage(name1, name2) > maximumPermittedWordMatchPercentage) {
       name1.length < name2.length match {
         case true => NameMatching(name1, shorten(name2, name1, shortenPercentage))
         case false => NameMatching(shorten(name1, name2, shortenPercentage), name2)
       }
     }
     else {
-      NameMatching(name1,name2)
+      NameMatching(name1, name2)
     }
   }
 
   def entireWordmatchPercentage(word1: String, word2: String): Int = {
     if (word1.length < word2.length) {
-      getEntireWordPercentage(word1,word2)
+      getEntireWordPercentage(word1, word2)
     } else {
-      getEntireWordPercentage(word2,word1)
+      getEntireWordPercentage(word2, word1)
     }
   }
 
-  private def getEntireWordPercentage(shortestWord: String, longestWord: String) : Int = {
+  private def getEntireWordPercentage(shortestWord: String, longestWord: String): Int = {
     if (longestWord.contains(shortestWord)) {
       (shortestWord.length * 100) / longestWord.length
     }
@@ -92,7 +92,7 @@ case class NameMatching(name1: String, name2: String) {
 
 
   private def shorten(long: String, short: String, x: Int): String = {
-    val x_percent_of_long = long.length*x*0.01
+    val x_percent_of_long = long.length * x * 0.01
     val len_of_short = short.length
     if (x_percent_of_long < len_of_short)
       long.take(len_of_short)

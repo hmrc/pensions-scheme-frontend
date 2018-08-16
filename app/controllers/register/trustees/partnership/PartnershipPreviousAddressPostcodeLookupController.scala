@@ -33,16 +33,16 @@ import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
 class PartnershipPreviousAddressPostcodeLookupController @Inject()(
-                                                                override val appConfig: FrontendAppConfig,
-                                                                override val messagesApi: MessagesApi,
-                                                                override val cacheConnector: DataCacheConnector,
-                                                                override val addressLookupConnector: AddressLookupConnector,
-                                                                @TrusteesPartnership override val navigator: Navigator,
-                                                                authenticate: AuthAction,
-                                                                getData: DataRetrievalAction,
-                                                                requireData: DataRequiredAction,
-                                                                formProvider: PostCodeLookupFormProvider
-                                                              ) extends PostcodeLookupController {
+                                                                    override val appConfig: FrontendAppConfig,
+                                                                    override val messagesApi: MessagesApi,
+                                                                    override val cacheConnector: DataCacheConnector,
+                                                                    override val addressLookupConnector: AddressLookupConnector,
+                                                                    @TrusteesPartnership override val navigator: Navigator,
+                                                                    authenticate: AuthAction,
+                                                                    getData: DataRetrievalAction,
+                                                                    requireData: DataRequiredAction,
+                                                                    formProvider: PostCodeLookupFormProvider
+                                                                  ) extends PostcodeLookupController {
 
   private val title: Message = "messages__partnershipPreviousAddressPostcodeLookup__title"
   private val heading: Message = "messages__partnershipPreviousAddressPostcodeLookup__title"

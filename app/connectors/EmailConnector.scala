@@ -24,14 +24,17 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+
 import scala.concurrent.{ExecutionContext, Future}
 
 
 sealed trait EmailStatus
+
 case object EmailSent extends EmailStatus
+
 case object EmailNotSent extends EmailStatus
 
-@ImplementedBy (classOf[EmailConnectorImpl])
+@ImplementedBy(classOf[EmailConnectorImpl])
 trait EmailConnector {
   def sendEmail(emailAddress: String, templateName: String, params: Map[String, String])
                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus]
@@ -62,8 +65,8 @@ class EmailConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) 
   }
 
   private def logExceptions: PartialFunction[Throwable, Future[EmailStatus]] = {
-        case t: Throwable =>
-            Logger.warn("Unable to connect to Email Service", t)
-            Future.successful(EmailNotSent)
+    case t: Throwable =>
+      Logger.warn("Unable to connect to Email Service", t)
+      Future.successful(EmailNotSent)
   }
 }

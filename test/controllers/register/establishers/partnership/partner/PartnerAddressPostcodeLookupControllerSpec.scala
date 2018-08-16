@@ -24,7 +24,7 @@ import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
 import models.address.TolerantAddress
 import models.person.PersonDetails
-import models.{CompanyDetails, Index, NormalMode, PartnershipDetails}
+import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import org.mockito.Matchers
 import org.mockito.Mockito.when

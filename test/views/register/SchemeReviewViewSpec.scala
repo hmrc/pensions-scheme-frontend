@@ -37,6 +37,7 @@ class SchemeReviewViewSpec extends ViewBehaviours {
   private val trusteeAddUrl = routes2.AddTrusteeController.onPageLoad(CheckMode)
 
   private def createView = () => schemeReview(frontendAppConfig, schemeName, establishers, trustees, estIndvUrl, trusteeAddUrl)(fakeRequest, messages)
+
   private def createSecView = () => schemeReview(frontendAppConfig, schemeName, establishers, tenTrustees, estIndvUrl, trusteeAddUrl)(fakeRequest, messages)
 
   "SchemeReview view" must {
@@ -67,7 +68,7 @@ class SchemeReviewViewSpec extends ViewBehaviours {
     }
 
     "contain list of establishers" in {
-      for(establisher <- establishers)
+      for (establisher <- establishers)
         Jsoup.parse(createView().toString) must haveDynamicText(establisher)
     }
 
@@ -90,7 +91,7 @@ class SchemeReviewViewSpec extends ViewBehaviours {
     }
 
     "contain list of trustees" in {
-      for(trustees <- trustees)
+      for (trustees <- trustees)
         Jsoup.parse(createView().toString) must haveDynamicText(trustees)
     }
   }

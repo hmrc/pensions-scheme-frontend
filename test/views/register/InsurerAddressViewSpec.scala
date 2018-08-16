@@ -37,7 +37,7 @@ class InsurerAddressViewSpec extends QuestionViewBehaviours[Address] {
 
   def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable = () =>
     insurerAddress(frontendAppConfig, new AddressFormProvider(FakeCountryOptions()).apply(),
-    NormalMode, validData, schemeName)(fakeRequest, messages)
+      NormalMode, validData, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[_]) => insurerAddress(frontendAppConfig, form, NormalMode,
     validData, schemeName)(fakeRequest, messages)

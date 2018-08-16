@@ -35,25 +35,25 @@ import views.html.register.establishers.partnership.partner.partnerNino
 import scala.concurrent.Future
 
 class PartnerNinoController @Inject()(
-                                               appConfig: FrontendAppConfig,
-                                               override val messagesApi: MessagesApi,
-                                               dataCacheConnector: DataCacheConnector,
-                                               @EstablishersPartner navigator: Navigator,
-                                               authenticate: AuthAction,
-                                               getData: DataRetrievalAction,
-                                               requireData: DataRequiredAction,
-                                               formProvider: PartnerNinoFormProvider
-                                             ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                       appConfig: FrontendAppConfig,
+                                       override val messagesApi: MessagesApi,
+                                       dataCacheConnector: DataCacheConnector,
+                                       @EstablishersPartner navigator: Navigator,
+                                       authenticate: AuthAction,
+                                       getData: DataRetrievalAction,
+                                       requireData: DataRequiredAction,
+                                       formProvider: PartnerNinoFormProvider
+                                     ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[Nino] = formProvider()
 
   def onPageLoad(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      PartnerDetailsId(establisherIndex,partnerIndex).retrieve.right.flatMap { partner =>
-        PartnerNinoId(establisherIndex, partnerIndex).retrieve.right.map{ value =>
-          Future.successful(Ok(partnerNino(appConfig, form.fill(value), mode, establisherIndex, partnerIndex,partner.fullName)))
-        }.left.map{ _ =>
-          Future.successful(Ok(partnerNino(appConfig, form, mode, establisherIndex, partnerIndex,partner.fullName)))
+      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.flatMap { partner =>
+        PartnerNinoId(establisherIndex, partnerIndex).retrieve.right.map { value =>
+          Future.successful(Ok(partnerNino(appConfig, form.fill(value), mode, establisherIndex, partnerIndex, partner.fullName)))
+        }.left.map { _ =>
+          Future.successful(Ok(partnerNino(appConfig, form, mode, establisherIndex, partnerIndex, partner.fullName)))
         }
       }
   }
@@ -61,17 +61,17 @@ class PartnerNinoController @Inject()(
 
   def onSubmit(mode: Mode, establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      PartnerDetailsId(establisherIndex,partnerIndex).retrieve.right.map { partner =>
+      PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partner =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(partnerNino(appConfig, formWithErrors, mode, establisherIndex, partnerIndex,partner.fullName))),
+            Future.successful(BadRequest(partnerNino(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, partner.fullName))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,
               PartnerNinoId(establisherIndex, partnerIndex),
               value
             ) map { json =>
-                Redirect(navigator.nextPage(PartnerNinoId(establisherIndex, partnerIndex), mode, new UserAnswers(json)))
+              Redirect(navigator.nextPage(PartnerNinoId(establisherIndex, partnerIndex), mode, new UserAnswers(json)))
             }
         )
       }

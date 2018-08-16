@@ -16,11 +16,11 @@
 
 package views.register
 
-import play.api.data.Form
 import forms.register.SchemeEstablishedCountryFormProvider
 import models.NormalMode
 import models.register.SchemeDetails
 import models.register.SchemeType.SingleTrust
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import utils.{CountryOptions, InputOption}
 import views.behaviours.StringViewBehaviours

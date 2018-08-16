@@ -25,7 +25,7 @@ import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPreviousAddressPostcodeLookupId}
 import models.address.TolerantAddress
 import models.register.{SchemeDetails, SchemeType}
-import models.{PartnershipDetails, Index, NormalMode}
+import models.{Index, NormalMode, PartnershipDetails}
 import org.mockito.Mockito._
 import org.mockito._
 import org.scalatest.mockito.MockitoSugar

@@ -18,6 +18,6 @@ package identifiers.register.establishers.partnership
 
 import identifiers._
 
-case class AddPartnersId(index:Int) extends TypedIdentifier[Boolean] {
+case class AddPartnersId(index: Int) extends TypedIdentifier[Boolean] {
   override def toString: String = "addPartners"
 }

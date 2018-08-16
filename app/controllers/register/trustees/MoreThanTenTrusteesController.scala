@@ -35,16 +35,16 @@ import views.html.register.trustees.moreThanTenTrustees
 
 import scala.concurrent.Future
 
-class MoreThanTenTrusteesController @Inject() (
-                                                appConfig: FrontendAppConfig,
-                                                override val messagesApi: MessagesApi,
-                                                dataCacheConnector: DataCacheConnector,
-                                                @Trustees navigator: Navigator,
-                                                authenticate: AuthAction,
-                                                getData: DataRetrievalAction,
-                                                requireData: DataRequiredAction,
-                                                formProvider: MoreThanTenTrusteesFormProvider
-                                                   ) extends FrontendController with Retrievals with I18nSupport {
+class MoreThanTenTrusteesController @Inject()(
+                                               appConfig: FrontendAppConfig,
+                                               override val messagesApi: MessagesApi,
+                                               dataCacheConnector: DataCacheConnector,
+                                               @Trustees navigator: Navigator,
+                                               authenticate: AuthAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               formProvider: MoreThanTenTrusteesFormProvider
+                                             ) extends FrontendController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 

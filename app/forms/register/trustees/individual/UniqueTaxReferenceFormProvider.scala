@@ -16,9 +16,8 @@
 
 package forms.register.trustees.individual
 
-import javax.inject.Inject
-
 import forms.mappings.UtrMapping
+import javax.inject.Inject
 import models.UniqueTaxReference
 import play.api.data.Form
 

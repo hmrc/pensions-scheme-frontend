@@ -23,8 +23,8 @@ import forms.register.PartnershipDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.{Index, NormalMode, PartnershipDetails}
 import models.register.{SchemeDetails, SchemeType}
+import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call

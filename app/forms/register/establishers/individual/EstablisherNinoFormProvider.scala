@@ -16,11 +16,10 @@
 
 package forms.register.establishers.individual
 
+import forms.mappings.NinoMapping
 import javax.inject.Inject
-
-import forms.mappings.{Mappings, NinoMapping}
-import play.api.data.Form
 import models.Nino
+import play.api.data.Form
 
 class EstablisherNinoFormProvider @Inject() extends NinoMapping {
 
