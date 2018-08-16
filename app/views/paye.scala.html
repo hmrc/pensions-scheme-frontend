@@ -35,7 +35,10 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages(viewmodel.heading).toString, secondaryHeaderKey = viewmodel.subHeading)
+        @components.heading(
+            messages(viewmodel.heading).toString,
+            secondaryHeaderKey = viewmodel.subHeading.map{components.hyphen(_).toString}
+        )
 
         @components.fieldSet(
             field = form("paye.hasPaye"),
