@@ -45,6 +45,7 @@ trait EmailConnector {
 class EmailConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends EmailConnector {
 
   lazy val postUrl: String = s"${config.emailApiUrl}/hmrc/email"
+
   def callbackUrl(psaId: PsaId): String = s"${config.pensionsSchemeFrontend}/email-response/$psaId"
 
   override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId)
@@ -53,6 +54,8 @@ class EmailConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) 
     val sendEmailReq = SendEmailRequest(List(emailAddress), templateName, params, force = config.emailSendForce, callbackUrl(psa))
 
     val jsonData = Json.toJson(sendEmailReq)
+
+    Logger.debug(s"Data to email: $jsonData")
 
     http.POST(postUrl, jsonData).map { response =>
       response.status match {
