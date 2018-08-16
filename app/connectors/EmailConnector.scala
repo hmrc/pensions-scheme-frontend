@@ -22,6 +22,7 @@ import models.SendEmailRequest
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainBytes, PlainText}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -42,11 +43,20 @@ trait EmailConnector {
 }
 
 @Singleton
-class EmailConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends EmailConnector {
+class EmailConnectorImpl @Inject()(
+                                    http: HttpClient,
+                                    config: FrontendAppConfig,
+                                    crypto: ApplicationCrypto
+                                  ) extends EmailConnector {
 
   lazy val postUrl: String = s"${config.emailApiUrl}/hmrc/email"
 
-  def callbackUrl(psaId: PsaId): String = s"${config.pensionsSchemeFrontend}/email-response/$psaId"
+  def callbackUrl(psaId: PsaId): String = {
+
+    val encryptPsa = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value
+
+    s"${config.pensionsSchemeFrontend}/email-response/$encryptPsa"
+  }
 
   override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId)
                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
