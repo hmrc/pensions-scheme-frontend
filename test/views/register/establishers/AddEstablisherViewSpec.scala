@@ -24,7 +24,6 @@ import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndivi
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import utils.UserAnswers
 import views.behaviours.{EntityListBehaviours, QuestionViewBehaviours}
@@ -70,10 +69,6 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
 
   private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
     addEstablisher(frontendAppConfig, form, NormalMode, establishers, schemeName)(fakeRequest, messages)
-
-  override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.is-complete" -> true
-  ).build()
 
   "AddEstablisher view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
