@@ -23,9 +23,7 @@ import models.NormalMode
 import models.person.PersonDetails
 import models.register.DirectorEntity
 import org.joda.time.LocalDate
-import play.api.Application
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.establishers.company.addCompanyDirectors
 
@@ -45,10 +43,6 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   val form = new AddCompanyDirectorsFormProvider()()
   private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
   private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
-
-  override lazy val app: Application = new GuiceApplicationBuilder().configure(
-    "features.is-complete" -> true
-  ).build()
 
   private def createView(directors: Seq[DirectorEntity] = Nil) =
     () =>

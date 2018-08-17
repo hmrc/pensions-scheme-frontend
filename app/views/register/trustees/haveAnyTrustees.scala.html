@@ -32,7 +32,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__haveAnyTrustees__heading",  secondaryHeaderKey = Some(schemeName))
+        @components.heading(messages("messages__haveAnyTrustees__heading").toString,  secondaryHeaderKey = Some(schemeName))
 
         @components.input_yes_no(
             field = form("value"),

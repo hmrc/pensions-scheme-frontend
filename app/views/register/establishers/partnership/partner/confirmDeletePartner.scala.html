@@ -29,7 +29,7 @@
     @helpers.form(action = postCall, 'autoComplete -> "off") {
         @components.back_link()
 
-        @components.headingNew(
+        @components.heading(
             headingKey = components.hyphen((Message("messages__confirmDeletePartner__heading").withArgs(partnerName))).toString,
             secondaryHeaderKey = Some(components.hyphen(partnershipName).toString)
         )
