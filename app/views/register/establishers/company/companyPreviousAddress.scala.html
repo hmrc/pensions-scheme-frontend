@@ -33,7 +33,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__companyPreviousAddress__heading", secondaryHeaderKey = Some(companyName))
+        @components.heading(messages("messages__companyPreviousAddress__heading").toString, secondaryHeaderKey = Some(companyName))
 
         @components.address(form, countryOptions)
 

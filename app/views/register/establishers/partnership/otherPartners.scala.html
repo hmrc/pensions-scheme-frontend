@@ -32,7 +32,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__otherPartners__heading",secondaryHeaderKey=Some(partnershipName))
+        @components.heading(messages("messages__otherPartners__heading").toString,secondaryHeaderKey=Some(partnershipName))
 
         @components.input_yes_no(
             field = form("value"),

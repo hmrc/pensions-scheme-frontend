@@ -25,12 +25,12 @@ import utils.{CountryOptions, NameMatching}
 import scala.language.implicitConversions
 
 trait Constraints {
-  val regexPostcode = """^[A-Za-z]{1,2}[0-9][0-9A-Za-z]?[ ]?[0-9][A-Za-z]{2}$"""
+  val regexPostcode = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
   val regexPostCodeNonUk = """^([0-9]+-)*[0-9]+$"""
   val regexSortCode: String = """\d{6,}""".r.toString()
   val regexUtr = """^\d{10}$"""
   val regexName = """^[a-zA-Z &`\-\'\.]{1,35}$"""
-  val regexUserResearch ="""^[a-zA-Z\u00C0-\u00FF '‘’\u2014\u2013\u2010\u002d]{1,160}$"""
+  val regexUserResearch = """^[a-zA-Z\u00C0-\u00FF '‘’\u2014\u2013\u2010\u002d]{1,160}$"""
   val regexAccountNo = """[0-9]*"""
   val regexEmailRestrictive: String = "^(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"" +
     "(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")" +
@@ -42,8 +42,8 @@ trait Constraints {
   val regexVat = """^\d{9}$"""
   val regexPaye = """^[0-9]{3}[0-9A-Za-z]{1,13}$"""
   val regexSafeText = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’"“”«»()*+,./:;=?@\\\[\]|~£€¥\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,160}$"""
-  val regexAddressLine = """^[A-Za-z0-9 !'‘’"“”(),./\u2014\u2013\u2010\u002d]{1,35}$"""
-  val adviserNameRegex = """^[a-zA-Z\u00C0-\u00FF '‘’\u2014\u2013\u2010\u002d]{1,255}$"""
+  val regexAddressLine = """^[A-Za-z0-9 &!'‘’(),./\u2014\u2013\u2010\u002d]{1,35}$"""
+  val adviserNameRegex = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’\"“”«»()*+,./:;=?@\\[\\]|~£€¥\\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,107}$"""
   val regexPolicyNumber = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’"“”«»()*+,./:;=?@\\\[\]|~£€¥\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,55}$"""
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =

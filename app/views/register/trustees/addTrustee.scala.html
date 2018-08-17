@@ -23,7 +23,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, trustees: Seq[Trustee[_]])(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
-    appConfig.completeFlagEnabled & trustees.exists(!_.isCompleted)
+    trustees.exists(!_.isCompleted)
 }
 
 @main_template(
@@ -37,7 +37,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.headingNew(
+        @components.heading(
             headingKey=messages("messages__addTrustee__heading"),
             secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
         )
@@ -48,11 +48,7 @@
 
         } else {
 
-            @if(appConfig.completeFlagEnabled){
-                @components.entity_list(trustees)
-            } else {
-                @components.editable_item_list(trustees)
-            }
+            @components.entity_list(trustees)
 
             @if(trustees.size < appConfig.maxTrustees) {
                 @components.input_yes_no(

@@ -337,9 +337,7 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
       "AB12 1AB",
       "AB1A 1AB",
       "AB121AB",
-      "aB12 1AB",
-      "Ab12 1AB",
-      "AB1a 1AB"
+      "A1 1AA"
     )
 
     val invalidPostCode = Table(
@@ -349,7 +347,13 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
       "ABC2 1AB",
       "AB12 AAB",
       "AB12 11B",
-      "AB12 1A1"
+      "AB12 1A1",
+      "aB12 1AB",
+      "Ab12 1AB",
+      "AB1a 1AB",
+      "A 1AA",
+      "A1 1 AA",
+      "AB121A A"
     )
 
     val invalidMsg = "Invalid post code"
@@ -365,14 +369,14 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
       "ABCD",
       "ab'cd",
       "ab-cd",
-      "ab cd"
+      "ab cd",
+      "1234"
     )
 
     val invalidText = Table(
-      "text",
-      "1234",
-      "abc123",
-      "a&b"
+      "test<name",
+      "1234>",
+      ""
     )
 
     val invalidMsg = "Invalid text"

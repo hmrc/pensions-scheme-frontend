@@ -30,7 +30,7 @@
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
-    appConfig.completeFlagEnabled & directors.exists(!_.isCompleted)
+    directors.exists(!_.isCompleted)
 }
 
 @main_template(
@@ -44,7 +44,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.headingNew(
+        @components.heading(
             headingKey=messages("messages__addCompanyDirectors__heading"),
             secondaryHeaderKey = Some(components.hyphen(companyName).toString)
         )
@@ -53,11 +53,8 @@
             @components.paragraph_text(messages("messages__addCompanyDirectors_lede"))
             @components.submit_button("messages__addCompanyDirectors_add_director")
         } else {
-            @if(appConfig.completeFlagEnabled){
-                @components.entity_list(directors)
-            } else {
-                @components.editable_item_list(directors)
-            }
+
+            @components.entity_list(directors)
 
             @if(directors.size < appConfig.maxDirectors) {
                 @components.input_yes_no(

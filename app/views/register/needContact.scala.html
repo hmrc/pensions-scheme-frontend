@@ -16,33 +16,30 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import models.{Mode, Index}
-@import viewmodels.address.ManualAddressViewModel
-@import utils.InputOption
+@import controllers.register.routes._
+@import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: ManualAddressViewModel)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_])(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages(viewmodel.title),
+    title = messages("messages__needContact__title"),
     appConfig = appConfig,
-    bodyClasses = None
-) {
-    @helpers.form(action = viewmodel.postCall, 'autoComplete -> "off") {
+    bodyClasses = None) {
+
+    @helpers.form(action = controllers.register.routes.NeedContactController.onSubmit, 'autoComplete -> "off") {
 
         @components.back_link()
 
         @components.error_summary(form.errors)
 
-        @components.heading(
-            headingKey=messages(viewmodel.heading),
-            secondaryHeaderKey = viewmodel.secondaryHeader.map{x=>components.hyphen(messages(x)).toString}
+        @components.heading(messages("messages__needContact__heading").toString)
+
+        <p>@messages("messages__needContact__hint")</p>
+
+        @components.input_text(
+          field = form("email"),
+          label = messages("messages__common__email")
         )
-
-        @viewmodel.hint.map{ hint =>
-            <p>@messages(hint)</p>
-        }
-
-        @components.address(form, viewmodel.countryOptions)
 
         @components.submit_button()
     }
