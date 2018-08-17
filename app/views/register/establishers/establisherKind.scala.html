@@ -42,12 +42,7 @@
             field = form("value"),
             legend = messages("messages__establishers__add_legend"),
             hint=Some(messages("messages__establishers__add_hint")),
-            inputs = EstablisherKind.options.filter { option =>
-                option.value match {
-                    case EstablisherKind.Partnership.toString => appConfig.allowPartnerships
-                    case _ => true
-                }
-            }
+            inputs = EstablisherKind.options
         )
 
         @components.submit_button("messages__common__continue")

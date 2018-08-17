@@ -35,12 +35,7 @@ class EstablisherKindViewSpec extends ViewBehaviours {
 
   private def createViewUsingForm = (form: Form[_]) => establisherKind(frontendAppConfig, form, NormalMode, Index(1), schemeName)(fakeRequest, messages)
 
-  private def establisherKindOptions = EstablisherKind.options.filter { option =>
-    option.value match {
-      case EstablisherKind.Partnership.toString => frontendAppConfig.allowPartnerships
-      case _ => true
-    }
-  }
+  private def establisherKindOptions = EstablisherKind.options
 
   "EstablisherKind view" must {
     behave like normalPage(createView, messageKeyPrefix, messages("messages__establishers__add__title"))
