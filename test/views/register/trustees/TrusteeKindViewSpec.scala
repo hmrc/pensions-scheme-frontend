@@ -35,12 +35,7 @@ class TrusteeKindViewSpec extends ViewBehaviours {
 
   private def createViewUsingForm = (form: Form[_]) => trusteeKind(frontendAppConfig, form, NormalMode, index, schemeName)(fakeRequest, messages)
 
-  private def trusteeKindOptions = TrusteeKind.options.filter { option =>
-    option.value match {
-      case TrusteeKind.Partnership.toString => frontendAppConfig.allowPartnerships
-      case _ => true
-    }
-  }
+  private def trusteeKindOptions = TrusteeKind.options
 
   "TrusteeKind view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
