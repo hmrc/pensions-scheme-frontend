@@ -22,9 +22,7 @@ import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import models.person.PersonDetails
 import models.register.PartnerEntity
 import org.joda.time.LocalDate
-import play.api.Application
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.addPartners
@@ -46,10 +44,6 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   val form = new AddPartnersFormProvider()()
   private val johnDoeEntity = PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
   private val joeBloggsEntity = PartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
-
-  override lazy val app: Application = new GuiceApplicationBuilder().configure(
-    "features.is-complete" -> true
-  ).build()
 
   private def createView(partners: Seq[PartnerEntity] = Nil) =
     () =>

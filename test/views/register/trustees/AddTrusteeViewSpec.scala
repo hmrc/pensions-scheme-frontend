@@ -25,7 +25,6 @@ import models.register.{Trustee, TrusteeIndividualEntity}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import utils.UserAnswers
 import views.behaviours.{EntityListBehaviours, YesNoViewBehaviours}
 import views.html.register.trustees.addTrustee
@@ -64,10 +63,6 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
 
   private def createViewUsingForm(trustees: Seq[Trustee[_]] = Seq.empty) = (form: Form[Boolean]) =>
     addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages)
-
-  override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.is-complete" -> true
-  ).build()
 
   "AddTrustee view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
