@@ -35,7 +35,7 @@ class BenefitsInsurerFormProvider @Inject() extends Mappings {
       ),
       "policyNumber" -> text("messages__error__benefits_insurance__policy").verifying(
         firstError(maxLength(policyMaxLength, "messages__error__benefits_insurance__policy_length"),
-          safeText("messages__error__benefits_insurance__policy_invalid")
+          policyNumber("messages__error__benefits_insurance__policy_invalid")
         )
       )
     )(BenefitsInsurer.apply)(BenefitsInsurer.unapply)

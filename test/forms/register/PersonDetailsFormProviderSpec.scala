@@ -43,7 +43,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(testRegexName)
+      RegexpGen.from(regexName)
     )
 
     behave like fieldWithMaxLength(
@@ -92,7 +92,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(testRegexName)
+      RegexpGen.from(regexName)
     )
 
     behave like fieldWithMaxLength(
@@ -136,7 +136,7 @@ class PersonDetailsFormProviderSpec extends StringFieldBehaviours with Constrain
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(testRegexName)
+      RegexpGen.from(regexName)
     )
 
     behave like fieldWithMaxLength(

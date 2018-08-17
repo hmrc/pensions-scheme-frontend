@@ -286,6 +286,27 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
 
   }
 
+  "policyNumber" must {
+
+    val validText = Table(
+      "text",
+      "some valid text À ÿ",
+      "!$%&*()[]@@'~#;:,./?^",
+      "s\\as"
+    )
+
+    val invalidText = Table(
+      "text",
+      "{invalid text}",
+      "<invalid>"
+    )
+
+    val invalidMsg = "Invalid text"
+
+    behave like regexWithValidAndInvalidExamples(policyNumber, validText, invalidText, invalidMsg, regexPolicyNumber)
+
+  }
+
   "addressLine" must {
 
     val validAddress = Table(
