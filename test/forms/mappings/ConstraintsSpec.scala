@@ -163,6 +163,7 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
 
     val validName = Table(
       "name",
+      "a`",
       "a.",
       "a'",
       "a&",
