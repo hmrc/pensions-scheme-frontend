@@ -32,7 +32,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading("messages__benefits_insurance_addr__title", secondaryHeaderKey = Some(schemeName))
+        @components.heading(messages("messages__benefits_insurance_addr__title").toString, secondaryHeaderKey = Some(schemeName))
 
         <p>@messages("messages__common__company_address_hint")</p>
 

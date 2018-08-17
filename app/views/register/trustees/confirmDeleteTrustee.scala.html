@@ -29,7 +29,7 @@
 
     @components.back_link()
 
-    @components.headingNew(
+    @components.heading(
         headingKey=components.hyphen((Message("messages__confirmDeleteTrustee__heading").withArgs(trusteeName))).toString,
         secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
     )
