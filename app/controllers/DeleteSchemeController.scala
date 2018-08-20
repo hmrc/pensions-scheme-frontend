@@ -24,7 +24,7 @@ import identifiers.register.SchemeDetailsId
 import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.deleteScheme
 
@@ -41,7 +41,7 @@ class DeleteSchemeController @Inject()(
                                       ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
-  private lazy val overviewPage = if (appConfig.useManagePensionsFrontend) Redirect(Call("GET",appConfig.managePensionsSchemeOverviewUrl)) else Redirect(controllers.routes.SchemesOverviewController.onPageLoad())
+  private lazy val overviewPage = if (appConfig.useManagePensionsFrontend) Redirect(appConfig.managePensionsSchemeOverviewUrl) else Redirect(controllers.routes.SchemesOverviewController.onPageLoad())
 
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {

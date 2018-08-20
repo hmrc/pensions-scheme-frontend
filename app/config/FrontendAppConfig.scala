@@ -35,8 +35,8 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   private lazy val contactHost = runModeConfiguration.getString("contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "pensionsschemefrontend"
   lazy val useManagePensionsFrontend: Boolean = runModeConfiguration.getBoolean("features.useManagePensionsFrontend").getOrElse(false)
-  lazy val managePensionsSchemeOverviewUrl : String = loadConfig("urls.manage-pensions-frontend.schemesOverview")
-  lazy val managePensionsSchemeListOfSchemesUrl : String = loadConfig("urls.manage-pensions-frontend.listOfSchemes")
+  lazy val managePensionsSchemeOverviewUrl : Call = Call("GET",loadConfig("urls.manage-pensions-frontend.schemesOverview"))
+  lazy val managePensionsSchemeListOfSchemesUrl : Call = Call("GET",loadConfig("urls.manage-pensions-frontend.listOfSchemes"))
   lazy val appName: String = runModeConfiguration.underlying.getString("appName")
   lazy val analyticsToken = loadConfig(s"google-analytics.token")
   lazy val analyticsHost = loadConfig(s"google-analytics.host")
@@ -49,7 +49,7 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val pensionsSchemeUrl = baseUrl("pensions-scheme")
 
   lazy val loginUrl = loadConfig("urls.login")
-  lazy val loginContinueUrl = if (useManagePensionsFrontend) managePensionsSchemeOverviewUrl  else loadConfig("urls.loginContinue")
+  lazy val loginContinueUrl = loadConfig("urls.loginContinue")
   lazy val serviceSignOut = loadConfig("urls.logout")
   lazy val registerSchemeUrl: String = pensionsSchemeUrl +
     runModeConfiguration.underlying.getString("urls.registerScheme")

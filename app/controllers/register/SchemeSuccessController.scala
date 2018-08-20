@@ -27,7 +27,7 @@ import models.requests.DataRequest
 import org.joda.time.LocalDate
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.register.schemeSuccess
 
@@ -68,7 +68,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      Redirect(if (appConfig.useManagePensionsFrontend) Call("GET",appConfig.managePensionsSchemeOverviewUrl) else controllers.routes.SchemesOverviewController.onPageLoad())
+      Redirect(if (appConfig.useManagePensionsFrontend) appConfig.managePensionsSchemeOverviewUrl else controllers.routes.SchemesOverviewController.onPageLoad())
   }
 
 

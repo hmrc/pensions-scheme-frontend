@@ -27,7 +27,6 @@ import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
 import play.api.mvc.Results._
 import play.api.test.Helpers._
 import views.html.register.schemeSuccess
@@ -40,7 +39,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
     "features.useManagePensionsFrontend" -> true
   ).build()
 
-  private lazy val onwardRoute = Call("GET",frontendAppConfig.managePensionsSchemeOverviewUrl)
+  private lazy val onwardRoute = frontendAppConfig.managePensionsSchemeOverviewUrl
 
   val submissionReferenceNumber = "XX123456789132"
 

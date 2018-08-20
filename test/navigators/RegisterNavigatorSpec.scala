@@ -162,7 +162,7 @@ object RegisterNavigatorSpec {
 
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def schemeOverview(appConfig: FrontendAppConfig) = Call("GET",appConfig.managePensionsSchemeOverviewUrl)
+  private def schemeOverview(appConfig: FrontendAppConfig) = appConfig.managePensionsSchemeOverviewUrl
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
