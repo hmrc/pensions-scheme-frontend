@@ -34,7 +34,8 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
 
   private lazy val contactHost = runModeConfiguration.getString("contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "pensionsschemefrontend"
-
+  lazy val useManagePensionsFrontend: Boolean = runModeConfiguration.getBoolean("features.useManagePensionsFrontend").getOrElse(false)
+  lazy val managePensionsSchemeOverviewUrl : String = loadConfig("urls.manage-pensions-frontend.schemesOverview")
   lazy val appName: String = runModeConfiguration.underlying.getString("appName")
   lazy val analyticsToken = loadConfig(s"google-analytics.token")
   lazy val analyticsHost = loadConfig(s"google-analytics.host")
@@ -47,7 +48,7 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val pensionsSchemeUrl = baseUrl("pensions-scheme")
 
   lazy val loginUrl = loadConfig("urls.login")
-  lazy val loginContinueUrl = loadConfig("urls.loginContinue")
+  lazy val loginContinueUrl = if (useManagePensionsFrontend) managePensionsSchemeOverviewUrl  else loadConfig("urls.loginContinue")
   lazy val serviceSignOut = loadConfig("urls.logout")
   lazy val registerSchemeUrl: String = pensionsSchemeUrl +
     runModeConfiguration.underlying.getString("urls.registerScheme")
@@ -59,10 +60,8 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val pensionPractitionerGovUkLink = runModeConfiguration.underlying.getString("urls.pensionPractitionerGovUkLink")
   lazy val govUkLink = runModeConfiguration.underlying.getString("urls.govUkLink")
   lazy val appealLink = runModeConfiguration.underlying.getString("urls.appealLink")
-  lazy val managePensionsSchemeOverviewUrl : String = loadConfig("urls.manage-pensions-frontend.schemesOverview")
   lazy val pensionsRegulatorLink = runModeConfiguration.underlying.getString("urls.pensionsRegulatorLink")
   lazy val languageTranslationEnabled = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
-  lazy val useManagePensionsFrontend: Boolean = runModeConfiguration.getBoolean("features.useManagePensionsFrontend").getOrElse(false)
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),

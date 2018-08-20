@@ -22,6 +22,7 @@ import connectors.DataCacheConnector
 import identifiers.UserResearchDetailsId
 import identifiers.register._
 import models.{CheckMode, Mode, NormalMode}
+import play.api.mvc.Call
 import utils.{Navigator, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
@@ -70,7 +71,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
       case DeclarationDutiesId =>
         declarationDutiesRoutes(from.userAnswers)
       case UserResearchDetailsId =>
-        NavigateTo.save(controllers.routes.SchemesOverviewController.onPageLoad())
+        NavigateTo.save(if (appConfig.useManagePensionsFrontend) Call("GET",appConfig.managePensionsSchemeOverviewUrl) else controllers.routes.SchemesOverviewController.onPageLoad())
       case _ => None
     }
 
