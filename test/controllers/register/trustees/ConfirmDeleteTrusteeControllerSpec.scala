@@ -23,10 +23,11 @@ import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import models.CompanyDetails
+import identifiers.register.trustees.partnership.PartnershipDetailsId
+import models.{CompanyDetails, PartnershipDetails}
 import models.person.PersonDetails
 import models.register.trustees.TrusteeKind
-import models.register.trustees.TrusteeKind.{Company, Individual}
+import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.Writes
@@ -53,6 +54,14 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString(individualTrustee.fullName, Individual)
     }
+
+    "return OK and the correct view for a GET to confirm deletion of a partnership trustee" in {
+      val result = controller(testData(partnershipId)(partnershipTrustee)).onPageLoad(0, Partnership)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(partnershipTrustee.name, Partnership)
+    }
+
 
     "redirect to already deleted view for a GET if the trustee was already deleted" in {
       val result = controller(testData(individualId)(deletedTrustee)).onPageLoad(index = 0, trusteeKind = Individual)(fakeRequest)
@@ -83,6 +92,13 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       FakeDataCacheConnector.verify(individualId, individualTrustee.copy(isDeleted = true))
     }
 
+    "remove the trustee in a POST request for a partnership trustee" in {
+      val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(0, Partnership)(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      FakeDataCacheConnector.verify(partnershipId, partnershipTrustee.copy(isDeleted = true))
+    }
+
     "redirect to the next page following a POST request" in {
       val result = controller(testData(companyId)(companyTrustee)).onSubmit(0, Company)(fakeRequest)
 
@@ -110,6 +126,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
   private val individualId = TrusteeDetailsId(0)
   private val companyId = CompanyDetailsId(0)
+  private val partnershipId = PartnershipDetailsId(0)
 
   private val individualTrustee = PersonDetails(
     "test-first-name",
@@ -122,6 +139,10 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
     "test-company-name",
     None,
     None
+  )
+
+  private val partnershipTrustee = PartnershipDetails(
+    "test-partnership-name"
   )
 
   private val deletedTrustee = individualTrustee.copy(isDeleted = true)
