@@ -59,8 +59,10 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val pensionPractitionerGovUkLink = runModeConfiguration.underlying.getString("urls.pensionPractitionerGovUkLink")
   lazy val govUkLink = runModeConfiguration.underlying.getString("urls.govUkLink")
   lazy val appealLink = runModeConfiguration.underlying.getString("urls.appealLink")
+  lazy val managePensionsSchemeOverviewUrl : String = loadConfig("urls.manage-pensions-frontend.schemesOverview")
   lazy val pensionsRegulatorLink = runModeConfiguration.underlying.getString("urls.pensionsRegulatorLink")
   lazy val languageTranslationEnabled = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
+  lazy val useManagePensionsFrontend: Boolean = runModeConfiguration.getBoolean("features.useManagePensionsFrontend").getOrElse(false)
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),

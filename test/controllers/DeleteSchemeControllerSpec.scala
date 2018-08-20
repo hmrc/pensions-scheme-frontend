@@ -23,6 +23,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers.{contentAsString, _}
 import views.html.deleteScheme
@@ -35,6 +36,10 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar {
   val form: Form[Boolean] = formProvider()
   val schemeName = "Test Scheme Name"
   val fakeDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
+
+  override lazy val app = new GuiceApplicationBuilder().configure(
+    "features.useManagePensionsFrontend" -> true
+  ).build()
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): DeleteSchemeController =
     new DeleteSchemeController(frontendAppConfig, messagesApi, fakeDataCacheConnector, FakeAuthAction,
@@ -68,7 +73,7 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar {
       val result = controller().onSubmit(postRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SchemesOverviewController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
@@ -85,7 +90,7 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar {
       val result = controller(dontGetAnyData).onPageLoad(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SchemesOverviewController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {

@@ -24,7 +24,7 @@ import identifiers.register.SchemeDetailsId
 import javax.inject.Inject
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.deleteScheme
 
@@ -41,6 +41,7 @@ class DeleteSchemeController @Inject()(
                                       ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
+  private val overviewPage = if (appConfig.useManagePensionsFrontend) Call("GET",appConfig.managePensionsSchemeOverviewUrl) else controllers.routes.SessionExpiredController.onPageLoad()
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
@@ -49,10 +50,10 @@ class DeleteSchemeController @Inject()(
           data.get(SchemeDetailsId) match {
             case Some(schemeDetails) =>
               Future.successful(Ok(deleteScheme(appConfig, form, schemeDetails.schemeName)))
-            case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+            case None => Future.successful(Redirect(overviewPage))
           }
         }
-        case None => Future.successful(Redirect(controllers.routes.SchemesOverviewController.onPageLoad()))
+        case None => Future.successful(Redirect(overviewPage))
       }
   }
 
@@ -68,7 +69,7 @@ class DeleteSchemeController @Inject()(
                 Redirect(controllers.routes.WhatYouWillNeedController.onPageLoad())
               }
             case false =>
-              Future.successful(Redirect(controllers.routes.SchemesOverviewController.onPageLoad()))
+              Future.successful(Redirect(overviewPage))
           }
         )
       }
