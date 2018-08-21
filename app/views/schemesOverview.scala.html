@@ -22,10 +22,6 @@
 
 @(appConfig: FrontendAppConfig, schemeName: Option[String], lastDate: Option[String], deleteDate: Option[String])(implicit request: Request[_], messages: Messages)
 
-@listSchemesPage = @{
-    if (appConfig.useManagePensionsFrontend) appConfig.managePensionsSchemeListOfSchemesUrl else routes.UserResearchDetailsController.onPageLoad
-}
-
 @manageRedirectLink = {<a id="manage-link" href="@appConfig.pensionSchemeOnlineServiceUrl">@messages("messages__schemesOverview__manage__redirect__link")</a>}
 
 @main_template(
@@ -42,7 +38,7 @@
 
     <h2>@messages("messages__schemesOverview__manage__head")</h2>
     <p>@messages("messages__schemesOverview__manage__text")</p>
-    <p><a id="view-schemes" href="@listSchemesPage">@messages("messages__schemesOverview__manage__link")</a></p>
+    <p><a id="view-schemes" href="@routes.ListSchemesController.onPageLoad">@messages("messages__schemesOverview__manage__link")</a></p>
     <p>@Html(Message("messages__schemesOverview__manage__redirect__text").withArgs(manageRedirectLink))</p>
 
     @schemeName match {

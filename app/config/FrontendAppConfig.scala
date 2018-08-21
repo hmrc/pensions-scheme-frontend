@@ -36,7 +36,6 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   private val contactFormServiceIdentifier = "pensionsschemefrontend"
   lazy val useManagePensionsFrontend: Boolean = runModeConfiguration.getBoolean("features.useManagePensionsFrontend").getOrElse(false)
   lazy val managePensionsSchemeOverviewUrl : Call = Call("GET",loadConfig("urls.manage-pensions-frontend.schemesOverview"))
-  lazy val managePensionsSchemeListOfSchemesUrl : Call = Call("GET",loadConfig("urls.manage-pensions-frontend.listOfSchemes"))
   lazy val appName: String = runModeConfiguration.underlying.getString("appName")
   lazy val analyticsToken = loadConfig(s"google-analytics.token")
   lazy val analyticsHost = loadConfig(s"google-analytics.host")

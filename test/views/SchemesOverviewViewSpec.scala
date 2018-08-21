@@ -19,7 +19,6 @@ package views
 import java.time.LocalDate
 
 import org.jsoup.Jsoup
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import viewmodels.Message
 import views.behaviours.ViewBehaviours
@@ -31,10 +30,6 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
   val schemeName = "Test Scheme Name"
   val lastDate: String = LocalDate.now.toString
   val deleteDate: String = LocalDate.now.plusDays(frontendAppConfig.daysDataSaved).toString
-
-  override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.useManagePensionsFrontend" -> true
-  ).build()
 
   def createView: (() => HtmlFormat.Appendable) = () =>
     schemesOverview(frontendAppConfig, Some(schemeName), Some(lastDate), Some(deleteDate))(fakeRequest, messages)
@@ -57,7 +52,7 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
 
     "have link to view all schemes" in {
       Jsoup.parse(createView().toString()).select("a[id=view-schemes]") must
-        haveLink(frontendAppConfig.managePensionsSchemeListOfSchemesUrl.url)
+        haveLink(controllers.routes.ListSchemesController.onPageLoad.url)
     }
 
     "have link to redirect to Pension Schemes Online service" in {
@@ -112,7 +107,7 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
 
     "have link to view all schemes" in {
       Jsoup.parse(createFreshView().toString()).select("a[id=view-schemes]") must
-        haveLink(frontendAppConfig.managePensionsSchemeListOfSchemesUrl.url)
+        haveLink(controllers.routes.ListSchemesController.onPageLoad.url)
     }
 
     "have link to redirect to Pension Schemes Online service" in {
