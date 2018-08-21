@@ -10,6 +10,9 @@ POST       /:index/company/trustee-confirm-delete                       controll
 GET        /:index/individual/trustee-confirm-delete                    controllers.register.trustees.ConfirmDeleteTrusteeController.onPageLoad(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Individual)
 POST       /:index/individual/trustee-confirm-delete                    controllers.register.trustees.ConfirmDeleteTrusteeController.onSubmit(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Individual)
 
+GET        /:index/partnership/trustee-confirm-delete                    controllers.register.trustees.ConfirmDeleteTrusteeController.onPageLoad(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Partnership)
+POST       /:index/partnership/trustee-confirm-delete                    controllers.register.trustees.ConfirmDeleteTrusteeController.onSubmit(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Partnership)
+
 GET        /:index/company/unique-taxpayer-reference                    controllers.register.trustees.company.CompanyUniqueTaxReferenceController.onPageLoad(mode: Mode = NormalMode,index:Index)
 POST       /:index/company/unique-taxpayer-reference                    controllers.register.trustees.company.CompanyUniqueTaxReferenceController.onSubmit(mode: Mode = NormalMode,index:Index)
 GET        /:index/company/change-unique-taxpayer-reference             controllers.register.trustees.company.CompanyUniqueTaxReferenceController.onPageLoad(mode: Mode = CheckMode,index:Index)
@@ -148,6 +151,7 @@ POST       /change-trustees                                             controll
 
 GET        /:index/company/already-deleted                              controllers.register.trustees.AlreadyDeletedController.onPageLoad(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Company)
 GET        /:index/individual/already-deleted                           controllers.register.trustees.AlreadyDeletedController.onPageLoad(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Individual)
+GET        /:index/partnership/already-deleted                           controllers.register.trustees.AlreadyDeletedController.onPageLoad(index: Index, trusteeKind: TrusteeKind = TrusteeKind.Partnership)
 
 GET        /:index/partnership/previous-address                         controllers.register.trustees.partnership.PartnershipPreviousAddressPostcodeLookupController.onPageLoad(mode: Mode = NormalMode, index: Index)
 POST       /:index/partnership/previous-address                         controllers.register.trustees.partnership.PartnershipPreviousAddressPostcodeLookupController.onSubmit(mode: Mode = NormalMode, index: Index)

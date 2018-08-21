@@ -176,7 +176,7 @@ case class TrusteePartnershipEntity(id: TrusteePartnershipDetailsId,
   }
 
   override def deleteLink: String =
-    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id.index, TrusteeKind.Company).url
+    controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id.index, TrusteeKind.Partnership).url
 
   override def index: Int = id.index
 }

@@ -21,6 +21,7 @@ import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models.register.trustees.TrusteeKind
 import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
@@ -62,7 +63,7 @@ class AlreadyDeletedController @Inject()(
     trusteeKind match {
       case Company => CompanyDetailsId(index).retrieve.right.map(_.companyName)
       case Individual => TrusteeDetailsId(index).retrieve.right.map(_.fullName)
-      case Partnership => Left(Future.successful(BadRequest(s"Partnerships not yet implemented")))
+      case Partnership => PartnershipDetailsId(index).retrieve.right.map(_.name)
       case invalid => Left(Future.successful(BadRequest(s"Invalid trustee kind $invalid")))
     }
   }
