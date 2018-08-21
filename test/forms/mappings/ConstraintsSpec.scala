@@ -169,7 +169,8 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
       "a&",
       "a",
       "a-",
-      "A B"
+      "A B",
+      "a^"
     )
 
     val invalidName = Table(
@@ -185,8 +186,7 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
       "a)",
       "a$",
       "a£",
-      "A\\",
-      "a^"
+      "A\\"
     )
 
     val invalidMsg = "Invalid name"
