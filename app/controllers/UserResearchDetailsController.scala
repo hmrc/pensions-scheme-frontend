@@ -48,16 +48,12 @@ class UserResearchDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(UserResearchDetailsId) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-      Ok(userResearchDetails(appConfig, preparedForm))
+      Ok(userResearchDetails(appConfig, form))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
