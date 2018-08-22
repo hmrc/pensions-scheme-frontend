@@ -31,5 +31,3 @@ GET        /continue-registration                       controllers.ContinueRegi
 
 GET        /user-research-details                       controllers.UserResearchDetailsController.onPageLoad()
 POST       /user-research-details                       controllers.UserResearchDetailsController.onSubmit()
-
-POST       /email-response/:id                          controllers.EmailResponseController.post(id: String)
