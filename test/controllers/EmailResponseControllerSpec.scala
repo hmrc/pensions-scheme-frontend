@@ -18,7 +18,7 @@ package controllers
 
 import audit.AuditService
 import audit.testdoubles.StubSuccessfulAuditService
-import controllers.model.{Delivered, EmailEvent, EmailEvents}
+import controllers.model.{Delivered, EmailEvent, EmailEvents, Opened}
 import org.joda.time.DateTime
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -33,7 +33,8 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
   "EmailResponseController" must {
 
     "respond OK when given EmailEvents" which {
-      "will send events to audit service" in {
+
+      "will send events excluding Opened to audit service" in {
 
         running(_.overrides(
           bind[AuditService].to(fakeAuditService)
@@ -47,9 +48,11 @@ class EmailResponseControllerSpec extends ControllerSpecBase {
 
           status(result) mustBe OK
           fakeAuditService.verifySent(audit.EmailEvent(PsaId(psa), Delivered)) mustBe true
+          fakeAuditService.verifySent(audit.EmailEvent(PsaId(psa), Opened)) mustBe false
 
         }
       }
+
     }
 
   }
@@ -101,7 +104,7 @@ object EmailResponseControllerSpec {
 
   val psa = "A7654321"
 
-  val emailEvents = EmailEvents(Seq(EmailEvent(Delivered, DateTime.now())))
+  val emailEvents = EmailEvents(Seq(EmailEvent(Delivered, DateTime.now()), EmailEvent(Opened, DateTime.now())))
 
   val fakeAuditService = new StubSuccessfulAuditService()
 

@@ -38,13 +38,12 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
                                        @Register navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction) extends FrontendController with I18nSupport with
-  Enumerable.Implicits with Retrievals {
+                                       requireData: DataRequiredAction
+                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      (SchemeDetailsId and EstablisherKindId(0)).retrieve.right.map {
-        case schemeDetails ~ establisherKind =>
+      SchemeDetailsId.retrieve.right.map { schemeDetails =>
           val establishers = request.userAnswers.allEstablishersAfterDelete.map(_.name)
           val trustees = request.userAnswers.allTrusteesAfterDelete.map(_.name)
 

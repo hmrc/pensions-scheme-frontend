@@ -17,7 +17,7 @@
 package controllers
 
 import audit.{AuditService, EmailEvent}
-import controllers.model.EmailEvents
+import controllers.model.{EmailEvents, Opened}
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, BodyParsers, Result}
@@ -38,9 +38,17 @@ class EmailResponseController @Inject()(
         case Right(psaId) => request.body.validate[EmailEvents].fold(
           _ => BadRequest,
           valid => {
-            valid.events.foreach { emailEvent =>
-              auditService.sendEvent(EmailEvent(psaId, emailEvent.event))
-            }
+            valid.events
+              .map {
+                _.event
+              }
+              .filterNot {
+                case Opened => true
+                case _ => false
+              }
+              .foreach { event =>
+                auditService.sendEvent(EmailEvent(psaId, event))
+              }
             Ok
           }
         )
