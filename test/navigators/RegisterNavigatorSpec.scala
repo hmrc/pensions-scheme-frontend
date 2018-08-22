@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.FakeDataCacheConnector
 import identifiers.UserResearchDetailsId
 import identifiers.register._
@@ -24,6 +25,7 @@ import models._
 import models.address.Address
 import models.register.{SchemeDetails, SchemeType}
 import org.scalatest.MustMatchers
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -32,6 +34,10 @@ import utils.UserAnswers
 class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import RegisterNavigatorSpec._
+
+  override lazy val app = new GuiceApplicationBuilder().configure(
+    "features.useManagePensionsFrontend" -> true
+  ).build()
 
   private def routesWithRestrictedEstablisher = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
@@ -75,7 +81,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (DeclarationDutiesId, emptyAnswers, expired, false, None, false),
 
     // User Research page - return to SchemeOverview
-    (UserResearchDetailsId, emptyAnswers, schemeOverview, true, None, false)
+    (UserResearchDetailsId, emptyAnswers, schemeOverview(frontendAppConfig), true, None, false)
   )
 
   "RegisterNavigator" must {
@@ -156,7 +162,7 @@ object RegisterNavigatorSpec {
 
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def schemeOverview = controllers.routes.SchemesOverviewController.onPageLoad()
+  private def schemeOverview(appConfig: FrontendAppConfig) = appConfig.managePensionsSchemeOverviewUrl
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 

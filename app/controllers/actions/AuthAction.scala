@@ -43,8 +43,11 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config
       case _ =>
         Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
     } recover {
-      case _: NoActiveSession =>
-        Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
+      case _: NoActiveSession => {
+        val loginContinueUrl = if (config.useManagePensionsFrontend) config.managePensionsSchemeOverviewUrl.url else config.loginContinueUrl
+
+        Redirect(config.loginUrl, Map("continue" -> Seq(loginContinueUrl)))
+      }
       case _: InsufficientEnrolments =>
         Redirect(routes.UnauthorisedController.onPageLoad)
       case _: InsufficientConfidenceLevel =>
