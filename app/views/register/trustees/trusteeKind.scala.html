@@ -33,7 +33,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.headingNew(
+        @components.heading(
             headingKey=messages("messages__trusteeKind__heading"),
             secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
         )
@@ -42,12 +42,7 @@
             field = form("value"),
             legend = messages("messages__trusteeKind__legend"),
             hint=Some(messages("messages__trusteeKind__hint")),
-            inputs = TrusteeKind.options.filter { option =>
-                option.value match {
-                    case TrusteeKind.Partnership.toString => appConfig.allowPartnerships
-                    case _ => true
-                }
-            }
+            inputs = TrusteeKind.options
         )
 
         @components.submit_button("site.save_and_continue")

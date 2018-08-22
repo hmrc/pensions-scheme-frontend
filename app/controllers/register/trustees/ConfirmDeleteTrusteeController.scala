@@ -23,9 +23,10 @@ import controllers.actions._
 import identifiers.register.trustees.ConfirmDeleteTrusteeId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.partnership.PartnershipDetailsId
 import javax.inject.Inject
 import models.register.trustees.TrusteeKind
-import models.register.trustees.TrusteeKind.{Company, Individual}
+import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.requests.DataRequest
 import models.{Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -87,8 +88,12 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           dataCacheConnector.save(CompanyDetailsId(trusteeIndex), companyDetails.copy(isDeleted = true))
         }
       case Individual =>
-        TrusteeDetailsId(trusteeIndex).retrieve.right.map { establisherDetails =>
-          dataCacheConnector.save(TrusteeDetailsId(trusteeIndex), establisherDetails.copy(isDeleted = true))
+        TrusteeDetailsId(trusteeIndex).retrieve.right.map { trusteeDetails =>
+          dataCacheConnector.save(TrusteeDetailsId(trusteeIndex), trusteeDetails.copy(isDeleted = true))
+        }
+      case Partnership =>
+        PartnershipDetailsId(trusteeIndex).retrieve.right.map { partnershipDetails =>
+          dataCacheConnector.save(PartnershipDetailsId(trusteeIndex), partnershipDetails.copy(isDeleted = true))
         }
       case _ =>
         Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
@@ -101,6 +106,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
     trusteeKind match {
       case Individual => userAnswers.get(TrusteeDetailsId(index)).map(details => DeletableTrustee(details.fullName, details.isDeleted))
       case Company => userAnswers.get(CompanyDetailsId(index)).map(details => DeletableTrustee(details.companyName, details.isDeleted))
+      case Partnership => userAnswers.get(PartnershipDetailsId(index)).map(details => DeletableTrustee(details.name, details.isDeleted))
       case _ => None
     }
   }
