@@ -41,6 +41,8 @@ class DeleteSchemeController @Inject()(
                                       ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
+  private lazy val overviewPage = if (appConfig.useManagePensionsFrontend) Redirect(appConfig.managePensionsSchemeOverviewUrl) else Redirect(controllers.routes.SchemesOverviewController.onPageLoad())
+
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
@@ -52,7 +54,7 @@ class DeleteSchemeController @Inject()(
             case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
           }
         }
-        case None => Future.successful(Redirect(controllers.routes.SchemesOverviewController.onPageLoad()))
+        case None => Future.successful(overviewPage)
       }
   }
 
@@ -68,7 +70,7 @@ class DeleteSchemeController @Inject()(
                 Redirect(controllers.routes.WhatYouWillNeedController.onPageLoad())
               }
             case false =>
-              Future.successful(Redirect(controllers.routes.SchemesOverviewController.onPageLoad()))
+              Future.successful(overviewPage)
           }
         )
       }
