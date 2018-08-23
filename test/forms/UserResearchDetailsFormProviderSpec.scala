@@ -35,7 +35,7 @@ class UserResearchDetailsFormProviderSpec extends StringFieldBehaviours with Ema
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      RegexpGen.from(regexName)
+      RegexpGen.from(regexUserResearch)
     )
 
     behave like fieldWithMaxLength(
