@@ -77,18 +77,16 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   private def sendEmail(srn: String)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
     psaNameCacheConnector.fetch(request.externalId).flatMap {
-      case Some(value) => {
+      case Some(value) =>
         value.as[PSAName].psaEmail match {
-          case Some(email) => emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrn(srn)))
+          case Some(email) => emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)
           case _ => Future.successful(EmailNotSent)
         }
-      }
       case _ => Future.successful(EmailNotSent)
     }
   }
 
-  /*Format srn number to have a space after first 6 digits before inserting it into email */
-  private def formatSrn(srn: String): String = {
+  private def formatSrnForEmail(srn: String): String = {
     //noinspection ScalaStyle
     val (start, end) = srn.splitAt(6)
     start + ' ' + end

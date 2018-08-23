@@ -67,7 +67,7 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy"))
 
-  def routeToSwitchLanguage: (String => Call) = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
+  def routeToSwitchLanguage: String => Call = (lang: String) => routes.LanguageSwitchController.switchToLanguage(lang)
 
   lazy val locationCanonicalList = loadConfig("location.canonical.list")
   lazy val addressLookUp = baseUrl("address-lookup")
@@ -79,4 +79,6 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val emailApiUrl: String = baseUrl("email")
   lazy val emailTemplateId: String = loadConfig("email.templateId")
   lazy val emailSendForce: Boolean = runModeConfiguration.getBoolean("email.force").getOrElse(false)
+
+  def encryptionKey(crypto: String): String = loadConfig(s"$crypto.encryption.key")
 }
