@@ -81,7 +81,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (DeclarationDutiesId, emptyAnswers, expired, false, None, false),
 
     // User Research page - return to SchemeOverview
-    (UserResearchDetailsId, emptyAnswers, schemeOverview(frontendAppConfig), true, None, false)
+    (UserResearchDetailsId, emptyAnswers, schemeOverview(frontendAppConfig), false, None, false)
   )
 
   "RegisterNavigator" must {

@@ -23,6 +23,7 @@ import controllers.actions._
 import forms.UserResearchDetailsFormProvider
 import identifiers.UserResearchDetailsId
 import javax.inject.Inject
+
 import models.NormalMode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,20 +49,19 @@ class UserResearchDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData) {
+  def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>
       Ok(userResearchDetails(appConfig, form))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData).async {
+  def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(userResearchDetails(appConfig, formWithErrors))),
+        BadRequest(userResearchDetails(appConfig, formWithErrors)),
         value => {
           auditService.sendEvent(UserResearchEvent.userResearchAgreementSchemeEvent(request.externalId, value.name, value.email))
-          dataCacheConnector.save(request.externalId, UserResearchDetailsId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(UserResearchDetailsId, NormalMode, UserAnswers(cacheMap))))
+          Redirect(navigator.nextPage(UserResearchDetailsId, NormalMode, UserAnswers()))
         }
       )
   }
