@@ -23,7 +23,6 @@ import controllers.actions._
 import forms.UserResearchDetailsFormProvider
 import identifiers.UserResearchDetailsId
 import javax.inject.Inject
-
 import models.NormalMode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -32,8 +31,6 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 import views.html.userResearchDetails
-
-import scala.concurrent.Future
 
 class UserResearchDetailsController @Inject()(
                                                appConfig: FrontendAppConfig,
