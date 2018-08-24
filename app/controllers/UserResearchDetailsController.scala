@@ -32,8 +32,6 @@ import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 import views.html.userResearchDetails
 
-import scala.concurrent.Future
-
 class UserResearchDetailsController @Inject()(
                                                appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
@@ -48,20 +46,19 @@ class UserResearchDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData) {
+  def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>
       Ok(userResearchDetails(appConfig, form))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData).async {
+  def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(userResearchDetails(appConfig, formWithErrors))),
+        BadRequest(userResearchDetails(appConfig, formWithErrors)),
         value => {
           auditService.sendEvent(UserResearchEvent.userResearchAgreementSchemeEvent(request.externalId, value.name, value.email))
-          dataCacheConnector.save(request.externalId, UserResearchDetailsId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(UserResearchDetailsId, NormalMode, UserAnswers(cacheMap))))
+          Redirect(navigator.nextPage(UserResearchDetailsId, NormalMode, UserAnswers()))
         }
       )
   }
