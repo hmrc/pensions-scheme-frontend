@@ -163,8 +163,14 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
 
     val validName = Table(
       "name",
-      "AÀ",
-      "a"
+      "a`",
+      "a.",
+      "a'",
+      "a&",
+      "a",
+      "a-",
+      "A B",
+      "a^"
     )
 
     val invalidName = Table(
@@ -174,7 +180,13 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
       "_a",
       "1a",
       "A/",
-      "a\\"
+      "aÀ",
+      "a1",
+      "a(",
+      "a)",
+      "a$",
+      "a£",
+      "A\\"
     )
 
     val invalidMsg = "Invalid name"
@@ -272,6 +284,27 @@ class ConstraintsSpec extends WordSpec with Matchers with Constraints with Regex
     val invalidMsg = "Invalid text"
 
     behave like regexWithValidAndInvalidExamples(safeText, validText, invalidText, invalidMsg, regexSafeText)
+
+  }
+
+  "policyNumber" must {
+
+    val validText = Table(
+      "text",
+      "some valid text À ÿ",
+      "!$%&*()[]@@'~#;:,./?^",
+      "s\\as"
+    )
+
+    val invalidText = Table(
+      "text",
+      "{invalid text}",
+      "<invalid>"
+    )
+
+    val invalidMsg = "Invalid text"
+
+    behave like regexWithValidAndInvalidExamples(policyNumber, validText, invalidText, invalidMsg, regexPolicyNumber)
 
   }
 

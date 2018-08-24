@@ -51,17 +51,12 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
         case JsSuccess(value, _) => value
         case JsError(errors) => throw JsResultException(errors)
       }
-    } andThen {
-      logExceptions()
-    } recoverWith {
-      translateExceptions()
-    }
+    } andThen logExceptions recoverWith translateExceptions
 
   }
 
   private def translateExceptions(): PartialFunction[Throwable, Future[SchemeSubmissionResponse]] = {
-    case ex: BadRequestException
-    => Future.failed(SchemeSubmissionUnsuccessful())
+    case _: BadRequestException => Future.failed(SchemeSubmissionUnsuccessful())
   }
 
   private def logExceptions(): PartialFunction[Try[SchemeSubmissionResponse], Unit] = {

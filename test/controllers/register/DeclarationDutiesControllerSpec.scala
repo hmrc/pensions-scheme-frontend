@@ -24,7 +24,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.{DeclarationDutiesId, SchemeDetailsId}
 import models.register.{SchemeDetails, SchemeSubmissionResponse, SchemeType}
 import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito._
+import org.mockito.Mockito.{mock, _}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
@@ -33,6 +33,7 @@ import play.api.libs.ws.WSClient
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declarationDuties
@@ -41,30 +42,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
-
-  val formProvider = new DeclarationDutiesFormProvider()
-  val form = formProvider()
-
-  private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
-
-  private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
-    override def registerScheme
-    (answers: UserAnswers, psaId: String)
-    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
-      Future.successful(validSchemeSubmissionResponse)
-    }
-  }
+  import DeclarationDutiesControllerSpec._
 
   private val mockEmailConnector = mock[EmailConnector]
-
-  private val fakeEmailConnector = new EmailConnector {
-    override def sendEmail
-    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty)
-    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
-      Future.successful(EmailSent)
-    }
-  }
 
   object fakePsaNameCacheConnector extends PSANameCacheConnector(
     frontendAppConfig,
@@ -104,6 +84,8 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
 
   def viewAsString(form: Form[_] = form): String = declarationDuties(frontendAppConfig, form, "Test Scheme Name")(fakeRequest, messages).toString
 
+
+
   "DeclarationDuties Controller" must {
 
 
@@ -138,15 +120,19 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
     "send an email when valid data is submitted" in {
       reset(mockEmailConnector)
 
-      when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any())(any(), any()))
+      when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
         .thenReturn(Future.successful(EmailSent))
 
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
       whenReady(controller(mockEmailConnector).onSubmit(postRequest)) {
         _ =>
-          verify(mockEmailConnector, times(1)).sendEmail(eqTo("email@test.com"),
-            eqTo("pods_scheme_register"), eqTo(Map("srn" -> "S12345 67890")))(any(), any())
+          verify(mockEmailConnector, times(1)).sendEmail(
+            eqTo("email@test.com"),
+            eqTo("pods_scheme_register"),
+            eqTo(Map("srn" -> "S12345 67890")),
+            eqTo(psaId)
+          )(any(), any())
       }
     }
 
@@ -175,4 +161,34 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
   }
+}
+
+object DeclarationDutiesControllerSpec {
+
+  val psaId = PsaId("A0000000")
+
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  val formProvider = new DeclarationDutiesFormProvider()
+  val form = formProvider()
+
+  private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
+
+  private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
+    override def registerScheme
+    (answers: UserAnswers, psaId: String)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+      Future.successful(validSchemeSubmissionResponse)
+    }
+  }
+
+
+  private val fakeEmailConnector = new EmailConnector {
+    override def sendEmail
+    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty, psaId: PsaId)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
+      Future.successful(EmailSent)
+    }
+  }
+
 }

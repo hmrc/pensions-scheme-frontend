@@ -22,6 +22,8 @@ import models.SendEmailRequest
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainBytes, PlainText}
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -36,21 +38,35 @@ case object EmailNotSent extends EmailStatus
 
 @ImplementedBy(classOf[EmailConnectorImpl])
 trait EmailConnector {
-  def sendEmail(emailAddress: String, templateName: String, params: Map[String, String])
+  def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psaId: PsaId)
                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus]
 }
 
 @Singleton
-class EmailConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends EmailConnector {
+class EmailConnectorImpl @Inject()(
+                                    http: HttpClient,
+                                    config: FrontendAppConfig,
+                                    crypto: ApplicationCrypto
+                                  ) extends EmailConnector {
 
   lazy val postUrl: String = s"${config.emailApiUrl}/hmrc/email"
 
-  override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String])
+  def callbackUrl(psaId: PsaId): String = {
+    val requestType = "Scheme"
+
+    val encryptedPsa = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value
+
+    s"${config.pensionsSchemeUrl}/pensions-scheme/$requestType/email-response/$encryptedPsa"
+  }
+
+  override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId)
                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
 
-    val sendEmailReq = SendEmailRequest(List(emailAddress), templateName, params, force = config.emailSendForce)
+    val sendEmailReq = SendEmailRequest(List(emailAddress), templateName, params, force = config.emailSendForce, callbackUrl(psa))
 
     val jsonData = Json.toJson(sendEmailReq)
+
+    Logger.debug(s"Data to email: $jsonData")
 
     http.POST(postUrl, jsonData).map { response =>
       response.status match {
@@ -65,7 +81,7 @@ class EmailConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) 
   }
 
   private def logExceptions: PartialFunction[Throwable, Future[EmailStatus]] = {
-    case (t: Throwable) =>
+    case t: Throwable =>
       Logger.warn("Unable to connect to Email Service", t)
       Future.successful(EmailNotSent)
   }

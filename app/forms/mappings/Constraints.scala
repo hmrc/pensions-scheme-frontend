@@ -29,7 +29,7 @@ trait Constraints {
   val regexPostCodeNonUk = """^([0-9]+-)*[0-9]+$"""
   val regexSortCode: String = """\d{6,}""".r.toString()
   val regexUtr = """^\d{10}$"""
-  val regexName = """^[a-zA-Z\u00C0-\u00FF '‘’\u2014\u2013\u2010\u002d]{1,35}$"""
+  val regexName = """^[a-zA-Z &`\-\'\.^]{1,35}$"""
   val regexUserResearch = """^[a-zA-Z\u00C0-\u00FF '‘’\u2014\u2013\u2010\u002d]{1,160}$"""
   val regexAccountNo = """[0-9]*"""
   val regexEmailRestrictive: String = "^(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"" +
@@ -43,7 +43,8 @@ trait Constraints {
   val regexPaye = """^[0-9]{3}[0-9A-Za-z]{1,13}$"""
   val regexSafeText = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’"“”«»()*+,./:;=?@\\\[\]|~£€¥\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,160}$"""
   val regexAddressLine = """^[A-Za-z0-9 &!'‘’(),./\u2014\u2013\u2010\u002d]{1,35}$"""
-  val adviserNameRegex = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’\"“”«»()*+,./:;=?@\\[\\]|~£€¥\\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,107}$"""
+  val adviserNameRegex = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’\"“”«»()*+,./:;=?@\\\[\]|~£€¥\\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,107}$"""
+  val regexPolicyNumber = """^[a-zA-Z0-9\u00C0-\u00FF !#$%&'‘’"“”«»()*+,./:;=?@\\\[\]|~£€¥\u005C\u2014\u2013\u2010\u005F\u005E\u0060\u002d]{1,55}$"""
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint {
@@ -187,5 +188,5 @@ trait Constraints {
 
   protected def userResearchName(errorKey: String): Constraint[String] = regexp(regexUserResearch, errorKey)
 
-
+  protected def policyNumber(errorKey: String): Constraint[String] = regexp(regexPolicyNumber, errorKey)
 }

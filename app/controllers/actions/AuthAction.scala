@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthActionImpl @Inject()(override val authConnector: AuthConnector, config: FrontendAppConfig)
                               (implicit ec: ExecutionContext) extends AuthAction with AuthorisedFunctions {
 
-  override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] = {
+  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised().retrieve(Retrievals.externalId and
