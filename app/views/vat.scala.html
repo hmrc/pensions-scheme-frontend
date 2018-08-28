@@ -27,7 +27,7 @@ Vat.options
 }
 
 @main_template(
-    title = messages(viewmodel.title),
+    title = viewmodel.title,
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -46,7 +46,7 @@ Vat.options
 
         @components.fieldSet(
         field = form("vat.hasVat"),
-        legend = "viewmodel.title",
+        legend = viewmodel.title,
         hiddenLegend = true
         ) {
             @components.radio(
