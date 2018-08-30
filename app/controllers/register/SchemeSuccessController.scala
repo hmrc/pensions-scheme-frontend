@@ -68,7 +68,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      Redirect(if (appConfig.useManagePensionsFrontend) appConfig.managePensionsSchemeOverviewUrl else controllers.routes.SchemesOverviewController.onPageLoad())
+      Redirect(appConfig.managePensionsSchemeOverviewUrl)
   }
 
 
