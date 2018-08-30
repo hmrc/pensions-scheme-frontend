@@ -49,12 +49,7 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
       "_UR__text",
       "_UR__link"
     )
-
-    "have link to view all schemes" in {
-      Jsoup.parse(createView().toString()).select("a[id=view-schemes]") must
-        haveLink(controllers.routes.ListSchemesController.onPageLoad.url)
-    }
-
+    
     "have link to redirect to Pension Schemes Online service" in {
       Jsoup.parse(createView().toString()).select("a[id=manage-link]") must
         haveLink(frontendAppConfig.pensionSchemeOnlineServiceUrl)
@@ -104,11 +99,6 @@ class SchemesOverviewViewSpec extends ViewBehaviours {
       "_register__text",
       "_register__link"
     )
-
-    "have link to view all schemes" in {
-      Jsoup.parse(createFreshView().toString()).select("a[id=view-schemes]") must
-        haveLink(controllers.routes.ListSchemesController.onPageLoad.url)
-    }
 
     "have link to redirect to Pension Schemes Online service" in {
       Jsoup.parse(createFreshView().toString()).select("a[id=manage-link]") must
