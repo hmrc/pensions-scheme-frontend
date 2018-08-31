@@ -17,60 +17,78 @@
 package utils
 
 import base.SpecBase
-import connectors.FakeDataCacheConnector
+import connectors.PSANameCacheConnector
 import models.PSAName
 import models.requests.OptionalDataRequest
-import play.api.libs.json.{JsValue, Json}
+import org.mockito.Matchers.{eq => eqTo, _}
+import org.mockito.Mockito._
+import org.scalatest.mockito.MockitoSugar
+import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class NameMatchingFactorySpec extends SpecBase {
+class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
-  class FakePSANameCacheConnector(fetchResponse: Option[JsValue]) extends FakeDataCacheConnector {
-    override def fetch(cacheId: String)(implicit
-                                        ec: ExecutionContext,
-                                        hc: HeaderCarrier
-    ): Future[Option[JsValue]] = Future.successful(fetchResponse)
-  }
-
+  val psaNameCacheConnector = mock[PSANameCacheConnector]
   val schemeName = "My Scheme Reg"
 
   implicit val request: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest("", ""), "externalId", None, PsaId("A0000000"))
 
-  def nameMatchingFactory(fetchResponse: Option[JsValue]) = new NameMatchingFactory(new FakePSANameCacheConnector(fetchResponse))
+  private def nameMatchingFactory = new NameMatchingFactory(psaNameCacheConnector, ApplicationCrypto)
 
   implicit val hc = HeaderCarrier()
 
+  private val encryptedPsaId = app.injector.instanceOf[ApplicationCrypto].QueryParameterCrypto.encrypt(PlainText("A0000000")).value
+
   "NameMatchingFactory" must {
     "return an instance of NameMatching" when {
-      "PSA name is retrieved" in {
+      "PSA name is retrieved from PSA Id" in {
+        when(psaNameCacheConnector.fetch(eqTo(encryptedPsaId))(any(), any())).thenReturn(Future(Some(Json.toJson(PSAName("My PSA", Some("test@test.com"))))))
+        when(psaNameCacheConnector.fetch(eqTo("externalId"))(any(), any())).thenReturn(Future(None))
 
-        val result = nameMatchingFactory(Some(Json.toJson(PSAName("My PSA", Some("test@test.com"))))).nameMatching(schemeName)
+        val result = nameMatchingFactory.nameMatching(schemeName)
 
         await(result) mustEqual Some(NameMatching("My Scheme Reg", "My PSA"))
+        verify(psaNameCacheConnector, times(1)).fetch(eqTo(encryptedPsaId))(any(), any())
+        verify(psaNameCacheConnector, times(1)).fetch(eqTo("externalId"))(any(), any())
+      }
 
+      "PSA name is retrieved from external Id" in {
+        reset(psaNameCacheConnector)
+        when(psaNameCacheConnector.fetch(eqTo(encryptedPsaId))(any(), any())).thenReturn(Future(None))
+        when(psaNameCacheConnector.fetch(eqTo("externalId"))(any(), any())).thenReturn(Future(Some(Json.toJson(PSAName("My PSA", Some("test@test.com"))))))
+
+        val result = nameMatchingFactory.nameMatching(schemeName)
+
+        await(result) mustEqual Some(NameMatching("My Scheme Reg", "My PSA"))
+        verify(psaNameCacheConnector, times(1)).fetch(eqTo(encryptedPsaId))(any(), any())
+        verify(psaNameCacheConnector, times(1)).fetch(eqTo("externalId"))(any(), any())
       }
     }
 
     "return None" when {
-
+      reset(psaNameCacheConnector)
       "psa name returns None when fetched" in {
-
-        val result = nameMatchingFactory(None).nameMatching(schemeName)
+        when(psaNameCacheConnector.fetch(any())(any(), any())).thenReturn(Future(None)).
+          thenReturn(Future(None))
+        val result = nameMatchingFactory.nameMatching(schemeName)
 
         await(result) mustEqual None
 
       }
 
       "psa name is not a PSAName" in {
-
-        val result = nameMatchingFactory(Some(Json.obj())).nameMatching(schemeName)
+        reset(psaNameCacheConnector)
+        when(psaNameCacheConnector.fetch(any())(any(), any())).thenReturn(Future(Some(Json.obj()))).
+          thenReturn(Future(Some(Json.obj())))
+        val result = nameMatchingFactory.nameMatching(schemeName)
 
         await(result) mustEqual None
 
