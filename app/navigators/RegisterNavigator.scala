@@ -69,8 +69,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: DataCacheConnector, ap
         NavigateTo.save(controllers.register.routes.DeclarationDutiesController.onPageLoad())
       case DeclarationDutiesId =>
         declarationDutiesRoutes(from.userAnswers)
-      case UserResearchDetailsId =>
-        NavigateTo.dontSave(if (appConfig.useManagePensionsFrontend) appConfig.managePensionsSchemeOverviewUrl else controllers.routes.SchemesOverviewController.onPageLoad())
+      case UserResearchDetailsId => NavigateTo.dontSave(appConfig.managePensionsSchemeOverviewUrl)
       case _ => None
     }
 

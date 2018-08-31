@@ -41,7 +41,7 @@ class DeleteSchemeController @Inject()(
                                       ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
-  private lazy val overviewPage = if (appConfig.useManagePensionsFrontend) Redirect(appConfig.managePensionsSchemeOverviewUrl) else Redirect(controllers.routes.SchemesOverviewController.onPageLoad())
+  private lazy val overviewPage = Redirect(appConfig.managePensionsSchemeOverviewUrl)
 
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
