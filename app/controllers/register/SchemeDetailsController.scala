@@ -24,6 +24,7 @@ import identifiers.register.SchemeDetailsId
 import javax.inject.Inject
 import models.Mode
 import models.PSAName._
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -73,8 +74,11 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                 )
               }
             case _ =>
+              Logger.error(s"Unable to do the psa name matching for the given scheme name")
               Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
           }
       )
   }
+
+
 }
