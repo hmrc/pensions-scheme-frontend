@@ -101,12 +101,13 @@ class MicroserviceCacheConnector @Inject()(
       .withHeaders(hc.headers: _*)
       .get().flatMap {
       response =>
+        Logger.debug(s"connectors.MicroserviceCacheConnector.fetch: Response received for id: $id is ${response.status}")
         response.status match {
           case NOT_FOUND =>
             Future.successful(None)
           case OK => {
             val decrypted = crypto.JsonCrypto.decrypt(Crypted(response.body))
-            Logger.debug(s"connectors.MicroserviceCacheConnector.fetch: Successful response: $decrypted")
+            Logger.debug(s"connectors.MicroserviceCacheConnector.fetch: Successful response for $id is ${decrypted.value}")
             Future.successful(Some(Json.parse(decrypted.value)))
           }
           case _ =>
