@@ -22,16 +22,26 @@ import models.PSAName
 import models.requests.OptionalDataRequest
 import play.api.libs.json.{JsValue, Reads}
 import play.api.mvc.AnyContent
+import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.annotations.PSANameCache
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactory @Inject()(
-                                     @PSANameCache val pSANameCacheConnector: DataCacheConnector
+                                     @PSANameCache val pSANameCacheConnector: DataCacheConnector,
+                                     crypto: ApplicationCrypto
                                    ) {
-  private def retrievePSAName(implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] =
-    pSANameCacheConnector.fetch(request.externalId)
+  private def retrievePSAName(implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] = {
+    val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
+    for {
+      psaNameFromPsaId <- pSANameCacheConnector.fetch(encryptedCacheId)
+      psaNameFromExtId <- pSANameCacheConnector.fetch(request.externalId)
+    } yield {
+      if(psaNameFromPsaId.nonEmpty) psaNameFromPsaId else psaNameFromExtId
+    }
+  }
+
 
   def nameMatching(schemeName: String)
                   (implicit request: OptionalDataRequest[AnyContent],
