@@ -35,13 +35,10 @@ class NameMatchingFactory @Inject()(
                                    ) {
   private def retrievePSAName(implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] = {
     val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
-    Logger.debug(s"NameMatchingFactory : Encrypted psa Id $encryptedCacheId for original psa id ${request.psaId.id}")
     for {
       psaNameFromPsaId <- pSANameCacheConnector.fetch(encryptedCacheId)
       psaNameFromExtId <- pSANameCacheConnector.fetch(request.externalId)
     } yield {
-      Logger.debug(s"NameMatchingFactory : psa Name retrieved for psa Id ${request.psaId.id} is $psaNameFromPsaId")
-      Logger.debug(s"NameMatchingFactory: psa Name retrieved for external Id ${request.externalId} is $psaNameFromExtId")
       if(psaNameFromPsaId.nonEmpty) psaNameFromPsaId else psaNameFromExtId
     }
   }
