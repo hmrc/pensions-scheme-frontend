@@ -52,11 +52,9 @@ class EmailConnectorImpl @Inject()(
   lazy val postUrl: String = s"${config.emailApiUrl}/hmrc/email"
 
   def callbackUrl(psaId: PsaId): String = {
-    val requestType = "Scheme"
-
     val encryptedPsa = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.value)).value
 
-    s"${config.pensionsSchemeUrl}/pensions-scheme/$requestType/email-response/$encryptedPsa"
+    s"${config.pensionsSchemeUrl}/pensions-scheme/email-response/$encryptedPsa"
   }
 
   override def sendEmail(emailAddress: String, templateName: String, params: Map[String, String], psa: PsaId)
