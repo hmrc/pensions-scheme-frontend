@@ -19,12 +19,15 @@ package controllers
 import connectors.PSANameCacheConnector
 import controllers.actions._
 import models.NormalMode
+import models.requests.AuthenticatedRequest
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.crypto.ApplicationCrypto
+import uk.gov.hmrc.domain.PsaId
 import views.html.whatYouWillNeed
 
 import scala.concurrent.Future
@@ -35,13 +38,15 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar
 
   private val fakePsaNameCacheConnector = mock[PSANameCacheConnector]
 
-
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedController =
     new WhatYouWillNeedController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      fakePsaNameCacheConnector
+      fakePsaNameCacheConnector,
+      ApplicationCrypto
     )
+
+  val fakeRequestWithExternalId = AuthenticatedRequest(fakeRequest, "ext-id", PsaId("A2000000"))
 
   def viewAsString(): String = whatYouWillNeed(frontendAppConfig)(fakeRequest, messages).toString
 
@@ -57,10 +62,26 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar
     }
 
     "on a POST" must {
-      "redirect to Scheme details page if the email exists" in {
+      "redirect to Scheme details page if the email exists for an external Id" in {
         when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
-          Future.successful(Some(Json.obj("psaName" -> "test name", "psaEmail" -> "test@test.com"))))
-        val result = controller().onSubmit(fakeRequest)
+          Future.successful(Some(Json.obj("psaName" -> "test name", "psaEmail" -> "test@test.com")))).thenReturn(
+          Future.successful(None))
+
+        val result = controller().onSubmit(fakeRequestWithExternalId)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(onwardRoute.url)
+      }
+
+      "redirect to Scheme details page if the email exists for a psa id" in {
+        val fakeRequestWithExternalId = AuthenticatedRequest(fakeRequest, "ext-id", PsaId("A2000000"))
+
+        when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
+          Future.successful(None)).thenReturn(
+          Future.successful(Some(Json.obj("psaName" -> "test name", "psaEmail" -> "test@test.com")
+        )))
+
+        val result = controller().onSubmit(fakeRequestWithExternalId)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
