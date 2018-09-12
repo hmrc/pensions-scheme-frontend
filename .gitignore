@@ -1,6 +1,4 @@
 .*
-!.g8
-
 !.gitignore
 
 node_modules
