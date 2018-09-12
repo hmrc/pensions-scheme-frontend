@@ -35,12 +35,7 @@ class NameMatchingFactory @Inject()(
                                    ) {
   private def retrievePSAName(implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] = {
     val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
-    for {
-      psaNameFromPsaId <- pSANameCacheConnector.fetch(encryptedCacheId)
-      psaNameFromExtId <- pSANameCacheConnector.fetch(request.externalId)
-    } yield {
-      if(psaNameFromPsaId.nonEmpty) psaNameFromPsaId else psaNameFromExtId
-    }
+    pSANameCacheConnector.fetch(encryptedCacheId)
   }
 
 

@@ -45,6 +45,7 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
   import DeclarationDutiesControllerSpec._
 
   private val mockEmailConnector = mock[EmailConnector]
+  private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   object fakePsaNameCacheConnector extends PSANameCacheConnector(
     frontendAppConfig,
@@ -79,7 +80,8 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
       formProvider,
       fakePensionsSchemeConnector,
       emailConnector,
-      fakePsaNameCacheConnector
+      fakePsaNameCacheConnector,
+      applicationCrypto
     )
 
   def viewAsString(form: Form[_] = form): String = declarationDuties(frontendAppConfig, form, "Test Scheme Name")(fakeRequest, messages).toString
