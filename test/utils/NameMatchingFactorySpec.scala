@@ -51,25 +51,11 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
     "return an instance of NameMatching" when {
       "PSA name is retrieved from PSA Id" in {
         when(psaNameCacheConnector.fetch(eqTo(encryptedPsaId))(any(), any())).thenReturn(Future(Some(Json.toJson(PSAName("My PSA", Some("test@test.com"))))))
-        when(psaNameCacheConnector.fetch(eqTo("externalId"))(any(), any())).thenReturn(Future(None))
 
         val result = nameMatchingFactory.nameMatching(schemeName)
 
         await(result) mustEqual Some(NameMatching("My Scheme Reg", "My PSA"))
         verify(psaNameCacheConnector, times(1)).fetch(eqTo(encryptedPsaId))(any(), any())
-        verify(psaNameCacheConnector, times(1)).fetch(eqTo("externalId"))(any(), any())
-      }
-
-      "PSA name is retrieved from external Id" in {
-        reset(psaNameCacheConnector)
-        when(psaNameCacheConnector.fetch(eqTo(encryptedPsaId))(any(), any())).thenReturn(Future(None))
-        when(psaNameCacheConnector.fetch(eqTo("externalId"))(any(), any())).thenReturn(Future(Some(Json.toJson(PSAName("My PSA", Some("test@test.com"))))))
-
-        val result = nameMatchingFactory.nameMatching(schemeName)
-
-        await(result) mustEqual Some(NameMatching("My Scheme Reg", "My PSA"))
-        verify(psaNameCacheConnector, times(1)).fetch(eqTo(encryptedPsaId))(any(), any())
-        verify(psaNameCacheConnector, times(1)).fetch(eqTo("externalId"))(any(), any())
       }
     }
 
