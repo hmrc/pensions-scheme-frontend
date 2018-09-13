@@ -28,7 +28,6 @@ import play.api.data.Form
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
-import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
 import views.html.register.schemeDetails
@@ -42,7 +41,7 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
   val formProvider = new SchemeDetailsFormProvider()
   val form = formProvider()
 
-  object FakeNameMatchingFactory extends NameMatchingFactory(FakeDataCacheConnector, ApplicationCrypto) {
+  object FakeNameMatchingFactory extends NameMatchingFactory(FakeDataCacheConnector) {
     override def nameMatching(schemeName: String)
                              (implicit request: OptionalDataRequest[AnyContent],
                               ec: ExecutionContext,

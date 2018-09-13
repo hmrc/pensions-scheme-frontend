@@ -27,7 +27,6 @@ import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -41,35 +40,19 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
 
   implicit val request: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest("", ""), "externalId", None, PsaId("A0000000"))
 
-  private def nameMatchingFactory = new NameMatchingFactory(psaNameCacheConnector, ApplicationCrypto)
+  private def nameMatchingFactory = new NameMatchingFactory(psaNameCacheConnector)
 
   implicit val hc = HeaderCarrier()
-
-  private val encryptedPsaId = app.injector.instanceOf[ApplicationCrypto].QueryParameterCrypto.encrypt(PlainText("A0000000")).value
 
   "NameMatchingFactory" must {
     "return an instance of NameMatching" when {
       "PSA name is retrieved from PSA Id" in {
-        when(psaNameCacheConnector.fetch(eqTo(encryptedPsaId))(any(), any())).thenReturn(Future(Some(Json.toJson(PSAName("My PSA", Some("test@test.com"))))))
-        when(psaNameCacheConnector.fetch(eqTo("externalId"))(any(), any())).thenReturn(Future(None))
+        when(psaNameCacheConnector.fetch(eqTo("A0000000"))(any(), any())).thenReturn(Future(Some(Json.toJson(PSAName("My PSA", Some("test@test.com"))))))
 
         val result = nameMatchingFactory.nameMatching(schemeName)
 
         await(result) mustEqual Some(NameMatching("My Scheme Reg", "My PSA"))
-        verify(psaNameCacheConnector, times(1)).fetch(eqTo(encryptedPsaId))(any(), any())
-        verify(psaNameCacheConnector, times(1)).fetch(eqTo("externalId"))(any(), any())
-      }
-
-      "PSA name is retrieved from external Id" in {
-        reset(psaNameCacheConnector)
-        when(psaNameCacheConnector.fetch(eqTo(encryptedPsaId))(any(), any())).thenReturn(Future(None))
-        when(psaNameCacheConnector.fetch(eqTo("externalId"))(any(), any())).thenReturn(Future(Some(Json.toJson(PSAName("My PSA", Some("test@test.com"))))))
-
-        val result = nameMatchingFactory.nameMatching(schemeName)
-
-        await(result) mustEqual Some(NameMatching("My Scheme Reg", "My PSA"))
-        verify(psaNameCacheConnector, times(1)).fetch(eqTo(encryptedPsaId))(any(), any())
-        verify(psaNameCacheConnector, times(1)).fetch(eqTo("externalId"))(any(), any())
+        verify(psaNameCacheConnector, times(1)).fetch(eqTo("A0000000"))(any(), any())
       }
     }
 

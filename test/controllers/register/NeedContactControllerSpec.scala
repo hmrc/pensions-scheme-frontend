@@ -22,13 +22,13 @@ import controllers.actions._
 import forms.register.NeedContactFormProvider
 import identifiers.PsaEmailId
 import models.NormalMode
+import org.mockito.Matchers.{eq => eqTo, _}
+import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.test.Helpers._
-import org.mockito.Mockito._
-import views.html.register.needContact
 import play.api.libs.json._
-import org.mockito.Matchers.{eq => eqTo, _}
+import play.api.test.Helpers._
+import views.html.register.needContact
 
 import scala.concurrent.Future
 

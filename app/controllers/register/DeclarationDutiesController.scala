@@ -91,7 +91,7 @@ class DeclarationDutiesController @Inject()(
   }
 
   private def sendEmail(srn: String, psaId: PsaId)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
-    psaNameCacheConnector.fetch(request.externalId).flatMap {
+    psaNameCacheConnector.fetch(psaId.id).flatMap {
       case Some(value) =>
         value.as[PSAName].psaEmail match {
           case Some(email) => emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
