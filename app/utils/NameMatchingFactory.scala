@@ -41,7 +41,7 @@ class NameMatchingFactory @Inject()(
                    ec: ExecutionContext,
                    hc: HeaderCarrier, r: Reads[PSAName]): Future[Option[NameMatching]] =
     retrievePSAName map { psaOpt =>
-      Logger.debug("PSA Name and Email for Name Matching : " +psaOpt)
+      Logger.debug(s"PSA Name and Email for Name Matching $psaOpt")
       for {
         psaJs <- psaOpt
         psaName <- psaJs.asOpt[PSAName]

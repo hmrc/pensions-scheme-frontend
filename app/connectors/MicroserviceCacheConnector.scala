@@ -61,7 +61,7 @@ class MicroserviceCacheConnector @Inject()(
     modify(cacheId, _.remove(id))
   }
 
-  private[connectors] def modify(cacheId: String, modification: UserAnswers => JsResult[UserAnswers])
+  private def modify(cacheId: String, modification: UserAnswers => JsResult[UserAnswers])
                     (implicit
                      ec: ExecutionContext,
                      hc: HeaderCarrier
