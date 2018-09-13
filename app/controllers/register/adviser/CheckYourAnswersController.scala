@@ -45,7 +45,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            implicit val countryOptions: CountryOptions,
                                            pensionsSchemeConnector: PensionsSchemeConnector,
                                            emailConnector: EmailConnector,
-                                           psaNameCacheConnector: PSANameCacheConnector) extends FrontendController with I18nSupport {
+                                           psaNameCacheConnector: PSANameCacheConnector
+                                          ) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -76,7 +77,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   }
 
   private def sendEmail(srn: String)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
-    psaNameCacheConnector.fetch(request.externalId).flatMap {
+    psaNameCacheConnector.fetch(request.psaId.id).flatMap {
       case Some(value) =>
         value.as[PSAName].psaEmail match {
           case Some(email) => emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)
