@@ -24,7 +24,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.{DeclarationDutiesId, SchemeDetailsId}
 import models.register.{SchemeDetails, SchemeSubmissionResponse, SchemeType}
 import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito._
+import org.mockito.Mockito.{mock, _}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
