@@ -27,6 +27,7 @@ import models.NormalMode
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.register.needContact
 
@@ -38,7 +39,8 @@ class NeedContactController @Inject()(
                                        dataCacheConnector: DataCacheConnector,
                                        authenticate: AuthAction,
                                        formProvider: NeedContactFormProvider,
-                                       psaNameCacheConnector: PSANameCacheConnector
+                                       psaNameCacheConnector: PSANameCacheConnector,
+                                       crypto: ApplicationCrypto
                                      ) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
@@ -54,9 +56,10 @@ class NeedContactController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(needContact(appConfig, formWithErrors))),
         value => {
-          psaNameCacheConnector.fetch(request.psaId.id).flatMap {
+          val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
+          psaNameCacheConnector.fetch(encryptedCacheId).flatMap {
             case Some(_) =>
-              psaNameCacheConnector.save(request.psaId.id, PsaEmailId, value).map { _ =>
+              psaNameCacheConnector.save(encryptedCacheId, PsaEmailId, value).map { _ =>
                 Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
               }
             case _ =>

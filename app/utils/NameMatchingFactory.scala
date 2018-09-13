@@ -23,16 +23,19 @@ import models.requests.OptionalDataRequest
 import play.api.Logger
 import play.api.libs.json.{JsValue, Reads}
 import play.api.mvc.AnyContent
+import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.annotations.PSANameCache
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactory @Inject()(
-                                     @PSANameCache val pSANameCacheConnector: DataCacheConnector
+                                     @PSANameCache val pSANameCacheConnector: DataCacheConnector,
+                                     crypto: ApplicationCrypto
                                    ) {
   private def retrievePSAName(implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] = {
-    pSANameCacheConnector.fetch(request.psaId.id)
+    val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
+    pSANameCacheConnector.fetch(encryptedCacheId)
   }
 
 
@@ -41,7 +44,6 @@ class NameMatchingFactory @Inject()(
                    ec: ExecutionContext,
                    hc: HeaderCarrier, r: Reads[PSAName]): Future[Option[NameMatching]] =
     retrievePSAName map { psaOpt =>
-      Logger.debug(s"PSA Name and Email for Name Matching $psaOpt")
       for {
         psaJs <- psaOpt
         psaName <- psaJs.asOpt[PSAName]

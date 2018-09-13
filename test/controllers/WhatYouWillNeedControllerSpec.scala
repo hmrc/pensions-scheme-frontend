@@ -20,14 +20,17 @@ import connectors.PSANameCacheConnector
 import controllers.actions._
 import identifiers.{PsaEmailId, PsaNameId}
 import models.NormalMode
+import models.requests.AuthenticatedRequest
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfterEach
+import org.scalatest.{AsyncFlatSpec, BeforeAndAfterEach}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
+import uk.gov.hmrc.domain.PsaId
 import views.html.whatYouWillNeed
 
 import scala.concurrent.Future
@@ -37,19 +40,23 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase  with MockitoSuga
   def onwardRoute: Call = controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode)
 
   private val fakePsaNameCacheConnector = mock[PSANameCacheConnector]
+  private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedController =
     new WhatYouWillNeedController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      fakePsaNameCacheConnector
+      fakePsaNameCacheConnector,
+      applicationCrypto
     )
+
+  val encryptedPsaId = applicationCrypto.QueryParameterCrypto.encrypt(PlainText("A0000000")).value
 
   def viewAsString(): String = whatYouWillNeed(frontendAppConfig)(fakeRequest, messages).toString
 
   private def verifyFetchCalledOnce = {
     verify(fakePsaNameCacheConnector, times(1)).fetch(eqTo("id"))(any(), any())
-    verify(fakePsaNameCacheConnector, times(1)).fetch(eqTo("A0000000"))(any(), any())
+    verify(fakePsaNameCacheConnector, times(1)).fetch(eqTo(encryptedPsaId))(any(), any())
   }
 
   override def beforeEach(): Unit = {
@@ -85,8 +92,8 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase  with MockitoSuga
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(onwardRoute.url)
           verifyFetchCalledOnce
-          verify(fakePsaNameCacheConnector, times(1)).save(eqTo("A0000000"), eqTo(PsaNameId), eqTo("test name"))(any(), any(), any())
-          verify(fakePsaNameCacheConnector, times(1)).save(eqTo("A0000000"), eqTo(PsaEmailId), eqTo("test@test.com"))(any(), any(), any())
+          verify(fakePsaNameCacheConnector, times(1)).save(eqTo(encryptedPsaId), eqTo(PsaNameId), eqTo("test name"))(any(), any(), any())
+          verify(fakePsaNameCacheConnector, times(1)).save(eqTo(encryptedPsaId), eqTo(PsaEmailId), eqTo("test@test.com"))(any(), any(), any())
         }
 
         "the psa name and email json is not in the correct format" in {
@@ -144,8 +151,8 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase  with MockitoSuga
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.register.routes.NeedContactController.onPageLoad.url)
-          verify(fakePsaNameCacheConnector, times(1)).save(eqTo("A0000000"), eqTo(PsaNameId), eqTo("test name"))(any(), any(), any())
-          verify(fakePsaNameCacheConnector, times(1)).save(eqTo("A0000000"), eqTo(PsaEmailId), eqTo(""))(any(), any(), any())
+          verify(fakePsaNameCacheConnector, times(1)).save(eqTo(encryptedPsaId), eqTo(PsaNameId), eqTo("test name"))(any(), any(), any())
+          verify(fakePsaNameCacheConnector, times(1)).save(eqTo(encryptedPsaId), eqTo(PsaEmailId), eqTo(""))(any(), any(), any())
         }
 
         "the psa name is saved against the psa id but no email" in {
