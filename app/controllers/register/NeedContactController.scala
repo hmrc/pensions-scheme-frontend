@@ -53,17 +53,16 @@ class NeedContactController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(needContact(appConfig, formWithErrors))),
-        value => {
-          psaNameCacheConnector.fetch(request.psaId.id).flatMap {
+        value =>
+          psaNameCacheConnector.fetch(request.externalId).flatMap {
             case Some(_) =>
-              psaNameCacheConnector.save(request.psaId.id, PsaEmailId, value).map { _ =>
+              psaNameCacheConnector.save(request.externalId, PsaEmailId, value).map { _ =>
                 Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
               }
             case _ =>
               Future.successful(Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode)))
 
           }
-        }
       )
   }
 }
