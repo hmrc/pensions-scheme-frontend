@@ -127,7 +127,6 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
   }
 
   private val mockEmailConnector = mock[EmailConnector]
-  private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   private val fakeEmailConnector = new EmailConnector {
     override def sendEmail
@@ -171,8 +170,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       new FakeCountryOptions,
       fakePensionsSchemeConnector,
       emailConnector,
-      FakePsaNameCacheConnector(psaName),
-      applicationCrypto
+      FakePsaNameCacheConnector(psaName)
     )
 
   lazy val viewAsString: String = check_your_answers(

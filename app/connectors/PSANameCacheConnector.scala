@@ -19,7 +19,7 @@ package connectors
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import play.api.libs.ws.WSClient
-import uk.gov.hmrc.crypto.ApplicationCrypto
+import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 
 class PSANameCacheConnector @Inject()(
                                        config: FrontendAppConfig,
@@ -27,5 +27,9 @@ class PSANameCacheConnector @Inject()(
                                        crypto: ApplicationCrypto
                                      ) extends MicroserviceCacheConnector(config, http, crypto) {
 
-  override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/psa-name/$id"
+  override protected def url(id: String) = {
+    val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(id)).value
+    s"${config.pensionsSchemeUrl}/pensions-scheme/psa-name/$encryptedCacheId"
+  }
+
 }

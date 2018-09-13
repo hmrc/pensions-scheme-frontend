@@ -22,10 +22,11 @@ import controllers.actions._
 import identifiers.{PsaEmailId, PsaNameId}
 import javax.inject.Inject
 import models.{NormalMode, PSAName}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.crypto.{ApplicationCrypto, Crypted, PlainText}
+import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.whatYouWillNeed
@@ -35,8 +36,7 @@ import scala.concurrent.Future
 class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           authenticate: AuthAction,
-                                          psaNameCacheConnector: PSANameCacheConnector,
-                                          crypto: ApplicationCrypto
+                                          psaNameCacheConnector: PSANameCacheConnector
                                          ) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate {
@@ -46,12 +46,12 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = authenticate.async {
     implicit request =>
-      val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
       for {
         psaNameFromExtId <- psaNameCacheConnector.fetch(request.externalId)
-        psaNameFromPsaId <- psaNameCacheConnector.fetch(encryptedCacheId)
-        psaNameAndEmail <- savePSANameAndEmail(psaNameFromExtId, psaNameFromPsaId, encryptedCacheId)
+        psaNameFromPsaId <- psaNameCacheConnector.fetch(request.psaId.id)
+        psaNameAndEmail <- savePSANameAndEmail(psaNameFromExtId, psaNameFromPsaId, request.psaId.id)
       } yield {
+        Logger.debug(s"Saved PSA Name and Email $psaNameAndEmail")
         psaNameAndEmail match {
           case Some(psaNameJsValue) =>
             psaNameJsValue.as[PSAName].psaEmail match {
@@ -68,8 +68,10 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
 
   private def savePSANameAndEmail(psaNameFromExtId: Option[JsValue],
                                   psaNameFromPsaId: Option[JsValue],
-                                  encryptedCacheId: String)(implicit hc: HeaderCarrier): Future[Option[JsValue]] = {
+                                  psaId: String)(implicit hc: HeaderCarrier): Future[Option[JsValue]] = {
 
+    Logger.debug(s"PSA Name and Email from External Id : $psaNameFromExtId")
+    Logger.debug(s"PSA Name and Email from PSA Id : $psaNameFromPsaId")
     if (psaNameFromExtId.nonEmpty && psaNameFromPsaId.isEmpty) {
       psaNameFromExtId match {
         case Some(psaNameJsValue) =>
@@ -79,8 +81,8 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
             },
             value => {
               for {
-                _ <- psaNameCacheConnector.save(encryptedCacheId, PsaNameId, value.psaName)
-                _ <- psaNameCacheConnector.save(encryptedCacheId, PsaEmailId, value.psaEmail.getOrElse(""))
+                _ <- psaNameCacheConnector.save(psaId, PsaNameId, value.psaName)
+                _ <- psaNameCacheConnector.save(psaId, PsaEmailId, value.psaEmail.getOrElse(""))
               } yield {
                 psaNameFromExtId
               }

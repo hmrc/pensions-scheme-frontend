@@ -26,7 +26,6 @@ import models.requests.DataRequest
 import models.{CheckMode, NormalMode, PSAName}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Adviser
 import utils.checkyouranswers.Ops._
@@ -46,8 +45,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            implicit val countryOptions: CountryOptions,
                                            pensionsSchemeConnector: PensionsSchemeConnector,
                                            emailConnector: EmailConnector,
-                                           psaNameCacheConnector: PSANameCacheConnector,
-                                           crypto: ApplicationCrypto
+                                           psaNameCacheConnector: PSANameCacheConnector
                                           ) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
@@ -79,8 +77,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   }
 
   private def sendEmail(srn: String)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
-    val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
-    psaNameCacheConnector.fetch(encryptedCacheId).flatMap {
+    psaNameCacheConnector.fetch(request.psaId.id).flatMap {
       case Some(value) =>
         value.as[PSAName].psaEmail match {
           case Some(email) => emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)

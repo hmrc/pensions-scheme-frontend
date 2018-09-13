@@ -28,7 +28,6 @@ import models.{NormalMode, PSAName}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
@@ -48,8 +47,7 @@ class DeclarationDutiesController @Inject()(
                                              formProvider: DeclarationDutiesFormProvider,
                                              pensionsSchemeConnector: PensionsSchemeConnector,
                                              emailConnector: EmailConnector,
-                                             psaNameCacheConnector: PSANameCacheConnector,
-                                             crypto: ApplicationCrypto
+                                             psaNameCacheConnector: PSANameCacheConnector
                                            ) extends FrontendController with I18nSupport with Retrievals with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -93,9 +91,7 @@ class DeclarationDutiesController @Inject()(
   }
 
   private def sendEmail(srn: String, psaId: PsaId)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
-    val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.id)).value
-
-    psaNameCacheConnector.fetch(encryptedCacheId).flatMap {
+    psaNameCacheConnector.fetch(psaId.id).flatMap {
       case Some(value) =>
         value.as[PSAName].psaEmail match {
           case Some(email) => emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
