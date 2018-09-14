@@ -18,7 +18,7 @@ package controllers.testOnlyDoNotUseInAppConf
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.PSANameCacheConnector
+import connectors.{PSANameCacheConnector, TestOnlyCacheConnector}
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.mappings.Mappings
@@ -36,6 +36,7 @@ class TestEnrolController @Inject()(
                                      appConfig: FrontendAppConfig,
                                      override val messagesApi: MessagesApi,
                                      psaNameCacheConnector: PSANameCacheConnector,
+                                     testOnlyCacheConnector: TestOnlyCacheConnector,
                                      authenticate: AuthAction,
                                      getData: DataRetrievalAction,
                                      requireData: DataRequiredAction
@@ -50,9 +51,11 @@ class TestEnrolController @Inject()(
     override def toString: String = "psaName"
   }
 
-  def onPageLoad: Action[AnyContent] = authenticate {
+  def onPageLoad: Action[AnyContent] = authenticate.async {
     implicit request =>
-      Ok(testEnrol(appConfig, formProvider))
+      testOnlyCacheConnector.dropCollection("psa-name").map{ _ =>
+        Ok(testEnrol(appConfig, formProvider))
+      }
   }
 
   def onSubmit(): Action[AnyContent] = (authenticate andThen getData).async {

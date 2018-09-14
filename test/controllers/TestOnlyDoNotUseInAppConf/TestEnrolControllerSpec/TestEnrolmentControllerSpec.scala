@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.PSANameCacheConnector
+import connectors.{PSANameCacheConnector, TestOnlyCacheConnector}
 import controllers.actions._
 import controllers.testOnlyDoNotUseInAppConf.TestEnrolController
 import forms.mappings.Mappings
@@ -26,6 +26,7 @@ import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
+import play.api.mvc.Results.Ok
 import play.api.test.Helpers._
 import views.html.testOnlyDoNotUseInAppConf.testEnrol
 
@@ -40,8 +41,7 @@ class TestEnrolControllerSpec extends ControllerSpecBase with Mappings with Mock
 
   val formProvider = apply()
   val psaNameCacheConnector = mock[PSANameCacheConnector]
-
-  when(psaNameCacheConnector.save(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Json.obj()))
+  val testOnlyCacheConnector = mock[TestOnlyCacheConnector]
 
   def onwardRoute: Call = controllers.routes.WhatYouWillNeedController.onPageLoad()
 
@@ -49,6 +49,7 @@ class TestEnrolControllerSpec extends ControllerSpecBase with Mappings with Mock
     new TestEnrolController(frontendAppConfig,
       messagesApi,
       psaNameCacheConnector,
+      testOnlyCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl
@@ -59,6 +60,7 @@ class TestEnrolControllerSpec extends ControllerSpecBase with Mappings with Mock
   "TestEnrol Controller" must {
 
     "return OK and the correct view for a GET" in {
+      when(testOnlyCacheConnector.dropCollection(any())(any(), any())).thenReturn(Future.successful(Ok))
       val result = controller().onPageLoad(fakeRequest)
 
       status(result) mustBe OK
@@ -66,6 +68,7 @@ class TestEnrolControllerSpec extends ControllerSpecBase with Mappings with Mock
     }
 
     "return OK when valid data is submitted" in {
+      when(psaNameCacheConnector.save(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Json.obj()))
       val postRequest = fakeRequest.withFormUrlEncodedBody(("psaName", "company"))
 
       val result = controller().onSubmit()(postRequest)
