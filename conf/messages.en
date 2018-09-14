@@ -211,14 +211,15 @@ messages__complete__heading = The pension scheme details have been sent to HMRC
 messages__complete__application_number_is = Your submission reference number is {0}.
 messages__complete__email = You have been sent a confirmation email.
 messages__complete__what_happens_next = What happens next
-messages__complete__copy_1 = The scheme has not been registered yet. HMRC will review the details and decide if the scheme can be registered. You will receive a pension scheme tax reference number (PSTR) if the scheme is registered.
-messages__complete__copy_2 = You might be contacted for more details to support this registration.
-messages__complete__copy_3 = There is no time limit for how long it will take HMRC to make a decision. {0} if HMRC decline the application to register the scheme or if a decision has not been made within 6 months.
-messages__complete__appeal_link = You can appeal to a tribunal
+messages__complete__copy_1 = The scheme has not been registered yet.
+messages__complete__copy_2 = HMRC will review the details and decide if the scheme can be registered. You‘ll receive a pension scheme tax reference number (PSTR) if the scheme is registered.
+messages__complete__copy_3 = You might be contacted for more details to support this registration.
+messages__complete__copy_4 = There is no time limit for how long it‘ll take HMRC to make a decision. {0}.
+messages__complete__appeal_link = You can appeal to a tribunal if HMRC decides not to register the scheme or if a decision has not been made within 6 months
 
 messages__complete__master_trust_heading = What you need to do
-messages__complete__pension_regulator_link = You must contact the Pensions Regulator
-messages__complete__pension_regulator = {0} to register the master trust scheme with them. HMRC cannot complete the registration until the Pensions Regulator authorise the scheme.
+messages__complete__pension_regulator_link = You must also contact The Pensions Regulator
+messages__complete__pension_regulator = {0} for this scheme to be authorised. HMRC cannot complete the registration until The Pensions Regulator authorise the scheme to be a master trust.
 messages__complete__return = Return to manage your pension schemes
 messages__complete__feedback = What did you think of this service? (opens in new window or tab)
 
