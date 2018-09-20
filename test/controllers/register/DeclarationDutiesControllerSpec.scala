@@ -49,8 +49,7 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
 
   object fakePsaNameCacheConnector extends PSANameCacheConnector(
     frontendAppConfig,
-    mock[WSClient],
-    injector.instanceOf[ApplicationCrypto]
+    mock[WSClient]
   ) with FakeUserAnswersCacheConnector {
 
     override def fetch(cacheId: String)(implicit

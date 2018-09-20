@@ -23,9 +23,8 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 
 class PSANameCacheConnector @Inject()(
                                        config: FrontendAppConfig,
-                                       http: WSClient,
-                                       crypto: ApplicationCrypto
-                                     ) extends MicroserviceCacheConnector(config, http, crypto) {
+                                       http: WSClient
+                                     ) extends MicroserviceCacheConnector(config, http) {
 
   override protected def url(id: String) = s"${config.pensionsSchemeUrl}/pensions-scheme/psa-name/$id"
 }

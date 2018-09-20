@@ -14,29 +14,17 @@
  * limitations under the License.
  */
 
-import connectors.{UserAnswersCacheConnector, MicroserviceCacheConnector, MongoCacheConnector, PSANameCacheConnector}
-import play.api.{Configuration, Environment, Logger}
+import connectors.{MicroserviceCacheConnector, PSANameCacheConnector, UserAnswersCacheConnector}
 import play.api.inject.{Binding, Module}
+import play.api.{Configuration, Environment}
 import utils.annotations.PSANameCache
 
 class DataCacheModule extends Module {
 
   override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
-
-    configuration.getString("journey-cache") match {
-      case Some("public") =>
-        Seq(bind[UserAnswersCacheConnector].to[MongoCacheConnector])
-      case Some("protected") =>
-        Seq(
-          bind[UserAnswersCacheConnector].to[MicroserviceCacheConnector],
-          bind[UserAnswersCacheConnector].qualifiedWith(classOf[PSANameCache]).to[PSANameCacheConnector]
-        )
-      case _ =>
-        Logger.warn("No journey-cache set, defaulting to `protected`")
-        Seq(
-          bind[UserAnswersCacheConnector].to[MicroserviceCacheConnector],
-          bind[UserAnswersCacheConnector].qualifiedWith(classOf[PSANameCache]).to[PSANameCacheConnector]
-        )
-    }
+    Seq(
+      bind[UserAnswersCacheConnector].to[MicroserviceCacheConnector],
+      bind[UserAnswersCacheConnector].qualifiedWith(classOf[PSANameCache]).to[PSANameCacheConnector]
+    )
   }
 }
