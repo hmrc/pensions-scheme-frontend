@@ -17,7 +17,7 @@
 package controllers.register.trustees
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.TrusteeKindFormProvider
@@ -40,7 +40,7 @@ import scala.concurrent.Future
 class TrusteeKindController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       dataCacheConnector: DataCacheConnector,
+                                       dataCacheConnector: UserAnswersCacheConnector,
                                        @Trustees navigator: Navigator,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,

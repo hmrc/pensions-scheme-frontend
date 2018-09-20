@@ -18,13 +18,13 @@ package navigators
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.register.trustees.partnership.routes
 import identifiers.register.trustees.partnership._
 import models.{AddressYears, CheckMode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
-class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: DataCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers(index: Int, answers: UserAnswers): Option[NavigateTo] =
     NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))

@@ -17,7 +17,7 @@
 package controllers.register.establishers
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class EstablisherKindController @Inject()(
                                            appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
-                                           dataCacheConnector: DataCacheConnector,
+                                           dataCacheConnector: UserAnswersCacheConnector,
                                            @Establishers navigator: Navigator,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,

@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import identifiers.register.establishers.IsEstablisherCompleteId
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class ConfirmDeletePartnerController @Inject()(
                                                 appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
-                                                dataCacheConnector: DataCacheConnector,
+                                                dataCacheConnector: UserAnswersCacheConnector,
                                                 @EstablishersPartner navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,

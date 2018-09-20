@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership.partner
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressYearsController
@@ -34,7 +34,7 @@ import viewmodels.address.AddressYearsViewModel
 
 class PartnerAddressYearsController @Inject()(
                                                val appConfig: FrontendAppConfig,
-                                               val cacheConnector: DataCacheConnector,
+                                               val cacheConnector: UserAnswersCacheConnector,
                                                @EstablishersPartner val navigator: Navigator,
                                                val messagesApi: MessagesApi,
                                                authenticate: AuthAction,

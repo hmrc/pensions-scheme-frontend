@@ -17,7 +17,7 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class CompanyPreviousAddressListController @Inject()(
                                                       override val appConfig: FrontendAppConfig,
                                                       override val messagesApi: MessagesApi,
-                                                      override val cacheConnector: DataCacheConnector,
+                                                      override val cacheConnector: UserAnswersCacheConnector,
                                                       @TrusteesCompany override val navigator: Navigator,
                                                       authenticate: AuthAction,
                                                       getData: DataRetrievalAction,

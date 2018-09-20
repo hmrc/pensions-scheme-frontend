@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import base.CSRFRequest
-import connectors.{DataCacheConnector, FakeDataCacheConnector}
+import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
@@ -77,7 +77,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
     "return Ok and the correct view on a Get Request" in {
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction),
         bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
@@ -99,7 +99,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(getEmptyData),
         bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
@@ -116,7 +116,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
         bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
@@ -133,7 +133,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
@@ -154,7 +154,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dontGetAnyData),
         bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>
@@ -176,7 +176,7 @@ class IndividualAddressListControllerSpec extends ControllerSpecBase with CSRFRe
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(getEmptyData),
         bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesIndividual]).toInstance(fakeNavigator)
       )) { implicit app =>

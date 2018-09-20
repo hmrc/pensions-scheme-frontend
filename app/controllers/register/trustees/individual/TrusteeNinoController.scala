@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.individual.TrusteeNinoFormProvider
@@ -40,7 +40,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
                                       @TrusteesIndividual navigator: Navigator,
-                                      dataCacheConnector: DataCacheConnector) extends FrontendController with I18nSupport with Retrievals {
+                                      dataCacheConnector: UserAnswersCacheConnector) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Nino] = new TrusteeNinoFormProvider()()
 

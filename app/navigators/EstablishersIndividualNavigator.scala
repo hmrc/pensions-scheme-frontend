@@ -18,7 +18,7 @@ package navigators
 
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import identifiers.register.establishers.individual._
 import models.{AddressYears, CheckMode, NormalMode}
 import utils.{Navigator, UserAnswers}
@@ -26,7 +26,7 @@ import utils.{Navigator, UserAnswers}
 @Singleton
 class EstablishersIndividualNavigator @Inject()(
                                                  appConfig: FrontendAppConfig,
-                                                 val dataCacheConnector: DataCacheConnector
+                                                 val dataCacheConnector: UserAnswersCacheConnector
                                                ) extends Navigator {
 
   private def checkYourAnswers(index: Int)(answers: UserAnswers): Option[NavigateTo] =

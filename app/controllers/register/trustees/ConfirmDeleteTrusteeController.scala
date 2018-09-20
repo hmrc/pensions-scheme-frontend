@@ -17,7 +17,7 @@
 package controllers.register.trustees
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.trustees.ConfirmDeleteTrusteeId
@@ -44,7 +44,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                @Trustees navigator: Navigator,
-                                               dataCacheConnector: DataCacheConnector) extends FrontendController with I18nSupport with Retrievals {
+                                               dataCacheConnector: UserAnswersCacheConnector) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

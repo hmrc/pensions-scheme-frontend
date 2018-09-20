@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -74,7 +74,7 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
     new PartnershipPreviousAddressListController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl

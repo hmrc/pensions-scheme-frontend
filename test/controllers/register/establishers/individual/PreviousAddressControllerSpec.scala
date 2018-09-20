@@ -18,7 +18,7 @@ package controllers.register.establishers.individual
 
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent}
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
@@ -58,7 +58,7 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures
     new PreviousAddressController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction,
       new DataRequiredActionImpl,

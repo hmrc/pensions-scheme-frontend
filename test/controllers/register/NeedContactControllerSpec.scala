@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import connectors.{FakeDataCacheConnector, PSANameCacheConnector}
+import connectors.{FakeUserAnswersCacheConnector, PSANameCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.NeedContactFormProvider
@@ -44,7 +44,7 @@ class NeedContactControllerSpec extends ControllerSpecBase with MockitoSugar {
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData) =
-    new NeedContactController(frontendAppConfig, messagesApi, FakeDataCacheConnector, FakeAuthAction,
+    new NeedContactController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, FakeAuthAction,
       formProvider, fakePsaNameCacheConnector, applicationCrypto)
 
   private def viewAsString(form: Form[_] = form) = needContact(frontendAppConfig, form)(fakeRequest, messages).toString

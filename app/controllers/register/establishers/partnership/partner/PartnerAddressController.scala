@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership.partner
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.establishers.partnership.partner.routes._
@@ -38,7 +38,7 @@ import viewmodels.address.ManualAddressViewModel
 class PartnerAddressController @Inject()(
                                           val appConfig: FrontendAppConfig,
                                           val messagesApi: MessagesApi,
-                                          val dataCacheConnector: DataCacheConnector,
+                                          val dataCacheConnector: UserAnswersCacheConnector,
                                           @EstablishersPartner val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,

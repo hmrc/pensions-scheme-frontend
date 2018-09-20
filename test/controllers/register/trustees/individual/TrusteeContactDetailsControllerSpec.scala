@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.ContactDetailsFormProvider
@@ -67,7 +67,7 @@ class TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
       val result = controller(trusteeData).onSubmit(NormalMode, index)(request)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verify(TrusteeContactDetailsId(index), contactDetailsModel)
+      FakeUserAnswersCacheConnector.verify(TrusteeContactDetailsId(index), contactDetailsModel)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
@@ -130,7 +130,7 @@ object TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

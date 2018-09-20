@@ -40,7 +40,7 @@ import scala.concurrent.Future
 class DeclarationDutiesController @Inject()(
                                              appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
-                                             dataCacheConnector: DataCacheConnector,
+                                             dataCacheConnector: UserAnswersCacheConnector,
                                              @Register navigator: Navigator,
                                              authenticate: AuthAction,
                                              getData: DataRetrievalAction,

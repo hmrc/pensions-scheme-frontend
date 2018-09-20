@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import connectors.{DataCacheConnector, MicroserviceCacheConnector, MongoCacheConnector}
+import connectors.{UserAnswersCacheConnector, MicroserviceCacheConnector, MongoCacheConnector}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.inject._
 import play.api.{Configuration, Environment}
@@ -27,7 +27,7 @@ class DataCacheModuleSpec extends WordSpec with MustMatchers with OptionValues {
 
       val config = Configuration("journey-cache" -> "public")
       val bindings = new DataCacheModule().bindings(Environment.simple(), config)
-      val binding = bind[DataCacheConnector].to[MongoCacheConnector]
+      val binding = bind[UserAnswersCacheConnector].to[MongoCacheConnector]
 
       bindings.head.target.value mustEqual binding.target.value
     }
@@ -36,7 +36,7 @@ class DataCacheModuleSpec extends WordSpec with MustMatchers with OptionValues {
 
       val config = Configuration("journey-cache" -> "protected")
       val bindings = new DataCacheModule().bindings(Environment.simple(), config)
-      val binding = bind[DataCacheConnector].to[MicroserviceCacheConnector]
+      val binding = bind[UserAnswersCacheConnector].to[MicroserviceCacheConnector]
 
       bindings.head.target.value mustEqual binding.target.value
     }
@@ -45,7 +45,7 @@ class DataCacheModuleSpec extends WordSpec with MustMatchers with OptionValues {
 
       val config = Configuration()
       val bindings = new DataCacheModule().bindings(Environment.simple(), config)
-      val binding = bind[DataCacheConnector].to[MicroserviceCacheConnector]
+      val binding = bind[UserAnswersCacheConnector].to[MicroserviceCacheConnector]
 
       bindings.head.target.value mustEqual binding.target.value
     }
@@ -54,7 +54,7 @@ class DataCacheModuleSpec extends WordSpec with MustMatchers with OptionValues {
 
       val config = Configuration("journey-cache" -> "foobar")
       val bindings = new DataCacheModule().bindings(Environment.simple(), config)
-      val binding = bind[DataCacheConnector].to[MicroserviceCacheConnector]
+      val binding = bind[UserAnswersCacheConnector].to[MicroserviceCacheConnector]
 
       bindings.head.target.value mustEqual binding.target.value
     }

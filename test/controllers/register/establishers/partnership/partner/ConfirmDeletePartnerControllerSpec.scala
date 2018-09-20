@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership.partner
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import controllers.register.establishers.partnership.routes.AddPartnersController
@@ -59,7 +59,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(establisherIndex, partnerIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verify(PartnerDetailsId(establisherIndex, partnerIndex), partnerDetails.copy(isDeleted = true))
+      FakeUserAnswersCacheConnector.verify(PartnerDetailsId(establisherIndex, partnerIndex), partnerDetails.copy(isDeleted = true))
     }
 
     "redirect to the next page on a successful POST" in {
@@ -143,7 +143,7 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
     new ConfirmDeletePartnerController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

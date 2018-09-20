@@ -17,7 +17,7 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import identifiers.register.trustees.HaveAnyTrusteesId
@@ -54,11 +54,11 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
     (ConfirmDeleteEstablisherId, emptyAnswers, addEstablisher, true, None, false)
   )
 
-  private val navigator = new EstablishersNavigator(FakeDataCacheConnector, frontendAppConfig)
+  private val navigator = new EstablishersNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
   navigator.getClass.getSimpleName must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 

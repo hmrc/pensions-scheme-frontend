@@ -18,7 +18,7 @@ package controllers.register.adviser
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.adviser.routes._
@@ -38,7 +38,7 @@ import viewmodels.address.ManualAddressViewModel
 class AdviserAddressController @Inject()(
                                           val appConfig: FrontendAppConfig,
                                           val messagesApi: MessagesApi,
-                                          val dataCacheConnector: DataCacheConnector,
+                                          val dataCacheConnector: UserAnswersCacheConnector,
                                           @Adviser val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,

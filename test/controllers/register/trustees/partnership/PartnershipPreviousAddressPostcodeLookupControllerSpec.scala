@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.partnership
 
-import connectors.{AddressLookupConnector, FakeDataCacheConnector}
+import connectors.{AddressLookupConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -87,7 +87,7 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
     new PartnershipPreviousAddressPostcodeLookupController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,

@@ -16,7 +16,7 @@
 
 package controllers.register.establishers
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
@@ -71,7 +71,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(establisherIndex, establisherKind)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verify(EstablisherDetailsId(establisherIndex), personDetails.copy(isDeleted = true))
+      FakeUserAnswersCacheConnector.verify(EstablisherDetailsId(establisherIndex), personDetails.copy(isDeleted = true))
     }
 
     "delete the establisher company on a POST" in {
@@ -79,7 +79,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(Index(1), EstablisherKind.Company)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verify(CompanyDetailsId(Index(1)), companyDetails.copy(isDeleted = true))
+      FakeUserAnswersCacheConnector.verify(CompanyDetailsId(Index(1)), companyDetails.copy(isDeleted = true))
     }
 
     "delete the establisher partnership on a POST" in {
@@ -87,7 +87,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(Index(2), EstablisherKind.Partnership)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verify(PartnershipDetailsId(Index(2)), partnershipDetails.copy(isDeleted = true))
+      FakeUserAnswersCacheConnector.verify(PartnershipDetailsId(Index(2)), partnershipDetails.copy(isDeleted = true))
     }
 
     "redirect to the next page on a successful POST" in {
@@ -155,7 +155,7 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     new ConfirmDeleteEstablisherController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

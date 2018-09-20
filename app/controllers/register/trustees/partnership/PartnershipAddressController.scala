@@ -18,7 +18,7 @@ package controllers.register.trustees.partnership
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
@@ -37,7 +37,7 @@ import viewmodels.address.ManualAddressViewModel
 class PartnershipAddressController @Inject()(
                                               val appConfig: FrontendAppConfig,
                                               val messagesApi: MessagesApi,
-                                              val dataCacheConnector: DataCacheConnector,
+                                              val dataCacheConnector: UserAnswersCacheConnector,
                                               @TrusteesPartnership val navigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,

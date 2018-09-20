@@ -17,7 +17,7 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import identifiers.register.adviser._
 import models.{CheckMode, Mode, NormalMode}
 import play.api.libs.json.Json
@@ -38,7 +38,7 @@ class AdviserNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   navigator.getClass.getSimpleName must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routes(), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 
@@ -46,7 +46,7 @@ class AdviserNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
 object AdviserNavigatorSpec {
 
-  private val navigator = new AdviserNavigator(FakeDataCacheConnector)
+  private val navigator = new AdviserNavigator(FakeUserAnswersCacheConnector)
 
   private val emptyAnswers = UserAnswers(Json.obj())
 

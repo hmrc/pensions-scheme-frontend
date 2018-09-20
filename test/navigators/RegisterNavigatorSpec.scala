@@ -18,7 +18,7 @@ package navigators
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import identifiers.UserResearchDetailsId
 import identifiers.register._
 import models._
@@ -86,8 +86,8 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
 
   "RegisterNavigator" must {
     appRunning()
-    val navigator = new RegisterNavigator(FakeDataCacheConnector, frontendAppConfig)
-    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
+    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 }

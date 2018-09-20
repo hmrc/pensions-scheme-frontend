@@ -18,7 +18,7 @@ package controllers.register.trustees.partnership
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressYearsController
@@ -34,7 +34,7 @@ import viewmodels.address.AddressYearsViewModel
 
 class PartnershipAddressYearsController @Inject()(
                                                    override val appConfig: FrontendAppConfig,
-                                                   override val cacheConnector: DataCacheConnector,
+                                                   override val cacheConnector: UserAnswersCacheConnector,
                                                    @TrusteesPartnership override val navigator: Navigator,
                                                    override val messagesApi: MessagesApi,
                                                    authenticate: AuthAction,

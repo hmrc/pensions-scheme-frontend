@@ -18,7 +18,7 @@ package controllers.register.establishers.partnership.partner
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
@@ -36,7 +36,7 @@ import scala.concurrent.Future
 
 class PartnerPreviousAddressListController @Inject()(
                                                       override val appConfig: FrontendAppConfig,
-                                                      override val cacheConnector: DataCacheConnector,
+                                                      override val cacheConnector: UserAnswersCacheConnector,
                                                       @EstablishersPartner override val navigator: Navigator,
                                                       override val messagesApi: MessagesApi,
                                                       authenticate: AuthAction,

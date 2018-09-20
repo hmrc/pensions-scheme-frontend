@@ -18,7 +18,7 @@ package controllers.register.trustees.individual
 
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressYearsController
@@ -35,7 +35,7 @@ import viewmodels.address.AddressYearsViewModel
 @Singleton
 class TrusteeAddressYearsController @Inject()(
                                                override val appConfig: FrontendAppConfig,
-                                               override val cacheConnector: DataCacheConnector,
+                                               override val cacheConnector: UserAnswersCacheConnector,
                                                @TrusteesIndividual override val navigator: Navigator,
                                                override val messagesApi: MessagesApi,
                                                authenticate: AuthAction,

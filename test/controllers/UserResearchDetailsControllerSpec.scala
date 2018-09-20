@@ -18,7 +18,7 @@ package controllers
 
 import audit.UserResearchEvent
 import audit.testdoubles.StubSuccessfulAuditService
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
 import forms.UserResearchDetailsFormProvider
 import identifiers.UserResearchDetailsId
@@ -43,7 +43,7 @@ class UserResearchDetailsControllerSpec extends ControllerSpecBase with ScalaFut
 
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): UserResearchDetailsController =
-    new UserResearchDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new UserResearchDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider, fakeAuditService)
 
   def viewAsString(form: Form[_] = form): String = userResearchDetails(frontendAppConfig, form)(fakeRequest, messages).toString

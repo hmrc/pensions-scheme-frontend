@@ -17,7 +17,7 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees._
 import identifiers.register.trustees.individual.TrusteeDetailsId
@@ -53,11 +53,11 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (ConfirmDeleteTrusteeId, emptyAnswers, addTrustee, true, None, false)
   )
 
-  private val navigator = new TrusteesNavigator(FakeDataCacheConnector, frontendAppConfig)
+  private val navigator = new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
   navigator.getClass.getSimpleName must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 

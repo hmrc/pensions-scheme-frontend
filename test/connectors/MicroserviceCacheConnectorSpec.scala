@@ -43,7 +43,7 @@ class MicroserviceCacheConnectorSpec extends AsyncWordSpec with MustMatchers wit
 
   protected def lastUpdatedUrl(id: String) = s"/pensions-scheme/journey-cache/scheme/$id/lastUpdated"
 
-  protected lazy val connector: DataCacheConnector = injector.instanceOf[MicroserviceCacheConnector]
+  protected lazy val connector: UserAnswersCacheConnector = injector.instanceOf[MicroserviceCacheConnector]
   protected lazy val crypto = injector.instanceOf[ApplicationCrypto].JsonCrypto
 
   ".fetch" must {

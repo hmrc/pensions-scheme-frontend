@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership
 
 import base.CSRFRequest
-import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
+import connectors.{AddressLookupConnector, UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -116,7 +116,7 @@ object PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with M
       bind[DataRequiredAction].to(new DataRequiredActionImpl),
       bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
       bind(classOf[Navigator]).qualifiedWith(classOf[EstablisherPartnership]).toInstance(fakeNavigator),
-      bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+      bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
       bind[PostCodeLookupFormProvider].to(formProvider)
     )) {
       app =>

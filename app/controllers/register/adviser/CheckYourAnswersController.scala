@@ -38,7 +38,7 @@ import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
-                                           dataCacheConnector: DataCacheConnector,
+                                           dataCacheConnector: UserAnswersCacheConnector,
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,

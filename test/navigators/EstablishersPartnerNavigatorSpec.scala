@@ -17,7 +17,7 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.partnership.partner._
 import identifiers.Identifier
 import identifiers.register.establishers.EstablishersId
@@ -37,7 +37,7 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
   //scalastyle:off magic.number
   import EstablishersPartnerNavigatorSpec._
 
-  private val navigator = new EstablishersPartnerNavigator(FakeDataCacheConnector, frontendAppConfig)
+  private val navigator = new EstablishersPartnerNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
   private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
@@ -65,7 +65,7 @@ class EstablishersPartnerNavigatorSpec extends SpecBase with NavigatorBehaviour 
 
   navigator.getClass.getSimpleName must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 

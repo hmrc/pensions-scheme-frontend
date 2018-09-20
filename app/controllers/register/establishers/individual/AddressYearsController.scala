@@ -17,7 +17,7 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.{AddressYearsController => GenericAddressYearController}
@@ -34,7 +34,7 @@ import viewmodels.address.AddressYearsViewModel
 
 class AddressYearsController @Inject()(
                                         override val appConfig: FrontendAppConfig,
-                                        override val cacheConnector: DataCacheConnector,
+                                        override val cacheConnector: UserAnswersCacheConnector,
                                         @EstablishersIndividual val navigator: Navigator,
                                         override val messagesApi: MessagesApi,
                                         authenticate: AuthAction,

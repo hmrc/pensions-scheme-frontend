@@ -18,7 +18,7 @@ package navigators
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
 import identifiers.register.trustees.HaveAnyTrusteesId
@@ -27,7 +27,7 @@ import models.register.establishers.EstablisherKind
 import models.register.{SchemeDetails, SchemeType}
 import utils.{Enumerable, Navigator, UserAnswers}
 
-class EstablishersNavigator @Inject()(val dataCacheConnector: DataCacheConnector, config: FrontendAppConfig) extends Navigator with Enumerable.Implicits {
+class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, config: FrontendAppConfig) extends Navigator with Enumerable.Implicits {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {

@@ -17,7 +17,7 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.{DataCacheConnector, PSANameCacheConnector}
+import connectors.{UserAnswersCacheConnector, PSANameCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.NeedContactFormProvider
@@ -36,7 +36,7 @@ import scala.concurrent.Future
 class NeedContactController @Inject()(
                                        appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
-                                       dataCacheConnector: DataCacheConnector,
+                                       dataCacheConnector: UserAnswersCacheConnector,
                                        authenticate: AuthAction,
                                        formProvider: NeedContactFormProvider,
                                        psaNameCacheConnector: PSANameCacheConnector,

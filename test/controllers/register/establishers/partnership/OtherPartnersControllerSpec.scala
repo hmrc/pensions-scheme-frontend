@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.partnership.OtherPartnersFormProvider
@@ -62,7 +62,7 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
     new OtherPartnersController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

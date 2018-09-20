@@ -17,7 +17,7 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
 import identifiers.register.trustees.company._
 import models.{AddressYears, CheckMode, Mode, NormalMode}
@@ -54,8 +54,8 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
 
   "EstablishersCompanyNavigator when restrict-establisher toggle is off" must {
     appRunning()
-    val navigator = new TrusteesCompanyNavigator(FakeDataCacheConnector)
-    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routesTrusteeCompany, dataDescriber)
+    val navigator = new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesTrusteeCompany, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 }
@@ -63,7 +63,7 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
 //noinspection MutatorLikeMethodIsParameterless
 object TrusteesCompanyNavigatorSpec extends OptionValues {
 
-  private val navigator = new TrusteesCompanyNavigator(FakeDataCacheConnector)
+  private val navigator = new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector)
 
   private def companyRegistrationNumber(mode: Mode): Call =
     controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, 0)

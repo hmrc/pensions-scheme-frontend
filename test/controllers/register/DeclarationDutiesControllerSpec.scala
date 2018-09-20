@@ -51,7 +51,7 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
     frontendAppConfig,
     mock[WSClient],
     injector.instanceOf[ApplicationCrypto]
-  ) with FakeDataCacheConnector {
+  ) with FakeUserAnswersCacheConnector {
 
     override def fetch(cacheId: String)(implicit
                                         ec: ExecutionContext,
@@ -73,7 +73,7 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
     new DeclarationDutiesController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
+      FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

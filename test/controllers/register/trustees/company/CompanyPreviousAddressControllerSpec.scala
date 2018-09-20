@@ -20,7 +20,7 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{DataCacheConnector, FakeDataCacheConnector}
+import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.trustees.company.routes._
@@ -69,7 +69,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
         bind[CountryOptions].to(countryOptions),
@@ -124,7 +124,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           bind(classOf[Navigator]).qualifiedWith(classOf[TrusteesCompany]).toInstance(new FakeNavigator(onwardCall)),
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
-          bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+          bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
           bind[DataRequiredAction].to(new DataRequiredActionImpl),
@@ -146,7 +146,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeDataCacheConnector.verify(CompanyPreviousAddressId(firstIndex), address)
+            FakeUserAnswersCacheConnector.verify(CompanyPreviousAddressId(firstIndex), address)
         }
       }
     }
@@ -164,7 +164,7 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[CountryOptions].to(countryOptions),
         bind[AuditService].toInstance(fakeAuditService)
