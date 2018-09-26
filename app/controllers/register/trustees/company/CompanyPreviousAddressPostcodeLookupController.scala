@@ -17,7 +17,7 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, DataCacheConnector}
+import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
@@ -35,7 +35,7 @@ import viewmodels.address.PostcodeLookupViewModel
 class CompanyPreviousAddressPostcodeLookupController @Inject()(
                                                                 val appConfig: FrontendAppConfig,
                                                                 override val messagesApi: MessagesApi,
-                                                                val cacheConnector: DataCacheConnector,
+                                                                val cacheConnector: UserAnswersCacheConnector,
                                                                 @TrusteesCompany val navigator: Navigator,
                                                                 authenticate: AuthAction,
                                                                 getData: DataRetrievalAction,

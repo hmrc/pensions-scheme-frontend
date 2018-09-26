@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.SchemeDetailsFormProvider
@@ -42,7 +42,7 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
   val formProvider = new SchemeDetailsFormProvider()
   val form = formProvider()
 
-  object FakeNameMatchingFactory extends NameMatchingFactory(FakeDataCacheConnector, ApplicationCrypto) {
+  object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, ApplicationCrypto) {
     override def nameMatching(schemeName: String)
                              (implicit request: OptionalDataRequest[AnyContent],
                               ec: ExecutionContext,
@@ -55,7 +55,7 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
     new SchemeDetailsController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

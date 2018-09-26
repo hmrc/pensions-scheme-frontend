@@ -16,7 +16,7 @@
 
 package utils
 
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import javax.inject.Inject
 import models.PSAName
 import models.requests.OptionalDataRequest
@@ -30,7 +30,7 @@ import utils.annotations.PSANameCache
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactory @Inject()(
-                                     @PSANameCache val pSANameCacheConnector: DataCacheConnector,
+                                     @PSANameCache val pSANameCacheConnector: UserAnswersCacheConnector,
                                      crypto: ApplicationCrypto
                                    ) {
   private def retrievePSAName(implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] = {

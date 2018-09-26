@@ -17,7 +17,7 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
@@ -36,7 +36,7 @@ import scala.util.Failure
 
 class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
-                                        cacheConnector: DataCacheConnector,
+                                        cacheConnector: UserAnswersCacheConnector,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction) extends FrontendController with I18nSupport with Retrievals {

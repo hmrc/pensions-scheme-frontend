@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.OtherDirectorsFormProvider
@@ -62,7 +62,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
     new OtherDirectorsController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

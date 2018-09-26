@@ -15,7 +15,7 @@
  */
 
 import com.google.inject.AbstractModule
-import connectors.{DataCacheConnector, PSANameCacheConnector}
+import connectors.{UserAnswersCacheConnector, PSANameCacheConnector}
 import navigators._
 import utils.annotations.{EstablishersPartner, _}
 import utils.Navigator
@@ -25,7 +25,7 @@ class PODSModule extends AbstractModule {
   //scalastyle:off method.length
   override def configure(): Unit = {
 
-    bind(classOf[DataCacheConnector])
+    bind(classOf[UserAnswersCacheConnector])
       .annotatedWith(classOf[PSANameCache])
       .to(classOf[PSANameCacheConnector])
 

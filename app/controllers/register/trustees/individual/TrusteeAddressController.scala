@@ -18,7 +18,7 @@ package controllers.register.trustees.individual
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes.TrusteeAddressController
@@ -38,7 +38,7 @@ import viewmodels.address.ManualAddressViewModel
 class TrusteeAddressController @Inject()(
                                           val appConfig: FrontendAppConfig,
                                           val messagesApi: MessagesApi,
-                                          val dataCacheConnector: DataCacheConnector,
+                                          val dataCacheConnector: UserAnswersCacheConnector,
                                           @TrusteesIndividual val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,

@@ -19,7 +19,7 @@ package controllers.address
 import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import forms.address.AddressYearsFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
@@ -48,7 +48,7 @@ object AddressYearsControllerSpec {
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
-                                  override val cacheConnector: DataCacheConnector,
+                                  override val cacheConnector: UserAnswersCacheConnector,
                                   override val navigator: Navigator,
                                   formProvider: AddressYearsFormProvider
                                 ) extends AddressYearsController {
@@ -131,10 +131,10 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
 
       import play.api.inject._
 
-      val cacheConnector = mock[DataCacheConnector]
+      val cacheConnector = mock[UserAnswersCacheConnector]
 
       running(_.overrides(
-        bind[DataCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>

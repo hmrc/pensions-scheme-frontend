@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.AddressListController
@@ -36,7 +36,7 @@ import scala.concurrent.Future
 
 class IndividualAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
-                                                override val cacheConnector: DataCacheConnector,
+                                                override val cacheConnector: UserAnswersCacheConnector,
                                                 @TrusteesIndividual override val navigator: Navigator,
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,

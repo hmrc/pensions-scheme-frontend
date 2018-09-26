@@ -17,7 +17,7 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.BenefitsFormProvider
@@ -36,7 +36,7 @@ import scala.concurrent.Future
 
 class BenefitsController @Inject()(appConfig: FrontendAppConfig,
                                    override val messagesApi: MessagesApi,
-                                   dataCacheConnector: DataCacheConnector,
+                                   dataCacheConnector: UserAnswersCacheConnector,
                                    @Register navigator: Navigator,
                                    authenticate: AuthAction,
                                    getData: DataRetrievalAction,

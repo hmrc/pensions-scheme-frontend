@@ -17,7 +17,7 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.partnership.routes
 import identifiers.Identifier
 import identifiers.register.establishers.partnership._
@@ -55,8 +55,8 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
 
   "EstablishersCompanyNavigator when restrict-establisher toggle is off" must {
     appRunning()
-    val navigator = new EstablishersPartnershipNavigator(FakeDataCacheConnector, frontendAppConfig)
-    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routes, dataDescriber)
+    val navigator = new EstablishersPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 

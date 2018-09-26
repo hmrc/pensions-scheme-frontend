@@ -17,7 +17,7 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.Identifier
 import identifiers.register.establishers.company.director._
@@ -53,7 +53,7 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
 
   navigator.getClass.getSimpleName must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routes(), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 
@@ -61,7 +61,7 @@ class EstablishersCompanyDirectorNavigatorSpec extends SpecBase with NavigatorBe
 
 object EstablishersCompanyDirectorNavigatorSpec extends OptionValues {
 
-  private val navigator = new EstablishersCompanyDirectorNavigator(FakeDataCacheConnector)
+  private val navigator = new EstablishersCompanyDirectorNavigator(FakeUserAnswersCacheConnector)
   private val emptyAnswers = UserAnswers(Json.obj())
   val establisherIndex = Index(0)
   val directorIndex = Index(0)

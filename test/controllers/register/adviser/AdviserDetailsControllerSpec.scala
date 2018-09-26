@@ -16,7 +16,7 @@
 
 package controllers.register.adviser
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.AdviserDetailsFormProvider
@@ -41,7 +41,7 @@ class AdviserDetailsControllerSpec extends ControllerSpecBase {
   val phone = "01234567890"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AdviserDetailsController =
-    new AdviserDetailsController(frontendAppConfig, messagesApi, FakeDataCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
+    new AdviserDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = adviserDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString

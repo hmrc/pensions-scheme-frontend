@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership.partner
 
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.PersonDetailsFormProvider
@@ -48,7 +48,7 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
     new PartnerDetailsController(
       frontendAppConfig,
       messagesApi,
-      mockDataCacheConnector,
+      mockUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
@@ -108,7 +108,7 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
         )
       )
 
-      when(mockDataCacheConnector.save(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+      when(mockUserAnswersCacheConnector.save(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
 
       val result = controller().onSubmit(NormalMode, firstEstablisherIndex, firstPartnerIndex)(postRequest)
       status(result) mustBe SEE_OTHER
@@ -173,7 +173,7 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
         )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val userAnswers = UserAnswers(validData)
-      when(mockDataCacheConnector.save(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
+      when(mockUserAnswersCacheConnector.save(any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(validData))
       when(mockSectionComplete.setCompleteFlag(eqTo(IsEstablisherCompleteId(0)),
         eqTo(userAnswers), eqTo(false))(any(), any(), any())).thenReturn(Future.successful(userAnswers))
 
@@ -195,7 +195,7 @@ object PartnerDetailsControllerSpec extends MockitoSugar {
   val invalidIndex: Index = Index(10)
 
   val partnershipName: String = "test partnership name"
-  val mockDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
+  val mockUserAnswersCacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
   val mockSectionComplete: SectionComplete = mock[SectionComplete]
 
   val day: Int = LocalDate.now().getDayOfMonth

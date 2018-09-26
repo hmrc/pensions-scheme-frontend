@@ -16,7 +16,7 @@
 
 package controllers.register.trustees.individual
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.individual.TrusteeNinoFormProvider
@@ -72,7 +72,7 @@ class TrusteeNinoControllerSpec extends ControllerSpecBase {
       val result = controller().onSubmit(mode, index)(request)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verify[Nino, TrusteeNinoId](TrusteeNinoId(index), Nino.Yes(nino))
+      FakeUserAnswersCacheConnector.verify[Nino, TrusteeNinoId](TrusteeNinoId(index), Nino.Yes(nino))
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
@@ -122,7 +122,7 @@ object TrusteeNinoControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       fakeNavigator,
-      FakeDataCacheConnector
+      FakeUserAnswersCacheConnector
     )
 
   private def viewAsString(form: Form[Nino] = form) =

@@ -16,7 +16,7 @@
 
 package controllers.register.establishers
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
@@ -129,7 +129,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
     new AddEstablisherController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

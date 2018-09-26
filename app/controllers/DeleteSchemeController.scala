@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.DeleteSchemeFormProvider
 import identifiers.register.SchemeDetailsId
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class DeleteSchemeController @Inject()(
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
+                                        dataCacheConnector: UserAnswersCacheConnector,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,

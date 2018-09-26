@@ -17,7 +17,7 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import identifiers.register.trustees.individual._
 import models._
 import play.api.libs.json.Json
@@ -47,7 +47,7 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   navigator.getClass.getSimpleName must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routes(), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 
@@ -55,7 +55,7 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
 object TrusteesIndividualNavigatorSpec {
 
-  private val navigator = new TrusteesIndividualNavigator(FakeDataCacheConnector)
+  private val navigator = new TrusteesIndividualNavigator(FakeUserAnswersCacheConnector)
 
   private val emptyAnswers = UserAnswers(Json.obj())
   val firstIndex = Index(0)

@@ -18,7 +18,7 @@ package controllers.register.establishers.company.director
 
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
+import connectors.{AddressLookupConnector, UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -85,13 +85,13 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
     "render postcodeLookup from GET request" in {
       val call: Call = routes.DirectorAddressPostcodeLookupController.onPageLoad(NormalMode, estIndex, dirIndex)
 
-      val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
+      val cacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
       val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[DataCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
@@ -128,7 +128,7 @@ class DirectorAddressPostcodeLookupControllerSpec extends ControllerSpecBase wit
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[MessagesApi].to(messagesApi),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
         bind[AuthAction].to(FakeAuthAction),

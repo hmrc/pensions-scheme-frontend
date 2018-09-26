@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company.director
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
@@ -59,7 +59,7 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       val result = controller(data).onSubmit(establisherIndex, directorIndex)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verify(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true))
+      FakeUserAnswersCacheConnector.verify(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true))
     }
 
     "redirect to the next page on a successful POST" in {
@@ -142,7 +142,7 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
     new ConfirmDeleteDirectorController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

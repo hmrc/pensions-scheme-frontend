@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import connectors.{DataCacheConnector, FakeDataCacheConnector}
+import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -51,7 +51,7 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
 
   def controller(
                   dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
-                  dataCacheConnector: DataCacheConnector = FakeDataCacheConnector
+                  dataCacheConnector: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
                 ): InsurerAddressListController =
     new InsurerAddressListController(
       frontendAppConfig, messagesApi,
@@ -133,11 +133,11 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
     "update the country of the chosen address to `GB`" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
-      val result = controller(new FakeDataRetrievalAction(Some(schemeDetails ++ addressObject)), FakeDataCacheConnector)
+      val result = controller(new FakeDataRetrievalAction(Some(schemeDetails ++ addressObject)), FakeUserAnswersCacheConnector)
         .onSubmit(NormalMode)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      FakeDataCacheConnector.verify(InsurerAddressListId, addresses.head.copy(country = Some("GB")))
+      FakeUserAnswersCacheConnector.verify(InsurerAddressListId, addresses.head.copy(country = Some("GB")))
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

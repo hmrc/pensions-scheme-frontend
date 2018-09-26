@@ -139,9 +139,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
 
   case class FakePsaNameCacheConnector(psaName: JsValue) extends PSANameCacheConnector(
     frontendAppConfig,
-    mock[WSClient],
-    injector.instanceOf[ApplicationCrypto]
-  ) with FakeDataCacheConnector {
+    mock[WSClient]
+  ) with FakeUserAnswersCacheConnector {
     override def fetch(cacheId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] = Future.successful(Some(psaName))
 
     override def upsert(cacheId: String, value: JsValue)
@@ -163,7 +162,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,

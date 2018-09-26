@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
@@ -61,7 +61,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     new CompanyUniqueTaxReferenceController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,

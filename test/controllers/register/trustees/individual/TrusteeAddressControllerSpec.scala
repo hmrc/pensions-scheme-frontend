@@ -19,7 +19,7 @@ package controllers.register.trustees.individual
 import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import config.FrontendAppConfig
-import connectors.{DataCacheConnector, FakeDataCacheConnector}
+import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerBehaviours
 import identifiers.register.trustees.TrusteesId
@@ -58,7 +58,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
     .overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
       bind[Navigator].qualifiedWith(classOf[TrusteesIndividual]).toInstance(FakeNavigator),
-      bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+      bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
       bind[AuthAction].to(FakeAuthAction),
       bind[DataRetrievalAction].to(retrieval),
       bind[CountryOptions].to(countryOptions)
@@ -95,7 +95,7 @@ class TrusteeAddressControllerSpec extends ControllerBehaviours {
     running(_.overrides(
       bind[FrontendAppConfig].to(frontendAppConfig),
       bind[Navigator].toInstance(FakeNavigator),
-      bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+      bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
       bind[AuthAction].to(FakeAuthAction),
       bind[CountryOptions].to(countryOptions),
       bind[AuditService].toInstance(fakeAuditService)

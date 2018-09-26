@@ -16,7 +16,7 @@
 
 package utils
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
 import play.api.mvc.AnyContent
@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FakeSectionComplete extends SectionComplete with FakeDataCacheConnector {
+object FakeSectionComplete extends SectionComplete with FakeUserAnswersCacheConnector {
 
   override def setCompleteFlag(id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean = true)
                               (implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers] = {

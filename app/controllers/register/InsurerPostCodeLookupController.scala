@@ -17,7 +17,7 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, DataCacheConnector}
+import connectors.{AddressLookupConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.address.PostcodeLookupController
 import forms.address.PostCodeLookupFormProvider
@@ -33,7 +33,7 @@ import viewmodels.address.PostcodeLookupViewModel
 
 class InsurerPostCodeLookupController @Inject()(val appConfig: FrontendAppConfig,
                                                 override val messagesApi: MessagesApi,
-                                                val cacheConnector: DataCacheConnector,
+                                                val cacheConnector: UserAnswersCacheConnector,
                                                 val addressLookupConnector: AddressLookupConnector,
                                                 @Register val navigator: Navigator,
                                                 authenticate: AuthAction,

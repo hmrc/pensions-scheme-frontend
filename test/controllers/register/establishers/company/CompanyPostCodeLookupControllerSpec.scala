@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
+import connectors.{AddressLookupConnector, UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -82,12 +82,12 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
 
     "render postcodeLookup from GET request" in {
 
-      val cacheConnector: DataCacheConnector = mock[DataCacheConnector]
+      val cacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
       val addressConnector: AddressLookupConnector = mock[AddressLookupConnector]
 
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
-        bind[DataCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
         bind[AddressLookupConnector].toInstance(addressConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany)
@@ -122,7 +122,7 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[MessagesApi].to(messagesApi),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompany),

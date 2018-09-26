@@ -17,7 +17,7 @@
 package controllers.register.establishers.company
 
 import base.CSRFRequest
-import connectors.{DataCacheConnector, FakeDataCacheConnector}
+import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions.{AuthAction, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.address.AddressListFormProvider
@@ -71,7 +71,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))))
@@ -91,7 +91,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))))
@@ -107,7 +107,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
         val request = addToken(FakeRequest(routes.CompanyAddressListController.onPageLoad(NormalMode, Index(0))))
@@ -123,7 +123,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dataRetrievalAction)
       )) { implicit app =>
         val request =
@@ -144,7 +144,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(dontGetAnyData)
       )) { implicit app =>
         val request =
@@ -165,7 +165,7 @@ class CompanyAddressListControllerSpec extends ControllerSpecBase with CSRFReque
 
       running(_.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].toInstance(getEmptyData)
       )) { implicit app =>
         val request =

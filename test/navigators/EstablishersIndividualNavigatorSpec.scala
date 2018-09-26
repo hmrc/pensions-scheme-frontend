@@ -17,7 +17,7 @@
 package navigators
 
 import base.SpecBase
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
@@ -34,7 +34,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
 
   import EstablishersIndividualNavigatorSpec._
 
-  private val navigator = new EstablishersIndividualNavigator(frontendAppConfig, FakeDataCacheConnector)
+  private val navigator = new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector)
 
   private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
@@ -55,7 +55,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeDataCacheConnector, routes, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
   }
 }
 

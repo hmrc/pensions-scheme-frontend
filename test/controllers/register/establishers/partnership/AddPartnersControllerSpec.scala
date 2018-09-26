@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.AddPartnersFormProvider
@@ -54,7 +54,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
     new AddPartnersController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       navigator,
       FakeAuthAction,
       dataRetrievalAction,
@@ -149,7 +149,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       controller(getRelevantData).onSubmit(establisherIndex)(postRequest)
 
-      FakeDataCacheConnector.verifyNot(AddPartnersId(firstIndex))
+      FakeUserAnswersCacheConnector.verifyNot(AddPartnersId(firstIndex))
     }
 
     "not save the answer when partners exist and valid data is submitted" in {
@@ -157,7 +157,7 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
       controller(getRelevantData).onSubmit(establisherIndex)(postRequest)
 
-      FakeDataCacheConnector.verifyNot(AddPartnersId(firstIndex))
+      FakeUserAnswersCacheConnector.verifyNot(AddPartnersId(firstIndex))
     }
 
     "set the user answer when partners exist and valid data is submitted" in {

@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -74,7 +74,7 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
     new CompanyPreviousAddressListController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl

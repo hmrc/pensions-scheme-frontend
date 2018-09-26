@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.partnership
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.establishers.partnership.PartnershipUniqueTaxReferenceFormProvider
@@ -61,7 +61,7 @@ class PartnershipUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     new PartnershipUniqueTaxReferenceController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       FakeAuthAction,
       new FakeNavigator(desiredRoute = onwardRoute),
       dataRetrievalAction,

@@ -16,7 +16,7 @@
 
 package controllers.register.trustees
 
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.TypedIdentifier
@@ -82,21 +82,21 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       val result = controller(testData(companyId)(companyTrustee)).onSubmit(0, Company)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verify(companyId, companyTrustee.copy(isDeleted = true))
+      FakeUserAnswersCacheConnector.verify(companyId, companyTrustee.copy(isDeleted = true))
     }
 
     "remove the trustee in a POST request for an individual trustee" in {
       val result = controller(testData(individualId)(individualTrustee)).onSubmit(0, Individual)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verify(individualId, individualTrustee.copy(isDeleted = true))
+      FakeUserAnswersCacheConnector.verify(individualId, individualTrustee.copy(isDeleted = true))
     }
 
     "remove the trustee in a POST request for a partnership trustee" in {
       val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(0, Partnership)(fakeRequest)
 
       status(result) mustBe SEE_OTHER
-      FakeDataCacheConnector.verify(partnershipId, partnershipTrustee.copy(isDeleted = true))
+      FakeUserAnswersCacheConnector.verify(partnershipId, partnershipTrustee.copy(isDeleted = true))
     }
 
     "redirect to the next page following a POST request" in {
@@ -158,7 +158,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
-      FakeDataCacheConnector
+      FakeUserAnswersCacheConnector
     )
 
   private def viewAsString(trusteeName: String, trusteeKind: TrusteeKind) =

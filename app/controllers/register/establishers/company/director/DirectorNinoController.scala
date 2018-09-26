@@ -17,7 +17,7 @@
 package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.company.director.DirectorNinoFormProvider
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class DirectorNinoController @Inject()(
                                         appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
+                                        dataCacheConnector: UserAnswersCacheConnector,
                                         @EstablishersCompanyDirector navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,

@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.company
 
-import connectors.{AddressLookupConnector, FakeDataCacheConnector}
+import connectors.{AddressLookupConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -87,7 +87,7 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
     new CompanyPreviousAddressPostcodeLookupController(
       frontendAppConfig,
       messagesApi,
-      FakeDataCacheConnector,
+      FakeUserAnswersCacheConnector,
       fakeAddressLookupConnector,
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,

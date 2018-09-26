@@ -18,14 +18,14 @@ package navigators
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import identifiers.UserResearchDetailsId
 import identifiers.register._
 import models.{CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
-class RegisterNavigator @Inject()(val dataCacheConnector: DataCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {

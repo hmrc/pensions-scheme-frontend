@@ -17,7 +17,7 @@
 package controllers.register.establishers.partnership
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.establishers.partnership.PartnershipUniqueTaxReferenceFormProvider
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class PartnershipUniqueTaxReferenceController @Inject()(
                                                          appConfig: FrontendAppConfig,
                                                          override val messagesApi: MessagesApi,
-                                                         dataCacheConnector: DataCacheConnector,
+                                                         dataCacheConnector: UserAnswersCacheConnector,
                                                          authenticate: AuthAction,
                                                          @EstablisherPartnership navigator: Navigator,
                                                          getData: DataRetrievalAction,

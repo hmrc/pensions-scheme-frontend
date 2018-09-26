@@ -17,7 +17,7 @@
 package controllers.register.trustees.partnership
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.VatController
 import controllers.actions._
 import forms.VatFormProvider
@@ -34,7 +34,7 @@ import viewmodels.{Message, VatViewModel}
 class PartnershipVatController @Inject()(
                                           override val appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
-                                          override val cacheConnector: DataCacheConnector,
+                                          override val cacheConnector: UserAnswersCacheConnector,
                                           @TrusteesPartnership override val navigator: Navigator,
                                           authenticate: AuthAction,
                                           getData: DataRetrievalAction,

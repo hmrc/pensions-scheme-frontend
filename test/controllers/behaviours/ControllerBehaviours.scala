@@ -17,7 +17,7 @@
 package controllers.behaviours
 
 import base.CSRFRequest
-import connectors.FakeDataCacheConnector
+import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import forms.address.AddressFormProvider
 import identifiers.TypedIdentifier
@@ -111,7 +111,7 @@ trait ControllerBehaviours extends ControllerSpecBase
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeDataCacheConnector.verify(id, address)
+            FakeUserAnswersCacheConnector.verify(id, address)
 
         }
       }

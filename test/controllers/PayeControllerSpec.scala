@@ -19,7 +19,7 @@ package controllers
 import akka.stream.Materializer
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import forms.PayeFormProvider
 import identifiers.TypedIdentifier
 import models.requests.DataRequest
@@ -110,10 +110,10 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
 
       import play.api.inject._
 
-      val cacheConnector = mock[DataCacheConnector]
+      val cacheConnector = mock[UserAnswersCacheConnector]
 
       running(_.overrides(
-        bind[DataCacheConnector].toInstance(cacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(cacheConnector),
         bind[Navigator].toInstance(FakeNavigator)
       )) {
         app =>
@@ -169,7 +169,7 @@ object PayeControllerSpec {
   class TestController @Inject()(
                                   override val appConfig: FrontendAppConfig,
                                   override val messagesApi: MessagesApi,
-                                  override val cacheConnector: DataCacheConnector,
+                                  override val cacheConnector: UserAnswersCacheConnector,
                                   override val navigator: Navigator,
                                   formProvider: PayeFormProvider
                                 ) extends PayeController {

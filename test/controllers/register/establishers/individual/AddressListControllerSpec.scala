@@ -16,7 +16,7 @@
 
 package controllers.register.establishers.individual
 
-import connectors.{DataCacheConnector, FakeDataCacheConnector}
+import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -52,7 +52,7 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
 
   def controller(
                   dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher,
-                  dataCacheConnector: DataCacheConnector = FakeDataCacheConnector
+                  dataCacheConnector: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
                 ): AddressListController =
     new AddressListController(
       frontendAppConfig, messagesApi,
@@ -132,11 +132,11 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
     "update the country of the chosen address to `GB`" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody("value" -> "0")
 
-      val result = controller(new FakeDataRetrievalAction(Some(validData)), FakeDataCacheConnector)
+      val result = controller(new FakeDataRetrievalAction(Some(validData)), FakeUserAnswersCacheConnector)
         .onSubmit(NormalMode, firstIndex)(postRequest)
 
       status(result) mustEqual SEE_OTHER
-      FakeDataCacheConnector.verify(AddressListId(firstIndex), addresses.head.copy(country = Some("GB")))
+      FakeUserAnswersCacheConnector.verify(AddressListId(firstIndex), addresses.head.copy(country = Some("GB")))
     }
 
     "return a Bad Request and errors when no data is submitted" in {

@@ -17,7 +17,7 @@
 package controllers.register.trustees.individual
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class TrusteePreviousAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
                                                      @TrusteesIndividual override val navigator: Navigator,
-                                                     override val cacheConnector: DataCacheConnector,
+                                                     override val cacheConnector: UserAnswersCacheConnector,
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction) extends AddressListController with Retrievals with I18nSupport {

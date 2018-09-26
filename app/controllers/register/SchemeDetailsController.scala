@@ -17,7 +17,7 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.SchemeDetailsFormProvider
 import identifiers.register.SchemeDetailsId
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 
 class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
-                                        dataCacheConnector: DataCacheConnector,
+                                        dataCacheConnector: UserAnswersCacheConnector,
                                         @Register navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,

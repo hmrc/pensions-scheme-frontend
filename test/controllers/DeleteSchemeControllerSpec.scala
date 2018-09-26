@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.DeleteSchemeFormProvider
 import org.mockito.Matchers.any
@@ -35,14 +35,14 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar {
   val formProvider = new DeleteSchemeFormProvider()
   val form: Form[Boolean] = formProvider()
   val schemeName = "Test Scheme Name"
-  val fakeDataCacheConnector: DataCacheConnector = mock[DataCacheConnector]
+  val fakeUserAnswersCacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
   override lazy val app = new GuiceApplicationBuilder().configure(
     "features.useManagePensionsFrontend" -> true
   ).build()
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): DeleteSchemeController =
-    new DeleteSchemeController(frontendAppConfig, messagesApi, fakeDataCacheConnector, FakeAuthAction,
+    new DeleteSchemeController(frontendAppConfig, messagesApi, fakeUserAnswersCacheConnector, FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = deleteScheme(frontendAppConfig, form, schemeName)(fakeRequest, messages).toString
@@ -58,13 +58,13 @@ class DeleteSchemeControllerSpec extends ControllerSpecBase with MockitoSugar {
 
     "remove all is called to delete user answers when user answers Yes" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      when(fakeDataCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
+      when(fakeUserAnswersCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
 
       val result = controller().onSubmit(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.WhatYouWillNeedController.onPageLoad().url)
-      verify(fakeDataCacheConnector, times(1)).removeAll(any())(any(), any())
+      verify(fakeUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
     }
 
     "redirect to the overview page when user answers No" in {

@@ -20,7 +20,7 @@ import audit.testdoubles.StubSuccessfulAuditService
 import audit.{AddressAction, AddressEvent, AuditService}
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{DataCacheConnector, FakeDataCacheConnector}
+import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressFormProvider
@@ -73,7 +73,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(retrieval),
         bind[CountryOptions].to(countryOptions)
@@ -117,7 +117,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
         running(_.overrides(
           bind[FrontendAppConfig].to(frontendAppConfig),
           bind[MessagesApi].to(messagesApi),
-          bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+          bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
           bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardCall)),
           bind[AuthAction].to(FakeAuthAction),
           bind[DataRetrievalAction].to(retrieval),
@@ -147,7 +147,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
             status(result) must be(SEE_OTHER)
             redirectLocation(result).value mustEqual onwardCall.url
 
-            FakeDataCacheConnector.verify(DirectorPreviousAddressId(establisherIndex, directorIndex), address)
+            FakeUserAnswersCacheConnector.verify(DirectorPreviousAddressId(establisherIndex, directorIndex), address)
         }
       }
     }
@@ -165,7 +165,7 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[CountryOptions].to(countryOptions),
         bind[AuditService].toInstance(fakeAuditService)

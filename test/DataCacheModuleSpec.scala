@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import connectors.{DataCacheConnector, MicroserviceCacheConnector, MongoCacheConnector}
+import connectors.{MicroserviceCacheConnector, UserAnswersCacheConnector}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.inject._
 import play.api.{Configuration, Environment}
@@ -23,40 +23,14 @@ class DataCacheModuleSpec extends WordSpec with MustMatchers with OptionValues {
 
   ".bindings" must {
 
-    "bind the `MongoCacheConnector` when configuration is set to `public`" in {
-
-      val config = Configuration("journey-cache" -> "public")
-      val bindings = new DataCacheModule().bindings(Environment.simple(), config)
-      val binding = bind[DataCacheConnector].to[MongoCacheConnector]
-
-      bindings.head.target.value mustEqual binding.target.value
-    }
-
-    "bind the `MicroserviceCacheConnector` when the configuration is set to `protected`" in {
-
-      val config = Configuration("journey-cache" -> "protected")
-      val bindings = new DataCacheModule().bindings(Environment.simple(), config)
-      val binding = bind[DataCacheConnector].to[MicroserviceCacheConnector]
-
-      bindings.head.target.value mustEqual binding.target.value
-    }
-
     "bind the `MicroserviceCacheConnector` when no configuration value is given" in {
 
       val config = Configuration()
       val bindings = new DataCacheModule().bindings(Environment.simple(), config)
-      val binding = bind[DataCacheConnector].to[MicroserviceCacheConnector]
+      val binding = bind[UserAnswersCacheConnector].to[MicroserviceCacheConnector]
 
       bindings.head.target.value mustEqual binding.target.value
     }
 
-    "bind the `MicroserviceCacheConnector` when the configuration is set to anything else" in {
-
-      val config = Configuration("journey-cache" -> "foobar")
-      val bindings = new DataCacheModule().bindings(Environment.simple(), config)
-      val binding = bind[DataCacheConnector].to[MicroserviceCacheConnector]
-
-      bindings.head.target.value mustEqual binding.target.value
-    }
   }
 }

@@ -17,12 +17,12 @@
 package navigators
 
 import com.google.inject.Inject
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import identifiers.register.adviser._
 import models.{CheckMode, NormalMode}
 import utils.Navigator
 
-class AdviserNavigator @Inject()(val dataCacheConnector: DataCacheConnector) extends Navigator {
+class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {

@@ -17,14 +17,14 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.register.establishers.company.director.routes
 import identifiers.register.establishers.company.director._
 import models.{AddressYears, CheckMode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 @Singleton
-class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: DataCacheConnector) extends Navigator {
+class EstablishersCompanyDirectorNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
 
   private def checkYourAnswers(establisherIndex: Int, directorIndex: Int)(answers: UserAnswers): Option[NavigateTo] =
     NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(establisherIndex, directorIndex))

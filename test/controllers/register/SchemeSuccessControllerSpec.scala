@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.register.{SchemeDetailsId, SubmissionReferenceNumberId}
@@ -43,7 +43,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   val submissionReferenceNumber = "XX123456789132"
 
-  private val fakeDataCacheConnector = mock[DataCacheConnector]
+  private val fakeUserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
   val validData: JsObject = Json.obj(
     SchemeDetailsId.toString -> Json.toJson(SchemeDetails("test scheme name", SchemeType.SingleTrust)),
@@ -55,7 +55,7 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
     new SchemeSuccessController(
       frontendAppConfig,
       messagesApi,
-      fakeDataCacheConnector,
+      fakeUserAnswersCacheConnector,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl
@@ -75,12 +75,12 @@ class SchemeSuccessControllerSpec extends ControllerSpecBase with MockitoSugar {
   "SchemeSuccess Controller" must {
 
     "return OK and the correct view for a GET" in {
-      when(fakeDataCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
+      when(fakeUserAnswersCacheConnector.removeAll(any())(any(), any())).thenReturn(Future.successful(Ok))
 
       val result = controller().onPageLoad(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
-      verify(fakeDataCacheConnector, times(1)).removeAll(any())(any(), any())
+      verify(fakeUserAnswersCacheConnector, times(1)).removeAll(any())(any(), any())
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {

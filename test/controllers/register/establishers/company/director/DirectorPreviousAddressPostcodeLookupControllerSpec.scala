@@ -18,7 +18,7 @@ package controllers.register.establishers.company.director
 
 import base.CSRFRequest
 import config.FrontendAppConfig
-import connectors.{AddressLookupConnector, DataCacheConnector, FakeDataCacheConnector}
+import connectors.{AddressLookupConnector, UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
@@ -58,7 +58,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
 
   val form = formProvider()
   val fakeAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
-  val fakeCacheConnector: DataCacheConnector = mock[DataCacheConnector]
+  val fakeCacheConnector: UserAnswersCacheConnector = mock[UserAnswersCacheConnector]
 
 
   lazy val viewmodel = PostcodeLookupViewModel(
@@ -78,7 +78,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
       running(_.overrides(
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[Navigator].toInstance(FakeNavigator),
-        bind[DataCacheConnector].toInstance(fakeCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(fakeCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector)
@@ -116,7 +116,7 @@ class DirectorPreviousAddressPostcodeLookupControllerSpec extends ControllerSpec
         bind[FrontendAppConfig].to(frontendAppConfig),
         bind[MessagesApi].to(messagesApi),
         bind[Navigator].toInstance(new FakeNavigator(desiredRoute = onwardRoute)),
-        bind[DataCacheConnector].toInstance(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector),
         bind[AddressLookupConnector].toInstance(fakeAddressLookupConnector),
         bind[AuthAction].to(FakeAuthAction),
         bind[DataRetrievalAction].to(getMandatoryEstablisherCompanyDirector),

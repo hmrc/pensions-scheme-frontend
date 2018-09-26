@@ -17,7 +17,7 @@
 package controllers.register.trustees.company
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.address.AddressYearsFormProvider
 import identifiers.register.trustees.company.{CompanyAddressYearsId, CompanyDetailsId}
@@ -35,7 +35,7 @@ class CompanyAddressYearsController @Inject()(
                                                override val appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
                                                @TrusteesCompany override val navigator: Navigator,
-                                               override val cacheConnector: DataCacheConnector,
+                                               override val cacheConnector: UserAnswersCacheConnector,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,

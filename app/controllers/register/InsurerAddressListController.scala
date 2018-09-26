@@ -17,7 +17,7 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressListController
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class InsurerAddressListController @Inject()(override val appConfig: FrontendAppConfig,
                                              override val messagesApi: MessagesApi,
-                                             override val cacheConnector: DataCacheConnector,
+                                             override val cacheConnector: UserAnswersCacheConnector,
                                              @Register override val navigator: Navigator,
                                              authenticate: AuthAction,
                                              getData: DataRetrievalAction,

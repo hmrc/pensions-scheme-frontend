@@ -17,7 +17,7 @@
 package controllers.register.adviser
 
 import base.CSRFRequest
-import connectors.{DataCacheConnector, FakeDataCacheConnector}
+import connectors.{UserAnswersCacheConnector, FakeUserAnswersCacheConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.address.AddressListFormProvider
@@ -161,7 +161,7 @@ object AdviserAddressListControllerSpec extends ControllerSpecBase {
     running(
       _.overrides(
         bind[AuthAction].to(FakeAuthAction),
-        bind[DataCacheConnector].to(FakeDataCacheConnector),
+        bind[UserAnswersCacheConnector].to(FakeUserAnswersCacheConnector),
         bind[DataRetrievalAction].to(data),
         bind(classOf[Navigator]).qualifiedWith(classOf[Adviser]).to(new FakeNavigator(onwardRoute))
       )

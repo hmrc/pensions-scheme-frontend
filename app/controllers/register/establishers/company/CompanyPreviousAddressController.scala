@@ -18,7 +18,7 @@ package controllers.register.establishers.company
 
 import audit.AuditService
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
@@ -37,7 +37,7 @@ import viewmodels.address.ManualAddressViewModel
 class CompanyPreviousAddressController @Inject()(
                                                   val appConfig: FrontendAppConfig,
                                                   val messagesApi: MessagesApi,
-                                                  val dataCacheConnector: DataCacheConnector,
+                                                  val dataCacheConnector: UserAnswersCacheConnector,
                                                   @EstablishersCompany val navigator: Navigator,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,

@@ -17,7 +17,7 @@
 package controllers.register.establishers.company.director
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.address.AddressYearsController
@@ -34,7 +34,7 @@ import viewmodels.address.AddressYearsViewModel
 
 class DirectorAddressYearsController @Inject()(
                                                 val appConfig: FrontendAppConfig,
-                                                val cacheConnector: DataCacheConnector,
+                                                val cacheConnector: UserAnswersCacheConnector,
                                                 @EstablishersCompanyDirector val navigator: Navigator,
                                                 val messagesApi: MessagesApi,
                                                 authenticate: AuthAction,

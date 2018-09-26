@@ -17,7 +17,7 @@
 package controllers.register.establishers.individual
 
 import config.FrontendAppConfig
-import connectors.DataCacheConnector
+import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class EstablisherDetailsController @Inject()(
                                               appConfig: FrontendAppConfig,
                                               override val messagesApi: MessagesApi,
-                                              dataCacheConnector: DataCacheConnector,
+                                              dataCacheConnector: UserAnswersCacheConnector,
                                               @EstablishersIndividual navigator: Navigator,
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
