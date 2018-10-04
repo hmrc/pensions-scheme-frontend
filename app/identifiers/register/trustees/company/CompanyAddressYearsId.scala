@@ -43,5 +43,7 @@ object CompanyAddressYearsId {
   override lazy val toString: String = "trusteesCompanyAddressYears"
 
   implicit val cya: CheckYourAnswers[CompanyAddressYearsId] =
-    AddressYearsCYA("messages__checkYourAnswers__trustees__company__address_years")()
+    AddressYearsCYA(
+      "messages__checkYourAnswers__trustees__company__address_years",
+      "messages__visuallyhidden__trustee__address_years")()
 }

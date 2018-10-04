@@ -24,7 +24,7 @@ import models.person.PersonDetails
 import models.register._
 import play.api.libs.json.Reads
 import utils.{CountryOptions, DateHelper, UserAnswers}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 import scala.language.implicitConversions
 
@@ -52,6 +52,8 @@ object CheckYourAnswers {
 
   implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]](implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = CompanyDetailsCYA()()
 
+  implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] = ContactDetailsCYA()()
+
   implicit def boolean[I <: TypedIdentifier[Boolean]](implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
@@ -61,7 +63,8 @@ object CheckYourAnswers {
               s"${id.toString}.checkYourAnswersLabel",
               Seq(if (flag) "site.yes" else "site.no"),
               answerIsMessageKey = true,
-              Some(changeUrl)
+              Some(changeUrl),
+              s"messages__visuallyhidden__${id.toString}"
             ))
         }.getOrElse(Seq.empty)
     }
@@ -76,31 +79,38 @@ object CheckYourAnswers {
               "messages__benefits__title",
               Seq(s"messages__benefits__$benefits"),
               answerIsMessageKey = true,
-              Some(changeUrl)
+              Some(changeUrl),
+              "messages__visuallyhidden__benefits"
             )
           )
       }.getOrElse(Seq.empty[AnswerRow])
     }
   }
 
-  implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
-        contactDetails =>
-          Seq(
-            AnswerRow(
-              "messages__common__email",
-              Seq(s"${contactDetails.emailAddress}"),
-              answerIsMessageKey = false,
-              Some(changeUrl)
-            ),
-            AnswerRow(
-              "messages__common__phone",
-              Seq(s"${contactDetails.phoneNumber}"),
-              answerIsMessageKey = false,
-              Some(changeUrl)
-            ))
-      }.getOrElse(Seq.empty[AnswerRow])
+  case class ContactDetailsCYA[I <: TypedIdentifier[ContactDetails]](changeEmailAddress: String = "messages__visuallyhidden__common__email_address",
+                                                                     changePhoneNumber: String = "messages__visuallyhidden__common__phone_number") {
+
+    def apply()(implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+          contactDetails =>
+            Seq(
+              AnswerRow(
+                "messages__common__email",
+                Seq(s"${contactDetails.emailAddress}"),
+                answerIsMessageKey = false,
+                Some(changeUrl),
+                changeEmailAddress
+              ),
+              AnswerRow(
+                "messages__common__phone",
+                Seq(s"${contactDetails.phoneNumber}"),
+                answerIsMessageKey = false,
+                Some(changeUrl),
+                changePhoneNumber
+              ))
+        }.getOrElse(Seq.empty[AnswerRow])
+      }
     }
   }
 
@@ -113,19 +123,22 @@ object CheckYourAnswers {
               "messages__common__cya__name",
               Seq(s"${adviserDetails.adviserName}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              Message("messages__visuallyhidden__common__name", adviserDetails.adviserName)
             ),
             AnswerRow(
               "messages__adviserDetails__email",
               Seq(s"${adviserDetails.emailAddress}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              "messages__visuallyhidden__adviser__email_address"
             ),
             AnswerRow(
               "messages__adviserDetails__phone",
               Seq(s"${adviserDetails.phoneNumber}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              "messages__visuallyhidden__adviser__phone_number"
             ))
       }.getOrElse(Seq.empty[AnswerRow])
     }
@@ -140,13 +153,15 @@ object CheckYourAnswers {
               "messages__common__cya__name",
               Seq(personDetails.fullName),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              Message("messages__visuallyhidden__common__name", personDetails.fullName)
             ),
             AnswerRow(
               "messages__common__dob",
               Seq(DateHelper.formatDate(personDetails.date)),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              Message("messages__visuallyhidden__common__dob", personDetails.fullName)
             ))
       }.getOrElse(Seq.empty[AnswerRow])
     }
@@ -161,7 +176,8 @@ object CheckYourAnswers {
               s"${id.toString}.checkYourAnswersLabel",
               Seq(s"messages__membership__$membership"),
               answerIsMessageKey = true,
-              Some(changeUrl)
+              Some(changeUrl),
+              s"messages__visuallyhidden__${id.toString}"
             )
           )
       }.getOrElse(Seq.empty[AnswerRow])
@@ -176,7 +192,8 @@ object CheckYourAnswers {
             "messages__common__cya__name",
             Seq(partnershipDetails.name),
             answerIsMessageKey = false,
-            Some(changeUrl)
+            Some(changeUrl),
+            Message("messages__visuallyhidden__common__name", partnershipDetails.name)
           )
         )
       } getOrElse Seq.empty[AnswerRow]
@@ -192,7 +209,8 @@ object CheckYourAnswers {
               s"${id.toString}.checkYourAnswersLabel",
               Seq(retrieveStringAnswer(id, string)),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              s"messages__visuallyhidden__${id.toString}"
             ))
         }.getOrElse(Seq.empty[AnswerRow])
     }
@@ -207,13 +225,15 @@ object CheckYourAnswers {
               "messages__partnership__checkYourAnswers__vat",
               Seq("site.yes"),
               answerIsMessageKey = true,
-              Some(changeUrl)
+              Some(changeUrl),
+              "messages__visuallyhidden__partnership__vat_yes_no"
             ),
             AnswerRow(
               "messages__common__cya__vat",
               Seq(vat),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              "messages__visuallyhidden__partnership__vat_number"
             )
           )
           case Vat.No => Seq(
@@ -221,7 +241,8 @@ object CheckYourAnswers {
               "messages__partnership__checkYourAnswers__vat",
               Seq("site.no"),
               answerIsMessageKey = true,
-              Some(changeUrl)
+              Some(changeUrl),
+              "messages__visuallyhidden__partnership__vat_yes_no"
             ))
         } getOrElse Seq.empty[AnswerRow]
     }
@@ -236,13 +257,15 @@ object CheckYourAnswers {
               "messages__partnership__checkYourAnswers__paye",
               Seq("site.yes"),
               answerIsMessageKey = true,
-              Some(changeUrl)
+              Some(changeUrl),
+              "messages__visuallyhidden__partnership__paye_yes_no"
             ),
             AnswerRow(
               "messages__common__cya__paye",
               Seq(paye),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              "messages__visuallyhidden__partnership__paye_number"
             )
           )
           case Paye.No => Seq(
@@ -250,7 +273,8 @@ object CheckYourAnswers {
               "messages__partnership__checkYourAnswers__paye",
               Seq("site.no"),
               answerIsMessageKey = true,
-              Some(changeUrl)
+              Some(changeUrl),
+              "messages__visuallyhidden__partnership__paye_yes_no"
             ))
         } getOrElse Seq.empty[AnswerRow]
     }
@@ -266,7 +290,12 @@ object CheckYourAnswers {
 
 }
 
-case class NinoCYA[I <: TypedIdentifier[Nino]](label: String = "messages__trusteeNino_question_cya_label") {
+case class NinoCYA[I <: TypedIdentifier[Nino]](
+                                                label: String = "messages__trusteeNino_question_cya_label",
+                                                changeHasNino: String = "messages__visuallyhidden__trustee__nino_yes_no",
+                                                changeNino: String = "messages__visuallyhidden__trustee__nino",
+                                                changeNoNino: String = "messages__visuallyhidden__trustee__nino_no"
+                                              ) {
 
   def apply()(implicit rds: Reads[Nino]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -277,26 +306,30 @@ case class NinoCYA[I <: TypedIdentifier[Nino]](label: String = "messages__truste
               label,
               Seq(s"${Nino.Yes}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeHasNino
             ),
             AnswerRow(
               "messages__trusteeNino_nino_cya_label",
               Seq(nino),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeNino
             )
           )
           case Some(Nino.No(reason)) => Seq(
             AnswerRow(
               label,
               Seq(s"${Nino.No}"),
-              answerIsMessageKey = false, Some(changeUrl)
+              answerIsMessageKey = false, Some(changeUrl),
+              changeHasNino
             ),
             AnswerRow(
               "messages__trusteeNino_reason_cya_label",
               Seq(reason),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeNoNino
             ))
           case _ => Seq.empty[AnswerRow]
         }
@@ -305,7 +338,12 @@ case class NinoCYA[I <: TypedIdentifier[Nino]](label: String = "messages__truste
 
 }
 
-case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistrationNumber]](label: String = "messages__company__cya__crn_yes_no") {
+case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistrationNumber]](
+                                                                                          label: String = "messages__company__cya__crn_yes_no",
+                                                                                          changeHasCrn: String = "messages__visuallyhidden__establisher__crn_yes_no",
+                                                                                          changeCrn: String = "messages__visuallyhidden__establisher__crn",
+                                                                                          changeNoCrn: String = "messages__visuallyhidden__establisher__crn_no"
+                                                                                        ) {
 
   def apply()(implicit rds: Reads[CompanyRegistrationNumber]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -317,25 +355,30 @@ case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistration
               label,
               Seq(s"${CompanyRegistrationNumber.Yes}"),
               answerIsMessageKey = true,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeHasCrn
             ),
             AnswerRow(
               "messages__common__crn",
               Seq(s"$crn"),
               answerIsMessageKey = true,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeCrn
             ))
           case Some(CompanyRegistrationNumber.No(reason)) => Seq(
             AnswerRow(
               label,
               Seq(s"${CompanyRegistrationNumber.No}"),
               answerIsMessageKey = true,
-              Some(changeUrl)),
+              Some(changeUrl),
+              changeHasCrn
+            ),
             AnswerRow(
               "messages__company__cya__crn_no_reason",
               Seq(s"$reason"),
               answerIsMessageKey = true,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeNoCrn
             ))
           case _ => Seq.empty[AnswerRow]
         }
@@ -347,7 +390,9 @@ case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistration
 
 case class SchemeDetailsCYA[I <: TypedIdentifier[SchemeDetails]](
                                                                   nameLabel: String = "messages__scheme_details__name_label",
-                                                                  typeLabel: String = "messages__scheme_details__type_legend_short"
+                                                                  changeName: String = "messages__visuallyhidden__scheme_name",
+                                                                  typeLabel: String = "messages__scheme_details__type_legend_short",
+                                                                  changeType: String = "messages__visuallyhidden__scheme_type"
                                                                 ) {
 
   def apply()(implicit rds: Reads[SchemeDetails]): CheckYourAnswers[I] = {
@@ -361,13 +406,15 @@ case class SchemeDetailsCYA[I <: TypedIdentifier[SchemeDetails]](
               nameLabel,
               Seq(s"${schemeDetails.schemeName}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeName
             ),
               AnswerRow(
                 typeLabel,
                 Seq(s"messages__scheme_details__type_${schemeDetails.schemeType}"),
                 answerIsMessageKey = true,
-                Some(changeUrl)
+                Some(changeUrl),
+                changeType
               )
             )
         }.getOrElse(Seq.empty[AnswerRow])
@@ -379,10 +426,15 @@ case class SchemeDetailsCYA[I <: TypedIdentifier[SchemeDetails]](
 
 case class BankDetailsCYA[I <: TypedIdentifier[UKBankDetails]](
                                                                 bankNameLabel: String = "messages__uk_bank_account_details__bank_name",
+                                                                changeBankName: String = "messages__visuallyhidden__uKBankAccount__bank_name",
                                                                 accountNameLabel: String = "messages__uk_bank_account_details__account_name",
+                                                                changeAccountName: String = "messages__visuallyhidden__uKBankAccount__account_name",
                                                                 sortCodeLabel: String = "messages__uk_bank_account_details__sort_code",
+                                                                changeSortCode: String = "messages__visuallyhidden__uKBankAccount__sort_code",
                                                                 accountNumberLabel: String = "messages__uk_bank_account_details__account_number",
-                                                                dateLabel: String = "bankAccountDate.checkYourAnswersLabel"
+                                                                changeAccountNumber: String = "messages__visuallyhidden__uKBankAccount__account_number",
+                                                                dateLabel: String = "bankAccountDate.checkYourAnswersLabel",
+                                                                changeDate: String = "messages__visuallyhidden__uKBankAccount__date_bank_account"
                                                               ) {
 
   def apply()(implicit rds: Reads[UKBankDetails]): CheckYourAnswers[I] = {
@@ -394,31 +446,36 @@ case class BankDetailsCYA[I <: TypedIdentifier[UKBankDetails]](
               bankNameLabel,
               Seq(s"${bankDetails.bankName}"),
               answerIsMessageKey = false,
-              changeUrl = Some(changeUrl)
+              changeUrl = Some(changeUrl),
+              changeBankName
             ),
             AnswerRow(
               accountNameLabel,
               Seq(s"${bankDetails.accountName}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeAccountName
             ),
             AnswerRow(
               sortCodeLabel,
               Seq(s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeSortCode
             ),
             AnswerRow(
               accountNumberLabel,
               Seq(s"${bankDetails.accountNumber}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeAccountNumber
             ),
             AnswerRow(
               dateLabel,
               Seq(s"${DateHelper.formatDate(bankDetails.date)}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeDate
             )
           )
       }.getOrElse(Seq.empty[AnswerRow])
@@ -427,7 +484,8 @@ case class BankDetailsCYA[I <: TypedIdentifier[UKBankDetails]](
 
 }
 
-case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "messages__establisher_address_years__title") {
+case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "messages__establisher_address_years__title",
+                                                               changeAddressYears: String = "messages__visuallyhidden__common__address_years") {
 
   def apply()(implicit rds: Reads[AddressYears]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -436,14 +494,18 @@ case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "
           label,
           Seq(s"messages__common__$addressYears"),
           answerIsMessageKey = true,
-          Some(changeUrl)
+          Some(changeUrl),
+          changeAddressYears
         ))).getOrElse(Seq.empty[AnswerRow])
     }
   }
 
 }
 
-case class AddressCYA[I <: TypedIdentifier[Address]](label: String = "messages__common__cya__address") {
+case class AddressCYA[I <: TypedIdentifier[Address]](
+                                                      label: String = "messages__common__cya__address",
+                                                      changeAddress: String = "messages__visuallyhidden__common__address"
+                                                    ) {
 
   def apply()(implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -465,7 +527,8 @@ case class AddressCYA[I <: TypedIdentifier[Address]](label: String = "messages__
           Seq(AnswerRow(
             label,
             addressAnswer(address),
-            answerIsMessageKey = false, Some(changeUrl)
+            answerIsMessageKey = false, Some(changeUrl),
+            changeAddress
           ))
         }.getOrElse(Seq.empty[AnswerRow])
       }
@@ -476,7 +539,9 @@ case class AddressCYA[I <: TypedIdentifier[Address]](label: String = "messages__
 
 case class BenefitsInsurerCYA[I <: TypedIdentifier[BenefitsInsurer]](
                                                                       nameLabel: String = "messages__benefits_insurance__name",
-                                                                      policyLabel: String = "messages__benefits_insurance__policy"
+                                                                      changeName: String = "messages__visuallyhidden__benefits_insurance__name",
+                                                                      policyLabel: String = "messages__benefits_insurance__policy",
+                                                                      changePolicyNumber: String = "messages__visuallyhidden__benefits_insurance__policy"
                                                                     ) {
 
   def apply()(implicit rds: Reads[BenefitsInsurer]): CheckYourAnswers[I] = {
@@ -488,13 +553,15 @@ case class BenefitsInsurerCYA[I <: TypedIdentifier[BenefitsInsurer]](
               nameLabel,
               Seq(s"${benefitsInsurer.companyName}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeName
             ),
             AnswerRow(
               policyLabel,
               Seq(s"${benefitsInsurer.policyNumber}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changePolicyNumber
             )
           )
       }.getOrElse(Seq.empty[AnswerRow])
@@ -503,7 +570,12 @@ case class BenefitsInsurerCYA[I <: TypedIdentifier[BenefitsInsurer]](
 
 }
 
-case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](label: String = "messages__establisher_individual_utr_question_cya_label") {
+case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](
+                                                                            label: String = "messages__establisher_individual_utr_question_cya_label",
+                                                                            changeHasUtr: String = "messages__visuallyhidden__establisher__utr_yes_no",
+                                                                            changeUtr: String = "messages__visuallyhidden__establisher__utr",
+                                                                            changeNoUtr: String = "messages__visuallyhidden__establisher__utr_no"
+                                                                          ) {
 
   def apply()(implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -514,26 +586,30 @@ case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](label
               label,
               Seq(s"${UniqueTaxReference.Yes}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeHasUtr
             ),
             AnswerRow(
               "messages__establisher_individual_utr_cya_label",
               Seq(utr),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeUtr
             )
           )
           case Some(UniqueTaxReference.No(reason)) => Seq(
             AnswerRow(
               label,
               Seq(s"${UniqueTaxReference.No}"),
-              answerIsMessageKey = false, Some(changeUrl)
+              answerIsMessageKey = false, Some(changeUrl),
+              changeHasUtr
             ),
             AnswerRow(
               "messages__establisher_individual_utr_reason_cya_label",
               Seq(reason),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              changeNoUtr
             ))
           case _ => Seq.empty[AnswerRow]
         }
@@ -545,8 +621,9 @@ case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](label
 case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
                                                                     nameLabel: String = "messages__common__cya__name",
                                                                     vatLabel: String = "messages__common__cya__vat",
-                                                                    payeLabel: String = "messages__common__cya__paye"
-                                                                  ) {
+                                                                    changeVat: String = "messages__visuallyhidden__establisher__vat_number",
+                                                                    payeLabel: String = "messages__common__cya__paye",
+                                                                    changePaye: String = "messages__visuallyhidden__establisher__paye_number") {
 
   def apply()(implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -558,7 +635,8 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
               nameLabel,
               Seq(s"${companyDetails.companyName}"),
               answerIsMessageKey = false,
-              Some(changeUrl)
+              Some(changeUrl),
+              Message("messages__visuallyhidden__common__name", companyDetails.companyName)
             )
 
             val withVat = companyDetails.vatNumber.fold(Seq(nameRow)) { vat =>
@@ -566,7 +644,8 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
                 vatLabel,
                 Seq(s"$vat"),
                 answerIsMessageKey = false,
-                Some(changeUrl)
+                Some(changeUrl),
+                changeVat
               ))
             }
 
@@ -575,7 +654,8 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
                 payeLabel,
                 Seq(s"$paye"),
                 answerIsMessageKey = false,
-                Some(changeUrl)
+                Some(changeUrl),
+                changePaye
               )
             }
 

@@ -30,7 +30,12 @@ object PartnerUniqueTaxReferenceId {
   override def toString: String = "partnerUniqueTaxReference"
 
   implicit val cya: CheckYourAnswers[PartnerUniqueTaxReferenceId] =
-    UniqueTaxReferenceCYA("messages__partner_utr_question_cya_label")()
+    UniqueTaxReferenceCYA(
+      "messages__partner_utr_question_cya_label",
+      "messages__visuallyhidden__partner__utr_yes_no",
+      "messages__visuallyhidden__partner__utr",
+      "messages__visuallyhidden__partner__utr_no"
+    )()
 }
 
 

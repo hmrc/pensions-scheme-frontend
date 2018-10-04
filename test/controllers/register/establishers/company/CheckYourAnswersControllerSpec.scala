@@ -23,7 +23,7 @@ import models.{CheckMode, Index}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.{CheckYourAnswersFactory, CountryOptions, FakeNavigator, FakeSectionComplete, InputOption}
-import viewmodels.{AnswerRow, AnswerSection}
+import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
@@ -41,19 +41,22 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       "messages__common__cya__name",
       Seq("test company name"),
       false,
-      Some(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url)
+      Some(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url),
+      Message("messages__visuallyhidden__common__name", "test company name")
     ),
     AnswerRow(
       "messages__common__cya__vat",
       Seq("123456"),
       false,
-      Some(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url)
+      Some(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url),
+      "messages__visuallyhidden__establisher__vat_number"
     ),
     AnswerRow(
       "messages__company__cya__paye_ern",
       Seq("abcd"),
       false,
-      Some(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url)
+      Some(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url),
+      "messages__visuallyhidden__establisher__paye_number"
     )
   )
 

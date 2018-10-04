@@ -21,7 +21,7 @@ import identifiers.register.trustees.TrusteesId
 import models.address.Address
 import play.api.libs.json.JsPath
 import utils.CountryOptions
-import utils.checkyouranswers.AddressCYA
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 
 case class PartnershipPreviousAddressId(index: Int) extends TypedIdentifier[Address] {
   override def path: JsPath = TrusteesId(index).path \ PartnershipPreviousAddressId.toString
@@ -30,6 +30,9 @@ case class PartnershipPreviousAddressId(index: Int) extends TypedIdentifier[Addr
 object PartnershipPreviousAddressId {
   override def toString: String = "partnershipPreviousAddress"
 
-  implicit def cya(implicit countryOptions: CountryOptions) = AddressCYA[PartnershipPreviousAddressId]("messages__common__cya__previous_address")()
-
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[PartnershipPreviousAddressId] =
+    AddressCYA[PartnershipPreviousAddressId](
+      label = "messages__common__cya__previous_address",
+      changeAddress = "messages__visuallyhidden__partnership__previous_address"
+    )()
 }

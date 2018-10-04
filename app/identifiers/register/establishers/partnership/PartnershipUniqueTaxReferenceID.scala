@@ -29,5 +29,11 @@ case class PartnershipUniqueTaxReferenceID(index: Int) extends TypedIdentifier[U
 object PartnershipUniqueTaxReferenceID {
   override def toString: String = "partnershipUniqueTaxReference"
 
-  implicit val cya: CheckYourAnswers[PartnershipUniqueTaxReferenceID] = UniqueTaxReferenceCYA("messages__partnership__checkYourAnswers__utr")()
+  implicit val cya: CheckYourAnswers[PartnershipUniqueTaxReferenceID] =
+    UniqueTaxReferenceCYA(
+      label = "messages__partnership__checkYourAnswers__utr",
+      changeHasUtr = "messages__visuallyhidden__partnership__utr_yes_no",
+      changeUtr = "messages__visuallyhidden__partnership__utr",
+      changeNoUtr = "messages__visuallyhidden__partnership__utr_no"
+    )()
 }

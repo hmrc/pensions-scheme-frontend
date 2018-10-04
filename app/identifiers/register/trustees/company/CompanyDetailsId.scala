@@ -21,6 +21,7 @@ import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteesId}
 import models.CompanyDetails
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
+import utils.checkyouranswers.{CheckYourAnswers, CompanyDetailsCYA}
 
 case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] {
   override def path: JsPath = TrusteesId(index).path \ CompanyDetailsId.toString
@@ -35,4 +36,8 @@ case class CompanyDetailsId(index: Int) extends TypedIdentifier[CompanyDetails] 
 
 object CompanyDetailsId {
   override lazy val toString: String = "companyDetails"
+
+  implicit val cya: CheckYourAnswers[CompanyDetailsId] = CompanyDetailsCYA(
+    changeVat = "messages__visuallyhidden__trustee__vat_number",
+    changePaye = "messages__visuallyhidden__trustee__paye_number")()
 }

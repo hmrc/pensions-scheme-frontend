@@ -18,9 +18,15 @@ package identifiers.register.adviser
 
 import identifiers.TypedIdentifier
 import models.address.Address
+import utils.CountryOptions
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 
 case object AdviserAddressId extends TypedIdentifier[Address] {
+  self =>
   override def toString: String = "adviserAddress"
+
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] =
+    AddressCYA(changeAddress = "messages__visuallyhidden__adviser__address")()
 }
 
 

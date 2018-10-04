@@ -26,5 +26,8 @@ case object InsurerAddressId extends TypedIdentifier[Address] {
   override def toString: String = "insurerAddress"
 
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] =
-    AddressCYA("messages__benefits_insurance_addr__cya_label")()
+    AddressCYA(
+      label = "messages__benefits_insurance_addr__cya_label",
+      changeAddress = "messages__visuallyhidden__insurer_address"
+    )()
 }

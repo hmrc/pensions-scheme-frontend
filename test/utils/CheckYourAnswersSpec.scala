@@ -31,7 +31,7 @@ import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
 import utils.checkyouranswers.Ops._
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 import scala.language.implicitConversions
 
@@ -55,21 +55,21 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj(SchemeEstablishedCountryId.toString -> "AU")), PsaId("A0000000"))
 
           SchemeEstablishedCountryId.row(onwardUrl) must equal(Seq(
-            AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", Seq("Australia"), false, Some(onwardUrl))))
+            AnswerRow("schemeEstablishedCountry.checkYourAnswersLabel", Seq("Australia"), false, Some(onwardUrl), "messages__visuallyhidden__schemeEstablishedCountry")))
         }
 
         "any id other than schemeEstablishedCountryId" in {
           implicit val countryOptions = new CountryOptions(Seq.empty[InputOption])
           implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> "value")), PsaId("A0000000"))
 
-          testIdentifier[String].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("value"), false, Some(onwardUrl))))
+          testIdentifier[String].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("value"), false, Some(onwardUrl), "messages__visuallyhidden__testId")))
         }
       }
 
       "boolean" in {
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> true)), PsaId("A0000000"))
 
-        testIdentifier[Boolean].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("site.yes"), true, Some(onwardUrl))))
+        testIdentifier[Boolean].row(onwardUrl) must equal(Seq(AnswerRow("testId.checkYourAnswersLabel", Seq("site.yes"), true, Some(onwardUrl), "messages__visuallyhidden__testId")))
       }
 
       "schemeDetails" in {
@@ -79,7 +79,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
 
         testIdentifier[SchemeDetails].row(onwardUrl) must equal(Seq(
           AnswerRow("messages__scheme_details__name_label", Seq("test name"), false, Some(onwardUrl)),
-          AnswerRow("messages__scheme_details__type_legend_short", Seq(s"messages__scheme_details__type_$schemeType"), true, Some(onwardUrl))
+          AnswerRow("messages__scheme_details__type_legend_short", Seq(s"messages__scheme_details__type_$schemeType"), true, Some(onwardUrl), "messages__visuallyhidden__scheme_type")
         ))
       }
 
@@ -88,7 +88,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> membershipVal)), PsaId("A0000000"))
 
         testIdentifier[Membership].row(onwardUrl) must equal(Seq(AnswerRow(
-          "testId.checkYourAnswersLabel", Seq(s"messages__membership__$membershipVal"), true, Some(onwardUrl))))
+          "testId.checkYourAnswersLabel", Seq(s"messages__membership__$membershipVal"), true, Some(onwardUrl), "messages__visuallyhidden__testId")))
       }
 
       "bankDetails" in {
@@ -97,11 +97,11 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
           Json.obj("testId" -> UKBankDetails("test bank name", "test account name", SortCode("12", "23", "45"), "test account number", date))), PsaId("A0000000"))
 
         testIdentifier[UKBankDetails].row(onwardUrl) must equal(Seq(
-          AnswerRow("messages__uk_bank_account_details__bank_name", Seq("test bank name"), false, Some(onwardUrl)),
-          AnswerRow("messages__uk_bank_account_details__account_name", Seq("test account name"), false, Some(onwardUrl)),
-          AnswerRow("messages__uk_bank_account_details__sort_code", Seq("12-23-45"), false, Some(onwardUrl)),
-          AnswerRow("messages__uk_bank_account_details__account_number", Seq("test account number"), false, Some(onwardUrl)),
-          AnswerRow("bankAccountDate.checkYourAnswersLabel", Seq(s"${DateHelper.formatDate(date)}"), false, Some(onwardUrl))
+          AnswerRow("messages__uk_bank_account_details__bank_name", Seq("test bank name"), false, Some(onwardUrl), "messages__visuallyhidden__uKBankAccount__bank_name"),
+          AnswerRow("messages__uk_bank_account_details__account_name", Seq("test account name"), false, Some(onwardUrl), "messages__visuallyhidden__uKBankAccount__account_name"),
+          AnswerRow("messages__uk_bank_account_details__sort_code", Seq("12-23-45"), false, Some(onwardUrl), "messages__visuallyhidden__uKBankAccount__sort_code"),
+          AnswerRow("messages__uk_bank_account_details__account_number", Seq("test account number"), false, Some(onwardUrl), "messages__visuallyhidden__uKBankAccount__account_number"),
+          AnswerRow("bankAccountDate.checkYourAnswersLabel", Seq(s"${DateHelper.formatDate(date)}"), false, Some(onwardUrl), "messages__visuallyhidden__uKBankAccount__date_bank_account")
         ))
       }
 
@@ -110,7 +110,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
         implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest(), "id", UserAnswers(Json.obj("testId" -> benefitsVal)), PsaId("A0000000"))
 
         testIdentifier[Benefits].row(onwardUrl) must equal(Seq(AnswerRow(
-          "messages__benefits__title", Seq(s"messages__benefits__$benefitsVal"), true, Some(onwardUrl))))
+          "messages__benefits__title", Seq(s"messages__benefits__$benefitsVal"), true, Some(onwardUrl), "messages__visuallyhidden__benefits")))
       }
 
       "benefitsInsurer" in {
@@ -118,8 +118,8 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
           Json.obj("testId" -> BenefitsInsurer("test name", "test policy"))), PsaId("A0000000"))
 
         testIdentifier[BenefitsInsurer].row(onwardUrl) must equal(Seq(
-          AnswerRow("messages__benefits_insurance__name", Seq("test name"), false, Some(onwardUrl)),
-          AnswerRow("messages__benefits_insurance__policy", Seq("test policy"), false, Some(onwardUrl))
+          AnswerRow("messages__benefits_insurance__name", Seq("test name"), false, Some(onwardUrl), "messages__visuallyhidden__benefits_insurance__name"),
+          AnswerRow("messages__benefits_insurance__policy", Seq("test policy"), false, Some(onwardUrl), "messages__visuallyhidden__benefits_insurance__policy")
         ))
       }
 
@@ -137,7 +137,8 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             "messages__common__cya__name",
             Seq(companyDetails.companyName),
             false,
-            Some(onwardUrl)
+            Some(onwardUrl),
+            Message("messages__visuallyhidden__common__name", "Company Name")
           )))
 
         }
@@ -154,13 +155,15 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               "messages__common__cya__name",
               Seq(s"${companyDetails.companyName}"),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              Message("messages__visuallyhidden__common__name", "Company Name")
             ),
             AnswerRow(
               "messages__common__cya__vat",
               Seq(s"${companyDetails.vatNumber.get}"),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__establisher__vat_number"
             )))
 
         }
@@ -177,13 +180,15 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               "messages__common__cya__name",
               Seq(s"${companyDetails.companyName}"),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              Message("messages__visuallyhidden__common__name", "Company Name")
             ),
             AnswerRow(
               "messages__common__cya__paye",
               Seq(s"${companyDetails.payeNumber.get}"),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__establisher__paye_number"
             )))
 
         }
@@ -201,19 +206,22 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               "messages__common__cya__name",
               Seq(s"${companyDetails.companyName}"),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              Message("messages__visuallyhidden__common__name", "Company Name")
             ),
             AnswerRow(
               "messages__common__cya__vat",
               Seq(s"${companyDetails.vatNumber.get}"),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__establisher__vat_number"
             ),
             AnswerRow(
               "messages__common__cya__paye",
               Seq(s"${companyDetails.payeNumber.get}"),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__establisher__paye_number"
             )))
 
         }
@@ -232,13 +240,15 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               "messages__company__cya__crn_yes_no",
               Seq(s"${CompanyRegistrationNumber.Yes}"),
               true,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__establisher__crn_yes_no"
             ),
             AnswerRow(
               "messages__common__crn",
               Seq(s"${crn.crn}"),
               true,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__establisher__crn"
             )))
         }
         "no" in {
@@ -252,13 +262,15 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               "messages__company__cya__crn_yes_no",
               Seq(s"${CompanyRegistrationNumber.No}"),
               true,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__establisher__crn_yes_no"
             ),
             AnswerRow(
               "messages__company__cya__crn_no_reason",
               Seq(s"${crn.reason}"),
               true,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__establisher__crn_no"
             )
           ))
 
@@ -278,7 +290,8 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               "messages__establisher_individual_utr_question_cya_label",
               Seq(s"${UniqueTaxReference.Yes}"),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__establisher__utr_yes_no"
             ),
             AnswerRow(
               "messages__establisher_individual_utr_cya_label",
@@ -286,7 +299,8 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
                 utr.utr
               }),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__establisher__utr"
             )
           ))
 
@@ -303,13 +317,15 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               "messages__establisher_individual_utr_question_cya_label",
               Seq(s"${UniqueTaxReference.No}"),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__establisher__utr_yes_no"
             ),
             AnswerRow(
               "messages__establisher_individual_utr_reason_cya_label",
               Seq(utr.reason),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__establisher__utr_no"
             )))
 
         }
@@ -344,7 +360,8 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             "messages__common__cya__address",
             addressAnswer(address),
             false,
-            Some(onwardUrl)
+            Some(onwardUrl),
+            "messages__visuallyhidden__common__address"
           )))
 
       }
@@ -359,7 +376,8 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
           "messages__establisher_address_years__title",
           Seq(s"messages__common__$addressYears"),
           true,
-          Some(onwardUrl)
+          Some(onwardUrl),
+          "messages__visuallyhidden__common__address_years"
         )))
 
       }
@@ -375,13 +393,15 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             "messages__common__email",
             Seq(s"${contactDetails.emailAddress}"),
             false,
-            Some(onwardUrl)
+            Some(onwardUrl),
+            "messages__visuallyhidden__common__email_address"
           ),
           AnswerRow(
             "messages__common__phone",
             Seq(s"${contactDetails.phoneNumber}"),
             false,
-            Some(onwardUrl)
+            Some(onwardUrl),
+            "messages__visuallyhidden__common__phone_number"
           )))
 
       }
@@ -395,13 +415,15 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             "messages__common__cya__name",
             Seq(s"${personDetails.fullName}"),
             false,
-            Some(onwardUrl)
+            Some(onwardUrl),
+            Message("messages__visuallyhidden__common__name", personDetails.fullName)
           ),
           AnswerRow(
             "messages__common__dob",
             Seq(s"${DateHelper.formatDate(personDetails.date)}"),
             false,
-            Some(onwardUrl)
+            Some(onwardUrl),
+            Message("messages__visuallyhidden__common__dob", personDetails.fullName)
           )))
       }
 
@@ -415,13 +437,15 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               "messages__trusteeNino_question_cya_label",
               Seq(s"${Nino.Yes}"),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__trustee__nino_yes_no"
             ),
             AnswerRow(
               "messages__trusteeNino_nino_cya_label",
               Seq(nino.nino),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__trustee__nino"
             )))
         }
 
@@ -434,13 +458,15 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
               "messages__trusteeNino_question_cya_label",
               Seq(s"${Nino.No}"),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__trustee__nino_yes_no"
             ),
             AnswerRow(
               "messages__trusteeNino_reason_cya_label",
               Seq(nino.reason),
               false,
-              Some(onwardUrl)
+              Some(onwardUrl),
+              "messages__visuallyhidden__trustee__nino_no"
             )))
         }
       }

@@ -23,7 +23,7 @@ import models.{CheckMode, Index}
 import org.joda.time.LocalDate
 import play.api.test.Helpers.{contentAsString, redirectLocation, status, _}
 import utils._
-import viewmodels.{AnswerRow, AnswerSection}
+import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
@@ -39,13 +39,16 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       "messages__establisher_individual_name_cya_label",
       Seq("test first name test last name"),
       answerIsMessageKey = false,
-      Some(routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
+      Some(routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
+      Message("messages__visuallyhidden__common__name", "test first name test last name")
     ),
     AnswerRow(
       "messages__establisher_individual_dob_cya_label",
       Seq(DateHelper.formatDate(LocalDate.now)),
       answerIsMessageKey = false,
-      Some(routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url))
+      Some(routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
+      Message("messages__visuallyhidden__common__dob", "test first name test last name")
+    )
   )
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()

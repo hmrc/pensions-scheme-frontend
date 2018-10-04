@@ -20,6 +20,8 @@ import identifiers.TypedIdentifier
 import identifiers.register.trustees.TrusteesId
 import models.address.Address
 import play.api.libs.json.JsPath
+import utils.CountryOptions
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 
 
 case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
@@ -28,4 +30,7 @@ case class TrusteeAddressId(index: Int) extends TypedIdentifier[Address] {
 
 object TrusteeAddressId {
   override lazy val toString: String = "trusteeAddressId"
+
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[TrusteeAddressId] =
+    AddressCYA[TrusteeAddressId](changeAddress = "messages__visuallyhidden__trustee__address")()
 }
