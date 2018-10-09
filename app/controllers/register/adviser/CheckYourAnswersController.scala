@@ -25,6 +25,7 @@ import javax.inject.Inject
 import models.requests.DataRequest
 import models.{CheckMode, NormalMode, PSAName}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -79,8 +80,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   }
 
   private def sendEmail(srn: String)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
-    val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
-    psaNameCacheConnector.fetch(encryptedCacheId).flatMap {
+    getName flatMap {
       case Some(value) =>
         value.as[PSAName].psaEmail match {
           case Some(email) => emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)
@@ -95,4 +95,10 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     val (start, end) = srn.splitAt(6)
     start + ' ' + end
   }
+
+  private def getName(implicit request: DataRequest[AnyContent]): Future[Option[JsValue]] = {
+    val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
+    psaNameCacheConnector.fetch(encryptedCacheId)
+  }
+
 }
