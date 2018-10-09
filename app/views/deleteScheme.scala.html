@@ -23,7 +23,7 @@
 @(appConfig: FrontendAppConfig, form: Form[_], schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = Message("messages__deleteScheme__title", schemeName),
+    title = Message("messages__deleteScheme__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -37,7 +37,7 @@
 
         @components.input_yes_no(
             field = form("value"),
-            label = messages("messages__deleteScheme__heading"),
+            label = messages("messages__deleteScheme__title"),
             labelClass = Some("visually-hidden")
         )
 
