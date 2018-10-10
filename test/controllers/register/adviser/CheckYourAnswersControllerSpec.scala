@@ -68,7 +68,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
         val mockPsaNameCacheConnector = mock[PSANameCacheConnector]
 
         lazy val app = new GuiceApplicationBuilder()
-          .configure("work-package-one-enabled" -> false)
+          .configure("features.work-package-one-enabled" -> false)
           .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
           .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
           .overrides(bind[AuthAction].toInstance(FakeAuthAction))
@@ -105,12 +105,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
       "fetches name and email from Get PSA Minimal Details when work-package-one-enabled is true" in {
 
         lazy val app = new GuiceApplicationBuilder()
-          .configure("work-package-one-enabled" -> true)
+          .configure("features.work-package-one-enabled" -> true)
           .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
           .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
           .overrides(bind[AuthAction].toInstance(FakeAuthAction))
           .overrides(bind[DataRetrievalAction].toInstance(getEmptyData))
           .overrides(bind[PensionsSchemeConnector].toInstance(fakePensionsSchemeConnector))
+          .overrides(bind[PensionAdministratorConnector].toInstance(fakePensionAdminstratorConnector))
           .build()
 
         reset(mockEmailConnector)
@@ -188,6 +189,10 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
   private val mockEmailConnector = mock[EmailConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 
+  private val fakePensionAdminstratorConnector = new PensionAdministratorConnector {
+    override def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("email@test.com")
+  }
+
   private val fakeEmailConnector = new EmailConnector {
     override def sendEmail
     (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty, psaId: PsaId)
@@ -230,7 +235,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       fakePensionsSchemeConnector,
       emailConnector,
       FakePsaNameCacheConnector(psaName),
-      applicationCrypto
+      applicationCrypto,
+      fakePensionAdminstratorConnector
     )
 
   lazy val viewAsString: String = check_your_answers(

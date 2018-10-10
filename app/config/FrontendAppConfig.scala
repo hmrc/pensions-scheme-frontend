@@ -64,7 +64,6 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val pensionsRegulatorLink = runModeConfiguration.underlying.getString("urls.pensionsRegulatorLink")
   lazy val getPSAEmail = runModeConfiguration.underlying.getString("urls.get-psa-email")
 
-  lazy val languageTranslationEnabled = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
@@ -78,10 +77,15 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val maxTrustees: Int = loadConfig("maxTrustees").toInt
   lazy val maxPartners: Int = loadConfig("maxPartners").toInt
   lazy val daysDataSaved: Int = loadConfig("daysDataSaved").toInt
-  lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
+
   lazy val emailApiUrl: String = baseUrl("email")
   lazy val emailTemplateId: String = loadConfig("email.templateId")
   lazy val emailSendForce: Boolean = runModeConfiguration.getBoolean("email.force").getOrElse(false)
+
+  //FEATURES
+  lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
+  lazy val languageTranslationEnabled = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
+  lazy val isWorkPackageOneEnabled: Boolean = runModeConfiguration.getBoolean("features.work-package-one-enabled").getOrElse(false)
 
   def encryptionKey(crypto: String): String = loadConfig(s"$crypto.encryption.key")
 }

@@ -28,6 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
+import uk.gov.hmrc.http.{HttpException, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Adviser
 import utils.checkyouranswers.Ops._
@@ -48,7 +49,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            pensionsSchemeConnector: PensionsSchemeConnector,
                                            emailConnector: EmailConnector,
                                            psaNameCacheConnector: PSANameCacheConnector,
-                                           crypto: ApplicationCrypto
+                                           crypto: ApplicationCrypto,
+                                           pensionAdministratorConnector: PensionAdministratorConnector
                                           ) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
@@ -80,14 +82,27 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   }
 
   private def sendEmail(srn: String)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
-    getName flatMap {
-      case Some(value) =>
-        value.as[PSAName].psaEmail match {
-          case Some(email) => emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)
+
+      if(appConfig.isWorkPackageOneEnabled) {
+
+        pensionAdministratorConnector.getPSAEmail flatMap { email =>
+          emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)
+        } recoverWith {
+          case _: Throwable => Future.successful(EmailNotSent)
+        }
+
+      } else {
+
+        getName flatMap {
+          case Some(value) =>
+            value.as[PSAName].psaEmail match {
+              case Some(email) => emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)
+              case _ => Future.successful(EmailNotSent)
+            }
           case _ => Future.successful(EmailNotSent)
         }
-      case _ => Future.successful(EmailNotSent)
-    }
+
+      }
   }
 
   private def formatSrnForEmail(srn: String): String = {

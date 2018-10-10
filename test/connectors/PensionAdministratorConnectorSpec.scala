@@ -41,7 +41,7 @@ class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with
   "GetPSAEmail" should "return email" in {
 
     server.stubFor(
-      get(urlEqualTo("/pension-administrator/getEmail"))
+      get(urlEqualTo("/pension-administrator/get-email"))
         .willReturn(
           ok("e@mail.com")
         )
@@ -58,7 +58,7 @@ class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with
   it should "throw NotFoundException when email cannot be found" in {
 
     server.stubFor(
-      get(urlEqualTo("/pension-administrator/getEmail"))
+      get(urlEqualTo("/pension-administrator/get-email"))
         .willReturn(
           notFound
         )
