@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.{AsyncFlatSpec, Matchers}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import utils.WireMockHelper
 
 class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
@@ -51,6 +51,23 @@ class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with
 
     connector.getPSAEmail map { email =>
       email shouldBe "e@mail.com"
+    }
+
+  }
+
+  it should "throw NotFoundException when email cannot be found" in {
+
+    server.stubFor(
+      get(urlEqualTo("/pension-administrator/getEmail"))
+        .willReturn(
+          notFound
+        )
+    )
+
+    val connector = injector.instanceOf[PensionAdministratorConnector]
+
+    recoverToSucceededIf[NotFoundException]{
+      connector.getPSAEmail
     }
 
   }

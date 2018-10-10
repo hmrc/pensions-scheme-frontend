@@ -19,7 +19,7 @@ package connectors
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import play.api.http.Status._
 
@@ -39,9 +39,10 @@ class PensionAdministratorConnectorImpl @Inject()(http: HttpClient, config: Fron
 
     val url = config.pensionsAdministratorUrl + config.getPSAEmail
 
-    http.GET(url) map { response =>
+    http.GET(url) flatMap { response =>
       response.status match {
-        case OK => response.body
+        case OK => Future.successful(response.body)
+        case NOT_FOUND => Future.failed(new NotFoundException("Cannot retrieve email from Minimal PSA Details"))
       }
     }
 
