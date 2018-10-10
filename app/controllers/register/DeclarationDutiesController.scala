@@ -49,7 +49,8 @@ class DeclarationDutiesController @Inject()(
                                              pensionsSchemeConnector: PensionsSchemeConnector,
                                              emailConnector: EmailConnector,
                                              psaNameCacheConnector: PSANameCacheConnector,
-                                             crypto: ApplicationCrypto
+                                             crypto: ApplicationCrypto,
+                                             pensionAdministratorConnector: PensionAdministratorConnector
                                            ) extends FrontendController with I18nSupport with Retrievals with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -75,17 +76,16 @@ class DeclarationDutiesController @Inject()(
               Future.successful(BadRequest(declarationDuties(appConfig, formWithErrors, schemeName))),
             {
               case true =>
-                dataCacheConnector.save(request.externalId, DeclarationDutiesId, true).flatMap { cacheMap =>
-                  pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id).flatMap { submissionResponse =>
-                    dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).flatMap { cacheMap =>
-                      sendEmail(submissionResponse.schemeReferenceNumber, request.psaId).map { _ =>
-                        Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
-                      }
-                    }
-                  }
+                for {
+                  cacheMap <- dataCacheConnector.save(request.externalId, DeclarationDutiesId, true)
+                  submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
+                  cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
+                  _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
+                } yield {
+                  Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
                 }
               case false =>
-                dataCacheConnector.save(request.externalId, DeclarationDutiesId, false).map(cacheMap =>
+                dataCacheConnector.save(request.externalId, DeclarationDutiesId, false).map( cacheMap =>
                   Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap))))
             }
           )
@@ -93,17 +93,31 @@ class DeclarationDutiesController @Inject()(
   }
 
   private def sendEmail(srn: String, psaId: PsaId)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
-    val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.id)).value
 
-    psaNameCacheConnector.fetch(encryptedCacheId).flatMap {
-      case Some(value) =>
-        value.as[PSAName].psaEmail match {
-          case Some(email) => emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
-          case _ => Future.successful(EmailNotSent)
-        }
+    if(appConfig.isWorkPackageOneEnabled) {
 
-      case _ => Future.successful(EmailNotSent)
+      pensionAdministratorConnector.getPSAEmail flatMap { email =>
+        emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
+      } recoverWith {
+        case _: Throwable => Future.successful(EmailNotSent)
+      }
+
+    } else {
+
+      val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.id)).value
+
+      psaNameCacheConnector.fetch(encryptedCacheId).flatMap {
+        case Some(value) =>
+          value.as[PSAName].psaEmail match {
+            case Some(email) => emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
+            case _ => Future.successful(EmailNotSent)
+          }
+
+        case _ => Future.successful(EmailNotSent)
+      }
+
     }
+
   }
 
   private def formatSrnForEmail(srn: String): String = {

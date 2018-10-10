@@ -28,7 +28,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
-import uk.gov.hmrc.http.{HttpException, Upstream4xxResponse, Upstream5xxResponse}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Adviser
 import utils.checkyouranswers.Ops._
