@@ -19,11 +19,13 @@ package connectors
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import play.api.Logger
 import play.api.http.Status._
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Try}
 
 @ImplementedBy(classOf[PensionAdministratorConnectorImpl])
 trait PensionAdministratorConnector {
@@ -39,13 +41,18 @@ class PensionAdministratorConnectorImpl @Inject()(http: HttpClient, config: Fron
 
     val url = config.pensionsAdministratorUrl + config.getPSAEmail
 
-    http.GET(url) flatMap { response =>
-      response.status match {
-        case OK => Future.successful(response.body)
-        case NOT_FOUND => Future.failed(new NotFoundException("Cannot retrieve email from Minimal PSA Details"))
-      }
-    }
+    http.GET(url) map { response =>
+      require(response.status == OK)
+
+      response.body
+
+    } andThen logExceptions
 
   }
+
+  private def logExceptions(): PartialFunction[Try[String], Unit] = {
+    case Failure(t: Throwable) => Logger.error("Unable to retrieve email for PSA", t)
+  }
+
 
 }
