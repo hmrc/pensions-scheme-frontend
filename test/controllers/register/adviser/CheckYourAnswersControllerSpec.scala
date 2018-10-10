@@ -105,7 +105,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
       "fetches name and email from Get PSA Minimal Details when work-package-one-enabled is true" in {
 
         lazy val app = new GuiceApplicationBuilder()
-          .configure("work-package-one-enabled" -> false)
+          .configure("work-package-one-enabled" -> true)
           .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
           .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
           .overrides(bind[AuthAction].toInstance(FakeAuthAction))
@@ -128,8 +128,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
             eqTo(Map("srn" -> "S12345 67890")),
             eqTo(psaId)
           )(any(), any())
-
-          verify(mockPsaNameCacheConnector, times(1)).fetch(any())(any(),any())
 
         }
       }
