@@ -16,10 +16,35 @@
 
 package connectors
 
-import scala.concurrent.Future
+import com.google.inject.ImplementedBy
+import config.FrontendAppConfig
+import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import play.api.http.Status._
 
-class PensionAdministratorConnector {
+import scala.concurrent.{ExecutionContext, Future}
 
-  def getPSAEmail: Future[String] = ???
+@ImplementedBy(classOf[PensionAdministratorConnectorImpl])
+trait PensionAdministratorConnector {
+
+  def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String]
+
+}
+
+@Singleton
+class PensionAdministratorConnectorImpl @Inject()(http: HttpClient, config: FrontendAppConfig) extends PensionAdministratorConnector {
+
+  def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {
+
+    val url = config.pensionsAdministratorUrl + config.getPSAEmail
+
+    http.GET(url) map { response =>
+      response.status match {
+        case OK => response.body
+      }
+    }
+
+  }
 
 }

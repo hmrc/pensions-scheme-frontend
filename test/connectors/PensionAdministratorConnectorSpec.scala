@@ -16,14 +16,16 @@
 
 package connectors
 
+import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.{AsyncFlatSpec, Matchers}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import com.github.tomakehurst.wiremock.client.WireMock._
-import play.api.libs.json.Json
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
 class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with WireMockHelper {
+
+  implicit val hc = HeaderCarrier()
 
   override protected def portConfigKey: String = "microservice.services.pension-administrator.port"
 
@@ -39,10 +41,9 @@ class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with
   "GetPSAEmail" should "return email" in {
 
     server.stubFor(
-      get(urlEqualTo(""))
+      get(urlEqualTo("/pension-administrator/getEmail"))
         .willReturn(
-          ok(Json.stringify(Json.obj("email" -> "e@mail.com")))
-            .withHeader("Content-Type", "application/json")
+          ok("e@mail.com")
         )
     )
 
