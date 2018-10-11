@@ -74,7 +74,6 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val maxTrustees: Int = loadConfig("maxTrustees").toInt
   lazy val maxPartners: Int = loadConfig("maxPartners").toInt
   lazy val daysDataSaved: Int = loadConfig("daysDataSaved").toInt
-  lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
   lazy val emailApiUrl: String = baseUrl("email")
   lazy val emailTemplateId: String = loadConfig("email.templateId")
   lazy val emailSendForce: Boolean = runModeConfiguration.getBoolean("email.force").getOrElse(false)

@@ -91,7 +91,6 @@ class DeclarationController @Inject()(
     }
   }
 
-  private def showMasterTrustDeclaration(implicit request: DataRequest[AnyContent]): Boolean =
-    appConfig.allowMasterTrust & request.userAnswers.get(SchemeDetailsId).map(_.schemeType).contains(MasterTrust)
+  private def showMasterTrustDeclaration(implicit request: DataRequest[AnyContent]): Boolean = request.userAnswers.get(SchemeDetailsId).map(_.schemeType).contains(MasterTrust)
 
 }
