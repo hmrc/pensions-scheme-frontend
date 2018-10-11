@@ -32,6 +32,8 @@ trait PensionAdministratorConnector {
 
   def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String]
 
+  def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String]
+
 }
 
 @Singleton
@@ -40,6 +42,19 @@ class PensionAdministratorConnectorImpl @Inject()(http: HttpClient, config: Fron
   def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {
 
     val url = config.pensionsAdministratorUrl + config.getPSAEmail
+
+    http.GET(url) map { response =>
+      require(response.status == OK)
+
+      response.body
+
+    } andThen logExceptions
+
+  }
+
+  def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {
+
+    val url = config.pensionsAdministratorUrl + config.getPSAName
 
     http.GET(url) map { response =>
       require(response.status == OK)

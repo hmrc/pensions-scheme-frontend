@@ -16,40 +16,55 @@
 
 package utils
 
-import connectors.UserAnswersCacheConnector
+import config.FrontendAppConfig
+import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import javax.inject.Inject
 import models.PSAName
 import models.requests.OptionalDataRequest
-import play.api.Logger
 import play.api.libs.json.{JsValue, Reads}
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import utils.annotations.PSANameCache
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameMatchingFactory @Inject()(
                                      @PSANameCache val pSANameCacheConnector: UserAnswersCacheConnector,
-                                     crypto: ApplicationCrypto
+                                     pensionAdministratorConnector: PensionAdministratorConnector,
+                                     crypto: ApplicationCrypto,
+                                     config: FrontendAppConfig
                                    ) {
-  private def retrievePSAName(implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[Option[JsValue]] = {
-    val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
-    pSANameCacheConnector.fetch(encryptedCacheId)
+
+  private def retrievePSAName(implicit request: OptionalDataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[String] = {
+    if (config.isWorkPackageOneEnabled) {
+      pensionAdministratorConnector.getPSAName
+    } else {
+
+      val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
+
+      pSANameCacheConnector.fetch(encryptedCacheId) flatMap { psaOpt =>
+
+        val psaName = for {
+          psaJs <- psaOpt
+          psaName <- psaJs.asOpt[PSAName]
+        } yield {
+          psaName.psaName
+        }
+
+        psaName match {
+          case Some(name) => Future.successful(name)
+          case _ => Future.failed(new NotFoundException("Cannot retrieve PSA name from collection"))
+        }
+
+      }
+    }
   }
 
 
   def nameMatching(schemeName: String)
                   (implicit request: OptionalDataRequest[AnyContent],
                    ec: ExecutionContext,
-                   hc: HeaderCarrier, r: Reads[PSAName]): Future[Option[NameMatching]] =
-    retrievePSAName map { psaOpt =>
-      for {
-        psaJs <- psaOpt
-        psaName <- psaJs.asOpt[PSAName]
-      } yield {
-        NameMatching(schemeName, psaName.psaName)
-      }
-    }
+                   hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] = retrievePSAName map { NameMatching(schemeName, _) }
 
 }

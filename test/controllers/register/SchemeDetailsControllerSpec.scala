@@ -16,7 +16,8 @@
 
 package controllers.register
 
-import connectors.FakeUserAnswersCacheConnector
+import config.FrontendAppConfig
+import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.SchemeDetailsFormProvider
@@ -42,12 +43,15 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
   val formProvider = new SchemeDetailsFormProvider()
   val form = formProvider()
 
-  object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, ApplicationCrypto) {
+  val config: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+  val pensionAdministratorConnector: PensionAdministratorConnector = injector.instanceOf[PensionAdministratorConnector]
+
+  object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, pensionAdministratorConnector, ApplicationCrypto, config) {
     override def nameMatching(schemeName: String)
                              (implicit request: OptionalDataRequest[AnyContent],
                               ec: ExecutionContext,
-                              hc: HeaderCarrier, r: Reads[PSAName]): Future[Option[NameMatching]] = {
-      Future.successful(Some(NameMatching("value 1", "My PSA")))
+                              hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] = {
+      Future.successful(NameMatching("value 1", "My PSA"))
     }
   }
 

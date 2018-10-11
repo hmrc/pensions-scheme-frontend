@@ -196,6 +196,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
 
   private val fakePensionAdminstratorConnector = new PensionAdministratorConnector {
     override def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("email@test.com")
+
+    override def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("PSA Name")
   }
 
   private val fakeEmailConnector = new EmailConnector {

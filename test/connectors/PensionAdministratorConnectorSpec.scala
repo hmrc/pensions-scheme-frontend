@@ -72,4 +72,38 @@ class PensionAdministratorConnectorSpec extends AsyncFlatSpec with Matchers with
 
   }
 
+  "GetPSAName" should "return name" in {
+
+    server.stubFor(
+      get(urlEqualTo("/pension-administrator/get-name"))
+        .willReturn(
+          ok("PSA Name")
+        )
+    )
+
+    val connector = injector.instanceOf[PensionAdministratorConnector]
+
+    connector.getPSAName map { email =>
+      email shouldBe "PSA Name"
+    }
+
+  }
+
+  it should "throw NotFoundException when name cannot be found" in {
+
+    server.stubFor(
+      get(urlEqualTo("/pension-administrator/get-name"))
+        .willReturn(
+          notFound
+        )
+    )
+
+    val connector = injector.instanceOf[PensionAdministratorConnector]
+
+    recoverToSucceededIf[NotFoundException]{
+      connector.getPSAName
+    }
+
+  }
+
 }

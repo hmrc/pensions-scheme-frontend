@@ -25,6 +25,7 @@ import identifiers.register.{DeclarationDutiesId, SubmissionReferenceNumberId}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{NormalMode, PSAName}
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -96,6 +97,8 @@ class DeclarationDutiesController @Inject()(
 
     if(appConfig.isWorkPackageOneEnabled) {
 
+      Logger.debug("Fetch email from API")
+
       pensionAdministratorConnector.getPSAEmail flatMap { email =>
         emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
       } recoverWith {
@@ -103,6 +106,8 @@ class DeclarationDutiesController @Inject()(
       }
 
     } else {
+
+      Logger.debug("Fetch email from cache")
 
       val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.id)).value
 

@@ -251,6 +251,8 @@ object DeclarationDutiesControllerSpec {
 
   private val fakePensionAdminstratorConnector = new PensionAdministratorConnector {
     override def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("email@test.com")
+
+    override def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("PSA Name")
   }
 
 }
