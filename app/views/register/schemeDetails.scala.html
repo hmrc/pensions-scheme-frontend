@@ -23,13 +23,7 @@
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@schemeOptions = @{
-    if(appConfig.allowMasterTrust){
-        SchemeType.options
-    } else {
-        SchemeType.options.filterNot(_.value == MasterTrust.toString)
-    }
-}
+@schemeOptions = @{ SchemeType.options }
 
 @main_template(
     title = messages("messages__scheme_details__title"),
