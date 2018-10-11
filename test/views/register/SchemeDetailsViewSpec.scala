@@ -37,13 +37,7 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  private def schemeOptions = {
-    if (frontendAppConfig.allowMasterTrust) {
-      SchemeType.options
-    } else {
-      SchemeType.options.filterNot(_.value == MasterTrust.toString)
-    }
-  }
+  private def schemeOptions = SchemeType.options
 
   "SchemeDetails view" must {
 
