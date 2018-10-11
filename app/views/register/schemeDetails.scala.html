@@ -23,8 +23,6 @@
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@schemeOptions = @{ SchemeType.options }
-
 @main_template(
     title = messages("messages__scheme_details__title"),
     appConfig = appConfig,
@@ -47,7 +45,7 @@
         @components.input_radio(
             field = form("schemeType.type"),
             legend = messages("messages__scheme_details__type_legend"),
-            inputs = schemeOptions
+            inputs = SchemeType.options
         )
 
         @components.input_text(
