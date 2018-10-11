@@ -63,16 +63,16 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
           Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
         value =>
           nameMatchingFactory.nameMatching(value.schemeName).flatMap { nameMatching =>
-              if (nameMatching.isMatch) {
-                Future.successful(BadRequest(schemeDetails(appConfig, form.withError(
-                  "schemeName",
-                  "messages__error__scheme_name_psa_name_match"
-                ), mode)))
-              } else {
-                dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
-                  Redirect(navigator.nextPage(SchemeDetailsId, mode, UserAnswers(cacheMap)))
-                )
-              }
+          if (nameMatching.isMatch) {
+              Future.successful(BadRequest(schemeDetails(appConfig, form.withError(
+                "schemeName",
+                "messages__error__scheme_name_psa_name_match"
+              ), mode)))
+            } else {
+              dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
+                Redirect(navigator.nextPage(SchemeDetailsId, mode, UserAnswers(cacheMap)))
+              )
+            }
           } recoverWith {
             case e: NotFoundException =>
               Logger.error(e.message)

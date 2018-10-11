@@ -47,25 +47,31 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = authenticate.async {
     implicit request =>
-      val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
-      for {
-        psaNameFromExtId <- psaNameCacheConnector.fetch(request.externalId)
-        psaNameFromPsaId <- psaNameCacheConnector.fetch(encryptedCacheId)
-        psaNameAndEmail <- savePSANameAndEmail(psaNameFromExtId, psaNameFromPsaId, encryptedCacheId)
-      } yield {
-        Logger.debug(s"Saved PSA Name and Email $psaNameAndEmail")
-        psaNameAndEmail match {
-          case Some(psaNameJsValue) =>
-            psaNameJsValue.as[PSAName].psaEmail match {
-              case None =>
-                Redirect(controllers.register.routes.NeedContactController.onPageLoad)
-              case _ =>
-                Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
-            }
-          case _ =>
-            Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
+
+      if(appConfig.isWorkPackageOneEnabled){
+        Future.successful(Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode)))
+      } else {
+        val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
+        for {
+          psaNameFromExtId <- psaNameCacheConnector.fetch(request.externalId)
+          psaNameFromPsaId <- psaNameCacheConnector.fetch(encryptedCacheId)
+          psaNameAndEmail <- savePSANameAndEmail(psaNameFromExtId, psaNameFromPsaId, encryptedCacheId)
+        } yield {
+          Logger.debug(s"Saved PSA Name and Email $psaNameAndEmail")
+          psaNameAndEmail match {
+            case Some(psaNameJsValue) =>
+              psaNameJsValue.as[PSAName].psaEmail match {
+                case None =>
+                  Redirect(controllers.register.routes.NeedContactController.onPageLoad)
+                case _ =>
+                  Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
+              }
+            case _ =>
+              Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
+          }
         }
       }
+
   }
 
   private def savePSANameAndEmail(psaNameFromExtId: Option[JsValue],
