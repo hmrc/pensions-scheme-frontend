@@ -41,19 +41,19 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       "messages__common__cya__name",
       Seq("test company name"),
       false,
-      routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
+      Some(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url)
     ),
     AnswerRow(
       "messages__common__cya__vat",
       Seq("123456"),
       false,
-      routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
+      Some(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url)
     ),
     AnswerRow(
       "messages__company__cya__paye_ern",
       Seq("abcd"),
       false,
-      routes.CompanyDetailsController.onPageLoad(CheckMode, index).url
+      Some(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url)
     )
   )
 
