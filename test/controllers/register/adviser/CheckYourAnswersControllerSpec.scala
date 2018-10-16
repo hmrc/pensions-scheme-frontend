@@ -104,7 +104,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
 
   val psaId = PsaId("A0000000")
 
-  lazy val adviserDetailsRoute: String = routes.AdviserDetailsController.onPageLoad(CheckMode).url
+  lazy val adviserDetailsRoute: Option[String] = Some(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
   lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit()
   lazy val adviserSection = AnswerSection(None,
     Seq(

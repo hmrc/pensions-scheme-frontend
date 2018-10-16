@@ -42,10 +42,10 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   lazy val answersDirectorDetails: Seq[AnswerRow] =
     Seq(
       AnswerRow("messages__common__cya__name", Seq("first middle last"), false,
-        director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url
+        Some(director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url)
       ),
       AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(new LocalDate(1990, 2, 2))), false,
-        director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url
+        Some(director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url)
       )
     )
 

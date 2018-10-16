@@ -57,7 +57,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "messages__establisher_individual_address_cya_label",
           Seq("address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "United Kingdom"),
           answerIsMessageKey = false,
-          AddressController.onPageLoad(CheckMode, firstIndex).url
+          Some(AddressController.onPageLoad(CheckMode, firstIndex).url)
         )
       )
       checkYourAnswerHelper(userAnswers).address(firstIndex) mustEqual expectedOutput
@@ -79,7 +79,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "messages__establisher_individual_previous_address_cya_label",
           Seq("address line 1,", "address line 2,", "address line 4,", "AB1 1AB,", "United Kingdom"),
           answerIsMessageKey = false,
-          PreviousAddressController.onPageLoad(CheckMode, firstIndex).url
+          Some(PreviousAddressController.onPageLoad(CheckMode, firstIndex).url)
         )
       )
       checkYourAnswerHelper(userAnswers).previousAddress(firstIndex) mustEqual expectedOutput
@@ -100,13 +100,13 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "messages__establisher_individual_nino_question_cya_label",
           Seq("Yes"),
           answerIsMessageKey = false,
-          controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url
+          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url)
         ),
         AnswerRow(
           "messages__establisher_individual_nino_cya_label",
           Seq("test Nino"),
           answerIsMessageKey = false,
-          controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url
+          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url)
         )
       )
       checkYourAnswerHelper(userAnswers).establisherNino(firstIndex) mustEqual expectedOutput
@@ -127,13 +127,13 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "messages__establisher_individual_nino_question_cya_label",
           Seq("No"),
           false,
-          EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url
+          Some(EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url)
         ),
         AnswerRow(
           "messages__establisher_individual_nino_reason_cya_label",
           Seq("No nino"),
           false,
-          EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url
+          Some(EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url)
         )
       )
       checkYourAnswerHelper(userAnswers).establisherNino(firstIndex) mustEqual expectedOutput
@@ -153,13 +153,13 @@ class CheckYourAnswerHelperSpec extends SpecBase {
         AnswerRow(
           "messages__establisher_individual_email_cya_label", Seq("test@test.com"),
           false,
-          ContactDetailsController.onPageLoad(CheckMode, firstIndex).url
+          Some(ContactDetailsController.onPageLoad(CheckMode, firstIndex).url)
         ),
         AnswerRow(
           "messages__establisher_individual_phone_cya_label",
           Seq("0111111111"),
           false,
-          ContactDetailsController.onPageLoad(CheckMode, firstIndex).url
+          Some(ContactDetailsController.onPageLoad(CheckMode, firstIndex).url)
         )
       )
       checkYourAnswerHelper(userAnswers).contactDetails(firstIndex) mustEqual expectedOutput
@@ -178,13 +178,13 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "messages__establisher_individual_name_cya_label",
           Seq("test first name test middle name test last name"),
           false,
-          EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url
+          Some(EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
         ),
         AnswerRow(
           "messages__establisher_individual_dob_cya_label",
           Seq(s"${DateHelper.formatDate(LocalDate.now)}"),
           false,
-          EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url
+          Some(EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
         )
       )
       checkYourAnswerHelper(userAnswers).establisherDetails(firstIndex) mustEqual expectedOutput
@@ -203,13 +203,13 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "messages__establisher_individual_name_cya_label",
           Seq("test first name test last name"),
           false,
-          EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url
+          Some(EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
         ),
         AnswerRow(
           "messages__establisher_individual_dob_cya_label",
           Seq(s"${DateHelper.formatDate(LocalDate.now)}"),
           false,
-          EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url
+          Some(EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
         )
       )
       checkYourAnswerHelper(userAnswers).establisherDetails(firstIndex) mustEqual expectedOutput
@@ -228,7 +228,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "messages__establisher_individual_address_years_cya_label",
           Seq(s"messages__common__${AddressYears.UnderAYear.toString}"),
           true,
-          AddressYearsController.onPageLoad(CheckMode, firstIndex).url
+          Some(AddressYearsController.onPageLoad(CheckMode, firstIndex).url)
         )
       )
       checkYourAnswerHelper(userAnswers).addressYears(firstIndex) mustEqual expectedOutput

@@ -39,13 +39,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       "messages__establisher_individual_name_cya_label",
       Seq("test first name test last name"),
       answerIsMessageKey = false,
-      routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url
+      Some(routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
     ),
     AnswerRow(
       "messages__establisher_individual_dob_cya_label",
       Seq(DateHelper.formatDate(LocalDate.now)),
       answerIsMessageKey = false,
-      routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
+      Some(routes.EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url))
   )
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
