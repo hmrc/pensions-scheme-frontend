@@ -169,7 +169,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
 
   val psaName = Json.obj("psaName" -> "Test", "psaEmail" -> "email@test.com")
 
-  lazy val adviserDetailsRoute: String = routes.AdviserDetailsController.onPageLoad(CheckMode).url
+  lazy val adviserDetailsRoute: Option[String] = Some(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
   lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit()
   lazy val adviserSection = AnswerSection(None,
     Seq(

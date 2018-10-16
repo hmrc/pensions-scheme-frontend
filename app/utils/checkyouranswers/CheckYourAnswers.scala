@@ -61,7 +61,7 @@ object CheckYourAnswers {
               s"${id.toString}.checkYourAnswersLabel",
               Seq(if (flag) "site.yes" else "site.no"),
               answerIsMessageKey = true,
-              changeUrl
+              Some(changeUrl)
             ))
         }.getOrElse(Seq.empty)
     }
@@ -76,7 +76,7 @@ object CheckYourAnswers {
               "messages__benefits__title",
               Seq(s"messages__benefits__$benefits"),
               true,
-              changeUrl
+              Some(changeUrl)
             )
           )
       }.getOrElse(Seq.empty[AnswerRow])
@@ -92,13 +92,13 @@ object CheckYourAnswers {
               "messages__common__email",
               Seq(s"${contactDetails.emailAddress}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               "messages__common__phone",
               Seq(s"${contactDetails.phoneNumber}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ))
       }.getOrElse(Seq.empty[AnswerRow])
     }
@@ -113,19 +113,19 @@ object CheckYourAnswers {
               "messages__common__cya__name",
               Seq(s"${adviserDetails.adviserName}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               "messages__adviserDetails__email",
               Seq(s"${adviserDetails.emailAddress}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               "messages__adviserDetails__phone",
               Seq(s"${adviserDetails.phoneNumber}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ))
       }.getOrElse(Seq.empty[AnswerRow])
     }
@@ -140,13 +140,13 @@ object CheckYourAnswers {
               "messages__common__cya__name",
               Seq(personDetails.fullName),
               false,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               "messages__common__dob",
               Seq(DateHelper.formatDate(personDetails.date)),
               false,
-              changeUrl
+              Some(changeUrl)
             ))
       }.getOrElse(Seq.empty[AnswerRow])
     }
@@ -161,7 +161,7 @@ object CheckYourAnswers {
               s"${id.toString}.checkYourAnswersLabel",
               Seq(s"messages__membership__$membership"),
               true,
-              changeUrl
+              Some(changeUrl)
             )
           )
       }.getOrElse(Seq.empty[AnswerRow])
@@ -176,7 +176,7 @@ object CheckYourAnswers {
             "messages__common__cya__name",
             Seq(partnershipDetails.name),
             false,
-            changeUrl
+            Some(changeUrl)
           )
         )
       } getOrElse Seq.empty[AnswerRow]
@@ -192,7 +192,7 @@ object CheckYourAnswers {
               s"${id.toString}.checkYourAnswersLabel",
               Seq(retrieveStringAnswer(id, string)),
               answerIsMessageKey = false,
-              changeUrl
+              Some(changeUrl)
             ))
         }.getOrElse(Seq.empty[AnswerRow])
     }
@@ -207,13 +207,13 @@ object CheckYourAnswers {
               "messages__partnership__checkYourAnswers__vat",
               Seq("site.yes"),
               true,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               "messages__common__cya__vat",
               Seq(vat),
               false,
-              changeUrl
+              Some(changeUrl)
             )
           )
           case Vat.No => Seq(
@@ -221,7 +221,7 @@ object CheckYourAnswers {
               "messages__partnership__checkYourAnswers__vat",
               Seq("site.no"),
               true,
-              changeUrl
+              Some(changeUrl)
             ))
         } getOrElse Seq.empty[AnswerRow]
     }
@@ -236,13 +236,13 @@ object CheckYourAnswers {
               "messages__partnership__checkYourAnswers__paye",
               Seq("site.yes"),
               true,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               "messages__common__cya__paye",
               Seq(paye),
               false,
-              changeUrl
+              Some(changeUrl)
             )
           )
           case Paye.No => Seq(
@@ -250,7 +250,7 @@ object CheckYourAnswers {
               "messages__partnership__checkYourAnswers__paye",
               Seq("site.no"),
               true,
-              changeUrl
+              Some(changeUrl)
             ))
         } getOrElse Seq.empty[AnswerRow]
     }
@@ -277,26 +277,26 @@ case class NinoCYA[I <: TypedIdentifier[Nino]](label: String = "messages__truste
               label,
               Seq(s"${Nino.Yes}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               "messages__trusteeNino_nino_cya_label",
               Seq(nino),
               false,
-              changeUrl
+              Some(changeUrl)
             )
           )
           case Some(Nino.No(reason)) => Seq(
             AnswerRow(
               label,
               Seq(s"${Nino.No}"),
-              false, changeUrl
+              false, Some(changeUrl)
             ),
             AnswerRow(
               "messages__trusteeNino_reason_cya_label",
               Seq(reason),
               false,
-              changeUrl
+              Some(changeUrl)
             ))
           case _ => Seq.empty[AnswerRow]
         }
@@ -317,25 +317,25 @@ case class CompanyRegistrationNumberCYA[I <: TypedIdentifier[CompanyRegistration
               label,
               Seq(s"${CompanyRegistrationNumber.Yes}"),
               true,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               "messages__common__crn",
               Seq(s"$crn"),
               true,
-              changeUrl
+              Some(changeUrl)
             ))
           case Some(CompanyRegistrationNumber.No(reason)) => Seq(
             AnswerRow(
               label,
               Seq(s"${CompanyRegistrationNumber.No}"),
               true,
-              changeUrl),
+              Some(changeUrl)),
             AnswerRow(
               "messages__company__cya__crn_no_reason",
               Seq(s"$reason"),
               true,
-              changeUrl
+              Some(changeUrl)
             ))
           case _ => Seq.empty[AnswerRow]
         }
@@ -361,13 +361,13 @@ case class SchemeDetailsCYA[I <: TypedIdentifier[SchemeDetails]](
               nameLabel,
               Seq(s"${schemeDetails.schemeName}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ),
               AnswerRow(
                 typeLabel,
                 Seq(s"messages__scheme_details__type_${schemeDetails.schemeType}"),
                 true,
-                changeUrl
+                Some(changeUrl)
               )
             )
         }.getOrElse(Seq.empty[AnswerRow])
@@ -394,31 +394,31 @@ case class BankDetailsCYA[I <: TypedIdentifier[UKBankDetails]](
               bankNameLabel,
               Seq(s"${bankDetails.bankName}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               accountNameLabel,
               Seq(s"${bankDetails.accountName}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               sortCodeLabel,
               Seq(s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               accountNumberLabel,
               Seq(s"${bankDetails.accountNumber}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               dateLabel,
               Seq(s"${DateHelper.formatDate(bankDetails.date)}"),
               false,
-              changeUrl
+              Some(changeUrl)
             )
           )
       }.getOrElse(Seq.empty[AnswerRow])
@@ -436,7 +436,7 @@ case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "
           label,
           Seq(s"messages__common__$addressYears"),
           true,
-          changeUrl
+          Some(changeUrl)
         ))).getOrElse(Seq.empty[AnswerRow])
     }
   }
@@ -465,7 +465,7 @@ case class AddressCYA[I <: TypedIdentifier[Address]](label: String = "messages__
           Seq(AnswerRow(
             label,
             addressAnswer(address),
-            false, changeUrl
+            false, Some(changeUrl)
           ))
         }.getOrElse(Seq.empty[AnswerRow])
       }
@@ -488,13 +488,13 @@ case class BenefitsInsurerCYA[I <: TypedIdentifier[BenefitsInsurer]](
               nameLabel,
               Seq(s"${benefitsInsurer.companyName}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               policyLabel,
               Seq(s"${benefitsInsurer.policyNumber}"),
               false,
-              changeUrl
+              Some(changeUrl)
             )
           )
       }.getOrElse(Seq.empty[AnswerRow])
@@ -514,26 +514,26 @@ case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](label
               label,
               Seq(s"${UniqueTaxReference.Yes}"),
               false,
-              changeUrl
+              Some(changeUrl)
             ),
             AnswerRow(
               "messages__establisher_individual_utr_cya_label",
               Seq(utr),
               false,
-              changeUrl
+              Some(changeUrl)
             )
           )
           case Some(UniqueTaxReference.No(reason)) => Seq(
             AnswerRow(
               label,
               Seq(s"${UniqueTaxReference.No}"),
-              false, changeUrl
+              false, Some(changeUrl)
             ),
             AnswerRow(
               "messages__establisher_individual_utr_reason_cya_label",
               Seq(reason),
               false,
-              changeUrl
+              Some(changeUrl)
             ))
           case _ => Seq.empty[AnswerRow]
         }
@@ -558,7 +558,7 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
               nameLabel,
               Seq(s"${companyDetails.companyName}"),
               false,
-              changeUrl
+              Some(changeUrl)
             )
 
             val withVat = companyDetails.vatNumber.fold(Seq(nameRow)) { vat =>
@@ -566,7 +566,7 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
                 vatLabel,
                 Seq(s"$vat"),
                 false,
-                changeUrl
+                Some(changeUrl)
               ))
             }
 
@@ -575,7 +575,7 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
                 payeLabel,
                 Seq(s"$paye"),
                 false,
-                changeUrl
+                Some(changeUrl)
               )
             }
 

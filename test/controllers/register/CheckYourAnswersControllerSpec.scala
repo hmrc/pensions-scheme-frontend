@@ -89,13 +89,13 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         "messages__scheme_details__name_label",
         Seq("Test Scheme Name"),
         answerIsMessageKey = false,
-        controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url
+        Some(controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url)
       ),
       AnswerRow(
         "messages__scheme_details__type_legend_short",
         Seq(s"messages__scheme_details__type_${SchemeType.SingleTrust}"),
         answerIsMessageKey = true,
-        controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url
+        Some(controllers.register.routes.SchemeDetailsController.onPageLoad(CheckMode).url)
       )
     )
   )
@@ -107,7 +107,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         "messages__benefits__title",
         Seq(s"messages__benefits__${Benefits.options.head.value}"),
         answerIsMessageKey = true,
-        controllers.register.routes.BenefitsController.onPageLoad(CheckMode).url
+        Some(controllers.register.routes.BenefitsController.onPageLoad(CheckMode).url)
       )
     )
   )
@@ -119,7 +119,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         "uKBankAccount.checkYourAnswersLabel",
         Seq("site.no"),
         answerIsMessageKey = true,
-        controllers.register.routes.UKBankAccountController.onPageLoad(CheckMode).url
+        Some(controllers.register.routes.UKBankAccountController.onPageLoad(CheckMode).url)
       )
     )
   )

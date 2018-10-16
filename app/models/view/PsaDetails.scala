@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models.view
 
-case class AnswerRow(label: String, answer: Seq[String], answerIsMessageKey: Boolean, changeUrl: Option[String])
+import play.api.libs.json._
+
+case class Name(firstName: Option[String], middleName: Option[String], lastName: Option[String])
+
+object Name {
+  implicit val formats : OFormat[Name] = Json.format[Name]
+}
+
+case class PsaDetails(id: String, organisationOrPartnershipName: Option[String], individual: Option[Name])
+
+object PsaDetails {
+  implicit val formats: OFormat[PsaDetails] = Json.format[PsaDetails]
+}

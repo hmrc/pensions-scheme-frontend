@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models.view
 
-case class AnswerRow(label: String, answer: Seq[String], answerIsMessageKey: Boolean, changeUrl: Option[String])
+import play.api.libs.json._
+
+case class PreviousAddressInfo(isPreviousAddressLast12Month: Boolean,
+                               previousAddress: Option[CorrespondenceAddress] = None)
+
+object PreviousAddressInfo {
+  implicit val formats: OFormat[PreviousAddressInfo] = Json.format[PreviousAddressInfo]
+}
