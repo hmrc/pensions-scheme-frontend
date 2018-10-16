@@ -16,4 +16,4 @@
 
 package viewmodels
 
-case class AnswerRow(label: String, answer: Seq[String], answerIsMessageKey: Boolean, changeUrl: Option[String])
+case class AnswerRow(label: String, answer: Seq[String], answerIsMessageKey: Boolean, changeUrl: Option[String] = None)
