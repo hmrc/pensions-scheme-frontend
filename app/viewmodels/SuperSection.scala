@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-package models.view
+package viewmodels
 
-import play.api.libs.json.{Json, OFormat}
-
-case class CorrespondenceAddress(addressLine1: String,
-                                 addressLine2: String,
-                                 addressLine3: Option[String],
-                                 addressLine4: Option[String],
-                                 countryCode: String,
-                                 postalCode: Option[String])
-
-object CorrespondenceAddress {
-  implicit val formats: OFormat[CorrespondenceAddress] = Json.format[CorrespondenceAddress]
-}
+case class SuperSection(headingKey: Option[String], sections: Seq[AnswerSection]) extends Section

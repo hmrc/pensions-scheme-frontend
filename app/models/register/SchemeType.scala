@@ -96,4 +96,17 @@ object SchemeType {
       }
     }
   }
+
+  def getSchemeType(schemeTypeStr : Option[String], isMasterTrust: Boolean): Option[String] = {
+    if (isMasterTrust) {
+      Some(s"messages__scheme_details__type_${MasterTrust.toString}")
+    } else {
+      schemeTypeStr.flatMap{ schemeStr =>
+        List(SingleTrust.toString, GroupLifeDeath.toString, BodyCorporate.toString, other).find(scheme=>
+          schemeStr.toLowerCase.contains(scheme.toLowerCase)).map{ str =>
+          s"messages__scheme_details__type_${str}"
+        }
+      }
+    }
+  }
 }
