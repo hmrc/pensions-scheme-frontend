@@ -140,14 +140,16 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 
     }
 
-    "not send an email if there is no records for user email" in {
-      reset(mockEmailConnector)
+    if (!frontendAppConfig.isWorkPackageOneEnabled) {
+      "not send an email if there is no records for user email" in {
+        reset(mockEmailConnector)
 
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      whenReady(controller(emailConnector = mockEmailConnector, psaName = Json.obj("psaName" -> "Test")).onSubmit(postRequest)) {
-        _ =>
-          verify(mockEmailConnector, times(0)).sendEmail(any(), any(), any(), any())(any(), any())
+        whenReady(controller(emailConnector = mockEmailConnector, psaName = Json.obj("psaName" -> "Test")).onSubmit(postRequest)) {
+          _ =>
+            verify(mockEmailConnector, times(0)).sendEmail(any(), any(), any(), any())(any(), any())
+        }
       }
     }
 

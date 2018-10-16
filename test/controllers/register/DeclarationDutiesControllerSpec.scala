@@ -126,6 +126,7 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
         reset(mockEmailConnector)
 
         lazy val app = new GuiceApplicationBuilder()
+          .configure("features.work-package-one-enabled" -> false)
           .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
           .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
           .overrides(bind[AuthAction].toInstance(FakeAuthAction))
