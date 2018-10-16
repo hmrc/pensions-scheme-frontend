@@ -885,3 +885,16 @@ messages__needContact__title = What is your email address?
 messages__needContact__heading = What is your email address?
 messages__needContact__hint = We will use this to contact you about your schemes.
 
+messages__psaSchemeDetails__scheme_type = Scheme type
+messages__psaSchemeDetails__country_established = Country established
+messages__psaSchemeDetails__current_scheme_members = How many scheme members are there?
+messages__psaSchemeDetails__future_scheme_members = How many scheme members do you expect there to be in the next 12 months?
+messages__psaSchemeDetails__is_investment_regulated = Is the scheme investment regulated?
+messages__psaSchemeDetails__is_occupational = Is the scheme an occupational pension scheme?
+messages__psaSchemeDetails__benefits = How does the scheme provide benefits?
+messages__psaSchemeDetails__are_benefits_secured = Are any of the scheme benefits secured by a contract of insurance or annuity?
+messages__psaSchemeDetails__insurance_company_name = Name of insurance company
+messages__psaSchemeDetails__policy_number = Policy number
+messages__psaSchemeDetails__insurance_company_address = Insurance company address
+
+

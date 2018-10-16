@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.view
+@import viewmodels.AnswerSection
+@import viewmodels.SuperSection
+@import views.html._
 
-import play.api.libs.json._
+@(superSection: SuperSection, idPath: String)(implicit messages: Messages)
 
-case class PsaSchemeDetails(schemeDetails: SchemeDetails,
-                            establisherDetails: Option[EstablisherInfo],
-                            trusteeDetails: Option[TrusteeInfo],
-                            psaDetails: Seq[PsaDetails])
-
-object PsaSchemeDetails {
-  implicit val formats: OFormat[PsaSchemeDetails] = Json.format[PsaSchemeDetails]
+@if(superSection.headingKey.isDefined){
+<header class="page-heading">
+<h2 id="supersection-@idPath-heading" class="heading-large">@messages(superSection.headingKey.get)</h2>
+</header>
 }
 
+<ul>
+    @for((section, i) <- superSection.sections.zipWithIndex){
+    @components.answer_section(section, idPath + "-" + i.toString)
+    }
+</ul>

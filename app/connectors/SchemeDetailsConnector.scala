@@ -18,7 +18,7 @@ package connectors
 
 import com.google.inject.{ImplementedBy, Inject, Singleton}
 import config.FrontendAppConfig
-import models.view.PsaSchemeDetails
+import models.details.PsaSchemeDetails
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsResultException, JsSuccess, Json}

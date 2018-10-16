@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package models.view
+package models.details.view
 
-import play.api.libs.json.{Json, OFormat}
+import viewmodels.AnswerRow
 
-case class TrusteeInfo(individual: Seq[IndividualInfo],
-                       company: Seq[CompanyDetails],
-                       partnership: Seq[PartnershipDetails])
+import scala.language.implicitConversions
 
-object TrusteeInfo {
-  implicit val formats: OFormat[TrusteeInfo] = Json.format[TrusteeInfo]
+trait DetailAnswerRow[I] {
+  def row(data: I): Seq[AnswerRow]
 }
