@@ -19,15 +19,18 @@ package models.details.transformation
 import javax.inject.Inject
 import models.details._
 import utils.CountryOptions
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
-//noinspection SpellCheckingInspection
-//scalastyle:off method.length
 case class PartnershipDetailsRows[I <: PartnershipDetails] @Inject()(countryOptions: CountryOptions) extends TransformedElement[I] {
 
   override val entityType: String = "partnership"
+
+  def transformSuperSection(data: I): SuperSection = {
+
+    SuperSection(Some(data.partnershipName), Seq(AnswerSection(None, transformRows(data))))
+  }
 
   override def transformRows(data: I): Seq[AnswerRow] = {
 
@@ -38,6 +41,4 @@ case class PartnershipDetailsRows[I <: PartnershipDetails] @Inject()(countryOpti
       previousAddressRows(countryOptions, Some(data.previousAddress)) ++
       contactRows(data.contact)
   }
-
-
 }

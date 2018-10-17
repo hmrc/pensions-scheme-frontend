@@ -20,13 +20,15 @@ import javax.inject.Inject
 import models.details.{InsuranceCompany, SchemeDetails}
 import models.register.SchemeType
 import utils.CountryOptions
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
-//noinspection SpellCheckingInspection
-//scalastyle:off method.length
 case class SchemeDetailsRows[I <: SchemeDetails] @Inject()(countryOptions: CountryOptions) extends TransformedElement[I] {
+
+  def transformSuperSection(data: I): SuperSection = {
+    SuperSection(None, Seq(AnswerSection(None, transformRows(data))))
+  }
 
   override def transformRows(data: I): Seq[AnswerRow] = {
 

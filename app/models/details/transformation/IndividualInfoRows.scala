@@ -20,15 +20,24 @@ import javax.inject.Inject
 import models.details._
 import org.joda.time.LocalDate
 import utils.{CountryOptions, DateHelper}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
-//noinspection SpellCheckingInspection
-//scalastyle:off method.length
 case class IndividualInfoRows[I <: IndividualInfo] @Inject()(countryOptions: CountryOptions) extends TransformedElement[I] {
 
   override val entityType = "individual"
+
+  def transformSuperSection(data: I, heading : Option[String]): SuperSection = {
+
+    SuperSection(if(heading.isEmpty){Some(fullName(data.personalDetails.name))} else {heading},
+      Seq(AnswerSection(if(heading.isEmpty){None} else {Some(fullName(data.personalDetails.name))}, transformRows(data))))
+  }
+
+  def transformAnswerSection(data: I): AnswerSection = {
+
+    AnswerSection(Some(fullName(data.personalDetails.name)), transformRows(data))
+  }
 
   override def transformRows(data: I): Seq[AnswerRow] = {
 
@@ -51,5 +60,4 @@ case class IndividualInfoRows[I <: IndividualInfo] @Inject()(countryOptions: Cou
       transformRow(label = "messages__psaSchemeDetails__individual_nino", answer = Seq(nino))
     }.toSeq
   }
-
 }

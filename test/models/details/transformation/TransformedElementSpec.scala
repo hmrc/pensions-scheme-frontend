@@ -19,7 +19,7 @@ package models.details.transformation
 import models.details.SchemeMemberNumbers
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 class TransformedElementSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues {
 

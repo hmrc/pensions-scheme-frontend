@@ -16,9 +16,9 @@
 
 package models.details.transformation
 
-import models.details.{CorrespondenceAddress, IndividualContactDetails, PreviousAddressInfo}
+import models.details._
 import utils.CountryOptions
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
@@ -33,6 +33,11 @@ trait TransformedElement[I] {
                    answerIsMessageKey: Boolean=false,
                    changeUrl: Option[String] = None): AnswerRow = {
     AnswerRow(label, answer, answerIsMessageKey, changeUrl)
+  }
+
+  def fullName(data : IndividualName): String = data.middleName match {
+    case Some(middle) => s"${data.firstName} $middle ${data.lastName}"
+    case _ => s"${data.firstName} ${data.lastName}"
   }
 
   protected def getCountry(countryOptions : CountryOptions, countryName: String): String = {

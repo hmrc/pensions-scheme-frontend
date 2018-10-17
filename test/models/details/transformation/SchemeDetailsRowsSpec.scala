@@ -20,7 +20,7 @@ import models.details.{CorrespondenceAddress, InsuranceCompany, SchemeDetails, S
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import utils.FakeCountryOptions
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
@@ -39,6 +39,14 @@ class SchemeDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChec
   )
 
   "SchemeDetailsRows" must {
+
+    "produce details section" when{
+      "called with correct details" in {
+        schemeDetailsRows.transformSuperSection(schemeDetails.copy(typeOfScheme = None, insuranceCompany = None)) must equal(
+          SuperSection(None, Seq(AnswerSection(None, expectedSeq)))
+        )
+      }
+    }
 
     "produce row of answers" when {
 

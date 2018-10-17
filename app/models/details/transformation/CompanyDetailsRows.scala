@@ -18,17 +18,20 @@ package models.details.transformation
 
 import javax.inject.Inject
 import models.details._
-import org.joda.time.LocalDate
-import utils.{CountryOptions, DateHelper}
-import viewmodels.AnswerRow
+import utils.CountryOptions
+import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
-//noinspection SpellCheckingInspection
-//scalastyle:off method.length
 case class CompanyDetailsRows[I <: CompanyDetails] @Inject()(countryOptions: CountryOptions) extends TransformedElement[I] {
 
   override val entityType: String = "company"
+
+  def transformSuperSection(data: I): SuperSection = {
+
+    SuperSection(Some(data.organizationName), Seq(AnswerSection(None, transformRows(data))))
+
+  }
 
   override def transformRows(data: I): Seq[AnswerRow] = {
 
@@ -40,6 +43,4 @@ case class CompanyDetailsRows[I <: CompanyDetails] @Inject()(countryOptions: Cou
       previousAddressRows(countryOptions, data.previousAddress) ++
       contactRows(data.contact)
   }
-
-
 }
