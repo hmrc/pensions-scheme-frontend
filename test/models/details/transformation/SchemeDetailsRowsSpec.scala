@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.details.view
+package models.details.transformation
 
 import models.details.{CorrespondenceAddress, InsuranceCompany, SchemeDetails, SchemeMemberNumbers}
 import org.scalatest.prop.PropertyChecks
@@ -57,7 +57,7 @@ class SchemeDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChec
     AnswerRow("messages__psaSchemeDetails__are_benefits_secured", Seq("site.no"), answerIsMessageKey = true, None)
   )
 
-  "SchemeDetailsRows " must {
+  "SchemeDetailsRows" must {
 
     "produce row of answers" when {
 

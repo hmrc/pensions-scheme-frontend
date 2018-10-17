@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.details.view
+package models.details.transformation
 
 import javax.inject.Inject
 import models.details.{CorrespondenceAddress, InsuranceCompany, SchemeDetails}

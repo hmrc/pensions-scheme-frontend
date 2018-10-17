@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.details.view
+package models.details.transformation
 
 import viewmodels.AnswerRow
 import scala.language.implicitConversions
