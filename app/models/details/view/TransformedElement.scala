@@ -21,5 +21,12 @@ import viewmodels.AnswerRow
 import scala.language.implicitConversions
 
 trait DetailAnswerRow[I] {
-  def row(data: I): Seq[AnswerRow]
+  def rows(data: I): Seq[AnswerRow]
+
+  def row(label: String,
+          answer: Seq[String],
+          answerIsMessageKey: Boolean=false,
+          changeUrl: Option[String] = None): AnswerRow = {
+    AnswerRow(label, answer, answerIsMessageKey, changeUrl)
+  }
 }
