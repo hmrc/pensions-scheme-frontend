@@ -898,4 +898,34 @@ messages__psaSchemeDetails__insurance_company_name = Name of insurance company
 messages__psaSchemeDetails__policy_number = Policy number
 messages__psaSchemeDetails__insurance_company_address = Insurance company address
 
+messages__psaSchemeDetails__individual_date_of_birth = Date of birth
+messages__psaSchemeDetails__individual_nino = National Insurance number
+messages__psaSchemeDetails__individual_utr = Unique Taxpayer Reference
+messages__psaSchemeDetails__individual_address = Address
+messages__psaSchemeDetails__individual_less_than_12months = How long has the company been at this address
+messages__psaSchemeDetails__individual_previous_address = Previous address
+messages__psaSchemeDetails__individual_email = Contact email address
+messages__psaSchemeDetails__individual_phone = Contact phone number
+
+messages__psaSchemeDetails__company_vat = VAT number
+messages__psaSchemeDetails__company_paye = Employer PAYE reference number
+messages__psaSchemeDetails__company_crn = Company registration number
+messages__psaSchemeDetails__company_utr = Unique Taxpayer Reference
+messages__psaSchemeDetails__company_address = Company‘s contact address
+messages__psaSchemeDetails__company_less_than_12months = How long has the company been at this address
+messages__psaSchemeDetails__company_previous_address = Previous address
+messages__psaSchemeDetails__company_email = Company’s email address
+messages__psaSchemeDetails__company_phone = Company’s phone number
+
+messages__psaSchemeDetails__partnership_vat = VAT number
+messages__psaSchemeDetails__partnership_paye = Employer PAYE reference number
+messages__psaSchemeDetails__partnership_utr = Unique Taxpayer Reference
+messages__psaSchemeDetails__partnership_address = Partnership‘s contact address
+messages__psaSchemeDetails__partnership_less_than_12months = How long has the partnership been at this address
+messages__psaSchemeDetails__partnership_previous_address = Previous address
+messages__psaSchemeDetails__partnership_email = Partnership’s email address
+messages__psaSchemeDetails__partnership_phone = Partnership’s phone number
+
+
+
 

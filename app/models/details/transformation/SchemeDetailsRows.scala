@@ -17,7 +17,7 @@
 package models.details.transformation
 
 import javax.inject.Inject
-import models.details.{CorrespondenceAddress, InsuranceCompany, SchemeDetails}
+import models.details.{InsuranceCompany, SchemeDetails}
 import models.register.SchemeType
 import utils.CountryOptions
 import viewmodels.AnswerRow
@@ -38,7 +38,7 @@ case class SchemeDetailsRows[I <: SchemeDetails] @Inject()(countryOptions: Count
 
   private def schemeDetailRows(data: I): Seq[AnswerRow] = {
     Seq(
-      transformRow(label = "messages__psaSchemeDetails__country_established", answer = Seq(getCountry(data.country))),
+      transformRow(label = "messages__psaSchemeDetails__country_established", answer = Seq(getCountry(countryOptions, data.country))),
       transformRow(label = "messages__psaSchemeDetails__current_scheme_members", answer = Seq(data.members.current)),
       transformRow(label = "messages__psaSchemeDetails__future_scheme_members", answer = Seq(data.members.future)),
       transformRow(label = "messages__psaSchemeDetails__is_investment_regulated", answer = Seq(yesNo(data.isInvestmentRegulated)),
@@ -68,28 +68,9 @@ case class SchemeDetailsRows[I <: SchemeDetails] @Inject()(countryOptions: Count
             transformRow(label = "messages__psaSchemeDetails__policy_number", answer = Seq(policyNumber))
           }.toList ++
           company.address.map { address =>
-            transformRow(label = "messages__psaSchemeDetails__insurance_company_address", addressAnswer(address))
+            transformRow(label = "messages__psaSchemeDetails__insurance_company_address", addressAnswer(countryOptions, address))
           }
     }.toList.flatten
-  }
-
-  private def getCountry(countryName: String): String = {
-    countryOptions.options.find(_.value == countryName).map(_.label).getOrElse(countryName)
-  }
-
-  private def addressAnswer(address: CorrespondenceAddress): Seq[String] = {
-    Seq(
-      Some(s"${address.addressLine1},"),
-      Some(s"${address.addressLine2},"),
-      address.addressLine3.map(line3 => s"$line3,"),
-      address.addressLine4.map(line4 => s"$line4,"),
-      address.postalCode.map(postCode => s"$postCode,"),
-      Some(getCountry(address.countryCode))
-    ).flatten
-  }
-
-  private def yesNo(flag: Boolean): String = {
-    if (flag) "site.yes" else "site.no"
   }
 
 }

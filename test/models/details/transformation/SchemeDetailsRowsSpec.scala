@@ -24,26 +24,7 @@ import viewmodels.AnswerRow
 
 import scala.language.implicitConversions
 
-class SchemeDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues {
-
-  val correspondenceAddress = CorrespondenceAddress("address line 1", "address line 2", Some("address line 3"), None, "GB", Some("AB1 1AB"))
-
-  val schemeDetails = SchemeDetails(srn = None,
-    pstr =None,
-    status = "test",
-    name = "Test Name",
-    isMasterTrust = false,
-    typeOfScheme = Some("Single trust"),
-    otherTypeOfScheme = None,
-    hasMoreThanTenTrustees= false,
-    members =  SchemeMemberNumbers(current = "1", future =  "2 to 11"),
-    isInvestmentRegulated = false,
-    isOccupational = false,
-    benefits =  "Defined benefits only",
-    country= "GB",
-    areBenefitsSecured= false,
-    insuranceCompany = Some(InsuranceCompany(name = Some("company name"),policyNumber= Some("123456789"),
-      address = Some(correspondenceAddress))))
+class SchemeDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues with SchemeDetailsStubData{
 
   val schemeDetailsRows: SchemeDetailsRows[SchemeDetails] = SchemeDetailsRows[SchemeDetails](FakeCountryOptions())
 
