@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package models.view
+package models.details.transformation
 
-import play.api.libs.json.{Json, OFormat}
+import viewmodels.AnswerRow
+import scala.language.implicitConversions
 
-case class TrusteeInfo(individual: Seq[IndividualInfo],
-                       company: Seq[CompanyDetails],
-                       partnership: Seq[PartnershipDetails])
+trait TransformedElement[I] {
 
-object TrusteeInfo {
-  implicit val formats: OFormat[TrusteeInfo] = Json.format[TrusteeInfo]
+  def transformRows(data: I): Seq[AnswerRow]
+
+  def transformRow(label: String,
+                   answer: Seq[String],
+                   answerIsMessageKey: Boolean=false,
+                   changeUrl: Option[String] = None): AnswerRow = {
+    AnswerRow(label, answer, answerIsMessageKey, changeUrl)
+  }
 }

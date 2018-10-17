@@ -14,6 +14,16 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models.details
 
-case class AnswerRow(label: String, answer: Seq[String], answerIsMessageKey: Boolean, changeUrl: Option[String] = None)
+import play.api.libs.json.{Json, OFormat}
+
+case class EstablisherInfo(individual: Seq[IndividualInfo],
+                           company: Seq[CompanyDetails],
+                           partnership: Seq[PartnershipDetails])
+
+object EstablisherInfo {
+  implicit val formats: OFormat[EstablisherInfo] = Json.format[EstablisherInfo]
+}
+
+

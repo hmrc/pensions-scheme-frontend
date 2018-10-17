@@ -14,6 +14,16 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models.details
 
-case class AnswerRow(label: String, answer: Seq[String], answerIsMessageKey: Boolean, changeUrl: Option[String] = None)
+import play.api.libs.json._
+
+case class PsaSchemeDetails(schemeDetails: SchemeDetails,
+                            establisherDetails: Option[EstablisherInfo],
+                            trusteeDetails: Option[TrusteeInfo],
+                            psaDetails: Seq[PsaDetails])
+
+object PsaSchemeDetails {
+  implicit val formats: OFormat[PsaSchemeDetails] = Json.format[PsaSchemeDetails]
+}
+

@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models.details
 
-case class AnswerRow(label: String, answer: Seq[String], answerIsMessageKey: Boolean, changeUrl: Option[String] = None)
+import play.api.libs.json.{Json, OFormat}
+
+case class CorrespondenceAddress(addressLine1: String,
+                                 addressLine2: String,
+                                 addressLine3: Option[String],
+                                 addressLine4: Option[String],
+                                 countryCode: String,
+                                 postalCode: Option[String])
+
+object CorrespondenceAddress {
+  implicit val formats: OFormat[CorrespondenceAddress] = Json.format[CorrespondenceAddress]
+}

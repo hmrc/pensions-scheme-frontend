@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package models.view
+package models.details
 
 import play.api.libs.json.{Json, OFormat}
 
-case class CompanyDetails(organizationName: String,
-                          utr: Option[String],
-                          crn: Option[String],
-                          vatRegistration: Option[String],
-                          payeRef: Option[String],
-                          address: CorrespondenceAddress,
-                          contact: IndividualContactDetails,
-                          previousAddress: Option[PreviousAddressInfo],
-                          directorsDetails: Seq[IndividualInfo])
+case class TrusteeInfo(individual: Seq[IndividualInfo],
+                       company: Seq[CompanyDetails],
+                       partnership: Seq[PartnershipDetails])
 
-object CompanyDetails {
-  implicit val formats: OFormat[CompanyDetails] = Json.format[CompanyDetails]
+object TrusteeInfo {
+  implicit val formats: OFormat[TrusteeInfo] = Json.format[TrusteeInfo]
 }
