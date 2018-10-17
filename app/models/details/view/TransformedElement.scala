@@ -17,16 +17,16 @@
 package models.details.view
 
 import viewmodels.AnswerRow
-
 import scala.language.implicitConversions
 
-trait DetailAnswerRow[I] {
-  def rows(data: I): Seq[AnswerRow]
+trait TransformedElement[I] {
 
-  def row(label: String,
-          answer: Seq[String],
-          answerIsMessageKey: Boolean=false,
-          changeUrl: Option[String] = None): AnswerRow = {
+  def transformRows(data: I): Seq[AnswerRow]
+
+  def transformRow(label: String,
+                   answer: Seq[String],
+                   answerIsMessageKey: Boolean=false,
+                   changeUrl: Option[String] = None): AnswerRow = {
     AnswerRow(label, answer, answerIsMessageKey, changeUrl)
   }
 }

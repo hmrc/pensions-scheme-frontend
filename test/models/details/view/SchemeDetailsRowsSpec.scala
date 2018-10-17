@@ -47,7 +47,7 @@ class SchemeDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChec
 
   val schemeDetailsRows: SchemeDetailsRows[SchemeDetails] = SchemeDetailsRows[SchemeDetails](FakeCountryOptions())
 
-  val excpectedSeq = Seq(
+  val expectedSeq = Seq(
     AnswerRow("messages__psaSchemeDetails__country_established", Seq("Country of GB"), answerIsMessageKey = false, None),
     AnswerRow("messages__psaSchemeDetails__current_scheme_members", Seq("1"), answerIsMessageKey = false, None),
     AnswerRow("messages__psaSchemeDetails__future_scheme_members", Seq("2 to 11"), answerIsMessageKey = false, None),
@@ -63,10 +63,10 @@ class SchemeDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChec
 
       "all data present" in {
 
-        schemeDetailsRows.row(schemeDetails) must equal(
+        schemeDetailsRows.transformRows(schemeDetails) must equal(
           Seq(
             AnswerRow("messages__psaSchemeDetails__scheme_type", Seq("messages__scheme_details__type_single"), answerIsMessageKey = false, None)
-          )++excpectedSeq ++
+          )++expectedSeq ++
           Seq(
               AnswerRow("messages__psaSchemeDetails__insurance_company_name", Seq("company name"), answerIsMessageKey = false, None),
               AnswerRow("messages__psaSchemeDetails__policy_number", Seq("123456789"), answerIsMessageKey = false, None),
@@ -77,7 +77,7 @@ class SchemeDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChec
 
       "scheme type and insuranceCompany are not present" in {
 
-        schemeDetailsRows.row(schemeDetails.copy(typeOfScheme = None, insuranceCompany = None)) must equal(excpectedSeq)
+        schemeDetailsRows.transformRows(schemeDetails.copy(typeOfScheme = None, insuranceCompany = None)) must equal(expectedSeq)
       }
     }
   }
