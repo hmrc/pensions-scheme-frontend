@@ -885,6 +885,7 @@ messages__needContact__title = What is your email address?
 messages__needContact__heading = What is your email address?
 messages__needContact__hint = We will use this to contact you about your schemes.
 
+messages__psaSchemeDetails__title = Scheme Details
 messages__psaSchemeDetails__scheme_type = Scheme type
 messages__psaSchemeDetails__country_established = Country established
 messages__psaSchemeDetails__current_scheme_members = How many scheme members are there?

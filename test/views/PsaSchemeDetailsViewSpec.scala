@@ -51,7 +51,7 @@ class PsaSchemeDetailsViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   "supersection page" must {
 
-    behave like normalPageWithoutPageTitleCheck(createView, messageKeyPrefix)
+    behave like normalPage(createView, messageKeyPrefix, secondaryHeader)
 
     "display the correct page title" in {
       val doc = asDocument(createView())

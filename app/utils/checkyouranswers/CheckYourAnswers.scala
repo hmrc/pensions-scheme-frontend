@@ -32,8 +32,6 @@ trait CheckYourAnswers[I <: TypedIdentifier.PathDependent] {
   def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow]
 }
 
-//noinspection ScalaStyle
-//scalastyle:off name.boolean
 object CheckYourAnswers {
 
   implicit def nino[I <: TypedIdentifier[Nino]](implicit rds: Reads[Nino]): CheckYourAnswers[I] = NinoCYA()()
