@@ -20,7 +20,7 @@ import models.details._
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import utils.FakeCountryOptions
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
@@ -47,6 +47,17 @@ class CompanyDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChe
           AnswerRow("messages__psaSchemeDetails__company_phone", Seq("07592113"), answerIsMessageKey = false, None)
         ))
       }
+    }
+
+    "produce correct super section" when {
+
+      "all correct data is present" in {
+
+        companyDetailsRows.transformSuperSection(companyDetails) must equal(
+          SuperSection(Some(companyDetails.organizationName), Seq(AnswerSection(None, companyAnswerRows)))
+        )
+      }
+
     }
   }
 }

@@ -22,37 +22,28 @@ import viewmodels.MasterSection
 
 import scala.language.implicitConversions
 
-case class EstablisherInfoSection @Inject()(individualInfoRows :IndividualInfoRows[IndividualInfo],
+case class TrusteeInfoSection @Inject()(individualInfoRows :IndividualInfoRows[IndividualInfo],
                                             companyDetailsRows : CompanyDetailsRows[CompanyDetails],
                                             partnershipDetailsRows : PartnershipDetailsRows[PartnershipDetails]) {
 
-  def transformMasterSection(data: EstablisherInfo): MasterSection = {
+  def transformMasterSection(data: TrusteeInfo): MasterSection = {
 
     val individuals = data.individual.map {
       indv =>
         individualInfoRows.transformSuperSection(indv)
     }
 
-    val companies = data.company.flatMap {
+    val companies = data.company.map {
       comp =>
-        Seq(companyDetailsRows.transformSuperSection(comp)) ++
-          comp.directorsDetails.map {
-            indv =>
-              individualInfoRows.transformSuperSection(indv,
-                Some("messages__psaSchemeDetails__director_details"))
-          }
+        companyDetailsRows.transformSuperSection(comp)
     }
 
-    val partnerships = data.partnership.flatMap {
+    val partnerships = data.partnership.map {
       partner =>
-        Seq(partnershipDetailsRows.transformSuperSection(partner)) ++
-          partner.partnerDetails.map { indv =>
-            individualInfoRows.transformSuperSection(indv,
-              Some("messages__psaSchemeDetails__partner_details"))
-          }
+        partnershipDetailsRows.transformSuperSection(partner)
     }
 
-    MasterSection(Some("messages__psaSchemeDetails__establishers"), individuals ++ companies ++ partnerships)
+    MasterSection(Some("messages__psaSchemeDetails__trustees"), individuals ++ companies ++ partnerships)
 
   }
 }

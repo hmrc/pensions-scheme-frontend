@@ -20,7 +20,7 @@ import models.details._
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import utils.FakeCountryOptions
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
@@ -50,5 +50,33 @@ class IndividualInfoRowsSpec extends WordSpec with MustMatchers with PropertyChe
         ))
       }
     }
+
+    "produce correct answer section" when {
+
+      "all correct data is present" in {
+
+        individualInfoRows.transformAnswerSection(individuals) must equal(
+          AnswerSection(Some("fName mName lName"), indidualAnswerRows)
+        )
+      }
+    }
+
+    "produce correct super section" when {
+
+      "all correct data is present" in {
+
+        individualInfoRows.transformSuperSection(individuals) must equal(
+          SuperSection(Some("fName mName lName"), Seq(AnswerSection(None, indidualAnswerRows)))
+        )
+      }
+
+      "all correct data is present and custom heading provided" in {
+
+        individualInfoRows.transformSuperSection(individuals, Some("heading")) must equal(
+          SuperSection(Some("heading"), Seq(AnswerSection(Some("fName mName lName"), indidualAnswerRows)))
+        )
+      }
+    }
+
   }
 }

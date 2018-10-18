@@ -33,6 +33,9 @@ trait SchemeDetailsStubData {
   val companyDetails = CompanyDetails("abc organisation", Some("7897700000"), Some("AA999999A"), Some("789770000"), Some("9999"),
     correspondenceAddressDetails,  correspondenceContactDetails, Some(previousAddressDetails), Seq(individuals))
 
+  val trusteeCompanyDetails = CompanyDetails("abc organisation", Some("7897700000"), Some("AA999999A"), Some("789770000"), Some("9999"),
+    correspondenceAddressDetails,  correspondenceContactDetails, Some(previousAddressDetails), Nil)
+
   val partnershipDetails = PartnershipDetails("abc partnership", Some("7897700000"), Some("789770000"), Some("9999"),
     correspondenceAddressDetails,  correspondenceContactDetails, previousAddressDetails, Seq(individuals))
 
@@ -41,7 +44,7 @@ trait SchemeDetailsStubData {
   val trusteePartnershipDetails = PartnershipDetails("abc partnership", Some("7897700000"), Some("789770000"), Some("9999"),
     correspondenceAddressDetails,  correspondenceContactDetails, previousAddressDetails, Nil)
 
-  val trusteeDetails = TrusteeInfo(Seq(individuals), Seq(companyDetails), Seq(trusteePartnershipDetails))
+  val trusteeDetails = TrusteeInfo(Seq(individuals), Seq(trusteeCompanyDetails), Seq(trusteePartnershipDetails))
 
   val psaDetails1 = PsaDetails("A0000001",Some("org name test"),Some(Name(Some("Mickey"),Some("m"),Some("Mouse"))))
   val psaDetails2 = PsaDetails("1234444444",Some("org name test"),Some(Name(Some("Mickey"),Some("m"),Some("Mouse"))))

@@ -887,6 +887,7 @@ messages__needContact__hint = We will use this to contact you about your schemes
 
 messages__psaSchemeDetails__title = Scheme Details
 messages__psaSchemeDetails__establishers = Establishers
+messages__psaSchemeDetails__trustees = Trustees
 messages__psaSchemeDetails__director_details = Director details
 messages__psaSchemeDetails__partner_details = Partner's details
 

@@ -34,7 +34,7 @@ class EstablisherInfoSectionSpec extends WordSpec with MustMatchers with Propert
 
   val individualAnswerRow = AnswerSection(Some("fName mName lName"), indidualAnswerRows)
 
-  "EstablisherInfoRows" must {
+  "EstablisherInfoSection" must {
 
     "produce section of correct data" when {
 
