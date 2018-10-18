@@ -43,7 +43,6 @@ case class EstablisherInfoSection @Inject()(individualInfoRows :IndividualInfoRo
           }
     }
 
-
     val partnerships = data.partnership.flatMap {
       partner =>
         Seq(partnershipDetailsRows.transformSuperSection(partner)) ++
@@ -56,5 +55,4 @@ case class EstablisherInfoSection @Inject()(individualInfoRows :IndividualInfoRo
     MasterSection(Some("messages__psaSchemeDetails__establishers"), individuals ++ companies ++ partnerships)
 
   }
-
 }
