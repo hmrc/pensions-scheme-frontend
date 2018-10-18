@@ -26,9 +26,9 @@ trait TransformedElement[I] {
 
   val entityType: String = "individual"
 
-  def transformRows(data: I): Seq[AnswerRow]
-
   def transformSuperSection(data: I): SuperSection
+
+  def transformRows(data: I): Seq[AnswerRow]
 
   def transformRow(label: String,
                    answer: Seq[String],
