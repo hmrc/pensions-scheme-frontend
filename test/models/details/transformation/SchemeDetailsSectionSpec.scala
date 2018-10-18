@@ -24,9 +24,9 @@ import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
-class SchemeDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues with SchemeDetailsStubData{
+class SchemeDetailsSectionSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues with SchemeDetailsStubData{
 
-  val schemeDetailsRows: SchemeDetailsRows[SchemeDetails] = SchemeDetailsRows[SchemeDetails](FakeCountryOptions())
+  val schemeDetailsRows: SchemeDetailsSection[SchemeDetails] = SchemeDetailsSection[SchemeDetails](FakeCountryOptions())
 
   val expectedSeq = Seq(
     AnswerRow("messages__psaSchemeDetails__country_established", Seq("Country of GB"), answerIsMessageKey = false, None),

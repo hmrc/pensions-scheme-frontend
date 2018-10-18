@@ -24,9 +24,9 @@ import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
-case class SchemeDetailsRows[I <: SchemeDetails] @Inject()(countryOptions: CountryOptions) extends TransformedElement[I] {
+case class SchemeDetailsSection[I <: SchemeDetails] @Inject()(countryOptions: CountryOptions) extends TransformedElement[I] {
 
-  def transformSuperSection(data: I): SuperSection = {
+  override def transformSuperSection(data: I): SuperSection = {
     SuperSection(None, Seq(AnswerSection(None, transformRows(data))))
   }
 
@@ -53,26 +53,32 @@ case class SchemeDetailsRows[I <: SchemeDetails] @Inject()(countryOptions: Count
     )
   }
 
-  private def schemeTypeRow(typeOfScheme: Option[String]): List[AnswerRow] = {
+  private def schemeTypeRow(typeOfScheme: Option[String]): Seq[AnswerRow] = {
+
     typeOfScheme.map {
       schemeType =>
         transformRow(label = "messages__psaSchemeDetails__scheme_type", answer = Seq(schemeType))
-    }.toList
+    }.toSeq
   }
 
-  private def insuranceCompanyRows(insuranceCompany: Option[InsuranceCompany]): List[AnswerRow] = {
+  private def insuranceCompanyRows(insuranceCompany: Option[InsuranceCompany]): Seq[AnswerRow] = {
+
     insuranceCompany.map {
       company =>
-        company.name.map { name =>
-          transformRow(label = "messages__psaSchemeDetails__insurance_company_name", answer = Seq(name))
-        }.toList ++
-          company.policyNumber.map { policyNumber =>
+        company.name.map {
+          name =>
+            transformRow(label = "messages__psaSchemeDetails__insurance_company_name", answer = Seq(name))
+        } ++
+        company.policyNumber.map {
+          policyNumber =>
             transformRow(label = "messages__psaSchemeDetails__policy_number", answer = Seq(policyNumber))
-          }.toList ++
-          company.address.map { address =>
+        } ++
+        company.address.map {
+          address =>
             transformRow(label = "messages__psaSchemeDetails__insurance_company_address", addressAnswer(countryOptions, address))
-          }
-    }.toList.flatten
+        }
+    }.toSeq.flatten
+
   }
 
 }

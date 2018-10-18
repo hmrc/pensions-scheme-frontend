@@ -28,7 +28,10 @@ class TransformedElementSpec extends WordSpec with MustMatchers with PropertyChe
   val row = AnswerRow("messages__psaSchemeDetails__current_scheme_members", Seq("1"), answerIsMessageKey = false, None)
 
   val element = new TransformedElement[SchemeMemberNumbers](){
+
     override def transformRows(data: SchemeMemberNumbers): Seq[AnswerRow] = Seq(row)
+
+    override def transformSuperSection(data: SchemeMemberNumbers): SuperSection = ???
   }
 
   "TransformedElement" must {

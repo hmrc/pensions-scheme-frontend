@@ -30,8 +30,16 @@ case class IndividualInfoRows[I <: IndividualInfo] @Inject()(countryOptions: Cou
 
   def transformSuperSection(data: I, heading : Option[String]): SuperSection = {
 
-    SuperSection(if(heading.isEmpty){Some(fullName(data.personalDetails.name))} else {heading},
-      Seq(AnswerSection(if(heading.isEmpty){None} else {Some(fullName(data.personalDetails.name))}, transformRows(data))))
+    val superHeading = if(heading.isEmpty){Some(fullName(data.personalDetails.name))} else heading
+
+    val answerHeading = if(heading.isEmpty){None} else {Some(fullName(data.personalDetails.name))}
+
+    SuperSection(superHeading, Seq(AnswerSection(answerHeading, transformRows(data))))
+  }
+
+  override def transformSuperSection(data: I): SuperSection = {
+
+    SuperSection(Some(fullName(data.personalDetails.name)), Seq(AnswerSection(None, transformRows(data))))
   }
 
   def transformAnswerSection(data: I): AnswerSection = {
@@ -50,6 +58,7 @@ case class IndividualInfoRows[I <: IndividualInfo] @Inject()(countryOptions: Cou
   }
 
   private def dateOfBirthRows(personalDetails: PersonalInfo): Seq[AnswerRow]  = {
+
     Seq(transformRow(label = "messages__psaSchemeDetails__individual_date_of_birth", answer = Seq(
       DateHelper.formatDate(new LocalDate(personalDetails.dateOfBirth)))))
   }

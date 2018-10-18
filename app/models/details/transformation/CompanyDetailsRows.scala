@@ -27,7 +27,7 @@ case class CompanyDetailsRows[I <: CompanyDetails] @Inject()(countryOptions: Cou
 
   override val entityType: String = "company"
 
-  def transformSuperSection(data: I): SuperSection = {
+  override def transformSuperSection(data: I): SuperSection = {
 
     SuperSection(Some(data.organizationName), Seq(AnswerSection(None, transformRows(data))))
 

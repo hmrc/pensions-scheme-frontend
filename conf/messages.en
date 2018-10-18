@@ -890,7 +890,6 @@ messages__psaSchemeDetails__establishers = Establishers
 messages__psaSchemeDetails__director_details = Director details
 messages__psaSchemeDetails__partner_details = Partner's details
 
-
 messages__psaSchemeDetails__scheme_type = Scheme type
 messages__psaSchemeDetails__country_established = Country established
 messages__psaSchemeDetails__current_scheme_members = How many scheme members are there?

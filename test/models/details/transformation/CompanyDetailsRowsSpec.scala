@@ -34,19 +34,7 @@ class CompanyDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChe
 
       "all data present" in {
 
-        companyDetailsRows.transformRows(companyDetails) must equal(Seq(
-          AnswerRow("messages__psaSchemeDetails__company_vat", Seq("789770000"), answerIsMessageKey = false, None),
-          AnswerRow("messages__psaSchemeDetails__company_paye", Seq("9999"), answerIsMessageKey = false, None),
-          AnswerRow("messages__psaSchemeDetails__company_crn", Seq("AA999999A"), answerIsMessageKey = false, None),
-          AnswerRow("messages__psaSchemeDetails__company_utr", Seq("7897700000"), answerIsMessageKey = false, None),
-          AnswerRow("messages__psaSchemeDetails__company_address", Seq(
-            "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
-          AnswerRow("messages__psaSchemeDetails__company_less_than_12months", Seq("companyAddressYears.under_a_year"), answerIsMessageKey = true, None),
-          AnswerRow("messages__psaSchemeDetails__company_previous_address", Seq(
-            "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
-          AnswerRow("messages__psaSchemeDetails__company_email", Seq("test@test.com"), answerIsMessageKey = false, None),
-          AnswerRow("messages__psaSchemeDetails__company_phone", Seq("07592113"), answerIsMessageKey = false, None)
-        ))
+        companyDetailsRows.transformRows(companyDetails) must equal(companyAnswerRows)
       }
 
       "vat, paye, utr, crn and previous address are not present" in {

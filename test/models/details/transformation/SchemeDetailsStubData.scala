@@ -17,6 +17,7 @@
 package models.details.transformation
 
 import models.details._
+import viewmodels.AnswerRow
 
 trait SchemeDetailsStubData {
 
@@ -86,4 +87,44 @@ trait SchemeDetailsStubData {
       Some(establisherDetails),
       Some(trusteeDetails),
       List(psaDetails1, psaDetails2))
+
+  val indidualAnswerRows = Seq(
+    AnswerRow("messages__psaSchemeDetails__individual_date_of_birth", Seq("29 March 1955"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__individual_nino", Seq("AA999999A"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__individual_utr", Seq("1234567892"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__individual_address", Seq(
+      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__individual_less_than_12months", Seq("companyAddressYears.under_a_year"), answerIsMessageKey = true, None),
+    AnswerRow("messages__psaSchemeDetails__individual_previous_address", Seq(
+      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__individual_email", Seq("test@test.com"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__individual_phone", Seq("07592113"), answerIsMessageKey = false, None)
+  )
+
+  val companyAnswerRows = Seq(
+    AnswerRow("messages__psaSchemeDetails__company_vat", Seq("789770000"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__company_paye", Seq("9999"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__company_crn", Seq("AA999999A"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__company_utr", Seq("7897700000"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__company_address", Seq(
+      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__company_less_than_12months", Seq("companyAddressYears.under_a_year"), answerIsMessageKey = true, None),
+    AnswerRow("messages__psaSchemeDetails__company_previous_address", Seq(
+      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__company_email", Seq("test@test.com"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__company_phone", Seq("07592113"), answerIsMessageKey = false, None)
+  )
+
+  val partnershipAnswerRows = Seq(
+    AnswerRow("messages__psaSchemeDetails__partnership_vat", Seq("789770000"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__partnership_paye", Seq("9999"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__partnership_utr", Seq("7897700000"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__partnership_address", Seq(
+      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__partnership_less_than_12months", Seq("companyAddressYears.under_a_year"), answerIsMessageKey = true, None),
+    AnswerRow("messages__psaSchemeDetails__partnership_previous_address", Seq(
+      "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__partnership_email", Seq("test@test.com"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__partnership_phone", Seq("07592113"), answerIsMessageKey = false, None)
+  )
 }
