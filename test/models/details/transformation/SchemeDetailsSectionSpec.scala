@@ -44,7 +44,7 @@ class SchemeDetailsSectionSpec extends WordSpec with MustMatchers with PropertyC
 
         schemeDetailsRows.transformRows(schemeDetails) must equal(
           Seq(
-            AnswerRow("messages__psaSchemeDetails__scheme_type", Seq("messages__scheme_details__type_single"), answerIsMessageKey = false, None)
+            AnswerRow("messages__psaSchemeDetails__scheme_type", Seq("messages__scheme_details__type_single"), answerIsMessageKey = true, None)
           )++expectedSchemeDetailsRows ++
           Seq(
               AnswerRow("messages__psaSchemeDetails__insurance_company_name", Seq("company name"), answerIsMessageKey = false, None),

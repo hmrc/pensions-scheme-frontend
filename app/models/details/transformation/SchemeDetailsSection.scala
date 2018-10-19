@@ -57,7 +57,8 @@ class SchemeDetailsSection[I <: SchemeDetails] @Inject()(countryOptions: Country
 
     typeOfScheme.map {
       schemeType =>
-        transformRow(label = "messages__psaSchemeDetails__scheme_type", answer = Seq(schemeType))
+        transformRow(label = "messages__psaSchemeDetails__scheme_type", answer = Seq(schemeType),
+          answerIsMessageKey = true)
     }.toSeq
   }
 

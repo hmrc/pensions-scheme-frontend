@@ -27,7 +27,7 @@
 @(appConfig: FrontendAppConfig, masterSection: Seq[MasterSection], header: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__psaSchemeDetails__title"),
+    title = header,
     appConfig = appConfig,
     bodyClasses = None
     ) {
