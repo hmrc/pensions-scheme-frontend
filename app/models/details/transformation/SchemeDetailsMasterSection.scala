@@ -45,7 +45,7 @@ class SchemeDetailsMasterSection @Inject()(schemeDetails: SchemeDetailsSection[S
 
   }
 
-  def transformEstablisherMasterSection(data: EstablisherInfo): MasterSection = {
+  private def transformEstablisherMasterSection(data: EstablisherInfo): MasterSection = {
 
     val individuals = individualSuperSection(data.individual)
 
@@ -57,7 +57,7 @@ class SchemeDetailsMasterSection @Inject()(schemeDetails: SchemeDetailsSection[S
 
   }
 
-  def transformTrusteeMasterSection(data: TrusteeInfo): MasterSection = {
+  private def transformTrusteeMasterSection(data: TrusteeInfo): MasterSection = {
 
     val individuals = individualSuperSection(data.individual)
 

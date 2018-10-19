@@ -31,7 +31,7 @@ import scala.concurrent.Future
 class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            schemeDetailsConnector: SchemeDetailsConnector,
-                                           schemesTransformer: SchemeDetailsMasterSection,
+                                           schemeTransformer: SchemeDetailsMasterSection,
                                            authenticate: AuthAction
                                        ) extends FrontendController with I18nSupport {
 
@@ -39,7 +39,7 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
 
       schemeDetailsConnector.getSchemeDetails(schemeIdType ="srn", srn).flatMap { scheme =>
-        val schemeDetailMasterSection = schemesTransformer.transformMasterSection(scheme)
+        val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
 
         Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name)))
       }

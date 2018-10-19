@@ -87,10 +87,14 @@ class SchemeDetailsMasterSectionSpec extends WordSpec with MustMatchers with Pro
       "all data present for individuals" in {
 
         val establisherDetails = EstablisherInfo(Seq(individuals), Seq(), Seq())
+        val psaSchemeDetailsSection = PsaSchemeDetails(minimumSchemeDetails, Some(establisherDetails), None, Nil)
 
-        psaSchemeDetailsMasterSection.transformEstablisherMasterSection(establisherDetails) must equal(
-          MasterSection(Some("messages__psaSchemeDetails__establishers"),
-            Seq(SuperSection(Some("fName mName lName"), Seq(AnswerSection(None, indidualAnswerRows))))
+        psaSchemeDetailsMasterSection.transformMasterSection(psaSchemeDetailsSection) must equal(
+
+          Seq(individualMasterSection,
+            MasterSection(Some("messages__psaSchemeDetails__establishers"),
+              Seq(SuperSection(Some("fName mName lName"), Seq(AnswerSection(None, indidualAnswerRows))))
+            )
           )
         )
       }
@@ -98,15 +102,17 @@ class SchemeDetailsMasterSectionSpec extends WordSpec with MustMatchers with Pro
       "all data present for companies" in {
 
         val establisherDetails = EstablisherInfo(Seq(), Seq(companyDetails), Seq())
+        val psaSchemeDetailsSection = PsaSchemeDetails(minimumSchemeDetails, Some(establisherDetails), None, Nil)
 
-        psaSchemeDetailsMasterSection.transformEstablisherMasterSection(establisherDetails) must equal(
+        psaSchemeDetailsMasterSection.transformMasterSection(psaSchemeDetailsSection) must equal(
 
-          MasterSection(Some("messages__psaSchemeDetails__establishers"),
+          Seq(individualMasterSection, MasterSection(Some("messages__psaSchemeDetails__establishers"),
             Seq(
               SuperSection(Some("abc organisation"), Seq(AnswerSection(None, companyAnswerRows))),
               SuperSection(Some("messages__psaSchemeDetails__director_details"),
                 Seq(individualAnswerRow))
             )
+          )
           )
         )
       }
@@ -114,12 +120,16 @@ class SchemeDetailsMasterSectionSpec extends WordSpec with MustMatchers with Pro
       "all data present for partnership" in {
 
         val establisherDetails = EstablisherInfo(Seq(), Seq(), Seq(partnershipDetails))
+        val psaSchemeDetailsSection = PsaSchemeDetails(minimumSchemeDetails, Some(establisherDetails), None, Nil)
 
-        psaSchemeDetailsMasterSection.transformEstablisherMasterSection(establisherDetails) must equal(
-          MasterSection(Some("messages__psaSchemeDetails__establishers"),
-            Seq(
-              SuperSection(Some("abc partnership"), Seq(AnswerSection(None, partnershipAnswerRows))),
-              SuperSection(Some("messages__psaSchemeDetails__partner_details"), Seq(individualAnswerRow))
+        psaSchemeDetailsMasterSection.transformMasterSection(psaSchemeDetailsSection) must equal(
+
+          Seq(individualMasterSection,
+            MasterSection(Some("messages__psaSchemeDetails__establishers"),
+              Seq(
+                SuperSection(Some("abc partnership"), Seq(AnswerSection(None, partnershipAnswerRows))),
+                SuperSection(Some("messages__psaSchemeDetails__partner_details"), Seq(individualAnswerRow))
+              )
             )
           )
         )
@@ -128,8 +138,12 @@ class SchemeDetailsMasterSectionSpec extends WordSpec with MustMatchers with Pro
       "all individual, companies and partnership data present" in {
 
         val establisherDetails = EstablisherInfo(Seq(individuals), Seq(companyDetails), Seq(partnershipDetails))
+        val psaSchemeDetailsSection = PsaSchemeDetails(minimumSchemeDetails, Some(establisherDetails), None, Nil)
 
-        psaSchemeDetailsMasterSection.transformEstablisherMasterSection(establisherDetails) must equal(establisherMasterSection)
+        psaSchemeDetailsMasterSection.transformMasterSection(psaSchemeDetailsSection) must equal(
+
+          Seq(individualMasterSection, establisherMasterSection)
+        )
       }
     }
   }
@@ -141,10 +155,14 @@ class SchemeDetailsMasterSectionSpec extends WordSpec with MustMatchers with Pro
       "all data present for individuals" in {
 
         val trusteeDetails = TrusteeInfo(Seq(individuals), Seq(), Seq())
+        val psaSchemeDetailsSection = PsaSchemeDetails(minimumSchemeDetails, None, Some(trusteeDetails), Nil)
 
-        psaSchemeDetailsMasterSection.transformTrusteeMasterSection(trusteeDetails) must equal(
-          MasterSection(Some("messages__psaSchemeDetails__trustees"),
-            Seq(SuperSection(Some("fName mName lName"), Seq(AnswerSection(None, indidualAnswerRows))))
+        psaSchemeDetailsMasterSection.transformMasterSection(psaSchemeDetailsSection) must equal(
+
+          Seq(individualMasterSection,
+            MasterSection(Some("messages__psaSchemeDetails__trustees"),
+              Seq(SuperSection(Some("fName mName lName"), Seq(AnswerSection(None, indidualAnswerRows))))
+            )
           )
         )
       }
@@ -152,12 +170,15 @@ class SchemeDetailsMasterSectionSpec extends WordSpec with MustMatchers with Pro
       "all data present for companies" in {
 
         val trusteeDetails = TrusteeInfo(Seq(), Seq(trusteeCompanyDetails), Seq())
+        val psaSchemeDetailsSection = PsaSchemeDetails(minimumSchemeDetails, None, Some(trusteeDetails), Nil)
 
-        psaSchemeDetailsMasterSection.transformTrusteeMasterSection(trusteeDetails) must equal(
+        psaSchemeDetailsMasterSection.transformMasterSection(psaSchemeDetailsSection) must equal(
 
-          MasterSection(Some("messages__psaSchemeDetails__trustees"),
-            Seq(
-              SuperSection(Some("abc organisation"), Seq(AnswerSection(None, companyAnswerRows)))
+          Seq(individualMasterSection,
+            MasterSection(Some("messages__psaSchemeDetails__trustees"),
+              Seq(
+                SuperSection(Some("abc organisation"), Seq(AnswerSection(None, companyAnswerRows)))
+              )
             )
           )
         )
@@ -166,11 +187,15 @@ class SchemeDetailsMasterSectionSpec extends WordSpec with MustMatchers with Pro
       "all data present for partnership" in {
 
         val trusteeDetails = TrusteeInfo(Seq(), Seq(), Seq(trusteePartnershipDetails))
+        val psaSchemeDetailsSection = PsaSchemeDetails(minimumSchemeDetails, None, Some(trusteeDetails), Nil)
 
-        psaSchemeDetailsMasterSection.transformTrusteeMasterSection(trusteeDetails) must equal(
-          MasterSection(Some("messages__psaSchemeDetails__trustees"),
-            Seq(
-              SuperSection(Some("abc partnership"), Seq(AnswerSection(None, partnershipAnswerRows)))
+        psaSchemeDetailsMasterSection.transformMasterSection(psaSchemeDetailsSection) must equal(
+
+          Seq(individualMasterSection,
+            MasterSection(Some("messages__psaSchemeDetails__trustees"),
+              Seq(
+                SuperSection(Some("abc partnership"), Seq(AnswerSection(None, partnershipAnswerRows)))
+              )
             )
           )
         )
@@ -179,8 +204,12 @@ class SchemeDetailsMasterSectionSpec extends WordSpec with MustMatchers with Pro
       "all individual, companies and partnership data present" in {
 
         val trusteeDetails = TrusteeInfo(Seq(individuals), Seq(trusteeCompanyDetails), Seq(trusteePartnershipDetails))
+        val psaSchemeDetailsSection = PsaSchemeDetails(minimumSchemeDetails, None, Some(trusteeDetails), Nil)
 
-        psaSchemeDetailsMasterSection.transformTrusteeMasterSection(trusteeDetails) must equal(trsuteeMasterSection)
+        psaSchemeDetailsMasterSection.transformMasterSection(psaSchemeDetailsSection) must equal(
+
+          Seq(individualMasterSection, trsuteeMasterSection)
+        )
       }
     }
   }
