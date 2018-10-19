@@ -24,17 +24,15 @@ import viewmodels.{AnswerSection, MasterSection, SuperSection}
 
 import scala.language.implicitConversions
 
-class PsaSchemeDetailsMasterSectionSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues with SchemeDetailsStubData {
+class SchemeDetailsMasterSectionSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues with SchemeDetailsStubData {
 
   val individualInfoRows: IndividualInfoRows[IndividualInfo] = new IndividualInfoRows[IndividualInfo](FakeCountryOptions())
   val companyDetailsRows: CompanyDetailsRows[CompanyDetails] = new CompanyDetailsRows[CompanyDetails](FakeCountryOptions())
   val partnershipDetailsRows: PartnershipDetailsRows[PartnershipDetails] = new PartnershipDetailsRows[PartnershipDetails](FakeCountryOptions())
 
   val schemeDetailsRows: SchemeDetailsSection[SchemeDetails] = new SchemeDetailsSection[SchemeDetails](FakeCountryOptions())
-//  val establisherInfoRows: EstablisherInfoSection = new EstablisherInfoSection(individualInfoRows, companyDetailsRows, partnershipDetailsRows)
-//  val trusteeInfoRows: TrusteeInfoSection = new TrusteeInfoSection(individualInfoRows, companyDetailsRows, partnershipDetailsRows)
 
-  val psaSchemeDetailsMasterSection = new PsaSchemeDetailsMasterSection(schemeDetailsRows, individualInfoRows, companyDetailsRows, partnershipDetailsRows)
+  val psaSchemeDetailsMasterSection = new SchemeDetailsMasterSection(schemeDetailsRows, individualInfoRows, companyDetailsRows, partnershipDetailsRows)
 
   "PsaSchemeDetailsMasterSection" must {
 

@@ -22,10 +22,10 @@ import viewmodels.{MasterSection, SuperSection}
 
 import scala.language.implicitConversions
 
-class PsaSchemeDetailsMasterSection @Inject()(schemeDetails: SchemeDetailsSection[SchemeDetails],
-                                              individualInfoRows: IndividualInfoRows[IndividualInfo],
-                                              companyDetailsRows: CompanyDetailsRows[CompanyDetails],
-                                              partnershipDetailsRows: PartnershipDetailsRows[PartnershipDetails]) {
+class SchemeDetailsMasterSection @Inject()(schemeDetails: SchemeDetailsSection[SchemeDetails],
+                                           individualInfoRows: IndividualInfoRows[IndividualInfo],
+                                           companyDetailsRows: CompanyDetailsRows[CompanyDetails],
+                                           partnershipDetailsRows: PartnershipDetailsRows[PartnershipDetails]) {
 
   def transformMasterSection(data: PsaSchemeDetails): Seq[MasterSection] = {
 
