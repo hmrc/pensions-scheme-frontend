@@ -20,32 +20,13 @@ import models.details.{CorrespondenceAddress, InsuranceCompany, SchemeDetails, S
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import utils.FakeCountryOptions
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
-class SchemeDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues {
+class SchemeDetailsSectionSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues with SchemeDetailsStubData{
 
-  val correspondenceAddress = CorrespondenceAddress("address line 1", "address line 2", Some("address line 3"), None, "GB", Some("AB1 1AB"))
-
-  val schemeDetails = SchemeDetails(srn = None,
-    pstr =None,
-    status = "test",
-    name = "Test Name",
-    isMasterTrust = false,
-    typeOfScheme = Some("Single trust"),
-    otherTypeOfScheme = None,
-    hasMoreThanTenTrustees= false,
-    members =  SchemeMemberNumbers(current = "1", future =  "2 to 11"),
-    isInvestmentRegulated = false,
-    isOccupational = false,
-    benefits =  "Defined benefits only",
-    country= "GB",
-    areBenefitsSecured= false,
-    insuranceCompany = Some(InsuranceCompany(name = Some("company name"),policyNumber= Some("123456789"),
-      address = Some(correspondenceAddress))))
-
-  val schemeDetailsRows: SchemeDetailsRows[SchemeDetails] = SchemeDetailsRows[SchemeDetails](FakeCountryOptions())
+  val schemeDetailsRows: SchemeDetailsSection[SchemeDetails] = new SchemeDetailsSection[SchemeDetails](FakeCountryOptions())
 
   val expectedSeq = Seq(
     AnswerRow("messages__psaSchemeDetails__country_established", Seq("Country of GB"), answerIsMessageKey = false, None),
@@ -58,6 +39,14 @@ class SchemeDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChec
   )
 
   "SchemeDetailsRows" must {
+
+    "produce details section" when{
+      "called with correct details" in {
+        schemeDetailsRows.transformSuperSection(schemeDetails.copy(typeOfScheme = None, insuranceCompany = None)) must equal(
+          SuperSection(None, Seq(AnswerSection(None, expectedSeq)))
+        )
+      }
+    }
 
     "produce row of answers" when {
 
