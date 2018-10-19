@@ -32,8 +32,6 @@ class EstablisherInfoSectionSpec extends WordSpec with MustMatchers with Propert
 
   val establisherInfoRows: EstablisherInfoSection = new EstablisherInfoSection(individualInfoRows, companyDetailsRows, partnershipDetailsRows)
 
-  val individualAnswerRow = AnswerSection(Some("fName mName lName"), indidualAnswerRows)
-
   "EstablisherInfoSection" must {
 
     "produce section of correct data" when {
@@ -83,17 +81,7 @@ class EstablisherInfoSectionSpec extends WordSpec with MustMatchers with Propert
 
         val establisherDetails = EstablisherInfo(Seq(individuals), Seq(companyDetails), Seq(partnershipDetails))
 
-        establisherInfoRows.transformMasterSection(establisherDetails) must equal(
-          MasterSection(Some("messages__psaSchemeDetails__establishers"),
-            Seq(
-              SuperSection(Some("fName mName lName"), Seq(AnswerSection(None, indidualAnswerRows))),
-              SuperSection(Some("abc organisation"), Seq(AnswerSection(None, companyAnswerRows))),
-              SuperSection(Some("messages__psaSchemeDetails__director_details"), Seq(individualAnswerRow)),
-              SuperSection(Some("abc partnership"), Seq(AnswerSection(None, partnershipAnswerRows))),
-              SuperSection(Some("messages__psaSchemeDetails__partner_details"), Seq(individualAnswerRow))
-            )
-          )
-        )
+        establisherInfoRows.transformMasterSection(establisherDetails) must equal(establisherMasterSection)
       }
     }
   }

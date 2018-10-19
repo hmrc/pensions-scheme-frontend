@@ -32,8 +32,6 @@ class TrusteeInfoSectionSpec extends WordSpec with MustMatchers with PropertyChe
 
   val trusteeInfoRows: TrusteeInfoSection = new TrusteeInfoSection(individualInfoRows, companyDetailsRows, partnershipDetailsRows)
 
-  val individualAnswerRow = AnswerSection(Some("fName mName lName"), indidualAnswerRows)
-
   "TrusteeInfoSection" must {
 
     "produce section of correct data" when {
@@ -80,15 +78,7 @@ class TrusteeInfoSectionSpec extends WordSpec with MustMatchers with PropertyChe
 
         val trusteeDetails = TrusteeInfo(Seq(individuals), Seq(trusteeCompanyDetails), Seq(trusteePartnershipDetails))
 
-        trusteeInfoRows.transformMasterSection(trusteeDetails) must equal(
-          MasterSection(Some("messages__psaSchemeDetails__trustees"),
-            Seq(
-              SuperSection(Some("fName mName lName"), Seq(AnswerSection(None, indidualAnswerRows))),
-              SuperSection(Some("abc organisation"), Seq(AnswerSection(None, companyAnswerRows))),
-              SuperSection(Some("abc partnership"), Seq(AnswerSection(None, partnershipAnswerRows)))
-            )
-          )
-        )
+        trusteeInfoRows.transformMasterSection(trusteeDetails) must equal(trsuteeMasterSection)
       }
     }
   }
