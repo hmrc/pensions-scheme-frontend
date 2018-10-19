@@ -26,7 +26,7 @@ import scala.language.implicitConversions
 
 class IndividualInfoRowsSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues with SchemeDetailsStubData {
 
-  val individualInfoRows: IndividualInfoRows[IndividualInfo] = IndividualInfoRows[IndividualInfo](FakeCountryOptions())
+  val individualInfoRows: IndividualInfoRows[IndividualInfo] = new IndividualInfoRows[IndividualInfo](FakeCountryOptions())
 
   "IndividualInfoRows" must {
 

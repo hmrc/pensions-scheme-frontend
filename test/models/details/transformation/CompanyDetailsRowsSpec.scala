@@ -26,7 +26,7 @@ import scala.language.implicitConversions
 
 class CompanyDetailsRowsSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues with SchemeDetailsStubData {
 
-  val companyDetailsRows: CompanyDetailsRows[CompanyDetails] = CompanyDetailsRows[CompanyDetails](FakeCountryOptions())
+  val companyDetailsRows: CompanyDetailsRows[CompanyDetails] = new CompanyDetailsRows[CompanyDetails](FakeCountryOptions())
 
   "CompanyDetailsRows" must {
 

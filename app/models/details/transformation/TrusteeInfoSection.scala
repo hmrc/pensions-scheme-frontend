@@ -22,7 +22,7 @@ import viewmodels.MasterSection
 
 import scala.language.implicitConversions
 
-case class TrusteeInfoSection @Inject()(individualInfoRows :IndividualInfoRows[IndividualInfo],
+class TrusteeInfoSection @Inject()(individualInfoRows :IndividualInfoRows[IndividualInfo],
                                             companyDetailsRows : CompanyDetailsRows[CompanyDetails],
                                             partnershipDetailsRows : PartnershipDetailsRows[PartnershipDetails]) {
 

@@ -23,7 +23,7 @@ import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
-case class CompanyDetailsRows[I <: CompanyDetails] @Inject()(countryOptions: CountryOptions) extends TransformedElement[I] {
+class CompanyDetailsRows[I <: CompanyDetails] @Inject()(countryOptions: CountryOptions) extends TransformedElement[I] {
 
   override val entityType: String = "company"
 

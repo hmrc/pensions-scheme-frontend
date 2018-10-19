@@ -26,7 +26,7 @@ import scala.language.implicitConversions
 
 class SchemeDetailsSectionSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues with SchemeDetailsStubData{
 
-  val schemeDetailsRows: SchemeDetailsSection[SchemeDetails] = SchemeDetailsSection[SchemeDetails](FakeCountryOptions())
+  val schemeDetailsRows: SchemeDetailsSection[SchemeDetails] = new SchemeDetailsSection[SchemeDetails](FakeCountryOptions())
 
   val expectedSeq = Seq(
     AnswerRow("messages__psaSchemeDetails__country_established", Seq("Country of GB"), answerIsMessageKey = false, None),

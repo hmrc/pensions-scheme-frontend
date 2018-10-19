@@ -24,7 +24,7 @@ import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
-case class SchemeDetailsSection[I <: SchemeDetails] @Inject()(countryOptions: CountryOptions) extends TransformedElement[I] {
+class SchemeDetailsSection[I <: SchemeDetails] @Inject()(countryOptions: CountryOptions) extends TransformedElement[I] {
 
   override def transformSuperSection(data: I): SuperSection = {
     SuperSection(None, Seq(AnswerSection(None, transformRows(data))))

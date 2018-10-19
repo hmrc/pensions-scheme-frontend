@@ -26,11 +26,11 @@ import scala.language.implicitConversions
 
 class EstablisherInfoSectionSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues with SchemeDetailsStubData {
 
-  val individualInfoRows: IndividualInfoRows[IndividualInfo] = IndividualInfoRows[IndividualInfo](FakeCountryOptions())
-  val companyDetailsRows: CompanyDetailsRows[CompanyDetails] = CompanyDetailsRows[CompanyDetails](FakeCountryOptions())
-  val partnershipDetailsRows: PartnershipDetailsRows[PartnershipDetails] = PartnershipDetailsRows[PartnershipDetails](FakeCountryOptions())
+  val individualInfoRows: IndividualInfoRows[IndividualInfo] = new IndividualInfoRows[IndividualInfo](FakeCountryOptions())
+  val companyDetailsRows: CompanyDetailsRows[CompanyDetails] = new CompanyDetailsRows[CompanyDetails](FakeCountryOptions())
+  val partnershipDetailsRows: PartnershipDetailsRows[PartnershipDetails] = new PartnershipDetailsRows[PartnershipDetails](FakeCountryOptions())
 
-  val establisherInfoRows: EstablisherInfoSection = EstablisherInfoSection(individualInfoRows, companyDetailsRows, partnershipDetailsRows)
+  val establisherInfoRows: EstablisherInfoSection = new EstablisherInfoSection(individualInfoRows, companyDetailsRows, partnershipDetailsRows)
 
   val individualAnswerRow = AnswerSection(Some("fName mName lName"), indidualAnswerRows)
 

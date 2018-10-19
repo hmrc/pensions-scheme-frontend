@@ -24,7 +24,7 @@ import viewmodels.{AnswerRow, AnswerSection, SuperSection}
 
 import scala.language.implicitConversions
 
-case class IndividualInfoRows[I <: IndividualInfo] @Inject()(countryOptions: CountryOptions) extends TransformedElement[I] {
+class IndividualInfoRows[I <: IndividualInfo] @Inject()(countryOptions: CountryOptions) extends TransformedElement[I] {
 
   override val entityType = "individual"
 
@@ -37,14 +37,14 @@ case class IndividualInfoRows[I <: IndividualInfo] @Inject()(countryOptions: Cou
     SuperSection(superHeading, Seq(AnswerSection(answerHeading, transformRows(data))))
   }
 
-  override def transformSuperSection(data: I): SuperSection = {
-
-    SuperSection(Some(fullName(data.personalDetails.name)), Seq(AnswerSection(None, transformRows(data))))
-  }
-
   def transformAnswerSection(data: I): AnswerSection = {
 
     AnswerSection(Some(fullName(data.personalDetails.name)), transformRows(data))
+  }
+
+  override def transformSuperSection(data: I): SuperSection = {
+
+    SuperSection(Some(fullName(data.personalDetails.name)), Seq(AnswerSection(None, transformRows(data))))
   }
 
   override def transformRows(data: I): Seq[AnswerRow] = {

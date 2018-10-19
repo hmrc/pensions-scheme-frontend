@@ -26,11 +26,11 @@ import scala.language.implicitConversions
 
 class TrusteeInfoSectionSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues with SchemeDetailsStubData {
 
-  val individualInfoRows: IndividualInfoRows[IndividualInfo] = IndividualInfoRows[IndividualInfo](FakeCountryOptions())
-  val companyDetailsRows: CompanyDetailsRows[CompanyDetails] = CompanyDetailsRows[CompanyDetails](FakeCountryOptions())
-  val partnershipDetailsRows: PartnershipDetailsRows[PartnershipDetails] = PartnershipDetailsRows[PartnershipDetails](FakeCountryOptions())
+  val individualInfoRows: IndividualInfoRows[IndividualInfo] = new IndividualInfoRows[IndividualInfo](FakeCountryOptions())
+  val companyDetailsRows: CompanyDetailsRows[CompanyDetails] = new CompanyDetailsRows[CompanyDetails](FakeCountryOptions())
+  val partnershipDetailsRows: PartnershipDetailsRows[PartnershipDetails] = new PartnershipDetailsRows[PartnershipDetails](FakeCountryOptions())
 
-  val trusteeInfoRows: TrusteeInfoSection = TrusteeInfoSection(individualInfoRows, companyDetailsRows, partnershipDetailsRows)
+  val trusteeInfoRows: TrusteeInfoSection = new TrusteeInfoSection(individualInfoRows, companyDetailsRows, partnershipDetailsRows)
 
   val individualAnswerRow = AnswerSection(Some("fName mName lName"), indidualAnswerRows)
 

@@ -19,7 +19,7 @@ package models.details.transformation
 import models.details.SchemeMemberNumbers
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import viewmodels.{AnswerRow, AnswerSection, SuperSection}
+import viewmodels.{AnswerRow, SuperSection}
 
 class TransformedElementSpec extends WordSpec with MustMatchers with PropertyChecks with OptionValues {
 
@@ -27,7 +27,7 @@ class TransformedElementSpec extends WordSpec with MustMatchers with PropertyChe
 
   val row = AnswerRow("messages__psaSchemeDetails__current_scheme_members", Seq("1"), answerIsMessageKey = false, None)
 
-  val element = new TransformedElement[SchemeMemberNumbers](){
+  val element = new TransformedElement[SchemeMemberNumbers]{
 
     override def transformRows(data: SchemeMemberNumbers): Seq[AnswerRow] = Seq(row)
 

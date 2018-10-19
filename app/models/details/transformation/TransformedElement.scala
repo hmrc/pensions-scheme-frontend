@@ -24,9 +24,9 @@ import scala.language.implicitConversions
 
 trait TransformedElement[I] {
 
-  val entityType: String = "individual"
+  protected val entityType: String = "individual"
 
-  def transformSuperSection(data: I): SuperSection
+  protected def transformSuperSection(data: I): SuperSection
 
   def transformRows(data: I): Seq[AnswerRow]
 
@@ -38,7 +38,7 @@ trait TransformedElement[I] {
     AnswerRow(label, answer, answerIsMessageKey, changeUrl)
   }
 
-  def fullName(data: IndividualName): String = data.middleName match {
+  protected def fullName(data: IndividualName): String = data.middleName match {
 
     case Some(middle) => s"${data.firstName} $middle ${data.lastName}"
     case _ => s"${data.firstName} ${data.lastName}"
@@ -61,10 +61,7 @@ trait TransformedElement[I] {
     ).flatten
   }
 
-  protected def yesNo(flag: Boolean): String = {
-
-    if (flag) "site.yes" else "site.no"
-  }
+  protected def yesNo(flag: Boolean): String = if (flag) "site.yes" else "site.no"
 
   protected def utrRows(utrStr: Option[String]): Seq[AnswerRow] = {
 
