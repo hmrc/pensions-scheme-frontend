@@ -18,13 +18,14 @@ package models.details.transformation
 
 import javax.inject.Inject
 import models.details._
-import viewmodels.MasterSection
+import viewmodels.{MasterSection, SuperSection}
 
 import scala.language.implicitConversions
 
-case class PsaSchemeDetailsMasterSection @Inject()(schemeDetails: SchemeDetailsSection[SchemeDetails],
-                                                   establisherDetails: EstablisherInfoSection,
-                                                   trusteeDetails: TrusteeInfoSection) {
+class PsaSchemeDetailsMasterSection @Inject()(schemeDetails: SchemeDetailsSection[SchemeDetails],
+                                              individualInfoRows: IndividualInfoRows[IndividualInfo],
+                                              companyDetailsRows: CompanyDetailsRows[CompanyDetails],
+                                              partnershipDetailsRows: PartnershipDetailsRows[PartnershipDetails]) {
 
   def transformMasterSection(data: PsaSchemeDetails): Seq[MasterSection] = {
 
@@ -32,15 +33,72 @@ case class PsaSchemeDetailsMasterSection @Inject()(schemeDetails: SchemeDetailsS
 
     val establisherDetailsSection = data.establisherDetails.map {
       establisher =>
-        establisherDetails.transformMasterSection(establisher)
+        transformEstablisherMasterSection(establisher)
     }.toSeq
 
     val trusteeDetailsSection = data.trusteeDetails.map {
       trustee =>
-        trusteeDetails.transformMasterSection(trustee)
+        transformTrusteeMasterSection(trustee)
     }.toSeq
 
     schemeDetailsSection ++ establisherDetailsSection ++ trusteeDetailsSection
 
+  }
+
+  def transformEstablisherMasterSection(data: EstablisherInfo): MasterSection = {
+
+    val individuals = individualSuperSection(data.individual)
+
+    val companies = companySuperSection(data.company)
+
+    val partnerships = partnershipSuperSection(data.partnership)
+
+    MasterSection(Some("messages__psaSchemeDetails__establishers"), individuals ++ companies ++ partnerships)
+
+  }
+
+  def transformTrusteeMasterSection(data: TrusteeInfo): MasterSection = {
+
+    val individuals = individualSuperSection(data.individual)
+
+    val companies = companySuperSection(data.company)
+
+    val partnerships = partnershipSuperSection(data.partnership)
+
+    MasterSection(Some("messages__psaSchemeDetails__trustees"), individuals ++ companies ++ partnerships)
+
+  }
+
+  private def individualSuperSection(individual: Seq[IndividualInfo]): Seq[SuperSection] = {
+
+    individual.map {
+      indv =>
+        individualInfoRows.transformSuperSection(indv)
+    }
+  }
+
+  private def companySuperSection(company: Seq[CompanyDetails]): Seq[SuperSection] = {
+
+    company.flatMap {
+      comp =>
+        Seq(companyDetailsRows.transformSuperSection(comp)) ++
+        comp.directorsDetails.map {
+          indv =>
+            individualInfoRows.transformSuperSection(indv,
+              Some("messages__psaSchemeDetails__director_details"))
+        }
+    }
+  }
+
+  private def partnershipSuperSection(partnership: Seq[PartnershipDetails]): Seq[SuperSection] = {
+
+    partnership.flatMap {
+      partner =>
+        Seq(partnershipDetailsRows.transformSuperSection(partner)) ++
+        partner.partnerDetails.map { indv =>
+          individualInfoRows.transformSuperSection(indv,
+            Some("messages__psaSchemeDetails__partner_details"))
+        }
+    }
   }
 }

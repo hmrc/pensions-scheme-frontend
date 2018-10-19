@@ -20,6 +20,7 @@ import models.details.{PsaSchemeDetails, _}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import utils.FakeCountryOptions
+import viewmodels.{AnswerSection, MasterSection, SuperSection}
 
 import scala.language.implicitConversions
 
@@ -30,10 +31,10 @@ class PsaSchemeDetailsMasterSectionSpec extends WordSpec with MustMatchers with 
   val partnershipDetailsRows: PartnershipDetailsRows[PartnershipDetails] = new PartnershipDetailsRows[PartnershipDetails](FakeCountryOptions())
 
   val schemeDetailsRows: SchemeDetailsSection[SchemeDetails] = new SchemeDetailsSection[SchemeDetails](FakeCountryOptions())
-  val establisherInfoRows: EstablisherInfoSection = new EstablisherInfoSection(individualInfoRows, companyDetailsRows, partnershipDetailsRows)
-  val trusteeInfoRows: TrusteeInfoSection = new TrusteeInfoSection(individualInfoRows, companyDetailsRows, partnershipDetailsRows)
+//  val establisherInfoRows: EstablisherInfoSection = new EstablisherInfoSection(individualInfoRows, companyDetailsRows, partnershipDetailsRows)
+//  val trusteeInfoRows: TrusteeInfoSection = new TrusteeInfoSection(individualInfoRows, companyDetailsRows, partnershipDetailsRows)
 
-  val psaSchemeDetailsMasterSection = PsaSchemeDetailsMasterSection(schemeDetailsRows, establisherInfoRows, trusteeInfoRows)
+  val psaSchemeDetailsMasterSection = new PsaSchemeDetailsMasterSection(schemeDetailsRows, individualInfoRows, companyDetailsRows, partnershipDetailsRows)
 
   "PsaSchemeDetailsMasterSection" must {
 
@@ -77,6 +78,111 @@ class PsaSchemeDetailsMasterSectionSpec extends WordSpec with MustMatchers with 
 
           Seq(individualMasterSection, establisherMasterSection, trsuteeMasterSection)
         )
+      }
+    }
+  }
+
+  "EstablisherInfoSection" must {
+
+    "produce section of correct data" when {
+
+      "all data present for individuals" in {
+
+        val establisherDetails = EstablisherInfo(Seq(individuals), Seq(), Seq())
+
+        psaSchemeDetailsMasterSection.transformEstablisherMasterSection(establisherDetails) must equal(
+          MasterSection(Some("messages__psaSchemeDetails__establishers"),
+            Seq(SuperSection(Some("fName mName lName"), Seq(AnswerSection(None, indidualAnswerRows))))
+          )
+        )
+      }
+
+      "all data present for companies" in {
+
+        val establisherDetails = EstablisherInfo(Seq(), Seq(companyDetails), Seq())
+
+        psaSchemeDetailsMasterSection.transformEstablisherMasterSection(establisherDetails) must equal(
+
+          MasterSection(Some("messages__psaSchemeDetails__establishers"),
+            Seq(
+              SuperSection(Some("abc organisation"), Seq(AnswerSection(None, companyAnswerRows))),
+              SuperSection(Some("messages__psaSchemeDetails__director_details"),
+                Seq(individualAnswerRow))
+            )
+          )
+        )
+      }
+
+      "all data present for partnership" in {
+
+        val establisherDetails = EstablisherInfo(Seq(), Seq(), Seq(partnershipDetails))
+
+        psaSchemeDetailsMasterSection.transformEstablisherMasterSection(establisherDetails) must equal(
+          MasterSection(Some("messages__psaSchemeDetails__establishers"),
+            Seq(
+              SuperSection(Some("abc partnership"), Seq(AnswerSection(None, partnershipAnswerRows))),
+              SuperSection(Some("messages__psaSchemeDetails__partner_details"), Seq(individualAnswerRow))
+            )
+          )
+        )
+      }
+
+      "all individual, companies and partnership data present" in {
+
+        val establisherDetails = EstablisherInfo(Seq(individuals), Seq(companyDetails), Seq(partnershipDetails))
+
+        psaSchemeDetailsMasterSection.transformEstablisherMasterSection(establisherDetails) must equal(establisherMasterSection)
+      }
+    }
+  }
+
+  "TrusteeInfoSection" must {
+
+    "produce section of correct data" when {
+
+      "all data present for individuals" in {
+
+        val trusteeDetails = TrusteeInfo(Seq(individuals), Seq(), Seq())
+
+        psaSchemeDetailsMasterSection.transformTrusteeMasterSection(trusteeDetails) must equal(
+          MasterSection(Some("messages__psaSchemeDetails__trustees"),
+            Seq(SuperSection(Some("fName mName lName"), Seq(AnswerSection(None, indidualAnswerRows))))
+          )
+        )
+      }
+
+      "all data present for companies" in {
+
+        val trusteeDetails = TrusteeInfo(Seq(), Seq(trusteeCompanyDetails), Seq())
+
+        psaSchemeDetailsMasterSection.transformTrusteeMasterSection(trusteeDetails) must equal(
+
+          MasterSection(Some("messages__psaSchemeDetails__trustees"),
+            Seq(
+              SuperSection(Some("abc organisation"), Seq(AnswerSection(None, companyAnswerRows)))
+            )
+          )
+        )
+      }
+
+      "all data present for partnership" in {
+
+        val trusteeDetails = TrusteeInfo(Seq(), Seq(), Seq(trusteePartnershipDetails))
+
+        psaSchemeDetailsMasterSection.transformTrusteeMasterSection(trusteeDetails) must equal(
+          MasterSection(Some("messages__psaSchemeDetails__trustees"),
+            Seq(
+              SuperSection(Some("abc partnership"), Seq(AnswerSection(None, partnershipAnswerRows)))
+            )
+          )
+        )
+      }
+
+      "all individual, companies and partnership data present" in {
+
+        val trusteeDetails = TrusteeInfo(Seq(individuals), Seq(trusteeCompanyDetails), Seq(trusteePartnershipDetails))
+
+        psaSchemeDetailsMasterSection.transformTrusteeMasterSection(trusteeDetails) must equal(trsuteeMasterSection)
       }
     }
   }
