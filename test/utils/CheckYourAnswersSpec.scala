@@ -78,7 +78,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
           Json.obj("testId" -> SchemeDetails("test name", schemeType))), PsaId("A0000000"))
 
         testIdentifier[SchemeDetails].row(onwardUrl) must equal(Seq(
-          AnswerRow("messages__scheme_details__name_label", Seq("test name"), false, Some(onwardUrl)),
+          AnswerRow("messages__scheme_details__name_label", Seq("test name"), false, Some(onwardUrl), "messages__visuallyhidden__scheme_name"),
           AnswerRow("messages__scheme_details__type_legend_short", Seq(s"messages__scheme_details__type_$schemeType"), true, Some(onwardUrl), "messages__visuallyhidden__scheme_type")
         ))
       }
