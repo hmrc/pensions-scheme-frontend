@@ -27,13 +27,15 @@
 @(appConfig: FrontendAppConfig, masterSection: Seq[MasterSection], header: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = header,
+    title = messages("messages__psaSchemeDetails__title"),
     appConfig = appConfig,
     bodyClasses = None
     ) {
+        <div class="row-group">
         @components.heading(
             headingKey=header
         )
+        </div>
 
         @for((masterSection, masterId) <- masterSection.zipWithIndex){
             @if(masterSection.headingKey.isDefined){
@@ -45,13 +47,13 @@
             <ul>
                 @for((superSection, superId) <- masterSection.sections.zipWithIndex){
                     @if(superSection.headingKey.isDefined){
-                        <h3 id="superSection-@masterId-@superId-heading" class="heading-medium">@messages(superSection.headingKey.get)</h3>
+                        <h3 id="superSection-@masterId-@superId-heading" class="heading-medium @if(superSection.sections.head.headingKey.isEmpty){row-group}">@messages(superSection.headingKey.get)</h3>
                     }
 
                     <ul>
                         @for((answerSection, answerId) <- superSection.sections.zipWithIndex){
                             @if(answerSection.headingKey.isDefined){
-                                <h4 id="answerSection-@masterId-@superId-@answerId-heading" class="heading-small">@messages(answerSection.headingKey.get)</h4>
+                                <h4 id="answerSection-@masterId-@superId-@answerId-heading" class="heading-small row-group">@messages(answerSection.headingKey.get)</h4>
                             }
 
                             <ul class="govuk-check-your-answers form-group">

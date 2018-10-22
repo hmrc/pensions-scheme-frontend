@@ -31,7 +31,7 @@ class PsaSchemeDetailsViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   private def emptyAnswerSections: Seq[SuperSection] = Nil
 
-  private def mainHeader: String = "test-secondaryHeader"
+  private def mainHeader: String = "Scheme Details"
 
   val fakeCall = Call("method", "url")
 
