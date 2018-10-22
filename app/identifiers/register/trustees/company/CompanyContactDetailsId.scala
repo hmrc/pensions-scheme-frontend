@@ -33,7 +33,7 @@ object CompanyContactDetailsId {
 
   implicit val cya: CheckYourAnswers[CompanyContactDetailsId] =
     ContactDetailsCYA(
-      "messages__visuallyhidden__trustee__email_address",
-      "messages__visuallyhidden__trustee__phone_number"
+      changeEmailAddress = "messages__visuallyhidden__trustee__email_address",
+      changePhoneNumber = "messages__visuallyhidden__trustee__phone_number"
     )()
 }

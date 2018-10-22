@@ -32,7 +32,7 @@ object PartnershipContactDetailsId {
 
   implicit val cya: CheckYourAnswers[PartnershipContactDetailsId] =
     ContactDetailsCYA(
-      "messages__visuallyhidden__partnership__email_address",
-      "messages__visuallyhidden__partnership__phone_number"
+      changeEmailAddress = "messages__visuallyhidden__partnership__email_address",
+      changePhoneNumber = "messages__visuallyhidden__partnership__phone_number"
     )()
 }

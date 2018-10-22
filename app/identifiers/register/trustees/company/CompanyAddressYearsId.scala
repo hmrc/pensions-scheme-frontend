@@ -44,6 +44,7 @@ object CompanyAddressYearsId {
 
   implicit val cya: CheckYourAnswers[CompanyAddressYearsId] =
     AddressYearsCYA(
-      "messages__checkYourAnswers__trustees__company__address_years",
-      "messages__visuallyhidden__trustee__address_years")()
+      label = "messages__checkYourAnswers__trustees__company__address_years",
+      changeAddressYears = "messages__visuallyhidden__trustee__address_years"
+    )()
 }

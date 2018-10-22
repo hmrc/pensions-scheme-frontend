@@ -31,11 +31,9 @@ object PartnerUniqueTaxReferenceId {
 
   implicit val cya: CheckYourAnswers[PartnerUniqueTaxReferenceId] =
     UniqueTaxReferenceCYA(
-      "messages__partner_utr_question_cya_label",
-      "messages__visuallyhidden__partner__utr_yes_no",
-      "messages__visuallyhidden__partner__utr",
-      "messages__visuallyhidden__partner__utr_no"
+      label = "messages__partner_utr_question_cya_label",
+      changeHasUtr = "messages__visuallyhidden__partner__utr_yes_no",
+      changeUtr = "messages__visuallyhidden__partner__utr",
+      changeNoUtr = "messages__visuallyhidden__partner__utr_no"
     )()
 }
-
-
