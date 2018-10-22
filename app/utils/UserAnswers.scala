@@ -22,11 +22,11 @@ import identifiers.register.establishers.company.{CompanyDetailsId => Establishe
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{IsPartnerCompleteId, PartnerDetailsId}
-import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
+import identifiers.register.establishers.{EstablisherKindId, EstablishersId, IsEstablisherCompleteId}
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteesId}
+import identifiers.register.trustees.{IsTrusteeCompleteId, TrusteeKindId, TrusteesId}
 import models.person.PersonDetails
 import models.register._
 import models.{CompanyDetails, PartnershipDetails}
@@ -138,10 +138,24 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       EstablisherPartnershipEntity(PartnershipDetailsId(index), details.name, details.isDeleted, isComplete.getOrElse(false))
     )
 
+    private def readsSkeleton(index: Int): Reads[Establisher[_]] = new Reads[Establisher[_]] {
+      override def reads(json: JsValue): JsResult[Establisher[_]] = {
+        (json \ EstablisherKindId.toString)
+          .toOption.map(_ => JsSuccess(EstablisherSkeletonEntity(EstablisherKindId(index))))
+          .getOrElse(JsError(s"Establisher does not have element establisherKind: index=$index"))
+      }
+    }
+
     override def reads(json: JsValue): JsResult[Seq[Establisher[_]]] = {
       json \ EstablishersId.toString match {
         case JsDefined(JsArray(establishers)) =>
-          readEntities(establishers, index => readsIndividual(index) orElse readsCompany(index) orElse readsPartnership(index))
+          readEntities(
+            establishers,
+            index => readsIndividual(index)
+              orElse readsCompany(index)
+              orElse readsPartnership(index)
+              orElse readsSkeleton(index)
+          )
         case _ => JsSuccess(Nil)
       }
     }
@@ -220,10 +234,25 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       ) ((details, isComplete) => TrusteePartnershipEntity(TrusteePartnershipDetailsId(index), details.name, details.isDeleted, isComplete.getOrElse(false))
     )
 
+    private def readsSkeleton(index: Int): Reads[Trustee[_]] = new Reads[Trustee[_]] {
+      override def reads(json: JsValue): JsResult[Trustee[_]] = {
+        (json \ TrusteeKindId.toString)
+          .toOption.map(_ => JsSuccess(TrusteeSkeletonEntity(TrusteeKindId(index))))
+          .getOrElse(JsError(s"Trustee does not have element trusteeKind: index=$index"))
+      }
+    }
+
     override def reads(json: JsValue): JsResult[Seq[Trustee[_]]] = {
       json \ TrusteesId.toString match {
         case JsDefined(JsArray(trustees)) =>
-          readEntities(trustees, index => readsIndividual(index) orElse readsCompany(index) orElse readsPartnership(index))
+          readEntities(
+            trustees,
+            index =>
+              readsIndividual(index)
+                orElse readsCompany(index)
+                orElse readsPartnership(index)
+                orElse readsSkeleton(index)
+          )
         case _ => JsSuccess(Nil)
       }
     }
