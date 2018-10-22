@@ -82,10 +82,10 @@ class SchemeDetailsMasterSection @Inject()(schemeDetails: SchemeDetailsSection[S
     company.flatMap {
       comp =>
         Seq(companyDetailsRows.transformSuperSection(comp)) ++
-        comp.directorsDetails.map {
-          indv =>
+        comp.directorsDetails.zipWithIndex.map {
+          case (indv, index) =>
             individualInfoRows.transformSuperSection(indv,
-              Some("messages__psaSchemeDetails__director_details"))
+              if(index==0) Some("messages__psaSchemeDetails__director_details") else None)
         }
     }
   }
@@ -95,9 +95,10 @@ class SchemeDetailsMasterSection @Inject()(schemeDetails: SchemeDetailsSection[S
     partnership.flatMap {
       partner =>
         Seq(partnershipDetailsRows.transformSuperSection(partner)) ++
-        partner.partnerDetails.map { indv =>
+        partner.partnerDetails.zipWithIndex.map{
+          case (indv, index) =>
           individualInfoRows.transformSuperSection(indv,
-            Some("messages__psaSchemeDetails__partner_details"))
+            if(index==0) Some("messages__psaSchemeDetails__partner_details") else None)
         }
     }
   }
