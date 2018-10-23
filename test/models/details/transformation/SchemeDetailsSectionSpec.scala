@@ -16,7 +16,7 @@
 
 package models.details.transformation
 
-import models.details.{CorrespondenceAddress, InsuranceCompany, SchemeDetails, SchemeMemberNumbers}
+import models.details.SchemeDetails
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import utils.FakeCountryOptions
@@ -28,22 +28,12 @@ class SchemeDetailsSectionSpec extends WordSpec with MustMatchers with PropertyC
 
   val schemeDetailsRows: SchemeDetailsSection[SchemeDetails] = new SchemeDetailsSection[SchemeDetails](FakeCountryOptions())
 
-  val expectedSeq = Seq(
-    AnswerRow("messages__psaSchemeDetails__country_established", Seq("Country of GB"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__current_scheme_members", Seq("1"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__future_scheme_members", Seq("2 to 11"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__is_investment_regulated", Seq("site.no"), answerIsMessageKey = true, None),
-    AnswerRow("messages__psaSchemeDetails__is_occupational", Seq("site.no"), answerIsMessageKey = true, None),
-    AnswerRow("messages__psaSchemeDetails__benefits", Seq("Defined benefits only"), answerIsMessageKey = false, None),
-    AnswerRow("messages__psaSchemeDetails__are_benefits_secured", Seq("site.no"), answerIsMessageKey = true, None)
-  )
-
   "SchemeDetailsRows" must {
 
     "produce details section" when{
       "called with correct details" in {
-        schemeDetailsRows.transformSuperSection(schemeDetails.copy(typeOfScheme = None, insuranceCompany = None)) must equal(
-          SuperSection(None, Seq(AnswerSection(None, expectedSeq)))
+        schemeDetailsRows.transformSuperSection(minimumSchemeDetails) must equal(
+          SuperSection(None, Seq(AnswerSection(None, expectedSchemeDetailsRows)))
         )
       }
     }
@@ -54,8 +44,8 @@ class SchemeDetailsSectionSpec extends WordSpec with MustMatchers with PropertyC
 
         schemeDetailsRows.transformRows(schemeDetails) must equal(
           Seq(
-            AnswerRow("messages__psaSchemeDetails__scheme_type", Seq("messages__scheme_details__type_single"), answerIsMessageKey = false, None)
-          )++expectedSeq ++
+            AnswerRow("messages__psaSchemeDetails__scheme_type", Seq("messages__scheme_details__type_single"), answerIsMessageKey = true, None)
+          )++expectedSchemeDetailsRows ++
           Seq(
               AnswerRow("messages__psaSchemeDetails__insurance_company_name", Seq("company name"), answerIsMessageKey = false, None),
               AnswerRow("messages__psaSchemeDetails__policy_number", Seq("123456789"), answerIsMessageKey = false, None),
@@ -66,7 +56,7 @@ class SchemeDetailsSectionSpec extends WordSpec with MustMatchers with PropertyC
 
       "scheme type and insuranceCompany are not present" in {
 
-        schemeDetailsRows.transformRows(schemeDetails.copy(typeOfScheme = None, insuranceCompany = None)) must equal(expectedSeq)
+        schemeDetailsRows.transformRows(minimumSchemeDetails) must equal(expectedSchemeDetailsRows)
       }
     }
   }

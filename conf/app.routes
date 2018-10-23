@@ -28,3 +28,5 @@ GET        /continue-registration                       controllers.ContinueRegi
 
 GET        /user-research-details                       controllers.UserResearchDetailsController.onPageLoad()
 POST       /user-research-details                       controllers.UserResearchDetailsController.onSubmit()
+
+GET        /scheme-details/:srn                         controllers.PSASchemeDetailsController.onPageLoad(srn: String)

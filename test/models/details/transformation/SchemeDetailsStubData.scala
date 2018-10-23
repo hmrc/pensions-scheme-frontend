@@ -17,7 +17,7 @@
 package models.details.transformation
 
 import models.details._
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, AnswerSection, MasterSection, SuperSection}
 
 trait SchemeDetailsStubData {
 
@@ -65,6 +65,8 @@ trait SchemeDetailsStubData {
     areBenefitsSecured= false,
     insuranceCompany = Some(InsuranceCompany(name = Some("company name"),policyNumber= Some("123456789"),
       address = Some(correspondenceAddressDetails))))
+
+  val minimumSchemeDetails = schemeDetails.copy(typeOfScheme = None, insuranceCompany = None)
 
   val psaSchemeDetailsSample = PsaSchemeDetails(
     SchemeDetails(
@@ -129,5 +131,38 @@ trait SchemeDetailsStubData {
       "address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "Country of GB"), answerIsMessageKey = false, None),
     AnswerRow("messages__psaSchemeDetails__partnership_email", Seq("test@test.com"), answerIsMessageKey = false, None),
     AnswerRow("messages__psaSchemeDetails__partnership_phone", Seq("07592113"), answerIsMessageKey = false, None)
+  )
+
+
+  val expectedSchemeDetailsRows = Seq(
+    AnswerRow("messages__psaSchemeDetails__country_established", Seq("Country of GB"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__current_scheme_members", Seq("1"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__future_scheme_members", Seq("2 to 11"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__is_investment_regulated", Seq("site.no"), answerIsMessageKey = true, None),
+    AnswerRow("messages__psaSchemeDetails__is_occupational", Seq("site.no"), answerIsMessageKey = true, None),
+    AnswerRow("messages__psaSchemeDetails__benefits", Seq("Defined benefits only"), answerIsMessageKey = false, None),
+    AnswerRow("messages__psaSchemeDetails__are_benefits_secured", Seq("site.no"), answerIsMessageKey = true, None)
+  )
+
+  val individualAnswerRow = AnswerSection(Some("fName mName lName"), indidualAnswerRows)
+
+  val individualMasterSection = MasterSection(None,Seq(SuperSection(None, Seq(AnswerSection(None, expectedSchemeDetailsRows)))))
+
+  val establisherMasterSection = MasterSection(Some("messages__psaSchemeDetails__establishers"),
+    Seq(
+      SuperSection(Some("fName mName lName"), Seq(AnswerSection(None, indidualAnswerRows))),
+      SuperSection(Some("abc organisation"), Seq(AnswerSection(None, companyAnswerRows))),
+      SuperSection(Some("messages__psaSchemeDetails__director_details"), Seq(individualAnswerRow)),
+      SuperSection(Some("abc partnership"), Seq(AnswerSection(None, partnershipAnswerRows))),
+      SuperSection(Some("messages__psaSchemeDetails__partner_details"), Seq(individualAnswerRow))
+    )
+  )
+
+  val trsuteeMasterSection = MasterSection(Some("messages__psaSchemeDetails__trustees"),
+    Seq(
+      SuperSection(Some("fName mName lName"), Seq(AnswerSection(None, indidualAnswerRows))),
+      SuperSection(Some("abc organisation"), Seq(AnswerSection(None, companyAnswerRows))),
+      SuperSection(Some("abc partnership"), Seq(AnswerSection(None, partnershipAnswerRows)))
+    )
   )
 }
