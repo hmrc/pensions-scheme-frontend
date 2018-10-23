@@ -16,11 +16,13 @@
 
 package models.register
 
+import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
+import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
@@ -129,6 +131,21 @@ case class EstablisherPartnershipEntity(id: PartnershipDetailsId,
   override def index: Int = id.index
 }
 
+case class EstablisherSkeletonEntity(id: EstablisherKindId) extends Establisher[EstablisherKindId] {
+
+  override def index: Int = id.index
+
+  override def name: String = ""
+
+  override def isDeleted: Boolean = true
+
+  override def isCompleted: Boolean = false
+
+  override def editLink: String = ""
+
+  override def deleteLink: String = ""
+}
+
 sealed trait Trustee[T] extends Entity[T]
 
 case class TrusteeCompanyEntity(id: TrusteeCompanyDetailsId,
@@ -177,6 +194,20 @@ case class TrusteePartnershipEntity(id: TrusteePartnershipDetailsId,
 
   override def deleteLink: String =
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id.index, TrusteeKind.Partnership).url
+
+  override def index: Int = id.index
+}
+
+case class TrusteeSkeletonEntity(id: TrusteeKindId) extends Trustee[TrusteeKindId] {
+  override def name: String = ""
+
+  override def isDeleted: Boolean = true
+
+  override def isCompleted: Boolean = false
+
+  override def editLink: String = ""
+
+  override def deleteLink: String = ""
 
   override def index: Int = id.index
 }
