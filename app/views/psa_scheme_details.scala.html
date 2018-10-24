@@ -1,0 +1,86 @@
+@*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import models.Index
+@import play.api.mvc.Call
+@import uk.gov.hmrc.play.views.html._
+@import viewmodels.MasterSection
+@import viewmodels.AnswerSection
+@import viewmodels.SuperSection
+@import viewmodels.AnswerRow
+@import views.html._
+
+@(appConfig: FrontendAppConfig, masterSection: Seq[MasterSection], header: String)(implicit request: Request[_], messages: Messages)
+
+@main_template(
+    title = messages("messages__psaSchemeDetails__title"),
+    appConfig = appConfig,
+    bodyClasses = None
+    ) {
+        <div class="row-group">
+        @components.heading(
+            headingKey=header
+        )
+        </div>
+
+        @for((masterSection, masterId) <- masterSection.zipWithIndex){
+            @if(masterSection.headingKey.isDefined){
+            <header class="page-heading">
+                <h2 id="masterSection-@masterId-heading" class="heading-large">@messages(masterSection.headingKey.get)</h2>
+            </header>
+            }
+
+            <ul>
+                @for((superSection, superId) <- masterSection.sections.zipWithIndex){
+                    @if(superSection.headingKey.isDefined){
+                        <h3 id="superSection-@masterId-@superId-heading" class="heading-medium @if(superSection.sections.head.headingKey.isEmpty){row-group}">@messages(superSection.headingKey.get)</h3>
+                    }
+
+                    <ul>
+                        @for((answerSection, answerId) <- superSection.sections.zipWithIndex){
+                            @if(answerSection.headingKey.isDefined){
+                                <h4 id="answerSection-@masterId-@superId-@answerId-heading" class="heading-small row-group">@messages(answerSection.headingKey.get)</h4>
+                            }
+
+                            <ul class="govuk-check-your-answers form-group">
+                                @for((row, idPath) <- answerSection.rows.zipWithIndex){
+                                <li>
+                                    <div id="cya-@masterId-@superId-@answerId-@idPath-question" class="cya-question">
+                                        <h5 class="bold std-text">@messages(row.label)</h5>
+                                    </div>
+                                    <div class="cya-answer">
+                                        <p>
+                                            @if(row.answerIsMessageKey){
+                                            <span id="cya-@masterId-@superId-@answerId-@idPath-0-answer">@messages(row.answer.head)</span>
+                                            } else{
+                                            @for((r, i) <- row.answer.zipWithIndex){
+                                            <span id="cya-@masterId-@superId-@answerId-@idPath-@i-answer" class="address-multi-line">@r</span>
+                                            }
+                                            }
+                                        </p>
+                                    </div>
+                                </li>
+                                }
+                            </ul>
+
+                        }
+                    </ul>
+                }
+            </ul>
+        }
+
+    }

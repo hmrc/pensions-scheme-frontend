@@ -16,9 +16,11 @@
 
 package models.register
 
+import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.company.CompanyDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.NormalMode
@@ -133,6 +135,24 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
     }
   }
 
+  "EstablisherSkeletonEntity" must {
+    val skeletonEntity = EstablisherSkeletonEntity(
+      EstablisherKindId(1)
+    )
+
+    "have correct index" in {
+      skeletonEntity.index mustBe 1
+    }
+
+    "have isDeleted flag set to true" in {
+      skeletonEntity.isDeleted mustBe true
+    }
+
+    "have isCompleted flag set to false" in {
+      skeletonEntity.isCompleted mustBe false
+    }
+  }
+
   "TrusteeCompanyEntity" must {
     val companyEntity = TrusteeCompanyEntity(
       CompanyDetailsId(index = 1),
@@ -201,4 +221,24 @@ class EntitySpec extends WordSpecLike with MustMatchers with OptionValues {
       individualEntity.deleteLink mustEqual expectedDeleteLink
     }
   }
+
+  "TrusteeSkeletonEntity" must {
+    val skeletonTrustee = TrusteeSkeletonEntity(
+      TrusteeKindId(1)
+    )
+
+    "have correct index" in {
+      skeletonTrustee.index mustBe 1
+    }
+
+    "have isDeleted flag set to true" in {
+      skeletonTrustee.isDeleted mustBe true
+    }
+
+    "have isCompleted flag set to false" in {
+      skeletonTrustee.isCompleted mustBe false
+    }
+
+  }
+
 }

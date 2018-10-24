@@ -32,14 +32,14 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
 
   private def loadConfigOrDefault(key: String, default: String) = runModeConfiguration.getString(key).getOrElse(default)
 
-  lazy val appName: String = runModeConfiguration.underlying.getString("appName")
-
   private lazy val contactHost = runModeConfiguration.getString("contact-frontend.host").getOrElse("")
   private val contactFormServiceIdentifier = "pensionsschemefrontend"
-
+  lazy val managePensionsSchemeOverviewUrl : Call = Call("GET",loadConfig("urls.manage-pensions-frontend.schemesOverview"))
+  lazy val appName: String = runModeConfiguration.underlying.getString("appName")
   lazy val analyticsToken = loadConfig(s"google-analytics.token")
   lazy val analyticsHost = loadConfig(s"google-analytics.host")
-
+  lazy val googleTagManagerIdAvailable: Boolean = runModeConfiguration.underlying.getBoolean(s"google-tag-manager.id-available")
+  lazy val googleTagManagerId: String = loadConfig(s"google-tag-manager.id")
   lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback"
@@ -49,13 +49,14 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val pensionsSchemeUrl = baseUrl("pensions-scheme")
   lazy val pensionsAdministratorUrl = baseUrl("pension-administrator")
 
-  lazy val managePensionsSchemeOverviewUrl : Call = Call("GET",loadConfig("urls.manage-pensions-frontend.schemesOverview"))
   lazy val loginUrl = loadConfig("urls.login")
   lazy val loginContinueUrl = loadConfig("urls.loginContinue")
   lazy val serviceSignOut = loadConfig("urls.logout")
-  lazy val registerSchemeUrl: String = pensionsSchemeUrl + runModeConfiguration.underlying.getString("urls.registerScheme")
+  lazy val registerSchemeUrl: String = pensionsSchemeUrl +
+    runModeConfiguration.underlying.getString("urls.registerScheme")
   lazy val registerSchemeAdministratorUrl: String = loadConfig("urls.registerSchemeAdministrator")
-  lazy val listOfSchemesUrl: String = pensionsSchemeUrl + runModeConfiguration.underlying.getString("urls.listOfSchemes")
+  lazy val listOfSchemesUrl: String = pensionsSchemeUrl +
+    runModeConfiguration.underlying.getString("urls.listOfSchemes")
   lazy val pensionSchemeOnlineServiceUrl: String = loadConfig("urls.pensionSchemeOnlineService")
   lazy val pensionAdministratorGovUkLink = runModeConfiguration.underlying.getString("urls.pensionAdministratorGovUkLink")
   lazy val pensionPractitionerGovUkLink = runModeConfiguration.underlying.getString("urls.pensionPractitionerGovUkLink")
@@ -64,7 +65,6 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val pensionsRegulatorLink = runModeConfiguration.underlying.getString("urls.pensionsRegulatorLink")
   lazy val getPSAEmail = runModeConfiguration.underlying.getString("urls.get-psa-email")
   lazy val getPSAName = runModeConfiguration.underlying.getString("urls.get-psa-name")
-
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
@@ -78,7 +78,6 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val maxTrustees: Int = loadConfig("maxTrustees").toInt
   lazy val maxPartners: Int = loadConfig("maxPartners").toInt
   lazy val daysDataSaved: Int = loadConfig("daysDataSaved").toInt
-
   lazy val emailApiUrl: String = baseUrl("email")
   lazy val emailTemplateId: String = loadConfig("email.templateId")
   lazy val emailSendForce: Boolean = runModeConfiguration.getBoolean("email.force").getOrElse(false)
@@ -86,7 +85,7 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
 
   //FEATURES
   lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
-  lazy val languageTranslationEnabled = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
+  lazy val languageTranslationEnabled:Boolean = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
   lazy val isWorkPackageOneEnabled: Boolean = runModeConfiguration.getBoolean("features.work-package-one-enabled").getOrElse(false)
 
   def encryptionKey(crypto: String): String = loadConfig(s"$crypto.encryption.key")

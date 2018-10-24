@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-package models.view
+package viewmodels
 
-import play.api.libs.json.{Json, OFormat}
-
-case class TrusteeInfo(individual: Seq[IndividualInfo],
-                       company: Seq[CompanyDetails],
-                       partnership: Seq[PartnershipDetails])
-
-object TrusteeInfo {
-  implicit val formats: OFormat[TrusteeInfo] = Json.format[TrusteeInfo]
-}
+case class MasterSection(headingKey: Option[String], sections: Seq[SuperSection]) extends Section

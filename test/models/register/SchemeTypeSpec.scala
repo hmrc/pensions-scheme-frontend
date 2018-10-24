@@ -16,6 +16,7 @@
 
 package models.register
 
+import models.register.SchemeType.MasterTrust
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 import play.api.libs.json.{JsError, Json}
 
@@ -71,6 +72,33 @@ class SchemeTypeSpec extends WordSpecLike with MustMatchers with OptionValues {
     }
     "return successfully write other" in {
       Json.toJson[SchemeType](SchemeType.Other("Some Scheme")) mustEqual Json.obj("name" -> "other", "schemeTypeDetails" -> "Some Scheme")
+    }
+  }
+
+  "getSchemetype" must{
+
+    "return master trust type if isMasterTrust is true" in {
+      SchemeType.getSchemeType(None, isMasterTrust = true) mustEqual Some("messages__scheme_details__type_master")
+    }
+
+    "return type_single if isMasterTrust is false and scheme type is present as part" in {
+      val str = "A single trust under which all of the assets are held for the benefit of all members of the scheme"
+      SchemeType.getSchemeType(Some(str), isMasterTrust = false) mustEqual Some("messages__scheme_details__type_single")
+    }
+
+    "return type_group if isMasterTrust is false and scheme type is present as part" in {
+      val str = "A group life/death in service scheme"
+      SchemeType.getSchemeType(Some(str), isMasterTrust = false) mustEqual Some("messages__scheme_details__type_group")
+    }
+
+    "return type_body if isMasterTrust is false and scheme type is present as part" in {
+      val str = "A body corporate"
+      SchemeType.getSchemeType(Some(str), isMasterTrust = false) mustEqual Some("messages__scheme_details__type_corp")
+    }
+
+    "return type_other if isMasterTrust is false and scheme type is present as part" in {
+      val str = "Other"
+      SchemeType.getSchemeType(Some(str), isMasterTrust = false) mustEqual Some("messages__scheme_details__type_other")
     }
   }
 }
