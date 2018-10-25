@@ -16,7 +16,7 @@
 
 package controllers.register
 
-import connectors._
+import connectors.{PSANameCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationDutiesFormProvider
@@ -24,10 +24,12 @@ import identifiers.TypedIdentifier
 import identifiers.register.{DeclarationDutiesId, SchemeDetailsId}
 import models.register.{SchemeDetails, SchemeSubmissionResponse, SchemeType}
 import org.mockito.Matchers.{any, eq => eqTo}
-import org.mockito.Mockito.{mock, _}
+import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
 import play.api.mvc.Call
@@ -80,15 +82,13 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
       fakePensionsSchemeConnector,
       emailConnector,
       fakePsaNameCacheConnector,
-      applicationCrypto
+      applicationCrypto,
+      fakePensionAdminstratorConnector
     )
 
   def viewAsString(form: Form[_] = form): String = declarationDuties(frontendAppConfig, form, "Test Scheme Name")(fakeRequest, messages).toString
 
-
-
   "DeclarationDuties Controller" must {
-
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(fakeRequest)
@@ -118,22 +118,81 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "send an email when valid data is submitted" in {
-      reset(mockEmailConnector)
+    "send an email when valid data is submitted" which {
+      "fetches from cacheConnector when work-package-one-enabled is false" in {
 
-      when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
-        .thenReturn(Future.successful(EmailSent))
+        val mockPSANameCacheConnector = mock[PSANameCacheConnector]
 
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+        reset(mockEmailConnector)
 
-      whenReady(controller(mockEmailConnector).onSubmit(postRequest)) {
-        _ =>
+        lazy val app = new GuiceApplicationBuilder()
+          .configure("features.work-package-one-enabled" -> false)
+          .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
+          .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
+          .overrides(bind[AuthAction].toInstance(FakeAuthAction))
+          .overrides(bind[PSANameCacheConnector].toInstance(mockPSANameCacheConnector))
+          .overrides(bind[DataRetrievalAction].toInstance(getMandatorySchemeName))
+          .overrides(bind[PensionsSchemeConnector].toInstance(fakePensionsSchemeConnector))
+          .overrides(bind[PensionAdministratorConnector].toInstance(fakePensionAdminstratorConnector))
+          .build()
+
+        when(mockPSANameCacheConnector.fetch(any())(any(), any()))
+            .thenReturn(Future.successful(Some(Json.obj("psaName" -> "Test",
+              "psaEmail" -> "email@test.com"))))
+
+        when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
+          .thenReturn(Future.successful(EmailSent))
+
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+        whenReady(app.injector.instanceOf[DeclarationDutiesController].onSubmit(postRequest)) { _ =>
+
           verify(mockEmailConnector, times(1)).sendEmail(
             eqTo("email@test.com"),
             eqTo("pods_scheme_register"),
             eqTo(Map("srn" -> "S12345 67890")),
             eqTo(psaId)
           )(any(), any())
+
+          verify(mockPSANameCacheConnector, times(1)).fetch(any())(any(),any())
+
+        }
+      }
+
+      "fetches from Get PSA Minimal Details when work-package-one-enabled is true" in {
+
+        val mockPSANameCacheConnector = mock[PSANameCacheConnector]
+
+        reset(mockEmailConnector)
+
+        lazy val app = new GuiceApplicationBuilder()
+          .configure("features.work-package-one-enabled" -> true)
+          .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
+          .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
+          .overrides(bind[AuthAction].toInstance(FakeAuthAction))
+          .overrides(bind[PSANameCacheConnector].toInstance(mockPSANameCacheConnector))
+          .overrides(bind[DataRetrievalAction].toInstance(getMandatorySchemeName))
+          .overrides(bind[PensionsSchemeConnector].toInstance(fakePensionsSchemeConnector))
+          .overrides(bind[PensionAdministratorConnector].toInstance(fakePensionAdminstratorConnector))
+          .build()
+
+        when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
+          .thenReturn(Future.successful(EmailSent))
+
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+        whenReady(app.injector.instanceOf[DeclarationDutiesController].onSubmit(postRequest)) { _ =>
+
+          verify(mockEmailConnector, times(1)).sendEmail(
+            eqTo("email@test.com"),
+            eqTo("pods_scheme_register"),
+            eqTo(Map("srn" -> "S12345 67890")),
+            eqTo(psaId)
+          )(any(), any())
+
+          verifyZeroInteractions(mockPSANameCacheConnector)
+
+        }
       }
     }
 
@@ -183,13 +242,18 @@ object DeclarationDutiesControllerSpec {
     }
   }
 
-
   private val fakeEmailConnector = new EmailConnector {
     override def sendEmail
     (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty, psaId: PsaId)
     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
       Future.successful(EmailSent)
     }
+  }
+
+  private val fakePensionAdminstratorConnector = new PensionAdministratorConnector {
+    override def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("email@test.com")
+
+    override def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("PSA Name")
   }
 
 }

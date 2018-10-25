@@ -28,6 +28,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{NameMatchingFactory, Navigator, UserAnswers}
@@ -61,20 +62,20 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
         value =>
-          nameMatchingFactory.nameMatching(value.schemeName).flatMap {
-            case Some(nameMatching) =>
-              if (nameMatching.isMatch) {
-                Future.successful(BadRequest(schemeDetails(appConfig, form.withError(
-                  "schemeName",
-                  "messages__error__scheme_name_psa_name_match"
-                ), mode)))
-              } else {
-                dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
-                  Redirect(navigator.nextPage(SchemeDetailsId, mode, UserAnswers(cacheMap)))
-                )
-              }
-            case _ =>
-              Logger.error(s"Unable to do the psa name matching for the given scheme name")
+          nameMatchingFactory.nameMatching(value.schemeName).flatMap { nameMatching =>
+          if (nameMatching.isMatch) {
+              Future.successful(BadRequest(schemeDetails(appConfig, form.withError(
+                "schemeName",
+                "messages__error__scheme_name_psa_name_match"
+              ), mode)))
+            } else {
+              dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
+                Redirect(navigator.nextPage(SchemeDetailsId, mode, UserAnswers(cacheMap)))
+              )
+            }
+          } recoverWith {
+            case e: NotFoundException =>
+              Logger.error(e.message)
               Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
           }
       )

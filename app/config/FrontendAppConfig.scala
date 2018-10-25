@@ -47,6 +47,7 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
 
   lazy val authUrl = baseUrl("auth")
   lazy val pensionsSchemeUrl = baseUrl("pensions-scheme")
+  lazy val pensionsAdministratorUrl = baseUrl("pension-administrator")
 
   lazy val loginUrl = loadConfig("urls.login")
   lazy val loginContinueUrl = loadConfig("urls.loginContinue")
@@ -62,7 +63,8 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val govUkLink = runModeConfiguration.underlying.getString("urls.govUkLink")
   lazy val appealLink = runModeConfiguration.underlying.getString("urls.appealLink")
   lazy val pensionsRegulatorLink = runModeConfiguration.underlying.getString("urls.pensionsRegulatorLink")
-  lazy val languageTranslationEnabled = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
+  lazy val getPSAEmail = runModeConfiguration.underlying.getString("urls.get-psa-email")
+  lazy val getPSAName = runModeConfiguration.underlying.getString("urls.get-psa-name")
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
@@ -80,6 +82,11 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val emailTemplateId: String = loadConfig("email.templateId")
   lazy val emailSendForce: Boolean = runModeConfiguration.getBoolean("email.force").getOrElse(false)
   lazy val schemeDetailsUrl: String = s"${baseUrl("pensions-scheme")}${runModeConfiguration.underlying.getString("urls.schemeDetails")}"
+
+  //FEATURES
+  lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
+  lazy val languageTranslationEnabled:Boolean = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
+  lazy val isWorkPackageOneEnabled: Boolean = runModeConfiguration.getBoolean("features.work-package-one-enabled").getOrElse(false)
 
   def encryptionKey(crypto: String): String = loadConfig(s"$crypto.encryption.key")
 }

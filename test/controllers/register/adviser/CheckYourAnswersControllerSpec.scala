@@ -26,6 +26,7 @@ import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSClient
 import play.api.mvc.Call
@@ -36,6 +37,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeCountryOptions, FakeNavigator, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
+import play.api.inject.bind
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,33 +61,95 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
-    "send an email when valid data is submitted" in {
-      reset(mockEmailConnector)
+    "send an email when valid data is submitted" which {
 
-      when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
-        .thenReturn(Future.successful(EmailSent))
+      "fetches name and email from cacheConnector when work-package-one-enabled is false" in {
 
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+        val mockPsaNameCacheConnector = mock[PSANameCacheConnector]
 
-      whenReady(controller(emailConnector = mockEmailConnector).onSubmit(postRequest)) {
-        _ =>
+        lazy val app = new GuiceApplicationBuilder()
+          .configure("features.work-package-one-enabled" -> false)
+          .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
+          .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
+          .overrides(bind[AuthAction].toInstance(FakeAuthAction))
+          .overrides(bind[DataRetrievalAction].toInstance(getEmptyData))
+          .overrides(bind[PensionsSchemeConnector].toInstance(fakePensionsSchemeConnector))
+          .overrides(bind[PSANameCacheConnector].toInstance(mockPsaNameCacheConnector))
+          .build()
+
+        reset(mockEmailConnector)
+
+        when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
+          .thenReturn(Future.successful(EmailSent))
+
+        when(mockPsaNameCacheConnector.fetch(any())(any(), any()))
+          .thenReturn(Future.successful(Some(psaName)))
+
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+        whenReady(app.injector.instanceOf[CheckYourAnswersController].onSubmit(postRequest)) { _ =>
+
+          verify(mockEmailConnector, times(1)).sendEmail(
+              eqTo("email@test.com"),
+              eqTo("pods_scheme_register"),
+              eqTo(Map("srn" -> "S12345 67890")),
+              eqTo(psaId)
+            )(any(), any())
+
+          verify(mockPsaNameCacheConnector, times(1)).fetch(any())(any(),any())
+
+        }
+
+      }
+
+      "fetches name and email from Get PSA Minimal Details when work-package-one-enabled is true" in {
+
+        val mockPsaNameCacheConnector = mock[PSANameCacheConnector]
+
+        lazy val app = new GuiceApplicationBuilder()
+          .configure("features.work-package-one-enabled" -> true)
+          .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
+          .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
+          .overrides(bind[AuthAction].toInstance(FakeAuthAction))
+          .overrides(bind[DataRetrievalAction].toInstance(getEmptyData))
+          .overrides(bind[PSANameCacheConnector].toInstance(mockPsaNameCacheConnector))
+          .overrides(bind[PensionsSchemeConnector].toInstance(fakePensionsSchemeConnector))
+          .overrides(bind[PensionAdministratorConnector].toInstance(fakePensionAdminstratorConnector))
+          .build()
+
+        reset(mockEmailConnector)
+
+        when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
+          .thenReturn(Future.successful(EmailSent))
+
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+        whenReady(app.injector.instanceOf[CheckYourAnswersController].onSubmit(postRequest)) { _ =>
+
           verify(mockEmailConnector, times(1)).sendEmail(
             eqTo("email@test.com"),
             eqTo("pods_scheme_register"),
             eqTo(Map("srn" -> "S12345 67890")),
             eqTo(psaId)
           )(any(), any())
+
+          verifyZeroInteractions(mockPsaNameCacheConnector)
+
+        }
       }
+
     }
 
-    "not send an email if there is no records for user email" in {
-      reset(mockEmailConnector)
+    if (!frontendAppConfig.isWorkPackageOneEnabled) {
+      "not send an email if there is no records for user email" in {
+        reset(mockEmailConnector)
 
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
-      whenReady(controller(emailConnector = mockEmailConnector, psaName = Json.obj("psaName" -> "Test")).onSubmit(postRequest)) {
-        _ =>
-          verify(mockEmailConnector, times(0)).sendEmail(any(), any(), any(), any())(any(), any())
+        whenReady(controller(emailConnector = mockEmailConnector, psaName = Json.obj("psaName" -> "Test")).onSubmit(postRequest)) {
+          _ =>
+            verify(mockEmailConnector, times(0)).sendEmail(any(), any(), any(), any())(any(), any())
+        }
       }
     }
 
@@ -95,6 +159,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
+
   }
 }
 
@@ -103,6 +168,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
   val schemeName = "Test Scheme Name"
 
   val psaId = PsaId("A0000000")
+
+  val psaName = Json.obj("psaName" -> "Test", "psaEmail" -> "email@test.com")
 
   lazy val adviserDetailsRoute: Option[String] = Some(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
   lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit()
@@ -128,6 +195,12 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
 
   private val mockEmailConnector = mock[EmailConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
+
+  private val fakePensionAdminstratorConnector = new PensionAdministratorConnector {
+    override def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("email@test.com")
+
+    override def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("PSA Name")
+  }
 
   private val fakeEmailConnector = new EmailConnector {
     override def sendEmail
@@ -156,7 +229,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  emailConnector: EmailConnector = fakeEmailConnector,
-                 psaName: JsValue = Json.obj("psaName" -> "Test", "psaEmail" -> "email@test.com")
+                 psaName: JsValue = psaName
                 ): CheckYourAnswersController =
 
     new CheckYourAnswersController(
@@ -171,7 +244,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       fakePensionsSchemeConnector,
       emailConnector,
       FakePsaNameCacheConnector(psaName),
-      applicationCrypto
+      applicationCrypto,
+      fakePensionAdminstratorConnector
     )
 
   lazy val viewAsString: String = check_your_answers(

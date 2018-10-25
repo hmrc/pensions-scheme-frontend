@@ -17,66 +17,112 @@
 package utils
 
 import base.SpecBase
-import connectors.PSANameCacheConnector
+import connectors.{PSANameCacheConnector, PensionAdministratorConnector}
 import models.PSAName
 import models.requests.OptionalDataRequest
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
+import org.scalatest.{OptionValues, RecoverMethods}
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class NameMatchingFactorySpec extends SpecBase with MockitoSugar {
+class NameMatchingFactorySpec extends SpecBase with MockitoSugar with ScalaFutures with RecoverMethods {
 
-  val psaNameCacheConnector = mock[PSANameCacheConnector]
+  val pensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
+  val psaNameCacheConnector: PSANameCacheConnector = mock[PSANameCacheConnector]
   val schemeName = "My Scheme Reg"
 
   implicit val request: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest("", ""), "externalId", None, PsaId("A0000000"))
 
-  private def nameMatchingFactory = new NameMatchingFactory(psaNameCacheConnector, ApplicationCrypto)
+  private def nameMatchingFactory = new NameMatchingFactory(psaNameCacheConnector, pensionAdministratorConnector, ApplicationCrypto, frontendAppConfig)
 
   implicit val hc = HeaderCarrier()
 
   private val encryptedPsaId = app.injector.instanceOf[ApplicationCrypto].QueryParameterCrypto.encrypt(PlainText("A0000000")).value
 
   "NameMatchingFactory" must {
-    "return an instance of NameMatching" when {
-      "PSA name is retrieved from PSA Id" in {
-        when(psaNameCacheConnector.fetch(eqTo(encryptedPsaId))(any(), any())).thenReturn(Future(Some(Json.toJson(PSAName("My PSA", Some("test@test.com"))))))
+    "return an instance of NameMatching when PSA name is retrieved from PSA Id" which {
+      "uses cacheConnector when work-package-one-enabled is false" in {
 
-        val result = nameMatchingFactory.nameMatching(schemeName)
+        lazy val app = new GuiceApplicationBuilder()
+          .configure("features.work-package-one-enabled" -> false)
+          .overrides(bind[PSANameCacheConnector].toInstance(psaNameCacheConnector))
+          .overrides(bind[PensionAdministratorConnector].toInstance(pensionAdministratorConnector))
+          .build()
 
-        await(result) mustEqual Some(NameMatching("My Scheme Reg", "My PSA"))
-        verify(psaNameCacheConnector, times(1)).fetch(eqTo(encryptedPsaId))(any(), any())
+        when(psaNameCacheConnector.fetch(eqTo(encryptedPsaId))(any(), any()))
+          .thenReturn(Future(Some(Json.toJson(PSAName("My PSA", Some("test@test.com"))))))
+
+        val nameMatchingFactory = app.injector.instanceOf[NameMatchingFactory]
+
+        whenReady(nameMatchingFactory.nameMatching(schemeName)){ result =>
+          result mustEqual NameMatching("My Scheme Reg", "My PSA")
+          verify(psaNameCacheConnector, times(1)).fetch(eqTo(encryptedPsaId))(any(), any())
+          verifyZeroInteractions(pensionAdministratorConnector)
+
+        }
+
+      }
+      "uses Get PSA Minimal Details when work-package-one-enabled is true" in {
+
+        lazy val app = new GuiceApplicationBuilder()
+            .configure("features.work-package-one-enabled" -> true)
+            .overrides(bind[PSANameCacheConnector].toInstance(psaNameCacheConnector))
+            .overrides(bind[PensionAdministratorConnector].toInstance(pensionAdministratorConnector))
+            .build()
+
+        val nameMatchingFactory = app.injector.instanceOf[NameMatchingFactory]
+
+        when(pensionAdministratorConnector.getPSAName(any(), any()))
+          .thenReturn(Future.successful("My PSA"))
+
+        whenReady(nameMatchingFactory.nameMatching(schemeName)) { result =>
+
+          result mustEqual NameMatching("My Scheme Reg", "My PSA")
+          verify(pensionAdministratorConnector, times(1)).getPSAName(any(), any())
+          verifyZeroInteractions(psaNameCacheConnector)
+
+        }
+
       }
     }
 
-    "return None" when {
-      reset(psaNameCacheConnector)
-      "psa name returns None when fetched" in {
-        when(psaNameCacheConnector.fetch(any())(any(), any())).thenReturn(Future(None)).
-          thenReturn(Future(None))
-        val result = nameMatchingFactory.nameMatching(schemeName)
+    "return NotFoundException" when {
 
-        await(result) mustEqual None
+      "psa name returns None when fetched" in {
+
+        reset(psaNameCacheConnector)
+
+        when(psaNameCacheConnector.fetch(any())(any(), any())).thenReturn(Future(None))
+          .thenReturn(Future(None))
+
+        recoverToSucceededIf[NotFoundException] {
+          nameMatchingFactory.nameMatching(schemeName)
+        }
 
       }
 
       "psa name is not a PSAName" in {
-        reset(psaNameCacheConnector)
-        when(psaNameCacheConnector.fetch(any())(any(), any())).thenReturn(Future(Some(Json.obj()))).
-          thenReturn(Future(Some(Json.obj())))
-        val result = nameMatchingFactory.nameMatching(schemeName)
 
-        await(result) mustEqual None
+        reset(psaNameCacheConnector)
+
+        when(psaNameCacheConnector.fetch(any())(any(), any())).thenReturn(Future(Some(Json.obj())))
+          .thenReturn(Future(Some(Json.obj())))
+
+        recoverToSucceededIf[NotFoundException] {
+          nameMatchingFactory.nameMatching(schemeName)
+        }
 
       }
     }
