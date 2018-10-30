@@ -30,3 +30,5 @@ GET        /user-research-details                       controllers.UserResearch
 POST       /user-research-details                       controllers.UserResearchDetailsController.onSubmit()
 
 GET        /scheme-details/:srn                         controllers.PSASchemeDetailsController.onPageLoad(srn: String)
+
+GET        /scheme-details                              controllers.SchemeTaskListController.onPageLoad
