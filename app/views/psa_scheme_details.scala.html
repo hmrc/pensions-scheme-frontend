@@ -53,7 +53,9 @@
                     <ul>
                         @for((answerSection, answerId) <- superSection.sections.zipWithIndex){
                             @if(answerSection.headingKey.isDefined){
-                                <h4 id="answerSection-@masterId-@superId-@answerId-heading" class="heading-small row-group">@messages(answerSection.headingKey.get)</h4>
+                                <div class="row-group">
+                                    <p id="answerSection-@masterId-@superId-@answerId-heading" class="lede">@messages(answerSection.headingKey.get)</p>
+                                </div>
                             }
 
                             <ul class="govuk-check-your-answers form-group">
