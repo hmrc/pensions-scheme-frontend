@@ -18,10 +18,6 @@ GET        /unauthorised                                controllers.Unauthorised
 
 GET        /logout                                      controllers.LogoutController.onPageLoad
 
-GET        /discard                                     controllers.DeleteSchemeController.onPageLoad
-
-POST       /discard                                     controllers.DeleteSchemeController.onSubmit
-
 GET        /you-need-to-register                        controllers.YouNeedToRegisterController.onPageLoad()
 
 GET        /continue-registration                       controllers.ContinueRegistrationController.continue()
