@@ -30,11 +30,9 @@ class IndividualInfoRows[I <: IndividualInfo] @Inject()(countryOptions: CountryO
 
   def transformSuperSection(data: I, heading : Option[String]): SuperSection = {
 
-    val superHeading = if(heading.isEmpty){Some(fullName(data.personalDetails.name))} else heading
+    val answerHeading = Some(fullName(data.personalDetails.name))
 
-    val answerHeading = if(heading.isEmpty){None} else {Some(fullName(data.personalDetails.name))}
-
-    SuperSection(superHeading, Seq(AnswerSection(answerHeading, transformRows(data))))
+    SuperSection(heading, Seq(AnswerSection(answerHeading, transformRows(data))))
   }
 
   def transformAnswerSection(data: I): AnswerSection = {

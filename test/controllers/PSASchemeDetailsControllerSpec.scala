@@ -66,6 +66,6 @@ private object PSASchemeDetailsControllerSpec extends ControllerSpecBase with Mo
 
   def viewAsString(): String =
     psa_scheme_details(
-      frontendAppConfig, masterSections, psaSchemeDetailsSample.schemeDetails.name
+      frontendAppConfig, masterSections, psaSchemeDetailsSample.schemeDetails.name, srn
     )(fakeRequest, messages).toString()
 }
