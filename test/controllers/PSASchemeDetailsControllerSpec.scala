@@ -17,7 +17,9 @@
 package controllers
 
 import connectors._
+import controllers.PSASchemeDetailsControllerSpec.psaSchemeDetailsSample
 import controllers.actions.{DataRetrievalAction, _}
+import models.details.{Name, PsaDetails}
 import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
 import org.mockito.Matchers
 import org.mockito.Mockito.{reset, when}
@@ -34,7 +36,23 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
   "SchemeDetailsController" must {
 
     "return OK and the correct view for a GET" in {
+      val psaDetails3 = PsaDetails("A0000000",Some("org name test zero"),Some(Name(Some("Minnie"),Some("m"),Some("Mouse"))))
+      val psaSchemeDetailsSampleAdministeredByLoggedInUser = psaSchemeDetailsSample copy (
+        psaDetails = List(psaDetails1, psaDetails2, psaDetails3)
+        )
 
+      reset(fakeSchemeDetailsConnector)
+      when(fakeSchemeDetailsConnector.getSchemeDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
+        .thenReturn(Future.successful(psaSchemeDetailsSampleAdministeredByLoggedInUser))
+      when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
+
+      val result = controller().onPageLoad(srn)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
+    }
+
+    "return NOT_FOUND for a GET where logged in PSA is not administrator of scheme" in {
       reset(fakeSchemeDetailsConnector)
       when(fakeSchemeDetailsConnector.getSchemeDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(psaSchemeDetailsSample))
@@ -42,8 +60,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
 
       val result = controller().onPageLoad(srn)(fakeRequest)
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      status(result) mustBe NOT_FOUND
     }
 
   }
