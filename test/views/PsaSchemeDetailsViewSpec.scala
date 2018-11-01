@@ -17,6 +17,7 @@
 package views
 
 import org.jsoup.nodes.Document
+import org.jsoup.Jsoup
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import viewmodels.{AnswerRow, AnswerSection, MasterSection, SuperSection}
@@ -28,6 +29,7 @@ class PsaSchemeDetailsViewSpec extends CheckYourAnswersBehaviours with ViewBehav
   import PsaSchemeDetailsViewSpec._
 
   private val messageKeyPrefix = "psaSchemeDetails"
+  private val srn = "S2400000007"
 
   private def emptyAnswerSections: Seq[SuperSection] = Nil
 
@@ -39,23 +41,30 @@ class PsaSchemeDetailsViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     psa_scheme_details(
       frontendAppConfig,
       seqMasterSection,
-      mainHeader
+      mainHeader,
+      srn
     )(fakeRequest, messages)
 
   def createViewWithData: Seq[MasterSection] => HtmlFormat.Appendable = sections =>
     psa_scheme_details(
       frontendAppConfig,
       sections,
-      mainHeader
+      mainHeader,
+      srn
     )(fakeRequest, messages)
 
-  "supersection page" must {
+  "PSA scheme details page" must {
 
     behave like normalPageWithTitle(createView, messageKeyPrefix, mainHeader, mainHeader)
 
     "display the correct page title" in {
       val doc = asDocument(createView())
       assertPageTitleEqualsMessage(doc, mainHeader)
+    }
+
+    "have link for return to scheme details" in {
+      Jsoup.parse(createView().toString()).select("a[id=return]") must
+          haveLink(s"http://localhost:8204/manage-pension-schemes/scheme-details/${srn}")
     }
 
     "correctly display an MasterSection headings" in {

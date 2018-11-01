@@ -76,6 +76,13 @@ class IndividualInfoRowsSpec extends WordSpec with MustMatchers with PropertyChe
           SuperSection(Some("heading"), Seq(AnswerSection(Some("fName mName lName"), indidualAnswerRows)))
         )
       }
+
+      "all correct data is present and custom heading as None" in {
+
+        individualInfoRows.transformSuperSection(individuals, None) must equal(
+          SuperSection(None, Seq(AnswerSection(Some("fName mName lName"), indidualAnswerRows)))
+        )
+      }
     }
 
   }

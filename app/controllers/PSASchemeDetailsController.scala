@@ -41,7 +41,7 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
       schemeDetailsConnector.getSchemeDetails(schemeIdType ="srn", srn).flatMap { scheme =>
         val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
 
-        Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name)))
+        Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name, srn)))
       }
   }
 }

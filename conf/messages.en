@@ -930,6 +930,7 @@ messages__psaSchemeDetails__partnership_less_than_12months = How long has the pa
 messages__psaSchemeDetails__partnership_previous_address = Previous address
 messages__psaSchemeDetails__partnership_email = Partnership’s email address
 messages__psaSchemeDetails__partnership_phone = Partnership’s phone number
+messages__psaSchemeDetails__return_link = Return to {0}
 
 
 

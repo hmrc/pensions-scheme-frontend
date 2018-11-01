@@ -24,7 +24,7 @@
 @import viewmodels.AnswerRow
 @import views.html._
 
-@(appConfig: FrontendAppConfig, masterSection: Seq[MasterSection], header: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, masterSection: Seq[MasterSection], header: String, srn: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__psaSchemeDetails__title"),
@@ -39,9 +39,7 @@
 
         @for((masterSection, masterId) <- masterSection.zipWithIndex){
             @if(masterSection.headingKey.isDefined){
-            <header class="page-heading">
                 <h2 id="masterSection-@masterId-heading" class="heading-large">@messages(masterSection.headingKey.get)</h2>
-            </header>
             }
 
             <ul>
@@ -84,5 +82,7 @@
                 }
             </ul>
         }
+
+    <p><a id="return" href="@appConfig.managePensionsSchemeDetailsUrl.format(srn)">@messages("messages__psaSchemeDetails__return_link", header)</a></p>
 
     }
