@@ -152,5 +152,3 @@ object TolerantAddress {
     }
 }
 
-final case class NoAddressLinesFoundException() extends Exception("Address with no address lines received")
-

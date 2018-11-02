@@ -16,7 +16,7 @@
 
 package models.reads
 
-import models.address.{NoAddressLinesFoundException, TolerantAddress}
+import models.address.TolerantAddress
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
 
