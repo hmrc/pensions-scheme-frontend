@@ -254,8 +254,10 @@ class TolerantAddressReadsSpec extends WordSpec with MustMatchers with OptionVal
         val payload = Json.obj("address" -> Json.obj("lines" -> JsArray(Seq()),
           "postcode" -> "ZZ1 1ZZ", "country" -> Json.obj("code" -> "UK")))
 
-        the[NoAddressLinesFoundException] thrownBy payload.as[TolerantAddress](
-          TolerantAddress.postCodeLookupAddressReads) must have message "Address with no address lines received"
+        val expectedResult = TolerantAddress(None, None, None, None, Some("ZZ1 1ZZ"), Some("UK"))
+
+        payload.as[TolerantAddress](TolerantAddress.postCodeLookupAddressReads) mustBe expectedResult
+
       }
     }
   }
