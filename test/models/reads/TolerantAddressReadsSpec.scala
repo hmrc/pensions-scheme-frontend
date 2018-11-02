@@ -249,7 +249,7 @@ class TolerantAddressReadsSpec extends WordSpec with MustMatchers with OptionVal
       }
     }
 
-    "throw a NoAddressLines exception" when {
+    "give a tolerant address with no address lines" when {
       "we have no lines in the address" in {
         val payload = Json.obj("address" -> Json.obj("lines" -> JsArray(Seq()),
           "postcode" -> "ZZ1 1ZZ", "country" -> Json.obj("code" -> "UK")))
