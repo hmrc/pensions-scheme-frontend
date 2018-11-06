@@ -55,7 +55,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
       val expectedOutput = Seq(
         AnswerRow(
           "messages__establisher_individual_address_cya_label",
-          Seq("address line 1,", "address line 2,", "address line 3,", "AB1 1AB,", "United Kingdom"),
+          Seq("address line 1", "address line 2", "address line 3", "AB1 1AB", "United Kingdom"),
           answerIsMessageKey = false,
           Some(AddressController.onPageLoad(CheckMode, firstIndex).url)
         )
@@ -77,7 +77,7 @@ class CheckYourAnswerHelperSpec extends SpecBase {
       val expectedOutput = Seq(
         AnswerRow(
           "messages__establisher_individual_previous_address_cya_label",
-          Seq("address line 1,", "address line 2,", "address line 4,", "AB1 1AB,", "United Kingdom"),
+          Seq("address line 1", "address line 2", "address line 4", "AB1 1AB", "United Kingdom"),
           answerIsMessageKey = false,
           Some(PreviousAddressController.onPageLoad(CheckMode, firstIndex).url)
         )
