@@ -67,13 +67,26 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
 object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val schemeName = "Test Scheme Name"
+  val trusteeName = "Test Trustee Name"
   val firstIndex = Index(0)
   lazy val trusteeDetailsRoute: String = routes.TrusteeDetailsController.onPageLoad(CheckMode, firstIndex).url
   lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit(firstIndex)
   lazy val trusteeDetailsSection = AnswerSection(None,
     Seq(
-      AnswerRow("messages__common__cya__name", Seq("Test Trustee Name"), answerIsMessageKey = false, Some(trusteeDetailsRoute)),
-      AnswerRow("messages__common__dob", Seq(s"${DateHelper.formatDate(LocalDate.now)}"), answerIsMessageKey = false, Some(trusteeDetailsRoute))
+      AnswerRow(
+        "messages__common__cya__name",
+        Seq("Test Trustee Name"),
+        answerIsMessageKey = false,
+        Some(trusteeDetailsRoute),
+        Message("messages__visuallyhidden__common__name", trusteeName)
+      ),
+      AnswerRow(
+        "messages__common__dob",
+        Seq(s"${DateHelper.formatDate(LocalDate.now)}"),
+        answerIsMessageKey = false,
+        Some(trusteeDetailsRoute),
+        Message("messages__visuallyhidden__common__dob", trusteeName)
+      )
     )
   )
   lazy val contactDetailsSection = AnswerSection(

@@ -31,5 +31,8 @@ object CompanyPreviousAddressId {
   override def toString: String = "companyPreviousAddress"
 
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyPreviousAddressId] =
-    AddressCYA("messages__common__cya__previous_address")()
+    AddressCYA(
+      label = "messages__common__cya__previous_address",
+      changeAddress = "messages__visuallyhidden__trustee__previous_address"
+    )()
 }

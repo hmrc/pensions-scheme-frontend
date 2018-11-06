@@ -646,14 +646,14 @@ messages__adviserDetails__error__email_required = Enter an email address
 messages__adviserDetails__error__adviser_name_length = The adviser name cannot be more than 107 characters
 messages__adviserDetails__error__adviser_name_invalid = The adviser name contains invalid characters
 
-messages__adviserAddress__title = Pension adviser''s address
-messages__adviserAddress__heading = Pension adviser''s address
+messages__adviserAddress__title = Pension adviser’s address
+messages__adviserAddress__heading = Pension adviser’s address
 messages__adviserAddress__secondary = Pension adviser
 
 messages__adviser__secondary_heading = Pension adviser
 
-messages__adviserPostCodeLookupAddress__title=Pension adviser''s address
-messages__adviserPostCodeLookupAddress__heading=Pension adviser''s address
+messages__adviserPostCodeLookupAddress__title=Pension adviser’s address
+messages__adviserPostCodeLookupAddress__heading=Pension adviser’s address
 messages__adviserPostCodeLookupAddress__secondary=Pension adviser
 messages__adviserPostCodeLookupAddress__enterPostCode= Enter the postcode below, or if you have an overseas address{0} enter the address manually {1}
 
@@ -932,6 +932,104 @@ messages__psaSchemeDetails__partnership_email = Partnership’s email address
 messages__psaSchemeDetails__partnership_phone = Partnership’s phone number
 messages__psaSchemeDetails__return_link = Return to {0}
 
+messages__visuallyhidden__common__address = Change address
+messages__visuallyhidden__common__address_years = Change how long at address
+messages__visuallyhidden__common__email_address = Change email address
+messages__visuallyhidden__common__phone_number = Change phone number
+messages__visuallyhidden__common__name = Change {0}’s name
+messages__visuallyhidden__common__dob = Change {0}’s date of birth
 
+messages__visuallyhidden__scheme_name = Change the scheme name
+messages__visuallyhidden__scheme_type = Change the type of scheme
+messages__visuallyhidden__schemeEstablishedCountry = Change the country the scheme was established in
+messages__visuallyhidden__membership = Change how many members the scheme currently has
+messages__visuallyhidden__membershipFuture = Change how many members you expect the scheme to have in the next 12 months
+messages__visuallyhidden__investmentRegulated = Change whether the scheme is investment regulated
+messages__visuallyhidden__occupationalPensionScheme = Change whether the scheme is an occupational pension scheme
+messages__visuallyhidden__benefits = Change how the scheme provides benefits
+messages__visuallyhidden__securedBenefits = Change whether any of the scheme benefits are secured by a contract of insurance or annuity
+messages__visuallyhidden__benefits_insurance__name = Change the name of the insurance company
+messages__visuallyhidden__benefits_insurance__policy = Change the policy number
+messages__visuallyhidden__insurer_address = Change the address of the insurance company
 
+messages__visuallyhidden__uKBankAccount = Change whether the scheme has a UK bank account
+messages__visuallyhidden__uKBankAccount__bank_name = Change the bank name
+messages__visuallyhidden__uKBankAccount__account_name = Change the account name
+messages__visuallyhidden__uKBankAccount__sort_code = Change the sort code
+messages__visuallyhidden__uKBankAccount__account_number = Change the account number
+messages__visuallyhidden__uKBankAccount__date_bank_account = Change approximate date the account was opened
 
+messages__visuallyhidden__establisher__nino_yes_no = Change whether the establisher has a National Insurance number
+messages__visuallyhidden__establisher__nino_no = Change why the establisher does not have a National Insurance number
+messages__visuallyhidden__establisher__nino = Change the establisher’s National Insurance number
+messages__visuallyhidden__establisher__utr_yes_no = Change whether the establisher has a Unique Taxpayer Reference number
+messages__visuallyhidden__establisher__utr_no = Change why the establisher does not have a Unique Taxpayer Reference number
+messages__visuallyhidden__establisher__utr = Change the establisher’s Unique Taxpayer Reference number
+messages__visuallyhidden__establisher__vat_number = Change the establisher’s VAT registration number
+messages__visuallyhidden__establisher__paye_number = Change the establisher’s PAYE employer reference number
+messages__visuallyhidden__establisher__crn_yes_no = Change whether the establisher has a Company Registration number
+messages__visuallyhidden__establisher__crn_no = Change why the establisher does not have a Company Registration number
+messages__visuallyhidden__establisher__crn = Change the establisher’s Company Registration number
+messages__visuallyhidden__establisher__address = Change the establisher’s address
+messages__visuallyhidden__establisher__address_years = Change how long the establisher has been at their address
+messages__visuallyhidden__establisher__previous_address = Change the establisher’s previous address
+messages__visuallyhidden__establisher__email_address = Change the establisher’s email address
+messages__visuallyhidden__establisher__phone_number = Change the establisher’s phone number
+
+messages__visuallyhidden__director__nino_yes_no = Change whether the director has a National Insurance number
+messages__visuallyhidden__director__nino_no = Change why the director does not have a National Insurance number
+messages__visuallyhidden__director__nino = Change the director’s National Insurance number
+messages__visuallyhidden__director__utr_yes_no = Change whether the director has a Unique Taxpayer Reference number
+messages__visuallyhidden__director__utr_no = Change why the director does not have a Unique Taxpayer Reference number
+messages__visuallyhidden__director__utr = Change the director’s Unique Taxpayer Reference number
+messages__visuallyhidden__director__address = Change the director’s address
+messages__visuallyhidden__director__address_years = Change how long the director has been at their address
+messages__visuallyhidden__director__previous_address = Change the director’s previous address
+messages__visuallyhidden__director__email_address = Change the director’s email address
+messages__visuallyhidden__director__phone_number = Change the director’s phone number
+
+messages__visuallyhidden__partnership__vat_yes_no = Change whether the partnership has a VAT registration number
+messages__visuallyhidden__partnership__vat_number = Change the partnership’s VAT registration number
+messages__visuallyhidden__partnership__paye_yes_no = Change whether the partnership has a PAYE employer reference number
+messages__visuallyhidden__partnership__paye_number = Change the partnership’s PAYE employer reference number
+messages__visuallyhidden__partnership__utr_yes_no = Change whether the partnership has a Unique Taxpayer Reference number
+messages__visuallyhidden__partnership__utr_no = Change why the partnership does not have a Unique Taxpayer Reference number
+messages__visuallyhidden__partnership__utr = Change the partnership’s Unique Taxpayer Reference number
+messages__visuallyhidden__partnership__address = Change the partnership’s address
+messages__visuallyhidden__partnership__address_years = Change how long the partnership has been at their address
+messages__visuallyhidden__partnership__previous_address = Change the partnership’s previous address
+messages__visuallyhidden__partnership__email_address = Change the partnership’s email address
+messages__visuallyhidden__partnership__phone_number = Change the partnership’s phone number
+
+messages__visuallyhidden__partner__nino_yes_no = Change whether the partner has a National Insurance number
+messages__visuallyhidden__partner__nino_no = Change why the partner does not have a National Insurance number
+messages__visuallyhidden__partner__nino = Change the partner’s National Insurance number
+messages__visuallyhidden__partner__utr_yes_no = Change whether the partner has a Unique Taxpayer Reference number
+messages__visuallyhidden__partner__utr_no = Change why the partner does not have a Unique Taxpayer Reference number
+messages__visuallyhidden__partner__utr = Change the partner’s Unique Taxpayer Reference number
+messages__visuallyhidden__partner__address = Change the partner’s address
+messages__visuallyhidden__partner__address_years = Change how long the partner has been at their address
+messages__visuallyhidden__partner__previous_address = Change the partner’s previous address
+messages__visuallyhidden__partner__email_address = Change the partner’s email address
+messages__visuallyhidden__partner__phone_number = Change the partner’s phone number
+
+messages__visuallyhidden__trustee__nino_yes_no = Change whether the trustee has a National Insurance number
+messages__visuallyhidden__trustee__nino_no = Change why the trustee does not have a National Insurance number
+messages__visuallyhidden__trustee__nino = Change the trustee’s National Insurance number
+messages__visuallyhidden__trustee__vat_number = Change the trustee’s VAT registration number
+messages__visuallyhidden__trustee__paye_number = Change the trustee’s PAYE employer reference number
+messages__visuallyhidden__trustee__crn_yes_no = Change whether the trustee has a Company Registration number
+messages__visuallyhidden__trustee__crn_no = Change why the trustee does not have a Company Registration number
+messages__visuallyhidden__trustee__crn = Change the trustee’s Company Registration number
+messages__visuallyhidden__trustee__utr_yes_no = Change whether the trustee has a Unique Taxpayer Reference number
+messages__visuallyhidden__trustee__utr_no = Change why the trustee does not have a Unique Taxpayer Reference number
+messages__visuallyhidden__trustee__utr = Change the trustee’s Unique Taxpayer Reference number
+messages__visuallyhidden__trustee__address = Change the trustee’s address
+messages__visuallyhidden__trustee__address_years = Change how long the trustee has been at their address
+messages__visuallyhidden__trustee__previous_address = Change the trustee’s previous address
+messages__visuallyhidden__trustee__email_address = Change the trustee’s email address
+messages__visuallyhidden__trustee__phone_number = Change the trustee’s phone number
+
+messages__visuallyhidden__adviser__email_address = Change the adviser’s email address
+messages__visuallyhidden__adviser__phone_number = Change the adviser’s phone number
+messages__visuallyhidden__adviser__address = Change the adviser’s address

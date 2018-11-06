@@ -30,5 +30,10 @@ object PartnerNinoId {
   override lazy val toString: String = "partnerNino"
 
   implicit val cya: CheckYourAnswers[PartnerNinoId] =
-    NinoCYA("messages__partner_nino_question_cya_label")()
+    NinoCYA(
+      label = "messages__partner_nino_question_cya_label",
+      changeHasNino = "messages__visuallyhidden__partner__nino_yes_no",
+      changeNino = "messages__visuallyhidden__partner__nino",
+      changeNoNino = "messages__visuallyhidden__partner__nino_no"
+  )()
 }

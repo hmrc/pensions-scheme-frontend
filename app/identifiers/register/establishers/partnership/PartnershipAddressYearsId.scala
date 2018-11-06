@@ -40,5 +40,9 @@ case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[Address
 object PartnershipAddressYearsId {
   override def toString: String = "partnershipAddressYears"
 
-  implicit val cya: CheckYourAnswers[PartnershipAddressYearsId] = AddressYearsCYA("messages__partnership__checkYourAnswers__addressYears")()
+  implicit val cya: CheckYourAnswers[PartnershipAddressYearsId] =
+    AddressYearsCYA(
+      label = "messages__partnership__checkYourAnswers__addressYears",
+      changeAddressYears = "messages__visuallyhidden__partnership__address_years"
+    )()
 }

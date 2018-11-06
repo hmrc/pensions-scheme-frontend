@@ -25,7 +25,7 @@ import org.joda.time.LocalDate
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.{CheckYourAnswersFactory, CountryOptions, DateHelper, FakeNavigator, FakeSectionComplete, InputOption}
-import viewmodels.{AnswerRow, AnswerSection}
+import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
@@ -42,10 +42,12 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   lazy val answersDirectorDetails: Seq[AnswerRow] =
     Seq(
       AnswerRow("messages__common__cya__name", Seq("first middle last"), false,
-        Some(director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url)
+        Some(director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url),
+        Message("messages__visuallyhidden__common__name", "first middle last")
       ),
       AnswerRow("messages__common__dob", Seq(DateHelper.formatDate(new LocalDate(1990, 2, 2))), false,
-        Some(director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url)
+        Some(director.routes.DirectorDetailsController.onPageLoad(CheckMode, Index(establisherIndex), Index(directorIndex)).url),
+        Message("messages__visuallyhidden__common__dob", "first middle last")
       )
     )
 
