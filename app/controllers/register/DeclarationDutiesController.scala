@@ -23,20 +23,23 @@ import controllers.actions._
 import forms.register.DeclarationDutiesFormProvider
 import identifiers.register.{DeclarationDutiesId, SubmissionReferenceNumberId}
 import javax.inject.Inject
+
 import models.requests.DataRequest
 import models.{NormalMode, PSAName}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
+import views.html.{error_template, service_unavailable}
 import views.html.register.declarationDuties
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 class DeclarationDutiesController @Inject()(
                                              appConfig: FrontendAppConfig,
@@ -90,6 +93,9 @@ class DeclarationDutiesController @Inject()(
                   Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap))))
             }
           )
+      } recoverWith {
+        case _: SchemeSubmissionUnsuccessful =>
+          Future.successful(Redirect(controllers.routes.ServiceUnavailableController.onPageLoad()))
       }
   }
 
