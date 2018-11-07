@@ -456,7 +456,7 @@ case class AddressCYA[I <: TypedIdentifier[Address]](label: String = "messages__
             Some(address.addressLine2),
             address.addressLine3,
             address.addressLine4,
-            address.postcode.map(postCode => s"$postCode,"),
+            address.postcode,
             Some(country)
           ).flatten
         }

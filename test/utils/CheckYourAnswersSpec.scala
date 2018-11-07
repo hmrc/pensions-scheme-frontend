@@ -334,7 +334,7 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
             Some(address.addressLine2),
             address.addressLine3,
             address.addressLine4,
-            address.postcode.map(postCode => s"$postCode,"),
+            address.postcode,
             Some(country)
           ).flatten
         }
