@@ -94,7 +94,7 @@ class DeclarationDutiesController @Inject()(
             }
           )
       } recoverWith {
-        case _: SchemeSubmissionUnsuccessful =>
+        case _: InvalidPayloadException =>
           Future.successful(Redirect(controllers.routes.ServiceUnavailableController.onPageLoad()))
       }
   }
