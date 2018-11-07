@@ -346,11 +346,11 @@ class CheckYourAnswersSpec extends WordSpec with MustMatchers with PropertyCheck
           val country = countryOptions.options.find(_.value == address.country).map(_.label).getOrElse(address.country)
 
           Seq(
-            Some(s"${address.addressLine1},"),
-            Some(s"${address.addressLine2},"),
-            address.addressLine3.map(line3 => s"$line3,"),
-            address.addressLine4.map(line4 => s"$line4,"),
-            address.postcode.map(postCode => s"$postCode,"),
+            Some(address.addressLine1),
+            Some(address.addressLine2),
+            address.addressLine3,
+            address.addressLine4,
+            address.postcode,
             Some(country)
           ).flatten
         }
