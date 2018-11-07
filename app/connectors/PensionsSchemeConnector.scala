@@ -56,7 +56,7 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
   }
 
   private def translateExceptions(): PartialFunction[Throwable, Future[SchemeSubmissionResponse]] = {
-    case _: BadRequestException => Future.failed(SchemeSubmissionUnsuccessful())
+    case e: BadRequestException if e.getMessage contains "INVALID_PAYLOAD" => Future.failed(new InvalidPayloadException)
   }
 
   private def logExceptions(): PartialFunction[Try[SchemeSubmissionResponse], Unit] = {
@@ -67,4 +67,4 @@ class PensionsSchemeConnectorImpl @Inject()(http: HttpClient, config: FrontendAp
 
 sealed trait RegisterSchemeException extends Exception
 
-case class SchemeSubmissionUnsuccessful() extends RegisterSchemeException
+class InvalidPayloadException extends RegisterSchemeException

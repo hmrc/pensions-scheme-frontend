@@ -19,6 +19,7 @@ package controllers.register.adviser
 import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.DeclarationDutiesControllerSpec.{fakePensionsSchemeConnector, fakePensionsSchemeConnectorWithInvalidPayloadException}
 import identifiers.TypedIdentifier
 import models.CheckMode
 import models.register.SchemeSubmissionResponse
@@ -160,6 +161,15 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
+
+    "redirect to Service Unavailable page for a POST if InvalidPayloadException thrown" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+      val result = controller(pensionsSchemeConnector = fakePensionsSchemeConnectorWithInvalidPayloadException).onSubmit(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ServiceUnavailableController.onPageLoad().url)
+    }
+
   }
 }
 
@@ -193,6 +203,15 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       Future.successful(validSchemeSubmissionResponse)
     }
   }
+
+  private val fakePensionsSchemeConnectorWithInvalidPayloadException = new PensionsSchemeConnector {
+    override def registerScheme
+    (answers: UserAnswers, psaId: String)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+      Future.failed(new InvalidPayloadException)
+    }
+  }
+
 
   private val mockEmailConnector = mock[EmailConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
@@ -230,7 +249,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  emailConnector: EmailConnector = fakeEmailConnector,
-                 psaName: JsValue = psaName
+                 psaName: JsValue = psaName,
+                 pensionsSchemeConnector: PensionsSchemeConnector = fakePensionsSchemeConnector
                 ): CheckYourAnswersController =
 
     new CheckYourAnswersController(
@@ -242,7 +262,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
       new FakeCountryOptions,
-      fakePensionsSchemeConnector,
+      pensionsSchemeConnector,
       emailConnector,
       FakePsaNameCacheConnector(psaName),
       applicationCrypto,

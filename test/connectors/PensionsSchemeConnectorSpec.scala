@@ -127,7 +127,7 @@ class PensionsSchemeConnectorSpec extends AsyncFlatSpec with Matchers with WireM
 
     val connector = injector.instanceOf[PensionsSchemeConnector]
 
-    recoverToSucceededIf[SchemeSubmissionUnsuccessful] {
+    recoverToSucceededIf[InvalidPayloadException] {
       connector.registerScheme(userAnswers, "test-psa-id")
     }
 

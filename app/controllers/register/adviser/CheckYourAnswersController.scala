@@ -77,7 +77,10 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
           }
         }
-      )
+      ) recoverWith {
+        case _: InvalidPayloadException =>
+          Future.successful(Redirect(controllers.routes.ServiceUnavailableController.onPageLoad()))
+      }
   }
 
   private def sendEmail(srn: String)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
