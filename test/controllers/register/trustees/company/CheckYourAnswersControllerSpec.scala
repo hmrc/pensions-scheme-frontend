@@ -118,11 +118,19 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   private def answerSections(implicit request: DataRequest[AnyContent]): Seq[AnswerSection] = {
 
-    val crnRows = CompanyRegistrationNumberCYA[CompanyRegistrationNumberId]("messages__checkYourAnswers__trustees__company__crn")()
-      .row(CompanyRegistrationNumberId(index))(companyRegistrationNumberRoute, request.userAnswers)
+    val crnRows = CompanyRegistrationNumberCYA[CompanyRegistrationNumberId](
+      label = "messages__checkYourAnswers__trustees__company__crn",
+      changeHasCrn = "messages__visuallyhidden__trustee__crn_yes_no",
+      changeCrn = "messages__visuallyhidden__trustee__crn",
+      changeNoCrn = "messages__visuallyhidden__trustee__crn_no"
+    )().row(CompanyRegistrationNumberId(index))(companyRegistrationNumberRoute, request.userAnswers)
 
-    val utrRows = UniqueTaxReferenceCYA[CompanyUniqueTaxReferenceId]("messages__checkYourAnswers__trustees__company__utr")()
-      .row(CompanyUniqueTaxReferenceId(index))(companyUniqueTaxReferenceRoute, request.userAnswers)
+    val utrRows = UniqueTaxReferenceCYA[CompanyUniqueTaxReferenceId](
+      label = "messages__checkYourAnswers__trustees__company__utr",
+      changeHasUtr = "messages__visuallyhidden__trustee__utr_yes_no",
+      changeUtr = "messages__visuallyhidden__trustee__utr",
+      changeNoUtr = "messages__visuallyhidden__trustee__utr_no"
+    )().row(CompanyUniqueTaxReferenceId(index))(companyUniqueTaxReferenceRoute, request.userAnswers)
 
     val companyDetailsSection = AnswerSection(
       Some("messages__checkYourAnswers__section__company_details"),
@@ -131,8 +139,10 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         utrRows
     )
 
-    val addressYearsRows = AddressYearsCYA[CompanyAddressYearsId]("messages__checkYourAnswers__trustees__company__address_years")()
-      .row(CompanyAddressYearsId(index))(companyAddressYearsRoute, request.userAnswers)
+    val addressYearsRows = AddressYearsCYA[CompanyAddressYearsId](
+      label = "messages__checkYourAnswers__trustees__company__address_years",
+      changeAddressYears = "messages__visuallyhidden__trustee__address_years"
+    )().row(CompanyAddressYearsId(index))(companyAddressYearsRoute, request.userAnswers)
 
     val contactDetailsSection = AnswerSection(
       Some("messages__checkYourAnswers__section__contact_details"),

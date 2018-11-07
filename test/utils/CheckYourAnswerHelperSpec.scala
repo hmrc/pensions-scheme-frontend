@@ -19,6 +19,7 @@ package utils
 import base.SpecBase
 import controllers.register.establishers.individual.routes._
 import identifiers.register.SchemeDetailsId
+import identifiers.register.establishers.company.CompanyUniqueTaxReferenceId
 import identifiers.register.establishers.individual._
 import models._
 import models.address.Address
@@ -26,7 +27,7 @@ import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json._
-import viewmodels.AnswerRow
+import viewmodels.{AnswerRow, Message}
 
 class CheckYourAnswerHelperSpec extends SpecBase {
 
@@ -57,7 +58,8 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "messages__establisher_individual_address_cya_label",
           Seq("address line 1", "address line 2", "address line 3", "AB1 1AB", "United Kingdom"),
           answerIsMessageKey = false,
-          Some(AddressController.onPageLoad(CheckMode, firstIndex).url)
+          Some(AddressController.onPageLoad(CheckMode, firstIndex).url),
+          "messages__visuallyhidden__establisher__address"
         )
       )
       checkYourAnswerHelper(userAnswers).address(firstIndex) mustEqual expectedOutput
@@ -79,7 +81,8 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "messages__establisher_individual_previous_address_cya_label",
           Seq("address line 1", "address line 2", "address line 4", "AB1 1AB", "United Kingdom"),
           answerIsMessageKey = false,
-          Some(PreviousAddressController.onPageLoad(CheckMode, firstIndex).url)
+          Some(PreviousAddressController.onPageLoad(CheckMode, firstIndex).url),
+          "messages__visuallyhidden__establisher__previous_address"
         )
       )
       checkYourAnswerHelper(userAnswers).previousAddress(firstIndex) mustEqual expectedOutput
@@ -100,13 +103,15 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "messages__establisher_individual_nino_question_cya_label",
           Seq("Yes"),
           answerIsMessageKey = false,
-          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url)
+          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url),
+          "messages__visuallyhidden__establisher__nino_yes_no"
         ),
         AnswerRow(
           "messages__establisher_individual_nino_cya_label",
           Seq("test Nino"),
           answerIsMessageKey = false,
-          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url)
+          Some(controllers.register.establishers.individual.routes.EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url),
+          "messages__visuallyhidden__establisher__nino"
         )
       )
       checkYourAnswerHelper(userAnswers).establisherNino(firstIndex) mustEqual expectedOutput
@@ -127,13 +132,15 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "messages__establisher_individual_nino_question_cya_label",
           Seq("No"),
           false,
-          Some(EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url)
+          Some(EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url),
+          "messages__visuallyhidden__establisher__nino_yes_no"
         ),
         AnswerRow(
           "messages__establisher_individual_nino_reason_cya_label",
           Seq("No nino"),
           false,
-          Some(EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url)
+          Some(EstablisherNinoController.onPageLoad(CheckMode, firstIndex).url),
+          "messages__visuallyhidden__establisher__nino_no"
         )
       )
       checkYourAnswerHelper(userAnswers).establisherNino(firstIndex) mustEqual expectedOutput
@@ -153,13 +160,15 @@ class CheckYourAnswerHelperSpec extends SpecBase {
         AnswerRow(
           "messages__establisher_individual_email_cya_label", Seq("test@test.com"),
           false,
-          Some(ContactDetailsController.onPageLoad(CheckMode, firstIndex).url)
+          Some(ContactDetailsController.onPageLoad(CheckMode, firstIndex).url),
+          "messages__visuallyhidden__establisher__email_address"
         ),
         AnswerRow(
           "messages__establisher_individual_phone_cya_label",
           Seq("0111111111"),
           false,
-          Some(ContactDetailsController.onPageLoad(CheckMode, firstIndex).url)
+          Some(ContactDetailsController.onPageLoad(CheckMode, firstIndex).url),
+          "messages__visuallyhidden__establisher__phone_number"
         )
       )
       checkYourAnswerHelper(userAnswers).contactDetails(firstIndex) mustEqual expectedOutput
@@ -173,18 +182,21 @@ class CheckYourAnswerHelperSpec extends SpecBase {
             Json.obj(EstablisherDetailsId.toString -> establisherDetails)
           ))
       )
+      val establisherName: String = "test first name test middle name test last name"
       val expectedOutput = Seq(
         AnswerRow(
           "messages__establisher_individual_name_cya_label",
-          Seq("test first name test middle name test last name"),
+          Seq(establisherName),
           false,
-          Some(EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
+          Some(EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
+          Message("messages__visuallyhidden__common__name", establisherName)
         ),
         AnswerRow(
           "messages__establisher_individual_dob_cya_label",
           Seq(s"${DateHelper.formatDate(LocalDate.now)}"),
           false,
-          Some(EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
+          Some(EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
+          Message("messages__visuallyhidden__common__dob", establisherName)
         )
       )
       checkYourAnswerHelper(userAnswers).establisherDetails(firstIndex) mustEqual expectedOutput
@@ -198,18 +210,21 @@ class CheckYourAnswerHelperSpec extends SpecBase {
             Json.obj(EstablisherDetailsId.toString -> establisherDetails.copy(middleName = None))
           ))
       )
+      val establisherName: String = "test first name test last name"
       val expectedOutput = Seq(
         AnswerRow(
           "messages__establisher_individual_name_cya_label",
-          Seq("test first name test last name"),
+          Seq(establisherName),
           false,
-          Some(EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
+          Some(EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
+          Message("messages__visuallyhidden__common__name", establisherName)
         ),
         AnswerRow(
           "messages__establisher_individual_dob_cya_label",
           Seq(s"${DateHelper.formatDate(LocalDate.now)}"),
           false,
-          Some(EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url)
+          Some(EstablisherDetailsController.onPageLoad(CheckMode, firstIndex).url),
+          Message("messages__visuallyhidden__common__dob", establisherName)
         )
       )
       checkYourAnswerHelper(userAnswers).establisherDetails(firstIndex) mustEqual expectedOutput
@@ -228,7 +243,8 @@ class CheckYourAnswerHelperSpec extends SpecBase {
           "messages__establisher_individual_address_years_cya_label",
           Seq(s"messages__common__${AddressYears.UnderAYear.toString}"),
           true,
-          Some(AddressYearsController.onPageLoad(CheckMode, firstIndex).url)
+          Some(AddressYearsController.onPageLoad(CheckMode, firstIndex).url),
+          "messages__visuallyhidden__establisher__address_years"
         )
       )
       checkYourAnswerHelper(userAnswers).addressYears(firstIndex) mustEqual expectedOutput

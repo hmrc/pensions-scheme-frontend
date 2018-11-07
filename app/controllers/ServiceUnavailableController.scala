@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package identifiers.register.adviser
+package controllers
 
-import identifiers.TypedIdentifier
-import models.address.Address
-import utils.CountryOptions
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import javax.inject.Inject
 
-case object AdviserAddressId extends TypedIdentifier[Address] {
-  self =>
-  override def toString: String = "adviserAddress"
+import config.FrontendAppConfig
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
+import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import views.html.service_unavailable
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] =
-    AddressCYA(changeAddress = "messages__visuallyhidden__adviser__address")()
+class ServiceUnavailableController @Inject()(val appConfig: FrontendAppConfig,
+                                             val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+
+  def onPageLoad: Action[AnyContent] = Action { implicit request =>
+    Ok(service_unavailable(appConfig))
+  }
 }
-
-

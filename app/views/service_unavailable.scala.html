@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package identifiers.register.adviser
+@import config.FrontendAppConfig
 
-import identifiers.TypedIdentifier
-import models.address.Address
-import utils.CountryOptions
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+@(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
 
-case object AdviserAddressId extends TypedIdentifier[Address] {
-  self =>
-  override def toString: String = "adviserAddress"
+@main_template(
+    title = messages("messages__service_unavailable__title"),
+    appConfig = appConfig,
+    bodyClasses = None) {
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] =
-    AddressCYA(changeAddress = "messages__visuallyhidden__adviser__address")()
+    <h1 class="heading-xlarge">@messages("messages__service_unavailable__title")</h1>
+
+    <p>@messages("messages__service_unavailable__guidance1")</p>
+    <p>@messages("messages__service_unavailable__guidance2")</p>
+
+    <a id="gov-uk-link" href="@appConfig.govUkLink" role="button">@messages("messages__youNeedToRegister__govUk__link")</a>
 }
-
-

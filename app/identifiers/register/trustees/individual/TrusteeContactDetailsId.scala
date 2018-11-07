@@ -20,6 +20,8 @@ import identifiers._
 import identifiers.register.trustees.TrusteesId
 import models.ContactDetails
 import play.api.libs.json._
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.ContactDetailsCYA
 
 case class TrusteeContactDetailsId(index: Int) extends TypedIdentifier[ContactDetails] {
   override def path: JsPath = __ \ TrusteesId.toString \ index \ TrusteeContactDetailsId.toString
@@ -27,4 +29,10 @@ case class TrusteeContactDetailsId(index: Int) extends TypedIdentifier[ContactDe
 
 object TrusteeContactDetailsId {
   override lazy val toString: String = "trusteeContactDetails"
+
+  implicit val cya: CheckYourAnswers[TrusteeContactDetailsId] =
+    ContactDetailsCYA(
+      changeEmailAddress = "messages__visuallyhidden__trustee__email_address",
+      changePhoneNumber = "messages__visuallyhidden__trustee__phone_number"
+    )()
 }

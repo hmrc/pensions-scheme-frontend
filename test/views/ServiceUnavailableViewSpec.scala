@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package identifiers.register.adviser
+package views
 
-import identifiers.TypedIdentifier
-import models.address.Address
-import utils.CountryOptions
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import play.twirl.api.HtmlFormat
+import views.behaviours.ViewBehaviours
+import views.html.service_unavailable
 
-case object AdviserAddressId extends TypedIdentifier[Address] {
-  self =>
-  override def toString: String = "adviserAddress"
+class ServiceUnavailableViewSpec extends ViewBehaviours {
 
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] =
-    AddressCYA(changeAddress = "messages__visuallyhidden__adviser__address")()
+  def view: () => HtmlFormat.Appendable = () => service_unavailable(frontendAppConfig)(fakeRequest, messages)
+
+  "Service Unavailable view" must {
+
+    behave like normalPage(view, "service_unavailable", messages("messages__service_unavailable__title"))
+
+    "have a gov uk link" in {
+      val doc = asDocument(view())
+      assertRenderedById(doc, "gov-uk-link")
+    }
+  }
 }
-
-

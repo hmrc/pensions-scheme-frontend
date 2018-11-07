@@ -41,7 +41,8 @@ case class PartnerAddressYearsId(establisherIndex: Int, partnerIndex: Int) exten
 object PartnerAddressYearsId {
   override lazy val toString: String = "partnerAddressYears"
 
-  implicit val cya: CheckYourAnswers[PartnerAddressYearsId] =
-    AddressYearsCYA[PartnerAddressYearsId]("messages__partner_address_years_question_cya_label")()
+  implicit val cya: CheckYourAnswers[PartnerAddressYearsId] = AddressYearsCYA[PartnerAddressYearsId](
+    label = "messages__partner_address_years_question_cya_label",
+    changeAddressYears = "messages__visuallyhidden__partner__address_years")()
 }
 

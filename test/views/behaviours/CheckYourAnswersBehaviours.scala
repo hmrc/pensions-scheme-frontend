@@ -31,7 +31,7 @@ trait CheckYourAnswersBehaviours extends ViewSpecBase {
           val answer1 = "test-answer-1"
           val answer2 = "test-answer-2"
 
-          val answerRow = AnswerRow("test-label", Seq(answer1, answer2), answerIsMessageKey = false, Some("http//:google.com"))
+          val answerRow = AnswerRow("test-label", Seq(answer1, answer2), answerIsMessageKey = false, Some("http//:google.com"), "site.hidden-edit")
 
           val section = AnswerSection(
             Some(headingKey),

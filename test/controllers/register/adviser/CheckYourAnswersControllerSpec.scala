@@ -19,6 +19,7 @@ package controllers.register.adviser
 import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.DeclarationDutiesControllerSpec.{fakePensionsSchemeConnector, fakePensionsSchemeConnectorWithInvalidPayloadException}
 import identifiers.TypedIdentifier
 import models.CheckMode
 import models.register.SchemeSubmissionResponse
@@ -160,12 +161,22 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
+
+    "redirect to Service Unavailable page for a POST if InvalidPayloadException thrown" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+      val result = controller(pensionsSchemeConnector = fakePensionsSchemeConnectorWithInvalidPayloadException).onSubmit(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ServiceUnavailableController.onPageLoad().url)
+    }
+
   }
 }
 
 object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   val schemeName = "Test Scheme Name"
+  val adviserName = "name"
 
   val psaId = PsaId("A0000000")
 
@@ -175,9 +186,9 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
   lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit()
   lazy val adviserSection = AnswerSection(None,
     Seq(
-      AnswerRow("messages__common__cya__name", Seq("name"), answerIsMessageKey = false, adviserDetailsRoute),
-      AnswerRow("messages__adviserDetails__email", Seq("email"), answerIsMessageKey = false, adviserDetailsRoute),
-      AnswerRow("messages__adviserDetails__phone", Seq("phone"), answerIsMessageKey = false, adviserDetailsRoute)
+      AnswerRow("messages__common__cya__name", Seq(adviserName), answerIsMessageKey = false, adviserDetailsRoute, Message("messages__visuallyhidden__common__name", adviserName)),
+      AnswerRow("messages__adviserDetails__email", Seq("email"), answerIsMessageKey = false, adviserDetailsRoute, "messages__visuallyhidden__adviser__email_address"),
+      AnswerRow("messages__adviserDetails__phone", Seq("phone"), answerIsMessageKey = false, adviserDetailsRoute, "messages__visuallyhidden__adviser__phone_number")
     )
   )
 
@@ -192,6 +203,15 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       Future.successful(validSchemeSubmissionResponse)
     }
   }
+
+  private val fakePensionsSchemeConnectorWithInvalidPayloadException = new PensionsSchemeConnector {
+    override def registerScheme
+    (answers: UserAnswers, psaId: String)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+      Future.failed(new InvalidPayloadException)
+    }
+  }
+
 
   private val mockEmailConnector = mock[EmailConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
@@ -229,7 +249,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  emailConnector: EmailConnector = fakeEmailConnector,
-                 psaName: JsValue = psaName
+                 psaName: JsValue = psaName,
+                 pensionsSchemeConnector: PensionsSchemeConnector = fakePensionsSchemeConnector
                 ): CheckYourAnswersController =
 
     new CheckYourAnswersController(
@@ -241,7 +262,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
       new FakeCountryOptions,
-      fakePensionsSchemeConnector,
+      pensionsSchemeConnector,
       emailConnector,
       FakePsaNameCacheConnector(psaName),
       applicationCrypto,

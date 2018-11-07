@@ -16,13 +16,14 @@
 
 package controllers.register
 
+import javax.inject.Inject
+
 import config.FrontendAppConfig
 import connectors._
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationDutiesFormProvider
 import identifiers.register.{DeclarationDutiesId, SubmissionReferenceNumberId}
-import javax.inject.Inject
 import models.requests.DataRequest
 import models.{NormalMode, PSAName}
 import play.api.Logger
@@ -90,6 +91,9 @@ class DeclarationDutiesController @Inject()(
                   Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap))))
             }
           )
+      } recoverWith {
+        case _: InvalidPayloadException =>
+          Future.successful(Redirect(controllers.routes.ServiceUnavailableController.onPageLoad()))
       }
   }
 
