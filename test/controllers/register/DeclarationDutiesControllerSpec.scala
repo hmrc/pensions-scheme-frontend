@@ -70,7 +70,9 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
   }
 
   def controller(emailConnector: EmailConnector = fakeEmailConnector,
-                 dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): DeclarationDutiesController =
+                 dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName,
+                 pensionsSchemeConnector: PensionsSchemeConnector = fakePensionsSchemeConnector
+                ): DeclarationDutiesController =
     new DeclarationDutiesController(
       frontendAppConfig,
       messagesApi,
@@ -79,7 +81,7 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
       dataRetrievalAction,
       new DataRequiredActionImpl,
       formProvider,
-      fakePensionsSchemeConnector,
+      pensionsSchemeConnector,
       emailConnector,
       fakePsaNameCacheConnector,
       applicationCrypto,
@@ -220,6 +222,15 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
+
+    "redirect to Service Unavailable page for a POST if InvalidPayloadException thrown" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+      val result = controller(pensionsSchemeConnector = fakePensionsSchemeConnectorWithInvalidPayloadException).onSubmit(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.ServiceUnavailableController.onPageLoad().url)
+    }
+
   }
 }
 
@@ -239,6 +250,14 @@ object DeclarationDutiesControllerSpec {
     (answers: UserAnswers, psaId: String)
     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
       Future.successful(validSchemeSubmissionResponse)
+    }
+  }
+
+  private val fakePensionsSchemeConnectorWithInvalidPayloadException = new PensionsSchemeConnector {
+    override def registerScheme
+    (answers: UserAnswers, psaId: String)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+      Future.failed(new InvalidPayloadException)
     }
   }
 
