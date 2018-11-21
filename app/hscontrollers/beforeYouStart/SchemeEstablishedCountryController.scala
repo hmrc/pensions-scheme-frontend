@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.Register
+import utils.annotations.BeforeYouStart
 import utils.{CountryOptions, Navigator, UserAnswers}
 import views.html.hs.beforeYouStart.schemeEstablishedCountry
 
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 class SchemeEstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
                                                    override val messagesApi: MessagesApi,
                                                    dataCacheConnector: UserAnswersCacheConnector,
-                                                   @Register navigator: Navigator,
+                                                   @BeforeYouStart navigator: Navigator,
                                                    authenticate: AuthAction,
                                                    getData: DataRetrievalAction,
                                                    requireData: DataRequiredAction,

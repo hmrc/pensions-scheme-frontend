@@ -3,3 +3,8 @@ GET        /country-established-in                hscontrollers.beforeYouStart.S
 POST       /country-established-in                hscontrollers.beforeYouStart.SchemeEstablishedCountryController.onSubmit(mode: Mode = NormalMode)
 GET        /change-country-established-in         hscontrollers.beforeYouStart.SchemeEstablishedCountryController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-country-established-in         hscontrollers.beforeYouStart.SchemeEstablishedCountryController.onSubmit(mode: Mode = CheckMode)
+
+GET        /any-trustees                          hscontrollers.beforeYouStart.HaveAnyTrusteesController.onPageLoad(mode: Mode = NormalMode)
+POST       /any-trustees                          hscontrollers.beforeYouStart.HaveAnyTrusteesController.onSubmit(mode: Mode = NormalMode)
+GET        /change-any-trustees                   hscontrollers.beforeYouStart.HaveAnyTrusteesController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-any-trustees                   hscontrollers.beforeYouStart.HaveAnyTrusteesController.onSubmit(mode: Mode = CheckMode)
