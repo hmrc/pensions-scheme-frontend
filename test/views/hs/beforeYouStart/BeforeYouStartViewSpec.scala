@@ -35,7 +35,7 @@ class BeforeYouStartViewSpec extends ViewBehaviours {
 
     "have a return link" in {
       val doc = asDocument(createView())
-      assertRenderedById(doc, "return")
+      assertLink(doc = doc, linkId = "return", url = frontendAppConfig.managePensionsSchemeOverviewUrl.url)
     }
 
   }
