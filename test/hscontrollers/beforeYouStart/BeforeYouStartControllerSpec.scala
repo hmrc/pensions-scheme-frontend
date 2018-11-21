@@ -47,5 +47,15 @@ class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar 
         contentAsString(result) mustBe viewAsString()
       }
     }
+
+    "on a POST" must {
+      "redirect to the manage pensions schemes page" in {
+        val result = controller().onSubmit(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
+
+      }
+    }
   }
 }

@@ -38,7 +38,7 @@ class BeforeYouStartController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      Ok(beforeYouStart(appConfig))
+      Redirect(appConfig.managePensionsSchemeOverviewUrl)
   }
 
 }
