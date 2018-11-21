@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register
+package hscontrollers.beforeYouStart
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{CountryOptions, Navigator, UserAnswers}
-import hsviews.html.beforeYouStart.schemeEstablishedCountry
+import views.html.hs.beforeYouStart.schemeEstablishedCountry
 
 import scala.concurrent.Future
 
