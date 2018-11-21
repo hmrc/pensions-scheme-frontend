@@ -29,7 +29,6 @@ import views.html.hs.beforeYouStart.beforeYouStart
 class BeforeYouStartController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
-                                         psaNameCacheConnector: PSANameCacheConnector,
                                          crypto: ApplicationCrypto
                                         ) extends FrontendController with I18nSupport {
 
@@ -37,4 +36,10 @@ class BeforeYouStartController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       Ok(beforeYouStart(appConfig))
   }
+
+  def onSubmit: Action[AnyContent] = authenticate {
+    implicit request =>
+      NotImplemented
+  }
+
 }

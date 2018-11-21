@@ -1,0 +1,3 @@
+
+GET        /what-you-will-need-before-start                hscontrollers.beforeYouStart.BeforeYouStartController.onPageLoad()
+POST       /what-you-will-need-before-start                hscontrollers.beforeYouStart.BeforeYouStartController.onSubmit()
