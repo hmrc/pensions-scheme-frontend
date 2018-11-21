@@ -17,7 +17,6 @@
 package hscontrollers.beforeYouStart
 
 import config.FrontendAppConfig
-import connectors.PSANameCacheConnector
 import controllers.actions._
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,7 +38,7 @@ class BeforeYouStartController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      NotImplemented
+      Ok(beforeYouStart(appConfig))
   }
 
 }

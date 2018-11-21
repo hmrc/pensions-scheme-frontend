@@ -31,8 +31,6 @@ class BeforeYouStartViewSpec extends ViewBehaviours {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"),
       "_lede", "_item_1", "_item_2", "_item_3", "_item_4")
 
-    behave like pageWithSecondaryHeader(createView, messages("messages_cya_secondary_header"))
-
     behave like pageWithSubmitButton(createView)
 
     "have a return link" in {
