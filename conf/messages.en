@@ -1038,3 +1038,16 @@ messages__visuallyhidden__trustee__phone_number = Change the trustee’s phone n
 messages__visuallyhidden__adviser__email_address = Change the adviser’s email address
 messages__visuallyhidden__adviser__phone_number = Change the adviser’s phone number
 messages__visuallyhidden__adviser__address = Change the adviser’s address
+
+
+##
+
+messages__before_you_start__title = Before you start
+messages__before_you_start__lede = Before you start entering all of the scheme details, you will need to tell us:
+messages__before_you_start__item_1 = the pension scheme name
+messages__before_you_start__item_2 = the type of scheme
+messages__before_you_start__item_3 = which country the scheme was established in
+messages__before_you_start__item_4 = if you have working knowledge of pensions and and pensions tax legislation
+
+
+
