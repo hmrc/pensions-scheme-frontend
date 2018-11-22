@@ -16,7 +16,6 @@
 
 package views.hs.beforeYouStart
 
-import hscontrollers.beforeYouStart.routes
 import hsforms.beforeYouStart.SchemeTypeFormProvider
 import hsmodels.beforeYouStart.SchemeType
 import models.NormalMode
@@ -29,7 +28,7 @@ import views.html.register.schemeDetails
 
 class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
 
-  val messageKeyPrefix = "scheme_details"
+  val messageKeyPrefix = "scheme_type"
 
   override val form = new SchemeTypeFormProvider()()
 
@@ -43,7 +42,7 @@ class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
   "SchemeType view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }
 
   "SchemeType view" when {
