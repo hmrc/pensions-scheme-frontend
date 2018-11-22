@@ -42,7 +42,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
         )
 
       reset(fakeSchemeDetailsConnector)
-      when(fakeSchemeDetailsConnector.getSchemeDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
+      when(fakeSchemeDetailsConnector.getSchemeDetails(Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(psaSchemeDetailsSampleAdministeredByLoggedInUser))
       when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
 
@@ -54,7 +54,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
 
     "return NOT_FOUND for a GET where logged in PSA is not administrator of scheme" in {
       reset(fakeSchemeDetailsConnector)
-      when(fakeSchemeDetailsConnector.getSchemeDetails(Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
+      when(fakeSchemeDetailsConnector.getSchemeDetails(Matchers.any(), Matchers.any(), Matchers.any())(Matchers.any(), Matchers.any()))
         .thenReturn(Future.successful(psaSchemeDetailsSample))
       when(fakeSchemeTransformer.transformMasterSection(Matchers.any())).thenReturn(masterSections)
 
