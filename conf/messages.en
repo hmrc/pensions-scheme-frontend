@@ -121,6 +121,7 @@ site.agree_and_continue = Agree and continue
 site.go_back = Go back
 site.signOut = Sign out
 site.printThisPage = Print this page
+site.return.overview = Return to managing pension schemes
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -1039,15 +1040,11 @@ messages__visuallyhidden__adviser__email_address = Change the adviser’s email 
 messages__visuallyhidden__adviser__phone_number = Change the adviser’s phone number
 messages__visuallyhidden__adviser__address = Change the adviser’s address
 
-
-##
-
 messages__before_you_start__title = Before you start
 messages__before_you_start__lede = Before you start entering all of the scheme details, you will need to tell us:
 messages__before_you_start__item_1 = the pension scheme name
 messages__before_you_start__item_2 = the type of scheme
 messages__before_you_start__item_3 = which country the scheme was established in
 messages__before_you_start__item_4 = if you have working knowledge of pensions and pensions tax legislation
-
 
 messages__complete__return_managing_pension_schemes = Return to managing pension schemes
