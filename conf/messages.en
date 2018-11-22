@@ -1039,3 +1039,16 @@ messages__visuallyhidden__trustee__phone_number = Change the trustee’s phone n
 messages__visuallyhidden__adviser__email_address = Change the adviser’s email address
 messages__visuallyhidden__adviser__phone_number = Change the adviser’s phone number
 messages__visuallyhidden__adviser__address = Change the adviser’s address
+
+
+messages__scheme_type__title = What type of scheme is it?
+messages__scheme_type__type_single = Single trust
+messages__scheme_type__type_single_hint = This is set up under trust and covers all members. The terms of the trust do not specifically allocate assets to a particular member.
+messages__scheme_type__type_group = Group life/death in service
+messages__scheme_type__type_group_hint = This is also known as death in service and only provides benefits upon death.
+messages__scheme_type__type_corp = Body corporate
+messages__scheme_type__type_corp_hint = This is a registered company, local authority or a body controlled by Royal Charter.
+messages__scheme_type__type_master = Master trust
+messages__scheme_type__type_master_hint = This is an occupational pension scheme which provides money purchase benefits. It is used by two or more employers who are not connected with each other.
+messages__scheme_type__type_other = Other
+messages__scheme_type__type_other_hint = This can be a deed poll trust.

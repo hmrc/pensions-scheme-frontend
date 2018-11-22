@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{NameMatchingFactory, Navigator, UserAnswers}
-import views.html.register.schemeDetails
+import views.html.hs.beforeYouStart.schemeType
 
 import scala.concurrent.Future
 
@@ -50,14 +50,14 @@ class SchemeTypeController @Inject()(appConfig: FrontendAppConfig,
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(schemeDetails(appConfig, preparedForm, mode))
+      Ok(schemeType(appConfig, preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(schemeType(appConfig, formWithErrors, mode))),
         value =>
           dataCacheConnector.save(request.externalId, SchemeTypeId, value).map(cacheMap =>
             Redirect(navigator.nextPage(SchemeTypeId, mode, UserAnswers(cacheMap)))

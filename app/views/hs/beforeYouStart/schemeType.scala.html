@@ -24,36 +24,25 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__scheme_details__title"),
+    title = messages("messages__scheme_type__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
     @helpers.form(action = SchemeTypeController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @components.back_link()
-
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__scheme_details__title").toString, secondaryHeaderKey = Some(messages("messages_cya_secondary_header").toString))
-
-        @components.input_text(
-            field = form("schemeName"),
-            label = messages("messages__scheme_details__name_label"),
-            hint = Some(messages("messages__scheme_details__name_hint"))
-        )
+        @components.heading(messages("messages__scheme_type__title").toString)
 
         @components.input_radio(
             field = form("schemeType.type"),
-            legend = messages("messages__scheme_details__type_legend"),
+            legend = "",
             inputs = SchemeType.options
         )
 
-        @components.input_text(
-            field = form("schemeType.schemeTypeDetails"),
-            label = messages("messages__scheme_details__type_other_more"),
-            groupClass = Some("js-hidden panel panel-border-narrow")
-        )
 
         @components.submit_button()
+
+        @components.return_link("site.return.overview", appConfig.managePensionsSchemeOverviewUrl)
     }
 }
