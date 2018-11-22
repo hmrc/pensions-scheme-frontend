@@ -98,13 +98,6 @@ trait ViewBehaviours extends ViewSpecBase {
     }
   }
 
-  def pageWithReturnLink(view: () => HtmlFormat.Appendable, url: String): Unit = {
-    "have a return link" in {
-      val doc = asDocument(view())
-      assertLink(doc, "return-link", url)
-    }
-  }
-
   def pageWithDateFields(view: Form[_] => HtmlFormat.Appendable, form: Form[_]): Unit = {
 
     val day = LocalDate.now().getDayOfMonth

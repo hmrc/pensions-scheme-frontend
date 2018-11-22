@@ -15,8 +15,7 @@
  */
 
 import com.google.inject.AbstractModule
-import connectors.{PSANameCacheConnector, UserAnswersCacheConnector}
-import hsnavigators.BeforeYouStartNavigator
+import connectors.{UserAnswersCacheConnector, PSANameCacheConnector}
 import navigators._
 import utils.annotations.{EstablishersPartner, _}
 import utils.Navigator
@@ -25,10 +24,6 @@ class PODSModule extends AbstractModule {
 
   //scalastyle:off method.length
   override def configure(): Unit = {
-
-    bind(classOf[Navigator])
-      .annotatedWith(classOf[BeforeYouStart])
-      .to(classOf[BeforeYouStartNavigator])
 
     bind(classOf[UserAnswersCacheConnector])
       .annotatedWith(classOf[PSANameCache])

@@ -121,7 +121,6 @@ site.agree_and_continue = Agree and continue
 site.go_back = Go back
 site.signOut = Sign out
 site.printThisPage = Print this page
-site.return.overview = Return to managing pension schemes
 
 messages__unauthorised__title = You can’t access this service with this account
 
