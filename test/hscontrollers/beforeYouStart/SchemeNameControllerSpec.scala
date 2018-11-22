@@ -21,7 +21,7 @@ import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import hsforms.beforeYouStart.SchemeNameFormProvider
-import hsidentifiers.SchemeNameId
+import hsidentifiers.beforeYouStart.SchemeNameId
 import models.register.SchemeType
 import models.requests.OptionalDataRequest
 import models.{NormalMode, PSAName}

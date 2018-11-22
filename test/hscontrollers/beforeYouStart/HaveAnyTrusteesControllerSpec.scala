@@ -19,9 +19,8 @@ package hscontrollers.beforeYouStart
 import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.trustees.HaveAnyTrusteesFormProvider
-import identifiers.register.SchemeDetailsId
-import identifiers.register.trustees.HaveAnyTrusteesId
+import hsforms.beforeYouStart.HaveAnyTrusteesFormProvider
+import hsidentifiers.beforeYouStart.{HaveAnyTrusteesId, SchemeNameId}
 import models.NormalMode
 import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
@@ -39,7 +38,7 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
   val form = formProvider()
   val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): HaveAnyTrusteesController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): HaveAnyTrusteesController =
     new HaveAnyTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -55,7 +54,7 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
+      val validData = Json.obj(SchemeNameId.toString -> "Test Scheme Name",
         HaveAnyTrusteesId.toString -> true)
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 

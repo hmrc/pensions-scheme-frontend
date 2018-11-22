@@ -16,10 +16,8 @@
 
 package views.hs.beforeYouStart
 
-import forms.register.SchemeEstablishedCountryFormProvider
+import hsforms.beforeYouStart.SchemeEstablishedCountryFormProvider
 import models.NormalMode
-import models.register.SchemeDetails
-import models.register.SchemeType.SingleTrust
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import utils.{CountryOptions, InputOption}
@@ -33,22 +31,22 @@ class SchemeEstablishedCountryViewSpec extends StringViewBehaviours {
   val inputOptions: Seq[InputOption] = Seq(InputOption("country:AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
   val countryOptions: CountryOptions = new CountryOptions(inputOptions)
 
-  val schemeDetails = SchemeDetails("MyScheme", SingleTrust)
+  val schemeName = "MyScheme"
 
   val form = new SchemeEstablishedCountryFormProvider(countryOptions)()
 
   def createView: () => HtmlFormat.Appendable = () =>
-    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, schemeDetails.schemeName, Seq.empty)(fakeRequest, messages)
+    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, schemeName, Seq.empty)(fakeRequest, messages)
 
   def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) =>
-    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, schemeDetails.schemeName, inputOptions)(fakeRequest, messages)
+    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, schemeName, inputOptions)(fakeRequest, messages)
 
   "SchemeEstablishedCountry view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
 
-    behave like pageWithSecondaryHeader(createView, schemeDetails.schemeName)
+    behave like pageWithSecondaryHeader(createView, schemeName)
 
     "contain select input options for the value" in {
       val doc = asDocument(createViewUsingForm(form))

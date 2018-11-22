@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package hsidentifiers
+package hsidentifiers.beforeYouStart
 
-import identifiers.TypedIdentifier
+import identifiers._
 
-case object SchemeNameId extends TypedIdentifier[String] {
-  override def toString: String = "schemeName"
+case object HaveAnyTrusteesId extends TypedIdentifier[Boolean] {
+  override def toString: String = "haveAnyTrustees"
 }

@@ -18,6 +18,7 @@ package controllers
 
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
+import hsidentifiers.beforeYouStart.SchemeNameId
 import identifiers.register.SchemeDetailsId
 import identifiers.register.adviser.AdviserDetailsId
 import identifiers.register.establishers.EstablishersId
@@ -43,6 +44,9 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
 
   def getMandatorySchemeName: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj(
     SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust))))
+
+  def getMandatorySchemeNameHs: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj(
+    SchemeNameId.toString -> "Test Scheme Name")))
 
   def dontGetAnyData: FakeDataRetrievalAction = new FakeDataRetrievalAction(None)
 

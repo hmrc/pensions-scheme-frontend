@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.register.SchemeEstablishedCountryFormProvider
-import identifiers.register.{SchemeDetailsId, SchemeEstablishedCountryId}
+import hsforms.beforeYouStart.SchemeEstablishedCountryFormProvider
+import hsidentifiers.beforeYouStart.{SchemeNameId, SchemeEstablishedCountryId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
@@ -48,12 +48,12 @@ class SchemeEstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+      SchemeNameId.retrieve.right.map { schemeName =>
         val preparedForm = request.userAnswers.get(SchemeEstablishedCountryId) match {
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(schemeEstablishedCountry(appConfig, preparedForm, mode, schemeDetails.schemeName, countryOptions.options)))
+        Future.successful(Ok(schemeEstablishedCountry(appConfig, preparedForm, mode, schemeName, countryOptions.options)))
       }
   }
 
@@ -61,8 +61,8 @@ class SchemeEstablishedCountryController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          SchemeDetailsId.retrieve.right.map { schemeDetails =>
-            Future.successful(BadRequest(schemeEstablishedCountry(appConfig, formWithErrors, mode, schemeDetails.schemeName, countryOptions.options)))
+          SchemeNameId.retrieve.right.map { schemeName =>
+            Future.successful(BadRequest(schemeEstablishedCountry(appConfig, formWithErrors, mode, schemeName, countryOptions.options)))
           },
         value =>
           dataCacheConnector.save(request.externalId, SchemeEstablishedCountryId, value).map(cacheMap =>

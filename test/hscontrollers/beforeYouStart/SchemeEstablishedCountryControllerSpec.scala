@@ -19,10 +19,9 @@ package hscontrollers.beforeYouStart
 import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.SchemeEstablishedCountryFormProvider
-import identifiers.register.{SchemeDetailsId, SchemeEstablishedCountryId}
+import hsforms.beforeYouStart.SchemeEstablishedCountryFormProvider
+import hsidentifiers.beforeYouStart.{SchemeNameId, SchemeEstablishedCountryId}
 import models.NormalMode
-import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -36,14 +35,14 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
 
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
 
-  val schemeDetails = SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)
+  val schemeName = "Test Scheme Name"
 
   def countryOptions: CountryOptions = new CountryOptions(options)
 
   val formProvider = new SchemeEstablishedCountryFormProvider(countryOptions)
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): SchemeEstablishedCountryController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): SchemeEstablishedCountryController =
     new SchemeEstablishedCountryController(
       frontendAppConfig,
       messagesApi,
@@ -57,7 +56,7 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
     ) {}
 
   def viewAsString(form: Form[_] = form): String =
-    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, schemeDetails.schemeName, options)(fakeRequest, messages).toString
+    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, schemeName, options)(fakeRequest, messages).toString
 
   val testAnswer = "territory:AE-AZ"
 
@@ -73,7 +72,7 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
     "populate the view correctly on a GET when the question has previously been answered" in {
       val validData = Json.obj(
         SchemeEstablishedCountryId.toString -> testAnswer,
-        SchemeDetailsId.toString -> schemeDetails
+        SchemeNameId.toString -> schemeName
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 

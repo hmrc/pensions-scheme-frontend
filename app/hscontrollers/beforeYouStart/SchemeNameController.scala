@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import hsforms.beforeYouStart.SchemeNameFormProvider
-import hsidentifiers.SchemeNameId
+import hsidentifiers.beforeYouStart.SchemeNameId
 import javax.inject.Inject
 import models.Mode
 import models.PSAName._
