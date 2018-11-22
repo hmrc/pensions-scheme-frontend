@@ -8,3 +8,8 @@ GET        /any-trustees                          hscontrollers.beforeYouStart.H
 POST       /any-trustees                          hscontrollers.beforeYouStart.HaveAnyTrusteesController.onSubmit(mode: Mode = NormalMode)
 GET        /change-any-trustees                   hscontrollers.beforeYouStart.HaveAnyTrusteesController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-any-trustees                   hscontrollers.beforeYouStart.HaveAnyTrusteesController.onSubmit(mode: Mode = CheckMode)
+
+GET        /scheme-name                           hscontrollers.beforeYouStart.SchemeNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /scheme-name                           hscontrollers.beforeYouStart.SchemeNameController.onSubmit(mode: Mode = NormalMode)
+GET        /change-scheme-name                    hscontrollers.beforeYouStart.SchemeNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-scheme-name                    hscontrollers.beforeYouStart.SchemeNameController.onSubmit(mode: Mode = CheckMode)
