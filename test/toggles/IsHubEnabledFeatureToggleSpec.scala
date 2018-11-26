@@ -17,7 +17,7 @@
 package toggles
 
 class IsHubEnabledFeatureToggleSpec extends FeatureToggleBehaviours {
-  "Wonderful new feature toggle" should {
+  "is-hub-enabled feature toggle" should {
     behave like featureToggle("is-hub-enabled", appConfig => appConfig.isHubEnabled)
   }
 }
