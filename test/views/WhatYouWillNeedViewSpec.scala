@@ -53,7 +53,7 @@ class WhatYouWillNeedHsViewSpec extends ViewBehaviours {
 
   def createView: () => HtmlFormat.Appendable = () => whatYouWillNeed(frontendAppConfig)(fakeRequest, messages)
 
-  "WhatYouWillNeed view" must {
+  "WhatYouWillNeed view (hub and spoke version)" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"),
       "_lede", "_p2", "_item_1", "_item_2", "_item_3", "_item_4", "_p3")
