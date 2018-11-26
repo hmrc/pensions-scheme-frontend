@@ -88,6 +88,7 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
   lazy val languageTranslationEnabled:Boolean = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
   lazy val isWorkPackageOneEnabled: Boolean = runModeConfiguration.getBoolean("features.work-package-one-enabled").getOrElse(false)
+  lazy val isHubEnabled: Boolean = runModeConfiguration.getBoolean("features.is-hub-enabled").getOrElse(false)
 
   def encryptionKey(crypto: String): String = loadConfig(s"$crypto.encryption.key")
 }
