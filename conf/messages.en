@@ -121,6 +121,7 @@ site.agree_and_continue = Agree and continue
 site.go_back = Go back
 site.signOut = Sign out
 site.printThisPage = Print this page
+site.return.tasklist = Return to pension scheme details
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -1038,3 +1039,9 @@ messages__visuallyhidden__trustee__phone_number = Change the trustee’s phone n
 messages__visuallyhidden__adviser__email_address = Change the adviser’s email address
 messages__visuallyhidden__adviser__phone_number = Change the adviser’s phone number
 messages__visuallyhidden__adviser__address = Change the adviser’s address
+
+messages__is_dormant__title = Has the establisher been dormant in the last 12 months?
+messages__is_dormant__heading = Have {0} been dormant in the last 12 months?
+messages__is_dormant__yes = Yes
+messages__is_dormant__no = No
+messages__is_dormant__error = Select yes if the establisher has been dormant in the last 12 months
