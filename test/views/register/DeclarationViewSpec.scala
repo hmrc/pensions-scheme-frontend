@@ -46,7 +46,8 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
       "_statement4",
       "_statement5",
       "_statement6",
-      "_statement7")
+      "_statement7",
+      "_statement8")
 
     behave like pageWithSecondaryHeader(createView, schemeName)
 

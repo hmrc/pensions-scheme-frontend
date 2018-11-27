@@ -32,7 +32,7 @@
 
         @components.heading(
             headingKey= messages("messages__declaration__heading"),
-            secondaryHeaderKey = None
+            secondaryHeaderKey = Some(components.hyphen(schemeName).toString())
         )
 
         @components.paragraph_text(messages("messages__declaration__declare"))
