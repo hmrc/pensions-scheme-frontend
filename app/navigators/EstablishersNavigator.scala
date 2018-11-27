@@ -27,7 +27,8 @@ import models.register.establishers.EstablisherKind
 import models.register.{SchemeDetails, SchemeType}
 import utils.{Enumerable, Navigator, UserAnswers}
 
-class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, config: FrontendAppConfig) extends Navigator with Enumerable.Implicits {
+class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                      config: FrontendAppConfig)extends Navigator with Enumerable.Implicits {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {
@@ -43,7 +44,11 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
   private def addEstablisherRoutes(value: Option[Boolean], answers: UserAnswers): Option[NavigateTo] = {
     value match {
       case Some(false) =>
-        navigateBasedOnSchemeDetails(answers)
+        if(config.isHubEnabled){
+          NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+        } else {
+          navigateBasedOnSchemeDetails(answers)
+        }
       case Some(true) =>
         NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount))
       case None =>
