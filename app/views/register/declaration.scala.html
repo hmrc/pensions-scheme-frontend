@@ -32,12 +32,12 @@
 
         @components.heading(
             headingKey= messages("messages__declaration__heading"),
-            secondaryHeaderKey = Some(components.hyphen(schemeName).toString())
+            secondaryHeaderKey = None
         )
 
         @components.paragraph_text(messages("messages__declaration__declare"))
 
-        <ol class="list-number">
+        <ol class="list-bullet">
             @if(isCompany){
                 @if(isDormant){
                     <li>
@@ -55,11 +55,11 @@
             <li>
                 @components.paragraph_text(messages("messages__declaration__statement3"))
             </li>
-            @if(showMasterTrustDeclaration){
-                <li>
-                    @components.paragraph_text(messages("messages__declaration__statement4"))
-                </li>
-            }
+
+            <li>
+                @components.paragraph_text(messages("messages__declaration__statement4"))
+            </li>
+
             <li>
                 @components.paragraph_text(messages("messages__declaration__statement5"))
             </li>
@@ -69,9 +69,11 @@
             <li>
                 @components.paragraph_text(messages("messages__declaration__statement7"))
             </li>
-            <li>
-                @components.paragraph_text(messages("messages__declaration__statement8"))
-            </li>
+            @if(showMasterTrustDeclaration){
+                <li>
+                    @components.paragraph_text(messages("messages__declaration__statement8"))
+                </li>
+            }
         </ol>
 
         <div class="form-group">
@@ -91,6 +93,10 @@
 
         @components.submit_button("site.agree_and_continue")
 
-        <a id="cancel" href="@controllers.routes.WhatYouWillNeedController.onPageLoad()">@messages("site.cancel")</a>
+        @if(appConfig.isHubEnabled) {
+            <a id="return-managing" href="@appConfig.managePensionsSchemeOverviewUrl">@messages("messages__complete__return")</a>
+        } else {
+            <a id="cancel" href="@controllers.routes.WhatYouWillNeedController.onPageLoad()">@messages("site.cancel")</a>
+        }
     }
 }
