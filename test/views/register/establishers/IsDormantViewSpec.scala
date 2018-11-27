@@ -14,36 +14,40 @@
  * limitations under the License.
  */
 
-package views.register
+package views.register.establishers
 
-import forms.register.DeclarationDormantFormProvider
+import controllers.register.establishers.company.routes
+import forms.register.establishers.IsDormantFormProvider
+import models.NormalMode
 import models.register.DeclarationDormant
 import play.api.data.Form
+import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.register.declarationDormant
+import views.html.register.establishers.isDormant
 
-class DeclarationDormantViewSpec extends ViewBehaviours {
+class IsDormantViewSpec extends ViewBehaviours {
 
-  val schemeName = "MyScheme"
+  val companyName = "My company"
 
-  val messageKeyPrefix = "declarationDormant"
+  val messageKeyPrefix = "is_dormant"
 
-  val form = new DeclarationDormantFormProvider()()
+  val form = new IsDormantFormProvider()()
+  val postCall: Call = routes.IsCompanyDormantController.onSubmit(NormalMode, 0)
 
-  def createView: () => HtmlFormat.Appendable = () => declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => isDormant(frontendAppConfig, form, companyName, postCall)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable =
+    (form: Form[_]) => isDormant(frontendAppConfig, form, companyName, postCall)(fakeRequest, messages)
 
-  "DeclarationDormant view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+  "IsDormant view" must {
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", companyName))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithReturnLink(createView, controllers.routes.SchemeTaskListController.onPageLoad().url)
 
-    behave like pageWithSecondaryHeader(createView, schemeName)
   }
 
-  "DeclarationDormant view" when {
+  "IsDormant view" when {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
