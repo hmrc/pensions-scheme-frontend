@@ -19,7 +19,12 @@
 @import controllers.register.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_], schemeName: String, isCompany: Boolean, isDormant: Boolean, showMasterTrustDeclaration: Boolean)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_],
+    schemeName: String,
+    isCompany: Boolean,
+    isDormant: Boolean,
+    showMasterTrustDeclaration: Boolean,
+    hasWorkingKnowledge: Boolean)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__declaration__title"),
@@ -69,6 +74,16 @@
             <li>
                 @components.paragraph_text(messages("messages__declaration__statement7"))
             </li>
+            @if(appConfig.isHubEnabled) {
+                <li>
+                    @if(hasWorkingKnowledge){
+                            @components.paragraph_text(messages("messages__declaration__statement8_working_knowledge"))
+                    } else {
+                            @components.paragraph_text(messages("messages__declaration__statement8_no_working_knowledge"))
+                    }
+                </li>
+            }
+
             @if(showMasterTrustDeclaration){
                 <li>
                     @components.paragraph_text(messages("messages__declaration__statement8"))

@@ -16,13 +16,14 @@
 
 package controllers.register
 
+import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.DeclarationFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
+import identifiers.register.{DeclarationDormantId, DeclarationDutiesId, SchemeDetailsId}
 import models.CompanyDetails
 import models.person.PersonDetails
 import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
@@ -38,7 +39,7 @@ class DeclarationControllerSpec extends ControllerSpecBase {
 
   import DeclarationControllerSpec._
 
-  "Declaration Controller" must {
+  "Declaration Controller with hub and spoke switched off" must {
 
     "return OK and the correct view" when {
       "individual journey" in {
@@ -129,9 +130,12 @@ class DeclarationControllerSpec extends ControllerSpecBase {
 
 object DeclarationControllerSpec extends ControllerSpecBase {
 
-  override lazy val app = new GuiceApplicationBuilder()
-    .configure(Map("features.allowMasterTrust" -> true))
-    .build()
+  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    Map(
+      "features.allowMasterTrust" -> true,
+      "features.is-hub-enabled" -> false
+    )
+  ).build().injector.instanceOf[FrontendAppConfig]
 
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
@@ -151,14 +155,16 @@ object DeclarationControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean, showMasterTrustDeclaration: Boolean = false): String =
+  private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
+                           showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
     declaration(
       frontendAppConfig,
       form,
       schemeName,
       isCompany,
       isDormant,
-      showMasterTrustDeclaration
+      showMasterTrustDeclaration,
+      hasWorkingKnowledge
     )(fakeRequest, messages).toString
 
   private val individual =
@@ -205,4 +211,193 @@ object DeclarationControllerSpec extends ControllerSpecBase {
     }
   }
 
+}
+
+class DeclarationControllerSpecHs extends ControllerSpecBase {
+
+  import DeclarationControllerSpecHs._
+
+  "Declaration Controller with hub and spoke switched on" must {
+
+    "return OK and the correct view" when {
+      "individual journey" in {
+        val result = controller(individual).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false)
+      }
+      "non-dormant company establisher" in {
+        val result = controller(nonDormantCompany).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false)
+      }
+      "dormant company establisher" in {
+        val result = controller(dormantCompany).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
+      }
+
+      "master trust" in {
+
+        val data = new FakeDataRetrievalAction(Some(UserAnswers()
+          .set(SchemeDetailsId)(SchemeDetails("Test Scheme Name", SchemeType.MasterTrust))
+          .asOpt
+          .value
+          .set(DeclarationDutiesId)(false)
+          .asOpt
+          .value
+          .json
+        ))
+
+        val result = controller(data).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false, showMasterTrustDeclaration = true)
+      }
+    }
+
+    "redirect to the next page when valid data is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody("agree" -> "agreed")
+
+      val result = controller(nonDormantCompany).onSubmit()(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "return a Bad Request and errors" when {
+      "invalid data is submitted in individual journey" in {
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+        val boundForm = form.bind(Map("value" -> "invalid value"))
+
+        val result = controller(individual).onSubmit()(postRequest)
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm, isCompany = false, isDormant = false)
+      }
+      "invalid data is submitted in company journey" in {
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
+        val boundForm = form.bind(Map("value" -> "invalid value"))
+
+        val result = controller(nonDormantCompany).onSubmit()(postRequest)
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe viewAsString(boundForm, isCompany = true, isDormant = false)
+      }
+    }
+
+    "redirect to Session Expired" when {
+      "no existing data is found" when {
+        "GET" in {
+          val result = controller(dontGetAnyData).onPageLoad()(fakeRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+        "POST" in {
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", ""))
+          val result = controller(dontGetAnyData).onSubmit()(postRequest)
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+        }
+      }
+    }
+
+  }
+
+}
+
+object DeclarationControllerSpecHs extends ControllerSpecBase {
+
+  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    Map(
+      "features.allowMasterTrust" -> true,
+      "features.is-hub-enabled" -> true
+    )
+  ).build().injector.instanceOf[FrontendAppConfig]
+
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  private val formProvider = new DeclarationFormProvider()
+  private val form = formProvider()
+  private val schemeName = "Test Scheme Name"
+
+  private def controller(dataRetrievalAction: DataRetrievalAction): DeclarationController =
+    new DeclarationController(
+      frontendAppConfig,
+      messagesApi,
+      FakeUserAnswersCacheConnector,
+      new FakeNavigator(onwardRoute),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
+
+  private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
+                           showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
+    declaration(
+      frontendAppConfig,
+      form,
+      schemeName,
+      isCompany,
+      isDormant,
+      showMasterTrustDeclaration,
+      hasWorkingKnowledge
+    )(fakeRequest, messages).toString
+
+  private val individual =
+    UserAnswers()
+      .schemeDetails()
+      .individualEstablisher()
+      .hasWorkingKnowledge(false)
+      .asDataRetrievalAction()
+
+  private val nonDormantCompany =
+    UserAnswers()
+      .schemeDetails()
+      .companyEstablisher()
+      .hasWorkingKnowledge(false)
+      .dormant(false)
+      .asDataRetrievalAction()
+
+  private val dormantCompany =
+    UserAnswers()
+      .schemeDetails()
+      .companyEstablisher()
+      .hasWorkingKnowledge(false)
+      .dormant(true)
+      .asDataRetrievalAction()
+
+
+  private implicit class UserAnswersOps(answers: UserAnswers) {
+
+    def schemeDetails(): UserAnswers = {
+      answers.set(SchemeDetailsId)(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)).asOpt.value
+    }
+
+    def companyEstablisher(): UserAnswers = {
+      answers.set(CompanyDetailsId(0))(CompanyDetails("test-company-name", None, None)).asOpt.value
+    }
+
+    def individualEstablisher(): UserAnswers = {
+      answers.set(EstablisherDetailsId(0))(PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())).asOpt.value
+    }
+
+    def dormant(dormant: Boolean): UserAnswers = {
+      val declarationDormant = if (dormant) DeclarationDormant.Yes else DeclarationDormant.No
+      answers.set(DeclarationDormantId)(declarationDormant).asOpt.value
+    }
+
+    def hasWorkingKnowledge(hasWorkingKnowledge: Boolean): UserAnswers = {
+      answers.set(DeclarationDutiesId)(hasWorkingKnowledge).asOpt.value
+    }
+
+    def asDataRetrievalAction(): DataRetrievalAction = {
+      new FakeDataRetrievalAction(Some(answers.json))
+    }
+  }
 }

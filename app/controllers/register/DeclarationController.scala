@@ -21,7 +21,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationFormProvider
-import identifiers.register.{DeclarationDormantId, DeclarationId, SchemeDetailsId}
+import identifiers.register.{DeclarationDormantId, DeclarationDutiesId, DeclarationId, SchemeDetailsId}
 import javax.inject.Inject
 import models.NormalMode
 import models.register.DeclarationDormant.{No, Yes}
@@ -67,23 +67,30 @@ class DeclarationController @Inject()(
             Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))))
   }
 
-  private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
+  private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) =
+    if (appConfig.isHubEnabled) {
+      hsShowPage(status, form)
+    } else {
+      nonHsShowPage(status, form)
+    }
+
+  private def nonHsShowPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
     SchemeDetailsId.retrieve.right.map { details =>
       val isCompany = request.userAnswers.hasCompanies
       request.userAnswers.get(DeclarationDormantId) match {
         case Some(Yes) => Future.successful(
           status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDormant = true, showMasterTrustDeclaration)
+            declaration(appConfig, form, details.schemeName, isCompany, isDormant = true, showMasterTrustDeclaration, hasWorkingKnowledge = false)
           )
         )
         case Some(No) => Future.successful(
           status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)
+            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge = false)
           )
         )
         case None if !isCompany => Future.successful(
           status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)
+            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge = false)
           )
         )
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
@@ -91,6 +98,31 @@ class DeclarationController @Inject()(
     }
   }
 
-  private def showMasterTrustDeclaration(implicit request: DataRequest[AnyContent]): Boolean = request.userAnswers.get(SchemeDetailsId).map(_.schemeType).contains(MasterTrust)
+  private def hsShowPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
+    SchemeDetailsId.retrieve.right.map { details =>
+      val isCompany = request.userAnswers.hasCompanies
+      (request.userAnswers.get(DeclarationDormantId), request.userAnswers.get(DeclarationDutiesId)) match {
+        case (Some(Yes), Some(hasWorkingKnowledge)) => Future.successful(
+          status(
+            declaration(appConfig, form, details.schemeName, isCompany, isDormant = true, showMasterTrustDeclaration, hasWorkingKnowledge)
+          )
+        )
+        case (Some(No), Some(hasWorkingKnowledge)) => Future.successful(
+          status(
+            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge)
+          )
+        )
+        case (None, Some(hasWorkingKnowledge)) if !isCompany => Future.successful(
+          status(
+            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge)
+          )
+        )
+        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      }
+    }
+  }
+
+  private def showMasterTrustDeclaration(implicit request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers.get(SchemeDetailsId).map(_.schemeType).contains(MasterTrust)
 
 }

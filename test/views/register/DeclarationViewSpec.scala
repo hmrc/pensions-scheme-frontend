@@ -19,6 +19,7 @@ package views.register
 import forms.register.DeclarationFormProvider
 import org.jsoup.Jsoup
 import play.api.data.Form
+import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.declaration
 
@@ -28,11 +29,14 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
   val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
-  def createView = () => declaration(frontendAppConfig, form, schemeName, true, false, true)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => declaration(frontendAppConfig, form, schemeName, true, false, true, false)(fakeRequest, messages)
 
-  def createViewDynamic(isCompany: Boolean = true, isDormant: Boolean = false, showMasterTrustDeclaration: Boolean = true) = () => declaration(frontendAppConfig, form, schemeName, isCompany, isDormant, showMasterTrustDeclaration)(fakeRequest, messages)
+  def createViewDynamic(isCompany: Boolean = true, isDormant: Boolean = false,
+                        showMasterTrustDeclaration: Boolean = true, hasWorkingKnowledge: Boolean = false): () => HtmlFormat.Appendable =
+    () => declaration(frontendAppConfig, form, schemeName, isCompany, isDormant, showMasterTrustDeclaration,
+      hasWorkingKnowledge)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => declaration(frontendAppConfig, form, schemeName, false, false, true)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => declaration(frontendAppConfig, form, schemeName, false, false, true, false)(fakeRequest, messages)
 
   "Declaration view" must {
     behave like normalPage(
