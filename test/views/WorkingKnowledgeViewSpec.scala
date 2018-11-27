@@ -16,39 +16,40 @@
 
 package views
 
-import com.google.inject.Inject
-import config.FrontendAppConfig
-import org.jsoup.Jsoup
-import views.behaviours.ViewBehaviours
-import views.html.youNeedToRegister
+import controllers.routes
+import forms.WorkingKnowledgeFormProvider
+import models.NormalMode
+import play.api.data.Form
+import play.twirl.api.HtmlFormat
+import views.behaviours.YesNoViewBehaviours
+import views.html.workingKnowledge
 
-class YouNeedToRegisterViewSpec @Inject()(appConfig: FrontendAppConfig) extends ViewBehaviours {
+class WorkingKnowledgeViewSpec extends YesNoViewBehaviours {
 
-  val messageKeyPrefix = "youNeedToRegister"
+  val messageKeyPrefix = "workingKnowledge"
 
-  private def createView = () => youNeedToRegister(frontendAppConfig)(fakeRequest, messages)
+  val workingKnowledgeOptions = Seq("true", "false")
 
-  "YouNeedToRegister view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"), "_lede", "_p1", "_p2")
+  val form = new WorkingKnowledgeFormProvider()()
 
-    "have button to redirect to register as pension administrator" in {
-      Jsoup.parse(createView().toString()).select("a[id=redirect-to-psa]") must
-        haveLink(frontendAppConfig.registerSchemeAdministratorUrl)
-    }
+  def createView: () => HtmlFormat.Appendable = () =>
+    workingKnowledge(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-    "have link to redirect to Gov UK" in {
-      Jsoup.parse(createView().toString()).select("a[id=gov-uk-link]") must
-        haveLink(appConfig.govUkLink)
-    }
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    workingKnowledge(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-    "have link to redirect to PSA Gov UK" in {
-      Jsoup.parse(createView().toString()).select("a[id=psa-gov-uk-link]") must
-        haveLink(appConfig.pensionAdministratorGovUkLink)
-    }
+  "Working Knowledge view" must {
 
-    "have link to redirect to PSP Gov UK" in {
-      Jsoup.parse(createView().toString()).select("a[id=psp-gov-uk-link]") must
-        haveLink(appConfig.pensionPractitionerGovUkLink)
-    }
+    behave like normalPage(createView, messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading"),
+      expectedGuidanceKeys = "_p1", "_p2", "_p3")
+
+    behave like yesNoPage(
+      createView = createViewUsingForm,
+      messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = routes.WorkingKnowledgeController.onSubmit().url
+    )
+
+    behave like pageWithSubmitButton(createView)
+
   }
 }

@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package forms.register
+package forms
 
-import forms.FormSpec
+class WorkingKnowledgeFormProviderSpec extends FormSpec {
 
-class SecuredBenefitsFormProviderSpec extends FormSpec {
-
-  val requiredKey = "messages__error__selection"
+  val requiredKey = "messages__workingKnowledge__error__required"
   val invalidKey = "error.boolean"
 
-  val formProvider = new SecuredBenefitsFormProvider()
+  val formProvider = new WorkingKnowledgeFormProvider()
 
   "SecuredBenefits Form Provider" must {
 

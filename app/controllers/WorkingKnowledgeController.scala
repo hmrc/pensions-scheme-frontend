@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
-import forms.register.WorkingKnowledgeFormProvider
-import identifiers.register.WorkingKnowledgeId
+import forms.WorkingKnowledgeFormProvider
+import identifiers.register.DeclarationDutiesId
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
-import views.html.register.workingKnowledge
+import views.html.workingKnowledge
 
 import scala.concurrent.Future
 
@@ -48,7 +48,7 @@ class WorkingKnowledgeController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(WorkingKnowledgeId) match {
+      val preparedForm = request.userAnswers.get(DeclarationDutiesId) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -61,8 +61,8 @@ class WorkingKnowledgeController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode))),
         value =>
-          dataCacheConnector.save(request.externalId, WorkingKnowledgeId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(WorkingKnowledgeId, mode, UserAnswers(cacheMap))))
+          dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
+            Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap))))
       )
   }
 }

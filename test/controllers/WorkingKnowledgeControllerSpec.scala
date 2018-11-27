@@ -14,33 +14,28 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers
 
 import connectors.FakeUserAnswersCacheConnector
-import controllers.ControllerSpecBase
 import controllers.actions._
-import forms.register.SecuredBenefitsFormProvider
-import identifiers.register.{SchemeDetailsId, SecuredBenefitsId}
+import forms.WorkingKnowledgeFormProvider
+import identifiers.register.DeclarationDutiesId
 import models.NormalMode
-import models.register.SchemeDetails
-import models.register.SchemeType.SingleTrust
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.FakeNavigator
-import views.html.register.securedBenefits
+import views.html.workingKnowledge
 
-class SecuredBenefitsControllerSpec extends ControllerSpecBase {
+class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  val formProvider = new SecuredBenefitsFormProvider()
+  val formProvider = new WorkingKnowledgeFormProvider()
   val form = formProvider()
 
-  val schemeName = "Test Scheme Name"
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): SecuredBenefitsController =
-    new SecuredBenefitsController(
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): WorkingKnowledgeController =
+    new WorkingKnowledgeController(
       frontendAppConfig,
       messagesApi,
       FakeUserAnswersCacheConnector,
@@ -51,9 +46,9 @@ class SecuredBenefitsControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = securedBenefits(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = workingKnowledge(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
 
-  "SecuredBenefits Controller" must {
+  "WorkingKnowledgeController" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad(NormalMode)(fakeRequest)
@@ -64,8 +59,7 @@ class SecuredBenefitsControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val validData = Json.obj(
-        SecuredBenefitsId.toString -> true,
-        SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust)
+        DeclarationDutiesId.toString -> true
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
@@ -104,22 +98,6 @@ class SecuredBenefitsControllerSpec extends ControllerSpecBase {
         "POST" in {
           val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
           val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-        }
-      }
-      "scheme details are not retrieved" when {
-        "GET" in {
-          val result = controller(getEmptyData).onPageLoad(NormalMode)(fakeRequest)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-        }
-        "POST" in {
-          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-
-          val result = controller(getEmptyData).onSubmit(NormalMode)(postRequest)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
