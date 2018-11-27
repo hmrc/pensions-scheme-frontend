@@ -64,5 +64,10 @@ class WhatYouWillNeedHsViewSpec extends ViewBehaviours {
       val doc = asDocument(createView())
       assertLink(doc, linkId = "apply-to-register-govuk-link", url = frontendAppConfig.applyToRegisterLink)
     }
+
+    "have a link to the managing pension schemes" in {
+      val doc = asDocument(createView())
+      assertLink(doc, linkId = "return-managing", url = frontendAppConfig.managePensionsSchemeOverviewUrl.url)
+    }
   }
 }
