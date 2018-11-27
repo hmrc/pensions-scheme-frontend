@@ -1038,3 +1038,6 @@ messages__visuallyhidden__trustee__phone_number = Change the trustee’s phone n
 messages__visuallyhidden__adviser__email_address = Change the adviser’s email address
 messages__visuallyhidden__adviser__phone_number = Change the adviser’s phone number
 messages__visuallyhidden__adviser__address = Change the adviser’s address
+
+messages__schemeTaskList__title = Pension scheme details
+messages__schemeTaskList__heading = Pension scheme details
