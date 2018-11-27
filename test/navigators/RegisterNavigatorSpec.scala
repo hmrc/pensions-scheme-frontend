@@ -36,8 +36,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
   import RegisterNavigatorSpec._
 
   override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.useManagePensionsFrontend" -> true,
-    "features.is-hub-enabled" -> false
+    "features.useManagePensionsFrontend" -> true
   ).build()
 
   private def routesWithRestrictedEstablisher = Table(
@@ -167,34 +166,4 @@ object RegisterNavigatorSpec {
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
-}
-
-class RegisterHsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
-
-  import RegisterHsNavigatorSpec._
-
-  override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.useManagePensionsFrontend" -> true,
-    "features.is-hub-enabled" -> true
-  ).build()
-
-  private def routes = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-
-    //Check your answers - back to task list page
-    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false)
-  )
-
-  "RegisterHsNavigator" must {
-    appRunning()
-    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
-    behave like nonMatchingNavigator(navigator)
-  }
-}
-
-object RegisterHsNavigatorSpec {
-  private val emptyAnswers = UserAnswers(Json.obj())
-  private def taskList:Call = controllers.routes.SchemeTaskListController.onPageLoad()
-  private def dataDescriber(answers: UserAnswers): String = answers.toString
 }
