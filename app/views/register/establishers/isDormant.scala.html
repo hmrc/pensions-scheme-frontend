@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.establishers.routes._
 @import models.{Mode}
-@import models.register.establishers.Dormancy
+@import models.register.DeclarationDormant
 
 @(appConfig: FrontendAppConfig, form: Form[_], establisherName: String, postCall: Call)(implicit request: Request[_], messages: Messages)
 
@@ -39,7 +39,7 @@
                 field = form("value"),
                 legend = messages("messages__is_dormant__title"),
                 legendClass = Some("visually-hidden"),
-                inputs = Dormancy.options
+                inputs = DeclarationDormant.options(appConfig)
             )
 
             @components.submit_button("site.save_and_continue")

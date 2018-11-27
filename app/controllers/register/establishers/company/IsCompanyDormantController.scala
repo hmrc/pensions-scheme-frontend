@@ -25,8 +25,7 @@ import forms.register.establishers.IsDormantFormProvider
 import identifiers.register.DeclarationDormantId
 import identifiers.register.establishers.IsDormantId
 import models.register.DeclarationDormant
-import models.register.establishers.Dormancy
-import models.register.establishers.Dormancy._
+import models.register.DeclarationDormant._
 import models.{Mode, NormalMode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,7 +46,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
                                  requireData: DataRequiredAction,
                                  formProvider: IsDormantFormProvider) extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
 
-  private val form: Form[Dormancy] = formProvider()
+  private val form: Form[DeclarationDormant] = formProvider()
   private def postCall(mode: Mode, index: Int): Call = routes.IsCompanyDormantController.onSubmit(mode, index)
 
   def onPageLoad(mode: Mode, index: Int): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -66,13 +65,13 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(isDormant(appConfig, formWithErrors, companyName, postCall(mode, index)))),
           {
-            case Dormant =>
-              dataCacheConnector.save(request.externalId, IsDormantId(index), Dormancy.values(0)).flatMap { _ =>
-                dataCacheConnector.save(request.externalId, DeclarationDormantId, DeclarationDormant.values(0)).map (cacheMap =>
+            case Yes =>
+              dataCacheConnector.save(request.externalId, IsDormantId(index), DeclarationDormant.values(1)).flatMap { _ =>
+                dataCacheConnector.save(request.externalId, DeclarationDormantId, DeclarationDormant.values(1)).map (cacheMap =>
                  Redirect(navigator.nextPage(IsDormantId(index), NormalMode, UserAnswers(cacheMap))))
              }
-            case NotDormant =>
-              dataCacheConnector.save(request.externalId, IsDormantId(index), Dormancy.values(1)).map(cacheMap =>
+            case No =>
+              dataCacheConnector.save(request.externalId, IsDormantId(index), DeclarationDormant.values(0)).map(cacheMap =>
                 Redirect(navigator.nextPage(IsDormantId(index), mode, UserAnswers(cacheMap))))
 
           }

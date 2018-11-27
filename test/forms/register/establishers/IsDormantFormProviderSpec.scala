@@ -16,27 +16,38 @@
 
 package forms.register.establishers
 
+import base.SpecBase
+import config.FrontendAppConfig
 import forms.behaviours.FormBehaviours
-import models.register.establishers.Dormancy
+import models.register.DeclarationDormant
 import models.{Field, Invalid, Required}
+import play.api.inject.Injector
+import play.api.inject.guice.GuiceApplicationBuilder
 
 class IsDormantFormProviderSpec extends FormBehaviours {
 
+  lazy val app = new GuiceApplicationBuilder()
+    .configure("features.isHubEnabled" -> true)
+    .build()
+
+  def injector: Injector = app.injector
+  def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+
   val validData: Map[String, String] = Map(
-    "value" -> Dormancy.options.head.value
+    "value" -> DeclarationDormant.options(frontendAppConfig).head.value
   )
 
   val form = new IsDormantFormProvider()()
 
   "IsDormant form" must {
 
-    behave like questionForm[Dormancy](Dormancy.values.head)
+    behave like questionForm[DeclarationDormant](DeclarationDormant.values.head)
 
     behave like formWithOptionField(
       Field(
         "value",
         Required -> "messages__is_dormant__error",
         Invalid -> "error.invalid"),
-      Dormancy.options.map(_.value): _*)
+      DeclarationDormant.options(frontendAppConfig).map(_.value): _*)
   }
 }

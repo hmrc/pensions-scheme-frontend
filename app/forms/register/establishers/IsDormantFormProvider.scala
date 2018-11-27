@@ -18,13 +18,13 @@ package forms.register.establishers
 
 import com.google.inject.Inject
 import forms.mappings.Mappings
-import models.register.establishers.Dormancy
+import models.register.DeclarationDormant
 import play.api.data.Form
 
 class IsDormantFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Dormancy] = Form(
-    "value" -> enumerable[Dormancy]("messages__is_dormant__error")
+  def apply(): Form[DeclarationDormant] = Form(
+    "value" -> enumerable[DeclarationDormant]("messages__is_dormant__error")
   )
 
 }

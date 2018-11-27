@@ -19,7 +19,7 @@ package views.register.establishers
 import controllers.register.establishers.company.routes
 import forms.register.establishers.IsDormantFormProvider
 import models.NormalMode
-import models.register.establishers.Dormancy
+import models.register.DeclarationDormant
 import play.api.data.Form
 import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
@@ -51,19 +51,19 @@ class IsDormantViewSpec extends ViewBehaviours {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- Dormancy.options) {
+        for (option <- DeclarationDormant.options(frontendAppConfig)) {
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, false)
         }
       }
     }
 
-    for (option <- Dormancy.options) {
+    for (option <- DeclarationDormant.options(frontendAppConfig)) {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
 
-          for (unselectedOption <- Dormancy.options.filterNot(o => o == option)) {
+          for (unselectedOption <- DeclarationDormant.options(frontendAppConfig).filterNot(o => o == option)) {
             assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
           }
         }

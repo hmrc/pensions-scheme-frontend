@@ -23,7 +23,7 @@ import forms.register.establishers.IsDormantFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.{EstablishersId, IsDormantId}
-import models.register.establishers.Dormancy
+import models.register.DeclarationDormant
 import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
 import models.{CompanyDetails, NormalMode}
 import play.api.data.Form
@@ -63,7 +63,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
         Json.obj(
           CompanyDetailsId.toString ->
             CompanyDetails("test company name", Some("123456"), Some("abcd")),
-          IsDormantId.toString -> Dormancy.values.head.toString
+          IsDormantId.toString -> DeclarationDormant.values.head.toString
         )
       )
     )
@@ -83,11 +83,11 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
 
       val result = controller(new FakeDataRetrievalAction(Some(validData))).onPageLoad(NormalMode, index)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(Dormancy.values.head))
+      contentAsString(result) mustBe viewAsString(form.fill(DeclarationDormant.values.head))
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", Dormancy.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options(frontendAppConfig).head.value))
 
       val result = controller().onSubmit(NormalMode, index)(postRequest)
 
@@ -114,7 +114,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
         }
         "POST" in {
-          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options.head.value))
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options(frontendAppConfig).head.value))
           val result = controller(dontGetAnyData).onSubmit(NormalMode, index)(postRequest)
 
           status(result) mustBe SEE_OTHER

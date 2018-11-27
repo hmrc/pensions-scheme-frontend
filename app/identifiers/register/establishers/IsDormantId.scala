@@ -17,10 +17,10 @@
 package identifiers.register.establishers
 
 import identifiers.TypedIdentifier
-import models.register.establishers.Dormancy
+import models.register.DeclarationDormant
 import play.api.libs.json.JsPath
 
-case class IsDormantId(index: Int) extends TypedIdentifier[Dormancy] {
+case class IsDormantId(index: Int) extends TypedIdentifier[DeclarationDormant] {
   override def path: JsPath = EstablishersId(index).path \ IsDormantId.toString
 }
 
