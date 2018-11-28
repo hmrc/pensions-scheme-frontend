@@ -225,6 +225,7 @@ messages__complete__master_trust_heading = What you need to do
 messages__complete__pension_regulator_link = You must also contact The Pensions Regulator
 messages__complete__pension_regulator = {0} for this scheme to be authorised. HMRC cannot complete the registration until The Pensions Regulator authorise the scheme to be a master trust.
 messages__complete__return = Return to manage your pension schemes
+messages__complete__return_pension_scheme_details = Return to pension scheme details
 messages__complete__feedback = What did you think of this service? (opens in new window or tab)
 
 messages__uk_bank_account_details__title = Bank account details
