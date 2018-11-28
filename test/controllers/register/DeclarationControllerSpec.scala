@@ -39,7 +39,7 @@ class DeclarationControllerSpec extends ControllerSpecBase {
 
   import DeclarationControllerSpec._
 
-  "Declaration Controller" must {
+  "Declaration Controller with hub and spoke switched off" must {
 
     "return OK and the correct view" when {
       "individual journey" in {
@@ -210,4 +210,5 @@ object DeclarationControllerSpec extends ControllerSpecBase {
       new FakeDataRetrievalAction(Some(answers.json))
     }
   }
+
 }
