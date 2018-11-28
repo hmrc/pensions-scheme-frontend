@@ -98,35 +98,13 @@ class DeclarationDutiesController @Inject()(
   }
 
   private def sendEmail(srn: String, psaId: PsaId)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
+    Logger.debug("Fetch email from API")
 
-    if(appConfig.isWorkPackageOneEnabled) {
-
-      Logger.debug("Fetch email from API")
-
-      pensionAdministratorConnector.getPSAEmail flatMap { email =>
-        emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
-      } recoverWith {
-        case _: Throwable => Future.successful(EmailNotSent)
-      }
-
-    } else {
-
-      Logger.debug("Fetch email from cache")
-
-      val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(psaId.id)).value
-
-      psaNameCacheConnector.fetch(encryptedCacheId).flatMap {
-        case Some(value) =>
-          value.as[PSAName].psaEmail match {
-            case Some(email) => emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
-            case _ => Future.successful(EmailNotSent)
-          }
-
-        case _ => Future.successful(EmailNotSent)
-      }
-
+    pensionAdministratorConnector.getPSAEmail flatMap { email =>
+      emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
+    } recoverWith {
+      case _: Throwable => Future.successful(EmailNotSent)
     }
-
   }
 
   private def formatSrnForEmail(srn: String): String = {

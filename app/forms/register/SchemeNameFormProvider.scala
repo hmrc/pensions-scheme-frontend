@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(
-messageKey: String,
-href: Call
-)(implicit messages: Messages)
+package forms.register
 
-<div class="grid-row">
- <div class="column-two-thirds">
-  <p class="govuk-margin-top-5"><a id="return-link" href="@href">@messages(messageKey)</a></p>
- </div>
-</div>
+import forms.mappings.{Constraints, Mappings}
+import javax.inject.Inject
+import play.api.data.Form
+
+class SchemeNameFormProvider @Inject() extends Mappings with Constraints {
+  val schemeNameMaxLength = 160
+
+  def apply(): Form[String] = Form(
+    "schemeName" -> text("messages__error__scheme_name").
+      verifying(firstError(
+        maxLength(schemeNameMaxLength, "messages__error__scheme_name_length"),
+        safeText("messages__error__scheme_name_invalid")))
+  )
+}
