@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import connectors.PSANameCacheConnector
 import controllers.actions._
 import identifiers.{PsaEmailId, PsaNameId}
@@ -25,6 +26,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -33,7 +35,11 @@ import views.html.whatYouWillNeed
 
 import scala.concurrent.Future
 
-class WhatYouWillNeedControllerSpec extends ControllerSpecBase  with MockitoSugar with BeforeAndAfterEach {
+class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+
+  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    conf = "features.is-hub-enabled" -> false
+  ).build().injector.instanceOf[FrontendAppConfig]
 
   def onwardRoute: Call = controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode)
 
@@ -179,5 +185,38 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase  with MockitoSuga
       }
     }
   }
+}
 
+class WhatYouWillNeedHsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+
+  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    conf = "features.is-hub-enabled" -> true
+  ).build().injector.instanceOf[FrontendAppConfig]
+
+  private val fakePsaNameCacheConnector = mock[PSANameCacheConnector]
+  private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
+
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedController =
+    new WhatYouWillNeedController(frontendAppConfig,
+      messagesApi,
+      FakeAuthAction,
+      fakePsaNameCacheConnector,
+      applicationCrypto
+    )
+
+  override def beforeEach(): Unit = {
+    reset(fakePsaNameCacheConnector)
+    super.beforeEach()
+  }
+
+  "WhatYouWillNeed Controller (hub and spoke)" when {
+    "on a POST" must {
+      "redirect to Scheme details page" in {
+        val result = controller().onSubmit()(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad().url)
+      }
+    }
+  }
 }

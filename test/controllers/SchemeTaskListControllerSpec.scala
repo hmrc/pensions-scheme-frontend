@@ -17,11 +17,17 @@
 package controllers
 
 import controllers.actions._
+import models.{JourneyTaskList, JourneyTaskListSection, Link}
+import play.api.mvc.Call
 import play.api.test.Helpers._
+import views.html.schemeTaskList
 
 class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  val jtlSection = JourneyTaskListSection(None, Link("linkText", "linkTarget"), None)
+  val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, None)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeTaskListController =
     new SchemeTaskListController(
@@ -30,12 +36,18 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       FakeAuthAction
     )
 
-  "SchemeDetails Controller" must {
+  def viewAsString(): String =
+    schemeTaskList(
+      frontendAppConfig, journeyTL
+    )(fakeRequest, messages).toString()
+
+  "SchemeTaskList Controller" must {
 
     "return OK and the correct view for a GET" in {
       val result = controller().onPageLoad()(fakeRequest)
 
       status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString()
     }
   }
 

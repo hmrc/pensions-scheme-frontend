@@ -37,8 +37,7 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(srn: String): Action[AnyContent] = authenticate.async {
     implicit request =>
-
-      schemeDetailsConnector.getSchemeDetails(schemeIdType ="srn", srn).flatMap { scheme =>
+      schemeDetailsConnector.getSchemeDetails(request.psaId.id, schemeIdType ="srn", srn).flatMap { scheme =>
         if (scheme.psaDetails.exists(_.id == request.psaId.id)) {
           val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
           Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name, srn)))
