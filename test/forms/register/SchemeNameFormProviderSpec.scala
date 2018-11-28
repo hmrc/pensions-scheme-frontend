@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package hsforms.beforeYouStart
+package forms.register
 
 import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints

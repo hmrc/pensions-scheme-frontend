@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
-import hsidentifiers.beforeYouStart.SchemeNameId
+import controllers.register.SchemeNameId
 import identifiers.register.SchemeDetailsId
 import identifiers.register.adviser.AdviserDetailsId
 import identifiers.register.establishers.EstablishersId

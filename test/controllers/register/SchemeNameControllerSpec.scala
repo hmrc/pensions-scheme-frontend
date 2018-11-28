@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package hscontrollers.beforeYouStart
+package controllers.register
 
 import config.FrontendAppConfig
 import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import hsforms.beforeYouStart.SchemeNameFormProvider
-import hsidentifiers.beforeYouStart.SchemeNameId
-import models.register.SchemeType
+import forms.register.SchemeNameFormProvider
 import models.requests.OptionalDataRequest
 import models.{NormalMode, PSAName}
 import play.api.data.Form
@@ -32,7 +30,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
-import views.html.hs.beforeYouStart.schemeName
+import views.html.register.schemeName
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package views.hs.beforeYouStart
+package views.register
 
-import hscontrollers.beforeYouStart.routes
-import hsforms.beforeYouStart.SchemeNameFormProvider
+import forms.register.SchemeNameFormProvider
 import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.hs.beforeYouStart.schemeName
+import views.html.register.schemeName
 
 class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
 
@@ -39,7 +38,7 @@ class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.SchemeNameController.onSubmit(NormalMode).url,
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.register.routes.SchemeNameController.onSubmit(NormalMode).url,
       "schemeName")
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)

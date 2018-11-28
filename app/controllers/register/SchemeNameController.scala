@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package hscontrollers.beforeYouStart
+package controllers.register
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
-import hsforms.beforeYouStart.SchemeNameFormProvider
-import hsidentifiers.beforeYouStart.SchemeNameId
+import forms.register.SchemeNameFormProvider
 import javax.inject.Inject
 import models.Mode
 import models.PSAName._
@@ -30,16 +29,16 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.BeforeYouStart
+import utils.annotations.Register
 import utils.{NameMatchingFactory, Navigator, UserAnswers}
-import views.html.hs.beforeYouStart.schemeName
+import views.html.register.schemeName
 
 import scala.concurrent.Future
 
 class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
                                      override val messagesApi: MessagesApi,
                                      dataCacheConnector: UserAnswersCacheConnector,
-                                     @BeforeYouStart navigator: Navigator,
+                                     @Register navigator: Navigator,
                                      authenticate: AuthAction,
                                      getData: DataRetrievalAction,
                                      formProvider: SchemeNameFormProvider,

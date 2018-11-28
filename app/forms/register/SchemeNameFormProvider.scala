@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package hsidentifiers.beforeYouStart
+package forms.register
 
-import identifiers._
+import forms.mappings.{Constraints, Mappings}
+import javax.inject.Inject
+import play.api.data.Form
 
-case object HaveAnyTrusteesId extends TypedIdentifier[Boolean] {
-  override def toString: String = "haveAnyTrustees"
+class SchemeNameFormProvider @Inject() extends Mappings with Constraints {
+  val schemeNameMaxLength = 160
+
+  def apply(): Form[String] = Form(
+    "schemeName" -> text("messages__error__scheme_name").
+      verifying(firstError(
+        maxLength(schemeNameMaxLength, "messages__error__scheme_name_length"),
+        safeText("messages__error__scheme_name_invalid")))
+  )
 }
