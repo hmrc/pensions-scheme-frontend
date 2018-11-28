@@ -48,7 +48,10 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit: Action[AnyContent] = authenticate.async {
     implicit request =>
 
-      if(appConfig.isWorkPackageOneEnabled){
+      if (appConfig.isHubEnabled) {
+        Future.successful(Redirect(controllers.routes.SchemeTaskListController.onPageLoad()))
+      }
+      else if(appConfig.isWorkPackageOneEnabled){
         Future.successful(Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode)))
       } else {
         val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value

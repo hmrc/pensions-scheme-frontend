@@ -63,6 +63,7 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val pensionPractitionerGovUkLink = runModeConfiguration.underlying.getString("urls.pensionPractitionerGovUkLink")
   lazy val govUkLink = runModeConfiguration.underlying.getString("urls.govUkLink")
   lazy val appealLink = runModeConfiguration.underlying.getString("urls.appealLink")
+  lazy val applyToRegisterLink = runModeConfiguration.underlying.getString("urls.applyToRegisterLink")
   lazy val pensionsRegulatorLink = runModeConfiguration.underlying.getString("urls.pensionsRegulatorLink")
   lazy val getPSAEmail = runModeConfiguration.underlying.getString("urls.get-psa-email")
   lazy val getPSAName = runModeConfiguration.underlying.getString("urls.get-psa-name")
@@ -88,6 +89,7 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
   lazy val languageTranslationEnabled:Boolean = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
   lazy val isWorkPackageOneEnabled: Boolean = runModeConfiguration.getBoolean("features.work-package-one-enabled").getOrElse(false)
+  lazy val isHubEnabled: Boolean = runModeConfiguration.getBoolean("features.is-hub-enabled").getOrElse(false)
 
   def encryptionKey(crypto: String): String = loadConfig(s"$crypto.encryption.key")
 }
