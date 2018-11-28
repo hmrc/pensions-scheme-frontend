@@ -30,7 +30,15 @@ object JourneyTaskList {
   implicit val formats: OFormat[JourneyTaskList] = Json.format[JourneyTaskList]
 }
 
-case class JourneyTaskListSection(isCompleted: Option[Boolean] = None, link: Link, header: Option[String] = None)
+case class JourneyTaskListSection(isCompleted: Option[Boolean] = None, link: Link, header: Option[String] = None) {
+  def status: Option[String] =
+    isCompleted match {
+      case Some(true) => Some("messages__schemeTaskList__completed")
+      case Some(false) => Some("messages__schemeTaskList__inProgress")
+      case _ => None
+    }
+}
+
 
 case class Link(text: String, target: String)
 

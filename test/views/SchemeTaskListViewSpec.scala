@@ -28,7 +28,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
     Link(s"$sectionHeader link", s"$sectionHeader target")
 
   private def genJourneyTaskListSection(header: String, isCompleted: Option[Boolean] = None) =
-    JourneyTaskListSection(isCompleted = None, link = sectionLink(header), header = Some(header))
+    JourneyTaskListSection(isCompleted = isCompleted, link = sectionLink(header), header = Some(header))
 
 
   private val aboutHeader = "about"
@@ -75,40 +75,78 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
     behave like normalPageWithTitle(createView(), messageKeyPrefix, pageHeader, pageHeader)
   }
 
-  "SchemeTaskListView about section" should {
+  "SchemeTaskListView About the scheme section" should {
+
+    val notStarted = journeyTaskList.copy(about = about.copy(isCompleted = None))
+    val inProgress = journeyTaskList.copy(about = about.copy(isCompleted = Some(false)))
+    val completed = journeyTaskList.copy(about = about.copy(isCompleted = Some(true)))
+
+    behave like simpleSection(headerId = "section-about-header",
+      headerText = "messages__schemeTaskList__sectionAbout_header",
+      linkId = "section-about-link",
+      linkUrl = about.link.target ,
+      linkText = "messages__schemeTaskList__sectionAbout_link",
+      statusId = "section-about-status",
+      notStarted = notStarted,
+      inProgress = inProgress,
+      completed = completed)
+  }
+
+  "SchemeTaskListView Working knowledge of pensions section" should {
+
+    val notStarted = journeyTaskList.copy(workingKnowledge = workingKnowledge.copy(isCompleted = None))
+    val inProgress = journeyTaskList.copy(workingKnowledge = workingKnowledge.copy(isCompleted = Some(false)))
+    val completed = journeyTaskList.copy(workingKnowledge = workingKnowledge.copy(isCompleted = Some(true)))
+
+    behave like simpleSection(headerId = "section-workingKnowledge-header",
+      headerText = "messages__schemeTaskList__sectionWorkingKnowledge_header",
+      linkId = "section-workingKnowledge-link",
+      linkUrl = workingKnowledge.link.target,
+      linkText = "messages__schemeTaskList__sectionWorkingKnowledge_link",
+      statusId = "section-workingKnowledge-status",
+      notStarted = notStarted,
+      inProgress = inProgress,
+      completed = completed)
+  }
+
+
+
+  private def simpleSection(headerId:String, headerText:String, linkId: String, linkUrl: String, linkText: String, statusId: String,
+                            notStarted: JourneyTaskList,  inProgress: JourneyTaskList,  completed: JourneyTaskList) {
 
     "display correct details for the about section" in {
-      val doc = asDocument(createView()())
-      assertRenderedByIdWithText(doc, id = "section-about-header", text = messages("messages__schemeTaskList__sectionAbout_header"))
+
+      val doc = asDocument(createView(notStarted)())
+      assertRenderedByIdWithText(doc, id = headerId, text = messages(headerText))
     }
 
     "display the correct link" in {
 
-      createView() must haveLinkWithText(
-        url ="/",
-        linkText = messages("messages__schemeTaskList__sectionAbout_link"),
-        linkId ="section-about-link"
+      createView(notStarted) must haveLinkWithText(
+        url = linkUrl,
+        linkText = messages(linkText),
+        linkId = linkId
       )
-    }
-
-    "display the correct status if completed" in {
-      val doc = asDocument(createView()())
-      doc.getElementById("section-about-status").text mustBe messages("messages__schemeTaskList__completed")
     }
 
     "display nothing if not started" in {
-      val aa = journeyTaskList
-      val journeyTaskList = journeyTaskList copy (
-        about =
-      )
-      val doc = asDocument(createView(journeyTaskList)())
-      doc.getElementById("section-about-status").text mustBe messages("messages__schemeTaskList__completed")
+
+      val doc = asDocument(createView(notStarted)())
+      assertNotRenderedById(doc, statusId)
     }
 
+    "display the correct status if in progress" in {
 
+      val doc = asDocument(createView(inProgress)())
+      doc.getElementById(statusId).text mustBe messages("messages__schemeTaskList__inProgress")
+    }
+
+    "display the correct status if completed" in {
+
+      val doc = asDocument(createView(completed)())
+      doc.getElementById(statusId).text mustBe messages("messages__schemeTaskList__completed")
+    }
   }
-
-
 
 
 }

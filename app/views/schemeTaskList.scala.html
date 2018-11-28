@@ -20,7 +20,7 @@
 @import views.html._
 @import viewmodels.JourneyTaskList
 
-@(appConfig: FrontendAppConfig, model: JourneyTaskList)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, jl: JourneyTaskList)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__schemeTaskList__title"),
@@ -31,24 +31,49 @@
         @components.heading(messages("messages__schemeTaskList__heading").toString)
 
     <ol class="task-list">
-        <h2 id="section-about-header" class="heading-large">
-            @messages("messages__schemeTaskList__sectionAbout_header")
-        </h2>
-        <li>
-        <li>
-            <ul class="task-list-items">
-                <li class="task-list-item">
+        <div>
+            <h2 id="section-about-header" class="heading-large">
+                @messages("messages__schemeTaskList__sectionAbout_header")
+            </h2>
+            <li>
+            <li>
+                <ul class="task-list-items">
+                    <li class="task-list-item">
 
-                    <a id= "section-about-link" class="task-name" href="/" aria-describedby="read-declaration-completed">
-                        @messages("messages__schemeTaskList__sectionAbout_link")
-                    </a>
+                        <a id= "section-about-link" class="task-name" href="@jl.about.link.target" aria-describedby="read-declaration-completed">
+                            @messages("messages__schemeTaskList__sectionAbout_link")
+                        </a>
 
+                        @jl.about.status.map{ status =>
+                            <strong class="task-completed" id="section-about-status">@messages(status)</strong>
+                        }
 
-                    <strong class="task-completed" id="section-about-status">Completed</strong>
+                    </li>
+                </ul>
+            </li>
+        </div>
+        <div>
+            <h2 id="section-workingKnowledge-header" class="heading-large">
+                @messages("messages__schemeTaskList__sectionWorkingKnowledge_header")
+            </h2>
+            <li>
+            <li>
+                <ul class="task-list-items">
+                    <li class="task-list-item">
 
-                </li>
-            </ul>
-        </li>
+                        <a id= "section-workingKnowledge-link" class="task-name" href="@jl.workingKnowledge.link.target" aria-describedby="read-declaration-completed">
+                            @messages("messages__schemeTaskList__sectionWorkingKnowledge_link")
+                        </a>
+
+                        @jl.workingKnowledge.status.map{ status =>
+                            <strong class="task-completed" id="section-workingKnowledge-status">@messages(status)</strong>
+                        }
+
+                    </li>
+                </ul>
+            </li>
+        </div>
     </ol>
+
 
 }

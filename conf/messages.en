@@ -1060,5 +1060,10 @@ messages__schemeTaskList__heading = Pension scheme details
 messages__schemeTaskList__sectionAbout_header = About the scheme
 messages__schemeTaskList__sectionAbout_link = Enter scheme details
 
+messages__schemeTaskList__sectionWorkingKnowledge_header = Working knowledge of pensions
+messages__schemeTaskList__sectionWorkingKnowledge_link = Add who has working knowledge
+
+
 messages__schemeTaskList__completed = Completed
+messages__schemeTaskList__inProgress = In progress
 
