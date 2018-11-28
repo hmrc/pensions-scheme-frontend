@@ -1056,3 +1056,5 @@ messages__visuallyhidden__adviser__address = Change the adviser’s address
 
 messages__schemeTaskList__title = Pension scheme details
 messages__schemeTaskList__heading = Pension scheme details
+
+messages__schemeTaskList__sectionAbout_header = About the scheme
