@@ -133,6 +133,20 @@ messages__what_you_will_need__item_2 = the telephone numbers, email addresses an
 messages__what_you_will_need__item_3 = the name, contact details, Corporation Tax Unique Taxpayer Reference number and address of the scheme establisher
 messages__what_you_will_need__item_4 = PAYE, Company Registration and VAT registration numbers
 
+
+messages__hs_what_you_will_need__title = What you will need
+messages__hs_what_you_will_need__lede = You will need to tell us about the pension scheme, establishers and trustees. Most of these details will be on the scheme deeds form.
+messages__hs_what_you_will_need__p2 = If the scheme has a company or partnership as an establisher, you will also need to tell us about any directors or partners. This will include their:
+messages__hs_what_you_will_need__item_1 = National Insurance number
+messages__hs_what_you_will_need__item_2 = Unique Taxpayer Reference (UTR) if they submit Self Assessment returns
+messages__hs_what_you_will_need__item_3 = address
+messages__hs_what_you_will_need__item_4 = contact email address and phone number
+messages__hs_what_you_will_need__other_link = There might be other things you need to tell us about
+messages__hs_what_you_will_need__p3 = Your information will be saved as you progress. If you sign out, your changes will be saved for 28 days. After that time you will need to start again.
+
+
+
+
 messages__trustee__has_ct_utr__title = Does the trustee have a Corporation Tax Unique Taxpayer Reference number?
 messages__trustee__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
 messages__trustee__ct_utr = Corporation Tax Unique Taxpayer Reference number
@@ -226,6 +240,7 @@ messages__complete__master_trust_heading = What you need to do
 messages__complete__pension_regulator_link = You must also contact The Pensions Regulator
 messages__complete__pension_regulator = {0} for this scheme to be authorised. HMRC cannot complete the registration until The Pensions Regulator authorise the scheme to be a master trust.
 messages__complete__return = Return to manage your pension schemes
+
 messages__complete__feedback = What did you think of this service? (opens in new window or tab)
 
 messages__uk_bank_account_details__title = Bank account details
