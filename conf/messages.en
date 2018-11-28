@@ -243,6 +243,7 @@ messages__complete__master_trust_heading = What you need to do
 messages__complete__pension_regulator_link = You must also contact The Pensions Regulator
 messages__complete__pension_regulator = {0} for this scheme to be authorised. HMRC cannot complete the registration until The Pensions Regulator authorise the scheme to be a master trust.
 messages__complete__return = Return to manage your pension schemes
+messages__complete__return_pension_scheme_details = Return to pension scheme details
 
 messages__complete__feedback = What did you think of this service? (opens in new window or tab)
 
@@ -626,17 +627,18 @@ messages__trusteePreviousAddress__lede = This is usually the registered business
 
 messages__declaration__title = Declaration
 messages__declaration__heading = Declaration
-messages__declaration__declare = I declare/understand:
-messages__declaration__statement1_dormant = to the best of my knowledge and belief, some or all of the sponsoring employer(s) in relation to the scheme have been dormant during the last 12 months
-messages__declaration__statement1_not_dormant = to the best of my knowledge and belief, the sponsoring employer(s) in relation to the scheme have not been dormant during the last 12 months
-messages__declaration__statement2 = that as scheme administrator I am responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by Finance Act 2004 and I intend to discharge those functions at all times, whether resident in the United Kingdom or another EU member state or non-member EEA state
-messages__declaration__statement3 = that I will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. I understand that I may be liable to a penalty and the pension scheme may be de-registered if I fail to properly discharge those functions
-messages__declaration__statement4 = the scheme is a Master Trust as defined in Section 1 Pension Schemes Act 2017, or corresponding legislation in Northern Ireland. I understand that the scheme trustees must apply to The Pensions Regulator for authorisation to operate as a Master Trust and that if The Pensions Regulator do not grant authorisation, HMRC may refuse to register the scheme and if the Master Trust loses its authorisation, HMRC may de-register the scheme
-messages__declaration__statement5 = to the best of my knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete. I understand that I am responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
-messages__declaration__statement6 = that this scheme meets all the criteria to be registered as a pension scheme under the Finance Act 2004 and in particular, is established and will be maintained wholly or mainly for the purpose of making authorised payments of pensions and lumps sums as falling within section 164(1)(a) or (b) of the Finance Act 2004
-messages__declaration__statement7 = that the instruments or agreements by which this pension scheme is constituted do not directly or indirectly entitle any person to unauthorised payments. And the way in which the pension scheme is to be administered will not knowingly entitle any person to unauthorised payments
-messages__declaration__statement8 = that I may be liable to a penalty and the pension scheme may be de-registered if a false statement is made on this application, or in any information I provide in connection with this application, and that false statements may also lead to prosecution
-messages__declaration__agree = I agree
+messages__declaration__declare = By continuing you declare that:
+messages__declaration__statement1_dormant = to the best of your knowledge and belief, some or all of the sponsoring employer(s) in relation to the scheme have been dormant during the last 12 months
+messages__declaration__statement1_not_dormant = to the best of your knowledge and belief, the sponsoring employer(s) in relation to the scheme have not been dormant during the last 12 months
+messages__declaration__statement2 = this scheme meets all the criteria to be registered as a pension scheme under the Finance Act 2004 and, in particular, is established and will be maintained wholly or mainly for the purpose of making authorised payments of pensions and lumps sums as falling within section 164(1)(a) or (b) of the Finance Act 2004
+messages__declaration__statement3 = the instruments or agreements by which this pension scheme is constituted do not directly or indirectly entitle any person to unauthorised payments and the way in which the pension scheme is to be administered will not knowingly entitle any person to unauthorised payments
+messages__declaration__statement4 = as scheme administrator you are responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by Finance Act 2004 and you intend to discharge those functions at all times, whether resident in the United Kingdom or another EU member state or non-member EEA state
+messages__declaration__statement5 = you will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008 and you understand that you may be liable to a penalty and the pension scheme may be de-registered if you fail to properly discharge those functions
+messages__declaration__statement6 = you may be liable to a penalty and the pension scheme may be de-registered if a false statement is made on this application, or in any information you provide in connection with this application, and that false statements may also lead to prosecution
+messages__declaration__statement7 = to the best of your knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete and you understand that you are responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
+messages__declaration__statement8 = the scheme is a Master Trust as defined in Section 1 Pension Act 2017, or corresponding legislation in Northern Ireland and you understand the scheme trustees must apply to the Pensions Regulator for authorisation to operate as a Master Trust and that if the pensions regulator do not grant authorisation, HMRC may refuse to register the scheme and if the Master Trust loses its authorisation, HMRC may de-register the scheme
+
+messages__declaration__agree = Agree
 messages__declaration__invalid = You need to agree to all the declarations before you can continue
 
 messages__confirmDeleteTrustee__title = Confirm deletion

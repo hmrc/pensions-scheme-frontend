@@ -16,25 +16,39 @@
 
 package views.register
 
+import config.FrontendAppConfig
 import forms.register.DeclarationFormProvider
 import org.jsoup.Jsoup
 import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.declaration
 
 class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
 
+  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    Map(
+      "features.allowMasterTrust" -> true,
+      "features.is-hub-enabled" -> false
+    )
+  ).build().injector.instanceOf[FrontendAppConfig]
+
   val messageKeyPrefix = "declaration"
   val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
-  def createView = () => declaration(frontendAppConfig, form, schemeName, true, false, true)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
+    form, schemeName, true, false, true)(fakeRequest, messages)
 
-  def createViewDynamic(isCompany: Boolean = true, isDormant: Boolean = false, showMasterTrustDeclaration: Boolean = true) = () => declaration(frontendAppConfig, form, schemeName, isCompany, isDormant, showMasterTrustDeclaration)(fakeRequest, messages)
+  def createViewDynamic(isCompany: Boolean = true, isDormant: Boolean = false,
+                        showMasterTrustDeclaration: Boolean = true): () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
+    form, schemeName, isCompany, isDormant, showMasterTrustDeclaration)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => declaration(frontendAppConfig, form, schemeName, false, false, true)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => declaration(frontendAppConfig,
+    form, schemeName, false, false, true)(fakeRequest, messages)
 
-  "Declaration view" must {
+  "Declaration view (not hub and spoke)" must {
     behave like normalPage(
       createView,
       messageKeyPrefix,
@@ -46,7 +60,8 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
       "_statement4",
       "_statement5",
       "_statement6",
-      "_statement7")
+      "_statement7",
+      "_statement8")
 
     behave like pageWithSecondaryHeader(createView, schemeName)
 
@@ -82,5 +97,27 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
       messages(s"messages__${messageKeyPrefix}__title"),
       "_declare",
       "_statement1_dormant")
+  }
+}
+
+class DeclarationHsViewSpec extends QuestionViewBehaviours[Boolean] {
+  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    Map(
+      "features.allowMasterTrust" -> true,
+      "features.is-hub-enabled" -> true
+    )
+  ).build().injector.instanceOf[FrontendAppConfig]
+
+  val schemeName = "Test Scheme Name"
+  val form: Form[Boolean] = new DeclarationFormProvider()()
+
+  def createView: () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
+    form, schemeName, true, false, true)(fakeRequest, messages)
+
+  "Declaration view (hub and spoke)" must {
+    "have a return link" in {
+      Jsoup.parse(createView().toString).select("a[id=return-pension-scheme-details]") must
+        haveLink(controllers.routes.SchemeTaskListController.onPageLoad().url)
+    }
   }
 }
