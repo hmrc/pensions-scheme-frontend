@@ -41,6 +41,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   private val trustee3Header = "trustee3"
 
   private val workingKnowledgeHeader = "messages__schemeTaskList__sectionWorkingKnowledge_header"
+  private val declarationHeader = "messages__schemeTaskList__sectionDeclaration_header"
 
 
   private val about = genJourneyTaskListSection(header = aboutHeader, isCompleted = Some(true),
@@ -61,7 +62,9 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
     genJourneyTaskListSection(header = workingKnowledgeHeader, isCompleted = Some(true),
       linkText = "messages__schemeTaskList__sectionWorkingKnowledge_link")
 
-  private val declaration: Option[Link] = Some(sectionLink("declaration", linkText = ""))
+  private val declaration: JourneyTaskListSection =
+    genJourneyTaskListSection(header = declarationHeader, isCompleted = None,
+      linkText = "")
 
 
   private val journeyTaskList: JourneyTaskList = JourneyTaskList(about, establishers, trustees, workingKnowledge, declaration)
@@ -112,11 +115,39 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   }
 
   "SchemeTaskListView Declaration section where not complete" should {
-    "display correct heading for the Declaration section" in {
-      val notStarted = journeyTaskList.copy(declaration = None)
+
+    "display correct heading for the Declaration section where nothing started" in {
+
+      val notStarted = journeyTaskList
 
       val doc = asDocument(createView(notStarted)())
-      assertRenderedByIdWithText(doc, id = "section-declaration-header", text = messages("messages__schemeTaskList__sectionDeclaration_header"))
+      assertRenderedByIdWithText(doc, id = "section-declaration-header", text = messages(declaration.header.getOrElse("")))
+      assertNotRenderedById(doc, id = "section-declaration-link")
+    }
+
+    "display correct heading for the Declaration section where in progress" in {
+
+      val inProgress = journeyTaskList.copy(declaration = declaration.copy(isCompleted = Some(false)))
+
+      val doc = asDocument(createView(inProgress)())
+      assertRenderedByIdWithText(doc, id = "section-declaration-header", text = messages(declaration.header.getOrElse("")))
+      assertNotRenderedById(doc, id = "section-declaration-link")
+    }
+
+    "display correct heading for the Declaration section where all completed" in {
+
+      val completed = journeyTaskList.copy(declaration = declaration.copy(isCompleted = Some(true)))
+
+      val doc = asDocument(createView(completed)())
+      assertRenderedByIdWithText(doc, id = "section-declaration-header", text = messages(declaration.header.getOrElse("")))
+      assertNotRenderedById(doc, id = "section-declaration-text")
+      createView(completed) must haveLinkWithText(
+        url = declaration.link.target,
+        linkText = messages(declaration.link.text),
+        linkId = "section-declaration-link"
+      )
+
+
     }
 
 //    "display correct you must complete text for the Declaration section" in {

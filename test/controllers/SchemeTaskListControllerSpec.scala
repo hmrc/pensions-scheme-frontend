@@ -27,7 +27,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   val jtlSection = JourneyTaskListSection(None, Link("linkText", "linkTarget"), None)
-  val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, None)
+  val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, jtlSection)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeTaskListController =
     new SchemeTaskListController(

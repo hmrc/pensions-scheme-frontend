@@ -22,8 +22,10 @@ case class JourneyTaskList(about: JourneyTaskListSection,
                            establishers: Seq[JourneyTaskListSection],
                            trustees: Seq[JourneyTaskListSection],
                            workingKnowledge: JourneyTaskListSection,
-                           declaration: Option[Link] = None){
-
+                           declaration: JourneyTaskListSection){
+  def allSectionsCompleted: Boolean = {
+    true
+  }
 }
 
 object JourneyTaskList {
