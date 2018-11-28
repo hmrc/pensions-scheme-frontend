@@ -28,22 +28,25 @@ import views.html.register.declaration
 class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
 
   override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    conf = "features.is-hub-enabled" -> false
+    Map(
+      "features.allowMasterTrust" -> true,
+      "features.is-hub-enabled" -> false
+    )
   ).build().injector.instanceOf[FrontendAppConfig]
 
   val messageKeyPrefix = "declaration"
   val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => declaration(frontendAppConfig, form, schemeName, true, false, true, false)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
+    form, schemeName, true, false, true)(fakeRequest, messages)
 
   def createViewDynamic(isCompany: Boolean = true, isDormant: Boolean = false,
-                        showMasterTrustDeclaration: Boolean = true, hasWorkingKnowledge: Boolean = false): () => HtmlFormat.Appendable =
-    () => declaration(frontendAppConfig, form, schemeName, isCompany, isDormant, showMasterTrustDeclaration,
-      hasWorkingKnowledge)(fakeRequest, messages)
+                        showMasterTrustDeclaration: Boolean = true): () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
+    form, schemeName, isCompany, isDormant, showMasterTrustDeclaration)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    declaration(frontendAppConfig, form, schemeName, false, false, true, false)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => declaration(frontendAppConfig,
+    form, schemeName, false, false, true)(fakeRequest, messages)
 
   "Declaration view (not hub and spoke)" must {
     behave like normalPage(
@@ -58,8 +61,7 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
       "_statement5",
       "_statement6",
       "_statement7",
-      "_statement9",
-      "_statement10")
+      "_statement8")
 
     behave like pageWithSecondaryHeader(createView, schemeName)
 
@@ -99,80 +101,23 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
 }
 
 class DeclarationHsViewSpec extends QuestionViewBehaviours[Boolean] {
-
   override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    conf = "features.is-hub-enabled" -> true
+    Map(
+      "features.allowMasterTrust" -> true,
+      "features.is-hub-enabled" -> true
+    )
   ).build().injector.instanceOf[FrontendAppConfig]
 
-  val messageKeyPrefix = "declaration"
   val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => declaration(frontendAppConfig, form, schemeName, true, false, true, true)(fakeRequest, messages)
-
-  def createViewDynamic(isCompany: Boolean = true, isDormant: Boolean = false,
-                        showMasterTrustDeclaration: Boolean = true, hasWorkingKnowledge: Boolean = false): () => HtmlFormat.Appendable =
-    () => declaration(frontendAppConfig, form, schemeName, isCompany, isDormant, showMasterTrustDeclaration,
-      hasWorkingKnowledge)(fakeRequest, messages)
-
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    declaration(frontendAppConfig, form, schemeName, false, false, true, true)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
+    form, schemeName, true, false, true)(fakeRequest, messages)
 
   "Declaration view (hub and spoke)" must {
-    behave like normalPage(
-      createView,
-      messageKeyPrefix,
-      messages(s"messages__${messageKeyPrefix}__title"),
-      "_declare",
-      "_statement1_not_dormant",
-      "_statement2",
-      "_statement3",
-      "_statement4",
-      "_statement5",
-      "_statement6",
-      "_statement7",
-      "_statement8_working_knowledge",
-      "_statement9",
-      "_statement10")
-
-    "display the correct guidance when no working knowledge is claimed" in {
-      val doc = asDocument(createViewDynamic()())
-      assertContainsText(doc, messages(s"messages__${messageKeyPrefix}__statement8_no_working_knowledge"))
-    }
-
-    behave like pageWithSecondaryHeader(createView, schemeName)
-
-    "not display statement one for individual journey" in {
-      Jsoup.parse(createViewDynamic(false, false).toString) mustNot haveDynamicText(s"messages__${messageKeyPrefix}__statement1_not_dormant")
-      Jsoup.parse(createViewDynamic(false, false).toString) mustNot haveDynamicText(s"messages__${messageKeyPrefix}__statement1_dormant")
-    }
-
-    "show an error summary when rendered with an error" in {
-      val doc = asDocument(createViewUsingForm(form.withError(error)))
-      assertRenderedById(doc, "error-summary-heading")
-    }
-
-    "have an I Agree checkbox" in {
-      Jsoup.parse(createView().toString) must haveCheckBox("agree", "agreed")
-    }
-
-    "have a label for the I Agree checkbox" in {
-      Jsoup.parse(createView().toString) must haveLabelAndValue("agree", messages("messages__declaration__agree"), "agreed")
-    }
-
-    behave like pageWithSubmitButton(createView)
-
     "have a return link" in {
-      Jsoup.parse(createView().toString).select("a[id=return-managing]") must haveLink(frontendAppConfig.managePensionsSchemeOverviewUrl.url)
+      Jsoup.parse(createView().toString).select("a[id=return-pension-scheme-details]") must
+        haveLink(controllers.routes.SchemeTaskListController.onPageLoad().url)
     }
-  }
-
-  "Declaration view for company journey with dormant members" must {
-    behave like normalPage(
-      createViewDynamic(true, true),
-      messageKeyPrefix,
-      messages(s"messages__${messageKeyPrefix}__title"),
-      "_declare",
-      "_statement1_dormant")
   }
 }
