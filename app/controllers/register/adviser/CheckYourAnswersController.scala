@@ -84,27 +84,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   }
 
   private def sendEmail(srn: String)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
-
-      if(appConfig.isWorkPackageOneEnabled) {
-
-        pensionAdministratorConnector.getPSAEmail flatMap { email =>
-          emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)
-        } recoverWith {
-          case _: Throwable => Future.successful(EmailNotSent)
-        }
-
-      } else {
-
-        getName flatMap {
-          case Some(value) =>
-            value.as[PSAName].psaEmail match {
-              case Some(email) => emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)
-              case _ => Future.successful(EmailNotSent)
-            }
-          case _ => Future.successful(EmailNotSent)
-        }
-
-      }
+    pensionAdministratorConnector.getPSAEmail flatMap { email =>
+      emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)
+    } recoverWith {
+      case _: Throwable => Future.successful(EmailNotSent)
+    }
   }
 
   private def formatSrnForEmail(srn: String): String = {
