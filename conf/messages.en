@@ -117,7 +117,6 @@ site.service_name = Pension Scheme Registrations
 site.textarea.char_limit = (Limit is {0} characters)
 site.confirm = Confirm
 site.cancel = Cancel
-site.agree_and_continue = Agree and continue
 site.go_back = Go back
 site.signOut = Sign out
 site.printThisPage = Print this page
@@ -619,7 +618,7 @@ messages__declaration__statement6 = you may be liable to a penalty and the pensi
 messages__declaration__statement7 = to the best of your knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete and you understand that you are responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
 messages__declaration__statement8 = the scheme is a Master Trust as defined in Section 1 Pension Act 2017, or corresponding legislation in Northern Ireland and you understand the scheme trustees must apply to the Pensions Regulator for authorisation to operate as a Master Trust and that if the pensions regulator do not grant authorisation, HMRC may refuse to register the scheme and if the Master Trust loses its authorisation, HMRC may de-register the scheme
 
-messages__declaration__agree = I agree
+messages__declaration__agree = Agree
 messages__declaration__invalid = You need to agree to all the declarations before you can continue
 
 messages__confirmDeleteTrustee__title = Confirm deletion

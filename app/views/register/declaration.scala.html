@@ -89,9 +89,8 @@
                 </div>
             </fieldset>
         </div>
-        </div>
 
-        @components.submit_button("site.agree_and_continue")
+        @components.submit_button("site.save_and_continue")
 
         @if(appConfig.isHubEnabled) {
             <a id="return-managing" href="@appConfig.managePensionsSchemeOverviewUrl">@messages("messages__complete__return")</a>
