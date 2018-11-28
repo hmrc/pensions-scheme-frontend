@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(
-messageKey: String,
-href: Call
-)(implicit messages: Messages)
+package controllers.register
 
-<div class="grid-row">
- <div class="column-two-thirds">
-  <p class="govuk-margin-top-5"><a id="return-link" href="@href">@messages(messageKey)</a></p>
- </div>
-</div>
+import identifiers.TypedIdentifier
+
+case object SchemeNameId extends TypedIdentifier[String] {
+  override def toString: String = "schemeName"
+}

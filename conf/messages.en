@@ -134,6 +134,20 @@ messages__what_you_will_need__item_2 = the telephone numbers, email addresses an
 messages__what_you_will_need__item_3 = the name, contact details, Corporation Tax Unique Taxpayer Reference number and address of the scheme establisher
 messages__what_you_will_need__item_4 = PAYE, Company Registration and VAT registration numbers
 
+
+messages__hs_what_you_will_need__title = What you will need
+messages__hs_what_you_will_need__lede = You will need to tell us about the pension scheme, establishers and trustees. Most of these details will be on the scheme deeds form.
+messages__hs_what_you_will_need__p2 = If the scheme has a company or partnership as an establisher, you will also need to tell us about any directors or partners. This will include their:
+messages__hs_what_you_will_need__item_1 = National Insurance number
+messages__hs_what_you_will_need__item_2 = Unique Taxpayer Reference (UTR) if they submit Self Assessment returns
+messages__hs_what_you_will_need__item_3 = address
+messages__hs_what_you_will_need__item_4 = contact email address and phone number
+messages__hs_what_you_will_need__other_link = There might be other things you need to tell us about
+messages__hs_what_you_will_need__p3 = Your information will be saved as you progress. If you sign out, your changes will be saved for 28 days. After that time you will need to start again.
+
+
+
+
 messages__trustee__has_ct_utr__title = Does the trustee have a Corporation Tax Unique Taxpayer Reference number?
 messages__trustee__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
 messages__trustee__ct_utr = Corporation Tax Unique Taxpayer Reference number
@@ -161,6 +175,9 @@ messages__scheme_details__type_other_hint = For example, deed poll trust.
 messages__scheme_details__type_other_more = Details of the scheme type
 messages__error__scheme_name = Enter the name of the scheme
 messages__error__scheme_type_information = Enter more information about the scheme
+messages__scheme_name__title = What is the name of the scheme?
+messages__scheme_name__heading = What is the name of the scheme?
+
 
 messages__error__scheme_name_length = The scheme name cannot be more than 160 characters
 messages__error__scheme_name_invalid = The scheme name contains invalid characters
@@ -227,6 +244,7 @@ messages__complete__master_trust_heading = What you need to do
 messages__complete__pension_regulator_link = You must also contact The Pensions Regulator
 messages__complete__pension_regulator = {0} for this scheme to be authorised. HMRC cannot complete the registration until The Pensions Regulator authorise the scheme to be a master trust.
 messages__complete__return = Return to manage your pension schemes
+
 messages__complete__feedback = What did you think of this service? (opens in new window or tab)
 
 messages__uk_bank_account_details__title = Bank account details
@@ -1039,6 +1057,19 @@ messages__visuallyhidden__trustee__phone_number = Change the trustee’s phone n
 messages__visuallyhidden__adviser__email_address = Change the adviser’s email address
 messages__visuallyhidden__adviser__phone_number = Change the adviser’s phone number
 messages__visuallyhidden__adviser__address = Change the adviser’s address
+
+messages__schemeTaskList__title = Pension scheme details
+messages__schemeTaskList__heading = Pension scheme details
+messages__schemeTaskList__returnlink = Return to pension scheme details
+
+
+messages__workingKnowledge__title = Do you have working knowledge of pensions and pensions tax legislation?
+messages__workingKnowledge__heading = Do you have working knowledge of pensions and pensions tax legislation?
+messages__workingKnowledge__p1 = There needs to be someone with working knowledge of pensions and pensions tax legislation involved with this pension scheme. This could be either you as scheme administrator or a pension practitioner or provider who is helping you.
+messages__workingKnowledge__p2 = For example, if you are an employer, or a director of an employer, who has registered a pension scheme, you might not have working knowledge of pensions and pensions tax legislation.
+messages__workingKnowledge__p3 = If you do not have that knowledge, you must be helped by a pension practitioner or provider who has the knowledge. You will need to tell HMRC who that is.
+messages__workingKnowledge__error__required = Select yes if you have working knowledge of pensions and pensions tax legislation
+
 
 messages__is_dormant__title = Has the establisher been dormant in the last 12 months?
 messages__is_dormant__heading = Have {0} been dormant in the last 12 months?

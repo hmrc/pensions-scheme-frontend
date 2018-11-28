@@ -63,52 +63,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
     }
 
     "send an email when valid data is submitted" which {
-
-      "fetches name and email from cacheConnector when work-package-one-enabled is false" in {
-
-        val mockPsaNameCacheConnector = mock[PSANameCacheConnector]
-
-        lazy val app = new GuiceApplicationBuilder()
-          .configure("features.work-package-one-enabled" -> false)
-          .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
-          .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
-          .overrides(bind[AuthAction].toInstance(FakeAuthAction))
-          .overrides(bind[DataRetrievalAction].toInstance(getEmptyData))
-          .overrides(bind[PensionsSchemeConnector].toInstance(fakePensionsSchemeConnector))
-          .overrides(bind[PSANameCacheConnector].toInstance(mockPsaNameCacheConnector))
-          .build()
-
-        reset(mockEmailConnector)
-
-        when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
-          .thenReturn(Future.successful(EmailSent))
-
-        when(mockPsaNameCacheConnector.fetch(any())(any(), any()))
-          .thenReturn(Future.successful(Some(psaName)))
-
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-
-        whenReady(app.injector.instanceOf[CheckYourAnswersController].onSubmit(postRequest)) { _ =>
-
-          verify(mockEmailConnector, times(1)).sendEmail(
-              eqTo("email@test.com"),
-              eqTo("pods_scheme_register"),
-              eqTo(Map("srn" -> "S12345 67890")),
-              eqTo(psaId)
-            )(any(), any())
-
-          verify(mockPsaNameCacheConnector, times(1)).fetch(any())(any(),any())
-
-        }
-
-      }
-
-      "fetches name and email from Get PSA Minimal Details when work-package-one-enabled is true" in {
+      "fetches name and email from Get PSA Minimal Details" in {
 
         val mockPsaNameCacheConnector = mock[PSANameCacheConnector]
 
         lazy val app = new GuiceApplicationBuilder()
-          .configure("features.work-package-one-enabled" -> true)
           .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
           .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
           .overrides(bind[AuthAction].toInstance(FakeAuthAction))
@@ -139,19 +98,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
         }
       }
 
-    }
-
-    if (!frontendAppConfig.isWorkPackageOneEnabled) {
-      "not send an email if there is no records for user email" in {
-        reset(mockEmailConnector)
-
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-
-        whenReady(controller(emailConnector = mockEmailConnector, psaName = Json.obj("psaName" -> "Test")).onSubmit(postRequest)) {
-          _ =>
-            verify(mockEmailConnector, times(0)).sendEmail(any(), any(), any(), any())(any(), any())
-        }
-      }
     }
 
     "redirect to the next page on a POST request" in {

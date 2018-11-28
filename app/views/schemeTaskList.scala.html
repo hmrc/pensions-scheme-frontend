@@ -14,13 +14,19 @@
  * limitations under the License.
  *@
 
-@(
-messageKey: String,
-href: Call
-)(implicit messages: Messages)
+@import config.FrontendAppConfig
+@import play.api.mvc.Call
+@import uk.gov.hmrc.play.views.html._
+@import views.html._
+@import models.JourneyTaskList
 
-<div class="grid-row">
- <div class="column-two-thirds">
-  <p class="govuk-margin-top-5"><a id="return-link" href="@href">@messages(messageKey)</a></p>
- </div>
-</div>
+@(appConfig: FrontendAppConfig, model: JourneyTaskList)(implicit request: Request[_], messages: Messages)
+
+@main_template(
+    title = messages("messages__schemeTaskList__title"),
+    appConfig = appConfig,
+    bodyClasses = None
+    ) {
+
+        @components.heading(messages("messages__schemeTaskList__heading").toString)
+}
