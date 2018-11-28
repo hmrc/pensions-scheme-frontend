@@ -24,14 +24,14 @@ import views.html.schemeTaskList
 
 class SchemeTaskListViewSpec extends ViewBehaviours {
 
-  private def sectionLink(sectionHeader: String): Link =
-    Link(s"$sectionHeader link", s"$sectionHeader target")
+  private def sectionLink(sectionHeader: String, linkText: String): Link =
+    Link(linkText, s"$sectionHeader link")
 
-  private def genJourneyTaskListSection(header: String, isCompleted: Option[Boolean] = None) =
-    JourneyTaskListSection(isCompleted = isCompleted, link = sectionLink(header), header = Some(header))
+  private def genJourneyTaskListSection(header: String, isCompleted: Option[Boolean] = None, linkText: String) =
+    JourneyTaskListSection(isCompleted = isCompleted, link = sectionLink(header, linkText), header = Some(header))
 
 
-  private val aboutHeader = "about"
+  private val aboutHeader = "messages__schemeTaskList__sectionAbout_header"
   private val establisher1Header = "establisher1"
   private val establisher2Header = "establisher2"
   private val establisher3Header = "establisher3"
@@ -40,26 +40,28 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   private val trustee2Header = "trustee2"
   private val trustee3Header = "trustee3"
 
-  private val workingKnowledgeHeader = "workingknowledge"
+  private val workingKnowledgeHeader = "messages__schemeTaskList__sectionWorkingKnowledge_header"
 
 
-  private val about = genJourneyTaskListSection(header = aboutHeader, isCompleted = Some(true))
+  private val about = genJourneyTaskListSection(header = aboutHeader, isCompleted = Some(true),
+    linkText = "messages__schemeTaskList__sectionAbout_link")
   private val establishers: Seq[JourneyTaskListSection] = Seq(
-    genJourneyTaskListSection(header = establisher1Header, isCompleted = Some(true)),
-    genJourneyTaskListSection(header = establisher2Header, isCompleted = None),
-    genJourneyTaskListSection(header = establisher3Header, isCompleted = Some(false))
+    genJourneyTaskListSection(header = establisher1Header, isCompleted = Some(true), linkText = ""),
+    genJourneyTaskListSection(header = establisher2Header, isCompleted = None, linkText = ""),
+    genJourneyTaskListSection(header = establisher3Header, isCompleted = Some(false), linkText = "")
   )
 
   private val trustees: Seq[JourneyTaskListSection] = Seq(
-    genJourneyTaskListSection(header = trustee1Header, isCompleted = Some(false)),
-    genJourneyTaskListSection(header = trustee2Header, isCompleted = None),
-    genJourneyTaskListSection(header = trustee3Header, isCompleted = Some(true))
+    genJourneyTaskListSection(header = trustee1Header, isCompleted = Some(false), linkText = ""),
+    genJourneyTaskListSection(header = trustee2Header, isCompleted = None, linkText = ""),
+    genJourneyTaskListSection(header = trustee3Header, isCompleted = Some(true), linkText = "")
   )
 
   private val workingKnowledge: JourneyTaskListSection =
-    genJourneyTaskListSection(header = workingKnowledgeHeader, isCompleted = Some(true))
+    genJourneyTaskListSection(header = workingKnowledgeHeader, isCompleted = Some(true),
+      linkText = "messages__schemeTaskList__sectionWorkingKnowledge_link")
 
-  private val declaration: Option[Link] = Some(sectionLink("declaration"))
+  private val declaration: Option[Link] = Some(sectionLink("declaration", linkText = ""))
 
 
   private val journeyTaskList: JourneyTaskList = JourneyTaskList(about, establishers, trustees, workingKnowledge, declaration)
@@ -82,10 +84,10 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
     val completed = journeyTaskList.copy(about = about.copy(isCompleted = Some(true)))
 
     behave like simpleSection(headerId = "section-about-header",
-      headerText = "messages__schemeTaskList__sectionAbout_header",
+      headerText = about.header.getOrElse(""),
       linkId = "section-about-link",
-      linkUrl = about.link.target ,
-      linkText = "messages__schemeTaskList__sectionAbout_link",
+      linkUrl = about.link.target,
+      linkText = about.link.text,
       statusId = "section-about-status",
       notStarted = notStarted,
       inProgress = inProgress,
@@ -99,16 +101,42 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
     val completed = journeyTaskList.copy(workingKnowledge = workingKnowledge.copy(isCompleted = Some(true)))
 
     behave like simpleSection(headerId = "section-workingKnowledge-header",
-      headerText = "messages__schemeTaskList__sectionWorkingKnowledge_header",
+      headerText = workingKnowledge.header.getOrElse(""),
       linkId = "section-workingKnowledge-link",
       linkUrl = workingKnowledge.link.target,
-      linkText = "messages__schemeTaskList__sectionWorkingKnowledge_link",
+      linkText = workingKnowledge.link.text,
       statusId = "section-workingKnowledge-status",
       notStarted = notStarted,
       inProgress = inProgress,
       completed = completed)
   }
 
+  "SchemeTaskListView Declaration section where not complete" should {
+    "display correct heading for the Declaration section" in {
+      val notStarted = journeyTaskList.copy(declaration = None)
+
+      val doc = asDocument(createView(notStarted)())
+      assertRenderedByIdWithText(doc, id = "section-declaration-header", text = messages("messages__schemeTaskList__sectionDeclaration_header"))
+    }
+
+//    "display correct you must complete text for the Declaration section" in {
+//      val notStarted = journeyTaskList.copy(declaration = Some(Link(text="", target="")))
+//
+//      val doc = asDocument(createView(notStarted)())
+//      assertRenderedByIdWithText(doc, id = "section-declaration-header", text = messages("messages__schemeTaskList__sectionDeclaration_header"))
+//    }
+
+
+
+//    "display the correct link" in {
+//      val notStarted = journeyTaskList.copy(declaration = Some(Link(text="", target="")))
+//      createView(notStarted) must haveLinkWithText(
+//        url = linkUrl,
+//        linkText = messages(linkText),
+//        linkId = linkId
+//      )
+//    }
+  }
 
 
   private def simpleSection(headerId:String, headerText:String, linkId: String, linkUrl: String, linkText: String, statusId: String,

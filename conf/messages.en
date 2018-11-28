@@ -1063,6 +1063,10 @@ messages__schemeTaskList__sectionAbout_link = Enter scheme details
 messages__schemeTaskList__sectionWorkingKnowledge_header = Working knowledge of pensions
 messages__schemeTaskList__sectionWorkingKnowledge_link = Add who has working knowledge
 
+messages__schemeTaskList__sectionDeclaration_header = Declaration
+messages__schemeTaskList__sectionDeclaration_link = aa
+messages__schemeTaskList__sectionDeclaration_incomplete = You must complete every section before you can declare.
+
 
 messages__schemeTaskList__completed = Completed
 messages__schemeTaskList__inProgress = In progress
