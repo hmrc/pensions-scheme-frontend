@@ -212,3 +212,72 @@ object DeclarationControllerSpec extends ControllerSpecBase {
   }
 
 }
+
+class DeclarationHsControllerSpec extends ControllerSpecBase {
+  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    Map(
+      "features.allowMasterTrust" -> true,
+      "features.is-hub-enabled" -> true
+    )
+  ).build().injector.instanceOf[FrontendAppConfig]
+
+  private implicit class UserAnswersOps(answers: UserAnswers) {
+    def schemeDetails(): UserAnswers = {
+      answers.set(SchemeDetailsId)(SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)).asOpt.value
+    }
+
+    def individualEstablisher(): UserAnswers = {
+      answers.set(EstablisherDetailsId(0))(PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())).asOpt.value
+    }
+
+    def asDataRetrievalAction(): DataRetrievalAction = {
+      new FakeDataRetrievalAction(Some(answers.json))
+    }
+  }
+
+  private val schemeName = "Test Scheme Name"
+  private val formProvider = new DeclarationFormProvider()
+  private val individual =
+    UserAnswers()
+      .schemeDetails()
+      .individualEstablisher()
+      .set(DeclarationDutiesId)(false)
+      .asOpt
+      .value
+      .asDataRetrievalAction()
+
+  private def viewAsString(form: Form[_] = formProvider(), isCompany: Boolean, isDormant: Boolean,
+                           showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
+    declaration(
+      frontendAppConfig,
+      form,
+      schemeName,
+      isCompany,
+      isDormant,
+      showMasterTrustDeclaration,
+      hasWorkingKnowledge
+    )(fakeRequest, messages).toString
+
+  private def controller(dataRetrievalAction: DataRetrievalAction): DeclarationController =
+    new DeclarationController(
+      frontendAppConfig,
+      messagesApi,
+      FakeUserAnswersCacheConnector,
+      new FakeNavigator(controllers.routes.IndexController.onPageLoad()),
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      formProvider
+    )
+
+  "Declaration Controller with hub and spoke switched on" must {
+    "return OK and the correct view" when {
+      "individual journey" in {
+        val result = controller(individual).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false)
+      }
+    }
+  }
+}
