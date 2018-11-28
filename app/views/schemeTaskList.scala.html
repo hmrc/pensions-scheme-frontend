@@ -29,4 +29,26 @@
     ) {
 
         @components.heading(messages("messages__schemeTaskList__heading").toString)
+
+    <ol class="task-list">
+        <h2 id="section-about-header" class="heading-large">
+            @messages("messages__schemeTaskList__sectionAbout_header")
+        </h2>
+        <li>
+        <li>
+            <ul class="task-list-items">
+                <li class="task-list-item">
+
+                    <a id= "section-about-link" class="task-name" href="/" aria-describedby="read-declaration-completed">
+                        @messages("messages__schemeTaskList__sectionAbout_link")
+                    </a>
+
+
+                    <strong class="task-completed" id="section-about-status">Completed</strong>
+
+                </li>
+            </ul>
+        </li>
+    </ol>
+
 }

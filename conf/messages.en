@@ -1058,3 +1058,7 @@ messages__schemeTaskList__title = Pension scheme details
 messages__schemeTaskList__heading = Pension scheme details
 
 messages__schemeTaskList__sectionAbout_header = About the scheme
+messages__schemeTaskList__sectionAbout_link = Enter scheme details
+
+messages__schemeTaskList__completed = Completed
+

@@ -14,3 +14,44 @@
 @import 'partials/scheme__list';
 
 @import 'location-autocomplete.min';
+
+
+.task-list-items {
+  padding-left: 0px;
+}
+
+.task-inprogress {
+    display: -moz-inline-stack;
+    display: inline-block;
+    margin: 0 8px 0 0;
+    padding: 2px 5px 0;
+    font-family: "nta", Arial, sans-serif;
+    font-weight: 700;
+    text-transform: none;
+    font-size: 19px;
+    line-height: 1.14286;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: #0B0C0C;
+    float: right;
+    margin-right: 0;
+    padding-top: 3px;
+}
+.task-completed {
+    display: -moz-inline-stack;
+    display: inline-block;
+    margin: 0 8px 0 0;
+    padding: 2px 5px 0;
+    font-family: "nta", Arial, sans-serif;
+    font-weight: 700;
+    text-transform: none;
+    font-size: 19px;
+    line-height: 1.14286;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: #fff;
+    background-color: #005ea5;
+    float: right;
+    margin-right: 0;
+    padding-top: 3px;
+}

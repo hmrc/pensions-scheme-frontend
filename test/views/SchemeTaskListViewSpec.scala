@@ -16,6 +16,7 @@
 
 package views
 
+import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
 import views.behaviours.ViewBehaviours
@@ -63,30 +64,51 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
   private val journeyTaskList: JourneyTaskList = JourneyTaskList(about, establishers, trustees, workingKnowledge, declaration)
 
-  private def createView: () => HtmlFormat.Appendable = () => schemeTaskList(frontendAppConfig, journeyTaskList)(fakeRequest, messages)
+  private def createView(journeyTaskList:JourneyTaskList = journeyTaskList): () => HtmlFormat.Appendable = () =>
+    schemeTaskList(frontendAppConfig, journeyTaskList)(fakeRequest, messages)
 
   private val pageHeader = "Pension scheme details"
   private val messageKeyPrefix = "schemeTaskList"
 
   "SchemeTaskListView" should {
 
-    behave like normalPageWithTitle(createView, messageKeyPrefix, pageHeader, pageHeader)
+    behave like normalPageWithTitle(createView(), messageKeyPrefix, pageHeader, pageHeader)
   }
 
   "SchemeTaskListView about section" should {
+
     "display correct details for the about section" in {
-      val doc = asDocument(createView())
-      assertRenderedByIdWithText(doc, id = "section-about-header", text = "aa")
+      val doc = asDocument(createView()())
+      assertRenderedByIdWithText(doc, id = "section-about-header", text = messages("messages__schemeTaskList__sectionAbout_header"))
     }
+
+    "display the correct link" in {
+
+      createView() must haveLinkWithText(
+        url ="/",
+        linkText = messages("messages__schemeTaskList__sectionAbout_link"),
+        linkId ="section-about-link"
+      )
+    }
+
+    "display the correct status if completed" in {
+      val doc = asDocument(createView()())
+      doc.getElementById("section-about-status").text mustBe messages("messages__schemeTaskList__completed")
+    }
+
+    "display nothing if not started" in {
+      val aa = journeyTaskList
+      val journeyTaskList = journeyTaskList copy (
+        about =
+      )
+      val doc = asDocument(createView(journeyTaskList)())
+      doc.getElementById("section-about-status").text mustBe messages("messages__schemeTaskList__completed")
+    }
+
+
   }
 
 
-//  "display the correct link" in {
-//
-//    //      Jsoup.parse(createView().toString()).select("a[id=return]") must
-//    //        haveLink(s"http://localhost:8204/manage-pension-schemes/scheme-details/${srn}")
-//
-//  }
 
 
 }
