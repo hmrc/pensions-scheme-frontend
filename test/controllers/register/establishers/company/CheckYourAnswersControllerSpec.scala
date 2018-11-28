@@ -18,82 +18,31 @@ package controllers.register.establishers.company
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import identifiers.register.establishers.company.IsCompanyCompleteId
-import models.{CheckMode, Index}
-import play.api.mvc.Call
+import identifiers.register.establishers.company._
+import models._
+import models.address.Address
+import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
+import models.requests.DataRequest
+import play.api.mvc.{AnyContent, Call}
 import play.api.test.Helpers._
-import utils.{CheckYourAnswersFactory, CountryOptions, FakeNavigator, FakeSectionComplete, InputOption}
-import viewmodels.{AnswerRow, AnswerSection, Message}
+import utils.checkyouranswers.CheckYourAnswers.ContactDetailsCYA
+import utils.checkyouranswers._
+import utils.{CountryOptions, FakeCountryOptions, FakeNavigator, FakeSectionComplete, UserAnswers, _}
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
-  val countryOptions: CountryOptions = new CountryOptions(Seq(InputOption("GB", "United Kingdom")))
-  val index = Index(0)
-  val testSchemeName = "Test Scheme Name"
-
-  val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
-
-  def postUrl: Call = routes.CheckYourAnswersController.onSubmit(index)
-
-  lazy val answersCD: Seq[AnswerRow] = Seq(
-    AnswerRow(
-      "messages__common__cya__name",
-      Seq("test company name"),
-      false,
-      Some(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url),
-      Message("messages__visuallyhidden__common__name", "test company name")
-    ),
-    AnswerRow(
-      "messages__common__cya__vat",
-      Seq("123456"),
-      false,
-      Some(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url),
-      "messages__visuallyhidden__establisher__vat_number"
-    ),
-    AnswerRow(
-      "messages__company__cya__paye_ern",
-      Seq("abcd"),
-      false,
-      Some(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url),
-      "messages__visuallyhidden__establisher__paye_number"
-    )
-  )
-
-  lazy val answers = Seq(
-    AnswerSection(Some("messages__common__company_details__title"), answersCD),
-    AnswerSection(Some("messages__establisher_company_contact_details__title"), Seq.empty
-    ))
-
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherCompany): CheckYourAnswersController =
-    new CheckYourAnswersController(
-      frontendAppConfig,
-      messagesApi,
-      FakeAuthAction,
-      dataRetrievalAction,
-      new DataRequiredActionImpl,
-      checkYourAnswersFactory,
-      new FakeNavigator(onwardRoute),
-      FakeSectionComplete
-    )
-
-  def viewAsString(): String =
-    check_your_answers(
-      frontendAppConfig,
-      answers,
-      Some(testSchemeName),
-      postUrl
-    )(fakeRequest, messages).toString
+  import CheckYourAnswersControllerSpec._
 
   "CheckYourAnswers Controller" must {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad(index)(fakeRequest)
+    "return OK and the correct view for a GET with all the answers" in {
+      val request = FakeDataRequest(fullAnswers)
+      val result = controller(fullAnswers.dataRetrievalAction).onPageLoad(index)(request)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result) mustBe viewAsString(answerSections(request))
     }
 
     "redirect to Session Expired page for a GET when establisher name is not present" in {
@@ -116,6 +65,125 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       FakeSectionComplete.verify(IsCompanyCompleteId(index), true)
     }
   }
+
+}
+
+object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable.Implicits {
+
+  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+
+  private implicit val fakeCountryOptions: CountryOptions = new FakeCountryOptions
+  val index = Index(0)
+  val testSchemeName = "Test Scheme Name"
+  private val companyDetails = CompanyDetails("test company", Some("vat"), Some("paye"))
+  private val companyRegNoYes = CompanyRegistrationNumber.Yes("crn")
+  private val utrYes = UniqueTaxReference.Yes("utr")
+  private val address = Address("address-1-line-1", "address-1-line-2", None, None, Some("post-code-1"), "country-1")
+  private val addressYears = AddressYears.UnderAYear
+  private val previousAddress = Address("address-2-line-1", "address-2-line-2", None, None, Some("post-code-2"), "country-2")
+  private val contactDetails = ContactDetails("test@test.com", "1234")
+
+  private val emptyAnswers = UserAnswers()
+    .schemeDetails(SchemeDetails(testSchemeName, SchemeType.BodyCorporate))
+  private val companyRegistrationNumberRoute = routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, 0).url
+  private val companyUniqueTaxReferenceRoute = routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, 0).url
+  private val companyDetailsRoute = routes.CompanyDetailsController.onPageLoad(CheckMode, 0).url
+  private val isCompanyDormantRoute = routes.IsCompanyDormantController.onPageLoad(CheckMode, 0).url
+  private val companyAddressRoute = routes.CompanyAddressController.onPageLoad(CheckMode, Index(index)).url
+  private val companyAddressYearsRoute = routes.CompanyAddressYearsController.onPageLoad(CheckMode, Index(index)).url
+  private val companyPreviousAddressRoute = routes.CompanyPreviousAddressController.onPageLoad(CheckMode, Index(index)).url
+  private val companyContactDetailsRoute = routes.CompanyContactDetailsController.onPageLoad(CheckMode, Index(index)).url
+
+  private val fullAnswers = emptyAnswers.
+    establisherCompanyDetails(0, companyDetails).
+    establisherCompanyRegistrationNumber(0, companyRegNoYes).
+    establisherUniqueTaxReference(0, utrYes).
+    establisherCompanyDormant(0, DeclarationDormant.Yes).
+    establishersCompanyAddress(0, address).
+    establisherCompanyAddressYears(0, addressYears).
+    establishersCompanyPreviousAddress(0, previousAddress).
+    establishersCompanyContactDetails(0, contactDetails)
+
+  def postUrl: Call = routes.CheckYourAnswersController.onSubmit(index)
+
+  private def companyDetailsSection(implicit request: DataRequest[AnyContent]): AnswerSection = {
+    val companyDetailsRow = CompanyDetailsCYA(
+      nameLabel = "messages__common__cya__name",
+      vatLabel = "messages__common__cya__vat",
+      changeVat = "messages__visuallyhidden__establisher__vat_number",
+      payeLabel = "messages__common__cya__paye",
+      changePaye = "messages__visuallyhidden__establisher__paye_number")().row(CompanyDetailsId(index))(companyDetailsRoute, request.userAnswers)
+
+    val crnRows = CompanyRegistrationNumberCYA[CompanyRegistrationNumberId](
+      label = "messages__company__cya__crn_yes_no",
+      changeHasCrn = "messages__visuallyhidden__establisher__crn_yes_no",
+      changeCrn = "messages__visuallyhidden__establisher__crn",
+      changeNoCrn = "messages__visuallyhidden__establisher__crn_no"
+    )().row(CompanyRegistrationNumberId(index))(companyRegistrationNumberRoute, request.userAnswers)
+
+    val utrRows = UniqueTaxReferenceCYA(
+      label = "messages__company__cya__utr_yes_no",
+      utrLabel = "messages__company__cya__utr",
+      reasonLabel = "messages__company__cya__utr_no_reason",
+      changeHasUtr = "messages__visuallyhidden__establisher__utr_yes_no",
+      changeUtr = "messages__visuallyhidden__establisher__utr",
+      changeNoUtr = "messages__visuallyhidden__establisher__utr_no"
+    )().row(CompanyUniqueTaxReferenceId(index))(companyUniqueTaxReferenceRoute, request.userAnswers)
+
+    val isDormantRows = IsDormantCYA()().row(IsCompanyDormantId(index))(isCompanyDormantRoute, request.userAnswers)
+
+    AnswerSection(
+      Some("messages__common__company_details__title"),
+      companyDetailsRow ++ crnRows ++ utrRows ++ isDormantRows)
+  }
+
+  private def companyContactDetailsSection(implicit request: DataRequest[AnyContent]): AnswerSection = {
+
+    val addressRows = AddressCYA(
+      changeAddress = "messages__visuallyhidden__establisher__address")().row(
+      CompanyAddressId(index))(companyAddressRoute, request.userAnswers)
+
+    val addressYearsRows = AddressYearsCYA(label = "companyAddressYears.checkYourAnswersLabel",
+      changeAddressYears = "messages__visuallyhidden__establisher__address_years")().row(CompanyAddressYearsId(index))(
+      companyAddressYearsRoute, request.userAnswers
+    )
+
+    val previousAddressRows = AddressCYA(
+      label = "messages__common__cya__previous_address",
+      changeAddress = "messages__visuallyhidden__establisher__previous_address"
+    )().row(CompanyPreviousAddressId(index))(companyPreviousAddressRoute, request.userAnswers)
+
+    val contactDetailsRows = ContactDetailsCYA(
+      changeEmailAddress = "messages__visuallyhidden__establisher__email_address",
+      changePhoneNumber = "messages__visuallyhidden__establisher__phone_number"
+    )().row(CompanyContactDetailsId(index))(companyContactDetailsRoute, request.userAnswers)
+
+    AnswerSection(
+      Some("messages__establisher_company_contact_details__title"),
+      addressRows ++ addressYearsRows ++ previousAddressRows ++ contactDetailsRows)
+  }
+
+  private def answerSections(implicit request: DataRequest[AnyContent]) = Seq(companyDetailsSection, companyContactDetailsSection)
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
+    new CheckYourAnswersController(
+      frontendAppConfig,
+      messagesApi,
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl,
+      fakeCountryOptions,
+      new FakeNavigator(onwardRoute),
+      FakeSectionComplete
+    )
+
+  def viewAsString(answerSections: Seq[AnswerSection]): String =
+    check_your_answers(
+      frontendAppConfig,
+      answerSections,
+      Some(testSchemeName),
+      postUrl
+    )(fakeRequest, messages).toString
 
 }
 

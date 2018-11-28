@@ -434,6 +434,7 @@ messages__company__cya__crn_no_reason = Why the scheme establisher does not have
 messages__company__cya__utr_yes_no = Does the scheme establisher have a Unique Taxpayer Reference number?
 messages__company__cya__utr = UTR
 messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number
+messages__company__cya__dormant = Has the establisher been dormant in the last 12 months?
 messages__company__paye_error_length = The PAYE number cannot be more than 13 characters
 messages__company__paye_error_invalid = Enter a valid PAYE number
 
@@ -809,6 +810,7 @@ messages__partnership__checkYourAnswers__vat = Does the partnership have a VAT r
 messages__partnership__checkYourAnswers__paye = Does the partnership have a PAYE employer reference number?
 messages__partnership__checkYourAnswers__utr = Does the partnership have a Self Assessment Unique Taxpayer Reference number?
 messages__partnership__checkYourAnswers__addressYears = How long has the partnership been at this address?
+messages__partnership__checkYourAnswers__isDormant = Has the partnership been dormant in the last 12 months?
 
 messages__partnershipPaye__title = Does the partnership have a PAYE employer reference number?
 messages__partnershipPaye__heading = Does the partnership have a PAYE employer reference number?
@@ -981,6 +983,7 @@ messages__visuallyhidden__establisher__address_years = Change how long the estab
 messages__visuallyhidden__establisher__previous_address = Change the establisher’s previous address
 messages__visuallyhidden__establisher__email_address = Change the establisher’s email address
 messages__visuallyhidden__establisher__phone_number = Change the establisher’s phone number
+messages__visuallyhidden__establisher__dormant = Change whether the establisher been dormant in the last 12 months
 
 messages__visuallyhidden__director__nino_yes_no = Change whether the director has a National Insurance number
 messages__visuallyhidden__director__nino_no = Change why the director does not have a National Insurance number
@@ -1006,6 +1009,7 @@ messages__visuallyhidden__partnership__address_years = Change how long the partn
 messages__visuallyhidden__partnership__previous_address = Change the partnership’s previous address
 messages__visuallyhidden__partnership__email_address = Change the partnership’s email address
 messages__visuallyhidden__partnership__phone_number = Change the partnership’s phone number
+messages__visuallyhidden__partnership__dormant = Change whether the partnership been dormant in the last 12 months
 
 messages__visuallyhidden__partner__nino_yes_no = Change whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = Change why the partner does not have a National Insurance number

@@ -55,13 +55,12 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
       NavigateTo.save(routes.PartnershipContactDetailsController.onPageLoad(NormalMode, index))
     case PartnershipContactDetailsId(index) =>
       if(appConfig.isHubEnabled){
-        //TODO- Put dormant url
-        NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
+        NavigateTo.save(controllers.register.establishers.partnership.routes.IsPartnershipDormantController.onPageLoad(NormalMode, index))
       } else {
         NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
       }
     case IsPartnershipDormantId(index) =>
-      NavigateTo.save(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index))
+      NavigateTo.save(controllers.register.establishers.partnership.routes.CheckYourAnswersController.onPageLoad(index))
     case CheckYourAnswersId(index) =>
       NavigateTo.save(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(index))
     case OtherPartnersId(index) =>
@@ -96,6 +95,8 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case PartnershipPreviousAddressId(index) =>
       checkYourAnswers(index, from.userAnswers)
     case PartnershipContactDetailsId(index) =>
+      checkYourAnswers(index, from.userAnswers)
+    case IsPartnershipDormantId(index) =>
       checkYourAnswers(index, from.userAnswers)
     case OtherPartnersId(index) =>
       NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(index))

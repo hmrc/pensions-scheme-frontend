@@ -25,6 +25,7 @@ import utils.{Navigator, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
 class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {
       case CompanyDetailsId(index) =>
@@ -49,12 +50,11 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.save(controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index))
       case CompanyContactDetailsId(index) =>
         if(appConfig.isHubEnabled){
-          //TODO- Put dormant url
-          NavigateTo.save(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index))
+          NavigateTo.save(controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(NormalMode, index))
         } else {
           NavigateTo.save(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index))
         }
-      case IsDormantId(index) =>
+      case IsCompanyDormantId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index))
       case AddCompanyDirectorsId(index) =>
         addDirectors(NormalMode, index, from.userAnswers)
@@ -90,6 +90,8 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyPreviousAddressId(index) =>
         checkYourAnswers(index, from.userAnswers)
       case CompanyContactDetailsId(index) =>
+        checkYourAnswers(index, from.userAnswers)
+      case IsCompanyDormantId(index) =>
         checkYourAnswers(index, from.userAnswers)
       case AddCompanyDirectorsId(index) =>
         addDirectors(CheckMode, index, from.userAnswers)

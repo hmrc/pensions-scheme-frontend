@@ -20,11 +20,22 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
 import models.register.DeclarationDormant
 import play.api.libs.json.JsPath
+import utils.Enumerable
+import utils.checkyouranswers.{CheckYourAnswers, IsDormantCYA}
 
 case class IsPartnershipDormantId(index: Int) extends TypedIdentifier[DeclarationDormant] {
   override def path: JsPath = EstablishersId(index).path \ IsPartnershipDormantId.toString
 }
 
-object IsPartnershipDormantId {
+object IsPartnershipDormantId extends Enumerable.Implicits {
   override def toString: String = "isPartnershipDormant"
+
+  implicit val cya: CheckYourAnswers[IsPartnershipDormantId] =
+    IsDormantCYA(
+      label = "messages__partnership__checkYourAnswers__isDormant",
+      changeIsDormant = "messages__visuallyhidden__partnership__dormant"
+    )()
 }
+
+
+

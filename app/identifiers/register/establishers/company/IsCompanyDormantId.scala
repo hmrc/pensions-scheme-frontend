@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers
+package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
 import models.register.DeclarationDormant
 import play.api.libs.json.JsPath
 
-case class IsDormantId(index: Int) extends TypedIdentifier[DeclarationDormant] {
-  override def path: JsPath = EstablishersId(index).path \ IsDormantId.toString
+case class IsCompanyDormantId(index: Int) extends TypedIdentifier[DeclarationDormant] {
+  override def path: JsPath = EstablishersId(index).path \ IsCompanyDormantId.toString
 }
 
-object IsDormantId {
-  override def toString: String = "isDormant"
+object IsCompanyDormantId {
+  override def toString: String = "isCompanyDormant"
 }
+
