@@ -161,8 +161,11 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   }
 
   private def checkYourAnswersRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
-    NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
-
+    if (appConfig.isHubEnabled) {
+      NavigateTo.save(controllers.routes.SchemeTaskListController.onPageLoad())
+    } else {
+      NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
+    }
   }
 
 }
