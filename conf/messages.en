@@ -174,6 +174,9 @@ messages__scheme_details__type_other_hint = For example, deed poll trust.
 messages__scheme_details__type_other_more = Details of the scheme type
 messages__error__scheme_name = Enter the name of the scheme
 messages__error__scheme_type_information = Enter more information about the scheme
+messages__scheme_name__title = What is the name of the scheme?
+messages__scheme_name__heading = What is the name of the scheme?
+
 
 messages__error__scheme_name_length = The scheme name cannot be more than 160 characters
 messages__error__scheme_name_invalid = The scheme name contains invalid characters
@@ -1061,3 +1064,12 @@ messages__visuallyhidden__adviser__address = Change the adviser’s address
 
 messages__schemeTaskList__title = Pension scheme details
 messages__schemeTaskList__heading = Pension scheme details
+messages__schemeTaskList__returnlink = Return to pension scheme details
+
+
+messages__workingKnowledge__title = Do you have working knowledge of pensions and pensions tax legislation?
+messages__workingKnowledge__heading = Do you have working knowledge of pensions and pensions tax legislation?
+messages__workingKnowledge__p1 = There needs to be someone with working knowledge of pensions and pensions tax legislation involved with this pension scheme. This could be either you as scheme administrator or a pension practitioner or provider who is helping you.
+messages__workingKnowledge__p2 = For example, if you are an employer, or a director of an employer, who has registered a pension scheme, you might not have working knowledge of pensions and pensions tax legislation.
+messages__workingKnowledge__p3 = If you do not have that knowledge, you must be helped by a pension practitioner or provider who has the knowledge. You will need to tell HMRC who that is.
+messages__workingKnowledge__error__required = Select yes if you have working knowledge of pensions and pensions tax legislation

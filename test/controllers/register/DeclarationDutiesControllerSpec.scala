@@ -121,54 +121,13 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
     }
 
     "send an email when valid data is submitted" which {
-      "fetches from cacheConnector when work-package-one-enabled is false" in {
+      "fetches from Get PSA Minimal Details" in {
 
         val mockPSANameCacheConnector = mock[PSANameCacheConnector]
 
         reset(mockEmailConnector)
 
         lazy val app = new GuiceApplicationBuilder()
-          .configure("features.work-package-one-enabled" -> false)
-          .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
-          .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
-          .overrides(bind[AuthAction].toInstance(FakeAuthAction))
-          .overrides(bind[PSANameCacheConnector].toInstance(mockPSANameCacheConnector))
-          .overrides(bind[DataRetrievalAction].toInstance(getMandatorySchemeName))
-          .overrides(bind[PensionsSchemeConnector].toInstance(fakePensionsSchemeConnector))
-          .overrides(bind[PensionAdministratorConnector].toInstance(fakePensionAdminstratorConnector))
-          .build()
-
-        when(mockPSANameCacheConnector.fetch(any())(any(), any()))
-            .thenReturn(Future.successful(Some(Json.obj("psaName" -> "Test",
-              "psaEmail" -> "email@test.com"))))
-
-        when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
-          .thenReturn(Future.successful(EmailSent))
-
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-
-        whenReady(app.injector.instanceOf[DeclarationDutiesController].onSubmit(postRequest)) { _ =>
-
-          verify(mockEmailConnector, times(1)).sendEmail(
-            eqTo("email@test.com"),
-            eqTo("pods_scheme_register"),
-            eqTo(Map("srn" -> "S12345 67890")),
-            eqTo(psaId)
-          )(any(), any())
-
-          verify(mockPSANameCacheConnector, times(1)).fetch(any())(any(),any())
-
-        }
-      }
-
-      "fetches from Get PSA Minimal Details when work-package-one-enabled is true" in {
-
-        val mockPSANameCacheConnector = mock[PSANameCacheConnector]
-
-        reset(mockEmailConnector)
-
-        lazy val app = new GuiceApplicationBuilder()
-          .configure("features.work-package-one-enabled" -> true)
           .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
           .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
           .overrides(bind[AuthAction].toInstance(FakeAuthAction))
