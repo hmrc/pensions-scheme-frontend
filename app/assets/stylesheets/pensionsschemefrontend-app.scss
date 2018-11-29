@@ -70,12 +70,6 @@ $task-list-indent: 35px;
   }
 }
 
-@media (min-width: 641px) {
-  .task-list-items {
-    padding-left: 35px;
-  }
-}
-
 .task-list-item {
   border-bottom: 1px solid #bfc1c3;
   padding-top: 10px;

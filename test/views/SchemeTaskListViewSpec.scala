@@ -20,6 +20,9 @@ import play.twirl.api.HtmlFormat
 import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
 import views.behaviours.ViewBehaviours
 import views.html.schemeTaskList
+import controllers.register.establishers.routes._
+import controllers.register.trustees.routes._
+import models.NormalMode
 
 class SchemeTaskListViewSpec extends ViewBehaviours {
 
@@ -103,7 +106,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
       "display the correct link" in {
 
         view must haveLinkWithText(
-          url = "/",
+          url = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url,
           linkText = messages("messages__schemeTaskList__sectionEstablishers_add_link"),
           linkId = "section-establishers-add-link"
         )
@@ -117,7 +120,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
       "display the correct link" in {
 
         view must haveLinkWithText(
-          url = "/",
+          url = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url,
           linkText = messages("messages__schemeTaskList__sectionEstablishers_change_link"),
           linkId = "section-establishers-change-link"
         )
@@ -128,7 +131,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
         s"display the first establisher section with correct link and status for item no $index" in {
 
           view must haveLinkWithText(
-            url = "/",
+            url = journeyTaskList.establishers(index.toInt-1).link.target,
             linkText = journeyTaskList.establishers(index.toInt-1).link.text,
             linkId = s"section-establishers-link-$index"
           )
@@ -159,9 +162,8 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
       }
 
       "display the correct link" in {
-
         view must haveLinkWithText(
-          url = "/",
+          url = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url,
           linkText = messages("messages__schemeTaskList__sectionTrustees_add_link"),
           linkId = "section-trustees-add-link"
         )
@@ -175,7 +177,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
       "display the correct link" in {
 
         view must haveLinkWithText(
-          url = "/",
+          url = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url,
           linkText = messages("messages__schemeTaskList__sectionTrustees_change_link"),
           linkId = "section-trustees-change-link"
         )
@@ -186,7 +188,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
         s"display the first establisher section with correct link and status for item no $index" in {
 
           view must haveLinkWithText(
-            url = "/",
+            url = journeyTaskList.trustees(index.toInt-1).link.target,
             linkText = journeyTaskList.trustees(index.toInt-1).link.text,
             linkId = s"section-trustees-link-$index"
           )
