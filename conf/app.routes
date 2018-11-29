@@ -29,4 +29,3 @@ POST       /user-research-details                       controllers.UserResearch
 
 GET        /scheme-details/:srn                         controllers.PSASchemeDetailsController.onPageLoad(srn: String)
 
-GET        /scheme-details                              controllers.SchemeTaskListController.onPageLoad
