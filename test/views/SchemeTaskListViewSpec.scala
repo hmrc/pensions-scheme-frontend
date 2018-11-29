@@ -83,7 +83,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
     val completed = journeyTaskList.copy(about = about.copy(isCompleted = Some(true)))
 
     behave like simpleSection(headerId = "section-about-header",
-      headerText = about.header.getOrElse(""),
+      headerText = "messages__schemeTaskList__sectionAbout_header",
       linkId = "section-about-link",
       linkUrl = about.link.target,
       linkText = about.link.text,
@@ -100,7 +100,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
     val completed = journeyTaskList.copy(workingKnowledge = workingKnowledge.copy(isCompleted = Some(true)))
 
     behave like simpleSection(headerId = "section-workingKnowledge-header",
-      headerText = workingKnowledge.header.getOrElse(""),
+      headerText = "messages__schemeTaskList__sectionWorkingKnowledge_header",
       linkId = "section-workingKnowledge-link",
       linkUrl = workingKnowledge.link.target,
       linkText = workingKnowledge.link.text,
