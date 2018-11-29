@@ -22,7 +22,7 @@ case class JourneyTaskList(about: JourneyTaskListSection,
                            establishers: Seq[JourneyTaskListSection],
                            trustees: Seq[JourneyTaskListSection],
                            workingKnowledge: JourneyTaskListSection,
-                           declaration: Option[Link] = None){
+                           declaration: JourneyTaskListDeclarationSection){
 
 }
 
@@ -31,6 +31,12 @@ object JourneyTaskList {
 }
 
 case class JourneyTaskListSection(isCompleted: Option[Boolean] = None, link: Link, header: Option[String] = None)
+
+case class JourneyTaskListDeclarationSection(link: Option[Link], header: Option[String] = None)
+
+object JourneyTaskListDeclarationSection {
+  implicit val formats: OFormat[JourneyTaskListDeclarationSection] = Json.format[JourneyTaskListDeclarationSection]
+}
 
 case class Link(text: String, target: String)
 

@@ -19,15 +19,16 @@ package controllers
 import controllers.actions._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
+import viewmodels.{JourneyTaskList, JourneyTaskListDeclarationSection, JourneyTaskListSection, Link}
 import views.html.schemeTaskList
 
 class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
+  val dclSection = JourneyTaskListDeclarationSection(None, None)
   val jtlSection = JourneyTaskListSection(None, Link("linkText", "linkTarget"), None)
-  val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, None)
+  val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, dclSection)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeTaskListController =
     new SchemeTaskListController(
