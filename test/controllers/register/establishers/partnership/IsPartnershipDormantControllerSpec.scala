@@ -21,11 +21,10 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.IsDormantFormProvider
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.partnership.PartnershipDetailsId
-import identifiers.register.establishers.{EstablishersId, IsDormantId}
-import models.register.DeclarationDormant
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId}
 import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
-import models.{PartnershipDetails, NormalMode}
+import models.{NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json._
 import play.api.mvc.Call
@@ -63,7 +62,7 @@ class IsPartnershipDormantControllerSpec extends ControllerSpecBase {
         Json.obj(
           PartnershipDetailsId.toString ->
             PartnershipDetails("test partnership name", false),
-          IsDormantId.toString -> DeclarationDormant.values.head.toString
+          IsPartnershipDormantId.toString -> DeclarationDormant.values.head.toString
         )
       )
     )

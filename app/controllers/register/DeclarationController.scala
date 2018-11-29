@@ -70,6 +70,7 @@ class DeclarationController @Inject()(
   private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
     SchemeDetailsId.retrieve.right.map { details =>
       val isCompany = request.userAnswers.hasCompanies
+
       request.userAnswers.get(DeclarationDormantId) match {
         case Some(Yes) => Future.successful(
           status(

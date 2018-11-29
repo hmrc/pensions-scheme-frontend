@@ -21,9 +21,8 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.IsDormantFormProvider
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.{EstablishersId, IsDormantId}
-import models.register.DeclarationDormant
+import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
 import models.{CompanyDetails, NormalMode}
 import play.api.data.Form
@@ -63,7 +62,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
         Json.obj(
           CompanyDetailsId.toString ->
             CompanyDetails("test company name", Some("123456"), Some("abcd")),
-          IsDormantId.toString -> DeclarationDormant.values.head.toString
+          IsCompanyDormantId.toString -> DeclarationDormant.values.head.toString
         )
       )
     )
