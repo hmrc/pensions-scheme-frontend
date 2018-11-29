@@ -74,6 +74,10 @@ package object utils {
       answers.set(establishers.company.CompanyDetailsId(index))(companyDetails).asOpt.value
     }
 
+    def establisherPartnershipDetails(index: Int, partnershipDetails: PartnershipDetails): UserAnswers = {
+      answers.set(establishers.partnership.PartnershipDetailsId(index))(partnershipDetails).asOpt.value
+    }
+
     def establishersCompanyAddress(index: Int, address: Address): UserAnswers = {
       answers.set(establishers.company.CompanyAddressId(index))(address).asOpt.value
     }

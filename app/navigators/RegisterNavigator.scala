@@ -141,6 +141,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   }
 
   private def schemeReviewRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
+    println("\n\n\n userAnswers.hasCompanies : "+userAnswers.hasCompanies)
     if (userAnswers.hasCompanies) {
       NavigateTo.save(controllers.register.routes.DeclarationDormantController.onPageLoad())
     }
