@@ -78,8 +78,15 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
       completed = completed)
   }
 
-  "SchemeTaskListView Working knowledge of pensions section" should {
+  "SchemeTaskListView Establishers section" should {
 
+  }
+
+  "SchemeTaskListView Trustees section" should {
+
+  }
+
+  "SchemeTaskListView Working knowledge of pensions section" should {
     val notStarted = journeyTaskList.copy(workingKnowledge = workingKnowledge.copy(isCompleted = None))
     val inProgress = journeyTaskList.copy(workingKnowledge = workingKnowledge.copy(isCompleted = Some(false)))
     val completed = journeyTaskList.copy(workingKnowledge = workingKnowledge.copy(isCompleted = Some(true)))
@@ -117,26 +124,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
         linkId = "section-declaration-link"
       )
     }
-
-//    "display correct you must complete text for the Declaration section" in {
-//      val notStarted = journeyTaskList.copy(declaration = Some(Link(text="", target="")))
-//
-//      val doc = asDocument(createView(notStarted)())
-//      assertRenderedByIdWithText(doc, id = "section-declaration-header", text = messages("messages__schemeTaskList__sectionDeclaration_header"))
-//    }
-
-
-
-//    "display the correct link" in {
-//      val notStarted = journeyTaskList.copy(declaration = Some(Link(text="", target="")))
-//      createView(notStarted) must haveLinkWithText(
-//        url = linkUrl,
-//        linkText = messages(linkText),
-//        linkId = linkId
-//      )
-//    }
   }
-
 
   private def simpleSection(headerId:String, headerText:String, linkId: String, linkUrl: String, linkText: String, statusId: String,
                             notStarted: JourneyTaskList,  inProgress: JourneyTaskList,  completed: JourneyTaskList) {
