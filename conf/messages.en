@@ -121,6 +121,7 @@ site.agree_and_continue = Agree and continue
 site.go_back = Go back
 site.signOut = Sign out
 site.printThisPage = Print this page
+site.return.tasklist = Return to pension scheme details
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -1070,3 +1071,10 @@ messages__workingKnowledge__p1 = There needs to be someone with working knowledg
 messages__workingKnowledge__p2 = For example, if you are an employer, or a director of an employer, who has registered a pension scheme, you might not have working knowledge of pensions and pensions tax legislation.
 messages__workingKnowledge__p3 = If you do not have that knowledge, you must be helped by a pension practitioner or provider who has the knowledge. You will need to tell HMRC who that is.
 messages__workingKnowledge__error__required = Select yes if you have working knowledge of pensions and pensions tax legislation
+
+
+messages__is_dormant__title = Has the establisher been dormant in the last 12 months?
+messages__is_dormant__heading = Have {0} been dormant in the last 12 months?
+messages__is_dormant__yes = Yes
+messages__is_dormant__no = No
+messages__is_dormant__error = Select yes if the establisher has been dormant in the last 12 months

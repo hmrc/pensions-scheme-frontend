@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package forms.register
+package forms.register.establishers
 
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.behaviours.FormBehaviours
 import models.register.DeclarationDormant
 import models.{Field, Invalid, Required}
+import play.api.inject.Injector
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.inject.{Injector, bind}
 
-class DeclarationDormantFormProviderSpec extends FormBehaviours {
-
+class IsDormantFormProviderSpec extends FormBehaviours {
 
   lazy val app = new GuiceApplicationBuilder()
     .configure("features.isHubEnabled" -> true)
@@ -38,16 +37,16 @@ class DeclarationDormantFormProviderSpec extends FormBehaviours {
     "value" -> DeclarationDormant.options(frontendAppConfig).head.value
   )
 
-  val form = new DeclarationDormantFormProvider()()
+  val form = new IsDormantFormProvider()()
 
-  "DeclarationDormant form" must {
+  "IsDormant form" must {
 
     behave like questionForm[DeclarationDormant](DeclarationDormant.values.head)
 
     behave like formWithOptionField(
       Field(
         "value",
-        Required -> "messages__declarationDormant__error__required",
+        Required -> "messages__is_dormant__error",
         Invalid -> "error.invalid"),
       DeclarationDormant.options(frontendAppConfig).map(_.value): _*)
   }
