@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
 import identifiers.register.establishers.EstablishersId
@@ -27,6 +28,7 @@ import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -38,38 +40,51 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   import EstablishersCompanyNavigatorSpec._
 
-  private def routesWithNoRestrictedEstablishers: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (CompanyDetailsId(0), emptyAnswers, companyRegistrationNumber(NormalMode), true, Some(checkYourAnswers), true),
-    (CompanyRegistrationNumberId(0), emptyAnswers, companyUTR(NormalMode), true, Some(checkYourAnswers), true),
-    (CompanyUniqueTaxReferenceId(0), emptyAnswers, companyPostCodeLookup(NormalMode), true, Some(checkYourAnswers), true),
-    (CompanyPostCodeLookupId(0), emptyAnswers, companyAddressList(NormalMode), true, Some(companyAddressList(CheckMode)), true),
-    (CompanyAddressListId(0), emptyAnswers, companyManualAddress(NormalMode), true, Some(companyManualAddress(CheckMode)), true),
-    (CompanyAddressId(0), emptyAnswers, companyAddressYears(NormalMode), true, Some(checkYourAnswers), true),
-    (CompanyAddressYearsId(0), addressYearsOverAYear, companyContactDetails, true, Some(checkYourAnswers), true),
-    (CompanyAddressYearsId(0), addressYearsUnderAYear, prevAddPostCodeLookup(NormalMode), true, Some(prevAddPostCodeLookup(CheckMode)), true),
-    (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (CompanyPreviousAddressPostcodeLookupId(0), emptyAnswers, companyPaList(NormalMode), true, Some(companyPaList(CheckMode)), true),
-    (CompanyPreviousAddressListId(0), emptyAnswers, companyPreviousAddress(NormalMode), true, Some(companyPreviousAddress(CheckMode)), true),
-    (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails, true, Some(checkYourAnswers), true),
-    (CompanyContactDetailsId(0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
-    (AddCompanyDirectorsId(0), emptyAnswers, directorDetails(0, NormalMode), true, Some(directorDetails(0, CheckMode)), true),
-    (AddCompanyDirectorsId(0), addCompanyDirectorsTrue, directorDetails(1, NormalMode), true, Some(directorDetails(1, CheckMode)), true),
-    (AddCompanyDirectorsId(0), addCompanyDirectorsFalse, companyReview, true, Some(companyReview), true),
-    (AddCompanyDirectorsId(0), addOneCompanyDirectors, sessionExpired, false, Some(sessionExpired), false),
-    (AddCompanyDirectorsId(0), addCompanyDirectorsMoreThan10, otherDirectors(NormalMode), true, Some(otherDirectors(CheckMode)), true),
-    (OtherDirectorsId(0), emptyAnswers, companyReview, true, Some(companyReview), true),
-    (CompanyReviewId(0), emptyAnswers, addEstablisher, true, None, false),
-    (CheckYourAnswersId(0), emptyAnswers, addCompanyDirectors(0, NormalMode), true, None, false)
+  private def routesWithHubEnabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",                "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
+    (CompanyDetailsId(0),                         emptyAnswers,                     companyRegistrationNumber(NormalMode),    true,           Some(checkYourAnswers),                   true),
+    (CompanyRegistrationNumberId(0),              emptyAnswers,                     companyUTR(NormalMode),                   true,           Some(checkYourAnswers),                   true),
+    (CompanyUniqueTaxReferenceId(0),              emptyAnswers,                     companyPostCodeLookup(NormalMode),        true,           Some(checkYourAnswers),                   true),
+    (CompanyPostCodeLookupId(0),                  emptyAnswers,                     companyAddressList(NormalMode),           true,           Some(companyAddressList(CheckMode)),      true),
+    (CompanyAddressListId(0),                     emptyAnswers,                     companyManualAddress(NormalMode),         true,           Some(companyManualAddress(CheckMode)),    true),
+    (CompanyAddressId(0),                         emptyAnswers,                     companyAddressYears(NormalMode),          true,           Some(checkYourAnswers),                   true),
+    (CompanyAddressYearsId(0),                    addressYearsOverAYear,            companyContactDetails,                    true,           Some(checkYourAnswers),                   true),
+    (CompanyAddressYearsId(0),                    addressYearsUnderAYear,           prevAddPostCodeLookup(NormalMode),        true,           Some(prevAddPostCodeLookup(CheckMode)),   true),
+    (CompanyAddressYearsId(0),                    emptyAnswers,                     sessionExpired,                           false,          Some(sessionExpired),                     false),
+    (CompanyPreviousAddressPostcodeLookupId(0),   emptyAnswers,                     companyPaList(NormalMode),                true,           Some(companyPaList(CheckMode)),           true),
+    (CompanyPreviousAddressListId(0),             emptyAnswers,                     companyPreviousAddress(NormalMode),       true,           Some(companyPreviousAddress(CheckMode)),  true),
+    (CompanyPreviousAddressId(0),                 emptyAnswers,                     companyContactDetails,                    true,           Some(checkYourAnswers),                   true),
+    (CompanyContactDetailsId(0),                  emptyAnswers,                     isDormant(NormalMode),                    true,           Some(checkYourAnswers),                   true),
+    (IsCompanyDormantId(0),                       emptyAnswers,                     checkYourAnswers,                         true,           Some(checkYourAnswers),                   true),
+    (AddCompanyDirectorsId(0),                    emptyAnswers,                     directorDetails(0, NormalMode),    true,           Some(directorDetails(0, CheckMode)), true),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsTrue,          directorDetails(1, NormalMode),    true,           Some(directorDetails(1, CheckMode)), true),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsFalse,         companyReview,                            true,           Some(companyReview),                       true),
+    (AddCompanyDirectorsId(0),                    addOneCompanyDirectors,           sessionExpired,                           false,          Some(sessionExpired),                      false),
+    (AddCompanyDirectorsId(0),                    addCompanyDirectorsMoreThan10,    otherDirectors(NormalMode),               true,           Some(otherDirectors(CheckMode)),           true),
+    (OtherDirectorsId(0),                         emptyAnswers,                     companyReview,                            true,           Some(companyReview),                       true),
+    (CompanyReviewId(0),                          emptyAnswers,                     addEstablisher,                           true,           None,                                      false),
+    (CheckYourAnswersId(0),                       emptyAnswers,                     addCompanyDirectors(0, NormalMode),true,           None,                                      false)
   )
 
-  "EstablishersCompanyNavigator when restrict-establisher toggle is off" must {
+  private def routesWithHubDisabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",                "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
+    (CompanyContactDetailsId(0),                  emptyAnswers,                     checkYourAnswers,                         true,           Some(checkYourAnswers),                   true)
+  )
+
+  def navigator(isHubEnabled: Boolean = true): EstablishersCompanyNavigator =
+    new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled))
+
+  s"${navigator().getClass.getSimpleName} when isHubEnabled toggle is on" must {
     appRunning()
-    val navigator = new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithNoRestrictedEstablishers, dataDescriber)
-    behave like nonMatchingNavigator(navigator)
+    behave like navigatorWithRoutes(navigator(), FakeUserAnswersCacheConnector, routesWithHubEnabled, dataDescriber)
+    behave like nonMatchingNavigator(navigator())
   }
 
+  s"${navigator(isHubEnabled = false).getClass.getSimpleName} when isHubEnabled toggle is off" must {
+    appRunning()
+    behave like navigatorWithRoutes(navigator(isHubEnabled = false), FakeUserAnswersCacheConnector, routesWithHubDisabled, dataDescriber)
+    behave like nonMatchingNavigator(navigator(isHubEnabled = false))
+  }
 }
 
 //noinspection MutatorLikeMethodIsParameterless
@@ -128,6 +143,8 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
 
   private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, index)
 
+  private def isDormant(mode: Mode) = controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(mode, 0)
+
   private val emptyAnswers = UserAnswers(Json.obj())
   private val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(CompanyAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
@@ -140,5 +157,9 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
   private val addOneCompanyDirectors = UserAnswers(validData(johnDoe))
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+
+  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    "features.is-hub-enabled" -> isHubEnabled
+  ).build().injector.instanceOf[FrontendAppConfig]
 
 }
