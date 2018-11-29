@@ -60,14 +60,11 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      println(s"\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>here0")
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
         value =>{
-          println(s"\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>here1")
           nameMatchingFactory.nameMatching(value.schemeName).flatMap { nameMatching =>
-            println(s"\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>nameMatching - $nameMatching")
           if (nameMatching.isMatch) {
               Future.successful(BadRequest(schemeDetails(appConfig, form.withError(
                 "schemeName",
@@ -83,7 +80,6 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
           } recoverWith {
             case e: NotFoundException =>
               Logger.error(e.message)
-              println("\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>here-notfoundexception")
               Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
           }}
       )
