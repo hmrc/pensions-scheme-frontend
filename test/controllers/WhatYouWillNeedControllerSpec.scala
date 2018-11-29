@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.PSANameCacheConnector
+import connectors.{FakeUserAnswersCacheConnector, PSANameCacheConnector}
 import controllers.actions._
 import identifiers.{PsaEmailId, PsaNameId}
 import models.NormalMode
@@ -51,7 +51,8 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar
       messagesApi,
       FakeAuthAction,
       fakePsaNameCacheConnector,
-      applicationCrypto
+      applicationCrypto,
+      FakeUserAnswersCacheConnector
     )
 
   val encryptedPsaId: String = applicationCrypto.QueryParameterCrypto.encrypt(PlainText("A0000000")).value
@@ -104,7 +105,8 @@ class WhatYouWillNeedHsControllerSpec extends ControllerSpecBase with MockitoSug
       messagesApi,
       FakeAuthAction,
       fakePsaNameCacheConnector,
-      applicationCrypto
+      applicationCrypto,
+      FakeUserAnswersCacheConnector
     )
 
   override def beforeEach(): Unit = {

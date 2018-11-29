@@ -17,9 +17,9 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.PSANameCacheConnector
+import connectors.{PSANameCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
-import identifiers.{PsaEmailId, PsaNameId}
+import identifiers.{IndexId, PsaEmailId, PsaNameId}
 import javax.inject.Inject
 import models.{NormalMode, PSAName}
 import play.api.Logger
@@ -37,12 +37,15 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           authenticate: AuthAction,
                                           psaNameCacheConnector: PSANameCacheConnector,
-                                          crypto: ApplicationCrypto
+                                          crypto: ApplicationCrypto,
+                                          userAnswersCacheConnector: UserAnswersCacheConnector
                                          ) extends FrontendController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authenticate {
+  def onPageLoad: Action[AnyContent] = authenticate.async {
     implicit request =>
-      Ok(whatYouWillNeed(appConfig))
+      userAnswersCacheConnector.save(request.externalId, IndexId, "").map { _ =>
+        Ok(whatYouWillNeed(appConfig))
+      }
   }
 
   def onSubmit: Action[AnyContent] = authenticate.async {
