@@ -37,8 +37,6 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      val z = new TaskListHelper(request.userAnswers).tasklist
-      println("\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+z)
         Future.successful(Ok(schemeTaskList(appConfig, new TaskListHelper(request.userAnswers).tasklist)))
       }
 

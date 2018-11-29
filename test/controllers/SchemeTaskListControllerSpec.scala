@@ -33,7 +33,9 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
     new SchemeTaskListController(
       frontendAppConfig,
       messagesApi,
-      FakeAuthAction
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl
     )
 
   def viewAsString(): String =

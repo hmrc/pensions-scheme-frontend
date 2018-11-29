@@ -1,57 +1,73 @@
-///*
-// * Copyright 2018 HM Revenue & Customs
-// *
-// * Licensed under the Apache License, Version 2.0 (the "License");
-// * you may not use this file except in compliance with the License.
-// * You may obtain a copy of the License at
-// *
-// *     http://www.apache.org/licenses/LICENSE-2.0
-// *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
-//
-//package utils
-//
-//import base.SpecBase
-//import org.scalatest.{MustMatchers, WordSpec}
-//import utils.PsaDetailsHelperSpec.actualSeqAnswerRow
-//import viewmodels.{AnswerRow, SuperSection}
-//
-//class TaskListHelperSpec extends WordSpec with MustMatchers {
-//
-//  def validSection(testName: String, headingKey: Option[String], result: Seq[SuperSection], expectedAnswerRows: Seq[AnswerRow]): Unit = {
-//    s"display Individual details section with correct labels for $testName" in {
-//      val actualLabels = actualSeqAnswerRow(result, headingKey).map(_.label).toSet
-//      val expectedLabels = expectedAnswerRows.map(_.label).toSet
-//
-//      actualLabels mustBe expectedLabels
-//    }
-//
-//    s"display Individual details section with correct values for $testName" in {
-//      val actualValues = actualSeqAnswerRow(result, headingKey).map(_.answer).toSet
-//      val expectedValues = expectedAnswerRows.map(_.answer).toSet
-//
-//      actualValues mustBe expectedValues
-//    }
-//  }
-//
-//  "PsaDetailsHelper" must {
-//
-//    behave like validSection(testName = "individual details", headingKey = None, result = individualResult, expectedAnswerRows = individualExpectedAnswerRows)
-//
-//    behave like validSection(testName = "company details", headingKey = None, result = companyResult, expectedAnswerRows = companyExpectedAnswerRows)
-//
-//  }
-//}
-//
-//object PsaDetailsHelperSpec extends SpecBase {
-//
-//
-//
-//  private def actualSeqAnswerRow(result: Seq[SuperSection], headingKey: Option[String]): Seq[AnswerRow] =
-//    result.filter(_.headingKey == headingKey).flatMap(_.sections).take(1).flatMap(_.rows)
-//}
+/*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package utils
+
+import base.{JsonFileReader, SpecBase}
+import identifiers.register.IsAboutSchemeCompleteId
+import identifiers.register.adviser.IsWorkingKnowledgeCompleteId
+import models.{JourneyTaskList, JourneyTaskListSection, Link, NormalMode}
+import org.scalatest.{MustMatchers, WordSpec}
+import viewmodels.{AnswerRow, SuperSection}
+
+class TaskListHelperSpec extends WordSpec with MustMatchers {
+  import TaskListHelperSpec._
+
+  "TaskListHelper" must {
+    "return valid about section based on user answers" in {
+      new TaskListHelper(userAnswers).tasklist mustBe JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
+        expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink)
+    }
+  }
+}
+
+object TaskListHelperSpec extends SpecBase with JsonFileReader {
+
+  val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
+  val expectedAboutSection = JourneyTaskListSection(
+    Some(true),
+    Link(messages("messages__schemeTaskList__about_link_text"),
+      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
+    None)
+
+  val expectedWorkingKnowledgeSection = JourneyTaskListSection(
+    Some(true),
+    Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
+      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
+    None)
+
+  val expectedEstablishersSection = Seq(
+    JourneyTaskListSection(Some(true),
+      Link(messages("messages__schemeTaskList__company_link"),
+        controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(0).url),
+      Some("Test company name")),
+    JourneyTaskListSection(Some(true),
+      Link(messages("messages__schemeTaskList__individual_link"),
+        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(1).url),
+      Some("Test individual name")))
+
+  val expectedTrusteesSection = Seq(
+    JourneyTaskListSection(Some(true),
+      Link(messages("messages__schemeTaskList__partnership_link"),
+        controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(0).url),
+      Some("Test partnership name")))
+
+  val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),
+    controllers.register.routes.DeclarationController.onPageLoad().url))
+
+  private def actualSeqAnswerRow(result: Seq[SuperSection], headingKey: Option[String]): Seq[AnswerRow] =
+    result.filter(_.headingKey == headingKey).flatMap(_.sections).take(1).flatMap(_.rows)
+}

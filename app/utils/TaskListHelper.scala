@@ -32,8 +32,8 @@ class TaskListHelper(journey: UserAnswers)(implicit messages: Messages) {
 
   def tasklist: JourneyTaskList = JourneyTaskList(
     aboutSection,
-    establishers,
-    trustees,
+    listOf(journey.allEstablishersAfterDelete),
+    listOf(journey.allTrusteesAfterDelete),
     workingKnowledgeSection,
     declarationLink)
 
@@ -50,7 +50,7 @@ class TaskListHelper(journey: UserAnswers)(implicit messages: Messages) {
     None)
 
   private def declarationLink: Option[Link] =
-    if(declarationEnabled)
+    if (declarationEnabled)
       Some(Link(messages("messages__schemeTaskList__declaration_link"),
         controllers.register.routes.DeclarationController.onPageLoad().url))
     else None
@@ -62,33 +62,7 @@ class TaskListHelper(journey: UserAnswers)(implicit messages: Messages) {
       case _ => false
     }
 
-  private def establishers:Seq[JourneyTaskListSection] = {
-    val establishers = journey.allEstablishersAfterDelete
-    if(establishers.isEmpty)
-      Seq(JourneyTaskListSection(
-        None,
-        Link(messages("messages__schemeTaskList__establishers_add_link"),
-          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, journey.establishersCount).url),
-        None))
-    else
-      listOfSections(establishers)
-
-  }
-
-  private def trustees:Seq[JourneyTaskListSection] = {
-    val trustees = journey.allTrusteesAfterDelete
-    if(trustees.isEmpty)
-      Seq(JourneyTaskListSection(
-        None,
-        Link(messages("messages__schemeTaskList__trustees_add_link"),
-          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, journey.trusteesCount).url),
-        None))
-    else
-      listOfSections(trustees)
-
-  }
-
-  private def listOfSections(sections: Seq[Entity[_]]): Seq[JourneyTaskListSection] =
+  private def listOf(sections: Seq[Entity[_]]): Seq[JourneyTaskListSection] =
     for(section <- sections) yield
       JourneyTaskListSection(
         Some(section.isCompleted),
@@ -98,8 +72,8 @@ class TaskListHelper(journey: UserAnswers)(implicit messages: Messages) {
 
   private def linkText(item: Entity[_]): String =
     item.id match {
-      case EstablisherCompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => "Company details"
-      case EstablisherDetailsId(_) | TrusteeDetailsId(_) => "Individual details"
-      case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => "Partnership details"
+      case EstablisherCompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => messages("messages__schemeTaskList__company_link")
+      case EstablisherDetailsId(_) | TrusteeDetailsId(_) => messages("messages__schemeTaskList__individual_link")
+      case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => messages("messages__schemeTaskList__partnership_link")
     }
 }
