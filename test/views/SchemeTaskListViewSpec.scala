@@ -16,7 +16,6 @@
 
 package views
 
-import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
 import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
 import views.behaviours.ViewBehaviours
@@ -27,39 +26,25 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   private def sectionLink(sectionHeader: String, linkText: String): Link =
     Link(linkText, s"$sectionHeader link")
 
-  private def genJourneyTaskListSection(header: String, isCompleted: Option[Boolean] = None, linkText: String) =
-    JourneyTaskListSection(isCompleted = isCompleted, link = sectionLink(header, linkText), header = Some(header))
+  private def genJourneyTaskListSection(header: Option[String], isCompleted: Option[Boolean] = None, linkText: String) =
+    JourneyTaskListSection(isCompleted = isCompleted, link = sectionLink(header.getOrElse(""), linkText), header = header)
 
-
-  private val aboutHeader = "messages__schemeTaskList__sectionAbout_header"
-  private val establisher1Header = "establisher1"
-  private val establisher2Header = "establisher2"
-  private val establisher3Header = "establisher3"
-
-  private val trustee1Header = "trustee1"
-  private val trustee2Header = "trustee2"
-  private val trustee3Header = "trustee3"
-
-  private val workingKnowledgeHeader = "messages__schemeTaskList__sectionWorkingKnowledge_header"
-  private val declarationHeader = "messages__schemeTaskList__sectionDeclaration_header"
-
-
-  private val about = genJourneyTaskListSection(header = aboutHeader, isCompleted = Some(true),
+  private val about = genJourneyTaskListSection(header = None, isCompleted = Some(true),
     linkText = "aboutLinkText")
   private val establishers: Seq[JourneyTaskListSection] = Seq(
-    genJourneyTaskListSection(header = establisher1Header, isCompleted = Some(true), linkText = ""),
-    genJourneyTaskListSection(header = establisher2Header, isCompleted = None, linkText = ""),
-    genJourneyTaskListSection(header = establisher3Header, isCompleted = Some(false), linkText = "")
+    genJourneyTaskListSection(header = None, isCompleted = Some(true), linkText = ""),
+    genJourneyTaskListSection(header = None, isCompleted = None, linkText = ""),
+    genJourneyTaskListSection(header = None, isCompleted = Some(false), linkText = "")
   )
 
   private val trustees: Seq[JourneyTaskListSection] = Seq(
-    genJourneyTaskListSection(header = trustee1Header, isCompleted = Some(false), linkText = ""),
-    genJourneyTaskListSection(header = trustee2Header, isCompleted = None, linkText = ""),
-    genJourneyTaskListSection(header = trustee3Header, isCompleted = Some(true), linkText = "")
+    genJourneyTaskListSection(header = None, isCompleted = Some(false), linkText = ""),
+    genJourneyTaskListSection(header = None, isCompleted = None, linkText = ""),
+    genJourneyTaskListSection(header = None, isCompleted = Some(true), linkText = "")
   )
 
   private val workingKnowledge: JourneyTaskListSection =
-    genJourneyTaskListSection(header = workingKnowledgeHeader, isCompleted = Some(true),
+    genJourneyTaskListSection(header = None, isCompleted = Some(true),
       linkText = "workingKnowledgeLinkText")
 
 
@@ -156,7 +141,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   private def simpleSection(headerId:String, headerText:String, linkId: String, linkUrl: String, linkText: String, statusId: String,
                             notStarted: JourneyTaskList,  inProgress: JourneyTaskList,  completed: JourneyTaskList) {
 
-    "display correct details for the about section" in {
+    "display correct header" in {
 
       val doc = asDocument(createView(notStarted)())
       assertRenderedByIdWithText(doc, id = headerId, text = messages(headerText))

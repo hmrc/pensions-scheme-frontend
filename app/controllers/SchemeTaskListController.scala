@@ -32,10 +32,35 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction
                                         ) extends FrontendController with I18nSupport {
 
+
+  private def sectionLink(sectionHeader: String, linkText: String): Link =
+    Link(linkText, s"$sectionHeader link")
+
+  private def genJourneyTaskListSection(header: Option[String], isCompleted: Option[Boolean] = None, linkText: String) =
+    JourneyTaskListSection(isCompleted = isCompleted, link = sectionLink(header.getOrElse(""), linkText), header = header)
+
+  private val about = genJourneyTaskListSection(header = None, isCompleted = Some(true),
+    linkText = "aboutLinkText")
+  private val establishers: Seq[JourneyTaskListSection] = Seq(
+    genJourneyTaskListSection(header = None, isCompleted = Some(true), linkText = ""),
+    genJourneyTaskListSection(header = None, isCompleted = None, linkText = ""),
+    genJourneyTaskListSection(header = None, isCompleted = Some(false), linkText = "")
+  )
+
+  private val trustees: Seq[JourneyTaskListSection] = Seq(
+    genJourneyTaskListSection(header = None, isCompleted = Some(false), linkText = ""),
+    genJourneyTaskListSection(header = None, isCompleted = None, linkText = ""),
+    genJourneyTaskListSection(header = None, isCompleted = Some(true), linkText = "")
+  )
+
+  private val workingKnowledge: JourneyTaskListSection =
+    genJourneyTaskListSection(header = None, isCompleted = Some(true),
+      linkText = "workingKnowledgeLinkText")
+
+
+  private val journeyTaskList: JourneyTaskList = JourneyTaskList(about, establishers, trustees, workingKnowledge, None)
   def onPageLoad: Action[AnyContent] = authenticate.async {
     implicit request =>
-      val jtlSection = JourneyTaskListSection(None, Link("linkText", "linkTarget"), None)
-      val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, None)
-      Future.successful(Ok(schemeTaskList(appConfig, journeyTL)))
+      Future.successful(Ok(schemeTaskList(appConfig, journeyTaskList)))
   }
 }
