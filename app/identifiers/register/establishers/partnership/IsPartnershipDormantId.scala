@@ -36,6 +36,3 @@ object IsPartnershipDormantId extends Enumerable.Implicits {
       changeIsDormant = "messages__visuallyhidden__partnership__dormant"
     )()
 }
-
-
-

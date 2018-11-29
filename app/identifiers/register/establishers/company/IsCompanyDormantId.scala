@@ -28,4 +28,3 @@ case class IsCompanyDormantId(index: Int) extends TypedIdentifier[DeclarationDor
 object IsCompanyDormantId {
   override def toString: String = "isCompanyDormant"
 }
-
