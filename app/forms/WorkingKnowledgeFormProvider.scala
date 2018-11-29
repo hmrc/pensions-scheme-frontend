@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.FrontendAppConfig
-@import play.api.mvc.Call
-@import uk.gov.hmrc.play.views.html._
-@import views.html._
-@import viewmodels.JourneyTaskList
+package forms
 
-@(appConfig: FrontendAppConfig, model: JourneyTaskList)(implicit request: Request[_], messages: Messages)
+import com.google.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
 
-@main_template(
-    title = messages("messages__schemeTaskList__title"),
-    appConfig = appConfig,
-    bodyClasses = None
-    ) {
+class WorkingKnowledgeFormProvider @Inject() extends Mappings {
 
-        @components.heading(messages("messages__schemeTaskList__heading").toString)
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__workingKnowledge__error__required")
+    )
 }

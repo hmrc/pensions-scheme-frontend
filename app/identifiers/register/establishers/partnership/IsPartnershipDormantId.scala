@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.FrontendAppConfig
-@import play.api.mvc.Call
-@import uk.gov.hmrc.play.views.html._
-@import views.html._
-@import viewmodels.JourneyTaskList
+package identifiers.register.establishers.partnership
 
-@(appConfig: FrontendAppConfig, model: JourneyTaskList)(implicit request: Request[_], messages: Messages)
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.EstablishersId
+import models.register.DeclarationDormant
+import play.api.libs.json.JsPath
+import utils.Enumerable
 
-@main_template(
-    title = messages("messages__schemeTaskList__title"),
-    appConfig = appConfig,
-    bodyClasses = None
-    ) {
+case class IsPartnershipDormantId(index: Int) extends TypedIdentifier[DeclarationDormant] {
+  override def path: JsPath = EstablishersId(index).path \ IsPartnershipDormantId.toString
+}
 
-        @components.heading(messages("messages__schemeTaskList__heading").toString)
+object IsPartnershipDormantId extends Enumerable.Implicits {
+  override def toString: String = "isPartnershipDormant"
 }

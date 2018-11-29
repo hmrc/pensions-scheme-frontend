@@ -18,9 +18,9 @@ package controllers.register
 
 import controllers.ControllerSpecBase
 import controllers.actions._
-import models.{JourneyTaskList, JourneyTaskListSection, Link}
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
 import views.html.schemeTaskList
 
 class SchemeTaskListControllerSpec extends ControllerSpecBase {

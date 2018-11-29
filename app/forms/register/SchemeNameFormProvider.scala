@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.FrontendAppConfig
-@import play.api.mvc.Call
-@import uk.gov.hmrc.play.views.html._
-@import views.html._
-@import viewmodels.JourneyTaskList
+package forms.register
 
-@(appConfig: FrontendAppConfig, model: JourneyTaskList)(implicit request: Request[_], messages: Messages)
+import forms.mappings.{Constraints, Mappings}
+import javax.inject.Inject
+import play.api.data.Form
 
-@main_template(
-    title = messages("messages__schemeTaskList__title"),
-    appConfig = appConfig,
-    bodyClasses = None
-    ) {
+class SchemeNameFormProvider @Inject() extends Mappings with Constraints {
+  val schemeNameMaxLength = 160
 
-        @components.heading(messages("messages__schemeTaskList__heading").toString)
+  def apply(): Form[String] = Form(
+    "schemeName" -> text("messages__error__scheme_name").
+      verifying(firstError(
+        maxLength(schemeNameMaxLength, "messages__error__scheme_name_length"),
+        safeText("messages__error__scheme_name_invalid")))
+  )
 }

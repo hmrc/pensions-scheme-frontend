@@ -21,24 +21,46 @@
 
 @(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
 
+@pageTitle=@{if(appConfig.isHubEnabled){messages("messages__hs_what_you_will_need__title")}else{messages("messages__what_you_will_need__title")}}
+
 @main_template(
-    title = messages("messages__what_you_will_need__title"),
+    title = pageTitle,
     appConfig = appConfig,
     bodyClasses = None) {
 
     @helpers.form(action = WhatYouWillNeedController.onSubmit, 'autoComplete -> "off") {
 
-        @components.heading(headingKey = messages("messages__what_you_will_need__title").toString,
-                            secondaryHeaderKey = Some(messages("messages_cya_secondary_header").toString))
+        @if(appConfig.isHubEnabled) {
+            @components.heading(headingKey = messages("messages__hs_what_you_will_need__title").toString,
+            secondaryHeaderKey = None)
 
-        <p>@messages("messages__what_you_will_need__lede")</p>
-        <ul class="list list-bullet">
-            <li>@messages("messages__what_you_will_need__item_1")</li>
-            <li>@messages("messages__what_you_will_need__item_2")</li>
-            <li>@messages("messages__what_you_will_need__item_3")</li>
-            <li>@messages("messages__what_you_will_need__item_4")</li>
-        </ul>
+            <p>@messages("messages__hs_what_you_will_need__lede")</p>
+            <p>@messages("messages__hs_what_you_will_need__p2")</p>
+            <ul class="list list-bullet">
+                <li>@messages("messages__hs_what_you_will_need__item_1")</li>
+                <li>@messages("messages__hs_what_you_will_need__item_2")</li>
+                <li>@messages("messages__hs_what_you_will_need__item_3")</li>
+                <li>@messages("messages__hs_what_you_will_need__item_4")</li>
+            </ul>
+            <p>
+                <a id="apply-to-register-govuk-link" href="@appConfig.applyToRegisterLink">@messages("messages__hs_what_you_will_need__other_link")</a>.
+            </p>
+            <p>@messages("messages__hs_what_you_will_need__p3")</p>
+        } else {
+            @components.heading(headingKey = messages("messages__what_you_will_need__title").toString,
+                secondaryHeaderKey = Some(messages("messages_cya_secondary_header").toString))
+
+            <p>@messages("messages__what_you_will_need__lede")</p>
+            <ul class="list list-bullet">
+                <li>@messages("messages__what_you_will_need__item_1")</li>
+                <li>@messages("messages__what_you_will_need__item_2")</li>
+                <li>@messages("messages__what_you_will_need__item_3")</li>
+                <li>@messages("messages__what_you_will_need__item_4")</li>
+            </ul>
+        }
 
         @components.submit_button("messages__common__continue")
+
+        <a id="return-managing" href="@appConfig.managePensionsSchemeOverviewUrl">@messages("messages__complete__return")</a>
     }
 }

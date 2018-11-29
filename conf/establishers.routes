@@ -358,3 +358,13 @@ GET        /:establisherIndex/partnership/partner/:partnerIndex/already-deleted 
 
 GET        /:index/partnership/review                                                                           controllers.register.establishers.partnership.PartnershipReviewController.onPageLoad(index: Index)
 POST       /:index/partnership/review                                                                           controllers.register.establishers.partnership.PartnershipReviewController.onSubmit(index: Index)
+
+GET        /:index/company/dormant-in-last-12-months                                                      controllers.register.establishers.company.IsCompanyDormantController.onPageLoad(mode: Mode = NormalMode,index:Index)
+POST       /:index/company/dormant-in-last-12-months                                                      controllers.register.establishers.company.IsCompanyDormantController.onSubmit(mode: Mode = NormalMode,index:Index)
+GET        /:index/company/change-dormant-in-last-12-months                                               controllers.register.establishers.company.IsCompanyDormantController.onPageLoad(mode: Mode = CheckMode,index:Index)
+POST       /:index/company/change-dormant-in-last-12-months                                               controllers.register.establishers.company.IsCompanyDormantController.onSubmit(mode: Mode = CheckMode,index:Index)
+
+GET        /:index/partnership/dormant-in-last-12-months                                                      controllers.register.establishers.partnership.IsPartnershipDormantController.onPageLoad(mode: Mode = NormalMode,index:Index)
+POST       /:index/partnership/dormant-in-last-12-months                                                      controllers.register.establishers.partnership.IsPartnershipDormantController.onSubmit(mode: Mode = NormalMode,index:Index)
+GET        /:index/partnership/change-dormant-in-last-12-months                                               controllers.register.establishers.partnership.IsPartnershipDormantController.onPageLoad(mode: Mode = CheckMode,index:Index)
+POST       /:index/partnership/change-dormant-in-last-12-months                                               controllers.register.establishers.partnership.IsPartnershipDormantController.onSubmit(mode: Mode = CheckMode,index:Index)
