@@ -57,6 +57,15 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   "SchemeTaskListView" should {
 
     behave like normalPageWithTitle(createView(), messageKeyPrefix, pageHeader, pageHeader)
+
+    "display the correct link" in {
+      val view = createView(journeyTaskList)
+      view must haveLinkWithText(
+        url = frontendAppConfig.managePensionsSchemeOverviewUrl.url,
+        linkText = messages("messages__complete__saveAndReturnToManagePensionSchemes"),
+        linkId = "save-and-return"
+      )
+    }
   }
 
   "SchemeTaskListView About the scheme section" should {

@@ -32,7 +32,6 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction
                                         ) extends FrontendController with I18nSupport {
 
-
   private def sectionLink(sectionHeader: String, linkText: String): Link =
     Link(linkText, s"$sectionHeader link")
 
@@ -42,15 +41,13 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   private val about = genJourneyTaskListSection(header = None, isCompleted = Some(true),
     linkText = "aboutLinkText")
   private val establishers: Seq[JourneyTaskListSection] = Seq(
-    genJourneyTaskListSection(header = None, isCompleted = Some(true), linkText = ""),
-    genJourneyTaskListSection(header = None, isCompleted = None, linkText = ""),
-    genJourneyTaskListSection(header = None, isCompleted = Some(false), linkText = "")
+    genJourneyTaskListSection(header = Some("Company"), isCompleted = Some(false), linkText = ""),
+    genJourneyTaskListSection(header = Some("Organisation"), isCompleted = Some(true), linkText = "")
   )
 
   private val trustees: Seq[JourneyTaskListSection] = Seq(
-    genJourneyTaskListSection(header = None, isCompleted = Some(false), linkText = ""),
-    genJourneyTaskListSection(header = None, isCompleted = None, linkText = ""),
-    genJourneyTaskListSection(header = None, isCompleted = Some(true), linkText = "")
+    genJourneyTaskListSection(header = Some("John"), isCompleted = Some(false), linkText = ""),
+    genJourneyTaskListSection(header = Some("Rob"), isCompleted = Some(true), linkText = "")
   )
 
   private val workingKnowledge: JourneyTaskListSection =
@@ -59,6 +56,8 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
 
   private val journeyTaskList: JourneyTaskList = JourneyTaskList(about, establishers, trustees, workingKnowledge, None)
+
+
   def onPageLoad: Action[AnyContent] = authenticate.async {
     implicit request =>
       Future.successful(Ok(schemeTaskList(appConfig, journeyTaskList)))

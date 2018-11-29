@@ -49,7 +49,7 @@
         </div>
 
         <div>
-            <li class="task-list-item">
+            <li>
                 <h2 id="section-establishers-header" class="heading-large">
                     @messages("messages__schemeTaskList__sectionEstablishers_header")
                 </h2>
@@ -72,17 +72,17 @@
                         <a id= "section-establishers-link-0@index" class="task-name" href="/" aria-describedby="read-declaration-completed">
                             @messages(item.header.getOrElse(""))
                         </a>
+                        @item.status.map{ status =>
+                            <strong class="task-completed" id="section-establishers-status-0@index">@messages(status)</strong>
+                        }
                     </li>
-                    @item.status.map{ status =>
-                    <strong class="task-completed" id="section-establishers-status-0@index">@messages(status)</strong>
-                    }
                 }
             }
 
         </div>
 
         <div>
-            <li class="task-list-item">
+            <li>
                 <h2 id="section-trustees-header" class="heading-large">
                     @messages("messages__schemeTaskList__sectionTrustees_header")
                 </h2>
@@ -105,10 +105,10 @@
                         <a id= "section-trustees-link-0@index" class="task-name" href="/" aria-describedby="read-declaration-completed">
                             @messages(item.header.getOrElse(""))
                         </a>
+                        @item.status.map{ status =>
+                            <strong class="task-completed" id="section-trustees-status-0@index">@messages(status)</strong>
+                        }
                     </li>
-                    @item.status.map{ status =>
-                    <strong class="task-completed" id="section-trustees-status-0@index">@messages(status)</strong>
-                    }
                 }
             }
 
@@ -154,5 +154,9 @@
 
     </ol>
 
+    <br>
+    <a id= "save-and-return" class="task-name" href="@appConfig.managePensionsSchemeOverviewUrl.url" aria-describedby="read-declaration-completed">
+        @messages("messages__complete__saveAndReturnToManagePensionSchemes")
+    </a>
 
 }

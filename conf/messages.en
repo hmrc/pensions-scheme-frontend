@@ -1074,3 +1074,5 @@ messages__schemeTaskList__sectionDeclaration_incomplete = You must complete ever
 
 messages__schemeTaskList__completed = Completed
 messages__schemeTaskList__inProgress = In progress
+
+messages__complete__saveAndReturnToManagePensionSchemes = Save and return to managing pension schemes
