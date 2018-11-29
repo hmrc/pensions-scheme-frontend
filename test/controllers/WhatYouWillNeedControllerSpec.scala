@@ -80,108 +80,11 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar
     }
 
     "on a POST" must {
+      "redirect to Scheme details page" in {
+        val result = controller().onSubmit()(fakeRequest)
 
-      if (frontendAppConfig.isWorkPackageOneEnabled) {
-        "redirect to Scheme details page" in {
-          val result = controller().onSubmit()(fakeRequest)
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(onwardRoute.url)
-        }
-      }
-      else {
-        "redirect to Scheme details page" when {
-
-          "the psa name and email is saved against the Psa Id if it exists only for external Id" in {
-            when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
-              Future.successful(Some(Json.obj("psaName" -> "test name", "psaEmail" -> "test@test.com")))).thenReturn(
-              Future.successful(None))
-
-            when(fakePsaNameCacheConnector.save(any(), any(), any())(any(), any(), any())).thenReturn(
-              Future.successful(Json.obj()))
-
-            val result = controller().onSubmit()(fakeRequest)
-
-            status(result) mustBe SEE_OTHER
-            redirectLocation(result) mustBe Some(onwardRoute.url)
-            verifyFetchCalledOnce
-            verify(fakePsaNameCacheConnector, times(1)).save(eqTo(encryptedPsaId), eqTo(PsaNameId), eqTo("test name"))(any(), any(), any())
-            verify(fakePsaNameCacheConnector, times(1)).save(eqTo(encryptedPsaId), eqTo(PsaEmailId), eqTo("test@test.com"))(any(), any(), any())
-          }
-
-          "the psa name and email json is not in the correct format" in {
-            when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
-              Future.successful(Some(Json.obj("wrongName" -> "test name", "wrongEmail" -> "test@test.com")))).thenReturn(
-              Future.successful(None))
-
-            val result = controller().onSubmit()(fakeRequest)
-
-            ScalaFutures.whenReady(result.failed) { e =>
-              e mustBe a[PSANameNotFoundException]
-              e.getMessage mustBe "Unable to retrieve PSA Name"
-            }
-          }
-
-          "the psa name and email does not exist for both external id and psa id" in {
-            when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
-              Future.successful(None)).thenReturn(
-              Future.successful(None))
-
-            val result = controller().onSubmit(fakeRequest)
-
-            status(result) mustBe SEE_OTHER
-            redirectLocation(result) mustBe Some(onwardRoute.url)
-            verifyFetchCalledOnce
-            verify(fakePsaNameCacheConnector, never()).save(any(), any(), any())(any(), any(), any())
-          }
-
-          "the psa name and email already exists for Psa Id" in {
-            when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
-              Future.successful(None)).thenReturn(
-              Future.successful(Some(Json.obj("psaName" -> "test name", "psaEmail" -> "test@test.com")
-              )))
-
-            val result = controller().onSubmit(fakeRequest)
-
-            status(result) mustBe SEE_OTHER
-            redirectLocation(result) mustBe Some(onwardRoute.url)
-            verifyFetchCalledOnce
-            verify(fakePsaNameCacheConnector, never()).save(any(), any(), any())(any(), any(), any())
-          }
-        }
-
-        "redirect to Need Contact page" when {
-
-          "the psa name is saved against the external id but no email" in {
-            when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
-              Future.successful(Some(Json.obj("psaName" -> "test name")))).thenReturn(
-              Future.successful(None)
-            )
-            when(fakePsaNameCacheConnector.save(any(), any(), any())(any(), any(), any())).thenReturn(
-              Future.successful(Json.obj()))
-
-            val result = controller().onSubmit(fakeRequest)
-
-            status(result) mustBe SEE_OTHER
-            redirectLocation(result) mustBe Some(controllers.register.routes.NeedContactController.onPageLoad().url)
-            verify(fakePsaNameCacheConnector, times(1)).save(eqTo(encryptedPsaId), eqTo(PsaNameId), eqTo("test name"))(any(), any(), any())
-            verify(fakePsaNameCacheConnector, times(1)).save(eqTo(encryptedPsaId), eqTo(PsaEmailId), eqTo(""))(any(), any(), any())
-          }
-
-          "the psa name is saved against the psa id but no email" in {
-            when(fakePsaNameCacheConnector.fetch(any())(any(), any())).thenReturn(
-              Future.successful(None)).thenReturn(
-              Future.successful(Some(Json.obj("psaName" -> "test name"))))
-
-            val result = controller().onSubmit(fakeRequest)
-
-            status(result) mustBe SEE_OTHER
-            redirectLocation(result) mustBe Some(controllers.register.routes.NeedContactController.onPageLoad().url)
-            verifyFetchCalledOnce
-            verify(fakePsaNameCacheConnector, never()).save(any(), any(), any())(any(), any(), any())
-          }
-        }
-
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(onwardRoute.url)
       }
     }
   }
@@ -215,7 +118,7 @@ class WhatYouWillNeedHsControllerSpec extends ControllerSpecBase with MockitoSug
         val result = controller().onSubmit()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.register.routes.SchemeTaskListController.onPageLoad().url)
       }
     }
   }

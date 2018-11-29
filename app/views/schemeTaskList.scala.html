@@ -48,6 +48,7 @@
 
     <ol class="task-list">
         <div>
+            <li></li>
             <li class="task-list-item">
                 <h2 id="section-about-header" class="heading-large">
                     @messages("messages__schemeTaskList__sectionAbout_header")
@@ -70,7 +71,7 @@
                     @messages("messages__schemeTaskList__sectionEstablishers_header")
                 </h2>
             </li>
-            <li class="task-list-item">
+            <li>
                 @if(jl.establishers.isEmpty){
                     <a id= "section-establishers-add-link" href="/" aria-describedby="read-declaration-completed">
                         @messages("messages__schemeTaskList__sectionEstablishers_add_link")
@@ -89,7 +90,7 @@
                     </li>
                     <li class="task-list-item">
                         <a id= "section-establishers-link-0@index" href="/" aria-describedby="read-declaration-completed">
-                            @messages("messages__schemeTaskList__companyDetails")
+                            @messages(item.link.text)
                         </a>
                         @item.isCompleted.map{ isCompleted =>
                             <strong class="@statusClass(isCompleted)" id="section-establishers-status-0@index">@messages(status(isCompleted))</strong>
@@ -106,7 +107,7 @@
                     @messages("messages__schemeTaskList__sectionTrustees_header")
                 </h2>
             </li>
-            <li class="task-list-item">
+            <li>
                 @if(jl.trustees.isEmpty){
                     <a id= "section-trustees-add-link"  href="/" aria-describedby="read-declaration-completed">
                         @messages("messages__schemeTaskList__sectionTrustees_add_link")
@@ -125,7 +126,7 @@
                     </li>
                     <li class="task-list-item">
                         <a id= "section-trustees-link-0@index"  href="/" aria-describedby="read-declaration-completed">
-                            @messages("messages__schemeTaskList__companyDetails")
+                            @messages(item.link.text)
                         </a>
                         @item.isCompleted.map{ isCompleted =>
                             <strong class="@statusClass(isCompleted)" id="section-trustees-status-0@index">@messages(status(isCompleted))</strong>

@@ -32,8 +32,8 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   private val about = genJourneyTaskListSection(header = None, isCompleted = Some(true),
     linkText = "aboutLinkText")
   private val establishers: Seq[JourneyTaskListSection] = Seq(
-    genJourneyTaskListSection(header = Some("Company"), isCompleted = Some(false), linkText = ""),
-    genJourneyTaskListSection(header = Some("Organisation"), isCompleted = Some(true), linkText = "")
+    genJourneyTaskListSection(header = Some("Company details"), isCompleted = Some(false), linkText = ""),
+    genJourneyTaskListSection(header = Some("Organisation details"), isCompleted = Some(true), linkText = "")
   )
 
   private val trustees: Seq[JourneyTaskListSection] = Seq(
@@ -129,7 +129,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
           view must haveLinkWithText(
             url = "/",
-            linkText = journeyTaskList.establishers(index.toInt-1).header.getOrElse(""),
+            linkText = journeyTaskList.establishers(index.toInt-1).link.text,
             linkId = s"section-establishers-link-$index"
           )
         }
@@ -137,9 +137,6 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
         s"display the first establisher section with correct status of in progress for item no $index" in {
           val view = createView(journeyTaskList)
           val doc = asDocument(view())
-
-          journeyTaskList.establishers(index.toInt-1).status
-
           doc.getElementById(s"section-establishers-status-$index").text mustBe messages(msg)
         }
       }
@@ -190,7 +187,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
           view must haveLinkWithText(
             url = "/",
-            linkText = journeyTaskList.trustees(index.toInt-1).header.getOrElse(""),
+            linkText = journeyTaskList.trustees(index.toInt-1).link.text,
             linkId = s"section-trustees-link-$index"
           )
         }
@@ -198,8 +195,6 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
         s"display the first establisher section with correct status of in progress for item no $index" in {
           val view = createView(journeyTaskList)
           val doc = asDocument(view())
-
-          journeyTaskList.trustees(index.toInt-1).status
 
           doc.getElementById(s"section-trustees-status-$index").text mustBe messages(msg)
         }
