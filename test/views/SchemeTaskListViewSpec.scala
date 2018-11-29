@@ -32,9 +32,8 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   private val about = genJourneyTaskListSection(header = None, isCompleted = Some(true),
     linkText = "aboutLinkText")
   private val establishers: Seq[JourneyTaskListSection] = Seq(
-    genJourneyTaskListSection(header = None, isCompleted = Some(true), linkText = ""),
-    genJourneyTaskListSection(header = None, isCompleted = None, linkText = ""),
-    genJourneyTaskListSection(header = None, isCompleted = Some(false), linkText = "")
+    genJourneyTaskListSection(header = Some("Company"), isCompleted = Some(false), linkText = ""),
+    genJourneyTaskListSection(header = Some("Organisation"), isCompleted = Some(true), linkText = "")
   )
 
   private val trustees: Seq[JourneyTaskListSection] = Seq(
@@ -78,7 +77,66 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
       completed = completed)
   }
 
-  "SchemeTaskListView Establishers section" should {
+
+
+  "SchemeTaskListView Establishers section" when {
+
+    "no establishers" should {
+
+      val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(about, Seq.empty, trustees, workingKnowledge, None)
+      val view = createView(journeyTaskListNoEstablisher)
+
+      "display correct header" in {
+
+        val doc = asDocument(view())
+        assertRenderedByIdWithText(doc, id = "section-establishers-header", text = messages("messages__schemeTaskList__sectionEstablishers_header"))
+      }
+
+      "display the correct link" in {
+
+        view must haveLinkWithText(
+          url = "/",
+          linkText = messages("messages__schemeTaskList__sectionEstablishers_add_link"),
+          linkId = "section-establishers-add-link"
+        )
+      }
+    }
+
+    "establishers defined and not completed" should {
+
+      val view = createView(journeyTaskList)
+
+      "display the correct link" in {
+
+        view must haveLinkWithText(
+          url = "/",
+          linkText = messages("messages__schemeTaskList__sectionEstablishers_change_link"),
+          linkId = "section-establishers-change-link"
+        )
+      }
+
+      Seq(("01", "messages__schemeTaskList__inProgress"), ("02", "messages__schemeTaskList__completed")).foreach { case(index, msg) =>
+
+        s"display the first establisher section with correct link and status for item no $index" in {
+
+          view must haveLinkWithText(
+            url = "/",
+            linkText = journeyTaskList.establishers(index.toInt-1).header.getOrElse(""),
+            linkId = s"section-establishers-link-$index"
+          )
+        }
+
+        s"display the first establisher section with correct status of in progress for item no $index" in {
+          val view = createView(journeyTaskList)
+          val doc = asDocument(view())
+
+          journeyTaskList.establishers(index.toInt-1).status
+
+          doc.getElementById(s"section-establishers-status-$index").text mustBe messages(msg)
+        }
+      }
+
+    }
 
   }
 
