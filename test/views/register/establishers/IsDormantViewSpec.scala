@@ -43,7 +43,7 @@ class IsDormantViewSpec extends ViewBehaviours {
   "IsDormant view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", companyName))
 
-    behave like pageWithReturnLink(createView, controllers.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView, controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 
   }
 
