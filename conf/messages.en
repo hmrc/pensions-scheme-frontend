@@ -1064,7 +1064,7 @@ messages__schemeTaskList__sectionWorkingKnowledge_header = Working knowledge of 
 messages__schemeTaskList__sectionWorkingKnowledge_link = Add who has working knowledge
 
 messages__schemeTaskList__sectionDeclaration_header = Declaration
-messages__schemeTaskList__sectionDeclaration_link = aa
+messages__schemeTaskList__sectionDeclaration_link = Read declaration and send details to HMRC
 messages__schemeTaskList__sectionDeclaration_incomplete = You must complete every section before you can declare.
 
 

@@ -77,17 +77,19 @@
 
         <div>
             <h2 id="section-declaration-header" class="heading-large">
-                @messages(jl.declaration.header.getOrElse(""))
+                @messages("messages__schemeTaskList__sectionDeclaration_header")
             </h2>
             <li>
             <li>
                 <ul class="task-list-items">
                     <li class="task-list-item">
 
-                        @if(jl.allSectionsCompleted){
-                            <a id= "section-declaration-link" class="task-name" href="@jl.declaration.link.target" aria-describedby="read-declaration-completed">
-                                @messages(jl.declaration.link.text)
-                            </a>
+                        @if(jl.declaration.isDefined){
+                            @jl.declaration.map{ link =>
+                                <a id= "section-declaration-link" class="task-name" href="@link.target" aria-describedby="read-declaration-completed">
+                                    @messages(link.text)
+                                </a>
+                            }
                         }else{
                             <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
                         }
