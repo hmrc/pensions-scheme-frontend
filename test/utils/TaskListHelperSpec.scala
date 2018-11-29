@@ -34,7 +34,8 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
 
 object TaskListHelperSpec extends SpecBase with JsonFileReader {
 
-  val userAnswers = UserAnswers(readJsonFromFile("/payload.json"))
+  val userAnswersJson = readJsonFromFile("/payload.json")
+  val userAnswers = UserAnswers(userAnswersJson)
   val expectedAboutSection = JourneyTaskListSection(
     Some(true),
     Link(messages("messages__schemeTaskList__about_link_text"),

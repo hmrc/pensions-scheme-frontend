@@ -18,19 +18,26 @@ package controllers.register
 
 import controllers.ControllerSpecBase
 import controllers.actions._
+import models.NormalMode
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import utils.TaskListHelperSpec.messages
 import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
 import views.html.schemeTaskList
 
 class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
+  import utils.TaskListHelperSpec._
+
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
-  val jtlSection = JourneyTaskListSection(None, Link("linkText", "linkTarget"), None)
-  val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, None)
+  val journeyTL =  JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
+    expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeTaskListController =
+  val userAnswers =  new FakeDataRetrievalAction(Some(userAnswersJson))
+
+  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
     new SchemeTaskListController(
       frontendAppConfig,
       messagesApi,
