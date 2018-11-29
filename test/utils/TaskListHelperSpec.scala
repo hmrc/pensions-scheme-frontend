@@ -17,11 +17,9 @@
 package utils
 
 import base.{JsonFileReader, SpecBase}
-import identifiers.register.IsAboutSchemeCompleteId
-import identifiers.register.adviser.IsWorkingKnowledgeCompleteId
-import models.{JourneyTaskList, JourneyTaskListSection, Link, NormalMode}
+import models.NormalMode
 import org.scalatest.{MustMatchers, WordSpec}
-import viewmodels.{AnswerRow, SuperSection}
+import viewmodels._
 
 class TaskListHelperSpec extends WordSpec with MustMatchers {
   import TaskListHelperSpec._

@@ -24,8 +24,9 @@ import identifiers.register.establishers.partnership.{PartnershipDetailsId => Es
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
+import models.NormalMode
 import models.register.Entity
-import models.{JourneyTaskList, JourneyTaskListSection, Link, NormalMode}
+import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
 import play.api.i18n.Messages
 
 class TaskListHelper(journey: UserAnswers)(implicit messages: Messages) {
@@ -58,7 +59,7 @@ class TaskListHelper(journey: UserAnswers)(implicit messages: Messages) {
   private def declarationEnabled: Boolean =
     (journey.get(IsAboutSchemeCompleteId), journey.get(IsWorkingKnowledgeCompleteId)) match {
       case (Some(true), Some(true)) if journey.allEstablishersAfterDelete.forall(_.isCompleted) &&
-        (journey.allTrusteesAfterDelete.forall(_.isCompleted)) => true
+        journey.allTrusteesAfterDelete.forall(_.isCompleted) => true
       case _ => false
     }
 

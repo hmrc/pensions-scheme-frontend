@@ -34,7 +34,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         addTrusteeRoutes(from.userAnswers)
       case MoreThanTenTrusteesId =>
         if (appConfig.isHubEnabled) {
-          NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
         } else {
           NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
         }
@@ -70,7 +70,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     answers.get(AddTrusteeId) match {
       case Some(false) =>
         if (appConfig.isHubEnabled) {
-          NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
         } else {
           NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
         }

@@ -48,7 +48,7 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit: Action[AnyContent] = authenticate.async {
     implicit request =>
       if (appConfig.isHubEnabled) {
-        Future.successful(Redirect(controllers.routes.SchemeTaskListController.onPageLoad()))
+        Future.successful(Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad()))
       }
       else {
         Future.successful(Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode)))
