@@ -20,6 +20,12 @@
   padding-left: 0px;
 }
 
+.task-list-item {
+    border-bottom: 1px solid #bfc1c3;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
 .task-inprogress {
     display: -moz-inline-stack;
     display: inline-block;

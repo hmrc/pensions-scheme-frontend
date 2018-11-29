@@ -32,70 +32,55 @@
 
     <ol class="task-list">
         <div>
-            <h2 id="section-about-header" class="heading-large">
-                @messages("messages__schemeTaskList__sectionAbout_header")
-            </h2>
-            <li>
-            <li>
-                <ul class="task-list-items">
-                    <li class="task-list-item">
+            <li class="task-list-item">
+                <h2 id="section-about-header" class="heading-large">
+                    @messages("messages__schemeTaskList__sectionAbout_header")
+                </h2>
+            </li>
+            <li class="task-list-item">
+                <a id= "section-about-link" class="task-name" href="@jl.about.link.target" aria-describedby="read-declaration-completed">
+                    @messages(jl.about.link.text)
+                </a>
 
-                        <a id= "section-about-link" class="task-name" href="@jl.about.link.target" aria-describedby="read-declaration-completed">
-                            @messages(jl.about.link.text)
-                        </a>
-
-                        @jl.about.status.map{ status =>
-                            <strong class="task-completed" id="section-about-status">@messages(status)</strong>
-                        }
-
-                    </li>
-                </ul>
+                @jl.about.status.map{ status =>
+                <strong class="task-completed" id="section-about-status">@messages(status)</strong>
+                }
             </li>
         </div>
         <div>
-            <h2 id="section-workingKnowledge-header" class="heading-large">
-                @messages("messages__schemeTaskList__sectionWorkingKnowledge_header")
-            </h2>
-            <li>
-            <li>
-                <ul class="task-list-items">
-                    <li class="task-list-item">
+            <li class="task-list-item">
+                <h2 id="section-workingKnowledge-header" class="heading-large">
+                    @messages("messages__schemeTaskList__sectionWorkingKnowledge_header")
+                </h2>
+            </li>
+            <li class="task-list-item">
+                <a id= "section-workingKnowledge-link" class="task-name" href="@jl.workingKnowledge.link.target" aria-describedby="read-declaration-completed">
+                    @messages(jl.workingKnowledge.link.text)
+                </a>
 
-                        <a id= "section-workingKnowledge-link" class="task-name" href="@jl.workingKnowledge.link.target" aria-describedby="read-declaration-completed">
-                            @messages(jl.workingKnowledge.link.text)
-                        </a>
-
-                        @jl.workingKnowledge.status.map{ status =>
-                            <strong class="task-completed" id="section-workingKnowledge-status">@messages(status)</strong>
-                        }
-
-                    </li>
-                </ul>
+                @jl.workingKnowledge.status.map{ status =>
+                <strong class="task-completed" id="section-workingKnowledge-status">@messages(status)</strong>
+                }
             </li>
         </div>
 
 
         <div>
-            <h2 id="section-declaration-header" class="heading-large">
-                @messages("messages__schemeTaskList__sectionDeclaration_header")
-            </h2>
-            <li>
-            <li>
-                <ul class="task-list-items">
-                    <li class="task-list-item">
-
-                        @if(jl.declaration.isDefined){
-                            @jl.declaration.map{ link =>
-                                <a id= "section-declaration-link" class="task-name" href="@link.target" aria-describedby="read-declaration-completed">
-                                    @messages(link.text)
-                                </a>
-                            }
-                        }else{
-                            <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
-                        }
-
-                    </li>
-                </ul>
+            <li class="task-list-item">
+                <h2 id="section-declaration-header" class="heading-large">
+                    @messages("messages__schemeTaskList__sectionDeclaration_header")
+                </h2>
+            </li>
+            <li class="task-list-item">
+                @if(jl.declaration.isDefined){
+                    @jl.declaration.map{ link =>
+                    <a id= "section-declaration-link" class="task-name" href="@link.target" aria-describedby="read-declaration-completed">
+                        @messages(link.text)
+                    </a>
+                    }
+                }else{
+                <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
+                }
             </li>
         </div>        
         
