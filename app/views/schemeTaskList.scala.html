@@ -22,6 +22,22 @@
 
 @(appConfig: FrontendAppConfig, jl: JourneyTaskList)(implicit request: Request[_], messages: Messages)
 
+@status(isCompleted:Boolean)=@{
+    if (isCompleted) {
+        "messages__schemeTaskList__completed"
+    } else {
+        "messages__schemeTaskList__inProgress"
+    }
+}
+
+@statusClass(isCompleted:Boolean)=@{
+    if (isCompleted) {
+        "task-completed"
+    } else {
+        "task-inprogress"
+    }
+}
+
 @main_template(
     title = messages("messages__schemeTaskList__title"),
     appConfig = appConfig,
@@ -38,12 +54,12 @@
                 </h2>
             </li>
             <li class="task-list-item">
-                <a id= "section-about-link" class="task-name" href="@jl.about.link.target" aria-describedby="read-declaration-completed">
+                <a id= "section-about-link" href="@jl.about.link.target" aria-describedby="read-declaration-completed">
                     @messages(jl.about.link.text)
                 </a>
 
-                @jl.about.status.map{ status =>
-                <strong class="task-completed" id="section-about-status">@messages(status)</strong>
+                @jl.about.isCompleted.map{ isCompleted =>
+                <strong class="@statusClass(isCompleted)" id="section-about-status">@messages(status(isCompleted))</strong>
                 }
             </li>
         </div>
@@ -56,11 +72,11 @@
             </li>
             <li class="task-list-item">
                 @if(jl.establishers.isEmpty){
-                    <a id= "section-establishers-add-link" class="task-name" href="/" aria-describedby="read-declaration-completed">
+                    <a id= "section-establishers-add-link" href="/" aria-describedby="read-declaration-completed">
                         @messages("messages__schemeTaskList__sectionEstablishers_add_link")
                     </a>
                 } else {
-                    <a id= "section-establishers-change-link" class="task-name" href="/" aria-describedby="read-declaration-completed">
+                    <a id= "section-establishers-change-link" href="/" aria-describedby="read-declaration-completed">
                         @messages("messages__schemeTaskList__sectionEstablishers_change_link")
                     </a>
                 }
@@ -69,11 +85,14 @@
             @for((item, i) <- jl.establishers.zipWithIndex){
                 @defining(i+1) { index =>
                     <li class="task-list-item">
-                        <a id= "section-establishers-link-0@index" class="task-name" href="/" aria-describedby="read-declaration-completed">
-                            @messages(item.header.getOrElse(""))
+                        <h3 class="task-list-section">@messages(item.header.getOrElse(""))</h3>
+                    </li>
+                    <li class="task-list-item">
+                        <a id= "section-establishers-link-0@index" href="/" aria-describedby="read-declaration-completed">
+                            @messages("messages__schemeTaskList__companyDetails")
                         </a>
-                        @item.status.map{ status =>
-                            <strong class="task-completed" id="section-establishers-status-0@index">@messages(status)</strong>
+                        @item.isCompleted.map{ isCompleted =>
+                            <strong class="@statusClass(isCompleted)" id="section-establishers-status-0@index">@messages(status(isCompleted))</strong>
                         }
                     </li>
                 }
@@ -89,11 +108,11 @@
             </li>
             <li class="task-list-item">
                 @if(jl.trustees.isEmpty){
-                    <a id= "section-trustees-add-link" class="task-name" href="/" aria-describedby="read-declaration-completed">
+                    <a id= "section-trustees-add-link"  href="/" aria-describedby="read-declaration-completed">
                         @messages("messages__schemeTaskList__sectionTrustees_add_link")
                     </a>
                 } else {
-                    <a id= "section-trustees-change-link" class="task-name" href="/" aria-describedby="read-declaration-completed">
+                    <a id= "section-trustees-change-link"  href="/" aria-describedby="read-declaration-completed">
                         @messages("messages__schemeTaskList__sectionTrustees_change_link")
                     </a>
                 }
@@ -102,11 +121,14 @@
             @for((item, i) <- jl.trustees.zipWithIndex){
                 @defining(i+1) { index =>
                     <li class="task-list-item">
-                        <a id= "section-trustees-link-0@index" class="task-name" href="/" aria-describedby="read-declaration-completed">
-                            @messages(item.header.getOrElse(""))
+                        <h3 class="task-list-section">@messages(item.header.getOrElse(""))</h3>
+                    </li>
+                    <li class="task-list-item">
+                        <a id= "section-trustees-link-0@index"  href="/" aria-describedby="read-declaration-completed">
+                            @messages("messages__schemeTaskList__companyDetails")
                         </a>
-                        @item.status.map{ status =>
-                            <strong class="task-completed" id="section-trustees-status-0@index">@messages(status)</strong>
+                        @item.isCompleted.map{ isCompleted =>
+                            <strong class="@statusClass(isCompleted)" id="section-trustees-status-0@index">@messages(status(isCompleted))</strong>
                         }
                     </li>
                 }
@@ -121,12 +143,12 @@
                 </h2>
             </li>
             <li class="task-list-item">
-                <a id= "section-workingKnowledge-link" class="task-name" href="@jl.workingKnowledge.link.target" aria-describedby="read-declaration-completed">
+                <a id= "section-workingKnowledge-link" href="@jl.workingKnowledge.link.target" aria-describedby="read-declaration-completed">
                     @messages(jl.workingKnowledge.link.text)
                 </a>
 
-                @jl.workingKnowledge.status.map{ status =>
-                <strong class="task-completed" id="section-workingKnowledge-status">@messages(status)</strong>
+                @jl.workingKnowledge.isCompleted.map{ isCompleted =>
+                <strong class="@statusClass(isCompleted)" id="section-workingKnowledge-status">@messages(status(isCompleted))</strong>
                 }
             </li>
         </div>
@@ -141,7 +163,7 @@
             <li class="task-list-item">
                 @if(jl.declaration.isDefined){
                     @jl.declaration.map{ link =>
-                    <a id= "section-declaration-link" class="task-name" href="@link.target" aria-describedby="read-declaration-completed">
+                    <a id= "section-declaration-link" href="@link.target" aria-describedby="read-declaration-completed">
                         @messages(link.text)
                     </a>
                     }

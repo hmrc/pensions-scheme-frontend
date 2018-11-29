@@ -1076,3 +1076,5 @@ messages__schemeTaskList__completed = Completed
 messages__schemeTaskList__inProgress = In progress
 
 messages__complete__saveAndReturnToManagePensionSchemes = Save and return to managing pension schemes
+
+messages__schemeTaskList__companyDetails = Company details
