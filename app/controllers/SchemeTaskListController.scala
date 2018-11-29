@@ -22,7 +22,7 @@ import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import viewmodels.{JourneyTaskList, JourneyTaskListDeclarationSection, JourneyTaskListSection, Link}
+import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
 import views.html.schemeTaskList
 
 import scala.concurrent.Future
@@ -35,8 +35,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad: Action[AnyContent] = authenticate.async {
     implicit request =>
       val jtlSection = JourneyTaskListSection(None, Link("linkText", "linkTarget"), None)
-      val dclSection = JourneyTaskListDeclarationSection(None, None)
-      val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, dclSection )
+      val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, None)
         Future.successful(Ok(schemeTaskList(appConfig, journeyTL)))
       }
 }
