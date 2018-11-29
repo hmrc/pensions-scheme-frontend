@@ -19,8 +19,8 @@ package controllers.register
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
-import forms.register.SchemeDetailsFormProvider
-import identifiers.register.SchemeDetailsId
+import forms.register.{SchemeDetailsFormProvider, SchemeNameFormProvider}
+import identifiers.register.{IsAboutSchemeCompleteId, SchemeDetailsId}
 import javax.inject.Inject
 import models.Mode
 import models.PSAName._
@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{NameMatchingFactory, Navigator, UserAnswers}
+import utils.{NameMatchingFactory, Navigator, SectionComplete, UserAnswers}
 import views.html.register.schemeDetails
 
 import scala.concurrent.Future
@@ -42,8 +42,10 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         @Register navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
                                         formProvider: SchemeDetailsFormProvider,
-                                        nameMatchingFactory: NameMatchingFactory) extends FrontendController with I18nSupport {
+                                        nameMatchingFactory: NameMatchingFactory,
+                                        sectionComplete: SectionComplete) extends FrontendController with I18nSupport {
 
   private val form = formProvider()
 
@@ -56,28 +58,34 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
       Ok(schemeDetails(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
+      println(s"\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>here0")
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
-        value =>
+        value =>{
+          println(s"\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>here1")
           nameMatchingFactory.nameMatching(value.schemeName).flatMap { nameMatching =>
+            println(s"\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>nameMatching - $nameMatching")
           if (nameMatching.isMatch) {
               Future.successful(BadRequest(schemeDetails(appConfig, form.withError(
                 "schemeName",
                 "messages__error__scheme_name_psa_name_match"
               ), mode)))
             } else {
-              dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
-                Redirect(navigator.nextPage(SchemeDetailsId, mode, UserAnswers(cacheMap)))
-              )
+              dataCacheConnector.save(request.externalId, SchemeDetailsId, value).flatMap { cacheMap =>
+                sectionComplete.setCompleteFlag(IsAboutSchemeCompleteId, UserAnswers(cacheMap), value = false).map { json =>
+                  Redirect(navigator.nextPage(SchemeDetailsId, mode, json))
+                }
+              }
             }
           } recoverWith {
             case e: NotFoundException =>
               Logger.error(e.message)
+              println("\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>here-notfoundexception")
               Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-          }
+          }}
       )
   }
 
