@@ -37,9 +37,8 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   )
 
   private val trustees: Seq[JourneyTaskListSection] = Seq(
-    genJourneyTaskListSection(header = None, isCompleted = Some(false), linkText = ""),
-    genJourneyTaskListSection(header = None, isCompleted = None, linkText = ""),
-    genJourneyTaskListSection(header = None, isCompleted = Some(true), linkText = "")
+    genJourneyTaskListSection(header = Some("John"), isCompleted = Some(false), linkText = ""),
+    genJourneyTaskListSection(header = Some("Rob"), isCompleted = Some(true), linkText = "")
   )
 
   private val workingKnowledge: JourneyTaskListSection =
@@ -83,7 +82,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
     "no establishers" should {
 
-      val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(about, Seq.empty, trustees, workingKnowledge, None)
+      val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(about, Seq.empty, Seq.empty, workingKnowledge, None)
       val view = createView(journeyTaskListNoEstablisher)
 
       "display correct header" in {
@@ -141,6 +140,64 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   }
 
   "SchemeTaskListView Trustees section" should {
+
+    "no trustees" should {
+
+      val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(about, Seq.empty, Seq.empty, workingKnowledge, None)
+      val view = createView(journeyTaskListNoEstablisher)
+
+      "display correct header" in {
+
+        val doc = asDocument(view())
+        assertRenderedByIdWithText(doc, id = "section-trustees-header", text = messages("messages__schemeTaskList__sectionTrustees_header"))
+      }
+
+      "display the correct link" in {
+
+        view must haveLinkWithText(
+          url = "/",
+          linkText = messages("messages__schemeTaskList__sectionTrustees_add_link"),
+          linkId = "section-trustees-add-link"
+        )
+      }
+    }
+
+    "trustees defined and not completed" should {
+
+      val view = createView(journeyTaskList)
+
+      "display the correct link" in {
+
+        view must haveLinkWithText(
+          url = "/",
+          linkText = messages("messages__schemeTaskList__sectionTrustees_change_link"),
+          linkId = "section-trustees-change-link"
+        )
+      }
+
+      Seq(("01", "messages__schemeTaskList__inProgress"), ("02", "messages__schemeTaskList__completed")).foreach { case(index, msg) =>
+
+        s"display the first establisher section with correct link and status for item no $index" in {
+
+          view must haveLinkWithText(
+            url = "/",
+            linkText = journeyTaskList.trustees(index.toInt-1).header.getOrElse(""),
+            linkId = s"section-trustees-link-$index"
+          )
+        }
+
+        s"display the first establisher section with correct status of in progress for item no $index" in {
+          val view = createView(journeyTaskList)
+          val doc = asDocument(view())
+
+          journeyTaskList.trustees(index.toInt-1).status
+
+          doc.getElementById(s"section-trustees-status-$index").text mustBe messages(msg)
+        }
+      }
+
+    }
+
 
   }
 

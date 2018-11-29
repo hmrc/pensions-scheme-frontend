@@ -83,6 +83,39 @@
 
         <div>
             <li class="task-list-item">
+                <h2 id="section-trustees-header" class="heading-large">
+                    @messages("messages__schemeTaskList__sectionTrustees_header")
+                </h2>
+            </li>
+            <li class="task-list-item">
+                @if(jl.trustees.isEmpty){
+                    <a id= "section-trustees-add-link" class="task-name" href="/" aria-describedby="read-declaration-completed">
+                        @messages("messages__schemeTaskList__sectionTrustees_add_link")
+                    </a>
+                } else {
+                    <a id= "section-trustees-change-link" class="task-name" href="/" aria-describedby="read-declaration-completed">
+                        @messages("messages__schemeTaskList__sectionTrustees_change_link")
+                    </a>
+                }
+            </li>
+
+            @for((item, i) <- jl.trustees.zipWithIndex){
+                @defining(i+1) { index =>
+                    <li class="task-list-item">
+                        <a id= "section-trustees-link-0@index" class="task-name" href="/" aria-describedby="read-declaration-completed">
+                            @messages(item.header.getOrElse(""))
+                        </a>
+                    </li>
+                    @item.status.map{ status =>
+                    <strong class="task-completed" id="section-trustees-status-0@index">@messages(status)</strong>
+                    }
+                }
+            }
+
+        </div>
+
+        <div>
+            <li class="task-list-item">
                 <h2 id="section-workingKnowledge-header" class="heading-large">
                     @messages("messages__schemeTaskList__sectionWorkingKnowledge_header")
                 </h2>
