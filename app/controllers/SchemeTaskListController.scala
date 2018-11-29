@@ -41,8 +41,8 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
   private val about = genJourneyTaskListSection(header = None, isCompleted = Some(true),
     linkText = "aboutLinkText")
   private val establishers: Seq[JourneyTaskListSection] = Seq(
-    genJourneyTaskListSection(header = Some("Company"), isCompleted = Some(false), linkText = ""),
-    genJourneyTaskListSection(header = Some("Organisation"), isCompleted = Some(true), linkText = "")
+    genJourneyTaskListSection(header = Some("Company xxxxx"), isCompleted = Some(false), linkText = ""),
+    genJourneyTaskListSection(header = Some("Partnership yyyy"), isCompleted = Some(true), linkText = "")
   )
 
   private val trustees: Seq[JourneyTaskListSection] = Seq(
