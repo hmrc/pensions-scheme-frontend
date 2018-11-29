@@ -28,21 +28,14 @@ import views.html.schemeTaskList
 import scala.concurrent.Future
 
 class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        authenticate: AuthAction
-                                       ) extends FrontendController with I18nSupport {
-
-
+                                         override val messagesApi: MessagesApi,
+                                         authenticate: AuthAction
+                                        ) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate.async {
     implicit request =>
-
-
-
-
-
       val jtlSection = JourneyTaskListSection(None, Link("linkText", "linkTarget"), None)
-      val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, jtlSection)
-        Future.successful(Ok(schemeTaskList(appConfig, journeyTL)))
-      }
+      val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, None)
+      Future.successful(Ok(schemeTaskList(appConfig, journeyTL)))
+  }
 }
