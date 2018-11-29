@@ -110,32 +110,27 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
       completed = completed)
   }
 
-  "SchemeTaskListView Declaration section where not complete" should {
-
-    "display correct heading for the Declaration section where nothing started" in {
-
-      val notStarted = journeyTaskList
-
-      val doc = asDocument(createView(notStarted)())
+  "SchemeTaskListView Declaration section" should {
+    "display correct heading" in {
+      val doc = asDocument(createView(journeyTaskList)())
       assertRenderedByIdWithText(doc, id = "section-declaration-header", text = messages("messages__schemeTaskList__sectionDeclaration_header"))
+    }
+
+    "display correct text for the Declaration section where there is no link" in {
+      val doc = asDocument(createView(journeyTaskList)())
       assertNotRenderedById(doc, id = "section-declaration-link")
     }
 
-
-    "display correct heading for the Declaration section where there is a link" in {
-
+    "display correct link and no text for the Declaration section where there is a link" in {
       val completed = journeyTaskList.copy(declaration = Some(Link(text = "text", target = "target")))
-
       val doc = asDocument(createView(completed)())
-      assertRenderedByIdWithText(doc, id = "section-declaration-header", text = messages("messages__schemeTaskList__sectionDeclaration_header"))
+
       assertNotRenderedById(doc, id = "section-declaration-text")
       createView(completed) must haveLinkWithText(
         url = "target",
         linkText = "text",
         linkId = "section-declaration-link"
       )
-
-
     }
 
 //    "display correct you must complete text for the Declaration section" in {
