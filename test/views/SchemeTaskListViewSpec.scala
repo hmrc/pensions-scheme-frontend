@@ -45,7 +45,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
 
   private val about = genJourneyTaskListSection(header = aboutHeader, isCompleted = Some(true),
-    linkText = "messages__schemeTaskList__sectionAbout_link")
+    linkText = "aboutLinkText")
   private val establishers: Seq[JourneyTaskListSection] = Seq(
     genJourneyTaskListSection(header = establisher1Header, isCompleted = Some(true), linkText = ""),
     genJourneyTaskListSection(header = establisher2Header, isCompleted = None, linkText = ""),
@@ -60,7 +60,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
   private val workingKnowledge: JourneyTaskListSection =
     genJourneyTaskListSection(header = workingKnowledgeHeader, isCompleted = Some(true),
-      linkText = "messages__schemeTaskList__sectionWorkingKnowledge_link")
+      linkText = "workingKnowledgeLinkText")
 
 
   private val journeyTaskList: JourneyTaskList = JourneyTaskList(about, establishers, trustees, workingKnowledge, None)
