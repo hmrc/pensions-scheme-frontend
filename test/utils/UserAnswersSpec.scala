@@ -29,7 +29,7 @@ import models.register._
 import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind.{Company, Indivdual, Partnership}
 import models.register.trustees.TrusteeKind
-import models.{CompanyDetails, PartnershipDetails}
+import models.{CompanyDetails, PartnershipDetails, details}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json._
@@ -361,11 +361,11 @@ class UserAnswersSpec extends WordSpec with MustMatchers with OptionValues {
       answers.hasCompanies mustBe true
     }
 
-    "return true if a trustee is a company" in {
+    "return true if an establisher is a partnership" in {
       val answers =
         UserAnswers()
-          .set(TrusteeDetailsId(0))(person)
-          .flatMap(_.set(TrusteeCompanyDetailsId(1))(company))
+          .set(EstablisherDetailsId(0))(person)
+          .flatMap(_.set(PartnershipDetailsId(1))(partnershipDetails))
           .asOpt
           .value
 
@@ -442,4 +442,5 @@ object UserAnswersSpec {
 
   private val company = CompanyDetails("test-company-name", None, None)
   private val person = PersonDetails("test-first-name", None, "test-last-name", LocalDate.now())
+  private val partnershipDetails = PartnershipDetails("test-first-name")
 }

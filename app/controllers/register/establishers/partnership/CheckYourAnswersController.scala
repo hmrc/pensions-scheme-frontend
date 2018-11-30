@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablisherPartnership
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Navigator, SectionComplete}
+import utils.{CountryOptions, Enumerable, Navigator, SectionComplete}
 import viewmodels.{AnswerSection, Message}
 import views.html.check_your_answers
 
@@ -43,7 +43,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            sectionComplete: SectionComplete,
                                            @EstablisherPartnership navigator: Navigator,
                                            implicit val countryOptions: CountryOptions
-                                          ) extends FrontendController with Retrievals with I18nSupport {
+                                          ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
@@ -56,7 +56,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             PartnershipDetailsId(index).row(routes.PartnershipDetailsController.onPageLoad(CheckMode, index).url),
             PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(CheckMode, index).url),
             PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(CheckMode, index).url),
-            PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, index).url)
+            PartnershipUniqueTaxReferenceID(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, index).url),
+            IsPartnershipDormantId(index).row(routes.IsPartnershipDormantController.onPageLoad(CheckMode, index).url)
           ).flatten
         )
 
