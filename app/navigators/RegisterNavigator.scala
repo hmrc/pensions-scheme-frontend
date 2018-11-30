@@ -170,7 +170,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   private def workingKnowldgeAnswersRoutes(): Option[NavigateTo] = {
     if (appConfig.isHubEnabled) {
-      NavigateTo.save(controllers.routes.SchemeTaskListController.onPageLoad())
+      NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
     } else {
       NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
     }

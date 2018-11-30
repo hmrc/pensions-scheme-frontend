@@ -35,11 +35,6 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
 
   import RegisterNavigatorSpec._
 
-  override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.useManagePensionsFrontend" -> true,
-    "features.is-hub-enabled" -> false
-  ).build()
-
   private def routesWithRestrictedEstablisher = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     // Start - continue or what you will need
@@ -190,7 +185,6 @@ object RegisterNavigatorSpec {
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
-  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
 
 }
-
