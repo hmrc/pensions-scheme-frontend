@@ -74,17 +74,17 @@ class DeclarationController @Inject()(
       request.userAnswers.get(DeclarationDormantId) match {
         case Some(Yes) => Future.successful(
           status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDormant = true, showMasterTrustDeclaration)
+            declaration(appConfig, form, isCompany, isDormant = true, showMasterTrustDeclaration)
           )
         )
         case Some(No) => Future.successful(
           status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)
+            declaration(appConfig, form, isCompany, isDormant = false, showMasterTrustDeclaration)
           )
         )
         case None if !isCompany => Future.successful(
           status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)
+            declaration(appConfig, form, isCompany, isDormant = false, showMasterTrustDeclaration)
           )
         )
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))

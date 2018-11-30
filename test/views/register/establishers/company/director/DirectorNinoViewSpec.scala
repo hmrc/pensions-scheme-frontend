@@ -28,19 +28,16 @@ class DirectorNinoViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "director_nino"
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
-  val directorName = "First Name Middle Name Last Name"
   val form = new DirectorNinoFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () => directorNino(frontendAppConfig, form, NormalMode, establisherIndex,
-    directorIndex, directorName)(fakeRequest, messages)
+    directorIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorNino(frontendAppConfig, form, NormalMode,
-    establisherIndex, directorIndex, directorName)(fakeRequest, messages)
+    establisherIndex, directorIndex)(fakeRequest, messages)
 
   "DirectorNino view" must {
     behave like normalPage(createView, messageKeyPrefix, messages("messages__director_nino__title"))
-
-    behave like pageWithSecondaryHeader(createView, "First Name Middle Name Last Name")
 
     behave like pageWithBackLink(createView)
   }

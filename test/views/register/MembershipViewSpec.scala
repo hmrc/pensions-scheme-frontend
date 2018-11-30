@@ -30,17 +30,12 @@ class MembershipViewSpec extends ViewBehaviours {
 
   val form = new MembershipFormProvider()()
 
-  val schemeName = "Test Scheme Name"
+  def createView: () => HtmlFormat.Appendable = () => membership(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  def createView: () => HtmlFormat.Appendable = () => membership(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
-
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => membership(frontendAppConfig, form, NormalMode,
-    schemeName)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => membership(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   "Membership view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "_body1", "_body2")
-
-    behave like pageWithSecondaryHeader(createView, schemeName)
 
     behave like pageWithBackLink(createView)
   }

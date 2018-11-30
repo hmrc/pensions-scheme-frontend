@@ -84,7 +84,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         val viewAsString = check_your_answers(
           frontendAppConfig,
           Seq(partnerDetails, partnerContactDetails),
-          Some(schemeName),
           routes.CheckYourAnswersController.onSubmit(firstIndex, firstIndex)
         )(fakeRequest, messages).toString
 

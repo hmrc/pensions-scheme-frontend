@@ -23,7 +23,6 @@
     appConfig: FrontendAppConfig,
     form: Form[_],
     establisherIndex: Int,
-    partnershipName: String,
     partners: Seq[PartnerEntity],
     postUrl: Call
 )(implicit request: Request[_], messages: Messages)
@@ -44,8 +43,7 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            messages("messages__addPartners__heading").toString,
-            secondaryHeaderKey=Some(components.hyphen(partnershipName).toString)
+            messages("messages__addPartners__heading")
         )
 
         @if(partners.isEmpty) {

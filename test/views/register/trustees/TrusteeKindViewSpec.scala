@@ -29,11 +29,10 @@ class TrusteeKindViewSpec extends ViewBehaviours {
 
   private val form = new TrusteeKindFormProvider()()
   private val index = Index(0)
-  private val schemeName = "Test Scheme Name"
 
-  private def createView = () => trusteeKind(frontendAppConfig, form, NormalMode, index, schemeName)(fakeRequest, messages)
+  private def createView = () => trusteeKind(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
-  private def createViewUsingForm = (form: Form[_]) => trusteeKind(frontendAppConfig, form, NormalMode, index, schemeName)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) => trusteeKind(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   private def trusteeKindOptions = TrusteeKind.options
 

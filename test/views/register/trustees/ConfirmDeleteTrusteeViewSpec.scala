@@ -32,8 +32,6 @@ class ConfirmDeleteTrusteeViewSpec extends ViewBehaviours {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithSecondaryHeader(createView, schemeName)
-
     behave like pageWithSubmitButton(createView)
 
     "have a cancel link" in {
@@ -48,12 +46,10 @@ object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
 
   private val messageKeyPrefix = "confirmDeleteTrustee"
   private val trusteeName = "test-trustee-name"
-  private val schemeName = "test=scheme-name"
 
   private def createView =
     () => confirmDeleteTrustee(
       frontendAppConfig,
-      schemeName,
       trusteeName,
       controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onSubmit(0, Company)
     )(fakeRequest, messages)

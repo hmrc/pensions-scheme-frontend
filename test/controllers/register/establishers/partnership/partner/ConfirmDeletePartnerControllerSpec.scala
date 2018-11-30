@@ -153,7 +153,6 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
 
   private def viewAsString() = confirmDeletePartner(
     frontendAppConfig,
-    partnershipName,
     partnerName,
     postCall,
     cancelCall

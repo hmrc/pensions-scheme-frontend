@@ -155,7 +155,6 @@ object DeclarationControllerSpec extends ControllerSpecBase {
     declaration(
       frontendAppConfig,
       form,
-      schemeName,
       isCompany,
       isDormant,
       showMasterTrustDeclaration

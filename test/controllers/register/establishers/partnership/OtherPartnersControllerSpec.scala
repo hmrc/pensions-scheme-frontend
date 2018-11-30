@@ -75,8 +75,7 @@ class OtherPartnersControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       form,
       NormalMode,
-      index,
-      partnershipName
+      index
     )(fakeRequest, messages).toString
 
   "OtherPartners Controller" must {

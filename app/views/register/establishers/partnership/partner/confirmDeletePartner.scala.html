@@ -19,7 +19,7 @@
 @import play.api.mvc.Call
 @import viewmodels.Message
 
-@(appConfig: FrontendAppConfig, partnershipName: String, partnerName: String, postCall: Call, cancelCall: Call)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, partnerName: String, postCall: Call, cancelCall: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__confirmDeletePartner__title"),
@@ -30,8 +30,7 @@
         @components.back_link()
 
         @components.heading(
-            headingKey = components.hyphen((Message("messages__confirmDeletePartner__heading").withArgs(partnerName))).toString,
-            secondaryHeaderKey = Some(components.hyphen(partnershipName).toString)
+            headingKey = components.hyphen((Message("messages__confirmDeletePartner__heading").withArgs(partnerName))).toString
         )
 
         @components.submit_button("site.confirm")

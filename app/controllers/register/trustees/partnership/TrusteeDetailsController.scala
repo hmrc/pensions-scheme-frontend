@@ -52,9 +52,9 @@ class TrusteeDetailsController @Inject()(
         schemeName =>
           val redirectResult = request.userAnswers.get(PartnershipDetailsId(index)) match {
             case None =>
-              Ok(partnershipDetails(appConfig, form, mode, index, schemeName))
+              Ok(partnershipDetails(appConfig, form, mode, index))
             case Some(value) =>
-              Ok(partnershipDetails(appConfig, form.fill(value), mode, index, schemeName))
+              Ok(partnershipDetails(appConfig, form.fill(value), mode, index))
           }
           Future.successful(redirectResult)
       }
@@ -66,7 +66,7 @@ class TrusteeDetailsController @Inject()(
         schemeName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(partnershipDetails(appConfig, formWithErrors, mode, index, schemeName))),
+              Future.successful(BadRequest(partnershipDetails(appConfig, formWithErrors, mode, index))),
             value =>
               dataCacheConnector.save(request.externalId, PartnershipDetailsId(index), value
               ).map {

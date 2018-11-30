@@ -69,7 +69,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       Ok(check_your_answers(
         appConfig,
         Seq(schemeDetailsSection, schemeBenefitsSection, bankAccountSection),
-        Some("messages_cya_secondary_header"),
         routes.CheckYourAnswersController.onSubmit())
       )
   }

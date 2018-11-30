@@ -74,8 +74,7 @@ class PartnershipUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       form,
       NormalMode,
-      firstIndex,
-      partnershipName
+      firstIndex
     )(fakeRequest, messages).toString
 
   "PartnershipUniqueTaxReference Controller" must {

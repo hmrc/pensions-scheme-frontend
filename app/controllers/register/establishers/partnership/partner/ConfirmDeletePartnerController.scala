@@ -56,7 +56,6 @@ class ConfirmDeletePartnerController @Inject()(
               Ok(
                 confirmDeletePartner(
                   appConfig,
-                  partnership.name,
                   partner.fullName,
                   routes.ConfirmDeletePartnerController.onSubmit(establisherIndex, partnerIndex),
                   controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(establisherIndex)

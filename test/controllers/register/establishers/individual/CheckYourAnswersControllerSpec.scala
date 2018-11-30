@@ -72,7 +72,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad(firstIndex)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe check_your_answers(frontendAppConfig,
-        Seq(AnswerSection(None, answers)), Some(testSchemeName), postUrl)(fakeRequest, messages).toString
+        Seq(AnswerSection(None, answers)), postUrl)(fakeRequest, messages).toString
     }
 
     "redirect to Session Expired page for a GET when establisher name is not present" in {

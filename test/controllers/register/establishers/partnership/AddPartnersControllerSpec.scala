@@ -69,7 +69,6 @@ class AddPartnersControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       form,
       establisherIndex,
-      partnershipName,
       partners,
       postUrl
     )(fakeRequest, messages).toString

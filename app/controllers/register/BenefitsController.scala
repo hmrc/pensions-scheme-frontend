@@ -53,7 +53,7 @@ class BenefitsController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(benefits(appConfig, preparedForm, mode, schemeDetails.schemeName)))
+        Future.successful(Ok(benefits(appConfig, preparedForm, mode)))
       }
   }
 
@@ -62,7 +62,7 @@ class BenefitsController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
-            Future.successful(BadRequest(benefits(appConfig, formWithErrors, mode, schemeDetails.schemeName)))
+            Future.successful(BadRequest(benefits(appConfig, formWithErrors, mode)))
           },
         value =>
           dataCacheConnector.save(request.externalId, BenefitsId, value).map(cacheMap =>
