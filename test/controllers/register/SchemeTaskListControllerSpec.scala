@@ -53,7 +53,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad()(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result).contains(messages("messages__schemeTaskList__heading")) mustBe true
+      contentAsString(result) mustBe viewAsString()
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
