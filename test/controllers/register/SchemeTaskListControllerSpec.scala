@@ -20,9 +20,7 @@ import base.{JsonFileReader, SpecBase}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import models.NormalMode
-import play.api.mvc.Call
 import play.api.test.Helpers._
-import utils.UserAnswers
 import viewmodels._
 import views.html.schemeTaskList
 
@@ -30,12 +28,10 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
   import SchemeTaskListControllerSpec._
 
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  private val journeyTL = JourneyTaskList(expectedAboutSection, Seq.empty,
+    Seq.empty, expectedWorkingKnowledgeSection, expectedDeclarationLink)
 
-  private val journeyTL =  JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
-    expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink)
-
-  private val userAnswers =  new FakeDataRetrievalAction(Some(userAnswersJson))
+  private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
 
   def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
     new SchemeTaskListController(
@@ -57,7 +53,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad()(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result).contains(messages("messages__schemeTaskList__heading")) mustBe true
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
@@ -72,9 +68,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
 }
 
 object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
-
   private val userAnswersJson = readJsonFromFile("/payload.json")
-  private val userAnswers = UserAnswers(userAnswersJson)
   private val expectedAboutSection = JourneyTaskListSection(
     Some(true),
     Link(messages("messages__schemeTaskList__about_link_text"),
@@ -87,25 +81,6 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
       controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
     None)
 
-  private val expectedEstablishersSection = Seq(
-    JourneyTaskListSection(Some(true),
-      Link(messages("messages__schemeTaskList__company_link"),
-        controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(0).url),
-      Some("Test company name")),
-    JourneyTaskListSection(Some(true),
-      Link(messages("messages__schemeTaskList__individual_link"),
-        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(1).url),
-      Some("Test individual name")))
-
-  private val expectedTrusteesSection = Seq(
-    JourneyTaskListSection(Some(true),
-      Link(messages("messages__schemeTaskList__partnership_link"),
-        controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(0).url),
-      Some("Test partnership name")))
-
   private val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),
     controllers.register.routes.DeclarationController.onPageLoad().url))
-
-  private def actualSeqAnswerRow(result: Seq[SuperSection], headingKey: Option[String]): Seq[AnswerRow] =
-    result.filter(_.headingKey == headingKey).flatMap(_.sections).take(1).flatMap(_.rows)
 }

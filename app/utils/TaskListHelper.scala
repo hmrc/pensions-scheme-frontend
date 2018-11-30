@@ -47,7 +47,7 @@ class TaskListHelper(journey: UserAnswers)(implicit messages: Messages) {
   private def workingKnowledgeSection = JourneyTaskListSection(
     journey.get(IsWorkingKnowledgeCompleteId),
     Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
-      controllers.routes.WorkingKnowledgeController.onPageLoad.url),
+      controllers.routes.WorkingKnowledgeController.onPageLoad().url),
     None)
 
   private def declarationLink: Option[Link] =

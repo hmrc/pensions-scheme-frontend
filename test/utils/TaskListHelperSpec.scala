@@ -45,7 +45,7 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
   val expectedWorkingKnowledgeSection = JourneyTaskListSection(
     Some(true),
     Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
-      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
+      controllers.routes.WorkingKnowledgeController.onPageLoad().url),
     None)
 
   val expectedEstablishersSection = Seq(
