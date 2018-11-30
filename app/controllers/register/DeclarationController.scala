@@ -17,23 +17,26 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
+import connectors._
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationFormProvider
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId}
-import identifiers.register.{DeclarationDormantId, DeclarationId, SchemeDetailsId}
+import identifiers.register._
 import javax.inject.Inject
 import models.NormalMode
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant.{No, Yes}
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.crypto.ApplicationCrypto
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -49,7 +52,12 @@ class DeclarationController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: DeclarationFormProvider
+                                       formProvider: DeclarationFormProvider,
+                                       pensionsSchemeConnector: PensionsSchemeConnector,
+                                       emailConnector: EmailConnector,
+                                       psaNameCacheConnector: PSANameCacheConnector,
+                                       crypto: ApplicationCrypto,
+                                       pensionAdministratorConnector: PensionAdministratorConnector
                                      ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -66,8 +74,20 @@ class DeclarationController @Inject()(
           showPage(BadRequest.apply, formWithErrors)
         },
         value =>
-          dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))))
+          if (appConfig.isHubEnabled) {
+            for {
+              cacheMap <- dataCacheConnector.save(request.externalId, DeclarationDutiesId, true)
+              submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
+              cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
+              _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
+            } yield {
+              Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
+            }
+          } else {
+            dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
+              Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap))))
+          }
+      )
   }
 
   private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
@@ -133,6 +153,22 @@ class DeclarationController @Inject()(
       case Some(Yes) => true
       case _ => false
     }
+  }
+
+  private def sendEmail(srn: String, psaId: PsaId)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
+    Logger.debug("Fetch email from API")
+
+    pensionAdministratorConnector.getPSAEmail flatMap { email =>
+      emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
+    } recoverWith {
+      case _: Throwable => Future.successful(EmailNotSent)
+    }
+  }
+
+  private def formatSrnForEmail(srn: String): String = {
+    //noinspection ScalaStyle
+    val (start, end) = srn.splitAt(6)
+    start + ' ' + end
   }
 
 }
