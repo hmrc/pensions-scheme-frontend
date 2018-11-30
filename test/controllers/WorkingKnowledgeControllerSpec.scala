@@ -19,12 +19,12 @@ package controllers
 import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
-import identifiers.register.DeclarationDutiesId
+import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import models.NormalMode
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.{FakeNavigator, FakeSectionComplete}
 import views.html.workingKnowledge
 
 class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
@@ -43,7 +43,8 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      FakeSectionComplete
     )
 
   private def viewAsString(form: Form[_] = form) = workingKnowledge(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
@@ -68,13 +69,26 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form.fill(true))
     }
 
-    "redirect to the next page when valid data is submitted" in {
+    "redirect to the next page when true is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+
+      FakeSectionComplete.verify(IsWorkingKnowledgeCompleteId, true)
+    }
+
+    "redirect to the next page when false is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
+
+      val result = controller().onSubmit(NormalMode)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+
+      FakeSectionComplete.verify(IsWorkingKnowledgeCompleteId, false)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

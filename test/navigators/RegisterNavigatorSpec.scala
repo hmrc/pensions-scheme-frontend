@@ -35,11 +35,6 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
 
   import RegisterNavigatorSpec._
 
-  override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.useManagePensionsFrontend" -> true,
-    "features.is-hub-enabled" -> false
-  ).build()
-
   private def routesWithRestrictedEstablisher = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     // Start - continue or what you will need
@@ -86,10 +81,37 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (UserResearchDetailsId, emptyAnswers, schemeOverview(frontendAppConfig), false, None, false)
   )
 
+  private def routesWithRestrictedEstablisherWithHnS = Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+
+    //Check your answers - back to task list page
+    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false),
+    (DeclarationDutiesId, dutiesTrue, taskList, true, None, false)
+  )
+
   "RegisterNavigator" must {
-    appRunning()
+
+    lazy val app = new GuiceApplicationBuilder().configure(
+      "features.is-hub-enabled" -> false
+    ).build()
+
+    val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
     val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
+    behave like nonMatchingNavigator(navigator)
+  }
+
+  "RegisterNavigator with hub and spoke" must {
+
+    lazy val app = new GuiceApplicationBuilder().configure(
+      "features.is-hub-enabled" -> true
+    ).build()
+
+    val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisherWithHnS, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 }
@@ -141,11 +163,7 @@ object RegisterNavigatorSpec {
 
   private def occupationalPensionScheme(mode: Mode) = controllers.register.routes.OccupationalPensionSchemeController.onPageLoad(mode)
 
-  private def schemeDetails(mode: Mode) = controllers.register.routes.SchemeDetailsController.onPageLoad(mode)
-
   private def schemeEstablishedCountry(mode: Mode) = controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(mode)
-
-  private def schemeReview = controllers.register.routes.SchemeReviewController.onPageLoad()
 
   private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
 
@@ -157,8 +175,6 @@ object RegisterNavigatorSpec {
 
   private def whatYouWillNeed = controllers.routes.WhatYouWillNeedController.onPageLoad()
 
-  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
-
   private def adviserDetails = controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
 
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
@@ -169,34 +185,6 @@ object RegisterNavigatorSpec {
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
-}
+  private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
 
-class RegisterHsNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
-
-  import RegisterHsNavigatorSpec._
-
-  override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.useManagePensionsFrontend" -> true,
-    "features.is-hub-enabled" -> true
-  ).build()
-
-  private def routesWithRestrictedEstablisher = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-
-    //Check your answers - back to task list page
-    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false)
-  )
-
-  "RegisterHsNavigator" must {
-    appRunning()
-    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
-    behave like nonMatchingNavigator(navigator)
-  }
-}
-
-object RegisterHsNavigatorSpec {
-  private val emptyAnswers = UserAnswers(Json.obj())
-  private def taskList:Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
-  private def dataDescriber(answers: UserAnswers): String = answers.toString
 }

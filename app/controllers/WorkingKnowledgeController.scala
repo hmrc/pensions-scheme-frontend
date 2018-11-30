@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
-import identifiers.register.DeclarationDutiesId
+import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
@@ -28,21 +28,22 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, SectionComplete, UserAnswers}
 import views.html.workingKnowledge
 
 import scala.concurrent.Future
 
 class WorkingKnowledgeController @Inject()(
-                                                       appConfig: FrontendAppConfig,
-                                                       override val messagesApi: MessagesApi,
-                                                       dataCacheConnector: UserAnswersCacheConnector,
-                                                       @Register navigator: Navigator,
-                                                       authenticate: AuthAction,
-                                                       getData: DataRetrievalAction,
-                                                       requireData: DataRequiredAction,
-                                                       formProvider: WorkingKnowledgeFormProvider
-                                                     ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                            appConfig: FrontendAppConfig,
+                                            override val messagesApi: MessagesApi,
+                                            dataCacheConnector: UserAnswersCacheConnector,
+                                            @Register navigator: Navigator,
+                                            authenticate: AuthAction,
+                                            getData: DataRetrievalAction,
+                                            requireData: DataRequiredAction,
+                                            formProvider: WorkingKnowledgeFormProvider,
+                                            sectionComplete: SectionComplete
+                                          ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -61,8 +62,10 @@ class WorkingKnowledgeController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode))),
         value =>
-          dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap))))
+          sectionComplete.setCompleteFlag(IsWorkingKnowledgeCompleteId, request.userAnswers, value).flatMap{_=>
+            dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
+              Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap))))
+        }
       )
   }
 }
