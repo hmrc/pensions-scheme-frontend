@@ -77,11 +77,19 @@ class DeclarationController @Inject()(
       if (appConfig.isHubEnabled) {
         val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values(1) else DeclarationDormant.values.head
 
-        dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ =>
-          status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDeclarationDormant, showMasterTrustDeclaration)
+        if (isCompany) {
+          dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ =>
+            status(
+              declaration(appConfig, form, details.schemeName, isCompany, isDeclarationDormant, showMasterTrustDeclaration)
+            )
           )
-        )
+        } else {
+          Future.successful(
+            status(
+              declaration(appConfig, form, details.schemeName, isCompany, isDeclarationDormant, showMasterTrustDeclaration)
+            )
+          )
+        }
       } else {
         request.userAnswers.get(DeclarationDormantId) match {
           case Some(Yes) => Future.successful(

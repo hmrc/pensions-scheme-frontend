@@ -43,32 +43,35 @@ class DeclarationControllerSpec extends ControllerSpecBase {
 
   "Declaration Controller" must {
 
-    "return OK and the correct view" when {
-      "individual journey" in {
+    "return OK and don't save the DeclarationDormant " when {
+
+      "the establisher is an individual" in {
         val result = controller(individual).onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false)
+        FakeUserAnswersCacheConnector.verifyNot(DeclarationDormantId)
       }
-      "non-dormant company establisher" in {
-        val result = controller(nonDormantCompany, isHubEnabled = false).onPageLoad()(fakeRequest)
+    }
+
+    "return OK, the correct view and save the DeclarationDormant if isHubEnabled toggle is on" when {
+
+      "the establisher is a dormant company" in {
+        val result = controller(dormantCompanyAndNonDormantPartnership).onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false, isHubEnabled = false)
+        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
+        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
       }
-      "dormant company establisher" in {
-        val result = controller(dormantCompany, isHubEnabled = false).onPageLoad()(fakeRequest)
 
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true, isHubEnabled = false)
-      }
-      "non-dormant company and partnership establisher" in {
+      "the establisher is non dormant company and partnership estabslihsre" in {
         val result = controller(nonDormantCompanyAndPartnership).onPageLoad()(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false)
         FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values.head)
       }
+
       "dormant company establisher and non dormant partnership" in {
         val result = controller(dormantCompanyAndNonDormantPartnership).onPageLoad()(fakeRequest)
 
@@ -76,6 +79,7 @@ class DeclarationControllerSpec extends ControllerSpecBase {
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
         FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
       }
+
       "dormant partnership establisher and non dormant company" in {
         val result = controller(dormantPartnershipAndNonDormantCompany).onPageLoad()(fakeRequest)
 
@@ -83,6 +87,9 @@ class DeclarationControllerSpec extends ControllerSpecBase {
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
         FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
       }
+    }
+
+    "return OK and the correct view " when {
       "master trust" in {
 
         val data = new FakeDataRetrievalAction(Some(UserAnswers()
@@ -96,6 +103,23 @@ class DeclarationControllerSpec extends ControllerSpecBase {
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false, showMasterTrustDeclaration = true)
+      }
+    }
+
+    "return OK and the correct view if isHubEnabled toggle is off" when {
+
+      "non-dormant company establisher" in {
+        val result = controller(nonDormantCompany, isHubEnabled = false).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false, isHubEnabled = false)
+      }
+
+      "dormant company establisher" in {
+        val result = controller(dormantCompany, isHubEnabled = false).onPageLoad()(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true, isHubEnabled = false)
       }
     }
 
