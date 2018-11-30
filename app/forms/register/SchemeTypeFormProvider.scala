@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package hsforms.beforeYouStart
+package forms.register
 
 import forms.mappings.{Constraints, SchemeTypeMapping}
 import javax.inject.Inject

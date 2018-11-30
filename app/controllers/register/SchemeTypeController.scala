@@ -19,7 +19,7 @@ package controllers.register
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
-import hsforms.beforeYouStart.SchemeTypeFormProvider
+import forms.register.SchemeTypeFormProvider
 import identifiers.register.SchemeTypeId
 import javax.inject.Inject
 import models.Mode
