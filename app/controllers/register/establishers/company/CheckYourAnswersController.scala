@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.SchemeDetailsId
-import identifiers.register.establishers.company.{CheckYourAnswersId, CompanyDetailsId, CompanyRegistrationNumberId, IsCompanyCompleteId}
+import identifiers.register.establishers.company._
 import javax.inject.Inject
 import models.{CheckMode, Index, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
 import utils.checkyouranswers.Ops._
-import utils.{CheckYourAnswersFactory, Navigator, SectionComplete}
+import utils.{CountryOptions, Enumerable, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -40,29 +40,29 @@ class CheckYourAnswersController @Inject()(
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
-                                            checkYourAnswersFactory: CheckYourAnswersFactory,
+                                            implicit val countryOptions: CountryOptions,
                                             @EstablishersCompany navigator: Navigator,
                                             sectionComplete: SectionComplete
-                                          ) extends FrontendController with Retrievals with I18nSupport {
+                                          ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       SchemeDetailsId.retrieve.right.map { schemeDetails =>
-        val checkYourAnswersHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
 
         val companyDetails = AnswerSection(
           Some("messages__common__company_details__title"),
           CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url) ++
             CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url) ++
-            checkYourAnswersHelper.companyUniqueTaxReference(index.id)
+            CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url) ++
+            IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(CheckMode, Index(index)).url)
         )
 
         val companyContactDetails = AnswerSection(
           Some("messages__establisher_company_contact_details__title"),
-          checkYourAnswersHelper.companyAddress(index.id) ++
-            checkYourAnswersHelper.companyAddressYears(index.id) ++
-            checkYourAnswersHelper.companyPreviousAddress(index.id) ++
-            checkYourAnswersHelper.companyContactDetails(index.id)
+          CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(CheckMode, Index(index)).url) ++
+            CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(CheckMode, index).url) ++
+            CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url) ++
+            CompanyContactDetailsId(index).row(routes.CompanyContactDetailsController.onPageLoad(CheckMode, index).url)
         )
 
         Future.successful(Ok(check_your_answers(

@@ -19,13 +19,13 @@ import identifiers.LastPageId
 import identifiers.register._
 import models._
 import models.address.{Address, TolerantAddress}
-import models.register.SchemeDetails
+import models.register.{DeclarationDormant, SchemeDetails}
 import org.scalatest.OptionValues
 
 //scalastyle:off number.of.methods
 package object utils {
 
-  implicit class UserAnswerOps(answers: UserAnswers) extends OptionValues {
+  implicit class UserAnswerOps(answers: UserAnswers) extends OptionValues with Enumerable .Implicits {
 
     // Scheme details
     def declarationDuties(declarationDuties: Boolean): UserAnswers = {
@@ -74,6 +74,22 @@ package object utils {
       answers.set(establishers.company.CompanyDetailsId(index))(companyDetails).asOpt.value
     }
 
+    def establisherCompanyRegistrationNumber(index: Int, crn: CompanyRegistrationNumber): UserAnswers = {
+      answers.set(establishers.company.CompanyRegistrationNumberId(index))(crn).asOpt.value
+    }
+
+    def establisherCompanyDormant(index: Int, isDormant: DeclarationDormant): UserAnswers = {
+      answers.set(establishers.company.IsCompanyDormantId(index))(isDormant).asOpt.value
+    }
+
+    def establisherUniqueTaxReference(index: Int, utr: UniqueTaxReference): UserAnswers = {
+      answers.set(establishers.company.CompanyUniqueTaxReferenceId(index))(utr).asOpt.value
+    }
+
+    def establisherCompanyAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
+      answers.set(establishers.company.CompanyAddressYearsId(index))(addressYears).asOpt.value
+    }
+
     def establisherPartnershipDetails(index: Int, partnershipDetails: PartnershipDetails): UserAnswers = {
       answers.set(establishers.partnership.PartnershipDetailsId(index))(partnershipDetails).asOpt.value
     }
@@ -92,6 +108,10 @@ package object utils {
 
     def establishersCompanyPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(establishers.company.CompanyPreviousAddressListId(index))(selectedAddress).asOpt.value
+    }
+
+    def establishersCompanyContactDetails(index: Int, contactDetails: ContactDetails): UserAnswers = {
+      answers.set(establishers.company.CompanyContactDetailsId(index))(contactDetails).asOpt.value
     }
 
     //Establisher company director
