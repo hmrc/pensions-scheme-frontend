@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.register
 
+import controllers.ControllerSpecBase
 import controllers.actions._
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -33,7 +34,9 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
     new SchemeTaskListController(
       frontendAppConfig,
       messagesApi,
-      FakeAuthAction
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl
     )
 
   def viewAsString(): String =
@@ -49,6 +52,14 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
+
+    "redirect to Session Expired for a GET if no existing data is found" in {
+      val result = controller(dontGetAnyData).onPageLoad(fakeRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+    }
+
   }
 
 }

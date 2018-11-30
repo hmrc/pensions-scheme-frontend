@@ -45,7 +45,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
     value match {
       case Some(false) =>
         if(config.isHubEnabled){
-          NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
         } else {
           navigateBasedOnSchemeDetails(answers)
         }

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.{PensionAdministratorConnector, UserAnswersCacheConnector}
 import javax.inject.Inject
 import models.PSAName
-import models.requests.OptionalDataRequest
+import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.libs.json.{JsValue, Reads}
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
@@ -37,8 +37,9 @@ class NameMatchingFactory @Inject()(
                                    ) {
 
   def nameMatching(schemeName: String)
-                  (implicit request: OptionalDataRequest[AnyContent],
+                  (implicit request: DataRequest[AnyContent],
                    ec: ExecutionContext,
-                   hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] = pensionAdministratorConnector.getPSAName map { NameMatching(schemeName, _) }
+                   hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] =
+    pensionAdministratorConnector.getPSAName map { NameMatching(schemeName, _) }
 
 }

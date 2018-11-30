@@ -117,7 +117,7 @@ class DeclarationHsViewSpec extends QuestionViewBehaviours[Boolean] {
   "Declaration view (hub and spoke)" must {
     "have a return link" in {
       Jsoup.parse(createView().toString).select("a[id=return-pension-scheme-details]") must
-        haveLink(controllers.routes.SchemeTaskListController.onPageLoad().url)
+        haveLink(controllers.register.routes.SchemeTaskListController.onPageLoad().url)
     }
   }
 }
