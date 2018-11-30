@@ -20,7 +20,7 @@ import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.TypedIdentifier
-import identifiers.register.IsWorkingKnowledgeCompleteId
+import identifiers.register.adviser.IsWorkingKnowledgeCompleteId
 import models.CheckMode
 import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers.{any, eq => eqTo}
