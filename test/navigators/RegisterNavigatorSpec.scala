@@ -182,7 +182,8 @@ class RegisterHsNavigatorSpec extends SpecBase with MustMatchers with NavigatorB
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
 
     //Check your answers - back to task list page
-    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false)
+    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false),
+    (DeclarationDutiesId, dutiesTrue, taskList, true, None, false)
   )
 
   "RegisterHsNavigator" must {
@@ -195,6 +196,7 @@ class RegisterHsNavigatorSpec extends SpecBase with MustMatchers with NavigatorB
 
 object RegisterHsNavigatorSpec {
   private val emptyAnswers = UserAnswers(Json.obj())
+  private val dutiesTrue = UserAnswers().declarationDuties(true)
   private def taskList:Call = controllers.routes.SchemeTaskListController.onPageLoad()
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 }

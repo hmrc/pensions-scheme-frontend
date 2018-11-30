@@ -17,12 +17,13 @@
 package navigators
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.adviser._
 import models.{CheckMode, NormalMode}
 import utils.Navigator
 
-class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
+class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
@@ -35,7 +36,7 @@ class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
       case AdviserAddressId =>
         NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
       case CheckYourAnswersId =>
-        NavigateTo.save(controllers.register.routes.SchemeSuccessController.onPageLoad())
+        workingKnowldgeAnswersRoutes()
       case _ => None
     }
   }
@@ -51,6 +52,14 @@ class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
       case AdviserAddressId =>
         NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
       case _ => None
+    }
+  }
+
+  private def workingKnowldgeAnswersRoutes(): Option[NavigateTo] = {
+    if (appConfig.isHubEnabled) {
+      NavigateTo.save(controllers.routes.SchemeTaskListController.onPageLoad())
+    } else {
+      NavigateTo.save(controllers.register.routes.SchemeSuccessController.onPageLoad())
     }
   }
 

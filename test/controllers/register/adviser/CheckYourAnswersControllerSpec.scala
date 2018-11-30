@@ -19,14 +19,15 @@ package controllers.register.adviser
 import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.DeclarationDutiesControllerSpec.{fakePensionsSchemeConnector, fakePensionsSchemeConnectorWithInvalidPayloadException}
 import identifiers.TypedIdentifier
+import identifiers.register.IsWorkingKnowledgeCompleteId
 import models.CheckMode
 import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSClient
@@ -35,10 +36,9 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeCountryOptions, FakeNavigator, UserAnswers}
+import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete, SectionComplete, UserAnswers}
 import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
-import play.api.inject.bind
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -67,7 +67,9 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 
         val mockPsaNameCacheConnector = mock[PSANameCacheConnector]
 
-        lazy val app = new GuiceApplicationBuilder()
+        lazy val app = new GuiceApplicationBuilder().configure(
+            "features.is-hub-enabled" -> false
+          )
           .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
           .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
           .overrides(bind[AuthAction].toInstance(FakeAuthAction))
@@ -105,6 +107,26 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+    }
+
+    "redirect to the next page on a POST request when hubEnabled" in {
+        lazy val app = new GuiceApplicationBuilder().configure(
+          "features.is-hub-enabled" -> true
+        )
+        .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
+        .overrides(bind[AuthAction].toInstance(FakeAuthAction))
+        .overrides(bind[DataRetrievalAction].toInstance(getEmptyData))
+        .overrides(bind[PensionsSchemeConnector].toInstance(fakePensionsSchemeConnector))
+        .overrides(bind[PensionAdministratorConnector].toInstance(fakePensionAdminstratorConnector))
+        .overrides(bind[SectionComplete].toInstance(FakeSectionComplete)).build()
+
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
+
+      whenReady(app.injector.instanceOf[CheckYourAnswersController].onSubmit(postRequest)) { _=>
+
+        FakeSectionComplete.verify(IsWorkingKnowledgeCompleteId, true)
+      }
+
     }
 
 
@@ -212,7 +234,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
       emailConnector,
       FakePsaNameCacheConnector(psaName),
       applicationCrypto,
-      fakePensionAdminstratorConnector
+      fakePensionAdminstratorConnector,
+      FakeSectionComplete
     )
 
   lazy val viewAsString: String = check_your_answers(
