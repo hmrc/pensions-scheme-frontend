@@ -23,7 +23,7 @@
 @import controllers.register.establishers.routes._
 @import controllers.register.trustees.routes._
 
-@(appConfig: FrontendAppConfig, journeyTaskList: JourneyTaskList)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, taskSections: JourneyTaskList)(implicit request: Request[_], messages: Messages)
 
 @status(isCompleted:Boolean)=@{
     if (isCompleted) {
@@ -56,11 +56,11 @@
             </h2>
             <ul class="task-list-items">
                 <li class="task-list-item">
-                    <a id= "section-about-link" href="@journeyTaskList.about.link.target" aria-describedby="section-about-status">
-                        @messages(journeyTaskList.about.link.text)
+                    <a id= "section-about-link" href="@taskSections.about.link.target" aria-describedby="section-about-status">
+                        @messages(taskSections.about.link.text)
                     </a>
 
-                    @journeyTaskList.about.isCompleted.map{ isCompleted =>
+                    @taskSections.about.isCompleted.map{ isCompleted =>
                     <strong class="@statusClass(isCompleted)" id="section-about-status">@messages(status(isCompleted))</strong>
                     }
                 </li>
@@ -73,7 +73,7 @@
             </h2>
             <ul class="task-list-items">
                 <li>
-                    @if(journeyTaskList.establishers.isEmpty){
+                    @if(taskSections.establishers.isEmpty){
                         <a id= "section-establishers-add-link" href="@AddEstablisherController.onPageLoad(NormalMode)">
                             @messages("messages__schemeTaskList__sectionEstablishers_add_link")
                         </a>
@@ -84,7 +84,7 @@
                     }
                 </li>
 
-                @for((item, i) <- journeyTaskList.establishers.zipWithIndex){
+                @for((item, i) <- taskSections.establishers.zipWithIndex){
                     @defining(i+1) { index =>
                         <li class="task-list-item">
                             <h3 class="task-list-section">@messages(item.header.getOrElse(""))</h3>
@@ -109,7 +109,7 @@
             </h2>
             <ul class="task-list-items">
                 <li>
-                    @if(journeyTaskList.trustees.isEmpty){
+                    @if(taskSections.trustees.isEmpty){
                         <a id= "section-trustees-add-link"  href="@AddTrusteeController.onPageLoad(NormalMode)">
                             @messages("messages__schemeTaskList__sectionTrustees_add_link")
                         </a>
@@ -120,7 +120,7 @@
                     }
                 </li>
 
-                @for((item, i) <- journeyTaskList.trustees.zipWithIndex){
+                @for((item, i) <- taskSections.trustees.zipWithIndex){
                     @defining(i+1) { index =>
                         <li class="task-list-item">
                             <h3 class="task-list-section">@messages(item.header.getOrElse(""))</h3>
@@ -145,11 +145,11 @@
             </h2>
             <ul class="task-list-items">
                 <li class="task-list-item">
-                    <a id= "section-workingKnowledge-link" href="@journeyTaskList.workingKnowledge.link.target" aria-describedby="section-workingKnowledge-status">
-                        @messages(journeyTaskList.workingKnowledge.link.text)
+                    <a id= "section-workingKnowledge-link" href="@taskSections.workingKnowledge.link.target" aria-describedby="section-workingKnowledge-status">
+                        @messages(taskSections.workingKnowledge.link.text)
                     </a>
 
-                    @journeyTaskList.workingKnowledge.isCompleted.map{ isCompleted =>
+                    @taskSections.workingKnowledge.isCompleted.map{ isCompleted =>
                     <strong class="@statusClass(isCompleted)" id="section-workingKnowledge-status">@messages(status(isCompleted))</strong>
                     }
                 </li>
@@ -162,8 +162,8 @@
             </h2>
             <ul class="task-list-items">
                 <li class="task-list-item">
-                    @if(journeyTaskList.declaration.isDefined){
-                        @journeyTaskList.declaration.map{ link =>
+                    @if(taskSections.declaration.isDefined){
+                        @taskSections.declaration.map{ link =>
                         <a id= "section-declaration-link" href="@link.target">
                             @messages(link.text)
                         </a>
