@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.register.adviser._
 import models.{CheckMode, Mode, NormalMode}
@@ -25,7 +26,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
 
-class AdviserNavigatorSpec extends SpecBase with NavigatorBehaviour {
+class AdviserNavigatorSpec extends SpecBase with NavigatorBehaviour{
 
   import AdviserNavigatorSpec._
 
@@ -38,10 +39,36 @@ class AdviserNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (CheckYourAnswersId, emptyAnswers, schemeSuccess, true, None, true)
   )
 
-  val navigator = new AdviserNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+  private def routesWithWorkingKnowldge = Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
 
-  "AdviserNavigator" must {
+    //Check your answers - back to task list page
+    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false)
+  )
+
+
+  "AdviserNavigator" must{
+
+    lazy val app = new GuiceApplicationBuilder().configure(
+      "features.is-hub-enabled" -> false
+    ).build()
+    val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+    val navigator = new AdviserNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
+    behave like nonMatchingNavigator(navigator)
+
+  }
+
+  "AdviserNavigator with hub and spoke" must {
+    lazy val app = new GuiceApplicationBuilder().configure(
+      "features.useManagePensionsFrontend" -> true,
+      "features.is-hub-enabled" -> true
+    ).build()
+    val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+    val navigator = new AdviserNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithWorkingKnowldge, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 
@@ -49,11 +76,11 @@ class AdviserNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
 object AdviserNavigatorSpec {
 
-  val emptyAnswers = UserAnswers(Json.obj())
+  private val emptyAnswers = UserAnswers(Json.obj())
 
-  def taskList:Call = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList:Call = controllers.routes.SchemeTaskListController.onPageLoad()
 
-  def dataDescriber(answers: UserAnswers): String = answers.toString
+  private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def adviserAddress(mode: Mode) = controllers.register.adviser.routes.AdviserAddressController.onPageLoad(mode)
 
@@ -67,27 +94,4 @@ object AdviserNavigatorSpec {
 
   private def task = controllers.register.routes.SchemeSuccessController.onPageLoad()
 
-}
-
-class AdviserNavigatorHnSSpec extends SpecBase with NavigatorBehaviour {
-
-  import AdviserNavigatorSpec._
-
-  override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.useManagePensionsFrontend" -> true,
-    "features.is-hub-enabled" -> true
-  ).build()
-
-  private def routesWithWorkingKnowldge = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-
-    //Check your answers - back to task list page
-    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false)
-  )
-
-  "AdviserHsNavigator" must {
-    val navigator = new AdviserNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithWorkingKnowldge, dataDescriber)
-    behave like nonMatchingNavigator(navigator)
-  }
 }
