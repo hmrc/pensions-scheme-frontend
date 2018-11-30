@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package hsforms.beforeYouStart
+package models.register
 
-import forms.mappings.Constraints
-import hsforms.mappings.SchemeTypeTypeMapping
-import hsmodels.beforeYouStart.SchemeType
-import javax.inject.Inject
-import play.api.data.Form
-import play.api.data.Forms.mapping
+import play.api.libs.json.{Format, Json}
 
-class SchemeTypeFormProvider @Inject() extends SchemeTypeTypeMapping with Constraints {
-  def apply(): Form[hsmodels.beforeYouStart.SchemeType] = Form(mapping(
-    "schemeType" -> schemeTypeMapping()
-  )(SchemeType.apply)(SchemeType.unapply))
+case class SchemeTypeDetails(schemeType: SchemeType)
+
+object SchemeTypeDetails {
+  implicit val formats: Format[SchemeTypeDetails] = Json.format[SchemeTypeDetails]
 }
+
+

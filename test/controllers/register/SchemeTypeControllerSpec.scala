@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package hscontrollers.beforeYouStart
+package controllers.register
 
 import config.FrontendAppConfig
 import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import hsforms.beforeYouStart.SchemeTypeFormProvider
-import hsidentifiers.beforeYouStart.SchemeTypeId
-import hsmodels.beforeYouStart.SchemeType
+import identifiers.register.SchemeTypeId
+import models.register.{SchemeType, SchemeTypeDetails}
 import models.requests.OptionalDataRequest
 import models.{NormalMode, PSAName}
 import play.api.data.Form
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
-import types.SchemeTypeType
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
-import views.html.hs.beforeYouStart.schemeType
+import views.html.register.schemeType
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -80,12 +79,12 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(SchemeTypeId.toString -> Json.toJson(SchemeType(SchemeTypeType.SingleTrust)))
+      val validData = Json.obj(SchemeTypeId.toString -> Json.toJson(SchemeTypeDetails(SchemeType.SingleTrust)))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(SchemeType(SchemeTypeType.SingleTrust)))
+      contentAsString(result) mustBe viewAsString(form.fill(SchemeTypeDetails(SchemeType.SingleTrust)))
     }
 
     "redirect to the next page when valid data is submitted" in {

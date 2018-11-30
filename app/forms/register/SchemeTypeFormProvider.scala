@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package hsnavigators
+package hsforms.beforeYouStart
 
-import com.google.inject.Inject
-import connectors.UserAnswersCacheConnector
-import utils.Navigator
+import forms.mappings.{Constraints, SchemeTypeMapping}
+import javax.inject.Inject
+import models.register.SchemeTypeDetails
+import play.api.data.Form
+import play.api.data.Forms.mapping
 
-class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
-
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
-    from.id match {
-      case _ => None
-    }
-  }
-
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
-    from.id match {
-      case _ => None
-    }
-  }
-
+class SchemeTypeFormProvider @Inject() extends SchemeTypeMapping with Constraints {
+  def apply(): Form[SchemeTypeDetails] = Form(mapping(
+    "schemeType" -> schemeTypeMapping()
+  )(SchemeTypeDetails.apply)(SchemeTypeDetails.unapply))
 }

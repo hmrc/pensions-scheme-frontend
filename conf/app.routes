@@ -1,6 +1,5 @@
 # microservice specific routes
 ->         /register                                    register.Routes
-->         /                                            beforeYouStart.Routes
 
 GET        /                                            controllers.WhatYouWillNeedController.onPageLoad()
 

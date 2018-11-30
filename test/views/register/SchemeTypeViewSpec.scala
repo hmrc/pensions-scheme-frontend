@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package views.hs.beforeYouStart
+package views.register
 
 import hsforms.beforeYouStart.SchemeTypeFormProvider
-import hsmodels.beforeYouStart.SchemeType
 import models.NormalMode
+import models.register.{SchemeType, SchemeTypeDetails}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import types.SchemeTypeType
 import views.behaviours.QuestionViewBehaviours
-import views.html.hs.beforeYouStart.schemeType
-import views.html.register.schemeDetails
+import views.html.register.{schemeDetails, schemeType}
 
-class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
+class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeTypeDetails] {
 
   val messageKeyPrefix = "scheme_type"
 
@@ -37,7 +35,7 @@ class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  private def schemeOptions = SchemeTypeType.options
+  private def schemeOptions = SchemeType.options
 
   "SchemeType view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))

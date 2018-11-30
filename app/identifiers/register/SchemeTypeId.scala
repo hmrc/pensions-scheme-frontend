@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package hsmodels.beforeYouStart
+package identifiers.register
 
-import play.api.libs.json._
+import identifiers.TypedIdentifier
+import models.register.SchemeTypeDetails
 
-case class SchemeType(schemeType: types.SchemeTypeType)
-
-object SchemeType {
-  implicit val format = Json.format[SchemeType]
+case object SchemeTypeId extends TypedIdentifier[SchemeTypeDetails] {
+  override def toString: String = "schemeType"
 }

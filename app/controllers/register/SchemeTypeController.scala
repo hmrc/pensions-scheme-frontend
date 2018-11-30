@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package hscontrollers.beforeYouStart
+package controllers.register
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import hsforms.beforeYouStart.SchemeTypeFormProvider
-import hsidentifiers.beforeYouStart.SchemeTypeId
+import identifiers.register.SchemeTypeId
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{NameMatchingFactory, Navigator, UserAnswers}
-import views.html.hs.beforeYouStart.schemeType
+import views.html.register.schemeType
 
 import scala.concurrent.Future
 
