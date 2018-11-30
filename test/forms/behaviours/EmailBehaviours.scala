@@ -67,7 +67,6 @@ trait EmailBehaviours extends FormSpec with StringFieldBehaviours with Constrain
     }
   }
 
-  //scalastyle:off method.length
   def formWithEmailFieldForAllErrors(
                           form: Form[_],
                           fieldName: String,
