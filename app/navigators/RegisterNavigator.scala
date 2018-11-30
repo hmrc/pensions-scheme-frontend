@@ -60,7 +60,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case UKBankDetailsId =>
         NavigateTo.save(controllers.register.routes.CheckYourAnswersController.onPageLoad())
       case CheckYourAnswersId =>
-        checkYourAnswersRoutes(from.userAnswers)
+        checkYourAnswersRoutes()
       case SchemeReviewId =>
         schemeReviewRoutes(from.userAnswers)
       case DeclarationDormantId =>
@@ -152,7 +152,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   private def declarationDutiesRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
     userAnswers.get(DeclarationDutiesId) match {
       case Some(true) =>
-        NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
+        workingKnowldgeAnswersRoutes()
       case Some(false) =>
         NavigateTo.save(controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode))
       case None =>
@@ -160,11 +160,19 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     }
   }
 
-  private def checkYourAnswersRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
+  private def checkYourAnswersRoutes(): Option[NavigateTo] = {
     if (appConfig.isHubEnabled) {
       NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
     } else {
       NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
+    }
+  }
+
+  private def workingKnowldgeAnswersRoutes(): Option[NavigateTo] = {
+    if (appConfig.isHubEnabled) {
+      NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
+    } else {
+      NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
     }
   }
 
