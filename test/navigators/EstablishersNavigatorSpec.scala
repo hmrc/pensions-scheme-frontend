@@ -119,7 +119,7 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
 
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def taskList = controllers.routes.SchemeTaskListController.onPageLoad()
+  private def taskList = controllers.register.routes.SchemeTaskListController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
