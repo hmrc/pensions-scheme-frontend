@@ -19,8 +19,27 @@
 @import uk.gov.hmrc.play.views.html._
 @import views.html._
 @import viewmodels.JourneyTaskList
+@import models.NormalMode
+@import controllers.register.establishers.routes._
+@import controllers.register.trustees.routes._
 
-@(appConfig: FrontendAppConfig, model: JourneyTaskList)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, taskSections: JourneyTaskList)(implicit request: Request[_], messages: Messages)
+
+@status(isCompleted:Boolean)=@{
+    if (isCompleted) {
+        "messages__schemeTaskList__completed"
+    } else {
+        "messages__schemeTaskList__inProgress"
+    }
+}
+
+@statusClass(isCompleted:Boolean)=@{
+    if (isCompleted) {
+        "task-completed"
+    } else {
+        "task-inprogress"
+    }
+}
 
 @main_template(
     title = messages("messages__schemeTaskList__title"),
@@ -29,4 +48,137 @@
     ) {
 
         @components.heading(messages("messages__schemeTaskList__heading").toString)
+
+    <ol class="task-list">
+        <li>
+            <h2 id="section-about-header" class="heading-large">
+                @messages("messages__schemeTaskList__sectionAbout_header")
+            </h2>
+            <ul class="task-list-items">
+                <li class="task-list-item">
+                    <a id= "section-about-link" href="@taskSections.about.link.target" aria-describedby="section-about-status">
+                        @messages(taskSections.about.link.text)
+                    </a>
+
+                    @taskSections.about.isCompleted.map{ isCompleted =>
+                    <strong class="@statusClass(isCompleted)" id="section-about-status">@messages(status(isCompleted))</strong>
+                    }
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <h2 id="section-establishers-header" class="heading-large">
+                @messages("messages__schemeTaskList__sectionEstablishers_header")
+            </h2>
+            <ul class="task-list-items">
+                <li>
+                    @if(taskSections.establishers.isEmpty){
+                        <a id= "section-establishers-add-link" href="@AddEstablisherController.onPageLoad(NormalMode)">
+                            @messages("messages__schemeTaskList__sectionEstablishers_add_link")
+                        </a>
+                    } else {
+                        <a id= "section-establishers-change-link" href="@AddEstablisherController.onPageLoad(NormalMode)">
+                            @messages("messages__schemeTaskList__sectionEstablishers_change_link")
+                        </a>
+                    }
+                </li>
+
+                @for((item, i) <- taskSections.establishers.zipWithIndex){
+                    @defining(i+1) { index =>
+                        <li class="task-list-item">
+                            <h3 class="task-list-section">@messages(item.header.getOrElse(""))</h3>
+                        </li>
+                        <li class="task-list-item">
+                            <a id= "section-establishers-link-0@index" href="@{item.link.target}">
+                                @messages(item.link.text)
+                            </a>
+                            @item.isCompleted.map{ isCompleted =>
+                                <strong class="@statusClass(isCompleted)" id="section-establishers-status-0@index">@messages(status(isCompleted))</strong>
+                            }
+                        </li>
+                    }
+                }
+
+            </ul>
+        </li>
+
+        <li>
+            <h2 id="section-trustees-header" class="heading-large">
+                @messages("messages__schemeTaskList__sectionTrustees_header")
+            </h2>
+            <ul class="task-list-items">
+                <li>
+                    @if(taskSections.trustees.isEmpty){
+                        <a id= "section-trustees-add-link"  href="@AddTrusteeController.onPageLoad(NormalMode)">
+                            @messages("messages__schemeTaskList__sectionTrustees_add_link")
+                        </a>
+                    } else {
+                        <a id= "section-trustees-change-link"  href="@AddTrusteeController.onPageLoad(NormalMode)">
+                            @messages("messages__schemeTaskList__sectionTrustees_change_link")
+                        </a>
+                    }
+                </li>
+
+                @for((item, i) <- taskSections.trustees.zipWithIndex){
+                    @defining(i+1) { index =>
+                        <li class="task-list-item">
+                            <h3 class="task-list-section">@messages(item.header.getOrElse(""))</h3>
+                        </li>
+                        <li class="task-list-item">
+                            <a id= "section-trustees-link-0@index"  href="@{item.link.target}">
+                                @messages(item.link.text)
+                            </a>
+                            @item.isCompleted.map{ isCompleted =>
+                                <strong class="@statusClass(isCompleted)" id="section-trustees-status-0@index">@messages(status(isCompleted))</strong>
+                            }
+                        </li>
+                    }
+                }
+
+            </ul>
+        </li>
+
+        <li>
+            <h2 id="section-workingKnowledge-header" class="heading-large">
+                @messages("messages__schemeTaskList__sectionWorkingKnowledge_header")
+            </h2>
+            <ul class="task-list-items">
+                <li class="task-list-item">
+                    <a id= "section-workingKnowledge-link" href="@taskSections.workingKnowledge.link.target" aria-describedby="section-workingKnowledge-status">
+                        @messages(taskSections.workingKnowledge.link.text)
+                    </a>
+
+                    @taskSections.workingKnowledge.isCompleted.map{ isCompleted =>
+                    <strong class="@statusClass(isCompleted)" id="section-workingKnowledge-status">@messages(status(isCompleted))</strong>
+                    }
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <h2 id="section-declaration-header" class="heading-large">
+                @messages("messages__schemeTaskList__sectionDeclaration_header")
+            </h2>
+            <ul class="task-list-items">
+                <li class="task-list-item">
+                    @if(taskSections.declaration.isDefined){
+                        @taskSections.declaration.map{ link =>
+                        <a id= "section-declaration-link" href="@link.target">
+                            @messages(link.text)
+                        </a>
+                        }
+                    }else{
+                    <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
+                    }
+                </li>
+            </ul>
+        </li>
+    </ol>
+
+    <br>
+    <a id= "save-and-return" class="task-name" href="@appConfig.managePensionsSchemeOverviewUrl.url">
+        @messages("messages__complete__saveAndReturnToManagePensionSchemes")
+    </a>
+
 }
