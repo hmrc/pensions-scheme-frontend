@@ -70,7 +70,7 @@ class DeclarationController @Inject()(
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       retrieveSchemeName {
-        schemeName =>
+        _ =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) => {
               showPage(BadRequest.apply, formWithErrors)
@@ -78,7 +78,7 @@ class DeclarationController @Inject()(
             value =>
               if (appConfig.isHubEnabled) {
                 for {
-                  cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, true)
+                  cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
                   submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
                   cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
                   _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
@@ -93,7 +93,8 @@ class DeclarationController @Inject()(
       }
   }
 
-  private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
+  private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(
+    implicit request: DataRequest[AnyContent]): Either[Future[Result], Future[Result]] = {
     SchemeDetailsId.retrieve.right.map { details =>
       val isCompany = request.userAnswers.hasCompanies
 
@@ -101,39 +102,42 @@ class DeclarationController @Inject()(
         val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values(1) else DeclarationDormant.values.head
 
         if (isCompany) {
-          dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ =>
-            status(
-              declaration(appConfig, form, details.schemeName, isCompany, isDeclarationDormant, showMasterTrustDeclaration)
-            )
+          dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).flatMap(_ =>
+            renderView(status, form, details.schemeName, isCompany, isDeclarationDormant)
           )
         } else {
-          Future.successful(
-            status(
-              declaration(appConfig, form, details.schemeName, isCompany, isDeclarationDormant, showMasterTrustDeclaration)
-            )
-          )
+          renderView(status, form, details.schemeName, isCompany, isDeclarationDormant)
         }
       } else {
-        request.userAnswers.get(DeclarationDormantId) match {
-          case Some(Yes) => Future.successful(
-            status(
-              declaration(appConfig, form, details.schemeName, isCompany, isDormant = true, showMasterTrustDeclaration)
-            )
-          )
-          case Some(No) => Future.successful(
-            status(
-              declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)
-            )
-          )
-          case None if !isCompany => Future.successful(
-            status(
-              declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)
-            )
-          )
-          case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-        }
+        processViewIfNotHub(status, form, details.schemeName, isCompany)
       }
     }
+  }
+
+  private def processViewIfNotHub(status: HtmlFormat.Appendable => Result, form: Form[_],
+                                  schemeName: String, isCompany: Boolean)(
+    implicit request: DataRequest[AnyContent]) : Future[Result] = {
+
+    request.userAnswers.get(DeclarationDormantId) match {
+      case Some(Yes) =>
+        renderView(status, form, schemeName, isCompany, isDormant= true)
+      case Some(No) =>
+        renderView(status, form, schemeName, isCompany, isDormant = false)
+      case None if !isCompany =>
+        renderView(status, form, schemeName, isCompany, isDormant = false)
+      case _ =>
+        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+    }
+  }
+
+  private def renderView(status: HtmlFormat.Appendable => Result,
+                       form: Form[_], schemeName: String, isCompany: Boolean,
+                         isDormant: Boolean)(implicit request: DataRequest[AnyContent]) : Future[Result] = {
+    Future.successful(
+      status(
+        declaration(appConfig, form, schemeName, isCompany, isDormant, showMasterTrustDeclaration)
+      )
+    )
   }
 
   private def showMasterTrustDeclaration(implicit request: DataRequest[AnyContent]): Boolean =
