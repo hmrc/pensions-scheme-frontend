@@ -20,9 +20,9 @@ import config.FrontendAppConfig
 import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import hsforms.beforeYouStart.SchemeTypeFormProvider
+import forms.register.SchemeTypeFormProvider
 import identifiers.register.SchemeTypeId
-import models.register.{SchemeType, SchemeTypeDetails}
+import models.register.SchemeType
 import models.requests.OptionalDataRequest
 import models.{NormalMode, PSAName}
 import play.api.data.Form
@@ -79,12 +79,12 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(SchemeTypeId.toString -> Json.toJson(SchemeTypeDetails(SchemeType.SingleTrust)))
+      val validData = Json.obj(SchemeTypeId.toString -> Json.toJson(SchemeType.SingleTrust))
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
 
-      contentAsString(result) mustBe viewAsString(form.fill(SchemeTypeDetails(SchemeType.SingleTrust)))
+      contentAsString(result) mustBe viewAsString(form.fill(SchemeType.SingleTrust))
     }
 
     "redirect to the next page when valid data is submitted" in {

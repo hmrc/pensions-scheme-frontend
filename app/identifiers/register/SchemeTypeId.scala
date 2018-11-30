@@ -17,8 +17,8 @@
 package identifiers.register
 
 import identifiers.TypedIdentifier
-import models.register.SchemeTypeDetails
+import models.register.SchemeType
 
-case object SchemeTypeId extends TypedIdentifier[SchemeTypeDetails] {
+case object SchemeTypeId extends TypedIdentifier[SchemeType] {
   override def toString: String = "schemeType"
 }

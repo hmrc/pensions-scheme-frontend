@@ -16,15 +16,15 @@
 
 package views.register
 
-import hsforms.beforeYouStart.SchemeTypeFormProvider
+import forms.register.SchemeTypeFormProvider
 import models.NormalMode
-import models.register.{SchemeType, SchemeTypeDetails}
+import models.register.SchemeType
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.{schemeDetails, schemeType}
 
-class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeTypeDetails] {
+class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
 
   val messageKeyPrefix = "scheme_type"
 

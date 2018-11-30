@@ -18,12 +18,9 @@ package forms.register
 
 import forms.mappings.{Constraints, SchemeTypeMapping}
 import javax.inject.Inject
-import models.register.SchemeTypeDetails
+import models.register.SchemeType
 import play.api.data.Form
-import play.api.data.Forms.mapping
 
 class SchemeTypeFormProvider @Inject() extends SchemeTypeMapping with Constraints {
-  def apply(): Form[SchemeTypeDetails] = Form(mapping(
-    "schemeType" -> schemeTypeMapping()
-  )(SchemeTypeDetails.apply)(SchemeTypeDetails.unapply))
+  def apply(): Form[SchemeType] = Form("schemeType" -> schemeTypeMapping())
 }
