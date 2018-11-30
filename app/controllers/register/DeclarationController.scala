@@ -78,12 +78,12 @@ class DeclarationController @Inject()(
             value =>
               if (appConfig.isHubEnabled) {
                 for {
-                  cacheMap <- dataCacheConnector.save(request.externalId, DeclarationDutiesId, true)
+                  cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, true)
                   submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
                   cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
                   _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
                 } yield {
-                  Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
+                  Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
                 }
               } else {
                 dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
