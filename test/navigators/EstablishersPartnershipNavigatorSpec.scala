@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.partnership.routes
 import identifiers.Identifier
@@ -24,6 +25,7 @@ import identifiers.register.establishers.partnership._
 import models.{AddressYears, CheckMode, Mode, NormalMode}
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -33,31 +35,45 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
 
   import EstablishersPartnershipNavigatorSpec._
 
-  private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (PartnershipDetailsId(0), emptyAnswers, partnershipVat(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipVatId(0), emptyAnswers, partnershipPaye(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipPayeId(0), emptyAnswers, partnershipUtr(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipUniqueTaxReferenceID(0), emptyAnswers, partnershipPostcodeLookup(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipPostcodeLookupId(0), emptyAnswers, partnershipAddressList(NormalMode), true, Some(partnershipAddressList(CheckMode)), true),
-    (PartnershipAddressListId(0), emptyAnswers, partnershipAddress(NormalMode), true, Some(partnershipAddress(CheckMode)), true),
-    (PartnershipAddressId(0), emptyAnswers, partnershipAddressYears(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipAddressYearsId(0), addressYearsOverAYear, partnershipContact(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipAddressYearsId(0), addressYearsUnderAYear, partnershipPaPostCodeLookup(NormalMode), true, Some(partnershipPaPostCodeLookup(CheckMode)), true),
-    (PartnershipAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (PartnershipPreviousAddressPostcodeLookupId(0), emptyAnswers, partnershipPaList(NormalMode), true, Some(partnershipPaList(CheckMode)), true),
-    (PartnershipPreviousAddressListId(0), emptyAnswers, partnershipPa(NormalMode), true, Some(partnershipPa(CheckMode)), true),
-    (PartnershipPreviousAddressId(0), emptyAnswers, partnershipContact(NormalMode), true, Some(checkYourAnswers), true),
-    (PartnershipContactDetailsId(0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
-    (OtherPartnersId(0), emptyAnswers, partnershipReview, true, Some(partnershipReview), true),
-    (PartnershipReviewId(0), emptyAnswers, addEstablisher, true, None, true)
+  private def routesWithHubEnabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    (PartnershipDetailsId(0),                         emptyAnswers,                 partnershipVat(NormalMode),               true,         Some(checkYourAnswers),             true),
+    (PartnershipVatId(0),                             emptyAnswers,                 partnershipPaye(NormalMode),              true,         Some(checkYourAnswers),             true),
+    (PartnershipPayeId(0),                            emptyAnswers,                 partnershipUtr(NormalMode),               true,         Some(checkYourAnswers),             true),
+    (PartnershipUniqueTaxReferenceID(0),              emptyAnswers,                 partnershipPostcodeLookup(NormalMode),    true,         Some(checkYourAnswers),              true),
+    (PartnershipPostcodeLookupId(0),                  emptyAnswers,                 partnershipAddressList(NormalMode),       true,         Some(partnershipAddressList(CheckMode)), true),
+    (PartnershipAddressListId(0),                     emptyAnswers,                 partnershipAddress(NormalMode),           true,         Some(partnershipAddress(CheckMode)), true),
+    (PartnershipAddressId(0),                         emptyAnswers,                 partnershipAddressYears(NormalMode),      true,         Some(checkYourAnswers),               true),
+    (PartnershipAddressYearsId(0),                    addressYearsOverAYear,        partnershipContact(NormalMode),           true,         Some(checkYourAnswers),               true),
+    (PartnershipAddressYearsId(0),                    addressYearsUnderAYear,       partnershipPaPostCodeLookup(NormalMode),  true,         Some(partnershipPaPostCodeLookup(CheckMode)), true),
+    (PartnershipAddressYearsId(0),                    emptyAnswers,                 sessionExpired,                           false,        Some(sessionExpired),                 false),
+    (PartnershipPreviousAddressPostcodeLookupId(0),   emptyAnswers,                 partnershipPaList(NormalMode),            true,         Some(partnershipPaList(CheckMode)),   true),
+    (PartnershipPreviousAddressListId(0),             emptyAnswers,                 partnershipPa(NormalMode),                true,         Some(partnershipPa(CheckMode)),       true),
+    (PartnershipPreviousAddressId(0),                 emptyAnswers,                 partnershipContact(NormalMode),           true,         Some(checkYourAnswers),               true),
+    (PartnershipContactDetailsId(0),                  emptyAnswers,                 isDormant,                                true,         Some(checkYourAnswers),               true),
+    (IsPartnershipDormantId(0),                       emptyAnswers,                 checkYourAnswers,                         true,         Some(checkYourAnswers),               true),
+    (OtherPartnersId(0),                              emptyAnswers,                 partnershipReview,                        true,         Some(partnershipReview),              true),
+    (PartnershipReviewId(0),                          emptyAnswers,                 addEstablisher,                           true,         None,                                 true)
   )
 
-  "EstablishersCompanyNavigator when restrict-establisher toggle is off" must {
+  private def routesWithHubDisabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
+    (PartnershipContactDetailsId(0),                  emptyAnswers,                 checkYourAnswers,                        true,         Some(checkYourAnswers),               true)
+  )
+
+  def navigator(isHubEnabled: Boolean = true): EstablishersPartnershipNavigator =
+    new EstablishersPartnershipNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled))
+
+  s"${navigator().getClass.getSimpleName} when isHubEnabled toggle is on" must {
     appRunning()
-    val navigator = new EstablishersPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
-    behave like nonMatchingNavigator(navigator)
+    behave like navigatorWithRoutes(navigator(), FakeUserAnswersCacheConnector, routesWithHubEnabled, dataDescriber)
+    behave like nonMatchingNavigator(navigator())
+  }
+
+  s"${navigator(false).getClass.getSimpleName} when isHubEnabled toggle is off" must {
+    appRunning()
+    behave like navigatorWithRoutes(navigator(false), FakeUserAnswersCacheConnector, routesWithHubDisabled, dataDescriber)
+    behave like nonMatchingNavigator(navigator(false))
   }
 
 }
@@ -97,10 +113,16 @@ object EstablishersPartnershipNavigatorSpec extends OptionValues {
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
+  private def isDormant = controllers.register.establishers.partnership.routes.IsPartnershipDormantController.onPageLoad(NormalMode, 0)
+
   private val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(PartnershipAddressYearsId(0))(AddressYears.OverAYear).asOpt.value
   private val addressYearsUnderAYear = UserAnswers(Json.obj())
     .set(PartnershipAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+
+  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    "features.is-hub-enabled" -> isHubEnabled
+  ).build().injector.instanceOf[FrontendAppConfig]
 }
