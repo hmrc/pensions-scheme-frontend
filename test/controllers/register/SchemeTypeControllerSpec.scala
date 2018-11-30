@@ -23,7 +23,7 @@ import controllers.actions._
 import forms.register.SchemeTypeFormProvider
 import identifiers.register.SchemeTypeId
 import models.register.SchemeType
-import models.requests.OptionalDataRequest
+import models.requests.{DataRequest, OptionalDataRequest}
 import models.{NormalMode, PSAName}
 import play.api.data.Form
 import play.api.libs.json.{Json, Reads}
@@ -48,7 +48,7 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
 
   object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, pensionAdministratorConnector, ApplicationCrypto, config) {
     override def nameMatching(schemeName: String)
-                             (implicit request: OptionalDataRequest[AnyContent],
+                             (implicit request: DataRequest[AnyContent],
                               ec: ExecutionContext,
                               hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] = {
       Future.successful(NameMatching("value 1", "My PSA"))

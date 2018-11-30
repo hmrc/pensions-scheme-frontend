@@ -14,29 +14,17 @@
  * limitations under the License.
  */
 
-package controllers
+package base
 
-import controllers.actions._
-import play.api.test.Helpers._
+import play.api.libs.json.{JsValue, Json}
 
-class SchemeTaskListControllerSpec extends ControllerSpecBase {
+import scala.io.Source
 
-  private def onwardRoute = controllers.routes.IndexController.onPageLoad()
+trait JsonFileReader {
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeTaskListController =
-    new SchemeTaskListController(
-      frontendAppConfig,
-      messagesApi,
-      FakeAuthAction
-    )
-
-  "SchemeDetails Controller" must {
-
-    "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad()(fakeRequest)
-
-      status(result) mustBe OK
-    }
+  def readJsonFromFile(filePath: String): JsValue = {
+    val path = Source.fromURL(getClass.getResource(filePath)).mkString
+    Json.parse(path)
   }
 
 }

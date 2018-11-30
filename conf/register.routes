@@ -4,10 +4,17 @@
 ->         /trustees                                    trustees.Routes
 ->         /adviser                                     adviser.Routes
 
-GET        /scheme-details                              controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /scheme-details                              controllers.register.SchemeDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-scheme-details                       controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-scheme-details                       controllers.register.SchemeDetailsController.onSubmit(mode: Mode = CheckMode)
+GET        /scheme-details                              controllers.register.SchemeTaskListController.onPageLoad
+
+GET        /scheme-detail                              controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /scheme-detail                              controllers.register.SchemeDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-scheme-detail                       controllers.register.SchemeDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-scheme-detail                       controllers.register.SchemeDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /scheme-name                                 controllers.register.SchemeNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /scheme-name                                 controllers.register.SchemeNameController.onSubmit(mode: Mode = NormalMode)
+GET        /change-scheme-name                          controllers.register.SchemeNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-scheme-name                          controllers.register.SchemeNameController.onSubmit(mode: Mode = CheckMode)
 
 GET        /scheme-type                                 controllers.register.SchemeTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /scheme-type                                 controllers.register.SchemeTypeController.onSubmit(mode: Mode = NormalMode)

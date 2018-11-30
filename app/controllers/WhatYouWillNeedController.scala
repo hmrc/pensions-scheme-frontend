@@ -17,9 +17,9 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.PSANameCacheConnector
+import connectors.{PSANameCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
-import identifiers.{PsaEmailId, PsaNameId}
+import identifiers.{IndexId, PsaEmailId, PsaNameId}
 import javax.inject.Inject
 import models.{NormalMode, PSAName}
 import play.api.Logger
@@ -37,69 +37,25 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
                                           authenticate: AuthAction,
                                           psaNameCacheConnector: PSANameCacheConnector,
-                                          crypto: ApplicationCrypto
+                                          crypto: ApplicationCrypto,
+                                          userAnswersCacheConnector: UserAnswersCacheConnector
                                          ) extends FrontendController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authenticate {
+  def onPageLoad: Action[AnyContent] = authenticate.async {
     implicit request =>
-      Ok(whatYouWillNeed(appConfig))
+      userAnswersCacheConnector.save(request.externalId, IndexId, "").map { _ =>
+        Ok(whatYouWillNeed(appConfig))
+      }
   }
 
   def onSubmit: Action[AnyContent] = authenticate.async {
     implicit request =>
-
-      if(appConfig.isWorkPackageOneEnabled){
+      if (appConfig.isHubEnabled) {
+        Future.successful(Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad()))
+      }
+      else {
         Future.successful(Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode)))
-      } else {
-        val encryptedCacheId = crypto.QueryParameterCrypto.encrypt(PlainText(request.psaId.id)).value
-        for {
-          psaNameFromExtId <- psaNameCacheConnector.fetch(request.externalId)
-          psaNameFromPsaId <- psaNameCacheConnector.fetch(encryptedCacheId)
-          psaNameAndEmail <- savePSANameAndEmail(psaNameFromExtId, psaNameFromPsaId, encryptedCacheId)
-        } yield {
-          Logger.debug(s"Saved PSA Name and Email $psaNameAndEmail")
-          psaNameAndEmail match {
-            case Some(psaNameJsValue) =>
-              psaNameJsValue.as[PSAName].psaEmail match {
-                case None =>
-                  Redirect(controllers.register.routes.NeedContactController.onPageLoad)
-                case _ =>
-                  Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
-              }
-            case _ =>
-              Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode))
-          }
-        }
       }
-
-  }
-
-  private def savePSANameAndEmail(psaNameFromExtId: Option[JsValue],
-                                  psaNameFromPsaId: Option[JsValue],
-                                  encryptedCacheId: String)(implicit hc: HeaderCarrier): Future[Option[JsValue]] = {
-
-    if (psaNameFromExtId.nonEmpty && psaNameFromPsaId.isEmpty) {
-      psaNameFromExtId match {
-        case Some(psaNameJsValue) =>
-          psaNameJsValue.validate[PSAName].fold(
-            _ => {
-              Future.failed(PSANameNotFoundException())
-            },
-            value => {
-              for {
-                _ <- psaNameCacheConnector.save(encryptedCacheId, PsaNameId, value.psaName)
-                _ <- psaNameCacheConnector.save(encryptedCacheId, PsaEmailId, value.psaEmail.getOrElse(""))
-              } yield {
-                psaNameFromExtId
-              }
-            }
-          )
-        case _ =>
-          Future(None)
-      }
-    } else {
-      Future(psaNameFromPsaId)
-    }
   }
 }
 

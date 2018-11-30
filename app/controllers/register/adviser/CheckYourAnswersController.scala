@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
 import identifiers.register.SubmissionReferenceNumberId
-import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId}
+import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId, IsWorkingKnowledgeCompleteId}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{CheckMode, NormalMode, PSAName}
@@ -31,7 +31,7 @@ import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Adviser
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Navigator}
+import utils.{CountryOptions, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -49,7 +49,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            emailConnector: EmailConnector,
                                            psaNameCacheConnector: PSANameCacheConnector,
                                            crypto: ApplicationCrypto,
-                                           pensionAdministratorConnector: PensionAdministratorConnector
+                                           pensionAdministratorConnector: PensionAdministratorConnector,
+                                           sectionComplete: SectionComplete
                                           ) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
@@ -71,40 +72,30 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      pensionsSchemeConnector.registerScheme(request.userAnswers, request.psaId.id).flatMap(submissionResponse =>
-        dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).flatMap { _ =>
-          sendEmail(submissionResponse.schemeReferenceNumber).map { _ =>
-            Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
-          }
+      if (appConfig.isHubEnabled) {
+        sectionComplete.setCompleteFlag(IsWorkingKnowledgeCompleteId, request.userAnswers, value=true).map { _ =>
+          Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
         }
-      ) recoverWith {
-        case _: InvalidPayloadException =>
-          Future.successful(Redirect(controllers.routes.ServiceUnavailableController.onPageLoad()))
+      } else {
+        pensionsSchemeConnector.registerScheme(request.userAnswers, request.psaId.id).flatMap(submissionResponse =>
+          dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse).flatMap { _ =>
+            sendEmail(submissionResponse.schemeReferenceNumber).map { _ =>
+              Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
+            }
+          }
+        ) recoverWith {
+          case _: InvalidPayloadException =>
+            Future.successful(Redirect(controllers.routes.ServiceUnavailableController.onPageLoad()))
+        }
       }
   }
 
   private def sendEmail(srn: String)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
-
-      if(appConfig.isWorkPackageOneEnabled) {
-
-        pensionAdministratorConnector.getPSAEmail flatMap { email =>
-          emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)
-        } recoverWith {
-          case _: Throwable => Future.successful(EmailNotSent)
-        }
-
-      } else {
-
-        getName flatMap {
-          case Some(value) =>
-            value.as[PSAName].psaEmail match {
-              case Some(email) => emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)
-              case _ => Future.successful(EmailNotSent)
-            }
-          case _ => Future.successful(EmailNotSent)
-        }
-
-      }
+    pensionAdministratorConnector.getPSAEmail flatMap { email =>
+      emailConnector.sendEmail(email, "pods_scheme_register", Map("srn" -> formatSrnForEmail(srn)), request.psaId)
+    } recoverWith {
+      case _: Throwable => Future.successful(EmailNotSent)
+    }
   }
 
   private def formatSrnForEmail(srn: String): String = {

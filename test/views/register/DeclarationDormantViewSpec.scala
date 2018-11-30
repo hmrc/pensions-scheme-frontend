@@ -47,19 +47,19 @@ class DeclarationDormantViewSpec extends ViewBehaviours {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- DeclarationDormant.options) {
+        for (option <- DeclarationDormant.options(frontendAppConfig)) {
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, false)
         }
       }
     }
 
-    for (option <- DeclarationDormant.options) {
+    for (option <- DeclarationDormant.options(frontendAppConfig)) {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
 
-          for (unselectedOption <- DeclarationDormant.options.filterNot(o => o == option)) {
+          for (unselectedOption <- DeclarationDormant.options(frontendAppConfig).filterNot(o => o == option)) {
             assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
           }
         }

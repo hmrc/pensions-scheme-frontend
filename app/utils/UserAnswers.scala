@@ -287,12 +287,10 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   def hasCompanies: Boolean = {
-    val establishers = json \ "establishers" \\ "companyDetails"
+    val establisherCompany = json \ "establishers" \\ "companyDetails"
+    val establisherPartnership = json \ "establishers" \\ "partnershipDetails"
 
-    establishers.nonEmpty || {
-      val trustees = json \ "trustees" \\ "companyDetails"
-      trustees.nonEmpty
-    }
+    establisherCompany.nonEmpty || establisherPartnership.nonEmpty
   }
 
   def upsert[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)

@@ -17,7 +17,9 @@
 package navigators
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
+import identifiers.Identifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees._
 import identifiers.register.trustees.individual.TrusteeDetailsId
@@ -27,40 +29,57 @@ import models.register.trustees.TrusteeKind
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
+import org.scalatest.prop.TableFor6
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
 
 //scalastyle:off magic.number
 
 class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
-
   import TrusteesNavigatorSpec._
 
-  private def routes = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (HaveAnyTrusteesId, haveAnyTrusteesTrue, addTrustee, true, None, false),
-    (HaveAnyTrusteesId, haveAnyTrusteesFalse, schemeReview, true, None, false),
-    (HaveAnyTrusteesId, emptyAnswers, sessionExpired, false, None, false),
-    (AddTrusteeId, addTrusteeTrue(0), trusteeKind(0), true, Some(trusteeKind(0)), true),
-    (AddTrusteeId, addTrusteeTrue(1), trusteeKind(1), true, Some(trusteeKind(1)), true),
-    (AddTrusteeId, emptyAnswers, trusteeKind(0), true, Some(trusteeKind(0)), true),
-    (AddTrusteeId, trustees(10), moreThanTenTrustees, true, Some(moreThanTenTrustees), true),
-    (AddTrusteeId, addTrusteeFalse, schemeReview, true, Some(schemeReview), true),
-    (MoreThanTenTrusteesId, emptyAnswers, schemeReview, true, None, false),
-    (TrusteeKindId(0), trusteeKindCompany, companyDetails, true, None, false),
-    (TrusteeKindId(0), trusteeKindIndividual, trusteeDetails, true, None, false),
-    (TrusteeKindId(0), emptyAnswers, sessionExpired, false, None, false),
-    (ConfirmDeleteTrusteeId, emptyAnswers, addTrustee, true, None, false)
+  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    "features.is-hub-enabled" -> isHubEnabled
+  ).build().injector.instanceOf[FrontendAppConfig]
+
+  private def routesWithHubEnabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id",                  "User Answers",               "Next Page (Normal Mode)",     "Save (NM)",           "Next Page (Check Mode)",       "Save (CM)"),
+    (HaveAnyTrusteesId,       haveAnyTrusteesTrue,          addTrustee,                   true,                   None,                           false),
+    (HaveAnyTrusteesId,       haveAnyTrusteesFalse,         schemeReview,                 true,                   None,                           false),
+    (HaveAnyTrusteesId,       emptyAnswers,                 sessionExpired,               false,                  None,                           false),
+    (AddTrusteeId,            addTrusteeTrue(0),  trusteeKind(0),        true,                   Some(trusteeKind(0)),    true),
+    (AddTrusteeId,            addTrusteeTrue(1),  trusteeKind(1),        true,                   Some(trusteeKind(1)),    true),
+    (AddTrusteeId,            emptyAnswers,                 trusteeKind(0),        true,                   Some(trusteeKind(0)),    true),
+    (AddTrusteeId,            trustees(10),       moreThanTenTrustees,          true,                   Some(moreThanTenTrustees),      true),
+    (AddTrusteeId,            addTrusteeFalse,              taskList,                     false,                  Some(taskList),                 false),
+    (MoreThanTenTrusteesId,   emptyAnswers,                 taskList,                     false,                  None,                           false),
+    (TrusteeKindId(0),        trusteeKindCompany,           companyDetails,               true,                   None,                           false),
+    (TrusteeKindId(0),        trusteeKindIndividual,        trusteeDetails,               true,                   None,                           false),
+    (TrusteeKindId(0),        emptyAnswers,                 sessionExpired,               false,                  None,                           false),
+    (ConfirmDeleteTrusteeId,  emptyAnswers,                 addTrustee,                   true,                   None,                           false)
   )
 
-  private val navigator = new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+  private def routesWithHubDisabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id",                  "User Answers",               "Next Page (Normal Mode)",     "Save (NM)",           "Next Page (Check Mode)",       "Save (CM)"),
+    (MoreThanTenTrusteesId, emptyAnswers,                   schemeReview,                 true,                   None,                           false),
+    (AddTrusteeId,          addTrusteeFalse,                schemeReview,                 true,                   Some(schemeReview),             true)
+  )
 
-  navigator.getClass.getSimpleName must {
+  private def navigator(isHubEnabled: Boolean = true) = new TrusteesNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled))
+
+  s"${navigator().getClass.getSimpleName} when isHubEnabled toggle is on" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
-    behave like nonMatchingNavigator(navigator)
+    behave like navigatorWithRoutes(navigator(), FakeUserAnswersCacheConnector, routesWithHubEnabled, dataDescriber)
+    behave like nonMatchingNavigator(navigator())
   }
 
+  s"${navigator(false).getClass.getSimpleName} when isHubEnabled toggle is off" must {
+    appRunning()
+    behave like navigatorWithRoutes(navigator(false), FakeUserAnswersCacheConnector, routesWithHubDisabled, dataDescriber)
+    behave like nonMatchingNavigator(navigator(false))
+  }
 }
 
 //noinspection MutatorLikeMethodIsParameterless
@@ -95,6 +114,8 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private def trusteeKind(index: Int) = controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, index)
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
+
+  private def taskList = controllers.register.routes.SchemeTaskListController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = {
     val haveAnyTrustees = answers.get(HaveAnyTrusteesId) map { value =>

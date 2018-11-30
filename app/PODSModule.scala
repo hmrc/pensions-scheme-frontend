@@ -15,10 +15,10 @@
  */
 
 import com.google.inject.AbstractModule
-import connectors.{PSANameCacheConnector, UserAnswersCacheConnector}
+import connectors.{UserAnswersCacheConnector, PSANameCacheConnector}
 import navigators._
-import utils.Navigator
 import utils.annotations.{EstablishersPartner, _}
+import utils.Navigator
 
 class PODSModule extends AbstractModule {
 

@@ -121,7 +121,7 @@ site.agree_and_continue = Agree and continue
 site.go_back = Go back
 site.signOut = Sign out
 site.printThisPage = Print this page
-site.return.overview = Return to managing pension schemes
+site.return.tasklist = Return to pension scheme details
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -133,6 +133,16 @@ messages__what_you_will_need__item_1 = the names, addresses, previous addresses 
 messages__what_you_will_need__item_2 = the telephone numbers, email addresses and Self Assessment Unique Taxpayer Reference numbers of any directors and trustees associated with the pension scheme
 messages__what_you_will_need__item_3 = the name, contact details, Corporation Tax Unique Taxpayer Reference number and address of the scheme establisher
 messages__what_you_will_need__item_4 = PAYE, Company Registration and VAT registration numbers
+
+messages__hs_what_you_will_need__title = What you will need
+messages__hs_what_you_will_need__lede = You will need to tell us about the pension scheme, establishers and trustees. Most of these details will be on the scheme deeds form.
+messages__hs_what_you_will_need__p2 = If the scheme has a company or partnership as an establisher, you will also need to tell us about any directors or partners. This will include their:
+messages__hs_what_you_will_need__item_1 = National Insurance number
+messages__hs_what_you_will_need__item_2 = Unique Taxpayer Reference (UTR) if they submit Self Assessment returns
+messages__hs_what_you_will_need__item_3 = address
+messages__hs_what_you_will_need__item_4 = contact email address and phone number
+messages__hs_what_you_will_need__other_link = There might be other things you need to tell us about
+messages__hs_what_you_will_need__p3 = Your information will be saved as you progress. If you sign out, your changes will be saved for 28 days. After that time you will need to start again.
 
 messages__trustee__has_ct_utr__title = Does the trustee have a Corporation Tax Unique Taxpayer Reference number?
 messages__trustee__ct_utr_hint_what = A CTUTR is issued by HMRC when you register your business.
@@ -161,6 +171,9 @@ messages__scheme_details__type_other_hint = For example, deed poll trust.
 messages__scheme_details__type_other_more = Details of the scheme type
 messages__error__scheme_name = Enter the name of the scheme
 messages__error__scheme_type_information = Enter more information about the scheme
+messages__scheme_name__title = What is the name of the scheme?
+messages__scheme_name__heading = What is the name of the scheme?
+
 
 messages__error__scheme_name_length = The scheme name cannot be more than 160 characters
 messages__error__scheme_name_invalid = The scheme name contains invalid characters
@@ -227,6 +240,8 @@ messages__complete__master_trust_heading = What you need to do
 messages__complete__pension_regulator_link = You must also contact The Pensions Regulator
 messages__complete__pension_regulator = {0} for this scheme to be authorised. HMRC cannot complete the registration until The Pensions Regulator authorise the scheme to be a master trust.
 messages__complete__return = Return to manage your pension schemes
+messages__complete__return_pension_scheme_details = Return to pension scheme details
+
 messages__complete__feedback = What did you think of this service? (opens in new window or tab)
 
 messages__uk_bank_account_details__title = Bank account details
@@ -434,6 +449,7 @@ messages__company__cya__crn_no_reason = Why the scheme establisher does not have
 messages__company__cya__utr_yes_no = Does the scheme establisher have a Unique Taxpayer Reference number?
 messages__company__cya__utr = UTR
 messages__company__cya__utr_no_reason = Why the scheme establisher does not have a Unique Taxpayer Reference number
+messages__company__cya__dormant = Has the establisher been dormant in the last 12 months?
 messages__company__paye_error_length = The PAYE number cannot be more than 13 characters
 messages__company__paye_error_invalid = Enter a valid PAYE number
 
@@ -609,17 +625,18 @@ messages__trusteePreviousAddress__lede = This is usually the registered business
 
 messages__declaration__title = Declaration
 messages__declaration__heading = Declaration
-messages__declaration__declare = I declare/understand:
-messages__declaration__statement1_dormant = to the best of my knowledge and belief, some or all of the sponsoring employer(s) in relation to the scheme have been dormant during the last 12 months
-messages__declaration__statement1_not_dormant = to the best of my knowledge and belief, the sponsoring employer(s) in relation to the scheme have not been dormant during the last 12 months
-messages__declaration__statement2 = that as scheme administrator I am responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by Finance Act 2004 and I intend to discharge those functions at all times, whether resident in the United Kingdom or another EU member state or non-member EEA state
-messages__declaration__statement3 = that I will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008. I understand that I may be liable to a penalty and the pension scheme may be de-registered if I fail to properly discharge those functions
-messages__declaration__statement4 = the scheme is a Master Trust as defined in Section 1 Pension Schemes Act 2017, or corresponding legislation in Northern Ireland. I understand that the scheme trustees must apply to The Pensions Regulator for authorisation to operate as a Master Trust and that if The Pensions Regulator do not grant authorisation, HMRC may refuse to register the scheme and if the Master Trust loses its authorisation, HMRC may de-register the scheme
-messages__declaration__statement5 = to the best of my knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete. I understand that I am responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
-messages__declaration__statement6 = that this scheme meets all the criteria to be registered as a pension scheme under the Finance Act 2004 and in particular, is established and will be maintained wholly or mainly for the purpose of making authorised payments of pensions and lumps sums as falling within section 164(1)(a) or (b) of the Finance Act 2004
-messages__declaration__statement7 = that the instruments or agreements by which this pension scheme is constituted do not directly or indirectly entitle any person to unauthorised payments. And the way in which the pension scheme is to be administered will not knowingly entitle any person to unauthorised payments
-messages__declaration__statement8 = that I may be liable to a penalty and the pension scheme may be de-registered if a false statement is made on this application, or in any information I provide in connection with this application, and that false statements may also lead to prosecution
-messages__declaration__agree = I agree
+messages__declaration__declare = By continuing you declare that:
+messages__declaration__statement1_dormant = to the best of your knowledge and belief, some or all of the sponsoring employer(s) in relation to the scheme have been dormant during the last 12 months
+messages__declaration__statement1_not_dormant = to the best of your knowledge and belief, the sponsoring employer(s) in relation to the scheme have not been dormant during the last 12 months
+messages__declaration__statement2 = this scheme meets all the criteria to be registered as a pension scheme under the Finance Act 2004 and, in particular, is established and will be maintained wholly or mainly for the purpose of making authorised payments of pensions and lumps sums as falling within section 164(1)(a) or (b) of the Finance Act 2004
+messages__declaration__statement3 = the instruments or agreements by which this pension scheme is constituted do not directly or indirectly entitle any person to unauthorised payments and the way in which the pension scheme is to be administered will not knowingly entitle any person to unauthorised payments
+messages__declaration__statement4 = as scheme administrator you are responsible for discharging the functions conferred or imposed on the scheme administrator of the pension scheme by Finance Act 2004 and you intend to discharge those functions at all times, whether resident in the United Kingdom or another EU member state or non-member EEA state
+messages__declaration__statement5 = you will comply with all information notices issued to the scheme administrator under the Finance Act 2004 or the Finance Act 2008 and you understand that you may be liable to a penalty and the pension scheme may be de-registered if you fail to properly discharge those functions
+messages__declaration__statement6 = you may be liable to a penalty and the pension scheme may be de-registered if a false statement is made on this application, or in any information you provide in connection with this application, and that false statements may also lead to prosecution
+messages__declaration__statement7 = to the best of your knowledge and belief, the information given in this application to register the pension scheme for the purposes of tax relief is correct and complete and you understand that you are responsible for providing any further information and declarations reasonably required by HMRC in order to consider the application
+messages__declaration__statement8 = the scheme is a Master Trust as defined in Section 1 Pension Act 2017, or corresponding legislation in Northern Ireland and you understand the scheme trustees must apply to the Pensions Regulator for authorisation to operate as a Master Trust and that if the pensions regulator do not grant authorisation, HMRC may refuse to register the scheme and if the Master Trust loses its authorisation, HMRC may de-register the scheme
+
+messages__declaration__agree = Agree
 messages__declaration__invalid = You need to agree to all the declarations before you can continue
 
 messages__confirmDeleteTrustee__title = Confirm deletion
@@ -809,6 +826,7 @@ messages__partnership__checkYourAnswers__vat = Does the partnership have a VAT r
 messages__partnership__checkYourAnswers__paye = Does the partnership have a PAYE employer reference number?
 messages__partnership__checkYourAnswers__utr = Does the partnership have a Self Assessment Unique Taxpayer Reference number?
 messages__partnership__checkYourAnswers__addressYears = How long has the partnership been at this address?
+messages__partnership__checkYourAnswers__isDormant = Has the partnership been dormant in the last 12 months?
 
 messages__partnershipPaye__title = Does the partnership have a PAYE employer reference number?
 messages__partnershipPaye__heading = Does the partnership have a PAYE employer reference number?
@@ -981,6 +999,7 @@ messages__visuallyhidden__establisher__address_years = Change how long the estab
 messages__visuallyhidden__establisher__previous_address = Change the establisher’s previous address
 messages__visuallyhidden__establisher__email_address = Change the establisher’s email address
 messages__visuallyhidden__establisher__phone_number = Change the establisher’s phone number
+messages__visuallyhidden__establisher__dormant = Change whether the establisher been dormant in the last 12 months
 
 messages__visuallyhidden__director__nino_yes_no = Change whether the director has a National Insurance number
 messages__visuallyhidden__director__nino_no = Change why the director does not have a National Insurance number
@@ -1006,6 +1025,7 @@ messages__visuallyhidden__partnership__address_years = Change how long the partn
 messages__visuallyhidden__partnership__previous_address = Change the partnership’s previous address
 messages__visuallyhidden__partnership__email_address = Change the partnership’s email address
 messages__visuallyhidden__partnership__phone_number = Change the partnership’s phone number
+messages__visuallyhidden__partnership__dormant = Change whether the partnership been dormant in the last 12 months
 
 messages__visuallyhidden__partner__nino_yes_no = Change whether the partner has a National Insurance number
 messages__visuallyhidden__partner__nino_no = Change why the partner does not have a National Insurance number
@@ -1040,6 +1060,53 @@ messages__visuallyhidden__adviser__email_address = Change the adviser’s email 
 messages__visuallyhidden__adviser__phone_number = Change the adviser’s phone number
 messages__visuallyhidden__adviser__address = Change the adviser’s address
 
+messages__schemeTaskList__title = Pension scheme details
+messages__schemeTaskList__heading = Pension scheme details
+messages__schemeTaskList__about_link_text = Enter scheme details
+messages__schemeTaskList__trustees_change_link = Change trustees
+messages__schemeTaskList__company_link = Company details
+messages__schemeTaskList__individual_link = Individual details
+messages__schemeTaskList__partnership_link = Partnership details
+messages__schemeTaskList__working_knowledge_add_link = Add who has working knowledge
+messages__schemeTaskList__declaration_link = Read declaration and send details to HMRC
+messages__schemeTaskList__returnlink = Return to pension scheme details
+
+
+messages__workingKnowledge__title = Do you have working knowledge of pensions and pensions tax legislation?
+messages__workingKnowledge__heading = Do you have working knowledge of pensions and pensions tax legislation?
+messages__workingKnowledge__p1 = There needs to be someone with working knowledge of pensions and pensions tax legislation involved with this pension scheme. This could be either you as scheme administrator or a pension practitioner or provider who is helping you.
+messages__workingKnowledge__p2 = For example, if you are an employer, or a director of an employer, who has registered a pension scheme, you might not have working knowledge of pensions and pensions tax legislation.
+messages__workingKnowledge__p3 = If you do not have that knowledge, you must be helped by a pension practitioner or provider who has the knowledge. You will need to tell HMRC who that is.
+messages__workingKnowledge__error__required = Select yes if you have working knowledge of pensions and pensions tax legislation
+
+
+messages__is_dormant__title = Has the establisher been dormant in the last 12 months?
+messages__is_dormant__heading = Have {0} been dormant in the last 12 months?
+messages__is_dormant__yes = Yes
+messages__is_dormant__no = No
+messages__is_dormant__error = Select yes if the establisher has been dormant in the last 12 months
+
+messages__schemeTaskList__sectionAbout_header = About the scheme
+
+messages__schemeTaskList__sectionEstablishers_header = Establishers
+messages__schemeTaskList__sectionEstablishers_add_link = Add establishers
+messages__schemeTaskList__sectionEstablishers_change_link = Change establishers
+
+messages__schemeTaskList__sectionTrustees_header = Trustees
+messages__schemeTaskList__sectionTrustees_add_link = Add trustees
+messages__schemeTaskList__sectionTrustees_change_link = Change trustees
+
+messages__schemeTaskList__sectionWorkingKnowledge_header = Working knowledge of pensions
+
+messages__schemeTaskList__sectionDeclaration_header = Declaration
+messages__schemeTaskList__sectionDeclaration_incomplete = You must complete every section before you can declare.
+
+messages__schemeTaskList__completed = Completed
+messages__schemeTaskList__inProgress = In progress
+
+messages__complete__saveAndReturnToManagePensionSchemes = Save and return to managing pension schemes
+
+messages__schemeTaskList__companyDetails = Company details
 
 messages__scheme_type__title = What type of scheme is it?
 messages__scheme_type__type_single = Single trust

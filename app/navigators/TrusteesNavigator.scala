@@ -33,7 +33,11 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case AddTrusteeId =>
         addTrusteeRoutes(from.userAnswers)
       case MoreThanTenTrusteesId =>
-        NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
+        if (appConfig.isHubEnabled) {
+          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        } else {
+          NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
+        }
       case TrusteeKindId(index) =>
         trusteeKindRoutes(index, from.userAnswers)
       case ConfirmDeleteTrusteeId =>
@@ -65,7 +69,11 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
     answers.get(AddTrusteeId) match {
       case Some(false) =>
-        NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
+        if (appConfig.isHubEnabled) {
+          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        } else {
+          NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
+        }
       case Some(true) =>
         NavigateTo.save(TrusteeKindController.onPageLoad(NormalMode, answers.trusteesCount))
       case None if trusteesLengthCompare >= 0 =>
