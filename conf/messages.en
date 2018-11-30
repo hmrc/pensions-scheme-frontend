@@ -83,6 +83,14 @@ messages__error__address_line_4_invalid = The fourth line of the address contain
 messages__error_country_required = Enter a country
 messages__error_country_invalid = Enter a valid country
 
+messages__error__common__email__no_at_sign = Enter an email address which includes an @ symbol
+messages__error__common__email__start_with_at_sign = Enter an email address which does not start with @
+messages__error__common__email__dot_after_at_sign = Enter an email address in the correct format with a character between @ and dot
+messages__error__common__email__ends_with_dot = Enter an email address with at least a character after the last dot
+messages__error__common__email__address__required = Enter an email address
+messages__error__common__email__address__length = Enter an email address using less than 133 characters
+messages__error__common__email__address__invalid = Enter an email address in the correct format - you might have to check that you have the correct email
+
 messages__common__cya__name = Name
 messages__common__cya__address = Address
 messages__common__cya__previous_address = Previous Address
@@ -1082,7 +1090,6 @@ messages__schemeTaskList__declaration_link = Read declaration and send details t
 messages__schemeTaskList__return_link = Save and return to managing pension schemes
 messages__schemeTaskList__returnlink = Return to pension scheme details
 
-
 messages__workingKnowledge__title = Do you have working knowledge of pensions and pensions tax legislation?
 messages__workingKnowledge__heading = Do you have working knowledge of pensions and pensions tax legislation?
 messages__workingKnowledge__p1 = There needs to be someone with working knowledge of pensions and pensions tax legislation involved with this pension scheme. This could be either you as scheme administrator or a pension practitioner or provider who is helping you.
@@ -1090,9 +1097,12 @@ messages__workingKnowledge__p2 = For example, if you are an employer, or a direc
 messages__workingKnowledge__p3 = If you do not have that knowledge, you must be helped by a pension practitioner or provider who has the knowledge. You will need to tell HMRC who that is.
 messages__workingKnowledge__error__required = Select yes if you have working knowledge of pensions and pensions tax legislation
 
-
 messages__is_dormant__title = Has the establisher been dormant in the last 12 months?
 messages__is_dormant__heading = Have {0} been dormant in the last 12 months?
 messages__is_dormant__yes = Yes
 messages__is_dormant__no = No
 messages__is_dormant__error = Select yes if the establisher has been dormant in the last 12 months
+
+messages__adviser__email__address__title = What is your pension adviser’s email address?
+messages__adviser__email__address__heading = What is {0}’s email address?
+messages__adviser__email__address__p1 = This will be used if HMRC need to contact {0}.
