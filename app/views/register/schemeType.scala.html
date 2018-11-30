@@ -36,12 +36,12 @@
 
         @components.input_radio(
             field = form("schemeType.type"),
-            legend = "",
+            legend = messages("messages__scheme_type__title"),
             inputs = SchemeType.options(appConfig)
         )
 
         @components.submit_button()
 
-        @components.return_link("site.return.overview", appConfig.managePensionsSchemeOverviewUrl)
+        @components.return_link(messages("messages__schemeTaskList__returnlink"), controllers.register.routes.SchemeTaskListController.onPageLoad())
     }
 }
