@@ -23,7 +23,7 @@ import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.IsDormantFormProvider
 import identifiers.register.DeclarationDormantId
-import identifiers.register.establishers.IsDormantId
+import identifiers.register.establishers.partnership.IsPartnershipDormantId
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant._
 import models.{Mode, NormalMode}
@@ -54,7 +54,7 @@ class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       retrievePartnershipName(index) {
         partnershipName =>
-          val preparedForm = request.userAnswers.get(IsDormantId(index)).fold(form)(v=> form.fill(v))
+          val preparedForm = request.userAnswers.get(IsPartnershipDormantId(index)).fold(form)(v=> form.fill(v))
           Future.successful(Ok(isDormant(appConfig, preparedForm, partnershipName, postCall(mode, index))))
       }
   }
@@ -67,13 +67,13 @@ class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
             Future.successful(BadRequest(isDormant(appConfig, formWithErrors, partnershipName, postCall(mode, index)))),
           {
             case Yes =>
-              dataCacheConnector.save(request.externalId, IsDormantId(index), DeclarationDormant.values(1)).flatMap { _ =>
+              dataCacheConnector.save(request.externalId, IsPartnershipDormantId(index), DeclarationDormant.values(1)).flatMap { _ =>
                 dataCacheConnector.save(request.externalId, DeclarationDormantId, DeclarationDormant.values(1)).map (cacheMap =>
-                 Redirect(navigator.nextPage(IsDormantId(index), NormalMode, UserAnswers(cacheMap))))
+                 Redirect(navigator.nextPage(IsPartnershipDormantId(index), NormalMode, UserAnswers(cacheMap))))
              }
             case No =>
-              dataCacheConnector.save(request.externalId, IsDormantId(index), DeclarationDormant.values(0)).map(cacheMap =>
-                Redirect(navigator.nextPage(IsDormantId(index), mode, UserAnswers(cacheMap))))
+              dataCacheConnector.save(request.externalId, IsPartnershipDormantId(index), DeclarationDormant.values(0)).map(cacheMap =>
+                Redirect(navigator.nextPage(IsPartnershipDormantId(index), mode, UserAnswers(cacheMap))))
 
           }
 

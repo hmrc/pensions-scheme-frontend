@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company
+package identifiers.register.establishers.partnership
 
 import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import models.ContactDetails
+import models.register.DeclarationDormant
 import play.api.libs.json.JsPath
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.ContactDetailsCYA
+import utils.Enumerable
+import utils.checkyouranswers.{CheckYourAnswers, IsDormantCYA}
 
-case class CompanyContactDetailsId(index: Int) extends TypedIdentifier[ContactDetails] {
-  override def path: JsPath = EstablishersId(index).path \ CompanyContactDetailsId.toString
+case class IsPartnershipDormantId(index: Int) extends TypedIdentifier[DeclarationDormant] {
+  override def path: JsPath = EstablishersId(index).path \ IsPartnershipDormantId.toString
 }
 
-object CompanyContactDetailsId {
-  override def toString: String = "companyContactDetails"
+object IsPartnershipDormantId extends Enumerable.Implicits {
+  override def toString: String = "isPartnershipDormant"
 
-  implicit val cya: CheckYourAnswers[CompanyContactDetailsId] =
-    ContactDetailsCYA(
-      changeEmailAddress = "messages__visuallyhidden__establisher__email_address",
-      changePhoneNumber = "messages__visuallyhidden__establisher__phone_number"
+  implicit val cya: CheckYourAnswers[IsPartnershipDormantId] =
+    IsDormantCYA(
+      label = "messages__partnership__checkYourAnswers__isDormant",
+      changeIsDormant = "messages__visuallyhidden__partnership__dormant"
     )()
 }

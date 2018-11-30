@@ -74,6 +74,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
 
     // Review, declarations, success - return from establishers
     (SchemeReviewId, hasCompanies, declarationDormant, true, None, false),
+    (SchemeReviewId, hasPartnership, declarationDormant, true, None, false),
     (SchemeReviewId, emptyAnswers, declaration, true, None, false),
     (DeclarationDormantId, emptyAnswers, declaration, true, None, false),
     (DeclarationId, emptyAnswers, declarationDuties, true, None, false),
@@ -134,6 +135,7 @@ object RegisterNavigatorSpec {
   private val dutiesTrue = UserAnswers().declarationDuties(true)
   private val dutiesFalse = UserAnswers().declarationDuties(false)
   private val hasCompanies = UserAnswers().establisherCompanyDetails(0, CompanyDetails("test-company-name", None, None))
+  private val hasPartnership = UserAnswers().establisherPartnershipDetails(0, models.PartnershipDetails("test-company-name"))
   private val noEstablishers = emptyAnswers
   private val hasEstablishers = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.GroupLifeDeath))
   private val needsTrustees = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.SingleTrust))

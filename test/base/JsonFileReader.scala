@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers
+package base
 
-import identifiers.TypedIdentifier
-import models.register.DeclarationDormant
-import play.api.libs.json.JsPath
+import play.api.libs.json.{JsValue, Json}
 
-case class IsDormantId(index: Int) extends TypedIdentifier[DeclarationDormant] {
-  override def path: JsPath = EstablishersId(index).path \ IsDormantId.toString
-}
+import scala.io.Source
 
-object IsDormantId {
-  override def toString: String = "isDormant"
+trait JsonFileReader {
+
+  def readJsonFromFile(filePath: String): JsValue = {
+    val path = Source.fromURL(getClass.getResource(filePath)).mkString
+    Json.parse(path)
+  }
+
 }

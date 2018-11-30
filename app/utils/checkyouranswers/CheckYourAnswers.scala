@@ -50,6 +50,8 @@ object CheckYourAnswers {
 
   implicit def uniqueTaxReference[I <: TypedIdentifier[UniqueTaxReference]](implicit rds: Reads[UniqueTaxReference]): CheckYourAnswers[I] = UniqueTaxReferenceCYA()()
 
+  implicit def dormant[I <: TypedIdentifier[DeclarationDormant]](implicit rds: Reads[DeclarationDormant]): CheckYourAnswers[I] = IsDormantCYA()()
+
   implicit def companyDetails[I <: TypedIdentifier[CompanyDetails]](implicit rds: Reads[CompanyDetails]): CheckYourAnswers[I] = CompanyDetailsCYA()()
 
   implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] = ContactDetailsCYA()()
@@ -572,6 +574,8 @@ case class BenefitsInsurerCYA[I <: TypedIdentifier[BenefitsInsurer]](
 
 case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](
                                                                             label: String = "messages__establisher_individual_utr_question_cya_label",
+                                                                            utrLabel: String = "messages__establisher_individual_utr_cya_label",
+                                                                            reasonLabel: String = "messages__establisher_individual_utr_reason_cya_label",
                                                                             changeHasUtr: String = "messages__visuallyhidden__establisher__utr_yes_no",
                                                                             changeUtr: String = "messages__visuallyhidden__establisher__utr",
                                                                             changeNoUtr: String = "messages__visuallyhidden__establisher__utr_no"
@@ -590,7 +594,7 @@ case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](
               changeHasUtr
             ),
             AnswerRow(
-              "messages__establisher_individual_utr_cya_label",
+              utrLabel,
               Seq(utr),
               answerIsMessageKey = false,
               Some(changeUrl),
@@ -605,11 +609,43 @@ case class UniqueTaxReferenceCYA[I <: TypedIdentifier[UniqueTaxReference]](
               changeHasUtr
             ),
             AnswerRow(
-              "messages__establisher_individual_utr_reason_cya_label",
+              reasonLabel,
               Seq(reason),
               answerIsMessageKey = false,
               Some(changeUrl),
               changeNoUtr
+            ))
+          case _ => Seq.empty[AnswerRow]
+        }
+    }
+  }
+}
+
+case class IsDormantCYA[I <: TypedIdentifier[DeclarationDormant]](
+                                                                            label: String = "messages__company__cya__dormant",
+                                                                            changeIsDormant: String = "messages__visuallyhidden__establisher__dormant"
+                                                                          ) {
+
+  def apply()(implicit rds: Reads[DeclarationDormant]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) =
+        userAnswers.get(id) match {
+          case Some(DeclarationDormant.Yes) => Seq(
+            AnswerRow(
+              label,
+              Seq("site.yes"),
+              answerIsMessageKey = true,
+              Some(changeUrl),
+              changeIsDormant
+            )
+          )
+          case Some(DeclarationDormant.No) => Seq(
+            AnswerRow(
+              label,
+              Seq("site.no"),
+              answerIsMessageKey = true,
+              Some(changeUrl),
+              changeIsDormant
             ))
           case _ => Seq.empty[AnswerRow]
         }

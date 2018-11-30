@@ -16,23 +16,15 @@
 
 package identifiers.register.establishers.company
 
-import identifiers._
+import identifiers.TypedIdentifier
 import identifiers.register.establishers.EstablishersId
-import models.address.Address
+import models.register.DeclarationDormant
 import play.api.libs.json.JsPath
-import utils.CountryOptions
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 
-case class CompanyPreviousAddressId(index: Int) extends TypedIdentifier[Address] {
-  override def path: JsPath = EstablishersId(index).path \ CompanyPreviousAddressId.toString
+case class IsCompanyDormantId(index: Int) extends TypedIdentifier[DeclarationDormant] {
+  override def path: JsPath = EstablishersId(index).path \ IsCompanyDormantId.toString
 }
 
-object CompanyPreviousAddressId {
-  override def toString: String = "companyPreviousAddress"
-
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[CompanyPreviousAddressId] =
-    AddressCYA(
-      label = "messages__common__cya__previous_address",
-      changeAddress = "messages__visuallyhidden__establisher__previous_address"
-    )()
+object IsCompanyDormantId {
+  override def toString: String = "isCompanyDormant"
 }
