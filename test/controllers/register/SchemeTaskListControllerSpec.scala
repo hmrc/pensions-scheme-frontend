@@ -16,21 +16,24 @@
 
 package controllers.register
 
+import base.{JsonFileReader, SpecBase}
 import controllers.ControllerSpecBase
 import controllers.actions._
-import play.api.mvc.Call
+import models.NormalMode
 import play.api.test.Helpers._
-import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
+import viewmodels._
 import views.html.schemeTaskList
 
 class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
-  private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  import SchemeTaskListControllerSpec._
 
-  val jtlSection = JourneyTaskListSection(None, Link("linkText", "linkTarget"), None)
-  val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, None)
+  private val journeyTL = JourneyTaskList(expectedAboutSection, Seq.empty,
+    Seq.empty, expectedWorkingKnowledgeSection, expectedDeclarationLink)
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeTaskListController =
+  private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
+
+  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
     new SchemeTaskListController(
       frontendAppConfig,
       messagesApi,
@@ -50,7 +53,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad()(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
+      contentAsString(result).contains(messages("messages__schemeTaskList__heading")) mustBe true
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
@@ -62,4 +65,22 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
   }
 
+}
+
+object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
+  private val userAnswersJson = readJsonFromFile("/payload.json")
+  private val expectedAboutSection = JourneyTaskListSection(
+    Some(true),
+    Link(messages("messages__schemeTaskList__about_link_text"),
+      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
+    None)
+
+  private val expectedWorkingKnowledgeSection = JourneyTaskListSection(
+    Some(true),
+    Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
+      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
+    None)
+
+  private val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),
+    controllers.register.routes.DeclarationController.onPageLoad().url))
 }
