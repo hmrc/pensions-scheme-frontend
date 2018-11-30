@@ -69,25 +69,28 @@ class DeclarationController @Inject()(
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
-          showPage(BadRequest.apply, formWithErrors)
-        },
-        value =>
-          if (appConfig.isHubEnabled) {
-            for {
-              cacheMap <- dataCacheConnector.save(request.externalId, DeclarationDutiesId, true)
-              submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
-              cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-              _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
-            } yield {
-              Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
-            }
-          } else {
-            dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap))))
-          }
-      )
+      retrieveSchemeName {
+        schemeName =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) => {
+              showPage(BadRequest.apply, formWithErrors)
+            },
+            value =>
+              if (appConfig.isHubEnabled) {
+                for {
+                  cacheMap <- dataCacheConnector.save(request.externalId, DeclarationDutiesId, true)
+                  submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
+                  cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
+                  _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
+                } yield {
+                  Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
+                }
+              } else {
+                dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
+                  Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap))))
+              }
+          )
+      }
   }
 
   private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
