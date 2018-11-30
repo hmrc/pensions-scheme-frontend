@@ -18,9 +18,10 @@ package controllers.register
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.SchemeTypeFormProvider
-import identifiers.register.SchemeTypeId
+import identifiers.register.{SchemeDetailsId, SchemeTypeId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
@@ -39,25 +40,30 @@ class SchemeTypeController @Inject()(appConfig: FrontendAppConfig,
                                      @Register navigator: Navigator,
                                      authenticate: AuthAction,
                                      getData: DataRetrievalAction,
+                                     requireData: DataRequiredAction,
                                      formProvider: SchemeTypeFormProvider,
-                                     nameMatchingFactory: NameMatchingFactory) extends FrontendController with I18nSupport {
+                                     nameMatchingFactory: NameMatchingFactory) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val preparedForm = request.userAnswers.flatMap(_.get(SchemeTypeId)) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      SchemeNameId.retrieve.right.map { schemeName =>
+        val preparedForm = request.userAnswers.get(SchemeTypeId) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(schemeType(appConfig, preparedForm, mode, schemeName)))
       }
-      Ok(schemeType(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(schemeType(appConfig, formWithErrors, mode))),
+          SchemeNameId.retrieve.right.map { schemeName =>
+            Future.successful(BadRequest(schemeType(appConfig, formWithErrors, mode, schemeName)))
+          },
         value =>
           dataCacheConnector.save(request.externalId, SchemeTypeId, value).map(cacheMap =>
             Redirect(navigator.nextPage(SchemeTypeId, mode, UserAnswers(cacheMap)))

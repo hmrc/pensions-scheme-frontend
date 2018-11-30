@@ -16,10 +16,12 @@
 
 package views.register
 
+import config.FrontendAppConfig
 import forms.register.SchemeTypeFormProvider
 import models.NormalMode
 import models.register.SchemeType
 import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.{schemeDetails, schemeType}
@@ -27,18 +29,23 @@ import views.html.register.{schemeDetails, schemeType}
 class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
 
   val messageKeyPrefix = "scheme_type"
+  private val schemeName = "test scheme"
 
   override val form = new SchemeTypeFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => schemeType(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    "features.is-hub-enabled" -> isHubEnabled
+  ).build().injector.instanceOf[FrontendAppConfig]
+
+  def createView: () => HtmlFormat.Appendable = () => schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  private def schemeOptions = SchemeType.options
+  private def schemeOptions = SchemeType.options(appConfig(true))
 
   "SchemeType view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", schemeName))
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }

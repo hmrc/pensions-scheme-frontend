@@ -23,7 +23,7 @@ import controllers.actions._
 import forms.register.SchemeTypeFormProvider
 import identifiers.register.SchemeTypeId
 import models.register.SchemeType
-import models.requests.{DataRequest, OptionalDataRequest}
+import models.requests.DataRequest
 import models.{NormalMode, PSAName}
 import play.api.data.Form
 import play.api.libs.json.{Json, Reads}
@@ -31,7 +31,7 @@ import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
+import utils.{FakeNavigator, NameMatching, NameMatchingFactory, UserAnswers}
 import views.html.register.schemeType
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,9 +42,12 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
 
   val formProvider = new SchemeTypeFormProvider()
   val form = formProvider()
+  val schemeName = "Test Scheme Name"
 
   val config: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
   val pensionAdministratorConnector: PensionAdministratorConnector = injector.instanceOf[PensionAdministratorConnector]
+
+  val minData = UserAnswers().schemeName(schemeName).dataRetrievalAction
 
   object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, pensionAdministratorConnector, ApplicationCrypto, config) {
     override def nameMatching(schemeName: String)
@@ -55,7 +58,7 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
     }
   }
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): SchemeTypeController =
+  def controller(dataRetrievalAction: DataRetrievalAction = minData): SchemeTypeController =
     new SchemeTypeController(
       frontendAppConfig,
       messagesApi,
@@ -63,11 +66,12 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      new DataRequiredActionImpl,
       formProvider,
       FakeNameMatchingFactory
     )
 
-  private def viewAsString(form: Form[_] = form) = schemeType(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
 
   "SchemeType Controller" must {
 
@@ -79,7 +83,7 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
-      val validData = Json.obj(SchemeTypeId.toString -> Json.toJson(SchemeType.SingleTrust))
+      val validData = UserAnswers().schemeName(schemeName).schemeType(SchemeType.SingleTrust).json
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
 
       val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
@@ -88,7 +92,7 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeName", "value 1"), ("schemeType.type", "single"))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("schemeType.type", "single"))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 

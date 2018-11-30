@@ -45,7 +45,7 @@
         @components.input_radio(
             field = form("schemeType.type"),
             legend = messages("messages__scheme_details__type_legend"),
-            inputs = SchemeType.options
+            inputs = SchemeType.options(appConfig)
         )
 
         @components.input_text(
