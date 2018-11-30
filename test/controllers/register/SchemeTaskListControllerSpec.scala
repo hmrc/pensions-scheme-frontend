@@ -28,8 +28,8 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
   import SchemeTaskListControllerSpec._
 
-  private val journeyTL = JourneyTaskList(expectedAboutSection, Seq.empty,
-    Seq.empty, expectedWorkingKnowledgeSection, expectedDeclarationLink)
+  private val journeyTL = JourneyTaskList(expectedAboutSection, Seq(expectedEstablishersCompany, expectedEstablishersIndividual),
+    Seq(expectedTrustees), expectedWorkingKnowledgeSection, expectedDeclarationLink)
 
   private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
 
@@ -53,7 +53,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad()(fakeRequest)
 
       status(result) mustBe OK
-      contentAsString(result).contains(messages("messages__schemeTaskList__heading")) mustBe true
+      contentAsString(result) mustBe viewAsString()
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
@@ -69,16 +69,35 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
 object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
   private val userAnswersJson = readJsonFromFile("/payload.json")
+
   private val expectedAboutSection = JourneyTaskListSection(
     Some(true),
     Link(messages("messages__schemeTaskList__about_link_text"),
       controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
     None)
 
+  private val expectedEstablishersCompany = JourneyTaskListSection(
+    Some(true),
+    Link(messages(messages("messages__schemeTaskList__company_link")),
+      controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(0).url),
+    Some("Test company name"))
+
+  private val expectedEstablishersIndividual = JourneyTaskListSection(
+    Some(true),
+    Link(messages(messages("messages__schemeTaskList__individual_link")),
+      controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(1).url),
+    Some("Test individual name"))
+
+  private val expectedTrustees = JourneyTaskListSection(
+    Some(true),
+    Link(messages("messages__schemeTaskList__partnership_link"),
+      controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(0).url),
+    Some("Test partnership name"))
+
   private val expectedWorkingKnowledgeSection = JourneyTaskListSection(
     Some(true),
     Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
-      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
+      controllers.routes.WorkingKnowledgeController.onPageLoad().url),
     None)
 
   private val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),

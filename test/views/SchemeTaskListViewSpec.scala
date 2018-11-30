@@ -34,6 +34,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
   private val about = genJourneyTaskListSection(header = None, isCompleted = Some(true),
     linkText = "aboutLinkText")
+
   private val establishers: Seq[JourneyTaskListSection] = Seq(
     genJourneyTaskListSection(header = Some("Company details"), isCompleted = Some(false), linkText = ""),
     genJourneyTaskListSection(header = Some("Organisation details"), isCompleted = Some(true), linkText = "")
