@@ -73,7 +73,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       if (appConfig.isHubEnabled) {
-        sectionComplete.setCompleteFlag(IsWorkingKnowledgeCompleteId, request.userAnswers, value=true).map { _ =>
+        sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId, request.userAnswers, value=true).map { _ =>
           Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
         }
       } else {

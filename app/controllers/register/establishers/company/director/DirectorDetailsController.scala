@@ -81,7 +81,7 @@ class DirectorDetailsController @Inject()(
                   if (allDirectorsCompleted) {
                     Future.successful(Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers)))
                   } else {
-                    sectionComplete.setCompleteFlag(IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
+                    sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
                       Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers))
                     }
                   }

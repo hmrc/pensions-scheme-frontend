@@ -76,7 +76,7 @@ class ConfirmDeleteDirectorController @Inject()(
           dataCacheConnector.save(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true)).flatMap {
             userAnswers =>
               if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
-                sectionComplete.setCompleteFlag(IsEstablisherCompleteId(establisherIndex), request.userAnswers, false).map { _ =>
+                sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(establisherIndex), request.userAnswers, false).map { _ =>
                   Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers))
                 }
               } else {
