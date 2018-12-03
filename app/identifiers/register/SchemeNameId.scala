@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register
+package identifiers.register
 
 import identifiers.TypedIdentifier
 

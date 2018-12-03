@@ -15,7 +15,6 @@
  */
 
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
-import controllers.register.SchemeNameId
 import identifiers.LastPageId
 import identifiers.register._
 import models._

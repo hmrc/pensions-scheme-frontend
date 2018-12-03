@@ -21,6 +21,7 @@ import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
+import identifiers.register.SchemeNameId
 import models.requests.OptionalDataRequest
 import models.{NormalMode, PSAName}
 import play.api.data.Form
