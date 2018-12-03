@@ -24,7 +24,7 @@ import play.api.data.Form
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.{schemeDetails, schemeType}
+import views.html.register.schemeType
 
 class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
 
@@ -33,16 +33,16 @@ class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
 
   override val form = new SchemeTypeFormProvider()()
 
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+  def appConfig(isHubEnabled: Boolean = true): FrontendAppConfig = new GuiceApplicationBuilder().configure(
     "features.is-hub-enabled" -> isHubEnabled
   ).build().injector.instanceOf[FrontendAppConfig]
 
   def createView: () => HtmlFormat.Appendable = () => schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
-  private def schemeOptions = SchemeType.options(appConfig(true))
+  private def schemeOptions = SchemeType.options(appConfig())
 
   "SchemeType view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", schemeName))
@@ -71,6 +71,12 @@ class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
             }
           }
         }
+      }
+
+      "display an input text box with the value when the other is selected" in {
+        val expectedValue = "some value"
+        val doc = asDocument(createViewUsingForm(form.bind(Map("schemeType.type" -> "Other", "schemeType.schemeTypeDetails" -> expectedValue))))
+        doc must haveLabelAndValue("schemeType_schemeTypeDetails", messages("messages__scheme_details__type_other_more"), expectedValue)
       }
     }
   }

@@ -1120,3 +1120,5 @@ messages__scheme_type_master = Master trust
 messages__scheme_type_master_hint = This is an occupational pension scheme which provides money purchase benefits. It is used by two or more employers who are not connected with each other.
 messages__scheme_type_other = Other
 messages__scheme_type_other_hint = This can be a deed poll trust.
+messages__scheme_type__error__required = Select a type of pension scheme
+

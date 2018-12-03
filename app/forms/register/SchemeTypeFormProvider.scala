@@ -22,5 +22,7 @@ import models.register.SchemeType
 import play.api.data.Form
 
 class SchemeTypeFormProvider @Inject() extends SchemeTypeMapping with Constraints {
-  def apply(): Form[SchemeType] = Form("schemeType" -> schemeTypeMapping())
+  def apply(): Form[SchemeType] = Form(
+    "schemeType" -> schemeTypeMapping(requiredTypeKey = "messages__scheme_type__error__required")
+  )
 }

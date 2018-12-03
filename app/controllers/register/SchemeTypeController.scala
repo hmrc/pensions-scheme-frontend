@@ -21,7 +21,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.SchemeTypeFormProvider
-import identifiers.register.{SchemeDetailsId, SchemeTypeId}
+import identifiers.register.SchemeTypeId
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form

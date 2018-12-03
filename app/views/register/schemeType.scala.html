@@ -19,7 +19,6 @@
 @import controllers.register.routes._
 @import models.Mode
 @import models.register._
-@import models.register.SchemeType.MasterTrust
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
@@ -37,7 +36,14 @@
         @components.input_radio(
             field = form("schemeType.type"),
             legend = messages("messages__scheme_type__title"),
+            legendClass = Some("visually-hidden"),
             inputs = SchemeType.options(appConfig)
+        )
+
+        @components.input_text(
+            field = form("schemeType.schemeTypeDetails"),
+            label = messages("messages__scheme_details__type_other_more"),
+            groupClass = Some("js-hidden panel panel-border-narrow")
         )
 
         @components.submit_button()
