@@ -26,8 +26,15 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
 
   "TaskListHelper" must {
     "return valid about section based on user answers" in {
+
       new TaskListHelper(userAnswers).tasklist mustBe JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
         expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink)
+    }
+
+    "don't include the DeclarationLink if trustees flag is not added" in {
+
+      new TaskListHelper(userAnswers).tasklist mustBe JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
+        expectedTrusteesSection, expectedWorkingKnowledgeSection, None)
     }
   }
 }
@@ -35,7 +42,9 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
 object TaskListHelperSpec extends SpecBase with JsonFileReader {
 
   val userAnswersJson = readJsonFromFile("/payload.json")
+  val userAnswersWithoutTrusteesJson = readJsonFromFile("/payload_without_trustees.json")
   val userAnswers = UserAnswers(userAnswersJson)
+  val userAnswersWithoutTrustees = UserAnswers(userAnswersWithoutTrusteesJson)
   val expectedAboutSection = JourneyTaskListSection(
     Some(true),
     Link(messages("messages__schemeTaskList__about_link_text"),
