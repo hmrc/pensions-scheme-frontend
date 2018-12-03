@@ -59,7 +59,7 @@ class DirectorDetailsController @Inject()(
             case None => form
             case Some(value) => form.fill(value)
           }
-          Future.successful(Ok(directorDetails(appConfig, preparedForm, mode, establisherIndex, directorIndex, companyDetails.companyName)))
+          Future.successful(Ok(directorDetails(appConfig, preparedForm, mode, establisherIndex, directorIndex)))
         }
     }
 
@@ -69,7 +69,7 @@ class DirectorDetailsController @Inject()(
         CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, companyDetails.companyName)))
+              Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex)))
             ,
             value =>
               dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).flatMap {
@@ -81,7 +81,7 @@ class DirectorDetailsController @Inject()(
                   if (allDirectorsCompleted) {
                     Future.successful(Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers)))
                   } else {
-                    sectionComplete.setCompleteFlag(IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
+                    sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(establisherIndex), userAnswers, value = false).map { _ =>
                       Redirect(navigator.nextPage(DirectorDetailsId(establisherIndex, directorIndex), mode, userAnswers))
                     }
                   }

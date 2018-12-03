@@ -55,7 +55,7 @@ class MoreThanTenTrusteesController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(moreThanTenTrustees(appConfig, preparedForm, mode, details.schemeName)))
+        Future.successful(Ok(moreThanTenTrustees(appConfig, preparedForm, mode)))
       }
   }
 
@@ -64,7 +64,7 @@ class MoreThanTenTrusteesController @Inject()(
       SchemeDetailsId.retrieve.right.map { details =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(moreThanTenTrustees(appConfig, formWithErrors, mode, details.schemeName))),
+            Future.successful(BadRequest(moreThanTenTrustees(appConfig, formWithErrors, mode))),
           value =>
             dataCacheConnector.save(request.externalId, MoreThanTenTrusteesId, value).map(cacheMap =>
               Redirect(navigator.nextPage(MoreThanTenTrusteesId, mode, UserAnswers(cacheMap))))

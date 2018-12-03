@@ -31,24 +31,20 @@ class CompanyAddressViewSpec extends QuestionViewBehaviours[Address] {
 
   val messageKeyPrefix = "companyAddress"
 
-  val companyName: String = Random.alphanumeric take 6 mkString ""
-
   val options = Seq.empty[InputOption]
 
   override val form: Form[Address] = new AddressFormProvider(FakeCountryOptions())()
 
-  def createView: () => HtmlFormat.Appendable = () => companyAddress(frontendAppConfig, form, NormalMode, Index(0), companyName, options)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyAddress(frontendAppConfig, form, NormalMode, Index(0), options)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] =>
-    HtmlFormat.Appendable = (form: Form[_]) => companyAddress(frontendAppConfig, form, NormalMode, Index(0), companyName, options)(fakeRequest, messages)
+    HtmlFormat.Appendable = (form: Form[_]) => companyAddress(frontendAppConfig, form, NormalMode, Index(0), options)(fakeRequest, messages)
 
   "CompanyAddress view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, companyName)
 
     behave like pageWithTextFields(
       createViewUsingForm,

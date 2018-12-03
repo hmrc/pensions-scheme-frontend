@@ -31,8 +31,7 @@
     @helpers.form(action = WhatYouWillNeedController.onSubmit, 'autoComplete -> "off") {
 
         @if(appConfig.isHubEnabled) {
-            @components.heading(headingKey = messages("messages__hs_what_you_will_need__title").toString,
-            secondaryHeaderKey = None)
+            @components.heading(headingKey = messages("messages__hs_what_you_will_need__title"))
 
             <p>@messages("messages__hs_what_you_will_need__lede")</p>
             <p>@messages("messages__hs_what_you_will_need__p2")</p>
@@ -47,8 +46,7 @@
             </p>
             <p>@messages("messages__hs_what_you_will_need__p3")</p>
         } else {
-            @components.heading(headingKey = messages("messages__what_you_will_need__title").toString,
-                secondaryHeaderKey = Some(messages("messages_cya_secondary_header").toString))
+            @components.heading(headingKey = messages("messages__what_you_will_need__title"))
 
             <p>@messages("messages__what_you_will_need__lede")</p>
             <ul class="list list-bullet">

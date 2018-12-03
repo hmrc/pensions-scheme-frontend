@@ -58,8 +58,7 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       form,
       NormalMode,
-      firstIndex,
-      companyName
+      firstIndex
     )(fakeRequest, messages).toString
 
   private val validData = Json.obj(

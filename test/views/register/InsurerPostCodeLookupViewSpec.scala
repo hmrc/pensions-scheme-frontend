@@ -30,13 +30,11 @@ class InsurerPostCodeLookupViewSpec extends StringViewBehaviours {
   val messageKeyPrefix = "benefits_insurance_addr"
 
   val form = new PostCodeLookupFormProvider()()
-  val schemeName = "test scheme name"
 
-  def createView: () => HtmlFormat.Appendable = () => insurerPostCodeLookup(frontendAppConfig, form, NormalMode,
-    schemeName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => insurerPostCodeLookup(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) => insurerPostCodeLookup(frontendAppConfig, form,
-    NormalMode, schemeName)(fakeRequest, messages)
+    NormalMode)(fakeRequest, messages)
 
   "Address view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
@@ -45,10 +43,6 @@ class InsurerPostCodeLookupViewSpec extends StringViewBehaviours {
 
     behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.InsurerPostCodeLookupController.onSubmit(NormalMode).url,
       Some("messages__common__address_postcode"))
-
-    "have establisher name rendered on the page" in {
-      Jsoup.parse(createView().toString()) must haveDynamicText(schemeName)
-    }
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(

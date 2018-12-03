@@ -241,7 +241,6 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
   lazy val viewAsString: String = check_your_answers(
     frontendAppConfig,
     Seq(adviserSection),
-    Some(Message("messages__adviser__secondary_heading")),
     postUrl
   )(fakeRequest, messages).toString
 

@@ -68,7 +68,6 @@ class CheckYourAnswersController @Inject()(
         Future.successful(Ok(check_your_answers(
           appConfig,
           Seq(companyDetails, companyContactDetails),
-          Some(schemeDetails.schemeName),
           routes.CheckYourAnswersController.onSubmit(index)))
         )
       }
@@ -76,7 +75,7 @@ class CheckYourAnswersController @Inject()(
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      sectionComplete.setCompleteFlag(IsCompanyCompleteId(index), request.userAnswers, true).map { _ =>
+      sectionComplete.setCompleteFlag(request.externalId, IsCompanyCompleteId(index), request.userAnswers, true).map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId(index), NormalMode, request.userAnswers))
       }
   }

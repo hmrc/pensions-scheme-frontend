@@ -29,13 +29,11 @@ class OtherPartnersViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "otherPartners"
 
-  val partnershipName = "test partnership name"
-
   val form = new OtherPartnersFormProvider()()
 
-  def createView = () => otherPartners(frontendAppConfig, form, NormalMode, index, partnershipName)(fakeRequest, messages)
+  def createView = () => otherPartners(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => otherPartners(frontendAppConfig, form, NormalMode, index, partnershipName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => otherPartners(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   "OtherPartners view" must {
 
@@ -44,8 +42,6 @@ class OtherPartnersViewSpec extends YesNoViewBehaviours {
       messageKeyPrefix,
       messages("messages__otherPartners__heading")
     )
-
-    behave like pageWithSecondaryHeader(createView, partnershipName)
 
     behave like pageWithBackLink(createView)
 

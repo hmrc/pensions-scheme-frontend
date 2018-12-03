@@ -53,9 +53,9 @@ class EstablisherDetailsController @Inject()(
         schemeName =>
           val redirectResult = request.userAnswers.get(EstablisherDetailsId(index)) match {
             case None =>
-              Ok(establisherDetails(appConfig, form, mode, index, schemeName))
+              Ok(establisherDetails(appConfig, form, mode, index))
             case Some(value) =>
-              Ok(establisherDetails(appConfig, form.fill(value), mode, index, schemeName))
+              Ok(establisherDetails(appConfig, form.fill(value), mode, index))
           }
           Future.successful(redirectResult)
       }
@@ -67,8 +67,7 @@ class EstablisherDetailsController @Inject()(
         schemeName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index,
-                schemeName))),
+              Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index))),
             (value) =>
               dataCacheConnector.save(
                 request.externalId,

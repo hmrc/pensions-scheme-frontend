@@ -33,22 +33,18 @@ class SchemeEstablishedCountryViewSpec extends StringViewBehaviours {
   val inputOptions: Seq[InputOption] = Seq(InputOption("country:AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
   val countryOptions: CountryOptions = new CountryOptions(inputOptions)
 
-  val schemeDetails = SchemeDetails("MyScheme", SingleTrust)
-
   val form = new SchemeEstablishedCountryFormProvider(countryOptions)()
 
   def createView: () => HtmlFormat.Appendable = () =>
-    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, schemeDetails.schemeName, Seq.empty)(fakeRequest, messages)
+    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, Seq.empty)(fakeRequest, messages)
 
   def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) =>
-    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, schemeDetails.schemeName, inputOptions)(fakeRequest, messages)
+    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, inputOptions)(fakeRequest, messages)
 
   "SchemeEstablishedCountry view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, schemeDetails.schemeName)
 
     "contain select input options for the value" in {
       val doc = asDocument(createViewUsingForm(form))

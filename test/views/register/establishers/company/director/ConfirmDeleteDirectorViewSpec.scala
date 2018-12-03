@@ -26,19 +26,16 @@ class ConfirmDeleteDirectorViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "confirmDeleteDirector"
 
-  private val companyName = "MyCo Ltd"
   private val directorName = "John Doe"
   private val postCall = ConfirmDeleteDirectorController.onSubmit(0, 0)
   private val cancelCall = AddCompanyDirectorsController.onSubmit(NormalMode, 0)
 
-  private def createView = () => confirmDeleteDirector(frontendAppConfig, companyName, directorName, postCall, cancelCall)(fakeRequest, messages)
+  private def createView = () => confirmDeleteDirector(frontendAppConfig, directorName, postCall, cancelCall)(fakeRequest, messages)
 
   "ConfirmDeleteDirector view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading").format("John Doe"))
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, companyName)
 
     behave like pageWithSubmitButton(createView)
 

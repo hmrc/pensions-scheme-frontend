@@ -35,18 +35,17 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
   ).build().injector.instanceOf[FrontendAppConfig]
 
   val messageKeyPrefix = "declaration"
-  val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
-    form, schemeName, true, false, true)(fakeRequest, messages)
+    form, true, false, true)(fakeRequest, messages)
 
   def createViewDynamic(isCompany: Boolean = true, isDormant: Boolean = false,
                         showMasterTrustDeclaration: Boolean = true): () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
-    form, schemeName, isCompany, isDormant, showMasterTrustDeclaration)(fakeRequest, messages)
+    form, isCompany, isDormant, showMasterTrustDeclaration)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => declaration(frontendAppConfig,
-    form, schemeName, false, false, true)(fakeRequest, messages)
+    form, false, false, true)(fakeRequest, messages)
 
   "Declaration view (not hub and spoke)" must {
     behave like normalPage(
@@ -62,8 +61,6 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
       "_statement6",
       "_statement7",
       "_statement8")
-
-    behave like pageWithSecondaryHeader(createView, schemeName)
 
     "not display statement one for individual journey" in {
       Jsoup.parse(createViewDynamic(false, false).toString) mustNot haveDynamicText(s"messages__${messageKeyPrefix}__statement1_not_dormant")
@@ -112,7 +109,7 @@ class DeclarationHsViewSpec extends QuestionViewBehaviours[Boolean] {
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
-    form, schemeName, true, false, true)(fakeRequest, messages)
+    form, true, false, true)(fakeRequest, messages)
 
   "Declaration view (hub and spoke)" must {
     "have a return link" in {

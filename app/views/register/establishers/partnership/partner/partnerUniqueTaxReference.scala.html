@@ -21,7 +21,7 @@
 @import models.UniqueTaxReference
 
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, partnerIndex: Index, partnerName:String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, partnerIndex: Index)(implicit request: Request[_], messages: Messages)
 
 @options = @{
     UniqueTaxReference.options
@@ -39,8 +39,7 @@
         @components.error_summary(form.errors)
 
             @components.heading(
-                headingKey=messages("messages__partner_has_sautr__title"),
-                secondaryHeaderKey = Some(components.hyphen(partnerName).toString)
+                headingKey=messages("messages__partner_has_sautr__title")
             )
 
             @components.fieldSet(

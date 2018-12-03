@@ -69,14 +69,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       Ok(check_your_answers(
         appConfig,
         Seq(schemeDetailsSection, schemeBenefitsSection, bankAccountSection),
-        Some("messages_cya_secondary_header"),
         routes.CheckYourAnswersController.onSubmit())
       )
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      sectionComplete.setCompleteFlag(IsAboutSchemeCompleteId, request.userAnswers, value = true) map { _ =>
+      sectionComplete.setCompleteFlag(request.externalId, IsAboutSchemeCompleteId, request.userAnswers, value = true) map { _ =>
         Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
       }
   }

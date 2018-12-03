@@ -56,7 +56,7 @@ class AddPartnersController @Inject()(
       retrievePartnershipName(index) {
         partnershipName =>
           val partners = request.userAnswers.allPartnersAfterDelete(index)
-          Future.successful(Ok(addPartners(appConfig, form, index, partnershipName, partners, postUrl(index))))
+          Future.successful(Ok(addPartners(appConfig, form, index, partners, postUrl(index))))
       }
   }
 
@@ -78,7 +78,6 @@ class AddPartnersController @Inject()(
                       appConfig,
                       formWithErrors,
                       index,
-                      partnershipName,
                       partners,
                       postUrl(index)
                     )

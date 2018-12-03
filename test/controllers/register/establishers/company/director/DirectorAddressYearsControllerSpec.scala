@@ -61,8 +61,7 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
     form,
     NormalMode,
     establisherIndex,
-    directorIndex,
-    director.fullName
+    directorIndex
   )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

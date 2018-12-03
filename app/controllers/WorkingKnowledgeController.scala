@@ -63,7 +63,7 @@ class WorkingKnowledgeController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode))),
         value =>
-          sectionComplete.setCompleteFlag(IsWorkingKnowledgeCompleteId, request.userAnswers, value).flatMap{_=>
+          sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId, request.userAnswers, value).flatMap{_=>
             dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
               Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap))))
         }

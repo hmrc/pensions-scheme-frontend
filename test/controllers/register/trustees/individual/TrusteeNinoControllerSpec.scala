@@ -130,8 +130,7 @@ object TrusteeNinoControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       form,
       mode,
-      index,
-      trustee.fullName
+      index
     )(fakeRequest, messages).toString
 
   private def trusteeUserAnswers: UserAnswers = {

@@ -32,7 +32,6 @@ class PreviousAddressListViewSpec extends ViewBehaviours {
 
   val form = new AddressListFormProvider()(Seq(0))
   val firstIndex = Index(0)
-  val establisherName: String = "test first name test last name"
 
   def address(postCode: String): TolerantAddress = TolerantAddress(
     Some("address line 1"),
@@ -44,11 +43,10 @@ class PreviousAddressListViewSpec extends ViewBehaviours {
   val addressSeq = Seq(address("postcode 1"), address("postcode 2"))
   val previousAddressIndexes = Seq.range(0, 2)
 
-  def createView: () => HtmlFormat.Appendable = () => previousAddressList(frontendAppConfig, form, NormalMode, firstIndex, addressSeq,
-    establisherName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => previousAddressList(frontendAppConfig, form, NormalMode, firstIndex, addressSeq)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressList(frontendAppConfig, form, NormalMode,
-    firstIndex, addressSeq, establisherName)(fakeRequest, messages)
+    firstIndex, addressSeq)(fakeRequest, messages)
 
   def getAddressValue(address: Address): String = s"${address.addressLine1}, ${address.addressLine2}" +
     s"${address.addressLine3.map(town => s", $town").getOrElse("")}" +
@@ -64,10 +62,6 @@ class PreviousAddressListViewSpec extends ViewBehaviours {
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
         routes.PreviousAddressController.onPageLoad(NormalMode, firstIndex).url)
-    }
-
-    "have establisher name rendered on the page" in {
-      Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)
     }
   }
 

@@ -51,9 +51,9 @@ class CompanyUniqueTaxReferenceController @Inject()(
     implicit request =>
       CompanyDetailsId(index).retrieve.right.flatMap { companyDetails =>
         CompanyUniqueTaxReferenceId(index).retrieve.right.map { value =>
-          Future.successful(Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, companyDetails.companyName)))
+          Future.successful(Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index)))
         }.left.map { _ =>
-          Future.successful(Ok(companyUniqueTaxReference(appConfig, form, mode, index, companyDetails.companyName)))
+          Future.successful(Ok(companyUniqueTaxReference(appConfig, form, mode, index)))
         }
       }
   }
@@ -64,7 +64,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
         companyDetails =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, companyDetails.companyName))),
+              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index))),
             (value) =>
               dataCacheConnector.save(
                 request.externalId,
