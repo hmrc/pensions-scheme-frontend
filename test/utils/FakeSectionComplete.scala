@@ -26,8 +26,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object FakeSectionComplete extends SectionComplete with FakeUserAnswersCacheConnector {
 
-  override def setCompleteFlag(id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean = true)
-                              (implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers] = {
+  override def setCompleteFlag(cacheId: String, id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean = true)
+                              (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers] = {
     save("cacheId", id, value) map UserAnswers
   }
 

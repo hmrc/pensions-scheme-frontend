@@ -48,7 +48,7 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
 
   object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, pensionAdministratorConnector, ApplicationCrypto, config) {
     override def nameMatching(schemeName: String)
-                             (implicit request: DataRequest[AnyContent],
+                             (implicit request: OptionalDataRequest[AnyContent],
                               ec: ExecutionContext,
                               hc: HeaderCarrier, r: Reads[PSAName]): Future[NameMatching] = {
       Future.successful(NameMatching("value 1", "My PSA"))
