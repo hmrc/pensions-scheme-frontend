@@ -25,19 +25,16 @@ import views.html.register.trustees.individual.uniqueTaxReference
 class UniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "trustee__uniqueTaxReference"
-  val trustee = "Test Trustee Name"
   val index = Index(0)
 
   val form = new UniqueTaxReferenceFormProvider()()
 
-  def createView = () => uniqueTaxReference(frontendAppConfig, form, NormalMode, index, trustee)(fakeRequest, messages)
+  def createView = () => uniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => uniqueTaxReference(frontendAppConfig, form, NormalMode, index, trustee)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => uniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   "UniqueTaxReference view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
-
-    behave like pageWithSecondaryHeader(createView, trustee)
 
     behave like pageWithBackLink(createView)
   }

@@ -25,22 +25,18 @@ import views.html.register.declarationDormant
 
 class DeclarationDormantViewSpec extends ViewBehaviours {
 
-  val schemeName = "MyScheme"
-
   val messageKeyPrefix = "declarationDormant"
 
   val form = new DeclarationDormantFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => declarationDormant(frontendAppConfig, form)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => declarationDormant(frontendAppConfig, form)(fakeRequest, messages)
 
   "DeclarationDormant view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, schemeName)
   }
 
   "DeclarationDormant view" when {

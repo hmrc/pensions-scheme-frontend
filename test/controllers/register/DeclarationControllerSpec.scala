@@ -204,7 +204,6 @@ object DeclarationControllerSpec extends ControllerSpecBase {
     declaration(
       appConfig(isHubEnabled),
       form,
-      schemeName,
       isCompany,
       isDormant,
       showMasterTrustDeclaration

@@ -51,7 +51,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
           case Some(nino) => form.fill(nino)
           case _ => form
         }
-        Future.successful(Ok(trusteeNino(appConfig, filledForm, mode, index, trusteeDetails.fullName)))
+        Future.successful(Ok(trusteeNino(appConfig, filledForm, mode, index)))
       }
   }
 
@@ -59,7 +59,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       form.bindFromRequest().fold(
         errors => TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-          Future.successful(BadRequest(trusteeNino(appConfig, errors, mode, index, trusteeDetails.fullName)))
+          Future.successful(BadRequest(trusteeNino(appConfig, errors, mode, index)))
         },
         nino => dataCacheConnector.save(TrusteeNinoId(index), nino).map { userAnswers =>
           Redirect(navigator.nextPage(TrusteeNinoId(index), mode, userAnswers))

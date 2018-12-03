@@ -152,7 +152,6 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
 
   private def viewAsString() = confirmDeleteDirector(
     frontendAppConfig,
-    companyName,
     directorName,
     postCall,
     cancelCall

@@ -33,15 +33,14 @@ class PreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
   val firstIndex = Index(0)
   val validCountryData: Seq[InputOption] = Seq(InputOption("AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
   val countryOptions: CountryOptions = new CountryOptions(validCountryData)
-  val establisherName: String = "test first name test last name"
 
   override val form = new AddressFormProvider(countryOptions)()
 
   def createView: () => HtmlFormat.Appendable = () => previousAddress(frontendAppConfig, form, NormalMode, firstIndex,
-    countryOptions.options, establisherName)(fakeRequest, messages)
+    countryOptions.options)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => previousAddress(frontendAppConfig, form, NormalMode,
-    firstIndex, countryOptions.options, establisherName)(fakeRequest, messages)
+    firstIndex, countryOptions.options)(fakeRequest, messages)
 
 
   "Previous Address view" must {
@@ -71,8 +70,5 @@ class PreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
       }
     }
 
-    "have establisher name rendered on the page" in {
-      Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)
-    }
   }
 }

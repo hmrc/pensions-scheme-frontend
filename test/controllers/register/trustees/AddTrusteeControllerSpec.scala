@@ -83,7 +83,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form, trustees: Seq[Trustee[_]] = Seq.empty): String =
-    addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages).toString
+    addTrustee(frontendAppConfig, form, NormalMode, trustees)(fakeRequest, messages).toString
 
   val testAnswer = "answer"
 

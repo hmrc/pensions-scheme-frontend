@@ -91,7 +91,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(check_your_answers(
           appConfig,
           Seq(companyDetailsSection, contactDetailsSection),
-          Some(Message("messages__common__trustee_secondary_header", schemeDetails.schemeName)),
           routes.CheckYourAnswersController.onSubmit(index)
         )))
       }

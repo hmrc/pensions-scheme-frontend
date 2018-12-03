@@ -74,8 +74,7 @@ class CompanyUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       form,
       NormalMode,
-      firstIndex,
-      companyName
+      firstIndex
     )(fakeRequest, messages).toString
 
   "CompanyUniqueTaxReference Controller" must {

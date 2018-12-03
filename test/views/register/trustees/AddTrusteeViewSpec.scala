@@ -32,7 +32,6 @@ import views.html.register.trustees.addTrustee
 class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
 
   private val messageKeyPrefix = "addTrustee"
-  private val schemeName = "Test scheme name"
   private val companyDetails = CompanyDetails(
     "Trustee Company",
     None,
@@ -59,17 +58,15 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
   val form = new AddTrusteeFormProvider()()
 
   private def createView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
-    addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages)
+    addTrustee(frontendAppConfig, form, NormalMode, trustees)(fakeRequest, messages)
 
   private def createViewUsingForm(trustees: Seq[Trustee[_]] = Seq.empty) = (form: Form[Boolean]) =>
-    addTrustee(frontendAppConfig, form, NormalMode, schemeName, trustees)(fakeRequest, messages)
+    addTrustee(frontendAppConfig, form, NormalMode, trustees)(fakeRequest, messages)
 
   "AddTrustee view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
 
     behave like pageWithBackLink(createView())
-
-    behave like pageWithSecondaryHeader(createView(), schemeName)
 
     behave like yesNoPage(
       createViewUsingForm(trustees),

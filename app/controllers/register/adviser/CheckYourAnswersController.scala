@@ -64,7 +64,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         check_your_answers(
           appConfig,
           sections,
-          Some("messages__adviser__secondary_heading"),
           controllers.register.adviser.routes.CheckYourAnswersController.onSubmit()
         )
       )

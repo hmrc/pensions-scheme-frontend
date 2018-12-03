@@ -59,7 +59,6 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                   Ok(
                     confirmDeleteTrustee(
                       appConfig,
-                      schemeName,
                       trustee.name,
                       routes.ConfirmDeleteTrusteeController.onSubmit(index, trusteeKind)
                     )

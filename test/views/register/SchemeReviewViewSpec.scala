@@ -45,8 +45,6 @@ class SchemeReviewViewSpec extends ViewBehaviours {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithSecondaryHeader(createView, schemeName)
-
     "display scheme name" in {
       Jsoup.parse(createView().toString) must haveDynamicText(schemeName)
     }

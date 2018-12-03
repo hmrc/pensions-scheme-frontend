@@ -66,7 +66,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         Future.successful(Ok(check_your_answers(
           appConfig,
           Seq(companyDirectorDetails, companyDirectorContactDetails),
-          Some(schemeName),
           company.director.routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex)))
         )
       }

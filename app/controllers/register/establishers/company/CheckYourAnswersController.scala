@@ -68,7 +68,6 @@ class CheckYourAnswersController @Inject()(
         Future.successful(Ok(check_your_answers(
           appConfig,
           Seq(companyDetails, companyContactDetails),
-          Some(schemeDetails.schemeName),
           routes.CheckYourAnswersController.onSubmit(index)))
         )
       }

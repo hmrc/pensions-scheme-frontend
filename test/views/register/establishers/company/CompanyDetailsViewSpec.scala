@@ -30,12 +30,11 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
 
   override val form = new CompanyDetailsFormProvider()()
   val firstIndex = Index(1)
-  val schemeName = "test scheme name"
 
-  def createView: () => HtmlFormat.Appendable = () => companyDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages)
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
 
 
   "CompanyDetails view" must {

@@ -51,19 +51,19 @@ class UniqueTaxReferenceController @Inject()(
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.flatMap { details =>
         UniqueTaxReferenceId(index).retrieve.right.map { value =>
-          Future.successful(Ok(uniqueTaxReference(appConfig, form.fill(value), mode, index, details.fullName)))
+          Future.successful(Ok(uniqueTaxReference(appConfig, form.fill(value), mode, index)))
         }.left.map { _ =>
-          Future.successful(Ok(uniqueTaxReference(appConfig, form, mode, index, details.fullName)))
+          Future.successful(Ok(uniqueTaxReference(appConfig, form, mode, index)))
         }
       }
   }
 
-  def onSubmit(mode: Mode, index: Index) = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.map { details =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index, details.fullName))),
+            Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index))),
           (value) =>
             dataCacheConnector.save(request.externalId, UniqueTaxReferenceId(index), value).map(cacheMap =>
               Redirect(navigator.nextPage(UniqueTaxReferenceId(index), mode, new UserAnswers(cacheMap))))

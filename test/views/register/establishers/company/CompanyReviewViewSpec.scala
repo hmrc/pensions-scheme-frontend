@@ -31,7 +31,6 @@ class CompanyReviewViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "companyReview"
   val index = Index(0)
-  val schemeName = "Test Scheme Name"
   val companyName = "test company name"
   val directors = Seq("director a", "director b", "director c")
   val tenDirectors = Seq("director a", "director b", "director c", "director d", "director e",
@@ -41,9 +40,9 @@ class CompanyReviewViewSpec extends ViewBehaviours {
     DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now())
   )
 
-  def createView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, schemeName, companyName, directors)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, companyName, directors)(fakeRequest, messages)
 
-  def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, schemeName, companyName, tenDirectors)(fakeRequest, messages)
+  def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, companyName, tenDirectors)(fakeRequest, messages)
 
   "CompanyReview view" must {
     behave like normalPage(
@@ -51,10 +50,6 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       messageKeyPrefix,
       messages(s"messages__${messageKeyPrefix}__heading"),
       "_directors__heading")
-
-    behave like pageWithSecondaryHeader(
-      createView,
-      s"${messages("messages__companyReview__secondaryHeading__partial")} $schemeName")
 
     "display company name" in {
       Jsoup.parse(createView().toString) must haveDynamicText(companyName)

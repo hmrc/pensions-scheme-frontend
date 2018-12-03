@@ -94,7 +94,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       lazy val viewAsString: String = check_your_answers(
         frontendAppConfig,
         Seq(partnershipDetails, partnershipContactDetails),
-        Some(Message("messages__establishers__secondaryHeading", schemeName)),
         routes.CheckYourAnswersController.onSubmit(firstIndex)
       )(fakeRequest, messages).toString
 
