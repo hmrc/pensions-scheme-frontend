@@ -19,7 +19,7 @@ package utils
 import base.SpecBase
 import connectors.{PSANameCacheConnector, PensionAdministratorConnector}
 import models.PSAName
-import models.requests.{DataRequest, OptionalDataRequest}
+import models.requests.OptionalDataRequest
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito._
 import org.scalatest.{OptionValues, RecoverMethods}
@@ -43,7 +43,7 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar with ScalaFutur
   val psaNameCacheConnector: PSANameCacheConnector = mock[PSANameCacheConnector]
   val schemeName = "My Scheme Reg"
 
-  implicit val request: DataRequest[AnyContent] = DataRequest(FakeRequest("", ""), "externalId", UserAnswers(), PsaId("A0000000"))
+  implicit val request: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest("", ""), "externalId", None, PsaId("A0000000"))
 
   private def nameMatchingFactory = new NameMatchingFactory(psaNameCacheConnector, pensionAdministratorConnector, ApplicationCrypto, frontendAppConfig)
 
@@ -56,9 +56,9 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar with ScalaFutur
       "uses Get PSA Minimal Details" in {
 
         lazy val app = new GuiceApplicationBuilder()
-            .overrides(bind[PSANameCacheConnector].toInstance(psaNameCacheConnector))
-            .overrides(bind[PensionAdministratorConnector].toInstance(pensionAdministratorConnector))
-            .build()
+          .overrides(bind[PSANameCacheConnector].toInstance(psaNameCacheConnector))
+          .overrides(bind[PensionAdministratorConnector].toInstance(pensionAdministratorConnector))
+          .build()
 
         val nameMatchingFactory = app.injector.instanceOf[NameMatchingFactory]
 

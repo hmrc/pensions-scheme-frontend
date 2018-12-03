@@ -66,9 +66,8 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
             Future.successful(BadRequest(isDormant(appConfig, formWithErrors, companyName, postCall(mode, index)))),
           {
             case Yes =>
-              dataCacheConnector.save(request.externalId, IsCompanyDormantId(index), DeclarationDormant.values(1)).flatMap { _ =>
-                dataCacheConnector.save(request.externalId, DeclarationDormantId, DeclarationDormant.values(1)).map (cacheMap =>
-                 Redirect(navigator.nextPage(IsCompanyDormantId(index), NormalMode, UserAnswers(cacheMap))))
+              dataCacheConnector.save(request.externalId, IsCompanyDormantId(index), DeclarationDormant.values(1)).map { cacheMap =>
+                 Redirect(navigator.nextPage(IsCompanyDormantId(index), NormalMode, UserAnswers(cacheMap)))
              }
             case No =>
               dataCacheConnector.save(request.externalId, IsCompanyDormantId(index), DeclarationDormant.values(0)).map(cacheMap =>
