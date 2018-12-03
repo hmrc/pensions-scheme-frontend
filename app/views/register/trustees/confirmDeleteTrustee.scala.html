@@ -20,7 +20,7 @@
 @import models.Mode
 @import viewmodels.Message
 
-@(appConfig: FrontendAppConfig, schemeName: String, trusteeName: String, postCall: Call)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, trusteeName: String, postCall: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__confirmDeleteTrustee__title"),
@@ -30,8 +30,7 @@
     @components.back_link()
 
     @components.heading(
-        headingKey=components.hyphen((Message("messages__confirmDeleteTrustee__heading").withArgs(trusteeName))).toString,
-        secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
+        headingKey=components.hyphen((Message("messages__confirmDeleteTrustee__heading").withArgs(trusteeName))).toString
     )
 
     @helpers.form(action = postCall, 'autoComplete -> "off") {

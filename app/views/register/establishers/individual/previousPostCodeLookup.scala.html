@@ -19,7 +19,7 @@
 @import controllers.register.establishers.individual.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, establisherName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__establisher_individual_previous_address__title"),
@@ -32,7 +32,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__establisher_individual_previous_address__title").toString, secondaryHeaderKey = Some(establisherName))
+        @components.heading(messages("messages__establisher_individual_previous_address__title"))
 
         <p>@messages("messages__establisher_individual_previous_address_lede")</p>
 

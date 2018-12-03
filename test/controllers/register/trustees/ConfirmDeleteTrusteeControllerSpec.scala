@@ -164,7 +164,6 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
   private def viewAsString(trusteeName: String, trusteeKind: TrusteeKind) =
     confirmDeleteTrustee(
       frontendAppConfig,
-      scheme.schemeName,
       trusteeName,
       routes.ConfirmDeleteTrusteeController.onSubmit(0, trusteeKind)
     )(fakeRequest, messages).toString

@@ -17,27 +17,39 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.FakeUserAnswersCacheConnector
+import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.DeclarationDutiesControllerSpec.psaId
 import forms.register.DeclarationFormProvider
-import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
+import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.establishers.partnership.IsPartnershipDormantId
-import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.{CompanyDetails, PartnershipDetails}
+import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId}
+import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
 import models.person.PersonDetails
-import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
+import models.register.{DeclarationDormant, SchemeDetails, SchemeSubmissionResponse, SchemeType}
+import models.{CompanyDetails, PartnershipDetails}
 import org.joda.time.LocalDate
+import org.mockito.Matchers.{any, eq => eqTo}
+import org.mockito.Mockito._
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.{JsValue, Json}
+import play.api.libs.ws.WSClient
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import uk.gov.hmrc.crypto.ApplicationCrypto
+import uk.gov.hmrc.domain.PsaId
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
 
-class DeclarationControllerSpec extends ControllerSpecBase {
+import scala.concurrent.{ExecutionContext, Future}
+
+class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures{
 
   import DeclarationControllerSpec._
 
@@ -132,6 +144,32 @@ class DeclarationControllerSpec extends ControllerSpecBase {
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
+    "send an email when valid data is submitted when hub enabled" which {
+      "fetches from Get PSA Minimal Details" in {
+
+        reset(mockEmailConnector)
+
+        when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
+          .thenReturn(Future.successful(EmailSent))
+
+        val postRequest = fakeRequest.withFormUrlEncodedBody(("agree" -> "agreed"))
+
+        whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector,
+          fakePsaNameCacheConnector = mockPSANameCacheConnector).onSubmit(postRequest)) { _ =>
+
+          verify(mockEmailConnector, times(1)).sendEmail(
+            eqTo("email@test.com"),
+            eqTo("pods_scheme_register"),
+            eqTo(Map("srn" -> "S12345 67890")),
+            eqTo(psaId)
+          )(any(), any())
+
+          verifyZeroInteractions(mockPSANameCacheConnector)
+
+        }
+      }
+    }
+
     "return a Bad Request and errors" when {
       "invalid data is submitted in individual journey" in {
         val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
@@ -175,7 +213,7 @@ class DeclarationControllerSpec extends ControllerSpecBase {
 
 }
 
-object DeclarationControllerSpec extends ControllerSpecBase {
+object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar{
 
   def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
     "features.is-hub-enabled" -> isHubEnabled
@@ -187,7 +225,9 @@ object DeclarationControllerSpec extends ControllerSpecBase {
   private val form = formProvider()
   private val schemeName = "Test Scheme Name"
 
-  private def controller(dataRetrievalAction: DataRetrievalAction, isHubEnabled: Boolean = true): DeclarationController =
+  private def controller(dataRetrievalAction: DataRetrievalAction, isHubEnabled: Boolean = true,
+                         fakeEmailConnector : EmailConnector = fakeEmailConnector,
+                         fakePsaNameCacheConnector : PSANameCacheConnector = fakePsaNameCacheConnector): DeclarationController =
     new DeclarationController(
       appConfig(isHubEnabled),
       messagesApi,
@@ -196,7 +236,12 @@ object DeclarationControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      formProvider
+      formProvider,
+      fakePensionsSchemeConnector,
+      fakeEmailConnector,
+      fakePsaNameCacheConnector,
+      applicationCrypto,
+      fakePensionAdminstratorConnector
     )
 
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
@@ -204,7 +249,6 @@ object DeclarationControllerSpec extends ControllerSpecBase {
     declaration(
       appConfig(isHubEnabled),
       form,
-      schemeName,
       isCompany,
       isDormant,
       showMasterTrustDeclaration
@@ -299,6 +343,62 @@ object DeclarationControllerSpec extends ControllerSpecBase {
     def asDataRetrievalAction(): DataRetrievalAction = {
       new FakeDataRetrievalAction(Some(answers.json))
     }
+  }
+
+  private val mockPSANameCacheConnector = mock[PSANameCacheConnector]
+  private val mockEmailConnector = mock[EmailConnector]
+  private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
+
+  object fakePsaNameCacheConnector extends PSANameCacheConnector(
+    frontendAppConfig,
+    mock[WSClient]
+  ) with FakeUserAnswersCacheConnector {
+
+    override def fetch(cacheId: String)(implicit
+                                        ec: ExecutionContext,
+                                        hc: HeaderCarrier): Future[Option[JsValue]] = Future.successful(Some(Json.obj("psaName" -> "Test",
+      "psaEmail" -> "email@test.com")))
+
+    override def upsert(cacheId: String, value: JsValue)
+                       (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[JsValue] = Future.successful(value)
+
+    override def remove[I <: TypedIdentifier[_]](cacheId: String, id: I)
+                                                (implicit
+                                                 ec: ExecutionContext,
+                                                 hc: HeaderCarrier
+                                                ): Future[JsValue] = ???
+  }
+
+  private val validSchemeSubmissionResponse = SchemeSubmissionResponse("S1234567890")
+
+  private val fakePensionsSchemeConnector = new PensionsSchemeConnector {
+    override def registerScheme
+    (answers: UserAnswers, psaId: String)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+      Future.successful(validSchemeSubmissionResponse)
+    }
+  }
+
+  private val fakePensionsSchemeConnectorWithInvalidPayloadException = new PensionsSchemeConnector {
+    override def registerScheme
+    (answers: UserAnswers, psaId: String)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
+      Future.failed(new InvalidPayloadException)
+    }
+  }
+
+  private val fakeEmailConnector = new EmailConnector {
+    override def sendEmail
+    (emailAddress: String, templateName: String, params: Map[String, String] = Map.empty, psaId: PsaId)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmailStatus] = {
+      Future.successful(EmailSent)
+    }
+  }
+
+  private val fakePensionAdminstratorConnector = new PensionAdministratorConnector {
+    override def getPSAEmail(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("email@test.com")
+
+    override def getPSAName(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = Future.successful("PSA Name")
   }
 
 }

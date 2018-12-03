@@ -31,7 +31,6 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "partnershipReview"
   val index = Index(0)
-  val schemeName = "Test Scheme Name"
   val partnershipName = "test partnership name"
   val partners = Seq("partner a", "partner b", "partner c")
   val tenPartners = Seq("partner a", "partner b", "partner c", "partner d", "partner e",
@@ -44,7 +43,6 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
   def createView: () => HtmlFormat.Appendable = () => partnershipReview(
     frontendAppConfig,
     index,
-    schemeName,
     partnershipName,
     partners
   )(fakeRequest, messages)
@@ -52,7 +50,6 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
   def createSecView: () => HtmlFormat.Appendable = () => partnershipReview(
     frontendAppConfig,
     index,
-    schemeName,
     partnershipName,
     tenPartners
   )(fakeRequest, messages)
@@ -63,10 +60,6 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
       messageKeyPrefix,
       messages(s"messages__${messageKeyPrefix}__heading"),
       "_partners__heading")
-
-    behave like pageWithSecondaryHeader(
-      createView,
-      s"${messages("messages__partnershipReview__secondaryHeading__partial")} $schemeName")
 
     "display partnership name" in {
       Jsoup.parse(createView().toString) must haveDynamicText(partnershipName)

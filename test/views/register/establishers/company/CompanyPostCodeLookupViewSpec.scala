@@ -31,13 +31,11 @@ class CompanyPostCodeLookupViewSpec extends StringViewBehaviours {
 
   val form = new PostCodeLookupFormProvider()()
   val firstIndex = Index(0)
-  val companyName = "test company name"
 
-  def createView: () => HtmlFormat.Appendable = () => companyPostCodeLookup(frontendAppConfig, form, NormalMode, firstIndex,
-    companyName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyPostCodeLookup(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) => companyPostCodeLookup(frontendAppConfig, form,
-    NormalMode, firstIndex, companyName)(fakeRequest, messages)
+    NormalMode, firstIndex)(fakeRequest, messages)
 
   "Address view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
@@ -46,10 +44,6 @@ class CompanyPostCodeLookupViewSpec extends StringViewBehaviours {
 
     behave like stringPage(createViewUsingForm, messageKeyPrefix, routes.CompanyPostCodeLookupController.onSubmit(NormalMode, firstIndex).url,
       Some("messages__common__address_postcode"))
-
-    "have company name rendered on the page" in {
-      Jsoup.parse(createView().toString()) must haveDynamicText(companyName)
-    }
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(

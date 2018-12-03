@@ -19,7 +19,7 @@
 @import controllers.register.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, name: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__investment_regulated__title"),
@@ -33,8 +33,7 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey=messages("messages__investment_regulated__title"),
-            secondaryHeaderKey = Some(components.hyphen(name).toString)
+            headingKey=messages("messages__investment_regulated__title")
         )
 
         @components.input_yes_no(

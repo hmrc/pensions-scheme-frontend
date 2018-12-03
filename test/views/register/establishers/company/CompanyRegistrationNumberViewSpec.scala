@@ -26,12 +26,11 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "company__crn"
   val index = Index(1)
-  val companyName = "test name"
   val form = new CompanyRegistrationNumberFormProvider()()
 
-  def createView = () => companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
+  def createView = () => companyRegistrationNumber(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => companyRegistrationNumber(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   "CompanyRegistrationNumber view" must {
     behave like normalPage(createView, messageKeyPrefix, messages("messages__company__has_crn"))

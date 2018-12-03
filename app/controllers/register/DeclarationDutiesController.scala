@@ -62,8 +62,8 @@ class DeclarationDutiesController @Inject()(
       retrieveSchemeName {
         schemeName =>
           val result = request.userAnswers.get(DeclarationDutiesId) match {
-            case Some(value) => Ok(declarationDuties(appConfig, form.fill(value), schemeName))
-            case None => Ok(declarationDuties(appConfig, form, schemeName))
+            case Some(value) => Ok(declarationDuties(appConfig, form.fill(value)))
+            case None => Ok(declarationDuties(appConfig, form))
           }
           Future.successful(result)
       }
@@ -75,7 +75,7 @@ class DeclarationDutiesController @Inject()(
         schemeName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(declarationDuties(appConfig, formWithErrors, schemeName))),
+              Future.successful(BadRequest(declarationDuties(appConfig, formWithErrors))),
             {
               case true =>
                 for {

@@ -21,7 +21,7 @@
 @import models.address._
 
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, previousAddresses: Seq[TolerantAddress], establisherName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, previousAddresses: Seq[TolerantAddress])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__select_the_previous_address__title"),
@@ -34,7 +34,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(headingKey = messages("messages__select_the_previous_address__title").toString, secondaryHeaderKey = Some(establisherName))
+        @components.heading(headingKey = messages("messages__select_the_previous_address__title"))
 
         <p>
             @messages("messages__common__select_address")

@@ -19,7 +19,7 @@
 @import controllers.register.establishers.partnership.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_],mode: Mode, index: Index,partnershipName:String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_],mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__otherPartners__title"),
@@ -32,7 +32,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__otherPartners__heading").toString,secondaryHeaderKey=Some(partnershipName))
+        @components.heading(messages("messages__otherPartners__heading"))
 
         @components.input_yes_no(
             field = form("value"),

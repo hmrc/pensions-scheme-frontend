@@ -50,8 +50,6 @@ class PayeViewSpec extends ViewBehaviours {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithSecondaryHeader(createView, messages("test company name"))
-
   }
 
 

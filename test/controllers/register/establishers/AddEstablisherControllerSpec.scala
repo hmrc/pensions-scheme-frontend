@@ -142,8 +142,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
       frontendAppConfig,
       form,
       NormalMode,
-      allEstablishers,
-      schemeName
+      allEstablishers
     )(fakeRequest, messages).toString
 
   private val day = LocalDate.now().getDayOfMonth

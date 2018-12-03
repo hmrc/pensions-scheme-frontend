@@ -27,14 +27,13 @@ class EstablisherNinoViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "establisherNino"
   val index = Index(1)
-  val establisherName = "test name"
 
   val form = new EstablisherNinoFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => establisherNino(frontendAppConfig, form, NormalMode, index, establisherName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => establisherNino(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => establisherNino(frontendAppConfig, form, NormalMode,
-    index, establisherName)(fakeRequest, messages)
+    index)(fakeRequest, messages)
 
   "EstablisherNino view" must {
     behave like normalPage(createView, messageKeyPrefix, messages("messages__establisherNino__title"))

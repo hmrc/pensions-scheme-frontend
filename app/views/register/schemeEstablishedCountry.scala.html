@@ -20,7 +20,7 @@
 @import models.Mode
 @import utils.InputOption
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String, options: Seq[InputOption])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, options: Seq[InputOption])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__scheme_country__title"),
@@ -33,8 +33,7 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey=messages("messages__scheme_country__title"),
-            secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
+            headingKey=messages("messages__scheme_country__title")
         )
 
         @components.select(field = form("value"),
