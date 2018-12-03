@@ -35,7 +35,6 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
 
   private val messageKeyPrefix = "establishers__add"
 
-  private val schemeName = "Test scheme name"
 
   private val companyDetails = CompanyDetails(
     "Establisher Company",
@@ -64,18 +63,15 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
 
   val form: Form[Option[Boolean]] = new AddEstablisherFormProvider()(establishers)
 
-  private def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty,
-    schemeName)(fakeRequest, messages)
+  private def createView: () => HtmlFormat.Appendable = () => addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty)(fakeRequest, messages)
 
   private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
-    addEstablisher(frontendAppConfig, form, NormalMode, establishers, schemeName)(fakeRequest, messages)
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers)(fakeRequest, messages)
 
   "AddEstablisher view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, schemeName)
 
     "when there are no establishers" when {
       "not show the yes no inputs" in {

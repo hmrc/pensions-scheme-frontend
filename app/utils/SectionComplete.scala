@@ -20,9 +20,7 @@ import com.google.inject.{ImplementedBy, Inject}
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.TypedIdentifier
-import models.requests.DataRequest
 import play.api.libs.json.JsResultException
-import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent._
@@ -30,21 +28,21 @@ import scala.concurrent._
 @ImplementedBy(classOf[SectionCompleteImpl])
 trait SectionComplete {
 
-  def setCompleteFlag(id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
-                     (implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers]
+  def setCompleteFlag(cacheId: String, id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
+                     (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers]
 }
 
 class SectionCompleteImpl @Inject()(dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends SectionComplete {
 
-  override def setCompleteFlag(id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
-                              (implicit request: DataRequest[AnyContent], ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers] = {
+  override def setCompleteFlag(cacheId: String, id: TypedIdentifier[Boolean], userAnswers: UserAnswers, value: Boolean)
+                              (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[UserAnswers] = {
 
     userAnswers.set(id)(value).fold(
       invalid => Future.failed(JsResultException(invalid)),
       valid => Future.successful(valid)
     )
 
-    dataCacheConnector.save(request.externalId, id, value) map UserAnswers
+    dataCacheConnector.save(cacheId, id, value) map UserAnswers
   }
 
 }

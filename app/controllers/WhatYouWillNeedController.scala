@@ -41,11 +41,9 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                           userAnswersCacheConnector: UserAnswersCacheConnector
                                          ) extends FrontendController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authenticate.async {
+  def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>
-      userAnswersCacheConnector.save(request.externalId, IndexId, "").map { _ =>
-        Ok(whatYouWillNeed(appConfig))
-      }
+      Ok(whatYouWillNeed(appConfig))
   }
 
   def onSubmit: Action[AnyContent] = authenticate.async {

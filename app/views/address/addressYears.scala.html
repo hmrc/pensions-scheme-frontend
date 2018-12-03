@@ -32,8 +32,7 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey=messages(viewmodel.heading),
-            secondaryHeaderKey = viewmodel.subHeading.map{components.hyphen(_).toString}
+            headingKey=messages(viewmodel.heading)
         )
 
         @components.input_radio(

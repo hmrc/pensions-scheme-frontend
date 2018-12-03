@@ -36,7 +36,6 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSClient
@@ -148,28 +147,15 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
     "send an email when valid data is submitted when hub enabled" which {
       "fetches from Get PSA Minimal Details" in {
 
-        val mockPSANameCacheConnector = mock[PSANameCacheConnector]
-
         reset(mockEmailConnector)
-
-          lazy val app = new GuiceApplicationBuilder().configure(
-            "features.is-hub-enabled" -> true
-          )
-          .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
-          .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
-          .overrides(bind[AuthAction].toInstance(FakeAuthAction))
-          .overrides(bind[PSANameCacheConnector].toInstance(mockPSANameCacheConnector))
-          .overrides(bind[DataRetrievalAction].toInstance(getMandatorySchemeName))
-          .overrides(bind[PensionsSchemeConnector].toInstance(fakePensionsSchemeConnector))
-          .overrides(bind[PensionAdministratorConnector].toInstance(fakePensionAdminstratorConnector))
-          .build()
 
         when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
           .thenReturn(Future.successful(EmailSent))
 
         val postRequest = fakeRequest.withFormUrlEncodedBody(("agree" -> "agreed"))
 
-        whenReady(app.injector.instanceOf[DeclarationController].onSubmit(postRequest)) { _ =>
+        whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector,
+          fakePsaNameCacheConnector = mockPSANameCacheConnector).onSubmit(postRequest)) { _ =>
 
           verify(mockEmailConnector, times(1)).sendEmail(
             eqTo("email@test.com"),
@@ -239,7 +225,9 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar{
   private val form = formProvider()
   private val schemeName = "Test Scheme Name"
 
-  private def controller(dataRetrievalAction: DataRetrievalAction, isHubEnabled: Boolean = true): DeclarationController =
+  private def controller(dataRetrievalAction: DataRetrievalAction, isHubEnabled: Boolean = true,
+                         fakeEmailConnector : EmailConnector = fakeEmailConnector,
+                         fakePsaNameCacheConnector : PSANameCacheConnector = fakePsaNameCacheConnector): DeclarationController =
     new DeclarationController(
       appConfig(isHubEnabled),
       messagesApi,
@@ -261,7 +249,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar{
     declaration(
       appConfig(isHubEnabled),
       form,
-      schemeName,
       isCompany,
       isDormant,
       showMasterTrustDeclaration
@@ -358,6 +345,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar{
     }
   }
 
+  private val mockPSANameCacheConnector = mock[PSANameCacheConnector]
   private val mockEmailConnector = mock[EmailConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 

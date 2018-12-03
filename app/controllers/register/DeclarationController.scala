@@ -103,39 +103,39 @@ class DeclarationController @Inject()(
 
         if (isCompany) {
           dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).flatMap(_ =>
-            renderView(status, form, details.schemeName, isCompany, isDeclarationDormant)
+            renderView(status, form, isCompany, isDeclarationDormant)
           )
         } else {
-          renderView(status, form, details.schemeName, isCompany, isDeclarationDormant)
+          renderView(status, form, isCompany, isDeclarationDormant)
         }
       } else {
-        processViewIfNotHub(status, form, details.schemeName, isCompany)
+        processViewIfNotHub(status, form, isCompany)
       }
     }
   }
 
   private def processViewIfNotHub(status: HtmlFormat.Appendable => Result, form: Form[_],
-                                  schemeName: String, isCompany: Boolean)(
+                                  isCompany: Boolean)(
     implicit request: DataRequest[AnyContent]) : Future[Result] = {
 
     request.userAnswers.get(DeclarationDormantId) match {
       case Some(Yes) =>
-        renderView(status, form, schemeName, isCompany, isDormant= true)
+        renderView(status, form, isCompany, isDormant= true)
       case Some(No) =>
-        renderView(status, form, schemeName, isCompany, isDormant = false)
+        renderView(status, form, isCompany, isDormant = false)
       case None if !isCompany =>
-        renderView(status, form, schemeName, isCompany, isDormant = false)
+        renderView(status, form, isCompany, isDormant = false)
       case _ =>
         Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
   }
 
   private def renderView(status: HtmlFormat.Appendable => Result,
-                       form: Form[_], schemeName: String, isCompany: Boolean,
+                       form: Form[_], isCompany: Boolean,
                          isDormant: Boolean)(implicit request: DataRequest[AnyContent]) : Future[Result] = {
     Future.successful(
       status(
-        declaration(appConfig, form, schemeName, isCompany, isDormant, showMasterTrustDeclaration)
+        declaration(appConfig, form, isCompany, isDormant, showMasterTrustDeclaration)
       )
     )
   }

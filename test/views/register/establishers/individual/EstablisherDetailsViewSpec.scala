@@ -32,13 +32,11 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   override val form = new PersonDetailsFormProvider()()
 
-  val schemeName = "test scheme name"
-
   def createView: () => HtmlFormat.Appendable = () =>
-    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), schemeName)(fakeRequest, messages)
+    establisherDetails(frontendAppConfig, form, NormalMode, Index(1))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    establisherDetails(frontendAppConfig, form, NormalMode, Index(1), schemeName)(fakeRequest, messages)
+    establisherDetails(frontendAppConfig, form, NormalMode, Index(1))(fakeRequest, messages)
 
   val day = LocalDate.now().getDayOfMonth
   val year = LocalDate.now().getYear

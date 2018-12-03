@@ -51,7 +51,7 @@ class BenefitsControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = benefits(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = benefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
 
   "Benefits Controller" must {
 

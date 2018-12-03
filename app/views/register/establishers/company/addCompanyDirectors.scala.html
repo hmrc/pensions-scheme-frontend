@@ -25,7 +25,6 @@
     form: Form[_],
     mode: Mode,
     establisherIndex: Int,
-    companyName: String,
     directors: Seq[DirectorEntity]
 )(implicit request: Request[_], messages: Messages)
 
@@ -45,8 +44,7 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey=messages("messages__addCompanyDirectors__heading"),
-            secondaryHeaderKey = Some(components.hyphen(companyName).toString)
+            headingKey=messages("messages__addCompanyDirectors__heading")
         )
 
         @if(directors.isEmpty) {

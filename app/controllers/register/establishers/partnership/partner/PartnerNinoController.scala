@@ -51,9 +51,9 @@ class PartnerNinoController @Inject()(
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.flatMap { partner =>
         PartnerNinoId(establisherIndex, partnerIndex).retrieve.right.map { value =>
-          Future.successful(Ok(partnerNino(appConfig, form.fill(value), mode, establisherIndex, partnerIndex, partner.fullName)))
+          Future.successful(Ok(partnerNino(appConfig, form.fill(value), mode, establisherIndex, partnerIndex)))
         }.left.map { _ =>
-          Future.successful(Ok(partnerNino(appConfig, form, mode, establisherIndex, partnerIndex, partner.fullName)))
+          Future.successful(Ok(partnerNino(appConfig, form, mode, establisherIndex, partnerIndex)))
         }
       }
   }
@@ -64,7 +64,7 @@ class PartnerNinoController @Inject()(
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partner =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(partnerNino(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, partner.fullName))),
+            Future.successful(BadRequest(partnerNino(appConfig, formWithErrors, mode, establisherIndex, partnerIndex))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,

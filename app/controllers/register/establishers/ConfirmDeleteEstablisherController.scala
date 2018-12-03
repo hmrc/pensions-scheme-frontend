@@ -62,7 +62,6 @@ class ConfirmDeleteEstablisherController @Inject()(
                     Ok(
                       confirmDeleteEstablisher(
                         appConfig,
-                        schemeName,
                         establisher.name,
                         routes.ConfirmDeleteEstablisherController.onSubmit(index, establisherKind),
                         routes.AddEstablisherController.onPageLoad(NormalMode)

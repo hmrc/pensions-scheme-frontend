@@ -51,8 +51,8 @@ class OtherPartnersController @Inject()(
     implicit request =>
       retrievePartnershipName(establisherIndex) { partnershipName =>
         val redirectResult = request.userAnswers.get(OtherPartnersId(establisherIndex)) match {
-          case None => Ok(otherPartners(appConfig, form, mode, establisherIndex, partnershipName))
-          case Some(value) => Ok(otherPartners(appConfig, form.fill(value), mode, establisherIndex, partnershipName))
+          case None => Ok(otherPartners(appConfig, form, mode, establisherIndex))
+          case Some(value) => Ok(otherPartners(appConfig, form.fill(value), mode, establisherIndex))
         }
         Future.successful(redirectResult)
       }
@@ -65,7 +65,7 @@ class OtherPartnersController @Inject()(
         partnershipName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(otherPartners(appConfig, formWithErrors, mode, establisherIndex, partnershipName))),
+              Future.successful(BadRequest(otherPartners(appConfig, formWithErrors, mode, establisherIndex))),
             value =>
               dataCacheConnector.save(request.externalId, OtherPartnersId(establisherIndex), value).map(cacheMap =>
                 Redirect(navigator.nextPage(OtherPartnersId(establisherIndex), mode, UserAnswers(cacheMap))))

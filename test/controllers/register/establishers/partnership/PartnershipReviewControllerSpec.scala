@@ -52,7 +52,6 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
   def viewAsString(): String = partnershipReview(
     frontendAppConfig,
     index,
-    schemeName,
     partnershipName,
     partnerNames
   )(fakeRequest, messages).toString

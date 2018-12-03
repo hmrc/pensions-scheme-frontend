@@ -98,7 +98,7 @@ class PartnerNinoControllerSpec extends ControllerSpecBase {
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = partnerNino(frontendAppConfig, form, NormalMode,
-    establisherIndex, partnerIndex, partnerName)(fakeRequest, messages).toString
+    establisherIndex, partnerIndex)(fakeRequest, messages).toString
 
   "PartnerNino Controller" must {
 

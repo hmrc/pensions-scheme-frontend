@@ -51,7 +51,7 @@ class SecuredBenefitsControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = securedBenefits(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = securedBenefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
 
   "SecuredBenefits Controller" must {
 

@@ -30,12 +30,11 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
   val form = new UniqueTaxReferenceFormProvider()()
 
   val index = Index(1)
-  val establisherName = "test name"
 
-  def createView: () => HtmlFormat.Appendable = () => uniqueTaxReference(frontendAppConfig, form, NormalMode, index, establisherName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => uniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => uniqueTaxReference(frontendAppConfig, form, NormalMode,
-    index, establisherName)(fakeRequest, messages)
+    index)(fakeRequest, messages)
 
   "UniqueTaxReference view" must {
 

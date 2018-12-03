@@ -19,7 +19,7 @@
 @import play.api.mvc.Call
 @import viewmodels.Message
 
-@(appConfig: FrontendAppConfig, schemeName: String, establisherName: String, postCall: Call, cancelCall: Call)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, establisherName: String, postCall: Call, cancelCall: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__confirmDeleteEstablisher__title"),
@@ -30,8 +30,7 @@
         @components.back_link()
 
      @components.heading(
-            headingKey=components.hyphen((Message("messages__confirmDeleteEstablisher__heading").withArgs(establisherName))).toString,
-            secondaryHeaderKey = Some(components.hyphen(schemeName).toString)
+            headingKey=(Message("messages__confirmDeleteEstablisher__heading").withArgs(establisherName))
      )
 
         <span class="form-hint">@messages("messages__confirmDeleteEstablisher__hint")</span>
