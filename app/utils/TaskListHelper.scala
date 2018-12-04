@@ -95,7 +95,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     }
 
   private def flagValue[A](flag : TypedIdentifier[A])(implicit rds: Reads[A]): Option[A] ={
-    journey.flatMap(x => x.get[A](flag))
+    journey.flatMap(_.get[A](flag))
   }
 
   private def isAllEstablishersCompleted(userAnswers: UserAnswers) : Boolean = {
@@ -107,8 +107,8 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     val listOfSchemeTypeTrusts: Seq[SchemeType] = Seq(SchemeType.SingleTrust, SchemeType.MasterTrust)
     val isTrusteesOptional = flagValue(SchemeDetailsId).forall(scheme => !listOfSchemeTypeTrusts.contains(scheme.schemeType))
 
-    val isOptionalTrusteesJourney = (flagValue(HaveAnyTrusteesId).forall(_==false) && isTrusteesOptional)
-    val isMandatoryTrusteesJourney = (userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted))
+    val isOptionalTrusteesJourney = flagValue(HaveAnyTrusteesId).forall(_==false) && isTrusteesOptional
+    val isMandatoryTrusteesJourney = userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
 
     isOptionalTrusteesJourney || isMandatoryTrusteesJourney
   }

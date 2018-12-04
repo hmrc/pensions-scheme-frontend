@@ -55,7 +55,7 @@ class AddTrusteeController @Inject()(
     implicit request =>
       SchemeDetailsId.retrieve.right.map { schemeDetails =>
 
-        val listOfSchemeTypeTrusts: Seq[SchemeType] = Seq(SchemeType.SingleTrust, SchemeType.MasterTrust)
+        lazy val listOfSchemeTypeTrusts: Seq[SchemeType] = Seq(SchemeType.SingleTrust, SchemeType.MasterTrust)
 
         if(appConfig.isHubEnabled && !listOfSchemeTypeTrusts.contains(schemeDetails.schemeType)){
           Future.successful(Redirect(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)))
