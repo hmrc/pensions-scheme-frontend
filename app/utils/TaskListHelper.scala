@@ -83,12 +83,9 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     else None
 
   private def listOf(sections: Seq[Entity[_]]): Seq[JourneyTaskListSection] =
-    for(section <- sections) yield
-      JourneyTaskListSection(
-        Some(section.isCompleted),
-        Link(linkText(section),
-          section.editLink),
-        Some(section.name))
+    for (section <- sections) yield {
+      JourneyTaskListSection( Some(section.isCompleted), Link(linkText(section), section.editLink), Some(section.name))
+    }
 
   private def linkText(item: Entity[_]): String =
     item.id match {
@@ -108,15 +105,19 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
   private def isAllTrusteesCompleted(userAnswers: UserAnswers) : Boolean = {
 
     val listOfSchemeTypeTrusts: Seq[SchemeType] = Seq(SchemeType.SingleTrust, SchemeType.MasterTrust)
-
     val isTrusteesOptional = flagValue(SchemeDetailsId).forall(scheme => !listOfSchemeTypeTrusts.contains(scheme.schemeType))
 
-    (flagValue(HaveAnyTrusteesId).forall(_==false) && isTrusteesOptional) ||
-    userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
+    val isOptionalTrusteesJourney = (flagValue(HaveAnyTrusteesId).forall(_==false) && isTrusteesOptional)
+    val isMandatoryTrusteesJourney = (userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted))
 
+    isOptionalTrusteesJourney || isMandatoryTrusteesJourney
   }
 
   private[utils] def declarationEnabled(implicit userAnswers: UserAnswers): Boolean =
-    Seq(flagValue(IsAboutSchemeCompleteId), flagValue(IsWorkingKnowledgeCompleteId),
-      Some(isAllEstablishersCompleted(userAnswers)), Some(isAllTrusteesCompleted(userAnswers))).forall(_.contains(true))
+    Seq(
+      flagValue(IsAboutSchemeCompleteId),
+      flagValue(IsWorkingKnowledgeCompleteId),
+      Some(isAllEstablishersCompleted(userAnswers)),
+      Some(isAllTrusteesCompleted(userAnswers))
+    ).forall(_.contains(true))
 }
