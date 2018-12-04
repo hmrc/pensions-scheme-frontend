@@ -20,7 +20,7 @@ import identifiers.register._
 import identifiers.register.establishers.company.IsCompanyCompleteId
 import models._
 import models.address.{Address, TolerantAddress}
-import models.register.{DeclarationDormant, SchemeDetails}
+import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
 import org.scalatest.OptionValues
 
 //scalastyle:off number.of.methods
@@ -35,6 +35,14 @@ package object utils {
 
     def schemeDetails(schemeDetails: SchemeDetails): UserAnswers = {
       answers.set(SchemeDetailsId)(schemeDetails).asOpt.value
+    }
+
+    def schemeName(schemeName: String): UserAnswers = {
+      answers.set(SchemeNameId)(schemeName).asOpt.value
+    }
+
+    def schemeType(schemeType: SchemeType): UserAnswers = {
+      answers.set(SchemeTypeId)(schemeType).asOpt.value
     }
 
     def securedBenefits(securedBenefits: Boolean): UserAnswers = {
@@ -216,6 +224,14 @@ package object utils {
     //Advisers
     def advisersAddress(address: Address): UserAnswers = {
       answers.set(adviser.AdviserAddressId)(address).asOpt.value
+    }
+
+    def adviserEmailAddress(email: String): UserAnswers = {
+      answers.set(adviser.AdviserEmailId)(email).asOpt.value
+    }
+
+    def adviserName(name: String): UserAnswers = {
+      answers.set(adviser.AdviserNameId)(name).asOpt.value
     }
 
     def advisersAddressList(selectedAddress: TolerantAddress): UserAnswers = {

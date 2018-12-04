@@ -31,6 +31,7 @@ import org.scalatest.{MustMatchers, WordSpec}
 import viewmodels._
 
 class TaskListHelperSpec extends WordSpec with MustMatchers {
+
   import TaskListHelperSpec._
 
   "TaskListHelper" must {
@@ -38,6 +39,17 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
 
       new TaskListHelper(Some(userAnswers)).tasklist mustBe JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
         expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink)
+    }
+
+    "return blank task list if there are no user answers" in {
+      val blankJourneyTaskList = JourneyTaskList(
+        JourneyTaskListSection(None, aboutSectionDefaultLink, None),
+        Seq.empty,
+        Seq.empty,
+        JourneyTaskListSection(None, workingKnowledgeDefaultLink, None),
+        None)
+
+      new TaskListHelper(None).tasklist mustBe blankJourneyTaskList
     }
   }
 
@@ -103,6 +115,16 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
 
 object TaskListHelperSpec extends SpecBase with JsonFileReader {
 
+  private val aboutSectionDefaultLink: Link = {
+    Link(messages("messages__schemeTaskList__about_link_text"),
+      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
+  }
+
+  private val workingKnowledgeDefaultLink: Link = {
+    Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
+      controllers.routes.WorkingKnowledgeController.onPageLoad().url)
+  }
+
   val userAnswersJson = readJsonFromFile("/payload.json")
   val inProgressEst = Seq(EstablisherCompanyEntity(CompanyDetailsId(0), "test 1", false, true),
     EstablisherIndividualEntity(EstablisherDetailsId(1), "test 2", false, false))
@@ -111,14 +133,12 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
 
   val expectedAboutSection = JourneyTaskListSection(
     Some(true),
-    Link(messages("messages__schemeTaskList__about_link_text"),
-      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
+    aboutSectionDefaultLink,
     None)
 
   val expectedWorkingKnowledgeSection = JourneyTaskListSection(
     Some(true),
-    Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
-      controllers.routes.WorkingKnowledgeController.onPageLoad().url),
+    workingKnowledgeDefaultLink,
     None)
 
   val expectedEstablishersSection = Seq(

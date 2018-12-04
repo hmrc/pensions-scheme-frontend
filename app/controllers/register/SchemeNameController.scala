@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
-import identifiers.register.IsAboutSchemeCompleteId
+import identifiers.register.{IsAboutSchemeCompleteId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
 import models.PSAName._

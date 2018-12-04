@@ -35,13 +35,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
 
   def tasklist: JourneyTaskList = {
     journey.fold(
-      JourneyTaskList(
-        aboutSection,
-        Seq[JourneyTaskListSection](),
-        Seq[JourneyTaskListSection](),
-        workingKnowledgeSection,
-        None)
-
+      blankJourneyTaskList
     )(implicit userAnswers =>
       JourneyTaskList(
         aboutSection,
@@ -49,13 +43,31 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
         listOf(userAnswers.allTrusteesAfterDelete),
         workingKnowledgeSection,
         declarationLink)
-      )
+    )
   }
 
-  private def aboutSection = JourneyTaskListSection(
-    flagValue(IsAboutSchemeCompleteId),
+  private def blankJourneyTaskList: JourneyTaskList = {
+    JourneyTaskList(
+      JourneyTaskListSection(None, aboutSectionDefaultLink, None),
+      Seq.empty,
+      Seq.empty,
+      JourneyTaskListSection(None, workingKnowledgeDefaultLink, None),
+      None)
+  }
+
+  private val aboutSectionDefaultLink: Link = {
     Link(messages("messages__schemeTaskList__about_link_text"),
-      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
+      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
+  }
+
+  private val workingKnowledgeDefaultLink: Link = {
+    Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
+      controllers.routes.WorkingKnowledgeController.onPageLoad().url)
+  }
+
+  private def aboutSection(implicit userAnswers: UserAnswers) = JourneyTaskListSection(
+    userAnswers.get(IsAboutSchemeCompleteId),
+    aboutSectionDefaultLink,
     None)
 
   private def workingKnowledgeSection = JourneyTaskListSection(
@@ -70,7 +82,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
         controllers.register.routes.DeclarationController.onPageLoad().url))
     else None
 
-  def declarationEnabled(implicit userAnswers: UserAnswers): Boolean =
+  private[utils] def declarationEnabled(implicit userAnswers: UserAnswers): Boolean =
     (flagValue(IsAboutSchemeCompleteId), flagValue(IsWorkingKnowledgeCompleteId),
       isAllEstablishersCompleted(userAnswers), isAllTrusteesCompleted(userAnswers)) match {
       case (Some(true), Some(true), true, true) => true

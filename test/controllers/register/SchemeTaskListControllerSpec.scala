@@ -38,8 +38,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      dataRetrievalAction,
-      new DataRequiredActionImpl
+      dataRetrievalAction
     )
 
   def viewAsString(): String =
@@ -55,9 +54,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
     }
-
   }
-
 }
 
 object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {

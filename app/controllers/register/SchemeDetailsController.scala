@@ -19,7 +19,7 @@ package controllers.register
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
-import forms.register.{SchemeDetailsFormProvider, SchemeNameFormProvider}
+import forms.register.SchemeDetailsFormProvider
 import identifiers.register.{IsAboutSchemeCompleteId, SchemeDetailsId}
 import javax.inject.Inject
 import models.Mode
