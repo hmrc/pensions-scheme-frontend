@@ -37,7 +37,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
   "TaskListHelper" must {
     "return valid about section based on user answers" in {
 
-      new TaskListHelper(Some(userAnswers)).tasklist mustBe JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
+      new TaskListHelper(Some(userAnswers)).taskList mustBe JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
         expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink)
     }
 
@@ -49,7 +49,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
         JourneyTaskListSection(None, workingKnowledgeDefaultLink, None),
         None)
 
-      new TaskListHelper(None).tasklist mustBe blankJourneyTaskList
+      new TaskListHelper(None).taskList mustBe blankJourneyTaskList
     }
   }
 

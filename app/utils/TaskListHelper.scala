@@ -33,7 +33,7 @@ import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
 
 class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) {
 
-  def tasklist: JourneyTaskList = {
+  def taskList: JourneyTaskList = {
     journey.fold(
       blankJourneyTaskList
     )(implicit userAnswers =>
@@ -82,13 +82,6 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
         controllers.register.routes.DeclarationController.onPageLoad().url))
     else None
 
-  private[utils] def declarationEnabled(implicit userAnswers: UserAnswers): Boolean =
-    (flagValue(IsAboutSchemeCompleteId), flagValue(IsWorkingKnowledgeCompleteId),
-      isAllEstablishersCompleted(userAnswers), isAllTrusteesCompleted(userAnswers)) match {
-      case (Some(true), Some(true), true, true) => true
-      case _ => false
-    }
-
   private def listOf(sections: Seq[Entity[_]]): Seq[JourneyTaskListSection] =
     for(section <- sections) yield
       JourneyTaskListSection(
@@ -116,10 +109,14 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
 
     val listOfSchemeTypeTrusts: Seq[SchemeType] = Seq(SchemeType.SingleTrust, SchemeType.MasterTrust)
 
-    val isValidSchemeType = flagValue(SchemeDetailsId).map(scheme => !listOfSchemeTypeTrusts.contains(scheme.schemeType)).getOrElse(true)
+    val isTrusteesOptional = flagValue(SchemeDetailsId).forall(scheme => !listOfSchemeTypeTrusts.contains(scheme.schemeType))
 
-    (flagValue(HaveAnyTrusteesId).fold(false)(_==false) && isValidSchemeType) ||
+    (flagValue(HaveAnyTrusteesId).forall(_==false) && isTrusteesOptional) ||
     userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
 
   }
+
+  private[utils] def declarationEnabled(implicit userAnswers: UserAnswers): Boolean =
+    Seq(flagValue(IsAboutSchemeCompleteId), flagValue(IsWorkingKnowledgeCompleteId),
+      Some(isAllEstablishersCompleted(userAnswers)), Some(isAllTrusteesCompleted(userAnswers))).forall(_.contains(true))
 }
