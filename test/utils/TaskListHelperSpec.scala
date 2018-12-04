@@ -17,7 +17,11 @@
 package utils
 
 import base.{JsonFileReader, SpecBase}
-import models.NormalMode
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
+import models.{CheckMode, Index, NormalMode}
+import models.register.{EstablisherCompanyEntity, EstablisherIndividualEntity, EstablisherPartnershipEntity}
 import org.scalatest.{MustMatchers, WordSpec}
 import viewmodels._
 
@@ -42,6 +46,51 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
       new TaskListHelper(None).tasklist mustBe blankJourneyTaskList
     }
   }
+
+  "linkTarget" must {
+
+    "return correct link for establishers company if its completed" in {
+      val helper = new TaskListHelper(None)
+      helper.linkTarget(establisherCompany, 0) mustBe
+        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0).url
+
+    }
+
+    "return correct link for establishers if its not completed" in {
+      val helper = new TaskListHelper(None)
+      helper.linkTarget(establisherCompany.copy(isCompleted = false), 0) mustBe
+        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0).url
+
+    }
+
+    "return correct link for establishers partnership if its completed" in {
+      val helper = new TaskListHelper(None)
+      helper.linkTarget(establisherPartnership, 0) mustBe
+        controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(0).url
+
+    }
+
+    "return correct link for establishers partnership if its not completed" in {
+      val helper = new TaskListHelper(None)
+      helper.linkTarget(establisherPartnership.copy(isCompleted = false), 0) mustBe
+        controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 0).url
+
+    }
+
+    "return correct link for establishers individual if its completed" in {
+      val helper = new TaskListHelper(None)
+      helper.linkTarget(establisherIndividual, 0) mustBe
+        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0).url
+
+    }
+
+    "return correct link for establishers individual if its not completed" in {
+      val helper = new TaskListHelper(None)
+      helper.linkTarget(establisherIndividual.copy(isCompleted = false), 0) mustBe
+        controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url
+
+    }
+  }
 }
 
 object TaskListHelperSpec extends SpecBase with JsonFileReader {
@@ -51,42 +100,51 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
       controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
   }
 
+  private val aboutSectionCompletedLink: Link = {
+    Link(messages("messages__schemeTaskList__about_link_text"),
+      controllers.register.routes.CheckYourAnswersController.onPageLoad.url)
+  }
+
   private val workingKnowledgeDefaultLink: Link = {
     Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
       controllers.routes.WorkingKnowledgeController.onPageLoad().url)
   }
 
-  val userAnswersJson = readJsonFromFile("/payload.json")
-  val userAnswers = UserAnswers(userAnswersJson)
-  val expectedAboutSection = JourneyTaskListSection(
+  private val userAnswersJson = readJsonFromFile("/payload.json")
+  private val userAnswers = UserAnswers(userAnswersJson)
+  private val expectedAboutSection = JourneyTaskListSection(
     Some(true),
-    aboutSectionDefaultLink,
+    aboutSectionCompletedLink,
     None)
 
-  val expectedWorkingKnowledgeSection = JourneyTaskListSection(
+  private val expectedWorkingKnowledgeSection = JourneyTaskListSection(
     Some(true),
     workingKnowledgeDefaultLink,
     None)
 
-  val expectedEstablishersSection = Seq(
+  private val expectedEstablishersSection = Seq(
     JourneyTaskListSection(Some(true),
       Link(messages("messages__schemeTaskList__company_link"),
-        controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(0).url),
+        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0).url),
       Some("Test company name")),
     JourneyTaskListSection(Some(true),
       Link(messages("messages__schemeTaskList__individual_link"),
         controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(1).url),
       Some("Test individual name")))
 
-  val expectedTrusteesSection = Seq(
+  private val expectedTrusteesSection = Seq(
     JourneyTaskListSection(Some(true),
       Link(messages("messages__schemeTaskList__partnership_link"),
         controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(0).url),
       Some("Test partnership name")))
 
-  val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),
+  private val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),
     controllers.register.routes.DeclarationController.onPageLoad().url))
 
   private def actualSeqAnswerRow(result: Seq[SuperSection], headingKey: Option[String]): Seq[AnswerRow] =
     result.filter(_.headingKey == headingKey).flatMap(_.sections).take(1).flatMap(_.rows)
+
+  private val establisherCompany = EstablisherCompanyEntity(CompanyDetailsId(Index(0)), "Test Comapny", isDeleted = false, isCompleted = true)
+  private val establisherPartnership = EstablisherPartnershipEntity(PartnershipDetailsId(Index(0)), "Test Partnership", isDeleted = false, isCompleted = true)
+  private val establisherIndividual = EstablisherIndividualEntity(EstablisherDetailsId(Index(0)), "Test Partnership", isDeleted = false, isCompleted = true)
 }

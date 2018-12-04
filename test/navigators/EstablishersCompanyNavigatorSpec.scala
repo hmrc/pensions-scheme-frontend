@@ -62,7 +62,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (AddCompanyDirectorsId(0),                    addOneCompanyDirectors,           sessionExpired,                           false,          Some(sessionExpired),                      false),
     (AddCompanyDirectorsId(0),                    addCompanyDirectorsMoreThan10,    otherDirectors(NormalMode),               true,           Some(otherDirectors(CheckMode)),           true),
     (OtherDirectorsId(0),                         emptyAnswers,                     companyReview,                            true,           Some(companyReview),                       true),
-    (CompanyReviewId(0),                          emptyAnswers,                     addEstablisher,                           true,           None,                                      false),
+    (CompanyReviewId(0),                          emptyAnswers,                     taskList,                                 false,           None,                                      false),
     (CheckYourAnswersId(0),                       emptyAnswers,                     addCompanyDirectors(0, NormalMode),true,           None,                                      false)
   )
 
@@ -144,6 +144,8 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
   private def addCompanyDirectors(index: Int, mode: Mode) = controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(mode, index)
 
   private def isDormant(mode: Mode) = controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(mode, 0)
+
+  private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private val addressYearsOverAYear = UserAnswers(Json.obj())

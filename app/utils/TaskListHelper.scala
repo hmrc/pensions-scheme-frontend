@@ -89,11 +89,10 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     }
 
   private def listOf(sections: Seq[Entity[_]]): Seq[JourneyTaskListSection] =
-    for (section <- sections) yield
+    for ((section, index) <- sections.zipWithIndex) yield
       JourneyTaskListSection(
         Some(section.isCompleted),
-        Link(linkText(section),
-          section.editLink),
+        Link(linkText(section),  linkTarget(section, index)),
         Some(section.name))
 
   private def linkText(item: Entity[_]): String =
@@ -101,5 +100,14 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
       case EstablisherCompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => messages("messages__schemeTaskList__company_link")
       case EstablisherDetailsId(_) | TrusteeDetailsId(_) => messages("messages__schemeTaskList__individual_link")
       case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => messages("messages__schemeTaskList__partnership_link")
+    }
+
+  private[utils] def linkTarget(item: Entity[_], index : Int): String =
+    item.id match {
+      case EstablisherCompanyDetailsId(_) if item.isCompleted =>
+        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index).url
+      case EstablisherPartnershipDetailsId(_) if item.isCompleted =>
+        controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(index).url
+      case _ => item.editLink
     }
 }

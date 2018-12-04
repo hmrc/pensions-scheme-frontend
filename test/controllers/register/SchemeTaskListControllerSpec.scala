@@ -63,13 +63,13 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
   private val expectedAboutSection = JourneyTaskListSection(
     Some(true),
     Link(messages("messages__schemeTaskList__about_link_text"),
-      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
+      controllers.register.routes.CheckYourAnswersController.onPageLoad.url),
     None)
 
   private val expectedEstablishersCompany = JourneyTaskListSection(
     Some(true),
     Link(messages(messages("messages__schemeTaskList__company_link")),
-      controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(0).url),
+      controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0).url),
     Some("Test company name"))
 
   private val expectedEstablishersIndividual = JourneyTaskListSection(

@@ -107,7 +107,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
       "display the correct link" in {
 
         view must haveLinkWithText(
-          url = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url,
+          url = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0).url,
           linkText = messages("messages__schemeTaskList__sectionEstablishers_add_link"),
           linkId = "section-establishers-add-link"
         )
