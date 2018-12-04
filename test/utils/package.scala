@@ -213,6 +213,14 @@ package object utils {
       answers.set(adviser.AdviserAddressId)(address).asOpt.value
     }
 
+    def adviserEmailAddress(email: String): UserAnswers = {
+      answers.set(adviser.AdviserEmailId)(email).asOpt.value
+    }
+
+    def adviserName(name: String): UserAnswers = {
+      answers.set(adviser.AdviserNameId)(name).asOpt.value
+    }
+
     def advisersAddressList(selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(adviser.AdviserAddressListId)(selectedAddress).asOpt.value
     }
