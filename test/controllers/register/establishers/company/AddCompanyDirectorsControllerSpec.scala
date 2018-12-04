@@ -65,7 +65,6 @@ class AddCompanyDirectorsControllerSpec extends ControllerSpecBase {
       form,
       NormalMode,
       establisherIndex,
-      companyName,
       directors
     )(fakeRequest, messages).toString
 

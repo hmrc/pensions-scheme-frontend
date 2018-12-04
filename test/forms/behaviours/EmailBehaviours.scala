@@ -17,11 +17,16 @@
 package forms.behaviours
 
 import forms.FormSpec
-import forms.mappings.{Constraints, EmailMapping}
+import forms.mappings.{Constraints, EmailMapping, RegexBehaviourSpec}
 import play.api.data.{Form, FormError}
 
 
-trait EmailBehaviours extends FormSpec with StringFieldBehaviours with Constraints with EmailMapping {
+trait EmailBehaviours extends FormSpec with StringFieldBehaviours with Constraints with EmailMapping with RegexBehaviourSpec{
+
+  val keyNoAtSignIncluded: String = "messages__error__common__email__no_at_sign"
+  val keyStartsWithAtSign: String = "messages__error__common__email__start_with_at_sign"
+  val keyDotAfterAtSign: String = "messages__error__common__email__dot_after_at_sign"
+  val keyEndsWithDot: String = "messages__error__common__email__ends_with_dot"
 
   def formWithEmailField(
                           form: Form[_],
@@ -55,10 +60,74 @@ trait EmailBehaviours extends FormSpec with StringFieldBehaviours with Constrain
       behave like fieldWithRegex(
         form,
         fieldName,
-        "ab.com",
+        "ab@*.com",
         FormError(fieldName, keyEmailInvalid, Seq(regexEmailRestrictive))
       )
 
+    }
+  }
+
+  def formWithEmailFieldForAllErrors(
+                          form: Form[_],
+                          fieldName: String,
+                          keyEmailRequired: String,
+                          keyEmailLength: String,
+                          keyEmailInvalid: String
+                        ): Unit = {
+
+    "behave like a form with an email field" should {
+
+      formWithEmailField(
+        form,
+        fieldName: String,
+        keyEmailRequired: String,
+        keyEmailLength: String,
+        keyEmailInvalid: String
+      )
+
+      behave like emailWithCorrectFormat(
+        form,
+        fieldName
+      )
+
+      behave like formWithRegex(
+        form,
+        Table(
+          "valid",
+          Map("email" -> "test@test.com"),
+          Map("email" -> "test@t-g.com"),
+          Map("email" -> "\"\"@test.com")
+        ),
+        Table(
+          "invalid",
+          Map("email" -> "test@sdff"),
+          Map("email" -> "test@-.com")
+        )
+      )
+    }
+  }
+
+  private def emailWithCorrectFormat(
+                                      form: Form[_],
+                                      fieldName: String
+                                    ): Unit = {
+
+    def result(value: String) = form.bind(Map(fieldName -> value)).apply(fieldName)
+
+    "not bind when @ sign not included" in {
+      result("test.com").errors shouldEqual Seq(FormError(fieldName, keyNoAtSignIncluded))
+    }
+
+    "not bind when starts with @ sign" in {
+      result("@test.com").errors shouldEqual Seq(FormError(fieldName, keyStartsWithAtSign))
+    }
+
+    "not bind when nothing is between @ sign and dot(.)" in {
+      result("test@.com").errors shouldEqual Seq(FormError(fieldName, keyDotAfterAtSign))
+    }
+
+    "not bind when ends with a dot(.)" in {
+      result("test@com.").errors shouldEqual Seq(FormError(fieldName, keyEndsWithDot))
     }
   }
 

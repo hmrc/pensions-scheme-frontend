@@ -69,62 +69,77 @@ class DeclarationController @Inject()(
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
-          showPage(BadRequest.apply, formWithErrors)
-        },
-        value =>
-          if (appConfig.isHubEnabled) {
-            for {
-              cacheMap <- dataCacheConnector.save(request.externalId, DeclarationDutiesId, true)
-              submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
-              cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-              _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
-            } yield {
-              Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
-            }
-          } else {
-            dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap))))
-          }
-      )
+      retrieveSchemeName {
+        _ =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) => {
+              showPage(BadRequest.apply, formWithErrors)
+            },
+            value =>
+              if (appConfig.isHubEnabled) {
+                for {
+                  cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
+                  submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
+                  cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
+                  _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
+                } yield {
+                  Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+                }
+              } else {
+                dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
+                  Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap))))
+              }
+          )
+      }
   }
 
-  private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
+  private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) =
+    if (appConfig.isHubEnabled) {
+      hsShowPage(status, form)
+    } else {
+      nonHsShowPage(status, form)
+    }
+
+  private def nonHsShowPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
     SchemeDetailsId.retrieve.right.map { details =>
       val isCompany = request.userAnswers.hasCompanies
-
-      if (appConfig.isHubEnabled) {
-        val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values(1) else DeclarationDormant.values.head
-
-        if (isCompany) {
-          dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ =>
-            status(
-              declaration(appConfig, form, details.schemeName, isCompany, isDeclarationDormant, showMasterTrustDeclaration)
-            )
+      request.userAnswers.get(DeclarationDormantId) match {
+        case Some(Yes) => Future.successful(
+          status(
+            declaration(appConfig, form, isCompany, isDormant = true, showMasterTrustDeclaration, hasWorkingKnowledge = false)
           )
-        } else {
-          Future.successful(
-            status(
-              declaration(appConfig, form, details.schemeName, isCompany, isDeclarationDormant, showMasterTrustDeclaration)
-            )
+        )
+        case Some(No) => Future.successful(
+          status(
+            declaration(appConfig, form, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge = false)
           )
-        }
+        )
+        case None if !isCompany => Future.successful(
+          status(
+            declaration(appConfig, form, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge = false)
+          )
+        )
+        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+      }
+    }
+  }
+
+
+  private def hsShowPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
+    SchemeDetailsId.retrieve.right.map { details =>
+      val isCompany = request.userAnswers.hasCompanies
+      val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values(1) else DeclarationDormant.values.head
+      val readyForRender = if (isCompany) {
+        dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ => ())
       } else {
-        request.userAnswers.get(DeclarationDormantId) match {
-          case Some(Yes) => Future.successful(
+        Future.successful(())
+      }
+
+      readyForRender.flatMap { _ =>
+       request.userAnswers.get(DeclarationDutiesId) match {
+          case Some(hasWorkingKnowledge) => Future.successful(
             status(
-              declaration(appConfig, form, details.schemeName, isCompany, isDormant = true, showMasterTrustDeclaration)
-            )
-          )
-          case Some(No) => Future.successful(
-            status(
-              declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)
-            )
-          )
-          case None if !isCompany => Future.successful(
-            status(
-              declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration)
+              declaration(appConfig, form, isCompany, isDormant = isDeclarationDormant, showMasterTrustDeclaration, hasWorkingKnowledge)
             )
           )
           case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))

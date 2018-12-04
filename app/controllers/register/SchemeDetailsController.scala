@@ -19,7 +19,7 @@ package controllers.register
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
-import forms.register.{SchemeDetailsFormProvider, SchemeNameFormProvider}
+import forms.register.SchemeDetailsFormProvider
 import identifiers.register.{IsAboutSchemeCompleteId, SchemeDetailsId}
 import javax.inject.Inject
 import models.Mode
@@ -58,7 +58,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
       Ok(schemeDetails(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
@@ -72,7 +72,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
               ), mode)))
             } else {
               dataCacheConnector.save(request.externalId, SchemeDetailsId, value).flatMap { cacheMap =>
-                sectionComplete.setCompleteFlag(IsAboutSchemeCompleteId, UserAnswers(cacheMap), value = false).map { json =>
+                sectionComplete.setCompleteFlag(request.externalId, IsAboutSchemeCompleteId, UserAnswers(cacheMap), value = false).map { json =>
                   Redirect(navigator.nextPage(SchemeDetailsId, mode, json))
                 }
               }

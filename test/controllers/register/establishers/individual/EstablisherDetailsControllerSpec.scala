@@ -67,7 +67,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
     )
 
   def viewAsString(form: Form[_] = form): String =
-    establisherDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages).toString
+    establisherDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
 
   "EstablisherDetails Controller" must {
 

@@ -21,3 +21,8 @@ GET        /advisers-address                    controllers.register.adviser.Adv
 POST       /advisers-address                    controllers.register.adviser.AdviserPostCodeLookupController.onSubmit(mode:Mode=NormalMode)
 GET        /change-advisers-address             controllers.register.adviser.AdviserPostCodeLookupController.onPageLoad(mode:Mode=CheckMode)
 POST       /change-advisers-address             controllers.register.adviser.AdviserPostCodeLookupController.onSubmit(mode:Mode=CheckMode)
+
+GET        /adviser-email-address               controllers.register.adviser.AdviserEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /adviser-email-address               controllers.register.adviser.AdviserEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-adviser-email-address        controllers.register.adviser.AdviserEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-adviser-email-address        controllers.register.adviser.AdviserEmailAddressController.onSubmit(mode: Mode = CheckMode)

@@ -70,8 +70,6 @@ class AddressListSpec extends ViewBehaviours {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithSecondaryHeader(createView, subHeading)
-
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(call.url)
     }

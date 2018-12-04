@@ -50,7 +50,5 @@ class BenefitsInsurerViewSpec extends QuestionViewBehaviours[BenefitsInsurer] {
       "companyName", "policyNumber"
     )
 
-    behave like pageWithSecondaryHeader(createView, schemeName)
-
   }
 }

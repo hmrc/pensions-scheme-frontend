@@ -61,7 +61,7 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
     )
 
   def viewAsString(form: Form[_] = form): String = trusteeDetails(frontendAppConfig, form,
-    NormalMode, firstIndex, "Test Scheme Name")(fakeRequest, messages).toString
+    NormalMode, firstIndex)(fakeRequest, messages).toString
 
   "TrusteeDetails Controller" must {
 

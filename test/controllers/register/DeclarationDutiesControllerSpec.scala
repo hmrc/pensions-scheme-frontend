@@ -88,7 +88,7 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
       fakePensionAdminstratorConnector
     )
 
-  def viewAsString(form: Form[_] = form): String = declarationDuties(frontendAppConfig, form, "Test Scheme Name")(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = declarationDuties(frontendAppConfig, form)(fakeRequest, messages).toString
 
   "DeclarationDuties Controller" must {
 

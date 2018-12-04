@@ -51,8 +51,8 @@ class CompanyRegistrationNumberController @Inject()(
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
         val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
-          case None => Ok(companyRegistrationNumber(appConfig, form, mode, index, companyDetails.companyName))
-          case Some(value) => Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, companyDetails.companyName))
+          case None => Ok(companyRegistrationNumber(appConfig, form, mode, index))
+          case Some(value) => Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index))
         }
         Future.successful(redirectResult)
       }
@@ -63,7 +63,7 @@ class CompanyRegistrationNumberController @Inject()(
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, companyDetails.companyName))),
+            Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index))),
           (value) =>
             dataCacheConnector.save(request.externalId, CompanyRegistrationNumberId(index), value).map(cacheMap =>
               Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap))))

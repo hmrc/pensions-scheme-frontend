@@ -27,7 +27,6 @@ class ConfirmDeletePartnerViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "confirmDeletePartner"
 
-  private val partnershipName = "MyPartnership Ltd"
   private val partnerName = "John Doe"
   private val postCall = ConfirmDeletePartnerController.onSubmit(establisherIndex = 0, partnerIndex = 0)
   private val cancelCall = AddPartnersController.onSubmit(index = 0)
@@ -35,7 +34,6 @@ class ConfirmDeletePartnerViewSpec extends ViewBehaviours {
   private def createView: () => HtmlFormat.Appendable = () =>
     confirmDeletePartner(
       frontendAppConfig,
-      partnershipName,
       partnerName,
       postCall,
       cancelCall
@@ -45,8 +43,6 @@ class ConfirmDeletePartnerViewSpec extends ViewBehaviours {
     behave like normalPage(createView, messageKeyPrefix, Message(s"messages__${messageKeyPrefix}__heading").withArgs("John Doe"))
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, partnershipName)
 
     behave like pageWithSubmitButton(createView)
 

@@ -75,8 +75,7 @@ class OtherDirectorsControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       form,
       NormalMode,
-      index,
-      companyName
+      index
     )(fakeRequest, messages).toString
 
   "OtherDirectors Controller" must {

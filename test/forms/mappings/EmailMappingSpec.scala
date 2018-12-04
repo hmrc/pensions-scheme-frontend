@@ -39,4 +39,22 @@ class EmailMappingSpec extends EmailBehaviours {
     )
   }
 
+  "Email mapping with all errors" should {
+    val fieldName = "email"
+    val keyEmailRequired = "messages__error__adviser__email__address__required"
+    val keyEmailLength = "messages__error__adviser__email__address__length"
+    val keyEmailInvalid = "messages__error__adviser__email__address__invalid"
+
+    val mapping: Mapping[String] = emailMappingWithAllErrors(keyEmailRequired, keyEmailLength, keyEmailInvalid)
+    val form: Form[String] = Form(fieldName -> mapping)
+
+    behave like formWithEmailFieldForAllErrors(
+      form,
+      fieldName,
+      keyEmailRequired,
+      keyEmailLength,
+      keyEmailInvalid
+    )
+  }
+
 }

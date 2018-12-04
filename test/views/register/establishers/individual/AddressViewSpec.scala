@@ -32,15 +32,14 @@ class AddressViewSpec extends QuestionViewBehaviours[Address] {
   val firstIndex = Index(0)
   val validData: Seq[InputOption] = Seq(InputOption("AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
   val countryOptions: CountryOptions = new CountryOptions(validData)
-  val establisherName: String = "test first name test last name"
 
   override val form = new AddressFormProvider(countryOptions)()
 
   def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable = () => address(frontendAppConfig, new AddressFormProvider(countryOptions).apply(),
-    NormalMode, firstIndex, validData, establisherName)(fakeRequest, messages)
+    NormalMode, firstIndex, validData)(fakeRequest, messages)
 
   def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[_]) => address(frontendAppConfig, form, NormalMode,
-    firstIndex, validData, establisherName)(fakeRequest, messages)
+    firstIndex, validData)(fakeRequest, messages)
 
 
   "Address view" must {
@@ -68,10 +67,6 @@ class AddressViewSpec extends QuestionViewBehaviours[Address] {
           assertContainsSelectOption(doc, s"value-${unselectedOption.value}", unselectedOption.label, unselectedOption.value, false)
         }
       }
-    }
-
-    "have establisher name rendered on the page" in {
-      Jsoup.parse(createView().toString()) must haveDynamicText(establisherName)
     }
   }
 }

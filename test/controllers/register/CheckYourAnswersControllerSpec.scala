@@ -136,7 +136,6 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       schemeBenefitsSection,
       bankAccountSection
     ),
-    Some("messages_cya_secondary_header"),
     postUrl
   )(fakeRequest, messages).toString
 

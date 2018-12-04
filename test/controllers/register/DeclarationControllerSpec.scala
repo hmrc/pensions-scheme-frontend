@@ -26,7 +26,7 @@ import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId}
-import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
+import identifiers.register.{DeclarationDormantId, DeclarationDutiesId, SchemeDetailsId}
 import models.person.PersonDetails
 import models.register.{DeclarationDormant, SchemeDetails, SchemeSubmissionResponse, SchemeType}
 import models.{CompanyDetails, PartnershipDetails}
@@ -36,7 +36,6 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSClient
@@ -50,7 +49,7 @@ import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures{
+class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar with ScalaFutures {
 
   import DeclarationControllerSpec._
 
@@ -106,6 +105,9 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
       "master trust" in {
 
         val data = new FakeDataRetrievalAction(Some(UserAnswers()
+          .set(DeclarationDutiesId)(false)
+          .asOpt
+          .value
           .set(SchemeDetailsId)(SchemeDetails("Test Scheme Name", SchemeType.MasterTrust))
           .asOpt
           .value
@@ -148,28 +150,15 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
     "send an email when valid data is submitted when hub enabled" which {
       "fetches from Get PSA Minimal Details" in {
 
-        val mockPSANameCacheConnector = mock[PSANameCacheConnector]
-
         reset(mockEmailConnector)
-
-          lazy val app = new GuiceApplicationBuilder().configure(
-            "features.is-hub-enabled" -> true
-          )
-          .overrides(bind[EmailConnector].toInstance(mockEmailConnector))
-          .overrides(bind[UserAnswersCacheConnector].toInstance(FakeUserAnswersCacheConnector))
-          .overrides(bind[AuthAction].toInstance(FakeAuthAction))
-          .overrides(bind[PSANameCacheConnector].toInstance(mockPSANameCacheConnector))
-          .overrides(bind[DataRetrievalAction].toInstance(getMandatorySchemeName))
-          .overrides(bind[PensionsSchemeConnector].toInstance(fakePensionsSchemeConnector))
-          .overrides(bind[PensionAdministratorConnector].toInstance(fakePensionAdminstratorConnector))
-          .build()
 
         when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
           .thenReturn(Future.successful(EmailSent))
 
         val postRequest = fakeRequest.withFormUrlEncodedBody(("agree" -> "agreed"))
 
-        whenReady(app.injector.instanceOf[DeclarationController].onSubmit(postRequest)) { _ =>
+        whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector,
+          fakePsaNameCacheConnector = mockPSANameCacheConnector).onSubmit(postRequest)) { _ =>
 
           verify(mockEmailConnector, times(1)).sendEmail(
             eqTo("email@test.com"),
@@ -227,7 +216,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
 
 }
 
-object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar{
+object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
     "features.is-hub-enabled" -> isHubEnabled
@@ -239,7 +228,9 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar{
   private val form = formProvider()
   private val schemeName = "Test Scheme Name"
 
-  private def controller(dataRetrievalAction: DataRetrievalAction, isHubEnabled: Boolean = true): DeclarationController =
+  private def controller(dataRetrievalAction: DataRetrievalAction, isHubEnabled: Boolean = true,
+                         fakeEmailConnector: EmailConnector = fakeEmailConnector,
+                         fakePsaNameCacheConnector: PSANameCacheConnector = fakePsaNameCacheConnector): DeclarationController =
     new DeclarationController(
       appConfig(isHubEnabled),
       messagesApi,
@@ -257,20 +248,24 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar{
     )
 
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
-                           showMasterTrustDeclaration: Boolean = false, isHubEnabled: Boolean = true): String =
+                           showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false,
+                           isHubEnabled: Boolean = true): String =
     declaration(
       appConfig(isHubEnabled),
       form,
-      schemeName,
       isCompany,
       isDormant,
-      showMasterTrustDeclaration
+      showMasterTrustDeclaration,
+      hasWorkingKnowledge
     )(fakeRequest, messages).toString
 
   private val individual =
     UserAnswers()
       .schemeDetails()
       .individualEstablisher()
+      .set(DeclarationDutiesId)(false)
+      .asOpt
+      .value
       .asDataRetrievalAction()
 
   private val nonDormantCompany =
@@ -291,6 +286,9 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar{
     UserAnswers()
       .schemeDetails()
       .companyEstablisher(0)
+      .set(DeclarationDutiesId)(false)
+      .asOpt
+      .value
       .dormantCompany(false, 0)
       .partnershipEstablisher(1)
       .dormantPartnership(false, 1)
@@ -300,6 +298,9 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar{
     UserAnswers()
       .schemeDetails()
       .companyEstablisher(0)
+      .set(DeclarationDutiesId)(false)
+      .asOpt
+      .value
       .dormantCompany(false, 0)
       .companyEstablisher(1)
       .dormantCompany(true, 1)
@@ -311,6 +312,9 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar{
     UserAnswers()
       .schemeDetails()
       .companyEstablisher(0)
+      .set(DeclarationDutiesId)(false)
+      .asOpt
+      .value
       .dormantCompany(false, 0)
       .companyEstablisher(1)
       .dormantCompany(false, 1)
@@ -358,6 +362,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar{
     }
   }
 
+  private val mockPSANameCacheConnector = mock[PSANameCacheConnector]
   private val mockEmailConnector = mock[EmailConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 

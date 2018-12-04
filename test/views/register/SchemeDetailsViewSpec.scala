@@ -16,12 +16,13 @@
 
 package views.register
 
+import config.FrontendAppConfig
 import controllers.register.routes
 import forms.register.SchemeDetailsFormProvider
 import models.NormalMode
-import models.register.SchemeType.MasterTrust
 import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.schemeDetails
@@ -32,20 +33,23 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
 
   override val form = new SchemeDetailsFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    "features.is-hub-enabled" -> isHubEnabled
+  ).build().injector.instanceOf[FrontendAppConfig]
+
+
+  def createView: () => HtmlFormat.Appendable = () => schemeDetails(appConfig(false), form, NormalMode)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    schemeDetails(appConfig(false), form, NormalMode)(fakeRequest, messages)
 
-  private def schemeOptions = SchemeType.options
+  private def schemeOptions = SchemeType.options(frontendAppConfig)
 
   "SchemeDetails view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, messages("messages_cya_secondary_header"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.SchemeDetailsController.onSubmit(NormalMode).url,
       "schemeName")

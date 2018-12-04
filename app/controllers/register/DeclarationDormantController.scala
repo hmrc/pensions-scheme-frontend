@@ -54,7 +54,7 @@ class DeclarationDormantController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(declarationDormant(appConfig, preparedForm, schemeDetails.schemeName)))
+        Future.successful(Ok(declarationDormant(appConfig, preparedForm)))
       }
   }
 
@@ -63,7 +63,7 @@ class DeclarationDormantController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
-            Future.successful(BadRequest(declarationDormant(appConfig, formWithErrors, schemeDetails.schemeName)))
+            Future.successful(BadRequest(declarationDormant(appConfig, formWithErrors)))
           },
         value =>
           dataCacheConnector.save(request.externalId, DeclarationDormantId, value).map(cacheMap =>

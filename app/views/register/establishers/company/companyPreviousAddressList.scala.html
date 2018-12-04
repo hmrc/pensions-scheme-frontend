@@ -21,7 +21,7 @@
 @import models.address.TolerantAddress
 @import utils.InputOption
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, companyName: String, addresses: Seq[TolerantAddress])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, addresses: Seq[TolerantAddress])(implicit request: Request[_], messages: Messages)
 
 @options = @{
     for((address, id) <- addresses.zipWithIndex) yield {
@@ -40,7 +40,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__select_the_previous_address__title").toString, secondaryHeaderKey = Some(companyName))
+        @components.heading(messages("messages__select_the_previous_address__title").toString)
 
         <p>
             @messages("messages__common__select_address")

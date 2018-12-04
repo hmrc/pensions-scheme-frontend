@@ -31,21 +31,17 @@ class PartnershipUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   val index = Index(1)
 
-  val partnershipName = "test partnership name"
-
   def createView: () => HtmlFormat.Appendable = () => partnershipUniqueTaxReference(frontendAppConfig,
-    form, NormalMode, index, partnershipName)(fakeRequest, messages)
+    form, NormalMode, index)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => partnershipUniqueTaxReference(frontendAppConfig, form,
-    NormalMode, index, partnershipName)(fakeRequest, messages)
+    NormalMode, index)(fakeRequest, messages)
 
   "PartnershipUniqueTaxReference view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages("messages__partnership_has_utr__title"))
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, partnershipName)
   }
 
   "PartnershipUniqueTaxReference view" when {

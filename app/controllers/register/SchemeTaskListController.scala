@@ -31,11 +31,10 @@ import scala.concurrent.Future
 class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         requiredData: DataRequiredAction
+                                         getData: DataRetrievalAction
                                         ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       Future.successful(Ok(schemeTaskList(appConfig, new TaskListHelper(request.userAnswers).tasklist)))
   }

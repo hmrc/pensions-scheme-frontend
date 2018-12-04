@@ -52,9 +52,9 @@ class PartnershipUniqueTaxReferenceController @Inject()(
       PartnershipDetailsId(index).retrieve.right.map { details =>
         val redirectResult = request.userAnswers.get(PartnershipUniqueTaxReferenceId(index)) match {
           case None =>
-            Ok(partnershipUniqueTaxReference(appConfig, form, mode, index, details.name))
+            Ok(partnershipUniqueTaxReference(appConfig, form, mode, index))
           case Some(value) =>
-            Ok(partnershipUniqueTaxReference(appConfig, form.fill(value), mode, index, details.name))
+            Ok(partnershipUniqueTaxReference(appConfig, form.fill(value), mode, index))
         }
         Future.successful(redirectResult)
       }
@@ -65,7 +65,7 @@ class PartnershipUniqueTaxReferenceController @Inject()(
       PartnershipDetailsId(index).retrieve.right.map { details =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(partnershipUniqueTaxReference(appConfig, formWithErrors, mode, index, details.name))),
+            Future.successful(BadRequest(partnershipUniqueTaxReference(appConfig, formWithErrors, mode, index))),
           value =>
             dataCacheConnector.save(
               request.externalId,

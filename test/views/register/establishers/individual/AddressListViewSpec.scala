@@ -32,7 +32,6 @@ class AddressListViewSpec extends ViewBehaviours {
 
   val form = new AddressListFormProvider()(Seq(0))
   val firstIndex = Index(0)
-  val establisherName: String = "test first name test last name"
 
 
   def address(postCode: String): TolerantAddress = TolerantAddress(
@@ -45,18 +44,15 @@ class AddressListViewSpec extends ViewBehaviours {
   val addressSeq = Seq(address("postcode 1"), address("postcode 2"))
   val addressIndexes = Seq.range(0, 2)
 
-  def createView: () => HtmlFormat.Appendable = () => addressList(frontendAppConfig, form, NormalMode, firstIndex, addressSeq,
-    establisherName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => addressList(frontendAppConfig, form, NormalMode, firstIndex, addressSeq)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressList(frontendAppConfig, form, NormalMode,
-    firstIndex, addressSeq, establisherName)(fakeRequest, messages)
+    firstIndex, addressSeq)(fakeRequest, messages)
 
   "AddressListView view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, establisherName)
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(

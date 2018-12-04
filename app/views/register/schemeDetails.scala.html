@@ -34,7 +34,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__scheme_details__title").toString, secondaryHeaderKey = Some(messages("messages_cya_secondary_header").toString))
+        @components.heading(messages("messages__scheme_details__title"))
 
         @components.input_text(
             field = form("schemeName"),
@@ -45,7 +45,7 @@
         @components.input_radio(
             field = form("schemeType.type"),
             legend = messages("messages__scheme_details__type_legend"),
-            inputs = SchemeType.options
+            inputs = SchemeType.options(appConfig)
         )
 
         @components.input_text(

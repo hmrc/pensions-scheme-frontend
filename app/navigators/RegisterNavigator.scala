@@ -66,7 +66,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case DeclarationDormantId =>
         NavigateTo.save(controllers.register.routes.DeclarationController.onPageLoad())
       case DeclarationId =>
-        NavigateTo.save(controllers.register.routes.DeclarationDutiesController.onPageLoad())
+        declarationAnswersRoutes()
       case DeclarationDutiesId =>
         declarationDutiesRoutes(from.userAnswers)
       case UserResearchDetailsId => NavigateTo.dontSave(appConfig.managePensionsSchemeOverviewUrl)
@@ -173,6 +173,14 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
     } else {
       NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
+    }
+  }
+
+  private def declarationAnswersRoutes(): Option[NavigateTo] = {
+    if (appConfig.isHubEnabled) {
+      NavigateTo.save(controllers.register.routes.SchemeSuccessController.onPageLoad())
+    } else {
+      NavigateTo.save(controllers.register.routes.DeclarationDutiesController.onPageLoad())
     }
   }
 

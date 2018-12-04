@@ -32,8 +32,6 @@ class TrusteeNinoViewSpec extends ViewBehaviours {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithSecondaryHeader(createView, trusteeName)
-
     behave like pageWithSubmitButton(createView)
   }
 
@@ -83,7 +81,6 @@ object TrusteeNinoViewSpec extends ViewBehaviours {
 
   private val mode = NormalMode
   private val index = Index(0)
-  private val trusteeName = "Joe Bloggs"
 
   private val form = new TrusteeNinoFormProvider()()
 
@@ -92,8 +89,7 @@ object TrusteeNinoViewSpec extends ViewBehaviours {
       frontendAppConfig,
       form,
       mode,
-      index,
-      trusteeName
+      index
     )(fakeRequest, messages)
 
   private def createViewUsingForm: Form[_] => HtmlFormat.Appendable =
@@ -101,8 +97,7 @@ object TrusteeNinoViewSpec extends ViewBehaviours {
       frontendAppConfig,
       form,
       mode,
-      index,
-      trusteeName
+      index
     )(fakeRequest, messages)
 
 }

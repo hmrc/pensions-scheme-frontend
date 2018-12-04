@@ -47,7 +47,7 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
         case schemeDetails ~ partnershipDetails =>
           val partners: Seq[String] = request.userAnswers.allPartnersAfterDelete(index).map(_.name)
 
-          Future.successful(Ok(partnershipReview(appConfig, index, schemeDetails.schemeName, partnershipDetails.name, partners)))
+          Future.successful(Ok(partnershipReview(appConfig, index, partnershipDetails.name, partners)))
       }
   }
 
@@ -59,7 +59,7 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
       val isPartnershipComplete = request.userAnswers.get(IsPartnershipCompleteId(index)).getOrElse(false)
 
       if (allPartnersCompleted & isPartnershipComplete) {
-        sectionComplete.setCompleteFlag(IsEstablisherCompleteId(index), request.userAnswers, value = true).map { _ =>
+        sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(index), request.userAnswers, value = true).map { _ =>
           Redirect(navigator.nextPage(PartnershipReviewId(index), NormalMode, request.userAnswers))
         }
       }
