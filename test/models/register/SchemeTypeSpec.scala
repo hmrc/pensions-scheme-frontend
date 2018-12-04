@@ -16,7 +16,6 @@
 
 package models.register
 
-import models.register.SchemeType.MasterTrust
 import org.scalatest.{MustMatchers, OptionValues, WordSpecLike}
 import play.api.libs.json.{JsError, Json}
 

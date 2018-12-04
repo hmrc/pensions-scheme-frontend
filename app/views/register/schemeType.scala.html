@@ -19,32 +19,24 @@
 @import controllers.register.routes._
 @import models.Mode
 @import models.register._
-@import models.register.SchemeType.MasterTrust
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__scheme_details__title"),
+    title = messages("messages__scheme_type__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = SchemeDetailsController.onSubmit(mode), 'autoComplete -> "off") {
-
-        @components.back_link()
+    @helpers.form(action = SchemeTypeController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__scheme_details__title"))
-
-        @components.input_text(
-            field = form("schemeName"),
-            label = messages("messages__scheme_details__name_label"),
-            hint = Some(messages("messages__scheme_details__name_hint"))
-        )
+        @components.heading(messages("messages__scheme_type__heading", schemeName))
 
         @components.input_radio(
             field = form("schemeType.type"),
-            legend = messages("messages__scheme_details__type_legend"),
+            legend = messages("messages__scheme_type__title"),
+            legendClass = Some("visually-hidden"),
             inputs = SchemeType.options(appConfig)
         )
 
@@ -55,5 +47,7 @@
         )
 
         @components.submit_button()
+
+        @components.return_link(messages("messages__schemeTaskList__returnlink"), controllers.register.routes.SchemeTaskListController.onPageLoad())
     }
 }

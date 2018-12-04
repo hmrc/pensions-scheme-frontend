@@ -1114,6 +1114,23 @@ messages__complete__saveAndReturnToManagePensionSchemes = Save and return to man
 
 messages__schemeTaskList__companyDetails = Company details
 
+
+messages__scheme_type__title = What type of scheme is this?
+messages__scheme_type__heading = What type of scheme is {0}?
+messages__scheme_type_single = Single trust
+messages__scheme_type_single_hint = This is set up under trust and covers all members. The terms of the trust do not specifically allocate assets to a particular member.
+messages__scheme_type_group = Group life
+messages__scheme_type_group_hint = This is also known as death in service and only provides benefits upon death.
+messages__scheme_type_corp = Body corporate
+messages__scheme_type_corp_hint = This is a registered company, local authority or a body controlled by Royal Charter.
+messages__scheme_type_master = Master trust
+messages__scheme_type_master_hint = This is an occupational pension scheme which provides money purchase benefits. It is used by two or more employers who are not connected with each other.
+messages__scheme_type_other = Other
+messages__scheme_type_other_hint = This can be a deed poll trust.
+messages__scheme_type__error__required = Select a type of pension scheme
+
+
 messages__adviser__email__address__title = What is the person’s email address?
 messages__adviser__email__address__heading = What is {0}’s email address?
 messages__adviser__email__address__p1 = This will be used if HMRC need to contact {0}.
+

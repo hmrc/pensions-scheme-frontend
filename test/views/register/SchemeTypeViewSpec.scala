@@ -17,45 +17,40 @@
 package views.register
 
 import config.FrontendAppConfig
-import controllers.register.routes
-import forms.register.SchemeDetailsFormProvider
+import forms.register.SchemeTypeFormProvider
 import models.NormalMode
-import models.register.{SchemeDetails, SchemeType}
+import models.register.SchemeType
 import play.api.data.Form
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.schemeDetails
+import views.html.register.schemeType
 
-class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
+class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
 
-  val messageKeyPrefix = "scheme_details"
+  val messageKeyPrefix = "scheme_type"
+  private val schemeName = "test scheme"
 
-  override val form = new SchemeDetailsFormProvider()()
+  override val form = new SchemeTypeFormProvider()()
 
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+  def appConfig(isHubEnabled: Boolean = true): FrontendAppConfig = new GuiceApplicationBuilder().configure(
     "features.is-hub-enabled" -> isHubEnabled
   ).build().injector.instanceOf[FrontendAppConfig]
 
-
-  def createView: () => HtmlFormat.Appendable = () => schemeDetails(appConfig(false), form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    schemeDetails(appConfig(false), form, NormalMode)(fakeRequest, messages)
+    schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
-  private def schemeOptions = SchemeType.options(frontendAppConfig)
+  private def schemeOptions = SchemeType.options(appConfig())
 
-  "SchemeDetails view" must {
+  "SchemeType view" must {
+    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", schemeName))
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
-
-    behave like pageWithBackLink(createView)
-
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.SchemeDetailsController.onSubmit(NormalMode).url,
-      "schemeName")
+    behave like pageWithReturnLink(createView, controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
 
-  "SchemeDetails view" when {
+  "SchemeType view" when {
     "rendered" must {
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
