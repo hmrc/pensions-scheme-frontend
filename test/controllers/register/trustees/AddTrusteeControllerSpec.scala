@@ -51,6 +51,9 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
   def deleteTrusteeRoute(id: Int, kind: TrusteeKind): String =
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id, kind).url
 
+  def getMandatoryBodyCorporateSchemeName: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj(
+    SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.BodyCorporate))))
+
   val formProvider = new AddTrusteeFormProvider()
   val schemeName = "Test Scheme Name"
 
