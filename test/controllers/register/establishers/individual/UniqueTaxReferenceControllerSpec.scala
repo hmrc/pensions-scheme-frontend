@@ -62,8 +62,7 @@ class UniqueTaxReferenceControllerSpec extends ControllerSpecBase {
     new UniqueTaxReferenceController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = uniqueTaxReference(frontendAppConfig, form, NormalMode, firstIndex,
-    establisherName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = uniqueTaxReference(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
 
   "UniqueTaxReference Controller" must {
 

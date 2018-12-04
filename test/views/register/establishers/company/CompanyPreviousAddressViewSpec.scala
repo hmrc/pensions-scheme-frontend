@@ -29,7 +29,6 @@ class CompanyPreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
 
   val messageKeyPrefix = "companyPreviousAddress"
   val index = Index(0)
-  val companyName = "test company name"
   val options = Seq(InputOption("territory:AX", "Åland Islands"), InputOption("country:ZW", "Zimbabwe"))
 
   override val form = new AddressFormProvider(FakeCountryOptions())()
@@ -39,7 +38,6 @@ class CompanyPreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
     form,
     NormalMode,
     index,
-    companyName,
     options
   )(fakeRequest, messages)
 
@@ -48,7 +46,6 @@ class CompanyPreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
     form,
     NormalMode,
     index,
-    companyName,
     options)(fakeRequest, messages)
 
 
@@ -57,8 +54,6 @@ class CompanyPreviousAddressViewSpec extends QuestionViewBehaviours[Address] {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, companyName)
 
     behave like pageWithTextFields(
       createViewUsingForm,

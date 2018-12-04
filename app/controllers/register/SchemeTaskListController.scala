@@ -35,7 +35,7 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          requiredData: DataRequiredAction
                                         ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       Future.successful(Ok(schemeTaskList(appConfig, new TaskListHelper(request.userAnswers).tasklist)))
   }

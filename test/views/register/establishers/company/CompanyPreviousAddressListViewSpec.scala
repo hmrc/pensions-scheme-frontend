@@ -32,7 +32,6 @@ class CompanyPreviousAddressListViewSpec extends ViewBehaviours {
 
   val form = new AddressListFormProvider()(Seq(0, 1))
   val index = Index(0)
-  val companyName = "test company name"
   val addresses = Seq(
     address("test post code 1"),
     address("test post code 2")
@@ -48,16 +47,15 @@ class CompanyPreviousAddressListViewSpec extends ViewBehaviours {
   )
 
   def createView: () => HtmlFormat.Appendable = () => companyPreviousAddressList(frontendAppConfig, form, NormalMode,
-    index, companyName, addresses)(fakeRequest, messages)
+    index, addresses)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyPreviousAddressList(frontendAppConfig, form, NormalMode,
-    index, companyName, addresses)(fakeRequest, messages)
+    index, addresses)(fakeRequest, messages)
 
   "CompanyPreviousAddressList view" must {
     behave like normalPage(createView, s"$messageKeyPrefix", messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
-    behave like pageWithSecondaryHeader(createView, companyName)
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString).select("a[id=manual-address-link]") must haveLink(

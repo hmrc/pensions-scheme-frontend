@@ -47,7 +47,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
         case schemeDetails ~ companyDetails =>
           val directors: Seq[String] = request.userAnswers.allDirectorsAfterDelete(index).map(_.name)
 
-          Future.successful(Ok(companyReview(appConfig, index, schemeDetails.schemeName, companyDetails.companyName, directors)))
+          Future.successful(Ok(companyReview(appConfig, index, companyDetails.companyName, directors)))
       }
   }
 
@@ -59,7 +59,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
       val isCompanyComplete = request.userAnswers.get(IsCompanyCompleteId(index)).getOrElse(false)
 
       if (allDirectorsCompleted & isCompanyComplete) {
-        sectionComplete.setCompleteFlag(IsEstablisherCompleteId(index), request.userAnswers, value = true).map { _ =>
+        sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(index), request.userAnswers, value = true).map { _ =>
           Redirect(navigator.nextPage(CompanyReviewId(index), NormalMode, request.userAnswers))
         }
       }

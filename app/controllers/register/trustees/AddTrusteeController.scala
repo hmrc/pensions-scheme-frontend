@@ -61,7 +61,7 @@ class AddTrusteeController @Inject()(
           Future.successful(Redirect(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)))
         } else {
           val trustees = request.userAnswers.allTrusteesAfterDelete
-          Future.successful(Ok(addTrustee(appConfig, form, mode, schemeDetails.schemeName, trustees)))
+          Future.successful(Ok(addTrustee(appConfig, form, mode, trustees)))
         }
       }
   }
@@ -77,7 +77,7 @@ class AddTrusteeController @Inject()(
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             SchemeDetailsId.retrieve.right.map { schemeDetails =>
-              Future.successful(BadRequest(addTrustee(appConfig, formWithErrors, mode, schemeDetails.schemeName, trustees)))
+              Future.successful(BadRequest(addTrustee(appConfig, formWithErrors, mode, trustees)))
             },
           value =>
             request.userAnswers.set(AddTrusteeId)(value).fold(

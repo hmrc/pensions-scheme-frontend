@@ -261,7 +261,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar{
     declaration(
       appConfig(isHubEnabled),
       form,
-      schemeName,
       isCompany,
       isDormant,
       showMasterTrustDeclaration

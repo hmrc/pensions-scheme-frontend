@@ -161,7 +161,6 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   private def viewAsString(answerSections: Seq[AnswerSection]) = check_your_answers(
     frontendAppConfig,
     answerSections,
-    Some(messages("messages__common__trustee_secondary_header", schemeName)),
     postUrl
   )(fakeRequest, messages).toString
 

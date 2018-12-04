@@ -25,15 +25,14 @@ import views.html.register.declarationDuties
 class DeclarationDutiesViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "declarationDuties"
-  val testSchemeName = "test scheme name"
   val declarationOptions = Seq("true", "false")
 
   val form = new DeclarationDutiesFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => declarationDuties(frontendAppConfig, form, testSchemeName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => declarationDuties(frontendAppConfig, form)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => declarationDuties(
-    frontendAppConfig, form, testSchemeName)(fakeRequest, messages)
+    frontendAppConfig, form)(fakeRequest, messages)
 
   "DeclarationDuties view" must {
     behave like normalPage(
@@ -45,8 +44,6 @@ class DeclarationDutiesViewSpec extends ViewBehaviours {
     )
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, testSchemeName)
 
     behave like pageWithSubmitButton(createView)
   }

@@ -20,7 +20,7 @@
 @import models.Mode
 @import utils.InputOption
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, companyName: String, countryOptions: Seq[InputOption])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, countryOptions: Seq[InputOption])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__companyPreviousAddress__title"),
@@ -33,7 +33,7 @@
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__companyPreviousAddress__heading").toString, secondaryHeaderKey = Some(companyName))
+        @components.heading(messages("messages__companyPreviousAddress__heading"))
 
         @components.address(form, countryOptions)
 

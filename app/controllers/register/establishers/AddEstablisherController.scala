@@ -48,7 +48,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
         schemeName =>
           val establishers = request.userAnswers.allEstablishersAfterDelete
           Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
-            establishers, schemeName)))
+            establishers)))
       }
   }
 
@@ -60,7 +60,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
           formProvider(establishers).bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
-                establishers, schemeName))),
+                establishers))),
             value =>
               Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers)))
           )

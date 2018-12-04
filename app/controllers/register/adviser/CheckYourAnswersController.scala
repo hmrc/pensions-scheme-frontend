@@ -19,8 +19,8 @@ package controllers.register.adviser
 import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
-import identifiers.register.SubmissionReferenceNumberId
-import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId, IsWorkingKnowledgeCompleteId}
+import identifiers.register.{IsWorkingKnowledgeCompleteId, SubmissionReferenceNumberId}
+import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{CheckMode, NormalMode, PSAName}
@@ -64,7 +64,6 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         check_your_answers(
           appConfig,
           sections,
-          Some("messages__adviser__secondary_heading"),
           controllers.register.adviser.routes.CheckYourAnswersController.onSubmit()
         )
       )
@@ -73,7 +72,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       if (appConfig.isHubEnabled) {
-        sectionComplete.setCompleteFlag(IsWorkingKnowledgeCompleteId, request.userAnswers, value=true).map { _ =>
+        sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId, request.userAnswers, value=true).map { _ =>
           Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
         }
       } else {

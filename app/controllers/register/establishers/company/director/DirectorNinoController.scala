@@ -51,9 +51,9 @@ class DirectorNinoController @Inject()(
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.flatMap { director =>
         DirectorNinoId(establisherIndex, directorIndex).retrieve.right.map { value =>
-          Future.successful(Ok(directorNino(appConfig, form.fill(value), mode, establisherIndex, directorIndex, director.fullName)))
+          Future.successful(Ok(directorNino(appConfig, form.fill(value), mode, establisherIndex, directorIndex)))
         }.left.map { _ =>
-          Future.successful(Ok(directorNino(appConfig, form, mode, establisherIndex, directorIndex, director.fullName)))
+          Future.successful(Ok(directorNino(appConfig, form, mode, establisherIndex, directorIndex)))
         }
       }
   }
@@ -64,7 +64,7 @@ class DirectorNinoController @Inject()(
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(directorNino(appConfig, formWithErrors, mode, establisherIndex, directorIndex, director.fullName))),
+            Future.successful(BadRequest(directorNino(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,

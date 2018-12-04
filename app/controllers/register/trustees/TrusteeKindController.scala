@@ -57,7 +57,7 @@ class TrusteeKindController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(trusteeKind(appConfig, preparedForm, mode, index, schemeDetails.schemeName)))
+        Future.successful(Ok(trusteeKind(appConfig, preparedForm, mode, index)))
       }
   }
 
@@ -66,7 +66,7 @@ class TrusteeKindController @Inject()(
       SchemeDetailsId.retrieve.right.map { schemeDetails =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index, schemeDetails.schemeName))),
+            Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index))),
           value =>
             request.userAnswers.set(TrusteeKindId(index))(value).fold(
               errors => {

@@ -53,9 +53,9 @@ class EstablisherNinoController @Inject()(
         establisherName =>
           val redirectResult = request.userAnswers.get(EstablisherNinoId(index)) match {
             case None =>
-              Ok(establisherNino(appConfig, form, mode, index, establisherName))
+              Ok(establisherNino(appConfig, form, mode, index))
             case Some(value) =>
-              Ok(establisherNino(appConfig, form.fill(value), mode, index, establisherName))
+              Ok(establisherNino(appConfig, form.fill(value), mode, index))
           }
           Future.successful(redirectResult)
       }
@@ -67,7 +67,7 @@ class EstablisherNinoController @Inject()(
         establisherName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(establisherNino(appConfig, formWithErrors, mode, index, establisherName))),
+              Future.successful(BadRequest(establisherNino(appConfig, formWithErrors, mode, index))),
             (value) =>
               dataCacheConnector.save(
                 request.externalId,

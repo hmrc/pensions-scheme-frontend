@@ -26,16 +26,14 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "companyRegistrationNumber"
   val index = Index(0)
-  val companyName = "test company name"
   val form = new CompanyRegistrationNumberFormProvider()()
 
-  def createView = () => companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
+  def createView = () => companyRegistrationNumber(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => companyRegistrationNumber(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   "CompanyRegistrationNumber view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
-    behave like pageWithSecondaryHeader(createView, companyName)
     behave like pageWithBackLink(createView)
 
     "Generate correct hint text" in {

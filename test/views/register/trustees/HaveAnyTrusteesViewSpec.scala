@@ -27,14 +27,13 @@ import views.html.register.trustees.haveAnyTrustees
 class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "haveAnyTrustees"
-  val schemeName = "test scheme name"
 
   val form = new HaveAnyTrusteesFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => haveAnyTrustees(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => haveAnyTrustees(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => haveAnyTrustees(frontendAppConfig, form,
-    NormalMode, schemeName)(fakeRequest, messages)
+    NormalMode)(fakeRequest, messages)
 
   "HaveAnyTrustees view" must {
 

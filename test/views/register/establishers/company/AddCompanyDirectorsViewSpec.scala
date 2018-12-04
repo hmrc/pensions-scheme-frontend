@@ -30,7 +30,6 @@ import views.html.register.establishers.company.addCompanyDirectors
 class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
 
   private val establisherIndex = 1
-  private val companyName = "MyCo Ltd"
   private val maxDirectors = frontendAppConfig.maxDirectors
 
   // scalastyle:off magic.number
@@ -51,7 +50,6 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         form,
         NormalMode,
         establisherIndex,
-        companyName,
         directors
       )(fakeRequest, messages)
 
@@ -62,7 +60,6 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
         form,
         NormalMode,
         establisherIndex,
-        companyName,
         directors
       )(fakeRequest, messages)
 
@@ -71,8 +68,6 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
     behave like normalPage(createView(), messageKeyPrefix, messages("messages__addCompanyDirectors__heading"))
 
     behave like pageWithBackLink(createView())
-
-    behave like pageWithSecondaryHeader(createView(), companyName)
 
     behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),

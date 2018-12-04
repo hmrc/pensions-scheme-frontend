@@ -16,50 +16,64 @@
 
 package utils
 
-import identifiers.register.IsAboutSchemeCompleteId
-import identifiers.register.adviser.IsWorkingKnowledgeCompleteId
+import identifiers.TypedIdentifier
 import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
+import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
+import identifiers.register.{IsAboutSchemeCompleteId, IsWorkingKnowledgeCompleteId, SchemeDetailsId}
 import models.NormalMode
-import models.register.Entity
-import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
+import models.register.{Entity, SchemeType}
 import play.api.i18n.Messages
+import play.api.libs.json.Reads
+import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
 
-class TaskListHelper(journey: UserAnswers)(implicit messages: Messages) {
+class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) {
 
-  def tasklist: JourneyTaskList = JourneyTaskList(
-    aboutSection,
-    listOf(journey.allEstablishersAfterDelete),
-    listOf(journey.allTrusteesAfterDelete),
-    workingKnowledgeSection,
-    declarationLink)
+  def tasklist: JourneyTaskList = {
+    journey.fold(
+      JourneyTaskList(
+        aboutSection,
+        Seq[JourneyTaskListSection](),
+        Seq[JourneyTaskListSection](),
+        workingKnowledgeSection,
+        None)
+
+    )(implicit userAnswers =>
+      JourneyTaskList(
+        aboutSection,
+        listOf(userAnswers.allEstablishersAfterDelete),
+        listOf(userAnswers.allTrusteesAfterDelete),
+        workingKnowledgeSection,
+        declarationLink)
+      )
+  }
 
   private def aboutSection = JourneyTaskListSection(
-    journey.get(IsAboutSchemeCompleteId),
+    flagValue(IsAboutSchemeCompleteId),
     Link(messages("messages__schemeTaskList__about_link_text"),
       controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
     None)
 
   private def workingKnowledgeSection = JourneyTaskListSection(
-    journey.get(IsWorkingKnowledgeCompleteId),
+    flagValue(IsWorkingKnowledgeCompleteId),
     Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
       controllers.routes.WorkingKnowledgeController.onPageLoad().url),
     None)
 
-  private def declarationLink: Option[Link] =
+  private def declarationLink(implicit userAnswers: UserAnswers): Option[Link] =
     if (declarationEnabled)
       Some(Link(messages("messages__schemeTaskList__declaration_link"),
         controllers.register.routes.DeclarationController.onPageLoad().url))
     else None
 
-  private def declarationEnabled: Boolean =
-    (journey.get(IsAboutSchemeCompleteId), journey.get(IsWorkingKnowledgeCompleteId)) match {
-      case (Some(true), Some(true)) if journey.allEstablishersAfterDelete.forall(_.isCompleted) &&
-        journey.allTrusteesAfterDelete.forall(_.isCompleted) => true
+  def declarationEnabled(implicit userAnswers: UserAnswers): Boolean =
+    (flagValue(IsAboutSchemeCompleteId), flagValue(IsWorkingKnowledgeCompleteId),
+      isAllEstablishersCompleted(userAnswers), isAllTrusteesCompleted(userAnswers)) match {
+      case (Some(true), Some(true), true, true) => true
       case _ => false
     }
 
@@ -77,4 +91,23 @@ class TaskListHelper(journey: UserAnswers)(implicit messages: Messages) {
       case EstablisherDetailsId(_) | TrusteeDetailsId(_) => messages("messages__schemeTaskList__individual_link")
       case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => messages("messages__schemeTaskList__partnership_link")
     }
+
+  private def flagValue[A](flag : TypedIdentifier[A])(implicit rds: Reads[A]): Option[A] ={
+    journey.flatMap(x => x.get[A](flag))
+  }
+
+  private def isAllEstablishersCompleted(userAnswers: UserAnswers) : Boolean = {
+    userAnswers.allEstablishersAfterDelete.nonEmpty && userAnswers.allEstablishersAfterDelete.forall(_.isCompleted)
+  }
+
+  private def isAllTrusteesCompleted(userAnswers: UserAnswers) : Boolean = {
+
+    val listOfSchemeTypeTrusts: Seq[SchemeType] = Seq(SchemeType.SingleTrust, SchemeType.MasterTrust)
+
+    val isValidSchemeType = flagValue(SchemeDetailsId).map(scheme => !listOfSchemeTypeTrusts.contains(scheme.schemeType)).getOrElse(true)
+
+    (flagValue(HaveAnyTrusteesId).fold(false)(_==false) && isValidSchemeType) ||
+    userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
+
+  }
 }

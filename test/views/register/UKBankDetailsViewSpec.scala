@@ -30,13 +30,11 @@ class UKBankDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
 
   val messageKeyPrefix = "uk_bank_account_details"
 
-  val schemeName = "myScheme"
-
   override val form = new UKBankDetailsFormProvider()()
 
-  def createView = () => uKBankDetails(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+  def createView = () => uKBankDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => uKBankDetails(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => uKBankDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   val validData: Map[String, String] = Map(
     "bankName" -> "test bank",
@@ -60,8 +58,6 @@ class UKBankDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
       routes.UKBankDetailsController.onSubmit(NormalMode).url,
       "bankName", "accountName", "sortCode", "accountNumber"
     )
-
-    behave like pageWithSecondaryHeader(createView, schemeName)
 
     "display an input text box with the correct label and value for day" in {
       val doc = asDocument(createViewUsingForm(form.bind(validData)))

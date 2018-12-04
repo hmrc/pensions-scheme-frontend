@@ -20,8 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
-import identifiers.register.DeclarationDutiesId
-import identifiers.register.adviser.IsWorkingKnowledgeCompleteId
+import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
@@ -63,7 +62,7 @@ class WorkingKnowledgeController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode))),
         value =>
-          sectionComplete.setCompleteFlag(IsWorkingKnowledgeCompleteId, request.userAnswers, value).flatMap{_=>
+          sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId, request.userAnswers, value).flatMap{_=>
             dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
               Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap))))
         }

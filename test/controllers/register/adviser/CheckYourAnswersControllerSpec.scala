@@ -20,7 +20,7 @@ import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.TypedIdentifier
-import identifiers.register.adviser.IsWorkingKnowledgeCompleteId
+import identifiers.register.IsWorkingKnowledgeCompleteId
 import models.CheckMode
 import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -241,7 +241,6 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
   lazy val viewAsString: String = check_your_answers(
     frontendAppConfig,
     Seq(adviserSection),
-    Some(Message("messages__adviser__secondary_heading")),
     postUrl
   )(fakeRequest, messages).toString
 

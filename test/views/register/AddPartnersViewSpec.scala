@@ -30,7 +30,6 @@ import views.html.register.addPartners
 class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
 
   private val establisherIndex = 1
-  private val partnershipName = "MyCo Ltd"
   private val maxPartners = frontendAppConfig.maxPartners
 
   // scalastyle:off magic.number
@@ -51,7 +50,6 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         frontendAppConfig,
         form,
         establisherIndex,
-        partnershipName,
         partners,
         postUrl
       )(fakeRequest, messages)
@@ -62,7 +60,6 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         frontendAppConfig,
         form,
         establisherIndex,
-        partnershipName,
         partners,
         postUrl
       )(fakeRequest, messages)
@@ -72,8 +69,6 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
     behave like normalPage(createView(), messageKeyPrefix, messages("messages__addPartners__heading"))
 
     behave like pageWithBackLink(createView())
-
-    behave like pageWithSecondaryHeader(createView(), partnershipName)
 
     behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),

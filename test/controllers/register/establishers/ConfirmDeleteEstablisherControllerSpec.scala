@@ -164,7 +164,6 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
   private def viewAsString() = confirmDeleteEstablisher(
     frontendAppConfig,
-    schemeName,
     establisherName,
     postCall,
     cancelCall

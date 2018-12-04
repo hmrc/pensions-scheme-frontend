@@ -17,6 +17,7 @@
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
 import identifiers.LastPageId
 import identifiers.register._
+import identifiers.register.establishers.company.IsCompanyCompleteId
 import models._
 import models.address.{Address, TolerantAddress}
 import models.register.{DeclarationDormant, SchemeDetails}
@@ -72,6 +73,10 @@ package object utils {
     // Establishers company
     def establisherCompanyDetails(index: Int, companyDetails: CompanyDetails): UserAnswers = {
       answers.set(establishers.company.CompanyDetailsId(index))(companyDetails).asOpt.value
+    }
+
+    def establisherCompanyComplete(index: Int, value: Boolean): UserAnswers = {
+      answers.set(IsCompanyCompleteId(index))(value).asOpt.value
     }
 
     def establisherCompanyRegistrationNumber(index: Int, crn: CompanyRegistrationNumber): UserAnswers = {

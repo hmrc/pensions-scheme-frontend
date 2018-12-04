@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.play.views.html._
 @import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
 
-@(appConfig: FrontendAppConfig, answerSections: Seq[Section], secondaryHeader: Option[String], postUrl: Call)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("checkYourAnswers.title"),
@@ -30,8 +30,7 @@
 
     @helpers.form(action = postUrl, 'autoComplete -> "off") {
         @components.heading(
-                headingKey = components.hyphen(messages("checkYourAnswers.heading")).toString,
-                secondaryHeaderKey = secondaryHeader.map{x=>components.hyphen(messages(x)).toString}
+                headingKey = messages("checkYourAnswers.heading")
         )
 
         @for((section, i) <- answerSections.zipWithIndex){
