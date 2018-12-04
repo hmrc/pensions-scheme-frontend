@@ -19,8 +19,8 @@ package controllers.register.adviser
 import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
-import identifiers.register.SubmissionReferenceNumberId
-import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId, IsWorkingKnowledgeCompleteId}
+import identifiers.register.{IsWorkingKnowledgeCompleteId, SubmissionReferenceNumberId}
+import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId}
 import javax.inject.Inject
 import models.requests.DataRequest
 import models.{CheckMode, NormalMode, PSAName}

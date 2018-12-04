@@ -20,8 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
-import identifiers.register.DeclarationDutiesId
-import identifiers.register.adviser.IsWorkingKnowledgeCompleteId
+import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
