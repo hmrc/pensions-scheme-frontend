@@ -63,15 +63,17 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
       controllers.routes.WorkingKnowledgeController.onPageLoad().url)
   }
 
-  private def aboutSection(implicit userAnswers: UserAnswers) = JourneyTaskListSection(
-    userAnswers.get(IsAboutSchemeCompleteId),
-    aboutSectionDefaultLink,
-    None)
+  private def aboutSection(implicit userAnswers: UserAnswers): JourneyTaskListSection = {
+    val link = userAnswers.get(IsAboutSchemeCompleteId) match {
+      case Some(true) => Link(messages("messages__schemeTaskList__about_link_text"),
+        controllers.register.routes.CheckYourAnswersController.onPageLoad.url)
+      case _ => aboutSectionDefaultLink
+    }
+    JourneyTaskListSection(userAnswers.get(IsAboutSchemeCompleteId), link, None)
+  }
 
-  private def workingKnowledgeSection(implicit userAnswers: UserAnswers) = JourneyTaskListSection(
-    userAnswers.get(IsWorkingKnowledgeCompleteId),
-    workingKnowledgeDefaultLink,
-    None)
+  private def workingKnowledgeSection(implicit userAnswers: UserAnswers): JourneyTaskListSection =
+    JourneyTaskListSection(userAnswers.get(IsWorkingKnowledgeCompleteId), workingKnowledgeDefaultLink, None)
 
   private def declarationLink(implicit userAnswers: UserAnswers): Option[Link] =
     if (declarationEnabled)
