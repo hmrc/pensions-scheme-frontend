@@ -93,51 +93,59 @@ class DeclarationController @Inject()(
       }
   }
 
-  private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(
-    implicit request: DataRequest[AnyContent]): Either[Future[Result], Future[Result]] = {
+  private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) =
+    if (appConfig.isHubEnabled) {
+      hsShowPage(status, form)
+    } else {
+      nonHsShowPage(status, form)
+    }
+
+  private def nonHsShowPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
     SchemeDetailsId.retrieve.right.map { details =>
       val isCompany = request.userAnswers.hasCompanies
-
-      if (appConfig.isHubEnabled) {
-        val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values(1) else DeclarationDormant.values.head
-
-        if (isCompany) {
-          dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).flatMap(_ =>
-            renderView(status, form, isCompany, isDeclarationDormant)
+      request.userAnswers.get(DeclarationDormantId) match {
+        case Some(Yes) => Future.successful(
+          status(
+            declaration(appConfig, form, isCompany, isDormant = true, showMasterTrustDeclaration, hasWorkingKnowledge = false)
           )
-        } else {
-          renderView(status, form, isCompany, isDeclarationDormant)
-        }
-      } else {
-        processViewIfNotHub(status, form, isCompany)
+        )
+        case Some(No) => Future.successful(
+          status(
+            declaration(appConfig, form, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge = false)
+          )
+        )
+        case None if !isCompany => Future.successful(
+          status(
+            declaration(appConfig, form, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge = false)
+          )
+        )
+        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
       }
     }
   }
 
-  private def processViewIfNotHub(status: HtmlFormat.Appendable => Result, form: Form[_],
-                                  isCompany: Boolean)(
-    implicit request: DataRequest[AnyContent]) : Future[Result] = {
 
-    request.userAnswers.get(DeclarationDormantId) match {
-      case Some(Yes) =>
-        renderView(status, form, isCompany, isDormant= true)
-      case Some(No) =>
-        renderView(status, form, isCompany, isDormant = false)
-      case None if !isCompany =>
-        renderView(status, form, isCompany, isDormant = false)
-      case _ =>
-        Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+  private def hsShowPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
+    SchemeDetailsId.retrieve.right.map { details =>
+      val isCompany = request.userAnswers.hasCompanies
+      val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values(1) else DeclarationDormant.values.head
+      val readyForRender = if (isCompany) {
+        dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ => ())
+      } else {
+        Future.successful(())
+      }
+
+      readyForRender.flatMap { _ =>
+       request.userAnswers.get(DeclarationDutiesId) match {
+          case Some(hasWorkingKnowledge) => Future.successful(
+            status(
+              declaration(appConfig, form, isCompany, isDormant = isDeclarationDormant, showMasterTrustDeclaration, hasWorkingKnowledge)
+            )
+          )
+          case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        }
+      }
     }
-  }
-
-  private def renderView(status: HtmlFormat.Appendable => Result,
-                       form: Form[_], isCompany: Boolean,
-                         isDormant: Boolean)(implicit request: DataRequest[AnyContent]) : Future[Result] = {
-    Future.successful(
-      status(
-        declaration(appConfig, form, isCompany, isDormant, showMasterTrustDeclaration)
-      )
-    )
   }
 
   private def showMasterTrustDeclaration(implicit request: DataRequest[AnyContent]): Boolean =
