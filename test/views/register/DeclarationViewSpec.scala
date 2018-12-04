@@ -38,14 +38,25 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
-    form, true, false, true)(fakeRequest, messages)
+    form,
+    isCompany = true,
+    isDormant = false,
+    showMasterTrustDeclaration = true,
+    hasWorkingKnowledge = false)(fakeRequest, messages)
 
-  def createViewDynamic(isCompany: Boolean = true, isDormant: Boolean = false,
-                        showMasterTrustDeclaration: Boolean = true): () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
-    form, isCompany, isDormant, showMasterTrustDeclaration)(fakeRequest, messages)
+  def createViewDynamic(isCompany: Boolean = true,
+                        isDormant: Boolean = false,
+                        showMasterTrustDeclaration: Boolean = true,
+                        hasWorkingKnowledge:Boolean = false): () => HtmlFormat.Appendable =
+    () => declaration(frontendAppConfig,
+      form, isCompany, isDormant, showMasterTrustDeclaration, hasWorkingKnowledge)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => declaration(frontendAppConfig,
-    form, false, false, true)(fakeRequest, messages)
+    form,
+    isCompany = false,
+    isDormant = false,
+    showMasterTrustDeclaration = true,
+    hasWorkingKnowledge = false)(fakeRequest, messages)
 
   "Declaration view (not hub and spoke)" must {
     behave like normalPage(
@@ -60,11 +71,11 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
       "_statement5",
       "_statement6",
       "_statement7",
-      "_statement8")
+      "_statement10")
 
     "not display statement one for individual journey" in {
-      Jsoup.parse(createViewDynamic(false, false).toString) mustNot haveDynamicText(s"messages__${messageKeyPrefix}__statement1_not_dormant")
-      Jsoup.parse(createViewDynamic(false, false).toString) mustNot haveDynamicText(s"messages__${messageKeyPrefix}__statement1_dormant")
+      Jsoup.parse(createViewDynamic(isCompany = false).toString) mustNot haveDynamicText(s"messages__${messageKeyPrefix}__statement1_not_dormant")
+      Jsoup.parse(createViewDynamic(isCompany = false).toString) mustNot haveDynamicText(s"messages__${messageKeyPrefix}__statement1_dormant")
     }
 
     "show an error summary when rendered with an error" in {
@@ -89,7 +100,7 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
 
   "Declaration view for company journey with dormant members" must {
     behave like normalPage(
-      createViewDynamic(true, true),
+      createViewDynamic(isDormant = true),
       messageKeyPrefix,
       messages(s"messages__${messageKeyPrefix}__title"),
       "_declare",
@@ -98,6 +109,8 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
 }
 
 class DeclarationHsViewSpec extends QuestionViewBehaviours[Boolean] {
+  private val messageKeyPrefix = "declaration"
+
   override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
     Map(
       "features.allowMasterTrust" -> true,
@@ -108,13 +121,34 @@ class DeclarationHsViewSpec extends QuestionViewBehaviours[Boolean] {
   val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
-    form, true, false, true)(fakeRequest, messages)
+  def createView(hasWorkingKnowledge:Boolean = false): () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
+    form, isCompany = true,
+    isDormant = false,
+    showMasterTrustDeclaration = true,
+    hasWorkingKnowledge = hasWorkingKnowledge)(fakeRequest, messages)
 
-  "Declaration view (hub and spoke)" must {
+  "Declaration view (hub and spoke where no working knowledge)" must {
+
+    behave like normalPage(
+      createView(),
+      messageKeyPrefix,
+      messages(s"messages__${messageKeyPrefix}__title"),
+      "_statement8_no_working_knowledge",
+      "_statement9")
+
     "have a return link" in {
-      Jsoup.parse(createView().toString).select("a[id=return-pension-scheme-details]") must
+      Jsoup.parse(createView()().toString).select("a[id=return-pension-scheme-details]") must
         haveLink(controllers.register.routes.SchemeTaskListController.onPageLoad().url)
     }
+  }
+
+  "Declaration view (hub and spoke where working knowledge)" must {
+
+    behave like normalPage(
+      createView(hasWorkingKnowledge = true),
+      messageKeyPrefix,
+      messages(s"messages__${messageKeyPrefix}__title"),
+      "_statement8_working_knowledge",
+      "_statement9")
   }
 }
