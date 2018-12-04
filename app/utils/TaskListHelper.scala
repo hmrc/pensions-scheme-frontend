@@ -29,42 +29,65 @@ import models.register.Entity
 import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
 import play.api.i18n.Messages
 
-class TaskListHelper(journey: UserAnswers)(implicit messages: Messages) {
+class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) {
 
-  def tasklist: JourneyTaskList = JourneyTaskList(
-    aboutSection,
-    listOf(journey.allEstablishersAfterDelete),
-    listOf(journey.allTrusteesAfterDelete),
-    workingKnowledgeSection,
-    declarationLink)
+  def tasklist: JourneyTaskList = {
+    journey.fold(
+      blankJourneyTaskList
+    )(implicit userAnswers =>
+      JourneyTaskList(
+        aboutSection,
+        listOf(userAnswers.allEstablishersAfterDelete),
+        listOf(userAnswers.allTrusteesAfterDelete),
+        workingKnowledgeSection,
+        declarationLink)
+    )
+  }
 
-  private def aboutSection = JourneyTaskListSection(
-    journey.get(IsAboutSchemeCompleteId),
+  private def blankJourneyTaskList: JourneyTaskList = {
+    JourneyTaskList(
+      JourneyTaskListSection(None, aboutSectionDefaultLink, None),
+      Seq.empty,
+      Seq.empty,
+      JourneyTaskListSection(None, workingKnowledgeDefaultLink, None),
+      None)
+  }
+
+  private val aboutSectionDefaultLink: Link = {
     Link(messages("messages__schemeTaskList__about_link_text"),
-      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
-    None)
+      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
+  }
 
-  private def workingKnowledgeSection = JourneyTaskListSection(
-    journey.get(IsWorkingKnowledgeCompleteId),
+  private val workingKnowledgeDefaultLink: Link = {
     Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
-      controllers.routes.WorkingKnowledgeController.onPageLoad().url),
+      controllers.routes.WorkingKnowledgeController.onPageLoad().url)
+  }
+
+  private def aboutSection(implicit userAnswers: UserAnswers) = JourneyTaskListSection(
+    userAnswers.get(IsAboutSchemeCompleteId),
+    aboutSectionDefaultLink,
     None)
 
-  private def declarationLink: Option[Link] =
+  private def workingKnowledgeSection(implicit userAnswers: UserAnswers) = JourneyTaskListSection(
+    userAnswers.get(IsWorkingKnowledgeCompleteId),
+    workingKnowledgeDefaultLink,
+    None)
+
+  private def declarationLink(implicit userAnswers: UserAnswers): Option[Link] =
     if (declarationEnabled)
       Some(Link(messages("messages__schemeTaskList__declaration_link"),
         controllers.register.routes.DeclarationController.onPageLoad().url))
     else None
 
-  private def declarationEnabled: Boolean =
-    (journey.get(IsAboutSchemeCompleteId), journey.get(IsWorkingKnowledgeCompleteId)) match {
-      case (Some(true), Some(true)) if journey.allEstablishersAfterDelete.forall(_.isCompleted) &&
-        journey.allTrusteesAfterDelete.forall(_.isCompleted) => true
+  private def declarationEnabled(implicit userAnswers: UserAnswers): Boolean =
+    (userAnswers.get(IsAboutSchemeCompleteId), userAnswers.get(IsWorkingKnowledgeCompleteId)) match {
+      case (Some(true), Some(true)) if userAnswers.allEstablishersAfterDelete.forall(_.isCompleted) &&
+        userAnswers.allTrusteesAfterDelete.forall(_.isCompleted) => true
       case _ => false
     }
 
   private def listOf(sections: Seq[Entity[_]]): Seq[JourneyTaskListSection] =
-    for(section <- sections) yield
+    for (section <- sections) yield
       JourneyTaskListSection(
         Some(section.isCompleted),
         Link(linkText(section),
