@@ -18,8 +18,7 @@ package controllers
 
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
-import controllers.register.SchemeNameId
-import identifiers.register.SchemeDetailsId
+import identifiers.register.{SchemeDetailsId, SchemeNameId}
 import identifiers.register.adviser.AdviserDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId

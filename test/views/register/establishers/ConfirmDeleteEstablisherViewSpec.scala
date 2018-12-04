@@ -33,8 +33,6 @@ class ConfirmDeleteEstablisherViewSpec extends ViewBehaviours {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithSecondaryHeader(createView, schemeName)
-
     behave like pageWithSubmitButton(createView)
 
     "have a cancel link" in {
@@ -50,7 +48,6 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
   val messageKeyPrefix = "confirmDeleteEstablisher"
 
   private val firstIndex = Index(0)
-  private val schemeName = "MyScheme"
   private val establisherName = "John Doe"
   private val postCall = ConfirmDeleteEstablisherController.onSubmit(firstIndex, EstablisherKind.Indivdual)
   private val cancelCall = AddEstablisherController.onSubmit(NormalMode)
@@ -58,7 +55,6 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
   private def createView = () =>
     confirmDeleteEstablisher(
       frontendAppConfig,
-      schemeName,
       establisherName,
       postCall,
       cancelCall

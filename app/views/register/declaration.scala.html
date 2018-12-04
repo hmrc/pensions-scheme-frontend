@@ -20,7 +20,6 @@
 @import models.Mode
 
 @(appConfig: FrontendAppConfig, form: Form[_],
-    schemeName: String,
     isCompany: Boolean,
     isDormant: Boolean,
     showMasterTrustDeclaration: Boolean,
@@ -36,8 +35,7 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey= messages("messages__declaration__heading"),
-            secondaryHeaderKey = Some(components.hyphen(schemeName).toString())
+            headingKey= messages("messages__declaration__heading")
         )
 
         @components.paragraph_text(messages("messages__declaration__declare"))
@@ -110,7 +108,7 @@
         @components.submit_button("site.save_and_continue")
 
         @if(appConfig.isHubEnabled) {
-            <a id="return-pension-scheme-details" href="@controllers.routes.SchemeTaskListController.onPageLoad()">@messages("messages__complete__return_pension_scheme_details")</a>
+            <a id="return-pension-scheme-details" href="@controllers.register.routes.SchemeTaskListController.onPageLoad()">@messages("messages__complete__return_pension_scheme_details")</a>
         } else {
             <a id="cancel" href="@controllers.routes.WhatYouWillNeedController.onPageLoad()">@messages("site.cancel")</a>
         }

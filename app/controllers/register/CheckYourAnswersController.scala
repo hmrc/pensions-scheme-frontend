@@ -26,7 +26,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Enumerable, Navigator}
+import utils.{CountryOptions, Enumerable, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -36,7 +36,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
                                            implicit val countryOptions: CountryOptions,
-                                           @Register navigator: Navigator) extends FrontendController with Enumerable.Implicits with I18nSupport {
+                                           @Register navigator: Navigator,
+                                           sectionComplete: SectionComplete) extends FrontendController with Enumerable.Implicits with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -68,14 +69,15 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       Ok(check_your_answers(
         appConfig,
         Seq(schemeDetailsSection, schemeBenefitsSection, bankAccountSection),
-        Some("messages_cya_secondary_header"),
         routes.CheckYourAnswersController.onSubmit())
       )
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
+      sectionComplete.setCompleteFlag(request.externalId, IsAboutSchemeCompleteId, request.userAnswers, value = true) map { _ =>
+        Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
+      }
   }
 
 }

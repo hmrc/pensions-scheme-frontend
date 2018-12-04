@@ -56,8 +56,6 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
 
     behave like pageWithBackLink(createView)
 
-    behave like pageWithSecondaryHeader(createView, viewModel.secondaryHeader.get)
-
     behave like pageWithTextFields(
       createViewUsingForm,
       messageKeyPrefix,

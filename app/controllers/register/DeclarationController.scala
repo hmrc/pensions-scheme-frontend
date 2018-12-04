@@ -17,20 +17,26 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.UserAnswersCacheConnector
+import connectors._
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationFormProvider
-import identifiers.register.{DeclarationDormantId, DeclarationDutiesId, DeclarationId, SchemeDetailsId}
+import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
+import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId}
+import identifiers.register._
 import javax.inject.Inject
 import models.NormalMode
+import models.register.DeclarationDormant
 import models.register.DeclarationDormant.{No, Yes}
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.crypto.ApplicationCrypto
+import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
@@ -46,7 +52,12 @@ class DeclarationController @Inject()(
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: DeclarationFormProvider
+                                       formProvider: DeclarationFormProvider,
+                                       pensionsSchemeConnector: PensionsSchemeConnector,
+                                       emailConnector: EmailConnector,
+                                       psaNameCacheConnector: PSANameCacheConnector,
+                                       crypto: ApplicationCrypto,
+                                       pensionAdministratorConnector: PensionAdministratorConnector
                                      ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -58,13 +69,28 @@ class DeclarationController @Inject()(
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        (formWithErrors: Form[_]) => {
-          showPage(BadRequest.apply, formWithErrors)
-        },
-        value =>
-          dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))))
+      retrieveSchemeName {
+        _ =>
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) => {
+              showPage(BadRequest.apply, formWithErrors)
+            },
+            value =>
+              if (appConfig.isHubEnabled) {
+                for {
+                  cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
+                  submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
+                  cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
+                  _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
+                } yield {
+                  Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+                }
+              } else {
+                dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
+                  Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap))))
+              }
+          )
+      }
   }
 
   private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) =
@@ -80,17 +106,17 @@ class DeclarationController @Inject()(
       request.userAnswers.get(DeclarationDormantId) match {
         case Some(Yes) => Future.successful(
           status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDormant = true, showMasterTrustDeclaration, hasWorkingKnowledge = false)
+            declaration(appConfig, form, isCompany, isDormant = true, showMasterTrustDeclaration, hasWorkingKnowledge = false)
           )
         )
         case Some(No) => Future.successful(
           status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge = false)
+            declaration(appConfig, form, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge = false)
           )
         )
         case None if !isCompany => Future.successful(
           status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge = false)
+            declaration(appConfig, form, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge = false)
           )
         )
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
@@ -98,31 +124,66 @@ class DeclarationController @Inject()(
     }
   }
 
+
   private def hsShowPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
     SchemeDetailsId.retrieve.right.map { details =>
       val isCompany = request.userAnswers.hasCompanies
-      (request.userAnswers.get(DeclarationDormantId), request.userAnswers.get(DeclarationDutiesId)) match {
-        case (Some(Yes), Some(hasWorkingKnowledge)) => Future.successful(
-          status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDormant = true, showMasterTrustDeclaration, hasWorkingKnowledge)
+      val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values(1) else DeclarationDormant.values.head
+      val readyForRender = if (isCompany) {
+        dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ => ())
+      } else {
+        Future.successful(())
+      }
+
+      readyForRender.flatMap { _ =>
+       request.userAnswers.get(DeclarationDutiesId) match {
+          case Some(hasWorkingKnowledge) => Future.successful(
+            status(
+              declaration(appConfig, form, isCompany, isDormant = isDeclarationDormant, showMasterTrustDeclaration, hasWorkingKnowledge)
+            )
           )
-        )
-        case (Some(No), Some(hasWorkingKnowledge)) => Future.successful(
-          status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge)
-          )
-        )
-        case (None, Some(hasWorkingKnowledge)) if !isCompany => Future.successful(
-          status(
-            declaration(appConfig, form, details.schemeName, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge)
-          )
-        )
-        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+          case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        }
       }
     }
   }
 
   private def showMasterTrustDeclaration(implicit request: DataRequest[AnyContent]): Boolean =
     request.userAnswers.get(SchemeDetailsId).map(_.schemeType).contains(MasterTrust)
+
+  private def isDeclarationDormant(implicit request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers.allEstablishersAfterDelete.exists { allEstablishers =>
+      allEstablishers.id match {
+        case CompanyDetailsId(index) =>
+          isDormant(request.userAnswers.get(IsCompanyDormantId(index)))
+        case PartnershipDetailsId(index) =>
+          isDormant(request.userAnswers.get(IsPartnershipDormantId(index)))
+        case _ =>
+          false
+      }
+    }
+
+  private def isDormant(dormant: Option[DeclarationDormant]): Boolean = {
+    dormant match {
+      case Some(Yes) => true
+      case _ => false
+    }
+  }
+
+  private def sendEmail(srn: String, psaId: PsaId)(implicit request: DataRequest[AnyContent]): Future[EmailStatus] = {
+    Logger.debug("Fetch email from API")
+
+    pensionAdministratorConnector.getPSAEmail flatMap { email =>
+      emailConnector.sendEmail(email, appConfig.emailTemplateId, Map("srn" -> formatSrnForEmail(srn)), psaId)
+    } recoverWith {
+      case _: Throwable => Future.successful(EmailNotSent)
+    }
+  }
+
+  private def formatSrnForEmail(srn: String): String = {
+    //noinspection ScalaStyle
+    val (start, end) = srn.splitAt(6)
+    start + ' ' + end
+  }
 
 }

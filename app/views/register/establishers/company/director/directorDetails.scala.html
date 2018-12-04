@@ -19,7 +19,7 @@
 @import controllers.register.establishers.company.director.routes._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex:Index, directorIndex:Index, companyName:String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex:Index, directorIndex:Index)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__directorDetails__title"),
@@ -33,8 +33,7 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey=messages("messages__directorDetails__heading"),
-            secondaryHeaderKey = Some(components.hyphen(companyName).toString)
+            headingKey=messages("messages__directorDetails__heading")
         )
 
         @components.input_text(

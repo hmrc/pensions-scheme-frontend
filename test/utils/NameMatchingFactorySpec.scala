@@ -56,9 +56,9 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar with ScalaFutur
       "uses Get PSA Minimal Details" in {
 
         lazy val app = new GuiceApplicationBuilder()
-            .overrides(bind[PSANameCacheConnector].toInstance(psaNameCacheConnector))
-            .overrides(bind[PensionAdministratorConnector].toInstance(pensionAdministratorConnector))
-            .build()
+          .overrides(bind[PSANameCacheConnector].toInstance(psaNameCacheConnector))
+          .overrides(bind[PensionAdministratorConnector].toInstance(pensionAdministratorConnector))
+          .build()
 
         val nameMatchingFactory = app.injector.instanceOf[NameMatchingFactory]
 

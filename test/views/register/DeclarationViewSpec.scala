@@ -35,11 +35,10 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
   ).build().injector.instanceOf[FrontendAppConfig]
 
   val messageKeyPrefix = "declaration"
-  val schemeName = "Test Scheme Name"
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
-    form, schemeName,
+    form,
     isCompany = true,
     isDormant = false,
     showMasterTrustDeclaration = true,
@@ -50,10 +49,10 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
                         showMasterTrustDeclaration: Boolean = true,
                         hasWorkingKnowledge:Boolean = false): () => HtmlFormat.Appendable =
     () => declaration(frontendAppConfig,
-    form, schemeName, isCompany, isDormant, showMasterTrustDeclaration, hasWorkingKnowledge)(fakeRequest, messages)
+      form, isCompany, isDormant, showMasterTrustDeclaration, hasWorkingKnowledge)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => declaration(frontendAppConfig,
-    form, schemeName,
+    form,
     isCompany = false,
     isDormant = false,
     showMasterTrustDeclaration = true,
@@ -73,8 +72,6 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
       "_statement6",
       "_statement7",
       "_statement10")
-
-    behave like pageWithSecondaryHeader(createView, schemeName)
 
     "not display statement one for individual journey" in {
       Jsoup.parse(createViewDynamic(isCompany = false).toString) mustNot haveDynamicText(s"messages__${messageKeyPrefix}__statement1_not_dormant")
@@ -125,7 +122,7 @@ class DeclarationHsViewSpec extends QuestionViewBehaviours[Boolean] {
   val form: Form[Boolean] = new DeclarationFormProvider()()
 
   def createView(hasWorkingKnowledge:Boolean = false): () => HtmlFormat.Appendable = () => declaration(frontendAppConfig,
-    form, schemeName, isCompany = true,
+    form, isCompany = true,
     isDormant = false,
     showMasterTrustDeclaration = true,
     hasWorkingKnowledge = hasWorkingKnowledge)(fakeRequest, messages)
@@ -141,7 +138,7 @@ class DeclarationHsViewSpec extends QuestionViewBehaviours[Boolean] {
 
     "have a return link" in {
       Jsoup.parse(createView()().toString).select("a[id=return-pension-scheme-details]") must
-        haveLink(controllers.routes.SchemeTaskListController.onPageLoad().url)
+        haveLink(controllers.register.routes.SchemeTaskListController.onPageLoad().url)
     }
   }
 

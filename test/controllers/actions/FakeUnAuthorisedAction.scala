@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers.actions
 
-import identifiers.TypedIdentifier
+import controllers.routes
+import models.requests.AuthenticatedRequest
+import play.api.mvc.Results._
+import play.api.mvc.{Request, Result}
 
-case object SchemeNameId extends TypedIdentifier[String] {
-  override def toString: String = "schemeName"
+import scala.concurrent.Future
+
+object FakeUnAuthorisedAction {
+  def apply(): AuthAction = {
+    new AuthAction {
+      override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =
+        Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
+    }
+  }
 }
+

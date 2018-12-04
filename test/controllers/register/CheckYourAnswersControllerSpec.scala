@@ -23,7 +23,7 @@ import models.CheckMode
 import models.register.{Benefits, SchemeDetails, SchemeType}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import utils.{FakeCountryOptions, FakeNavigator}
+import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -68,7 +68,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       new FakeCountryOptions,
-      fakeNavigator
+      fakeNavigator,
+      FakeSectionComplete
     )
 
   private val postUrl = routes.CheckYourAnswersController.onSubmit()
@@ -135,7 +136,6 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       schemeBenefitsSection,
       bankAccountSection
     ),
-    Some("messages_cya_secondary_header"),
     postUrl
   )(fakeRequest, messages).toString
 

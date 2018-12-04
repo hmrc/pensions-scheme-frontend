@@ -29,13 +29,11 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "otherDirectors"
 
-  val companyName = "test company name"
-
   val form = new OtherDirectorsFormProvider()()
 
-  def createView = () => otherDirectors(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
+  def createView = () => otherDirectors(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => otherDirectors(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
+  def createViewUsingForm = (form: Form[_]) => otherDirectors(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   "OtherDirectors view" must {
 
@@ -44,8 +42,6 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
       messageKeyPrefix,
       messages("messages__otherDirectors__heading")
     )
-
-    behave like pageWithSecondaryHeader(createView, companyName)
 
     behave like pageWithBackLink(createView)
 

@@ -31,13 +31,11 @@ class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   val index = Index(1)
 
-  val companyName = "test company name"
 
-
-  def createView: () => HtmlFormat.Appendable = () => companyUniqueTaxReference(frontendAppConfig, form, NormalMode, index, companyName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => companyUniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyUniqueTaxReference(frontendAppConfig, form,
-    NormalMode, index, companyName)(fakeRequest, messages)
+    NormalMode, index)(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" must {
 

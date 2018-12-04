@@ -55,7 +55,7 @@ class DeclarationDormantControllerSpec extends ControllerSpecBase {
     DeclarationDormant.toString -> DeclarationDormant.values.head.toString
   )
 
-  def viewAsString(form: Form[_] = form): String = declarationDormant(frontendAppConfig, form, schemeName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = declarationDormant(frontendAppConfig, form)(fakeRequest, messages).toString
 
   "DeclarationDormant Controller" must {
 
@@ -79,7 +79,7 @@ class DeclarationDormantControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options.head.value))
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options(frontendAppConfig).head.value))
 
       val result = controller(new FakeDataRetrievalAction(Some(validData))).onSubmit(postRequest)
 
@@ -106,7 +106,7 @@ class DeclarationDormantControllerSpec extends ControllerSpecBase {
           redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
         }
         "POST" in {
-          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options.head.value))
+          val postRequest = fakeRequest.withFormUrlEncodedBody(("value", DeclarationDormant.options(frontendAppConfig).head.value))
           val result = controller(dontGetAnyData).onSubmit(postRequest)
 
           status(result) mustBe SEE_OTHER

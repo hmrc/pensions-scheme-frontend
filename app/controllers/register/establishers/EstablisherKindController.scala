@@ -52,8 +52,8 @@ class EstablisherKindController @Inject()(
       retrieveSchemeName {
         schemeName =>
           val redirectResult = request.userAnswers.get(EstablisherKindId(index)) match {
-            case None => Ok(establisherKind(appConfig, form, mode, index, schemeName))
-            case Some(value) => Ok(establisherKind(appConfig, form.fill(value), mode, index, schemeName))
+            case None => Ok(establisherKind(appConfig, form, mode, index))
+            case Some(value) => Ok(establisherKind(appConfig, form.fill(value), mode, index))
           }
           Future.successful(redirectResult)
       }
@@ -65,7 +65,7 @@ class EstablisherKindController @Inject()(
         schemeName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index, schemeName))),
+              Future.successful(BadRequest(establisherKind(appConfig, formWithErrors, mode, index))),
             value =>
               dataCacheConnector.save(
                 request.externalId,

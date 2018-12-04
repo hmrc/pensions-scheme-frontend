@@ -35,10 +35,6 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
 
   import RegisterNavigatorSpec._
 
-  override lazy val app = new GuiceApplicationBuilder().configure(
-    "features.useManagePensionsFrontend" -> true
-  ).build()
-
   private def routesWithRestrictedEstablisher = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     // Start - continue or what you will need
@@ -73,6 +69,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
 
     // Review, declarations, success - return from establishers
     (SchemeReviewId, hasCompanies, declarationDormant, true, None, false),
+    (SchemeReviewId, hasPartnership, declarationDormant, true, None, false),
     (SchemeReviewId, emptyAnswers, declaration, true, None, false),
     (DeclarationDormantId, emptyAnswers, declaration, true, None, false),
     (DeclarationId, emptyAnswers, declarationDuties, true, None, false),
@@ -84,10 +81,38 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (UserResearchDetailsId, emptyAnswers, schemeOverview(frontendAppConfig), false, None, false)
   )
 
+  private def routesWithRestrictedEstablisherWithHnS = Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+
+    //Check your answers - back to task list page
+    (DeclarationId, hasEstablishers, schemeSuccess, true, None, false),
+    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false),
+    (DeclarationDutiesId, dutiesTrue, taskList, true, None, false)
+  )
+
   "RegisterNavigator" must {
-    appRunning()
+
+    lazy val app = new GuiceApplicationBuilder().configure(
+      "features.is-hub-enabled" -> false
+    ).build()
+
+    val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
     val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
+    behave like nonMatchingNavigator(navigator)
+  }
+
+  "RegisterNavigator with hub and spoke" must {
+
+    lazy val app = new GuiceApplicationBuilder().configure(
+      "features.is-hub-enabled" -> true
+    ).build()
+
+    val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisherWithHnS, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 }
@@ -106,6 +131,7 @@ object RegisterNavigatorSpec {
   private val dutiesTrue = UserAnswers().declarationDuties(true)
   private val dutiesFalse = UserAnswers().declarationDuties(false)
   private val hasCompanies = UserAnswers().establisherCompanyDetails(0, CompanyDetails("test-company-name", None, None))
+  private val hasPartnership = UserAnswers().establisherPartnershipDetails(0, models.PartnershipDetails("test-company-name"))
   private val noEstablishers = emptyAnswers
   private val hasEstablishers = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.GroupLifeDeath))
   private val needsTrustees = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.SingleTrust))
@@ -138,11 +164,7 @@ object RegisterNavigatorSpec {
 
   private def occupationalPensionScheme(mode: Mode) = controllers.register.routes.OccupationalPensionSchemeController.onPageLoad(mode)
 
-  private def schemeDetails(mode: Mode) = controllers.register.routes.SchemeDetailsController.onPageLoad(mode)
-
   private def schemeEstablishedCountry(mode: Mode) = controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(mode)
-
-  private def schemeReview = controllers.register.routes.SchemeReviewController.onPageLoad()
 
   private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
 
@@ -154,8 +176,6 @@ object RegisterNavigatorSpec {
 
   private def whatYouWillNeed = controllers.routes.WhatYouWillNeedController.onPageLoad()
 
-  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
-
   private def adviserDetails = controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
 
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
@@ -165,5 +185,7 @@ object RegisterNavigatorSpec {
   private def schemeOverview(appConfig: FrontendAppConfig) = appConfig.managePensionsSchemeOverviewUrl
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
+
+  private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
 
 }

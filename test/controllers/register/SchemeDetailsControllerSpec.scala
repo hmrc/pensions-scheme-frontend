@@ -23,7 +23,7 @@ import controllers.actions._
 import forms.register.SchemeDetailsFormProvider
 import identifiers.register.SchemeDetailsId
 import models.register.{SchemeDetails, SchemeType}
-import models.requests.OptionalDataRequest
+import models.requests.{DataRequest, OptionalDataRequest}
 import models.{NormalMode, PSAName}
 import play.api.data.Form
 import play.api.libs.json.{Json, Reads}
@@ -31,7 +31,7 @@ import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
+import utils.{FakeNavigator, FakeSectionComplete, NameMatching, NameMatchingFactory}
 import views.html.register.schemeDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -63,8 +63,10 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      new DataRequiredActionImpl,
       formProvider,
-      FakeNameMatchingFactory
+      FakeNameMatchingFactory,
+      FakeSectionComplete
     )
 
   private def viewAsString(form: Form[_] = form) = schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString

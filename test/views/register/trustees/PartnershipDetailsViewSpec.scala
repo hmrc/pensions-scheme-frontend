@@ -30,12 +30,11 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
 
   override val form = new PartnershipDetailsFormProvider()()
   val firstIndex = Index(1)
-  val schemeName = "test scheme name"
 
-  def createView: () => HtmlFormat.Appendable = () => partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages)
+    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
 
 
   "PartnershipDetails view" must {
@@ -43,8 +42,6 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, messages("messages__common__trustee_secondary_header", schemeName))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       routes.TrusteeDetailsController.onSubmit(NormalMode, firstIndex).url, "partnershipName")

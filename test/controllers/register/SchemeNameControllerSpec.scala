@@ -21,6 +21,7 @@ import connectors.{FakeUserAnswersCacheConnector, PensionAdministratorConnector}
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
+import identifiers.register.SchemeNameId
 import models.requests.OptionalDataRequest
 import models.{NormalMode, PSAName}
 import play.api.data.Form
@@ -29,7 +30,7 @@ import play.api.mvc.AnyContent
 import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeNavigator, NameMatching, NameMatchingFactory}
+import utils.{FakeNavigator, FakeSectionComplete, NameMatching, NameMatchingFactory}
 import views.html.register.schemeName
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -61,8 +62,10 @@ class SchemeNameControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
+      new DataRequiredActionImpl,
       formProvider,
-      FakeNameMatchingFactory
+      FakeNameMatchingFactory,
+      FakeSectionComplete
     )
 
   private def viewAsString(form: Form[_] = form) = schemeName(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString

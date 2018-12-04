@@ -19,13 +19,13 @@ import identifiers.LastPageId
 import identifiers.register._
 import models._
 import models.address.{Address, TolerantAddress}
-import models.register.SchemeDetails
+import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
 import org.scalatest.OptionValues
 
 //scalastyle:off number.of.methods
 package object utils {
 
-  implicit class UserAnswerOps(answers: UserAnswers) extends OptionValues {
+  implicit class UserAnswerOps(answers: UserAnswers) extends OptionValues with Enumerable .Implicits {
 
     // Scheme details
     def declarationDuties(declarationDuties: Boolean): UserAnswers = {
@@ -34,6 +34,14 @@ package object utils {
 
     def schemeDetails(schemeDetails: SchemeDetails): UserAnswers = {
       answers.set(SchemeDetailsId)(schemeDetails).asOpt.value
+    }
+
+    def schemeName(schemeName: String): UserAnswers = {
+      answers.set(SchemeNameId)(schemeName).asOpt.value
+    }
+
+    def schemeType(schemeType: SchemeType): UserAnswers = {
+      answers.set(SchemeTypeId)(schemeType).asOpt.value
     }
 
     def securedBenefits(securedBenefits: Boolean): UserAnswers = {
@@ -74,6 +82,26 @@ package object utils {
       answers.set(establishers.company.CompanyDetailsId(index))(companyDetails).asOpt.value
     }
 
+    def establisherCompanyRegistrationNumber(index: Int, crn: CompanyRegistrationNumber): UserAnswers = {
+      answers.set(establishers.company.CompanyRegistrationNumberId(index))(crn).asOpt.value
+    }
+
+    def establisherCompanyDormant(index: Int, isDormant: DeclarationDormant): UserAnswers = {
+      answers.set(establishers.company.IsCompanyDormantId(index))(isDormant).asOpt.value
+    }
+
+    def establisherUniqueTaxReference(index: Int, utr: UniqueTaxReference): UserAnswers = {
+      answers.set(establishers.company.CompanyUniqueTaxReferenceId(index))(utr).asOpt.value
+    }
+
+    def establisherCompanyAddressYears(index: Int, addressYears: AddressYears): UserAnswers = {
+      answers.set(establishers.company.CompanyAddressYearsId(index))(addressYears).asOpt.value
+    }
+
+    def establisherPartnershipDetails(index: Int, partnershipDetails: PartnershipDetails): UserAnswers = {
+      answers.set(establishers.partnership.PartnershipDetailsId(index))(partnershipDetails).asOpt.value
+    }
+
     def establishersCompanyAddress(index: Int, address: Address): UserAnswers = {
       answers.set(establishers.company.CompanyAddressId(index))(address).asOpt.value
     }
@@ -88,6 +116,10 @@ package object utils {
 
     def establishersCompanyPreviousAddressList(index: Int, selectedAddress: TolerantAddress): UserAnswers = {
       answers.set(establishers.company.CompanyPreviousAddressListId(index))(selectedAddress).asOpt.value
+    }
+
+    def establishersCompanyContactDetails(index: Int, contactDetails: ContactDetails): UserAnswers = {
+      answers.set(establishers.company.CompanyContactDetailsId(index))(contactDetails).asOpt.value
     }
 
     //Establisher company director
@@ -187,6 +219,14 @@ package object utils {
     //Advisers
     def advisersAddress(address: Address): UserAnswers = {
       answers.set(adviser.AdviserAddressId)(address).asOpt.value
+    }
+
+    def adviserEmailAddress(email: String): UserAnswers = {
+      answers.set(adviser.AdviserEmailId)(email).asOpt.value
+    }
+
+    def adviserName(name: String): UserAnswers = {
+      answers.set(adviser.AdviserNameId)(name).asOpt.value
     }
 
     def advisersAddressList(selectedAddress: TolerantAddress): UserAnswers = {

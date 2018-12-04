@@ -200,6 +200,20 @@ trait ViewSpecBase extends SpecBase {
       )
   }
 
+
+  def haveLinkWithText(url: String, linkText:String, linkId: String): Matcher[View] = Matcher[View] {
+    view =>
+      val link = Jsoup.parse(view().toString()).select(s"a[id=$linkId]")
+      val href = link.attr("href")
+      val text = link.text
+      MatchResult(
+        href == url && text == linkText,
+        s"link $linkId href $href is not equal to the url $url \n or \n link $linkId text $text is not equal to the text $linkText",
+        s"link $linkId href $href is equal to the url $url and link $linkId text $text is equal to the text $linkText"
+
+      )
+  }
+
   def haveElementWithText(id: String, text: String): Matcher[View] = Matcher[View] {
     view =>
       val element = Jsoup.parse(view().toString()).getElementById(id)

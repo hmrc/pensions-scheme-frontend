@@ -14,28 +14,29 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.register
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions._
 import javax.inject.Inject
-import models.{JourneyTaskList, JourneyTaskListSection, Link}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.TaskListHelper
 import views.html.schemeTaskList
 
 import scala.concurrent.Future
 
 class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
-                                        override val messagesApi: MessagesApi,
-                                        authenticate: AuthAction
-                                       ) extends FrontendController with I18nSupport {
+                                         override val messagesApi: MessagesApi,
+                                         authenticate: AuthAction,
+                                         getData: DataRetrievalAction,
+                                         requiredData: DataRequiredAction
+                                        ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = authenticate.async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      val jtlSection = JourneyTaskListSection(None, Link("linkText", "linkTarget"), None)
-      val journeyTL = JourneyTaskList(jtlSection, Seq(jtlSection), Seq(jtlSection), jtlSection, None)
-        Future.successful(Ok(schemeTaskList(appConfig, journeyTL)))
-      }
+      Future.successful(Ok(schemeTaskList(appConfig, new TaskListHelper(request.userAnswers).tasklist)))
+  }
 }

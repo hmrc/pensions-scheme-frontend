@@ -28,19 +28,16 @@ class PartnerNinoViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "partner_nino"
   val establisherIndex = Index(1)
   val partnerIndex = Index(1)
-  val partnerName = "First Name Middle Name Last Name"
   val form = new PartnerNinoFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () => partnerNino(frontendAppConfig, form, NormalMode, establisherIndex,
-    partnerIndex, partnerName)(fakeRequest, messages)
+    partnerIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => partnerNino(frontendAppConfig, form, NormalMode,
-    establisherIndex, partnerIndex, partnerName)(fakeRequest, messages)
+    establisherIndex, partnerIndex)(fakeRequest, messages)
 
   "PartnerNino view" must {
     behave like normalPage(createView, messageKeyPrefix, messages("messages__partner_nino__title"))
-
-    behave like pageWithSecondaryHeader(createView, "First Name Middle Name Last Name")
 
     behave like pageWithBackLink(createView)
   }

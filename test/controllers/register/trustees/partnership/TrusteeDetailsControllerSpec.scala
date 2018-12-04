@@ -50,8 +50,7 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
     frontendAppConfig,
     form,
     NormalMode,
-    firstIndex,
-    schemeName
+    firstIndex
   )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

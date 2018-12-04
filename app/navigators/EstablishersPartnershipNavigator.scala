@@ -54,11 +54,17 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case PartnershipPreviousAddressId(index) =>
       NavigateTo.save(routes.PartnershipContactDetailsController.onPageLoad(NormalMode, index))
     case PartnershipContactDetailsId(index) =>
+      if(appConfig.isHubEnabled){
+        NavigateTo.save(routes.IsPartnershipDormantController.onPageLoad(NormalMode, index))
+      } else {
+        NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
+      }
+    case IsPartnershipDormantId(index) =>
       NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
     case CheckYourAnswersId(index) =>
-      NavigateTo.save(controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(index))
+      NavigateTo.save(routes.AddPartnersController.onPageLoad(index))
     case OtherPartnersId(index) =>
-      NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(index))
+      NavigateTo.save(routes.PartnershipReviewController.onPageLoad(index))
     case PartnershipReviewId(index) =>
       NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
     case _ =>
@@ -89,6 +95,8 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case PartnershipPreviousAddressId(index) =>
       checkYourAnswers(index, from.userAnswers)
     case PartnershipContactDetailsId(index) =>
+      checkYourAnswers(index, from.userAnswers)
+    case IsPartnershipDormantId(index) =>
       checkYourAnswers(index, from.userAnswers)
     case OtherPartnersId(index) =>
       NavigateTo.save(controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(index))

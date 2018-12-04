@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.SchemeDetailsFormProvider
-import identifiers.register.SchemeDetailsId
+import identifiers.register.{IsAboutSchemeCompleteId, SchemeDetailsId}
 import javax.inject.Inject
 import models.Mode
 import models.PSAName._
@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{NameMatchingFactory, Navigator, UserAnswers}
+import utils.{NameMatchingFactory, Navigator, SectionComplete, UserAnswers}
 import views.html.register.schemeDetails
 
 import scala.concurrent.Future
@@ -42,8 +42,10 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         @Register navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction,
                                         formProvider: SchemeDetailsFormProvider,
-                                        nameMatchingFactory: NameMatchingFactory) extends FrontendController with I18nSupport {
+                                        nameMatchingFactory: NameMatchingFactory,
+                                        sectionComplete: SectionComplete) extends FrontendController with I18nSupport {
 
   private val form = formProvider()
 
@@ -61,7 +63,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
-        value =>
+        value =>{
           nameMatchingFactory.nameMatching(value.schemeName).flatMap { nameMatching =>
           if (nameMatching.isMatch) {
               Future.successful(BadRequest(schemeDetails(appConfig, form.withError(
@@ -69,15 +71,17 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                 "messages__error__scheme_name_psa_name_match"
               ), mode)))
             } else {
-              dataCacheConnector.save(request.externalId, SchemeDetailsId, value).map(cacheMap =>
-                Redirect(navigator.nextPage(SchemeDetailsId, mode, UserAnswers(cacheMap)))
-              )
+              dataCacheConnector.save(request.externalId, SchemeDetailsId, value).flatMap { cacheMap =>
+                sectionComplete.setCompleteFlag(request.externalId, IsAboutSchemeCompleteId, UserAnswers(cacheMap), value = false).map { json =>
+                  Redirect(navigator.nextPage(SchemeDetailsId, mode, json))
+                }
+              }
             }
           } recoverWith {
             case e: NotFoundException =>
               Logger.error(e.message)
               Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-          }
+          }}
       )
   }
 

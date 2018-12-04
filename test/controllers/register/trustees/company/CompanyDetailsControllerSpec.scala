@@ -46,7 +46,7 @@ class CompanyDetailsControllerSpec extends ControllerSpecBase {
     new CompanyDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = companyDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(
     SchemeDetailsId.toString ->

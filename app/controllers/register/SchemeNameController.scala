@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
+import identifiers.register.{IsAboutSchemeCompleteId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
 import models.PSAName._
@@ -30,7 +31,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{NameMatchingFactory, Navigator, UserAnswers}
+import utils.{NameMatchingFactory, Navigator, SectionComplete, UserAnswers}
 import views.html.register.schemeName
 
 import scala.concurrent.Future
@@ -41,8 +42,10 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
                                      @Register navigator: Navigator,
                                      authenticate: AuthAction,
                                      getData: DataRetrievalAction,
+                                     requireData: DataRequiredAction,
                                      formProvider: SchemeNameFormProvider,
-                                     nameMatchingFactory: NameMatchingFactory) extends FrontendController with I18nSupport {
+                                     nameMatchingFactory: NameMatchingFactory,
+                                     sectionComplete: SectionComplete) extends FrontendController with I18nSupport {
 
   private val form = formProvider()
 
@@ -59,20 +62,22 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
           Future.successful(BadRequest(schemeName(appConfig, formWithErrors, mode))),
         value =>
           nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>
-          if (nameMatching.isMatch) {
+            if (nameMatching.isMatch) {
               Future.successful(BadRequest(schemeName(appConfig, form.withError(
                 "schemeName",
                 "messages__error__scheme_name_psa_name_match"
               ), mode)))
             } else {
-              dataCacheConnector.save(request.externalId, SchemeNameId, value).map(cacheMap =>
-                Redirect(navigator.nextPage(SchemeNameId, mode, UserAnswers(cacheMap)))
-              )
+              dataCacheConnector.save(request.externalId, SchemeNameId, value).flatMap { cacheMap =>
+                sectionComplete.setCompleteFlag(request.externalId, IsAboutSchemeCompleteId, UserAnswers(cacheMap), value = false).map { json =>
+                  Redirect(navigator.nextPage(SchemeNameId, mode, json))
+                }
+              }
+            } recoverWith {
+              case e: NotFoundException =>
+                Logger.error(e.message)
+                Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
             }
-          } recoverWith {
-            case e: NotFoundException =>
-              Logger.error(e.message)
-              Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
           }
       )
   }

@@ -26,7 +26,6 @@ import views.html.register.insurerAddressList
 
 class InsurerAddressListViewSpec extends ViewBehaviours {
 
-  val schemeName = "ThisSchemeName"
   val messageKeyPrefix = "select_the_address"
   val addressIndexes = Seq.range(0, 2)
   val addresses = Seq(
@@ -44,18 +43,16 @@ class InsurerAddressListViewSpec extends ViewBehaviours {
   val form = new AddressListFormProvider()(Seq.empty)
 
   def createView: () => _root_.play.twirl.api.HtmlFormat.Appendable =
-    () => insurerAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages)
+    () => insurerAddressList(frontendAppConfig, form, NormalMode, addresses)(fakeRequest, messages)
 
   def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable =
-    (form: Form[_]) => insurerAddressList(frontendAppConfig, form, NormalMode, schemeName, addresses)(fakeRequest, messages)
+    (form: Form[_]) => insurerAddressList(frontendAppConfig, form, NormalMode, addresses)(fakeRequest, messages)
 
   "InsurerAddressList view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithBackLink(createView)
-
-    behave like pageWithSecondaryHeader(createView, schemeName)
 
     "have link for enter address manually" in {
       Jsoup.parse(createView().toString).select("a[id=manual-address-link]") must haveLink(

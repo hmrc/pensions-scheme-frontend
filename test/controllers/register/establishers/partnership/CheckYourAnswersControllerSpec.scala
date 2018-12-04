@@ -23,7 +23,7 @@ import identifiers.register.establishers.partnership._
 import models.AddressYears.UnderAYear
 import models._
 import models.address.Address
-import models.register.SchemeDetails
+import models.register.{DeclarationDormant, SchemeDetails}
 import models.register.SchemeType.SingleTrust
 import play.api.test.Helpers._
 import utils._
@@ -45,6 +45,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
     .flatMap(_.set(PartnershipAddressYearsId(firstIndex))(UnderAYear))
     .flatMap(_.set(PartnershipPreviousAddressId(firstIndex))(Address("Previous Address 1", "Previous Address 2", None, None, None, "US")))
     .flatMap(_.set(PartnershipContactDetailsId(firstIndex))(ContactDetails("e@mail.co", "98765")))
+    .flatMap(_.set(IsPartnershipDormantId(firstIndex))(DeclarationDormant.Yes))
     .asOpt.value
 
   implicit val request = FakeDataRequest(partnershipAnswers)
@@ -73,7 +74,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
           PartnershipDetailsId(firstIndex).row(routes.PartnershipDetailsController.onPageLoad(CheckMode, firstIndex).url),
           PartnershipVatId(firstIndex).row(routes.PartnershipVatController.onPageLoad(CheckMode, firstIndex).url),
           PartnershipPayeId(firstIndex).row(routes.PartnershipPayeController.onPageLoad(CheckMode, firstIndex).url),
-          PartnershipUniqueTaxReferenceID(firstIndex).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url)
+          PartnershipUniqueTaxReferenceID(firstIndex).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, firstIndex).url),
+          IsPartnershipDormantId(firstIndex).row(routes.IsPartnershipDormantController.onPageLoad(CheckMode, firstIndex).url)
         ).flatten
       )
 
@@ -92,7 +94,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       lazy val viewAsString: String = check_your_answers(
         frontendAppConfig,
         Seq(partnershipDetails, partnershipContactDetails),
-        Some(Message("messages__establishers__secondaryHeading", schemeName)),
         routes.CheckYourAnswersController.onSubmit(firstIndex)
       )(fakeRequest, messages).toString
 

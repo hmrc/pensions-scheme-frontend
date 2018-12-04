@@ -28,13 +28,10 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   private def emptyAnswerSections: Seq[Section] = Nil
 
-  private def secondaryHeader: String = "test-secondaryHeader"
-
   def createView: () => HtmlFormat.Appendable = () =>
     check_your_answers(
       frontendAppConfig,
       emptyAnswerSections,
-      Some(secondaryHeader),
       routes.IndexController.onPageLoad()
     )(fakeRequest, messages)
 
@@ -42,14 +39,11 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     check_your_answers(
       frontendAppConfig,
       sections,
-      Some(secondaryHeader),
       routes.IndexController.onPageLoad()
     )(fakeRequest, messages)
 
   "check_your_answers view" must {
     behave like normalPageWithTitle(createView, messageKeyPrefix, messages("checkYourAnswers.title"), messages("checkYourAnswers.heading"))
-
-    behave like pageWithSecondaryHeader(createView, secondaryHeader)
 
     behave like pageWithSubmitButton(createView)
 

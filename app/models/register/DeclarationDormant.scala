@@ -16,6 +16,7 @@
 
 package models.register
 
+import config.FrontendAppConfig
 import utils.{Enumerable, InputOption, WithName}
 
 sealed trait DeclarationDormant
@@ -30,9 +31,12 @@ object DeclarationDormant {
     No, Yes
   )
 
-  val options: Seq[InputOption] = values.map {
+  def options(config: FrontendAppConfig): Seq[InputOption] = values.map {
     value =>
-      InputOption(value.toString, s"messages__declarationDormant__${value.toString}")
+      if(config.isHubEnabled)
+        InputOption(value.toString, s"messages__is_dormant__${value.toString}")
+      else
+        InputOption(value.toString, s"messages__declarationDormant__${value.toString}")
   }
 
   implicit val enumerable: Enumerable[DeclarationDormant] =

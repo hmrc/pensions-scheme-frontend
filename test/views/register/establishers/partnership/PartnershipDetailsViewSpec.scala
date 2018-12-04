@@ -30,12 +30,11 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
 
   override val form = new PartnershipDetailsFormProvider()()
   val firstIndex = Index(1)
-  val schemeName = "test scheme name"
 
-  def createView: () => HtmlFormat.Appendable = () => partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, schemeName)(fakeRequest, messages)
+    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
 
 
   "PartnershipDetails view" must {
