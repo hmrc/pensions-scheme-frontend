@@ -47,10 +47,10 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
   private def routesWithHubEnabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                  "User Answers",               "Next Page (Normal Mode)",     "Save (NM)",           "Next Page (Check Mode)",       "Save (CM)"),
     (HaveAnyTrusteesId,       haveAnyTrusteesTrue,          addTrustee,                   true,                   None,                           false),
-    (HaveAnyTrusteesId,       haveAnyTrusteesFalse,         schemeReview,                 true,                   None,                           false),
+    (HaveAnyTrusteesId,       haveAnyTrusteesFalse,         taskList,                     false,                   None,                           false),
     (HaveAnyTrusteesId,       emptyAnswers,                 sessionExpired,               false,                  None,                           false),
-    (AddTrusteeId,            addTrusteeTrue(0),  trusteeKind(0),        true,                   Some(trusteeKind(0)),    true),
-    (AddTrusteeId,            addTrusteeTrue(1),  trusteeKind(1),        true,                   Some(trusteeKind(1)),    true),
+    (AddTrusteeId,            addTrusteeTrue(0),  trusteeKind(0),         true,                   Some(trusteeKind(0)),    true),
+    (AddTrusteeId,            addTrusteeTrue(1),  trusteeKind(1),         true,                   Some(trusteeKind(1)),    true),
     (AddTrusteeId,            emptyAnswers,                 trusteeKind(0),        true,                   Some(trusteeKind(0)),    true),
     (AddTrusteeId,            trustees(10),       moreThanTenTrustees,          true,                   Some(moreThanTenTrustees),      true),
     (AddTrusteeId,            addTrusteeFalse,              taskList,                     false,                  Some(taskList),                 false),
@@ -64,7 +64,8 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
   private def routesWithHubDisabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                  "User Answers",               "Next Page (Normal Mode)",     "Save (NM)",           "Next Page (Check Mode)",       "Save (CM)"),
     (MoreThanTenTrusteesId, emptyAnswers,                   schemeReview,                 true,                   None,                           false),
-    (AddTrusteeId,          addTrusteeFalse,                schemeReview,                 true,                   Some(schemeReview),             true)
+    (AddTrusteeId,          addTrusteeFalse,                schemeReview,                 true,                   Some(schemeReview),             true),
+    (HaveAnyTrusteesId,     haveAnyTrusteesFalse,          schemeReview,                  true,                   None,                           false)
   )
 
   private def navigator(isHubEnabled: Boolean = true) = new TrusteesNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled))

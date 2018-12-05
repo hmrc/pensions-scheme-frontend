@@ -36,6 +36,6 @@ class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
-      Future.successful(Ok(schemeTaskList(appConfig, new TaskListHelper(request.userAnswers).tasklist)))
+      Future.successful(Ok(schemeTaskList(appConfig, new TaskListHelper(request.userAnswers).taskList)))
   }
 }
