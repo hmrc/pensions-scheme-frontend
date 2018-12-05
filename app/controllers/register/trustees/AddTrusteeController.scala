@@ -24,13 +24,12 @@ import forms.register.trustees.AddTrusteeFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.AddTrusteeId
 import javax.inject.Inject
-import models.register.{SchemeDetails, SchemeType}
-import models.{Mode, NormalMode}
+import models.Mode
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
 import utils.annotations.Trustees
@@ -54,15 +53,9 @@ class AddTrusteeController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       SchemeDetailsId.retrieve.right.map { schemeDetails =>
+        val trustees = request.userAnswers.allTrusteesAfterDelete
 
-        lazy val listOfSchemeTypeTrusts: Seq[SchemeType] = Seq(SchemeType.SingleTrust, SchemeType.MasterTrust)
-
-        if(appConfig.isHubEnabled && !listOfSchemeTypeTrusts.contains(schemeDetails.schemeType)){
-          Future.successful(Redirect(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)))
-        } else {
-          val trustees = request.userAnswers.allTrusteesAfterDelete
-          Future.successful(Ok(addTrustee(appConfig, form, mode, trustees)))
-        }
+        Future.successful(Ok(addTrustee(appConfig, form, mode, trustees)))
       }
   }
 

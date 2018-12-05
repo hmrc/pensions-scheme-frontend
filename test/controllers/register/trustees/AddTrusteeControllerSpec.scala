@@ -16,7 +16,6 @@
 
 package controllers.register.trustees
 
-import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -31,7 +30,6 @@ import models.register.trustees.TrusteeKind
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, _}
@@ -50,9 +48,6 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   def deleteTrusteeRoute(id: Int, kind: TrusteeKind): String =
     controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onPageLoad(id, kind).url
-
-  def getMandatoryBodyCorporateSchemeName: FakeDataRetrievalAction = new FakeDataRetrievalAction(Some(Json.obj(
-    SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.BodyCorporate))))
 
   val formProvider = new AddTrusteeFormProvider()
   val schemeName = "Test Scheme Name"
@@ -83,8 +78,7 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName,
-                 frontendAppConfig : FrontendAppConfig = frontendAppConfig): AddTrusteeController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddTrusteeController =
     new AddTrusteeController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -100,28 +94,6 @@ class AddTrusteeControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
-    }
-
-    "return OK and the correct view for if hub is enabled and having correct scheme type" in {
-      val frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
-        conf = "features.is-hub-enabled" -> true
-      ).build().injector.instanceOf[FrontendAppConfig]
-
-      val result = controller(frontendAppConfig=frontendAppConfig).onPageLoad(NormalMode)(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
-    }
-
-    "redirect to Have Any Trustees Controller if hub is enabled and having correct scheme type" in {
-      val frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
-        conf = "features.is-hub-enabled" -> true
-      ).build().injector.instanceOf[FrontendAppConfig]
-
-      val result = controller(getMandatoryBodyCorporateSchemeName, frontendAppConfig).onPageLoad(NormalMode)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
     }
 
     "redirect to the next page when valid data is submitted" in {

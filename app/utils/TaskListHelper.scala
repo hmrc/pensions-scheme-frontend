@@ -42,7 +42,8 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
         listOf(userAnswers.allEstablishersAfterDelete),
         listOf(userAnswers.allTrusteesAfterDelete),
         workingKnowledgeSection,
-        declarationLink)
+        declarationLink,
+        addTrusteeHeader)
     )
   }
 
@@ -52,7 +53,13 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
       Seq.empty,
       Seq.empty,
       JourneyTaskListSection(None, workingKnowledgeDefaultLink, None),
-      None)
+      None,
+      JourneyTaskListSection(
+        None,
+        Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+          controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+        None
+      ))
   }
 
   private lazy val aboutLinkText = messages("messages__schemeTaskList__about_link_text")

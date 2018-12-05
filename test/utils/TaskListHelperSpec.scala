@@ -43,7 +43,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
     "return valid about section based on user answers" in {
 
       new TaskListHelper(Some(userAnswers)).taskList mustBe JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
-        expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink)
+        expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink,expectedChangeTrusteeHeader)
     }
 
     "return blank task list if there are no user answers" in {
@@ -52,7 +52,8 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
         Seq.empty,
         Seq.empty,
         JourneyTaskListSection(None, workingKnowledgeDefaultLink, None),
-        None)
+        None,
+        expectedAddTrusteeHeader)
 
       new TaskListHelper(None).taskList mustBe blankJourneyTaskList
     }
@@ -256,6 +257,20 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
 
   private val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),
     controllers.register.routes.DeclarationController.onPageLoad().url))
+
+  private val expectedChangeTrusteeHeader = JourneyTaskListSection(
+    None,
+    Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url),
+    None
+  )
+
+  private val expectedAddTrusteeHeader = JourneyTaskListSection(
+      None,
+      Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+        controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+      None
+    )
 
   private def actualSeqAnswerRow(result: Seq[SuperSection], headingKey: Option[String]): Seq[AnswerRow] =
     result.filter(_.headingKey == headingKey).flatMap(_.sections).take(1).flatMap(_.rows)

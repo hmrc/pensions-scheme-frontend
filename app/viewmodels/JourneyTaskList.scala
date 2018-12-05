@@ -22,8 +22,8 @@ case class JourneyTaskList(about: JourneyTaskListSection,
                            establishers: Seq[JourneyTaskListSection],
                            trustees: Seq[JourneyTaskListSection],
                            workingKnowledge: JourneyTaskListSection,
-                           declaration: Option[Link] = None/*,
-                           addTrusteeHeader : JourneyTaskListSection*/){
+                           declaration: Option[Link] = None,
+                           addTrusteeHeader : JourneyTaskListSection){
 
 }
 
