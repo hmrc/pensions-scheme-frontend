@@ -16,32 +16,52 @@
 
 package views.register
 
+import config.FrontendAppConfig
 import controllers.register.routes
 import forms.register.OccupationalPensionSchemeFormProvider
 import models.NormalMode
 import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
 import views.html.register.occupationalPensionScheme
 
 class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
+  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    "features.is-hub-enabled" -> isHubEnabled
+  ).build().injector.instanceOf[FrontendAppConfig]
 
   val messageKeyPrefix = "occupational_pension_scheme"
 
   val form = new OccupationalPensionSchemeFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView(isHubEnabled:Boolean): () => HtmlFormat.Appendable = () =>
+    occupationalPensionScheme(appConfig(isHubEnabled), form, NormalMode)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  "OccupationalPensionScheme view" must {
+  "OccupationalPensionScheme view  with hub disabled" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(isHubEnabled=false), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView(isHubEnabled=false))
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
 
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.OccupationalPensionSchemeController.onSubmit(NormalMode).url)
+  }
+
+  "OccupationalPensionScheme view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
   }
 }

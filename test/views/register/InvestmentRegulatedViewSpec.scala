@@ -16,30 +16,52 @@
 
 package views.register
 
+import config.FrontendAppConfig
 import controllers.register.routes
 import forms.register.InvestmentRegulatedFormProvider
 import models.NormalMode
 import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
 import views.behaviours.YesNoViewBehaviours
 import views.html.register.investmentRegulated
 
 class InvestmentRegulatedViewSpec extends YesNoViewBehaviours {
 
+  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    "features.is-hub-enabled" -> isHubEnabled
+  ).build().injector.instanceOf[FrontendAppConfig]
+
   val messageKeyPrefix = "investment_regulated"
 
   val form = new InvestmentRegulatedFormProvider()()
 
-  def createView = () => investmentRegulated(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  private def createView(isHubEnabled: Boolean) = () =>
+    investmentRegulated(appConfig(isHubEnabled), form, NormalMode)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => investmentRegulated(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) =>
+    investmentRegulated(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  "InvestmentRegulated view" must {
+  "InvestmentRegulated view with hub switched off" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView(isHubEnabled = false))
 
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.InvestmentRegulatedController.onSubmit(NormalMode).url)
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
+  }
+
+  "InvestmentRegulated view with hub switched on" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
   }
 }

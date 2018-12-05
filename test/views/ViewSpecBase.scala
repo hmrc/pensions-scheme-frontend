@@ -186,7 +186,7 @@ trait ViewSpecBase extends SpecBase {
     val link = doc.select(s"a[id=$linkId]")
     assert(link.size() == 1, s"\n\nLink $linkId is not displayed")
     val href = link.attr("href")
-    assert(href == url, s"\n\nLink $linkId has href $href no $url")
+    assert(href == url, s"\n\nLink $linkId has href $href not $url")
   }
 
   def haveLink(url: String, linkId: String): Matcher[View] = Matcher[View] {

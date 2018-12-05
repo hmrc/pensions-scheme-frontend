@@ -16,29 +16,50 @@
 
 package views.register
 
+import config.FrontendAppConfig
 import forms.register.MembershipFutureFormProvider
 import models.NormalMode
 import models.register.Membership
 import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.membershipFuture
 
 class MembershipFutureViewSpec extends ViewBehaviours {
 
+  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    "features.is-hub-enabled" -> isHubEnabled
+  ).build().injector.instanceOf[FrontendAppConfig]
+
   val messageKeyPrefix = "membership"
 
   val form = new MembershipFutureFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => membershipFuture(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean): () => HtmlFormat.Appendable = () => membershipFuture(appConfig(isHubEnabled), form, NormalMode)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => membershipFuture(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  "MembershipFuture view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+  "MembershipFuture view with hub not enabled" must {
+    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView(isHubEnabled = false))
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
   }
+
+  "MembershipFuture view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
+  }
+
 
   "MembershipFuture view" when {
     "rendered" must {

@@ -16,17 +16,22 @@
 
 package views.register
 
+import controllers.register.routes
+import config.FrontendAppConfig
 import forms.register.SchemeEstablishedCountryFormProvider
 import models.NormalMode
-import models.register.SchemeDetails
-import models.register.SchemeType.SingleTrust
 import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import utils.{CountryOptions, InputOption}
 import views.behaviours.StringViewBehaviours
 import views.html.register.schemeEstablishedCountry
 
 class SchemeEstablishedCountryViewSpec extends StringViewBehaviours {
+
+  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    "features.is-hub-enabled" -> isHubEnabled
+  ).build().injector.instanceOf[FrontendAppConfig]
 
   val messageKeyPrefix = "scheme_country"
 
@@ -35,16 +40,32 @@ class SchemeEstablishedCountryViewSpec extends StringViewBehaviours {
 
   val form = new SchemeEstablishedCountryFormProvider(countryOptions)()
 
-  def createView: () => HtmlFormat.Appendable = () =>
-    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, Seq.empty)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean): () => HtmlFormat.Appendable = () =>
+    schemeEstablishedCountry(appConfig(isHubEnabled = isHubEnabled), form, NormalMode, Seq.empty)(fakeRequest, messages)
 
   def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) =>
     schemeEstablishedCountry(frontendAppConfig, form, NormalMode, inputOptions)(fakeRequest, messages)
 
-  "SchemeEstablishedCountry view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+  "SchemeEstablishedCountry view with hub not enabled" must {
+    behave like pageWithBackLink(createView(isHubEnabled = false))
 
-    behave like pageWithBackLink(createView)
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
+  }
+
+  "SchemeEstablishedCountry view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
+  }
+
+  "SchemeEstablishedCountry view" must {
+    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     "contain select input options for the value" in {
       val doc = asDocument(createViewUsingForm(form))
