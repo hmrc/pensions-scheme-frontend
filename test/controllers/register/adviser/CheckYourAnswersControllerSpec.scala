@@ -16,6 +16,7 @@
 
 package controllers.register.adviser
 
+import config.FrontendAppConfig
 import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -142,6 +143,10 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 }
 
 object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSugar {
+
+  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    conf = "features.is-hub-enabled" -> false
+  ).build().injector.instanceOf[FrontendAppConfig]
 
   val schemeName = "Test Scheme Name"
   val adviserName = "name"
