@@ -62,7 +62,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   private def createView(journeyTaskList:JourneyTaskList = journeyTaskList): () => HtmlFormat.Appendable = () =>
     schemeTaskList(frontendAppConfig, journeyTaskList)(fakeRequest, messages)
 
-  private val pageHeader = "Pension scheme details"
+  private val pageHeader = messages("messages__schemeTaskList__title")
   private val messageKeyPrefix = "schemeTaskList"
 
   "SchemeTaskListView" should {

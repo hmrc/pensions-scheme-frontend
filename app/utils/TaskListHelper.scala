@@ -154,11 +154,16 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
         Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url)
       case (true, true) =>
         Link(changeTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
+      case (true, false) if isAllTrusteesCompleted =>
+        Link(changeTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
       case (true, false) =>
         Link(addTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
     }
 
-    JourneyTaskListSection( None, link, None)
+    if(userAnswers.allTrusteesAfterDelete.isEmpty && isAllTrusteesCompleted)
+      JourneyTaskListSection(Some(isAllTrusteesCompleted), link, None)
+    else
+      JourneyTaskListSection(None, link, None)
 
   }
 }

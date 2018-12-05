@@ -177,8 +177,18 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
     "return the correct link and status if scheme type is not single or master and no trustees are added" in {
      val helper = new TaskListHelper(Some(declarationWithoutEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)))
       helper.addTrusteeHeader(declarationWithoutEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)) mustBe JourneyTaskListSection(
-        None,
-        Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+        Some(true),
+        Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+          controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+        None
+      )
+    }
+
+    "return the correct link and status if scheme type is not single or master, no trustees are added and Answered No" in {
+     val helper = new TaskListHelper(Some(declarationWithEstabliserAndHaveAnyTrusteesAndOtherSchemeType()))
+      helper.addTrusteeHeader(declarationWithEstabliserAndHaveAnyTrusteesAndOtherSchemeType()) mustBe JourneyTaskListSection(
+        Some(true),
+        Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
           controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
         None
       )
