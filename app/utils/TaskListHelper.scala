@@ -56,7 +56,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
       None,
       JourneyTaskListSection(
         None,
-        Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+        Link(addTrusteesLinkText,
           controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
         None
       ))
@@ -68,6 +68,8 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
   private lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
   private lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
   private lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
+  private lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
+  private lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
 
   private val aboutSectionDefaultLink: Link = {
     Link(aboutLinkText,
@@ -157,27 +159,18 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
 
   private[utils] def addTrusteeHeader(implicit userAnswers: UserAnswers): JourneyTaskListSection = {
 
-    val linkTarget = isTrusteesOptional match {
-      case false if userAnswers.allTrusteesAfterDelete.nonEmpty =>
-        controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url
-      case false =>
-        controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url
-      case true =>
-        controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url
+    val link = (isTrusteesOptional, userAnswers.allTrusteesAfterDelete.nonEmpty) match {
+      case (false, true) =>
+        Link(changeTrusteesLinkText, controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url)
+      case (false, false) =>
+        Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url)
+      case (true, true) =>
+        Link(changeTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
+      case (true, false) =>
+        Link(addTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
     }
 
-    if(userAnswers.allTrusteesAfterDelete.nonEmpty) {
-      JourneyTaskListSection(
-        None,
-        Link(messages("messages__schemeTaskList__sectionTrustees_change_link"), linkTarget),
-        None
-      )
-    } else {
-      JourneyTaskListSection(
-        None,
-        Link(messages("messages__schemeTaskList__sectionTrustees_add_link"), linkTarget),
-        None
-      )
-    }
+    JourneyTaskListSection( None, link, None)
+
   }
 }
