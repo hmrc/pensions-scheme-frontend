@@ -55,19 +55,26 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
       None)
   }
 
+  private lazy val aboutLinkText = messages("messages__schemeTaskList__about_link_text")
+  private lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_add_link")
+  private lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
+  private lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
+  private lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
+  private lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
+
   private val aboutSectionDefaultLink: Link = {
-    Link(messages("messages__schemeTaskList__about_link_text"),
+    Link(aboutLinkText,
       controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
   }
 
   private val workingKnowledgeDefaultLink: Link = {
-    Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
+    Link(workingKnowledgeLinkText,
       controllers.routes.WorkingKnowledgeController.onPageLoad().url)
   }
 
   private def aboutSection(implicit userAnswers: UserAnswers): JourneyTaskListSection = {
     val link = userAnswers.get(IsAboutSchemeCompleteId) match {
-      case Some(true) => Link(messages("messages__schemeTaskList__about_link_text"),
+      case Some(true) => Link(aboutLinkText,
         controllers.register.routes.CheckYourAnswersController.onPageLoad.url)
       case _ => aboutSectionDefaultLink
     }
@@ -76,42 +83,45 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
 
   private def workingKnowledgeSection = JourneyTaskListSection(
     flagValue(IsWorkingKnowledgeCompleteId),
-    Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
-      controllers.routes.WorkingKnowledgeController.onPageLoad().url),
+    Link(workingKnowledgeLinkText, controllers.routes.WorkingKnowledgeController.onPageLoad().url),
     None)
 
   private def declarationLink(implicit userAnswers: UserAnswers): Option[Link] =
     if (declarationEnabled)
-      Some(Link(messages("messages__schemeTaskList__declaration_link"),
+      Some(Link(declarationLinkText,
         controllers.register.routes.DeclarationController.onPageLoad().url))
     else None
 
-  private def listOf(sections: Seq[Entity[_]]): Seq[JourneyTaskListSection] =
+  private def listOf(sections: Seq[Entity[_]]): Seq[JourneyTaskListSection] = {
     for ((section, index) <- sections.zipWithIndex) yield
       JourneyTaskListSection(
         Some(section.isCompleted),
-        Link(linkText(section),  linkTarget(section, index)),
-        Some(section.name))
+        Link(linkText(section), linkTarget(section, index)),
+        Some(section.name)
+      )
+  }
 
   private def linkText(item: Entity[_]): String =
     item.id match {
-      case EstablisherCompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => messages("messages__schemeTaskList__company_link")
-      case EstablisherDetailsId(_) | TrusteeDetailsId(_) => messages("messages__schemeTaskList__individual_link")
-      case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => messages("messages__schemeTaskList__partnership_link")
+      case EstablisherCompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
+      case EstablisherDetailsId(_) | TrusteeDetailsId(_) => individualLinkText
+      case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
     }
 
-  private def flagValue[A](flag : TypedIdentifier[A])(implicit rds: Reads[A]): Option[A] ={
+  private def flagValue[A](flag : TypedIdentifier[A])(implicit rds: Reads[A]): Option[A] = {
     journey.flatMap(_.get[A](flag))
   }
 
-  private def isAllEstablishersCompleted(userAnswers: UserAnswers) : Boolean = {
+  private def isAllEstablishersCompleted(implicit userAnswers: UserAnswers) : Boolean = {
     userAnswers.allEstablishersAfterDelete.nonEmpty && userAnswers.allEstablishersAfterDelete.forall(_.isCompleted)
   }
 
-  private def isAllTrusteesCompleted(userAnswers: UserAnswers) : Boolean = {
-
+  private def isTrusteesOptional(implicit userAnswers: UserAnswers): Boolean ={
     val listOfSchemeTypeTrusts: Seq[SchemeType] = Seq(SchemeType.SingleTrust, SchemeType.MasterTrust)
-    val isTrusteesOptional = flagValue(SchemeDetailsId).forall(scheme => !listOfSchemeTypeTrusts.contains(scheme.schemeType))
+    flagValue(SchemeDetailsId).forall(scheme => !listOfSchemeTypeTrusts.contains(scheme.schemeType))
+  }
+
+  private def isAllTrusteesCompleted(implicit userAnswers: UserAnswers) : Boolean = {
 
     val isOptionalTrusteesJourney = flagValue(HaveAnyTrusteesId).forall(_==false) && isTrusteesOptional
     val isMandatoryTrusteesJourney = userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
@@ -119,15 +129,16 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     isOptionalTrusteesJourney || isMandatoryTrusteesJourney
   }
 
-  private[utils] def declarationEnabled(implicit userAnswers: UserAnswers): Boolean =
+  private[utils] def declarationEnabled(implicit userAnswers: UserAnswers): Boolean = {
     Seq(
       flagValue(IsAboutSchemeCompleteId),
       flagValue(IsWorkingKnowledgeCompleteId),
-      Some(isAllEstablishersCompleted(userAnswers)),
-      Some(isAllTrusteesCompleted(userAnswers))
+      Some(isAllEstablishersCompleted),
+      Some(isAllTrusteesCompleted)
     ).forall(_.contains(true))
+  }
 
-  private[utils] def linkTarget(item: Entity[_], index : Int): String =
+  private[utils] def linkTarget(item: Entity[_], index : Int): String = {
     item.id match {
       case EstablisherCompanyDetailsId(_) if item.isCompleted =>
         controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index).url
@@ -135,4 +146,31 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
         controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(index).url
       case _ => item.editLink
     }
+  }
+
+  private[utils] def addTrusteeHeader(implicit userAnswers: UserAnswers): JourneyTaskListSection = {
+
+    val linkTarget = isTrusteesOptional match {
+      case false if userAnswers.allTrusteesAfterDelete.nonEmpty =>
+        controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url
+      case false =>
+        controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url
+      case true =>
+        controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url
+    }
+
+    if(userAnswers.allTrusteesAfterDelete.nonEmpty) {
+      JourneyTaskListSection(
+        None,
+        Link(messages("messages__schemeTaskList__sectionTrustees_change_link"), linkTarget),
+        None
+      )
+    } else {
+      JourneyTaskListSection(
+        None,
+        Link(messages("messages__schemeTaskList__sectionTrustees_add_link"), linkTarget),
+        None
+      )
+    }
+  }
 }

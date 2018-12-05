@@ -24,6 +24,7 @@ import utils.{Navigator, UserAnswers}
 
 class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
 
+  //scalastyle:off cyclomatic.complexity
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
       case CompanyDetailsId(index) =>

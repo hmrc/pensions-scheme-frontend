@@ -161,6 +161,49 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
     }
   }
 
+  "addTrusteeHeader" must {
+
+    "return the correct link and status if scheme type is single or master and no trustees are added" in {
+     val helper = new TaskListHelper(Some(declarationWithoutEstabliserAndTrustees()))
+      helper.addTrusteeHeader(declarationWithoutEstabliserAndTrustees()) mustBe JourneyTaskListSection(
+        None,
+        Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url),
+        None
+      )
+    }
+
+    "return the correct link and status if scheme type is not single or master and no trustees are added" in {
+     val helper = new TaskListHelper(Some(declarationWithoutEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)))
+      helper.addTrusteeHeader(declarationWithoutEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)) mustBe JourneyTaskListSection(
+        None,
+        Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+          controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+        None
+      )
+    }
+
+    "return the correct link and status if scheme type is single or master and trustees are added" in {
+     val helper = new TaskListHelper(Some(declarationWithEstabliserAndTrustees()))
+      helper.addTrusteeHeader(declarationWithEstabliserAndTrustees()) mustBe JourneyTaskListSection(
+        None,
+        Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url),
+        None
+      )
+    }
+
+    "return the correct link and status if scheme type is not single or master and trustees are added" in {
+     val helper = new TaskListHelper(Some(declarationWithEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)))
+      helper.addTrusteeHeader(declarationWithEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)) mustBe JourneyTaskListSection(
+        None,
+        Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+          controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+        None
+      )
+    }
+  }
+
 }
 
 object TaskListHelperSpec extends SpecBase with JsonFileReader {
@@ -228,8 +271,9 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
   }
 
   private def declarationWithEstabliserAndTrustees(isEstablisherCompleteId : Boolean = true,
-                                           isTrusteeCompleteId : Boolean = true) : UserAnswers = {
-    declarationWithoutEstabliserAndTrustees()
+                                           isTrusteeCompleteId : Boolean = true,
+                                           schemeType: SchemeType = SchemeType.SingleTrust) : UserAnswers = {
+    declarationWithoutEstabliserAndTrustees(schemeType)
       .set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
       .set(IsEstablisherCompleteId(0))(true).asOpt.value
       .set(EstablisherDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
