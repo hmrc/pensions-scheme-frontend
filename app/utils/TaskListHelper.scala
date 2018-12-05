@@ -64,12 +64,11 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
   private lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
   private lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
 
-  private val aboutSectionDefaultLink: Link = {
-    Link(aboutLinkText,
-      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
-  }
+  private val aboutSectionDefaultLink: Link = Link(aboutLinkText,
+    controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
 
-  private val workingKnowledgeDefaultLink: Link = Link(workingKnowledgeLinkText, controllers.routes.WorkingKnowledgeController.onPageLoad().url)
+  private val workingKnowledgeDefaultLink: Link = Link(workingKnowledgeLinkText,
+    controllers.routes.WorkingKnowledgeController.onPageLoad().url)
 
   private val addTrusteesDefaultLink: JourneyTaskListSection = JourneyTaskListSection(
     None,
@@ -80,8 +79,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
 
   private def aboutSection(implicit userAnswers: UserAnswers): JourneyTaskListSection = {
     val link = userAnswers.get(IsAboutSchemeCompleteId) match {
-      case Some(true) => Link(aboutLinkText,
-        controllers.register.routes.CheckYourAnswersController.onPageLoad().url)
+      case Some(true) => Link(aboutLinkText, controllers.register.routes.CheckYourAnswersController.onPageLoad().url)
       case _ => aboutSectionDefaultLink
     }
 
