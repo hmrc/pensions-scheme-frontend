@@ -43,6 +43,10 @@
         }
 
         @components.submit_button("site.continue")
+
+        @if(appConfig.isHubEnabled) {
+            @components.return_link("messages__schemeTaskList__returnlink", controllers.register.routes.SchemeTaskListController.onPageLoad)
+        }
     }
 
 }

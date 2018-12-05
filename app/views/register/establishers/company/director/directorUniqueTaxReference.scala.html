@@ -32,51 +32,57 @@
         appConfig = appConfig,
         bodyClasses = None) {
 
-        @helpers.form(action = DirectorUniqueTaxReferenceController.onSubmit(mode, establisherIndex, directorIndex), 'autoComplete -> "off") {
+            @helpers.form(action = DirectorUniqueTaxReferenceController.onSubmit(mode, establisherIndex, directorIndex), 'autoComplete -> "off") {
 
-        @components.back_link()
+            @if(!appConfig.isHubEnabled) {
+                @components.back_link()
+            }
 
-        @components.error_summary(form.errors)
+            @components.error_summary(form.errors)
 
-            @components.heading(
-                headingKey=messages("messages__director_has_sautr__title")
+                @components.heading(
+                    headingKey=messages("messages__director_has_sautr__title")
+                )
+
+                @components.fieldSet(
+                field = form("directorUniqueTaxReference.hasUtr"),
+                legend = "messages__director_has_sautr__title",
+                hint = Some("messages__company__sautr_hint_what"),
+                hiddenLegend = true
+            ){
+            @components.radio(
+                field = form("uniqueTaxReference.hasUtr"),
+                label = options(0).label,
+                value = options(0).value,
+                dataTarget = options(0).dataTarget
             )
 
-            @components.fieldSet(
-            field = form("directorUniqueTaxReference.hasUtr"),
-            legend = "messages__director_has_sautr__title",
-            hint = Some("messages__company__sautr_hint_what"),
-            hiddenLegend = true
-        ){
-        @components.radio(
-            field = form("uniqueTaxReference.hasUtr"),
-            label = options(0).label,
-            value = options(0).value,
-            dataTarget = options(0).dataTarget
-        )
-
-        @components.input_text(
-            field = form("uniqueTaxReference.utr"),
-            label = messages("messages__director_sautr"),
-            groupClass = Some("js-hidden panel panel-border-narrow"),
-            hint = Some(messages("messages__director_sautr_hint_format"))
-        )
-
-        @components.radio(
-            field = form("uniqueTaxReference.hasUtr"),
-            label = options(1).label,
-            value = options(1).value,
-            dataTarget = options(1).dataTarget
-        )
-
-        @components.input_text(
-            field = form("uniqueTaxReference.reason"),
-            label = messages("messages__director_no_sautr"),
-            groupClass = Some("js-hidden panel panel-border-narrow")
+            @components.input_text(
+                field = form("uniqueTaxReference.utr"),
+                label = messages("messages__director_sautr"),
+                groupClass = Some("js-hidden panel panel-border-narrow"),
+                hint = Some(messages("messages__director_sautr_hint_format"))
             )
-        }
 
-        @components.submit_button()
+            @components.radio(
+                field = form("uniqueTaxReference.hasUtr"),
+                label = options(1).label,
+                value = options(1).value,
+                dataTarget = options(1).dataTarget
+            )
+
+            @components.input_text(
+                field = form("uniqueTaxReference.reason"),
+                label = messages("messages__director_no_sautr"),
+                groupClass = Some("js-hidden panel panel-border-narrow")
+                )
+            }
+
+            @components.submit_button()
+
+            @if(appConfig.isHubEnabled) {
+                @components.return_link("messages__schemeTaskList__returnlink", controllers.register.routes.SchemeTaskListController.onPageLoad)
+            }
 
         }
 }

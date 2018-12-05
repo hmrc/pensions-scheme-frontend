@@ -28,7 +28,9 @@
 
     @helpers.form(action = controllers.register.establishers.partnership.partner.routes.PartnerDetailsController.onSubmit(mode, establisherIndex, partnerIndex), 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(!appConfig.isHubEnabled) {
+            @components.back_link()
+        }
 
         @components.error_summary(form.errors)
 
@@ -58,5 +60,9 @@
         )
 
         @components.submit_button()
+
+        @if(appConfig.isHubEnabled) {
+            @components.return_link("messages__schemeTaskList__returnlink", controllers.register.routes.SchemeTaskListController.onPageLoad)
+        }
     }
 }

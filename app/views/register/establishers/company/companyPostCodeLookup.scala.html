@@ -28,7 +28,9 @@
 
     @helpers.form(action = CompanyPostCodeLookupController.onSubmit(mode, index), 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(!appConfig.isHubEnabled) {
+            @components.back_link()
+        }
 
         @components.error_summary(form.errors)
 
@@ -48,5 +50,9 @@
         )
 
         @components.submit_button("site.find_address")
+
+        @if(appConfig.isHubEnabled) {
+            @components.return_link("messages__schemeTaskList__returnlink", controllers.register.routes.SchemeTaskListController.onPageLoad)
+        }
     }
 }
