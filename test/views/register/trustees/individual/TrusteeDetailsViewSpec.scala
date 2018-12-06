@@ -33,17 +33,18 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   override val form = new PersonDetailsFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean = true): () => HtmlFormat.Appendable = () =>
+    trusteeDetails(appConfig(isHubEnabled), form, NormalMode, firstIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
 
 
-  "TrusteeDetails view" must {
+  "TrusteeDetails view with hub enabled" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 
     behave like pageWithTextFields(
       createViewUsingForm,
@@ -54,5 +55,20 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
     behave like pageWithDateFields(createViewUsingForm, form)
 
+    "not have a back link" in {
+      val doc = asDocument(createView()())
+      assertNotRenderedById(doc, "back-link")
+    }
+
   }
+
+  "TrusteeDetails view with hub disabled" must {
+    behave like pageWithBackLink(createView(isHubEnabled = false))
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
+  }
+
 }
