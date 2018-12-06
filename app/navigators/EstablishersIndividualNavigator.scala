@@ -32,6 +32,7 @@ class EstablishersIndividualNavigator @Inject()(
   private def checkYourAnswers(index: Int)(answers: UserAnswers): Option[NavigateTo] =
     NavigateTo.save(controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(index))
 
+  //scalastyle:off cyclomatic.complexity
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
       case EstablisherDetailsId(index) =>
@@ -57,7 +58,11 @@ class EstablishersIndividualNavigator @Inject()(
       case ContactDetailsId(index) =>
         checkYourAnswers(index)(from.userAnswers)
       case CheckYourAnswersId =>
-        NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
+        if(appConfig.isHubEnabled) {
+          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        } else {
+          NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
+        }
     }
   }
 
