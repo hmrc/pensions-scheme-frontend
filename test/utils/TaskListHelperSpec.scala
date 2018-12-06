@@ -20,18 +20,14 @@ import base.{JsonFileReader, SpecBase}
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.{HaveAnyTrusteesId, IsTrusteeCompleteId}
 import identifiers.register.{IsAboutSchemeCompleteId, IsWorkingKnowledgeCompleteId, SchemeDetailsId}
 import models.person.PersonDetails
-import models.register.{EstablisherCompanyEntity, EstablisherIndividualEntity, SchemeDetails, SchemeType}
-import models.{CompanyDetails, NormalMode}
+import models.register._
+import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
-import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.establishers.partnership.PartnershipDetailsId
-import models.{CheckMode, Index, NormalMode}
-import models.register.{EstablisherCompanyEntity, EstablisherIndividualEntity, EstablisherPartnershipEntity}
 import org.scalatest.{MustMatchers, WordSpec}
 import viewmodels._
 
@@ -168,7 +164,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
      val helper = new TaskListHelper(Some(declarationWithoutEstabliserAndTrustees()))
       helper.addTrusteeHeader(declarationWithoutEstabliserAndTrustees()) mustBe JourneyTaskListSection(
         None,
-        Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+        Link(messages(addTrusteesLinkText),
           controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url),
         None
       )
@@ -178,7 +174,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
      val helper = new TaskListHelper(Some(declarationWithoutEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)))
       helper.addTrusteeHeader(declarationWithoutEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)) mustBe JourneyTaskListSection(
         None,
-        Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+        Link(messages(addTrusteesLinkText),
           controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
         None
       )
@@ -188,7 +184,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
      val helper = new TaskListHelper(Some(declarationWithEstabliserAndHaveAnyTrusteesAndOtherSchemeType()))
       helper.addTrusteeHeader(declarationWithEstabliserAndHaveAnyTrusteesAndOtherSchemeType()) mustBe JourneyTaskListSection(
         Some(true),
-        Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+        Link(messages(changeTrusteesLinkText),
           controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
         None
       )
@@ -198,7 +194,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
      val helper = new TaskListHelper(Some(declarationWithEstabliserAndTrustees()))
       helper.addTrusteeHeader(declarationWithEstabliserAndTrustees()) mustBe JourneyTaskListSection(
         None,
-        Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+        Link(messages(changeTrusteesLinkText),
           controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url),
         None
       )
@@ -208,7 +204,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
      val helper = new TaskListHelper(Some(declarationWithEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)))
       helper.addTrusteeHeader(declarationWithEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)) mustBe JourneyTaskListSection(
         None,
-        Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+        Link(messages(changeTrusteesLinkText),
           controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
         None
       )
@@ -219,18 +215,27 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
 
 object TaskListHelperSpec extends SpecBase with JsonFileReader {
 
+  private lazy val aboutLinkText = messages("messages__schemeTaskList__about_link_text")
+  private lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_add_link")
+  private lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
+  private lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
+  private lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
+  private lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
+  private lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
+  private lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
+
   private val aboutSectionDefaultLink: Link = {
-    Link(messages("messages__schemeTaskList__about_link_text"),
+    Link(messages(aboutLinkText),
       controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
   }
 
   private val aboutSectionCompletedLink: Link = {
-    Link(messages("messages__schemeTaskList__about_link_text"),
+    Link(messages(aboutLinkText),
       controllers.register.routes.CheckYourAnswersController.onPageLoad.url)
   }
 
   private val workingKnowledgeDefaultLink: Link = {
-    Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
+    Link(messages(workingKnowledgeLinkText),
       controllers.routes.WorkingKnowledgeController.onPageLoad().url)
   }
 
@@ -251,33 +256,33 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
 
   private val expectedEstablishersSection = Seq(
     JourneyTaskListSection(Some(true),
-      Link(messages("messages__schemeTaskList__company_link"),
+      Link(messages(companyLinkText),
         controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0).url),
       Some("Test company name")),
     JourneyTaskListSection(Some(true),
-      Link(messages("messages__schemeTaskList__individual_link"),
+      Link(messages(individualLinkText),
         controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(1).url),
       Some("Test individual name")))
 
   private val expectedTrusteesSection = Seq(
     JourneyTaskListSection(Some(true),
-      Link(messages("messages__schemeTaskList__partnership_link"),
+      Link(messages(partnershipLinkText),
         controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(0).url),
       Some("Test partnership name")))
 
-  private val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),
+  private val expectedDeclarationLink = Some(Link(messages(declarationLinkText),
     controllers.register.routes.DeclarationController.onPageLoad().url))
 
   private val expectedChangeTrusteeHeader = JourneyTaskListSection(
     None,
-    Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+    Link(messages(changeTrusteesLinkText),
       controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url),
     None
   )
 
   private val expectedAddTrusteeHeader = JourneyTaskListSection(
       None,
-      Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+      Link(messages(addTrusteesLinkText),
         controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
       None
     )
