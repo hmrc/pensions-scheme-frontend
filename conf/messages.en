@@ -1142,6 +1142,7 @@ messages__pageNotFound404__heading = Page not found
 messages__pageNotFound404__p1 = If you typed the web address, check it is correct.
 messages__pageNotFound404__p2 = If you pasted the web address, check you copied the entire address.
 
+declarationDuties.checkYourAnswersLabel= Do you have working knowledge of pensions and pensions tax legislation?
 messages__adviserName__heading = Who has working knowledge of pensions and pensions tax legislation?
 
 messages__adviserAddress__cyaHeading = {0}’s address
