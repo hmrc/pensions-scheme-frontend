@@ -19,6 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.SchemeDetailsConnector
 import controllers.actions._
+import handlers.ErrorHandler
 import javax.inject.Inject
 import models.details.transformation.SchemeDetailsMasterSection
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -32,7 +33,8 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            schemeDetailsConnector: SchemeDetailsConnector,
                                            schemeTransformer: SchemeDetailsMasterSection,
-                                           authenticate: AuthAction
+                                           authenticate: AuthAction,
+                                           errorHandler: ErrorHandler
                                        ) extends FrontendController with I18nSupport {
 
   def onPageLoad(srn: String): Action[AnyContent] = authenticate.async {
@@ -42,7 +44,7 @@ class PSASchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
           val schemeDetailMasterSection = schemeTransformer.transformMasterSection(scheme)
           Future.successful(Ok(psa_scheme_details(appConfig, schemeDetailMasterSection, scheme.schemeDetails.name, srn)))
         } else {
-          Future.successful(NotFound)
+          Future.successful(NotFound(errorHandler.notFoundTemplate))
         }
       }
   }
