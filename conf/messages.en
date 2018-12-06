@@ -1141,3 +1141,11 @@ messages__pageNotFound404__title = Page not found
 messages__pageNotFound404__heading = Page not found
 messages__pageNotFound404__p1 = If you typed the web address, check it is correct.
 messages__pageNotFound404__p2 = If you pasted the web address, check you copied the entire address.
+
+messages__adviserName__title = Who has working knowledge of pensions and pensions tax legislation?
+messages__adviserName__heading = Who has working knowledge of pensions and pensions tax legislation?
+messages__adviserName__hint = This can be either the name of your adviser or the company they work for.
+messages__adviserName__name_label = The name of the adviser
+
+messages__adviserName__length = Enter a name using less than 108 characters
+messages__adviserName__invalid = Enter a name using only letters
