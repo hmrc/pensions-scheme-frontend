@@ -25,23 +25,29 @@ import views.behaviours.QuestionViewBehaviours
 import views.html.register.benefitsInsurer
 
 class BenefitsInsurerViewSpec extends QuestionViewBehaviours[BenefitsInsurer] {
-
   val messageKeyPrefix = "benefits_insurance"
 
   override val form = new BenefitsInsurerFormProvider()()
 
   val schemeName = "myScheme"
 
-  def createView = () => benefitsInsurer(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+  private def createView(isHubEnabled:Boolean) = () =>
+    benefitsInsurer(appConfig(isHubEnabled), form, NormalMode, schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => benefitsInsurer(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) =>
+    benefitsInsurer(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
 
   "BenefitsInsurer view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView(isHubEnabled = false))
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
 
     behave like pageWithTextFields(
       createViewUsingForm,
@@ -50,5 +56,14 @@ class BenefitsInsurerViewSpec extends QuestionViewBehaviours[BenefitsInsurer] {
       "companyName", "policyNumber"
     )
 
+  }
+
+  "BenefitsInsurer view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
   }
 }

@@ -217,11 +217,6 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
 }
 
 object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
-
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
-
   private def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
   private val formProvider = new DeclarationFormProvider()
