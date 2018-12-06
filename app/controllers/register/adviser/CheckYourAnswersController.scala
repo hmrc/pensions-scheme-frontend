@@ -19,21 +19,25 @@ package controllers.register.adviser
 import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
+import identifiers.TypedIdentifier
 import identifiers.register.{IsWorkingKnowledgeCompleteId, SubmissionReferenceNumberId}
 import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId}
 import javax.inject.Inject
+import models.address.Address
+import models.register.AdviserDetails
 import models.requests.DataRequest
 import models.{CheckMode, NormalMode, PSAName}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Reads}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Adviser
-import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Navigator, SectionComplete}
-import viewmodels.AnswerSection
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
+import utils.{CountryOptions, Navigator, SectionComplete, UserAnswers}
+import viewmodels.{AnswerRow, AnswerSection, Message}
 import views.html.check_your_answers
+import utils.checkyouranswers.Ops._
 
 import scala.concurrent.Future
 
@@ -55,11 +59,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-
-      val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
-      val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
-      val sections = Seq(AnswerSection(None, adviserDetailsRow ++ adviserAddressRow))
-
+      val sections = if (appConfig.isHubEnabled) {
+        hsAnswerSections()
+      } else {
+        val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
+        val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
+        Seq(AnswerSection(None, adviserDetailsRow ++ adviserAddressRow))
+      }
       Ok(
         check_your_answers(
           appConfig,
@@ -67,6 +73,45 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           controllers.register.adviser.routes.CheckYourAnswersController.onSubmit()
         )
       )
+  }
+
+  private def hsAnswerSections()(implicit request:models.requests.DataRequest[play.api.mvc.AnyContent]):Seq[AnswerSection] = {
+    implicit def adviserDetails[I <: TypedIdentifier[AdviserDetails]](implicit rds: Reads[AdviserDetails]): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+          adviserDetails =>
+            Seq(
+              AnswerRow(
+                "messages__workingKnowledge__heading",
+                Seq(s"${adviserDetails.adviserName}"),
+                answerIsMessageKey = false,
+                Some(changeUrl),
+                Message("messages__visuallyhidden__common__name", adviserDetails.adviserName)
+              ),
+              AnswerRow(
+                "messages__adviserName__heading",
+                Seq(s"${adviserDetails.adviserName}"),
+                answerIsMessageKey = false,
+                Some(changeUrl),
+                Message("messages__visuallyhidden__common__name", adviserDetails.adviserName)
+              ),
+              AnswerRow(
+                "messages__adviser__email__address__heading",
+                Seq(s"${adviserDetails.emailAddress}"),
+                answerIsMessageKey = false,
+                Some(changeUrl),
+                "messages__visuallyhidden__adviser__email_address"
+              ))
+        }.getOrElse(Seq.empty[AnswerRow])
+      }
+    }
+
+    implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
+      AddressCYA(label="messages__adviserAddress__cyaHeading")()
+
+    val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
+    val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
+    Seq(AnswerSection(None, adviserDetailsRow ++ adviserAddressRow))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
