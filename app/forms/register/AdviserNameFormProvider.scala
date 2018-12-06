@@ -24,7 +24,7 @@ class AdviserNameFormProvider @Inject() extends Mappings with Constraints {
   val schemeNameMaxLength = 160
 
   def apply(): Form[String] = Form(
-    "adviserName" -> text("???").
+    "adviserName" -> text("messages__adviserName__blank").
       verifying(firstError(
         maxLength(schemeNameMaxLength, "messages__adviserName__length"),
         safeText("messages__adviserName__invalid")))
