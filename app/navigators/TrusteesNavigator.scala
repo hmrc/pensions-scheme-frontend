@@ -57,7 +57,11 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case Some(true) =>
         NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
       case Some(false) =>
-        NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
+        if(appConfig.isHubEnabled){
+          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        } else {
+          NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
+        }
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }

@@ -16,11 +16,12 @@
 
 package controllers.register.adviser
 
+import config.FrontendAppConfig
 import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
 import identifiers.TypedIdentifier
-import identifiers.register.adviser.IsWorkingKnowledgeCompleteId
+import identifiers.register.IsWorkingKnowledgeCompleteId
 import models.CheckMode
 import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -142,6 +143,10 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 }
 
 object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSugar {
+
+  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    conf = "features.is-hub-enabled" -> false
+  ).build().injector.instanceOf[FrontendAppConfig]
 
   val schemeName = "Test Scheme Name"
   val adviserName = "name"

@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package identifiers.register.adviser
+package identifiers.register
 
 import identifiers.TypedIdentifier
 
 case object IsWorkingKnowledgeCompleteId extends TypedIdentifier[Boolean] {
   override def toString: String = "isWorkingKnowledgeComplete"
 }
-
-

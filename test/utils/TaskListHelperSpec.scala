@@ -17,7 +17,16 @@
 package utils
 
 import base.{JsonFileReader, SpecBase}
-import models.NormalMode
+import identifiers.register.establishers.IsEstablisherCompleteId
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.trustees.{HaveAnyTrusteesId, IsTrusteeCompleteId}
+import identifiers.register.{IsAboutSchemeCompleteId, IsWorkingKnowledgeCompleteId, SchemeDetailsId}
+import models.person.PersonDetails
+import models.register.{EstablisherCompanyEntity, EstablisherIndividualEntity, SchemeDetails, SchemeType}
+import models.{CompanyDetails, NormalMode}
+import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, WordSpec}
 import viewmodels._
 
@@ -27,7 +36,8 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
 
   "TaskListHelper" must {
     "return valid about section based on user answers" in {
-      new TaskListHelper(Some(userAnswers)).tasklist mustBe JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
+
+      new TaskListHelper(Some(userAnswers)).taskList mustBe JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
         expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink)
     }
 
@@ -39,9 +49,68 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
         JourneyTaskListSection(None, workingKnowledgeDefaultLink, None),
         None)
 
-      new TaskListHelper(None).tasklist mustBe blankJourneyTaskList
+      new TaskListHelper(None).taskList mustBe blankJourneyTaskList
     }
   }
+
+
+  "declarationEnabled" must {
+
+    "return false with no establishers and trustees" in {
+
+      val helper = new TaskListHelper(Some(declarationWithoutEstabliserAndTrustees()))
+      helper.declarationEnabled(declarationWithoutEstabliserAndTrustees()) mustBe false
+    }
+
+    "return false with establishers in progress and no trustees" in {
+
+      val helper = new TaskListHelper(Some(declarationWithEstabliserAndNoTrustees(isEstablisherCompleteId = false)))
+      helper.declarationEnabled(declarationWithEstabliserAndNoTrustees(isEstablisherCompleteId = false)) mustBe false
+    }
+
+    "return false with establishers completed and no trustees" in {
+
+      val helper = new TaskListHelper(Some(declarationWithEstabliserAndNoTrustees()))
+      helper.declarationEnabled(declarationWithEstabliserAndNoTrustees()) mustBe false
+    }
+
+    "return false with establishers in progress and trustees completed" in {
+
+      val helper = new TaskListHelper(Some(declarationWithEstabliserAndTrustees(isEstablisherCompleteId = false)))
+      helper.declarationEnabled(declarationWithEstabliserAndTrustees(isEstablisherCompleteId = false)) mustBe false
+    }
+
+    "return false with establishers completed and trustees in progress" in {
+
+      val helper = new TaskListHelper(Some(declarationWithEstabliserAndTrustees(isTrusteeCompleteId = false)))
+      helper.declarationEnabled(declarationWithEstabliserAndTrustees(isTrusteeCompleteId = false)) mustBe false
+    }
+
+    "return true with establishers and trustees completed" in {
+
+      val helper = new TaskListHelper(Some(declarationWithEstabliserAndTrustees()))
+      helper.declarationEnabled(declarationWithEstabliserAndTrustees()) mustBe true
+    }
+
+    "return true with establishers completed and HaveAnyTrusteesId set to false and scheme type is other" in {
+
+      val helper = new TaskListHelper(Some(declarationWithEstabliserAndHaveAnyTrusteesAndOtherSchemeType(haveAnyTrusteesId = false)))
+      helper.declarationEnabled(declarationWithEstabliserAndHaveAnyTrusteesAndOtherSchemeType(haveAnyTrusteesId = false)) mustBe true
+    }
+
+    "return false with establishers completed and HaveAnyTrusteesId set to true and scheme type is Single" in {
+
+      val helper = new TaskListHelper(Some(declarationWithoutEstabliserAndHaveAnyTrustees(haveAnyTrusteesId = true)))
+      helper.declarationEnabled(declarationWithoutEstabliserAndHaveAnyTrustees(haveAnyTrusteesId = true)) mustBe false
+    }
+
+    "return true with establishers completed and HaveAnyTrusteesId set to false" in {
+
+      val helper = new TaskListHelper(Some(declarationWithEstabliserAndTrustees()))
+      helper.declarationEnabled(declarationWithEstabliserAndTrustees()) mustBe true
+    }
+  }
+
 }
 
 object TaskListHelperSpec extends SpecBase with JsonFileReader {
@@ -57,7 +126,11 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
   }
 
   val userAnswersJson = readJsonFromFile("/payload.json")
+  val inProgressEst = Seq(EstablisherCompanyEntity(CompanyDetailsId(0), "test 1", false, true),
+    EstablisherIndividualEntity(EstablisherDetailsId(1), "test 2", false, false))
+
   val userAnswers = UserAnswers(userAnswersJson)
+
   val expectedAboutSection = JourneyTaskListSection(
     Some(true),
     aboutSectionDefaultLink,
@@ -89,4 +162,49 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
 
   private def actualSeqAnswerRow(result: Seq[SuperSection], headingKey: Option[String]): Seq[AnswerRow] =
     result.filter(_.headingKey == headingKey).flatMap(_.sections).take(1).flatMap(_.rows)
+
+  private val schemeDetails = SchemeDetails("Test Scheme Name", SchemeType.SingleTrust)
+  private val companyDetails = CompanyDetails("test company", Some("vat"), Some("paye"))
+
+  private def declarationWithoutEstabliserAndTrustees(schemeType: SchemeType = SchemeType.SingleTrust) : UserAnswers = {
+    UserAnswers()
+      .set(SchemeDetailsId)(schemeDetails.copy(schemeType = schemeType)).asOpt.value
+      .set(IsAboutSchemeCompleteId)(true).asOpt.value
+      .set(IsWorkingKnowledgeCompleteId)(true).asOpt.value
+  }
+
+  private def declarationWithEstabliserAndTrustees(isEstablisherCompleteId : Boolean = true,
+                                           isTrusteeCompleteId : Boolean = true) : UserAnswers = {
+    declarationWithoutEstabliserAndTrustees()
+      .set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+      .set(IsEstablisherCompleteId(0))(true).asOpt.value
+      .set(EstablisherDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+      .set(IsEstablisherCompleteId(1))(isEstablisherCompleteId).asOpt.value
+      .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+      .set(IsTrusteeCompleteId(0))(true).asOpt.value
+      .set(TrusteeDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+      .set(IsTrusteeCompleteId(1))(isTrusteeCompleteId).asOpt.value
+  }
+
+  private def declarationWithEstabliserAndNoTrustees(isEstablisherCompleteId : Boolean = true) : UserAnswers = {
+    declarationWithoutEstabliserAndHaveAnyTrustees()
+      .set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+      .set(IsEstablisherCompleteId(0))(true).asOpt.value
+      .set(EstablisherDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+      .set(IsEstablisherCompleteId(1))(isEstablisherCompleteId).asOpt.value
+  }
+
+  private def declarationWithoutEstabliserAndHaveAnyTrustees(haveAnyTrusteesId : Boolean = false) : UserAnswers = {
+    declarationWithoutEstabliserAndTrustees()
+      .set(HaveAnyTrusteesId)(haveAnyTrusteesId).asOpt.value
+  }
+
+  private def declarationWithEstabliserAndHaveAnyTrusteesAndOtherSchemeType(haveAnyTrusteesId : Boolean = false) : UserAnswers = {
+    declarationWithoutEstabliserAndTrustees(SchemeType.BodyCorporate)
+      .set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+      .set(IsEstablisherCompleteId(0))(true).asOpt.value
+      .set(EstablisherDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
+      .set(IsEstablisherCompleteId(1))(true).asOpt.value
+      .set(HaveAnyTrusteesId)(haveAnyTrusteesId).asOpt.value
+  }
 }
