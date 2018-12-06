@@ -21,7 +21,7 @@ import connectors._
 import controllers.actions._
 import identifiers.TypedIdentifier
 import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, SubmissionReferenceNumberId}
-import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId}
+import identifiers.register.adviser._
 import javax.inject.Inject
 import models.address.Address
 import models.register.AdviserDetails
@@ -67,10 +67,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
             AddressCYA(label = Message("messages__adviserAddress__cyaHeading", adviser.adviserName))()
 
           val workingKnowldge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad().url)
-          val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
+          val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
+          val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
           val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
 
-          Seq(AnswerSection(None, workingKnowldge ++ adviserDetailsRow ++ adviserAddressRow))
+          Seq(AnswerSection(None, workingKnowldge ++ adviserNameRow ++ adviserEmailRow ++  adviserAddressRow))
         }.getOrElse(Seq())
       } else {
         val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)

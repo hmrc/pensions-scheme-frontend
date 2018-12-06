@@ -1152,6 +1152,7 @@ messages__adviserName__invalid = Enter a name using only letters
 messages__adviserName__blank = Enter the name of who has working knowledge of pensions
 
 declarationDuties.checkYourAnswersLabel= Do you have working knowledge of pensions and pensions tax legislation?
-messages__adviserName__heading = Who has working knowledge of pensions and pensions tax legislation?
+adviserName.checkYourAnswersLabel = Who has working knowledge of pensions and pensions tax legislation?
+adviserEmail.checkYourAnswersLabel = What is {0}’s email address?
 
 messages__adviserAddress__cyaHeading = {0}’s address
