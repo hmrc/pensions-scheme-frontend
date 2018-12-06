@@ -21,7 +21,7 @@ import javax.inject.Inject
 import play.api.data.Form
 
 class AdviserNameFormProvider @Inject() extends Mappings with Constraints {
-  val schemeNameMaxLength = 160
+  val schemeNameMaxLength = 107
 
   def apply(): Form[String] = Form(
     "adviserName" -> text("messages__adviserName__blank").
