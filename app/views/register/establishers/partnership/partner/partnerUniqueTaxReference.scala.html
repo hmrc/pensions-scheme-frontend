@@ -34,7 +34,9 @@
 
         @helpers.form(action = PartnerUniqueTaxReferenceController.onSubmit(mode, establisherIndex, partnerIndex), 'autoComplete -> "off") {
 
-            @components.back_link()
+            @if(!appConfig.isHubEnabled) {
+                @components.back_link()
+            }
 
             @components.error_summary(form.errors)
 

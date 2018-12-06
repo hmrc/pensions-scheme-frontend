@@ -27,18 +27,20 @@
     bodyClasses = None) {
 
     @helpers.form(action = postCall, 'autoComplete -> "off") {
-        @components.back_link()
+        @if(!appConfig.isHubEnabled) {
+            @components.back_link()
+        }
 
-     @components.heading(
-            headingKey=(Message("messages__confirmDeleteEstablisher__heading").withArgs(establisherName))
-     )
+         @components.heading(
+                headingKey=(Message("messages__confirmDeleteEstablisher__heading").withArgs(establisherName))
+         )
 
-        <span class="form-hint">@messages("messages__confirmDeleteEstablisher__hint")</span>
+            <span class="form-hint">@messages("messages__confirmDeleteEstablisher__hint")</span>
 
-        @components.submit_button("site.confirm")
+            @components.submit_button("site.confirm")
 
-        <a id="cancel" href="@cancelCall.url">
-            @messages("site.cancel")
-        </a>
+            <a id="cancel" href="@cancelCall.url">
+                @messages("site.cancel")
+            </a>
     }
 }

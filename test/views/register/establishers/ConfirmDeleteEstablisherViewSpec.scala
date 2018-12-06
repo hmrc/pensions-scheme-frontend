@@ -29,15 +29,22 @@ class ConfirmDeleteEstablisherViewSpec extends ViewBehaviours {
   import ConfirmDeleteEstablisherViewSpec._
 
   "ConfirmDeleteEstablisher view" must {
-    behave like normalPage(createView, messageKeyPrefix, Message(s"messages__${messageKeyPrefix}__heading").withArgs(establisherName))
+    behave like normalPage(createView(), messageKeyPrefix, Message(s"messages__${messageKeyPrefix}__heading").withArgs(establisherName))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView())
 
-    behave like pageWithSubmitButton(createView)
+    behave like pageWithSubmitButton(createView())
 
     "have a cancel link" in {
-      val doc = asDocument(createView())
+      val doc = asDocument(createView()())
       assertLink(doc, "cancel", cancelCall.url)
+    }
+  }
+
+  "ConfirmDeleteEstablisher view with hub enabled" must {
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
     }
   }
 
@@ -52,9 +59,9 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
   private val postCall = ConfirmDeleteEstablisherController.onSubmit(firstIndex, EstablisherKind.Indivdual)
   private val cancelCall = AddEstablisherController.onSubmit(NormalMode)
 
-  private def createView = () =>
+  private def createView(isHubEnabled: Boolean = false) = () =>
     confirmDeleteEstablisher(
-      frontendAppConfig,
+      appConfig(isHubEnabled),
       establisherName,
       postCall,
       cancelCall

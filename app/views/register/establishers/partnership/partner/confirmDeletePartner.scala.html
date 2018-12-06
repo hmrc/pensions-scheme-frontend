@@ -27,7 +27,9 @@
     bodyClasses = None) {
 
     @helpers.form(action = postCall, 'autoComplete -> "off") {
-        @components.back_link()
+        @if(!appConfig.isHubEnabled) {
+            @components.back_link()
+        }
 
         @components.heading(
             headingKey = components.hyphen((Message("messages__confirmDeletePartner__heading").withArgs(partnerName))).toString

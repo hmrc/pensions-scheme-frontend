@@ -31,19 +31,21 @@ class OtherPartnersViewSpec extends YesNoViewBehaviours {
 
   val form = new OtherPartnersFormProvider()()
 
-  def createView = () => otherPartners(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+  private def createView(isHubEnabled: Boolean = false) = () =>
+    otherPartners(appConfig(isHubEnabled), form, NormalMode, index)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => otherPartners(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) =>
+    otherPartners(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   "OtherPartners view" must {
 
     behave like normalPage(
-      createView,
+      createView(),
       messageKeyPrefix,
       messages("messages__otherPartners__heading")
     )
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView())
 
     behave like yesNoPage(createViewUsingForm,
       messageKeyPrefix,
@@ -51,6 +53,20 @@ class OtherPartnersViewSpec extends YesNoViewBehaviours {
       expectedHintKey = Some("_lede")
     )
 
-    behave like pageWithSubmitButton(createView)
+    behave like pageWithSubmitButton(createView())
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
+  }
+
+  "OtherPartners view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
   }
 }
