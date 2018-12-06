@@ -16,10 +16,12 @@
 
 package views.address
 
+import config.FrontendAppConfig
 import forms.address.AddressListFormProvider
 import models.address.TolerantAddress
 import org.jsoup.Jsoup
 import play.api.data.Form
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -49,10 +51,10 @@ class AddressListSpec extends ViewBehaviours {
       Some("GB")
     )
 
-  private def createView: () => HtmlFormat.Appendable =
+  private def createView(isHubEnabled:Boolean): () => HtmlFormat.Appendable =
     () =>
       addressList(
-        frontendAppConfig,
+        appConfig(isHubEnabled),
         form,
         viewModel
       )(fakeRequest, messages)
@@ -66,12 +68,12 @@ class AddressListSpec extends ViewBehaviours {
       )(fakeRequest, messages)
 
   "AddressListView view" must {
-    behave like normalPage(createView, messageKeyPrefix, viewModel.title.resolve)
+    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, viewModel.title.resolve)
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView(isHubEnabled = false))
 
     "have link for enter address manually" in {
-      Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(call.url)
+      Jsoup.parse(createView(isHubEnabled=false)().toString()).select("a[id=manual-address-link]") must haveLink(call.url)
     }
   }
 

@@ -16,12 +16,10 @@
 
 package views.register
 
-import config.FrontendAppConfig
 import forms.register.SchemeTypeFormProvider
 import models.NormalMode
 import models.register.SchemeType
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.schemeType
@@ -33,16 +31,12 @@ class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
 
   override val form = new SchemeTypeFormProvider()()
 
-  def appConfig(isHubEnabled: Boolean = true): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
-
   def createView: () => HtmlFormat.Appendable = () => schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
-  private def schemeOptions = SchemeType.options(appConfig())
+  private def schemeOptions = SchemeType.options(appConfig(isHubEnabled = true))
 
   "SchemeType view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", schemeName))
