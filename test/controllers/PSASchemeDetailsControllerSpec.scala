@@ -19,6 +19,7 @@ package controllers
 import connectors._
 import controllers.PSASchemeDetailsControllerSpec.psaSchemeDetailsSample
 import controllers.actions.{DataRetrievalAction, _}
+import handlers.ErrorHandler
 import models.details.{Name, PsaDetails}
 import models.details.transformation.{SchemeDetailsMasterSection, SchemeDetailsStubData}
 import org.mockito.Matchers
@@ -61,6 +62,7 @@ class PSASchemeDetailsControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad(srn)(fakeRequest)
 
       status(result) mustBe NOT_FOUND
+      contentAsString(result).contains(messages("messages__pageNotFound404__heading")) mustBe true
     }
 
   }
@@ -76,7 +78,8 @@ private object PSASchemeDetailsControllerSpec extends ControllerSpecBase with Mo
       messagesApi,
       fakeSchemeDetailsConnector,
       fakeSchemeTransformer,
-      FakeAuthAction)
+      FakeAuthAction,
+      new ErrorHandler(frontendAppConfig, messagesApi))
 
   val masterSections = Seq(individualMasterSection)
   val srn = "S1000000456"
