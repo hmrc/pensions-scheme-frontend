@@ -112,6 +112,9 @@
                     <a id= "section-trustees-link"  href="@{taskSections.addTrusteeHeader.link.target}">
                         @messages(taskSections.addTrusteeHeader.link.text)
                     </a>
+                    @taskSections.addTrusteeHeader.isCompleted.map{ isCompleted =>
+                    <strong class="@statusClass(isCompleted)" id="section-trustees-status">@messages(status(isCompleted))</strong>
+                    }
                 </li>
 
                 @for((item, i) <- taskSections.trustees.zipWithIndex){
