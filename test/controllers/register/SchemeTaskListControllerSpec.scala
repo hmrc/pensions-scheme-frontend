@@ -29,7 +29,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
   import SchemeTaskListControllerSpec._
 
   private val journeyTL = JourneyTaskList(expectedAboutSection, Seq(expectedEstablishersCompany, expectedEstablishersIndividual),
-    Seq(expectedTrustees), expectedWorkingKnowledgeSection, expectedDeclarationLink)
+    Seq(expectedTrustees), expectedWorkingKnowledgeSection, expectedDeclarationLink, expectedChangeTrusteeHeader)
 
   private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
 
@@ -63,13 +63,13 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
   private val expectedAboutSection = JourneyTaskListSection(
     Some(true),
     Link(messages("messages__schemeTaskList__about_link_text"),
-      controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url),
+      controllers.register.routes.CheckYourAnswersController.onPageLoad.url),
     None)
 
   private val expectedEstablishersCompany = JourneyTaskListSection(
     Some(true),
     Link(messages(messages("messages__schemeTaskList__company_link")),
-      controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(0).url),
+      controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0).url),
     Some("Test company name"))
 
   private val expectedEstablishersIndividual = JourneyTaskListSection(
@@ -92,4 +92,11 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
 
   private val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),
     controllers.register.routes.DeclarationController.onPageLoad().url))
+
+  private val expectedChangeTrusteeHeader = JourneyTaskListSection(
+    None,
+    Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url),
+    None
+  )
 }

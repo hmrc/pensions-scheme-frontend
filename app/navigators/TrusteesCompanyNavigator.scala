@@ -17,13 +17,16 @@
 package navigators
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.trustees.company._
 import models.{AddressYears, CheckMode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
-class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
+class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                         appConfig: FrontendAppConfig) extends Navigator {
 
+  //scalastyle:off cyclomatic.complexity
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
       case CompanyDetailsId(index) =>
@@ -60,7 +63,11 @@ class TrusteesCompanyNavigator @Inject()(val dataCacheConnector: UserAnswersCach
         NavigateTo.save(controllers.register.trustees.company.routes.CheckYourAnswersController.onPageLoad(index))
 
       case CheckYourAnswersId =>
-        NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
+        if(appConfig.isHubEnabled) {
+          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        } else {
+          NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
+        }
       case _ => None
     }
   }

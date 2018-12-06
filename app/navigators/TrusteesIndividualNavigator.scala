@@ -17,17 +17,20 @@
 package navigators
 
 import com.google.inject.{Inject, Singleton}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.register.trustees.individual._
 import models.{AddressYears, CheckMode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 @Singleton
-class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
+class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                            appConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers(index: Int)(answers: UserAnswers): Option[NavigateTo] =
     NavigateTo.save(controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(index))
 
+  //scalastyle:off cyclomatic.complexity
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
       case TrusteeDetailsId(index) =>
@@ -53,7 +56,11 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
       case TrusteeContactDetailsId(index) =>
         NavigateTo.save(controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(index))
       case CheckYourAnswersId =>
-        NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
+        if(appConfig.isHubEnabled) {
+          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        } else {
+          NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
+        }
       case _ =>
         None
     }
