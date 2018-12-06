@@ -30,7 +30,9 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
-import views.html.register.establishers.company.director.directorAddressYears
+import viewmodels.Message
+import viewmodels.address.AddressYearsViewModel
+import views.html.address.addressYears
 
 //scalastyle:off magic.number
 
@@ -56,13 +58,18 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl
     )
 
-  def viewAsString(form: Form[_] = form): String = directorAddressYears(
-    frontendAppConfig,
-    form,
-    NormalMode,
-    establisherIndex,
-    directorIndex
-  )(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) =
+    addressYears(
+      frontendAppConfig,
+      form,
+      AddressYearsViewModel(
+        routes.DirectorAddressYearsController.onSubmit(NormalMode, establisherIndex, directorIndex),
+        Message("messages__director_address_years__title"),
+        Message("messages__director_address_years__heading"),
+        Message("messages__director_address_years__heading"),
+        Some(director.fullName)
+      )
+    )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(
     EstablishersId.toString -> Json.arr(
