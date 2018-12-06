@@ -25,7 +25,6 @@ import org.scalatest.matchers.{MatchResult, Matcher}
 import play.twirl.api.{Html, HtmlFormat}
 
 trait ViewSpecBase extends SpecBase {
-
   type View = () => HtmlFormat.Appendable
 
   def haveLink(url: String): Matcher[Elements] = Matcher[Elements] {

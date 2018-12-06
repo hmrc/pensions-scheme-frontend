@@ -16,20 +16,14 @@
 
 package views.register
 
-import config.FrontendAppConfig
 import controllers.register.routes
 import forms.register.InvestmentRegulatedFormProvider
 import models.NormalMode
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import views.behaviours.YesNoViewBehaviours
 import views.html.register.investmentRegulated
 
 class InvestmentRegulatedViewSpec extends YesNoViewBehaviours {
-
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
 
   val messageKeyPrefix = "investment_regulated"
 

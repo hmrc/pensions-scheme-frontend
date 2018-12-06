@@ -29,9 +29,6 @@ import views.behaviours.ViewBehaviours
 import views.html.address.addressList
 
 class AddressListSpec extends ViewBehaviours {
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
 
   private val messageKeyPrefix = "select_the_address"
 

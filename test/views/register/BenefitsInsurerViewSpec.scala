@@ -16,31 +16,25 @@
 
 package views.register
 
-import config.FrontendAppConfig
 import controllers.register.routes
 import forms.register.BenefitsInsurerFormProvider
 import models.NormalMode
 import models.register.BenefitsInsurer
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.benefitsInsurer
 
 class BenefitsInsurerViewSpec extends QuestionViewBehaviours[BenefitsInsurer] {
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
-
   val messageKeyPrefix = "benefits_insurance"
 
   override val form = new BenefitsInsurerFormProvider()()
 
   val schemeName = "myScheme"
 
-  def createView(isHubEnabled:Boolean) = () =>
+  private def createView(isHubEnabled:Boolean) = () =>
     benefitsInsurer(appConfig(isHubEnabled), form, NormalMode, schemeName)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) =>
+  private def createViewUsingForm = (form: Form[_]) =>
     benefitsInsurer(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
 

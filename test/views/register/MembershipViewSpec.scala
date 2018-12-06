@@ -16,21 +16,15 @@
 
 package views.register
 
-import config.FrontendAppConfig
 import forms.register.MembershipFormProvider
 import models.NormalMode
 import models.register.Membership
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.membership
 
 class MembershipViewSpec extends ViewBehaviours {
-
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
 
   val messageKeyPrefix = "membership_current"
 

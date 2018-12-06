@@ -31,11 +31,6 @@ import views.behaviours.QuestionViewBehaviours
 import views.html.address.manualAddress
 
 class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
-
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
-
   val messageKeyPrefix = "common__manual__address"
   val countryOptions: Seq[InputOption] = Seq(InputOption("AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
   val schemeName: String = "Test Scheme Name"

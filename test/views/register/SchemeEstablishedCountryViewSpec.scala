@@ -16,22 +16,15 @@
 
 package views.register
 
-import controllers.register.routes
-import config.FrontendAppConfig
 import forms.register.SchemeEstablishedCountryFormProvider
 import models.NormalMode
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import utils.{CountryOptions, InputOption}
 import views.behaviours.StringViewBehaviours
 import views.html.register.schemeEstablishedCountry
 
 class SchemeEstablishedCountryViewSpec extends StringViewBehaviours {
-
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
 
   val messageKeyPrefix = "scheme_country"
 

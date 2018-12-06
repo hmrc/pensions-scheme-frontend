@@ -16,19 +16,14 @@
 
 package views.register
 
-import config.FrontendAppConfig
 import forms.register.BenefitsFormProvider
 import models.NormalMode
 import models.register.Benefits
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import views.behaviours.ViewBehaviours
 import views.html.register.benefits
 
 class BenefitsViewSpec extends ViewBehaviours {
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
 
   val messageKeyPrefix = "benefits"
 

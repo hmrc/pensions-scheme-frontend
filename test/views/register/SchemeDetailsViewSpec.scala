@@ -16,13 +16,11 @@
 
 package views.register
 
-import config.FrontendAppConfig
 import controllers.register.routes
 import forms.register.SchemeDetailsFormProvider
 import models.NormalMode
 import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.schemeDetails
@@ -32,11 +30,6 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
   val messageKeyPrefix = "scheme_details"
 
   override val form = new SchemeDetailsFormProvider()()
-
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
-
 
   def createView(isHubEnabled:Boolean = false): () => HtmlFormat.Appendable = () =>
     schemeDetails(appConfig(isHubEnabled = isHubEnabled), form, NormalMode)(fakeRequest, messages)

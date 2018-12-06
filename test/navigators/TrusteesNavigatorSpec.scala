@@ -40,10 +40,6 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import TrusteesNavigatorSpec._
 
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
-
   private def routesWithHubEnabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                  "User Answers",               "Next Page (Normal Mode)",     "Save (NM)",           "Next Page (Check Mode)",       "Save (CM)"),
     (HaveAnyTrusteesId,       haveAnyTrusteesTrue,          addTrustee,                   true,                   None,                           false),

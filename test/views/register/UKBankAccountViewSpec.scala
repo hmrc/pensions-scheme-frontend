@@ -16,21 +16,15 @@
 
 package views.register
 
-import config.FrontendAppConfig
 import controllers.register.routes
 import forms.register.UKBankAccountFormProvider
 import models.NormalMode
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
 import views.html.register.uKBankAccount
 
 class UKBankAccountViewSpec extends YesNoViewBehaviours {
-
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
 
   val messageKeyPrefix = "uk_bank_account"
 

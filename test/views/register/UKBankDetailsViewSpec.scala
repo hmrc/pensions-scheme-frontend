@@ -16,7 +16,6 @@
 
 package views.register
 
-import config.FrontendAppConfig
 import controllers.register.routes
 import forms.register.UKBankDetailsFormProvider
 import models.NormalMode
@@ -24,15 +23,10 @@ import models.register.UKBankDetails
 import org.apache.commons.lang3.RandomUtils
 import org.joda.time.LocalDate
 import play.api.data.{Form, FormError}
-import play.api.inject.guice.GuiceApplicationBuilder
 import views.behaviours.QuestionViewBehaviours
 import views.html.register.uKBankDetails
 
 class UKBankDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
-
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
 
   val messageKeyPrefix = "uk_bank_account_details"
 

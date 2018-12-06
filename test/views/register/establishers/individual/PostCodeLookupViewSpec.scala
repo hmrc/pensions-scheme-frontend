@@ -16,21 +16,16 @@
 
 package views.register.establishers.individual
 
-import config.FrontendAppConfig
 import controllers.register.establishers.individual.routes
 import forms.address.PostCodeLookupFormProvider
 import models.{Index, NormalMode}
 import org.jsoup.Jsoup
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.StringViewBehaviours
 import views.html.register.establishers.individual.postCodeLookup
 
 class PostCodeLookupViewSpec extends StringViewBehaviours {
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
 
   val messageKeyPrefix = "establisher_individual_address"
 

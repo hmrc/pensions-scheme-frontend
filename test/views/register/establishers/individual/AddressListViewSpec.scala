@@ -44,19 +44,25 @@ class AddressListViewSpec extends ViewBehaviours {
   val addressSeq = Seq(address("postcode 1"), address("postcode 2"))
   val addressIndexes = Seq.range(0, 2)
 
-  def createView: () => HtmlFormat.Appendable = () => addressList(frontendAppConfig, form, NormalMode, firstIndex, addressSeq)(fakeRequest, messages)
+  def createView(isHubEnabled:Boolean): () => HtmlFormat.Appendable = () =>
+    addressList(appConfig(isHubEnabled), form, NormalMode, firstIndex, addressSeq)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => addressList(frontendAppConfig, form, NormalMode,
     firstIndex, addressSeq)(fakeRequest, messages)
 
   "AddressListView view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(isHubEnabled=false), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView(isHubEnabled=false))
 
     "have link for enter address manually" in {
-      Jsoup.parse(createView().toString()).select("a[id=manual-address-link]") must haveLink(
+      Jsoup.parse(createView(isHubEnabled=false)().toString()).select("a[id=manual-address-link]") must haveLink(
         routes.AddressController.onPageLoad(NormalMode, firstIndex).url)
+    }
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
     }
   }
 
@@ -80,6 +86,15 @@ class AddressListViewSpec extends ViewBehaviours {
             assertContainsRadioButton(doc, s"value-$unselectedIndex", "value", unselectedIndex.toString, isChecked = false)
           }
         }
+      }
+    }
+
+    "AddressListView view with hub enabled" must {
+      behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+      "not have a back link" in {
+        val doc = asDocument(createView(isHubEnabled = true)())
+        assertNotRenderedById(doc, "back-link")
       }
     }
   }
