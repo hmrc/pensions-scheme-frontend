@@ -124,7 +124,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
 
   private def isAllTrusteesCompleted(implicit userAnswers: UserAnswers) : Boolean = {
 
-    val isOptionalTrusteesJourney = userAnswers.get(HaveAnyTrusteesId).forall(_==false) && isTrusteesOptional
+    val isOptionalTrusteesJourney = userAnswers.get(HaveAnyTrusteesId).fold(false)(_==false) && isTrusteesOptional
     val isMandatoryTrusteesJourney = userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
 
     isOptionalTrusteesJourney || isMandatoryTrusteesJourney
