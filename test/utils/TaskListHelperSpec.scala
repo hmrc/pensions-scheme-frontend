@@ -27,6 +27,11 @@ import models.person.PersonDetails
 import models.register.{EstablisherCompanyEntity, EstablisherIndividualEntity, SchemeDetails, SchemeType}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
+import models.{CheckMode, Index, NormalMode}
+import models.register.{EstablisherCompanyEntity, EstablisherIndividualEntity, EstablisherPartnershipEntity}
 import org.scalatest.{MustMatchers, WordSpec}
 import viewmodels._
 
@@ -38,7 +43,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
     "return valid about section based on user answers" in {
 
       new TaskListHelper(Some(userAnswers)).taskList mustBe JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
-        expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink)
+        expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink,expectedChangeTrusteeHeader)
     }
 
     "return blank task list if there are no user answers" in {
@@ -47,7 +52,8 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
         Seq.empty,
         Seq.empty,
         JourneyTaskListSection(None, workingKnowledgeDefaultLink, None),
-        None)
+        None,
+        expectedAddTrusteeHeader)
 
       new TaskListHelper(None).taskList mustBe blankJourneyTaskList
     }
@@ -111,6 +117,94 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
     }
   }
 
+  "linkTarget" must {
+
+    "return correct link for establishers company if its completed" in {
+      val helper = new TaskListHelper(None)
+      helper.linkTarget(establisherCompany, 0) mustBe
+        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0).url
+
+    }
+
+    "return correct link for establishers if its not completed" in {
+      val helper = new TaskListHelper(None)
+      helper.linkTarget(establisherCompany.copy(isCompleted = false), 0) mustBe
+        controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0).url
+
+    }
+
+    "return correct link for establishers partnership if its completed" in {
+      val helper = new TaskListHelper(None)
+      helper.linkTarget(establisherPartnership, 0) mustBe
+        controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(0).url
+
+    }
+
+    "return correct link for establishers partnership if its not completed" in {
+      val helper = new TaskListHelper(None)
+      helper.linkTarget(establisherPartnership.copy(isCompleted = false), 0) mustBe
+        controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 0).url
+
+    }
+
+    "return correct link for establishers individual if its completed" in {
+      val helper = new TaskListHelper(None)
+      helper.linkTarget(establisherIndividual, 0) mustBe
+        controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(0).url
+
+    }
+
+    "return correct link for establishers individual if its not completed" in {
+      val helper = new TaskListHelper(None)
+      helper.linkTarget(establisherIndividual.copy(isCompleted = false), 0) mustBe
+        controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url
+
+    }
+  }
+
+  "addTrusteeHeader" must {
+
+    "return the correct link and status if scheme type is single or master and no trustees are added" in {
+     val helper = new TaskListHelper(Some(declarationWithoutEstabliserAndTrustees()))
+      helper.addTrusteeHeader(declarationWithoutEstabliserAndTrustees()) mustBe JourneyTaskListSection(
+        None,
+        Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url),
+        None
+      )
+    }
+
+    "return the correct link and status if scheme type is not single or master and no trustees are added" in {
+     val helper = new TaskListHelper(Some(declarationWithoutEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)))
+      helper.addTrusteeHeader(declarationWithoutEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)) mustBe JourneyTaskListSection(
+        None,
+        Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+          controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+        None
+      )
+    }
+
+    "return the correct link and status if scheme type is single or master and trustees are added" in {
+     val helper = new TaskListHelper(Some(declarationWithEstabliserAndTrustees()))
+      helper.addTrusteeHeader(declarationWithEstabliserAndTrustees()) mustBe JourneyTaskListSection(
+        None,
+        Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+          controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url),
+        None
+      )
+    }
+
+    "return the correct link and status if scheme type is not single or master and trustees are added" in {
+     val helper = new TaskListHelper(Some(declarationWithEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)))
+      helper.addTrusteeHeader(declarationWithEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)) mustBe JourneyTaskListSection(
+        None,
+        Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+          controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+        None
+      )
+    }
+  }
+
 }
 
 object TaskListHelperSpec extends SpecBase with JsonFileReader {
@@ -120,45 +214,63 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
       controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
   }
 
+  private val aboutSectionCompletedLink: Link = {
+    Link(messages("messages__schemeTaskList__about_link_text"),
+      controllers.register.routes.CheckYourAnswersController.onPageLoad.url)
+  }
+
   private val workingKnowledgeDefaultLink: Link = {
     Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
       controllers.routes.WorkingKnowledgeController.onPageLoad().url)
   }
 
-  val userAnswersJson = readJsonFromFile("/payload.json")
+  private val userAnswersJson = readJsonFromFile("/payload.json")
+  private val userAnswers = UserAnswers(userAnswersJson)
   val inProgressEst = Seq(EstablisherCompanyEntity(CompanyDetailsId(0), "test 1", false, true),
     EstablisherIndividualEntity(EstablisherDetailsId(1), "test 2", false, false))
 
-  val userAnswers = UserAnswers(userAnswersJson)
-
   val expectedAboutSection = JourneyTaskListSection(
     Some(true),
-    aboutSectionDefaultLink,
+    aboutSectionCompletedLink,
     None)
 
-  val expectedWorkingKnowledgeSection = JourneyTaskListSection(
+  private val expectedWorkingKnowledgeSection = JourneyTaskListSection(
     Some(true),
     workingKnowledgeDefaultLink,
     None)
 
-  val expectedEstablishersSection = Seq(
+  private val expectedEstablishersSection = Seq(
     JourneyTaskListSection(Some(true),
       Link(messages("messages__schemeTaskList__company_link"),
-        controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(0).url),
+        controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0).url),
       Some("Test company name")),
     JourneyTaskListSection(Some(true),
       Link(messages("messages__schemeTaskList__individual_link"),
         controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(1).url),
       Some("Test individual name")))
 
-  val expectedTrusteesSection = Seq(
+  private val expectedTrusteesSection = Seq(
     JourneyTaskListSection(Some(true),
       Link(messages("messages__schemeTaskList__partnership_link"),
         controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(0).url),
       Some("Test partnership name")))
 
-  val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),
+  private val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),
     controllers.register.routes.DeclarationController.onPageLoad().url))
+
+  private val expectedChangeTrusteeHeader = JourneyTaskListSection(
+    None,
+    Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url),
+    None
+  )
+
+  private val expectedAddTrusteeHeader = JourneyTaskListSection(
+      None,
+      Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+        controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+      None
+    )
 
   private def actualSeqAnswerRow(result: Seq[SuperSection], headingKey: Option[String]): Seq[AnswerRow] =
     result.filter(_.headingKey == headingKey).flatMap(_.sections).take(1).flatMap(_.rows)
@@ -174,8 +286,9 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
   }
 
   private def declarationWithEstabliserAndTrustees(isEstablisherCompleteId : Boolean = true,
-                                           isTrusteeCompleteId : Boolean = true) : UserAnswers = {
-    declarationWithoutEstabliserAndTrustees()
+                                           isTrusteeCompleteId : Boolean = true,
+                                           schemeType: SchemeType = SchemeType.SingleTrust) : UserAnswers = {
+    declarationWithoutEstabliserAndTrustees(schemeType)
       .set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
       .set(IsEstablisherCompleteId(0))(true).asOpt.value
       .set(EstablisherDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now())).asOpt.value
@@ -207,4 +320,8 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
       .set(IsEstablisherCompleteId(1))(true).asOpt.value
       .set(HaveAnyTrusteesId)(haveAnyTrusteesId).asOpt.value
   }
+
+  private val establisherCompany = EstablisherCompanyEntity(CompanyDetailsId(Index(0)), "Test Comapny", isDeleted = false, isCompleted = true)
+  private val establisherPartnership = EstablisherPartnershipEntity(PartnershipDetailsId(Index(0)), "Test Partnership", isDeleted = false, isCompleted = true)
+  private val establisherIndividual = EstablisherIndividualEntity(EstablisherDetailsId(Index(0)), "Test Partnership", isDeleted = false, isCompleted = true)
 }

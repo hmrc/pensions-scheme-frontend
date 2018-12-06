@@ -17,10 +17,15 @@
 package navigators
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
+import identifiers.Identifier
 import identifiers.register.trustees.individual._
 import models._
+import org.scalatest.prop.TableFor6
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.mvc.Call
 import utils.UserAnswers
 
 class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
@@ -45,17 +50,35 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (CheckYourAnswersId, emptyAnswers, addTrustee(NormalMode), true, None, true)
   )
 
-  navigator.getClass.getSimpleName must {
+  private def routesWithHubDisabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (CheckYourAnswersId, emptyAnswers, taskList, false, None, true)
+  )
+
+  s"${navigator().getClass.getSimpleName} when isHubEnabled toggle is off" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
-    behave like nonMatchingNavigator(navigator)
+    behave like navigatorWithRoutes(navigator(), FakeUserAnswersCacheConnector, routes(), dataDescriber)
+    behave like nonMatchingNavigator(navigator())
+  }
+
+  s"${navigator(true).getClass.getSimpleName} when isHubEnabled toggle is on" must {
+    appRunning()
+    behave like navigatorWithRoutes(navigator(true), FakeUserAnswersCacheConnector, routesWithHubDisabled, dataDescriber)
+    behave like nonMatchingNavigator(navigator(true))
   }
 
 }
 
 object TrusteesIndividualNavigatorSpec {
 
-  private val navigator = new TrusteesIndividualNavigator(FakeUserAnswersCacheConnector)
+  private def navigator(isHubEnabled: Boolean = false): TrusteesIndividualNavigator =
+    new TrusteesIndividualNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled))
+
+  private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
+
+  private def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    "features.is-hub-enabled" -> isHubEnabled
+  ).build().injector.instanceOf[FrontendAppConfig]
 
   private val emptyAnswers = UserAnswers(Json.obj())
   val firstIndex = Index(0)

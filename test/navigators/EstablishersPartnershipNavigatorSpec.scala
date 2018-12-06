@@ -53,7 +53,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     (PartnershipContactDetailsId(0),                  emptyAnswers,                 isDormant,                                true,         Some(checkYourAnswers),               true),
     (IsPartnershipDormantId(0),                       emptyAnswers,                 checkYourAnswers,                         true,         Some(checkYourAnswers),               true),
     (OtherPartnersId(0),                              emptyAnswers,                 partnershipReview,                        true,         Some(partnershipReview),              true),
-    (PartnershipReviewId(0),                          emptyAnswers,                 addEstablisher,                           true,         None,                                 true)
+    (PartnershipReviewId(0),                          emptyAnswers,                 taskList,                                false,         None,                                 true)
   )
 
   private def routesWithHubDisabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
@@ -114,6 +114,8 @@ object EstablishersPartnershipNavigatorSpec extends OptionValues {
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
   private def isDormant = controllers.register.establishers.partnership.routes.IsPartnershipDormantController.onPageLoad(NormalMode, 0)
+
+  private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
 
   private val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(PartnershipAddressYearsId(0))(AddressYears.OverAYear).asOpt.value

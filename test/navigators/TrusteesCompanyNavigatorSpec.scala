@@ -17,12 +17,14 @@
 package navigators
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
 import identifiers.register.trustees.company._
 import models.{AddressYears, CheckMode, Mode, NormalMode}
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -51,19 +53,36 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CheckYourAnswersId, emptyAnswers, addTrustee, true, None, false)
   )
 
+  private def routesWithHubDisabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (CheckYourAnswersId, emptyAnswers, taskList, false, None, true)
+  )
 
-  "EstablishersCompanyNavigator when restrict-establisher toggle is off" must {
+
+  s"${navigator().getClass.getSimpleName} when isHubEnabled toggle is off" must {
     appRunning()
-    val navigator = new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector)
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesTrusteeCompany, dataDescriber)
-    behave like nonMatchingNavigator(navigator)
+    behave like navigatorWithRoutes(navigator(), FakeUserAnswersCacheConnector, routesTrusteeCompany, dataDescriber)
+    behave like nonMatchingNavigator(navigator())
+  }
+
+  s"${navigator(true).getClass.getSimpleName} when isHubEnabled toggle is on" must {
+    appRunning()
+    behave like navigatorWithRoutes(navigator(true), FakeUserAnswersCacheConnector, routesWithHubDisabled, dataDescriber)
+    behave like nonMatchingNavigator(navigator(true))
   }
 }
 
 //noinspection MutatorLikeMethodIsParameterless
 object TrusteesCompanyNavigatorSpec extends OptionValues {
 
-  private val navigator = new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector)
+  private def navigator(isHubEnabled: Boolean = false): TrusteesCompanyNavigator =
+    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled))
+
+  private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
+
+  private def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    "features.is-hub-enabled" -> isHubEnabled
+  ).build().injector.instanceOf[FrontendAppConfig]
 
   private def companyRegistrationNumber(mode: Mode): Call =
     controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, 0)
@@ -105,6 +124,5 @@ object TrusteesCompanyNavigatorSpec extends OptionValues {
     .set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
-
 
 }

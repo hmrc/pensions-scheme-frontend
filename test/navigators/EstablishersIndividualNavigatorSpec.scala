@@ -17,6 +17,7 @@
 package navigators
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
 import identifiers.register.SchemeDetailsId
@@ -26,6 +27,7 @@ import models._
 import models.register.{SchemeDetails, SchemeType}
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -33,8 +35,6 @@ import utils.UserAnswers
 class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers with NavigatorBehaviour {
 
   import EstablishersIndividualNavigatorSpec._
-
-  private val navigator = new EstablishersIndividualNavigator(frontendAppConfig, FakeUserAnswersCacheConnector)
 
   private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
@@ -53,13 +53,32 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
     (CheckYourAnswersId, emptyAnswers, addEstablisher, true, None, true)
   )
 
-  s"${navigator.getClass.getSimpleName}" must {
+  private def routesWithHubDisabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
+    (CheckYourAnswersId, emptyAnswers, taskList, false, None, true)
+  )
+
+  s"${navigator().getClass.getSimpleName} when isHubEnabled toggle is off" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
+    behave like navigatorWithRoutes(navigator(), FakeUserAnswersCacheConnector, routes, dataDescriber)
+  }
+
+  s"${navigator(true).getClass.getSimpleName} when isHubEnabled toggle is on" must {
+    appRunning()
+    behave like navigatorWithRoutes(navigator(true), FakeUserAnswersCacheConnector, routesWithHubDisabled, dataDescriber)
   }
 }
 
 object EstablishersIndividualNavigatorSpec extends OptionValues {
+  private def navigator(isHubEnabled: Boolean = false): EstablishersIndividualNavigator =
+    new EstablishersIndividualNavigator(appConfig(isHubEnabled), FakeUserAnswersCacheConnector)
+
+  private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
+
+  private def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
+    "features.is-hub-enabled" -> isHubEnabled
+  ).build().injector.instanceOf[FrontendAppConfig]
+
   private val emptyAnswers = UserAnswers(Json.obj())
   private val addressYearsOverAYear = UserAnswers(Json.obj())
     .set(AddressYearsId(0))(AddressYears.OverAYear).asOpt.value

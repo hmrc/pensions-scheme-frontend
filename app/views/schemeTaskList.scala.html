@@ -74,7 +74,7 @@
             <ul class="task-list-items">
                 <li>
                     @if(taskSections.establishers.isEmpty){
-                        <a id= "section-establishers-add-link" href="@AddEstablisherController.onPageLoad(NormalMode)">
+                        <a id= "section-establishers-add-link" href="@EstablisherKindController.onPageLoad(NormalMode, 0)">
                             @messages("messages__schemeTaskList__sectionEstablishers_add_link")
                         </a>
                     } else {
@@ -109,15 +109,9 @@
             </h2>
             <ul class="task-list-items">
                 <li>
-                    @if(taskSections.trustees.isEmpty){
-                        <a id= "section-trustees-add-link"  href="@AddTrusteeController.onPageLoad(NormalMode)">
-                            @messages("messages__schemeTaskList__sectionTrustees_add_link")
-                        </a>
-                    } else {
-                        <a id= "section-trustees-change-link"  href="@AddTrusteeController.onPageLoad(NormalMode)">
-                            @messages("messages__schemeTaskList__sectionTrustees_change_link")
-                        </a>
-                    }
+                    <a id= "section-trustees-link"  href="@{taskSections.addTrusteeHeader.link.target}">
+                        @messages(taskSections.addTrusteeHeader.link.text)
+                    </a>
                 </li>
 
                 @for((item, i) <- taskSections.trustees.zipWithIndex){

@@ -32,9 +32,11 @@ class UKBankDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
 
   override val form = new UKBankDetailsFormProvider()()
 
-  def createView = () => uKBankDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  private def createView(isHubEnabled:Boolean) = () =>
+    uKBankDetails(appConfig(isHubEnabled), form, NormalMode)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => uKBankDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) =>
+    uKBankDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   val validData: Map[String, String] = Map(
     "bankName" -> "test bank",
@@ -48,9 +50,9 @@ class UKBankDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
 
   "UKBankDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView(isHubEnabled = false))
 
     behave like pageWithTextFields(
       createViewUsingForm,
@@ -58,6 +60,11 @@ class UKBankDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
       routes.UKBankDetailsController.onSubmit(NormalMode).url,
       "bankName", "accountName", "sortCode", "accountNumber"
     )
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
 
     "display an input text box with the correct label and value for day" in {
       val doc = asDocument(createViewUsingForm(form.bind(validData)))
@@ -102,6 +109,15 @@ class UKBankDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
       )
       val doc = asDocument(createViewUsingForm(form.bind(invalidData)))
       doc.select("span.error-notification").text() mustEqual expectedError
+    }
+  }
+
+  "UKBankDetails view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
     }
   }
 }
