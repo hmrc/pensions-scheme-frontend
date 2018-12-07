@@ -40,8 +40,8 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     PartnerDetailsId.toString -> PersonDetails("partner", None, lastName, LocalDate.now())
   )
 
-  def createView: () => HtmlFormat.Appendable = () => partnershipReview(
-    frontendAppConfig,
+  def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () => partnershipReview(
+    appConfig(isHubEnabled),
     index,
     partnershipName,
     partners
@@ -56,31 +56,31 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
 
   "PartnershipReview view" must {
     behave like normalPage(
-      createView,
+      createView(),
       messageKeyPrefix,
       messages(s"messages__${messageKeyPrefix}__heading"),
       "_partners__heading")
 
     "display partnership name" in {
-      Jsoup.parse(createView().toString) must haveDynamicText(partnershipName)
+      Jsoup.parse(createView()().toString) must haveDynamicText(partnershipName)
     }
 
     "have link to edit partnership details" in {
-      Jsoup.parse(createView().toString).select("a[id=edit-partnership-details]") must haveLink(
+      Jsoup.parse(createView()().toString).select("a[id=edit-partnership-details]") must haveLink(
         routes.CheckYourAnswersController.onPageLoad(index).url
       )
     }
 
     "have link to edit partner details when there are less than 10 partners" in {
-      Jsoup.parse(createView().toString).select("a[id=edit-partner-details]") must haveLink(
+      Jsoup.parse(createView()().toString).select("a[id=edit-partner-details]") must haveLink(
         routes.AddPartnersController.onPageLoad(index).url
       )
-      Jsoup.parse(createView().toString) must haveDynamicText("messages__partnershipReview__partners__editLink")
+      Jsoup.parse(createView()().toString) must haveDynamicText("messages__partnershipReview__partners__editLink")
 
     }
 
     "have link to edit partners when there are 10 partners" in {
-      Jsoup.parse(createView().toString).select("a[id=edit-partner-details]") must haveLink(
+      Jsoup.parse(createView()().toString).select("a[id=edit-partner-details]") must haveLink(
         routes.AddPartnersController.onPageLoad(index).url
       )
       Jsoup.parse(createSecView().toString) must haveDynamicText("messages__partnershipReview__partners__changeLink")
@@ -88,8 +88,17 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
 
     "contain list of partners" in {
       for (partner <- partners)
-        Jsoup.parse(createView().toString) must haveDynamicText(partner)
+        Jsoup.parse(createView()().toString) must haveDynamicText(partner)
     }
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
+  }
+
+  "PartnershipDetails view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
 
 }

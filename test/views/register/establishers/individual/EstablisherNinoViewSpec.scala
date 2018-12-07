@@ -30,15 +30,30 @@ class EstablisherNinoViewSpec extends ViewBehaviours {
 
   val form = new EstablisherNinoFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => establisherNino(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
+    establisherNino(appConfig(isHubEnabled), form, NormalMode, index)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => establisherNino(frontendAppConfig, form, NormalMode,
     index)(fakeRequest, messages)
 
   "EstablisherNino view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__establisherNino__title"))
+    behave like normalPage(createView(), messageKeyPrefix, messages("messages__establisherNino__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView())
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
+  }
+
+  "EstablisherNino view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
   }
 
   "EstablisherNino view" when {

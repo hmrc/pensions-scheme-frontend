@@ -16,13 +16,11 @@
 
 package views
 
+import models.NormalMode
 import play.twirl.api.HtmlFormat
 import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
 import views.behaviours.ViewBehaviours
 import views.html.schemeTaskList
-import controllers.register.establishers.routes._
-import controllers.register.trustees.routes._
-import models.NormalMode
 
 class SchemeTaskListViewSpec extends ViewBehaviours {
 
@@ -50,12 +48,21 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
       linkText = "workingKnowledgeLinkText")
 
 
-  private val journeyTaskList: JourneyTaskList = JourneyTaskList(about, establishers, trustees, workingKnowledge, None)
+  private val expectedChangeTrusteeHeader = JourneyTaskListSection(
+    None,
+    Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
+      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url),
+    None
+  )
+
+
+  private val journeyTaskList: JourneyTaskList = JourneyTaskList(about, establishers, trustees,
+    workingKnowledge, None, expectedChangeTrusteeHeader)
 
   private def createView(journeyTaskList:JourneyTaskList = journeyTaskList): () => HtmlFormat.Appendable = () =>
     schemeTaskList(frontendAppConfig, journeyTaskList)(fakeRequest, messages)
 
-  private val pageHeader = "Pension scheme details"
+  private val pageHeader = messages("messages__schemeTaskList__title")
   private val messageKeyPrefix = "schemeTaskList"
 
   "SchemeTaskListView" should {
@@ -95,7 +102,13 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
     "no establishers" should {
 
-      val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(about, Seq.empty, Seq.empty, workingKnowledge, None)
+      val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(about, Seq.empty, Seq.empty, workingKnowledge, None,
+        JourneyTaskListSection(
+          None,
+          Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+            controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+          None
+        ))
       val view = createView(journeyTaskListNoEstablisher)
 
       "display correct header" in {
@@ -107,7 +120,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
       "display the correct link" in {
 
         view must haveLinkWithText(
-          url = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url,
+          url = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0).url,
           linkText = messages("messages__schemeTaskList__sectionEstablishers_add_link"),
           linkId = "section-establishers-add-link"
         )
@@ -153,7 +166,13 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
     "no trustees" should {
 
-      val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(about, Seq.empty, Seq.empty, workingKnowledge, None)
+      val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(about, Seq.empty, Seq.empty, workingKnowledge, None,
+        JourneyTaskListSection(
+          None,
+          Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+            controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+          None
+        ))
       val view = createView(journeyTaskListNoEstablisher)
 
       "display correct header" in {
@@ -164,9 +183,9 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
       "display the correct link" in {
         view must haveLinkWithText(
-          url = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url,
+          url = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url,
           linkText = messages("messages__schemeTaskList__sectionTrustees_add_link"),
-          linkId = "section-trustees-add-link"
+          linkId = "section-trustees-link"
         )
       }
     }
@@ -180,7 +199,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
         view must haveLinkWithText(
           url = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url,
           linkText = messages("messages__schemeTaskList__sectionTrustees_change_link"),
-          linkId = "section-trustees-change-link"
+          linkId = "section-trustees-link"
         )
       }
 

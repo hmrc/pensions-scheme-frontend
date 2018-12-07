@@ -26,7 +26,9 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @components.back_link()
+    @if(!appConfig.isHubEnabled) {
+        @components.back_link()
+    }
 
     @helpers.form(action = EstablisherDetailsController.onSubmit(mode, index), 'autoComplete -> "off") {
 
@@ -39,5 +41,9 @@
         @components.person_details(form)
 
         @components.submit_button()
+
+        @if(appConfig.isHubEnabled) {
+            @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad)
+        }
     }
 }

@@ -16,36 +16,32 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.trustees.routes._
 @import models.Mode
+@import controllers.register.adviser.routes._
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__haveAnyTrustees__title"),
+    title = messages("messages__adviserName__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = HaveAnyTrusteesController.onSubmit(mode), 'autoComplete -> "off") {
-
-        @if(!appConfig.isHubEnabled) {
-            @components.back_link()
-        }
+    @helpers.form(action = AdviserNameController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__haveAnyTrustees__heading"))
+        @components.heading(messages("messages__adviserName__heading"))
 
-        @components.input_yes_no(
-            field = form("value"),
-            label = messages("messages__haveAnyTrustees__title"),
-            labelClass = Some("bold-small visually-hidden")
+        <p>@messages("messages__adviserName__hint")</p>
+
+        @components.input_text(
+            field = form("adviserName"),
+            label = messages("messages__scheme_details__name_label"),
+            labelClass = Some("visually-hidden")
         )
 
         @components.submit_button()
 
-        @if(appConfig.isHubEnabled) {
-            @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad)
-        }
+        @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
     }
 }

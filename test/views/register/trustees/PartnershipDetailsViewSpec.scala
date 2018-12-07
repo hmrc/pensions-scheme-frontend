@@ -31,19 +31,34 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
   override val form = new PartnershipDetailsFormProvider()()
   val firstIndex = Index(1)
 
-  def createView: () => HtmlFormat.Appendable = () => partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean = true): () => HtmlFormat.Appendable = () =>
+    partnershipDetails(appConfig(isHubEnabled), form, NormalMode, firstIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
 
 
-  "PartnershipDetails view" must {
+  "PartnershipDetails view with hub enabled" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
-
-    behave like pageWithBackLink(createView)
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       routes.TrusteeDetailsController.onSubmit(NormalMode, firstIndex).url, "partnershipName")
+
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView()())
+      assertNotRenderedById(doc, "back-link")
+    }
+  }
+
+  "PartnershipDetails view with hub disabled" must {
+    behave like pageWithBackLink(createView(isHubEnabled = false))
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
   }
 }

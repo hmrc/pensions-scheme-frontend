@@ -38,16 +38,34 @@ class AddressYearsViewSpec extends ViewBehaviours {
     legend = "legend"
   )
 
-  def createView: () => HtmlFormat.Appendable = () => addressYears(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean): () => HtmlFormat.Appendable = () =>
+    addressYears(appConfig(isHubEnabled), form, viewmodel)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     addressYears(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
 
   "AddressYears view" must {
-    behave like normalPage(createView, messageKeyPrefix, viewmodel.heading)
+    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, viewmodel.heading)
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView(isHubEnabled = false))
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
+
   }
+
+  "AddressYears view with hub enabled" must {
+
+    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
+  }
+
 
   "AddressYears view" when {
     "rendered" must {

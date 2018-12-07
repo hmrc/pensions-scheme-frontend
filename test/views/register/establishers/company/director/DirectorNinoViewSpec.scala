@@ -30,16 +30,30 @@ class DirectorNinoViewSpec extends ViewBehaviours {
   val directorIndex = Index(1)
   val form = new DirectorNinoFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => directorNino(frontendAppConfig, form, NormalMode, establisherIndex,
-    directorIndex)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean): () => HtmlFormat.Appendable = () =>
+    directorNino(appConfig(isHubEnabled), form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorNino(frontendAppConfig, form, NormalMode,
     establisherIndex, directorIndex)(fakeRequest, messages)
 
   "DirectorNino view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__director_nino__title"))
+    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, messages("messages__director_nino__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView(isHubEnabled = false))
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
+  }
+
+  "DirectorNino view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
   }
 
   "DirectorNino view" when {

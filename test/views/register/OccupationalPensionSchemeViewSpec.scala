@@ -30,18 +30,33 @@ class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
 
   val form = new OccupationalPensionSchemeFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView(isHubEnabled:Boolean): () => HtmlFormat.Appendable = () =>
+    occupationalPensionScheme(appConfig(isHubEnabled), form, NormalMode)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  "OccupationalPensionScheme view" must {
+  "OccupationalPensionScheme view  with hub disabled" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(isHubEnabled=false), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView(isHubEnabled=false))
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
 
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.OccupationalPensionSchemeController.onSubmit(NormalMode).url)
+  }
+
+  "OccupationalPensionScheme view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
   }
 }

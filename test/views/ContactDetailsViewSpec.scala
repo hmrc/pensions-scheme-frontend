@@ -39,17 +39,17 @@ class ContactDetailsViewSpec extends QuestionViewBehaviours[ContactDetails] {
     body = Message("messages__contact_details__body")
   )
 
-  def createView: () => HtmlFormat.Appendable = () =>
-    contactDetails(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
+    contactDetails(appConfig(isHubEnabled), form, viewmodel)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     contactDetails(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
 
   "ContactDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, pageHeader = "Enter the scheme establisher’s contact details")
+    behave like normalPage(createView(), messageKeyPrefix, pageHeader = "Enter the scheme establisher’s contact details")
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView())
 
     behave like pageWithTextFields(
       createViewUsingForm,
@@ -58,5 +58,19 @@ class ContactDetailsViewSpec extends QuestionViewBehaviours[ContactDetails] {
       "emailAddress",
       "phoneNumber"
     )
+
+    "not have a return link" in {
+      val doc = asDocument(createView()())
+      assertNotRenderedById(doc, "return-link")
+    }
+  }
+
+  "ContactDetails view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
   }
 }

@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
+import controllers.register.adviser.CheckYourAnswersControllerSpec.frontendAppConfig
 import identifiers.TypedIdentifier
 import identifiers.register.IsWorkingKnowledgeCompleteId
 import models.CheckMode
@@ -133,7 +134,11 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 
     "redirect to Service Unavailable page for a POST if InvalidPayloadException thrown" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
-      val result = controller(pensionsSchemeConnector = fakePensionsSchemeConnectorWithInvalidPayloadException).onSubmit(postRequest)
+      val frontendAppConfig = new GuiceApplicationBuilder().configure(
+        "features.is-hub-enabled" -> false
+      ).build().injector.instanceOf[FrontendAppConfig]
+      val result = controller(pensionsSchemeConnector = fakePensionsSchemeConnectorWithInvalidPayloadException,
+        frontendAppConfig=frontendAppConfig).onSubmit(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.ServiceUnavailableController.onPageLoad().url)
@@ -223,7 +228,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  emailConnector: EmailConnector = fakeEmailConnector,
                  psaName: JsValue = psaName,
-                 pensionsSchemeConnector: PensionsSchemeConnector = fakePensionsSchemeConnector
+                 pensionsSchemeConnector: PensionsSchemeConnector = fakePensionsSchemeConnector,
+                 frontendAppConfig : FrontendAppConfig = frontendAppConfig
                 ): CheckYourAnswersController =
 
     new CheckYourAnswersController(

@@ -24,7 +24,8 @@ import identifiers.register.trustees.partnership._
 import models.{AddressYears, CheckMode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
-class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
+                                             appConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers(index: Int, answers: UserAnswers): Option[NavigateTo] =
     NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
@@ -56,7 +57,11 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
     case PartnershipContactDetailsId(index) =>
       NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
     case CheckYourAnswersId(index) =>
-      NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
+      if(appConfig.isHubEnabled) {
+        NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+      } else {
+        NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
+      }
     case _ =>
       None
   }
