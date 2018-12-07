@@ -46,6 +46,6 @@
 
         @components.submit_button("site.save_and_continue")
 
-        <a id="return-managing" href="@appConfig.managePensionsSchemeOverviewUrl">@messages("messages__schemeTaskList__returnlink")</a>
+        @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
     }
 }

@@ -30,18 +30,35 @@ class AdviserDetailsViewSpec extends QuestionViewBehaviours[AdviserDetails] {
 
   override val form = new AdviserDetailsFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => adviserDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean=false): () => HtmlFormat.Appendable = () =>
+    adviserDetails(appConfig(isHubEnabled), form, NormalMode)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => adviserDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    adviserDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
 
   "AdviserDetails view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView())
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.register.adviser.routes.AdviserDetailsController.onSubmit(NormalMode).url,
       "adviserName", "emailAddress", "phoneNumber")
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
+  }
+
+  "AdviserDetails view with hubEnabled" must {
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
+
+    behave like pageWithReturnLink(createView(true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
   }
 }
