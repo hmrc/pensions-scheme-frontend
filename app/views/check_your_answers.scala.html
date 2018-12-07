@@ -23,6 +23,26 @@
 
 @(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call)(implicit request: Request[_], messages: Messages)
 
+@heading=@{
+    messages(
+        if(appConfig.isHubEnabled){
+            "checkYourAnswers.hs.heading"
+        } else {
+            "checkYourAnswers.heading"
+        }
+    )
+}
+
+@title=@{
+    messages(
+        if(appConfig.isHubEnabled){
+            "checkYourAnswers.hs.title"
+        } else {
+            "checkYourAnswers.title"
+        }
+    )
+}
+
 @main_template(
     title = messages("checkYourAnswers.title"),
     appConfig = appConfig,
@@ -42,10 +62,11 @@
             }
         }
 
-        @components.submit_button("site.continue")
-
-        @if(appConfig.isHubEnabled) {
-            @components.return_link("messages__schemeTaskList__returnlink", controllers.register.routes.SchemeTaskListController.onPageLoad)
+        @if(appConfig.isHubEnabled){
+            @components.submit_button()
+            @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
+        }else{
+            @components.submit_button("site.continue")
         }
     }
 

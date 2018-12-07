@@ -30,6 +30,8 @@ import scala.language.implicitConversions
 
 trait CheckYourAnswers[I <: TypedIdentifier.PathDependent] {
   def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow]
+  def rowWithValue(id: I)(changeUrl: String, data:String, userAnswers: UserAnswers): Seq[AnswerRow] = row(id)(changeUrl, userAnswers)
+
 }
 
 object CheckYourAnswers {
@@ -215,6 +217,7 @@ object CheckYourAnswers {
               s"messages__visuallyhidden__${id.toString}"
             ))
         }.getOrElse(Seq.empty[AnswerRow])
+
     }
   }
 
