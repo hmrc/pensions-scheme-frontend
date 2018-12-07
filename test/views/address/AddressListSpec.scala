@@ -16,12 +16,10 @@
 
 package views.address
 
-import config.FrontendAppConfig
 import forms.address.AddressListFormProvider
 import models.address.TolerantAddress
 import org.jsoup.Jsoup
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
@@ -51,7 +49,7 @@ class AddressListSpec extends ViewBehaviours {
       Some("GB")
     )
 
-  private def createView(isHubEnabled:Boolean): () => HtmlFormat.Appendable =
+  private def createView(isHubEnabled: Boolean): () => HtmlFormat.Appendable =
     () =>
       addressList(
         appConfig(isHubEnabled),
@@ -73,7 +71,21 @@ class AddressListSpec extends ViewBehaviours {
     behave like pageWithBackLink(createView(isHubEnabled = false))
 
     "have link for enter address manually" in {
-      Jsoup.parse(createView(isHubEnabled=false)().toString()).select("a[id=manual-address-link]") must haveLink(call.url)
+      Jsoup.parse(createView(isHubEnabled = false)().toString()).select("a[id=manual-address-link]") must haveLink(call.url)
+    }
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
+  }
+
+  "AddressListView view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
     }
   }
 

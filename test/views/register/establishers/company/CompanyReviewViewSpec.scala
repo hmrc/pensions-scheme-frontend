@@ -40,37 +40,43 @@ class CompanyReviewViewSpec extends ViewBehaviours {
     DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now())
   )
 
-  def createView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, companyName, directors)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
+    companyReview(appConfig(isHubEnabled), index, companyName, directors)(fakeRequest, messages)
 
   def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, companyName, tenDirectors)(fakeRequest, messages)
 
   "CompanyReview view" must {
     behave like normalPage(
-      createView,
+      createView(),
       messageKeyPrefix,
       messages(s"messages__${messageKeyPrefix}__heading"),
       "_directors__heading")
 
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
+
     "display company name" in {
-      Jsoup.parse(createView().toString) must haveDynamicText(companyName)
+      Jsoup.parse(createView()().toString) must haveDynamicText(companyName)
     }
 
     "have link to edit company details" in {
-      Jsoup.parse(createView().toString).select("a[id=edit-company-details]") must haveLink(
+      Jsoup.parse(createView()().toString).select("a[id=edit-company-details]") must haveLink(
         routes.CheckYourAnswersController.onPageLoad(index).url
       )
     }
 
     "have link to edit director details when there are less than 10 directors" in {
-      Jsoup.parse(createView().toString).select("a[id=edit-director-details]") must haveLink(
+      Jsoup.parse(createView()().toString).select("a[id=edit-director-details]") must haveLink(
         routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index).url
       )
-      Jsoup.parse(createView().toString) must haveDynamicText("messages__companyReview__directors__editLink")
+      Jsoup.parse(createView()().toString) must haveDynamicText("messages__companyReview__directors__editLink")
 
     }
 
     "have link to edit directors when there are 10 directors" in {
-      Jsoup.parse(createView().toString).select("a[id=edit-director-details]") must haveLink(
+      Jsoup.parse(createView()().toString).select("a[id=edit-director-details]") must haveLink(
         routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index).url
       )
       Jsoup.parse(createSecView().toString) must haveDynamicText("messages__companyReview__directors__changeLink")
@@ -78,7 +84,16 @@ class CompanyReviewViewSpec extends ViewBehaviours {
 
     "contain list of directors" in {
       for (director <- directors)
-        Jsoup.parse(createView().toString) must haveDynamicText(director)
+        Jsoup.parse(createView()().toString) must haveDynamicText(director)
+    }
+  }
+
+  "CompanyReview view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
     }
   }
 

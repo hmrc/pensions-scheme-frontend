@@ -28,18 +28,34 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
   val index = Index(1)
   val form = new CompanyRegistrationNumberFormProvider()()
 
-  def createView = () => companyRegistrationNumber(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+  private def createView(isHubEnabled: Boolean = false) = () =>
+    companyRegistrationNumber(appConfig(isHubEnabled), form, NormalMode, index)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyRegistrationNumber(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) =>
+    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   "CompanyRegistrationNumber view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__company__has_crn"))
+    behave like normalPage(createView(), messageKeyPrefix, messages("messages__company__has_crn"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView())
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
 
     "Generate correct hint text" in {
-      val doc = asDocument(createView())
+      val doc = asDocument(createView()())
       assertContainsText(doc, messages("messages__common__crn_hint"))
+    }
+  }
+
+  "CompanyRegistrationNumber view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
     }
   }
 
