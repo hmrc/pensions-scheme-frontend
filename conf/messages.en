@@ -1158,4 +1158,4 @@ declarationDuties.checkYourAnswersLabel= Do you have working knowledge of pensio
 adviserName.checkYourAnswersLabel = Who has working knowledge of pensions and pensions tax legislation?
 adviserEmail.checkYourAnswersLabel = What is {0}’s email address?
 adviserAddress.checkYourAnswersLabel = {0}’s address
-messages__visuallyhidden__adviserAddress = Change address
+

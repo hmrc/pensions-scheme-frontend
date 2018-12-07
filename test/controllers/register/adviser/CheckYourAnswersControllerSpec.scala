@@ -187,7 +187,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
               adviserAddress.postcode.get,
               "Country of GB"),
             answerIsMessageKey = false,
-            Some(routes.AdviserAddressController.onPageLoad(CheckMode).url), "messages__visuallyhidden__adviserAddress")
+            Some(routes.AdviserAddressController.onPageLoad(CheckMode).url), "Change address")
         )
       )
 
