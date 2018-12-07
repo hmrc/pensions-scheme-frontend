@@ -27,7 +27,9 @@
 
     @helpers.form(action = viewmodel.postCall, 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(!appConfig.isHubEnabled) {
+            @components.back_link()
+        }
 
         @components.error_summary(form.errors)
 
@@ -43,5 +45,9 @@
         )
 
         @components.submit_button()
+
+        @if(appConfig.isHubEnabled) {
+            @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad)
+        }
     }
 }

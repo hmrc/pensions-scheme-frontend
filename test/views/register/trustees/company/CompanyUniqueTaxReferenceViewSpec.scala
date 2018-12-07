@@ -31,17 +31,31 @@ class CompanyUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   val index = Index(1)
 
-
-  def createView: () => HtmlFormat.Appendable = () => companyUniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean = true): () => HtmlFormat.Appendable = () =>
+    companyUniqueTaxReference(appConfig(isHubEnabled), form, NormalMode, index)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => companyUniqueTaxReference(frontendAppConfig, form,
     NormalMode, index)(fakeRequest, messages)
 
-  "CompanyUniqueTaxReference view" must {
+  "CompanyUniqueTaxReference view with hub enabled" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__trustee__has_ct_utr__title"))
+    behave like normalPage(createView(), messageKeyPrefix, messages("messages__trustee__has_ct_utr__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView()())
+      assertNotRenderedById(doc, "back-link")
+    }
+  }
+
+  "CompanyUniqueTaxReference view with hub disabled" must {
+    behave like pageWithBackLink(createView(isHubEnabled = false))
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
   }
 
   "CompanyUniqueTaxReference view" when {

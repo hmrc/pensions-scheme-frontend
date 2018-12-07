@@ -44,10 +44,10 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   private val johnDoeEntity = PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
   private val joeBloggsEntity = PartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
 
-  private def createView(partners: Seq[PartnerEntity] = Nil) =
+  private def createView(partners: Seq[PartnerEntity] = Nil, isHubEnabled: Boolean = false) =
     () =>
       addPartners(
-        frontendAppConfig,
+        appConfig(isHubEnabled),
         form,
         establisherIndex,
         partners,
@@ -121,6 +121,20 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
       doc must haveDynamicText("messages__addPartners_at_maximum")
     }
 
+    "not have a return link" in {
+      val doc = asDocument(createView()())
+      assertNotRenderedById(doc, "return-link")
+    }
+
+  }
+
+  "AddPartnershipPartners view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
   }
 
 }
