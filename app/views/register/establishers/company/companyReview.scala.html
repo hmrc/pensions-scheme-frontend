@@ -53,4 +53,8 @@
         @components.submit_button("site.confirm")
     }
 
+    @if(appConfig.isHubEnabled) {
+        @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad)
+    }
+
 }

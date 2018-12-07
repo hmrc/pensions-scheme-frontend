@@ -30,17 +30,34 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
   override val form = new CompanyDetailsFormProvider()()
   val firstIndex = Index(1)
 
-  def createView = () => companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+  private def createView(isHubEnabled: Boolean = true) = () =>
+    companyDetails(appConfig(isHubEnabled), form, NormalMode, firstIndex)(fakeRequest, messages)
 
-  def createViewUsingForm = (form: Form[_]) => companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) =>
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
 
 
-  "CompanyDetails view" must {
+  "CompanyDetails view with hub enabled" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex).url, "companyName", "vatNumber", "payeNumber")
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
+      company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex).url, "companyName", "vatNumber", "payeNumber")
+
+    "not have a back link" in {
+      val doc = asDocument(createView()())
+      assertNotRenderedById(doc, "back-link")
+    }
+  }
+
+  "CompanyDetails view with hub disabled" must {
+    behave like pageWithBackLink(createView(isHubEnabled = false))
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
   }
 }

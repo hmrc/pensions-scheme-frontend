@@ -39,7 +39,10 @@
 
     @helpers.form(action = routes.AddEstablisherController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @components.back_link()
+        @if(!appConfig.isHubEnabled) {
+            @components.back_link()
+        }
+
         @if(establishers.isEmpty) {
 
         @components.heading(
@@ -67,5 +70,9 @@
         }
 
         @components.submit_button("messages__common__continue", disableSubmission)
+
+        @if(appConfig.isHubEnabled) {
+            @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad)
+        }
     }
 }

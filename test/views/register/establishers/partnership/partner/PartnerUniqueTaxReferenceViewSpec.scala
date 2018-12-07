@@ -30,18 +30,31 @@ class PartnerUniqueTaxReferenceViewSpec extends ViewBehaviours {
   val establisherIndex = Index(1)
   val partnerIndex = Index(1)
 
-
-  def createView: () => HtmlFormat.Appendable = () => partnerUniqueTaxReference(frontendAppConfig, form, NormalMode,
-    establisherIndex, partnerIndex)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
+    partnerUniqueTaxReference(appConfig(isHubEnabled), form, NormalMode, establisherIndex, partnerIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => partnerUniqueTaxReference(frontendAppConfig, form,
     NormalMode, establisherIndex, partnerIndex)(fakeRequest, messages)
 
   "PartnershipUniqueTaxReference view" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages("messages__partner_has_sautr__title"))
+    behave like normalPage(createView(), messageKeyPrefix, messages("messages__partner_has_sautr__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView())
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
+  }
+
+  "PartnershipUniqueTaxReference view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
   }
 
   "PartnershipUniqueTaxReference view" when {

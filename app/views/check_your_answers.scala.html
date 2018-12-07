@@ -44,13 +44,13 @@
 }
 
 @main_template(
-    title = title,
+    title = messages("checkYourAnswers.title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
     @helpers.form(action = postUrl, 'autoComplete -> "off") {
         @components.heading(
-                headingKey = heading
+                headingKey = messages("checkYourAnswers.heading")
         )
 
         @for((section, i) <- answerSections.zipWithIndex){

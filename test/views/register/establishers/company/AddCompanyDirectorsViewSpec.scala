@@ -43,10 +43,10 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
   private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
 
-  private def createView(directors: Seq[DirectorEntity] = Nil) =
+  private def createView(directors: Seq[DirectorEntity] = Nil, isHubEnabled: Boolean = false) =
     () =>
       addCompanyDirectors(
-        frontendAppConfig,
+        appConfig(isHubEnabled),
         form,
         NormalMode,
         establisherIndex,
@@ -68,6 +68,11 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
     behave like normalPage(createView(), messageKeyPrefix, messages("messages__addCompanyDirectors__heading"))
 
     behave like pageWithBackLink(createView())
+
+    "not have a return link" in {
+      val doc = asDocument(createView()())
+      assertNotRenderedById(doc, "return-link")
+    }
 
     behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),
@@ -121,6 +126,15 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
       doc must haveDynamicText("messages__addCompanyDirectors_tell_us_if_you_have_more")
     }
 
+  }
+
+  "AddCompanyDirectors view with hub enabled" must {
+    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
+    }
   }
 
 }

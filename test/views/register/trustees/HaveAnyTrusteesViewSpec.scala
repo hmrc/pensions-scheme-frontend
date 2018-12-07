@@ -30,17 +30,32 @@ class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {
 
   val form = new HaveAnyTrusteesFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => haveAnyTrustees(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView(isHubEnabled: Boolean = true): () => HtmlFormat.Appendable = () =>
+    haveAnyTrustees(appConfig(isHubEnabled), form, NormalMode)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => haveAnyTrustees(frontendAppConfig, form,
     NormalMode)(fakeRequest, messages)
 
-  "HaveAnyTrustees view" must {
+  "HaveAnyTrustees view with hub enabled" must {
 
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
-
-    behave like pageWithBackLink(createView)
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
 
     behave like yesNoPage(createViewUsingForm, messageKeyPrefix, routes.HaveAnyTrusteesController.onSubmit(NormalMode).url)
+
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView()())
+      assertNotRenderedById(doc, "back-link")
+    }
+  }
+
+  "HaveAnyTrustees view with hub disabled" must {
+    behave like pageWithBackLink(createView(isHubEnabled = false))
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
   }
 }

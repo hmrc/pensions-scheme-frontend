@@ -31,24 +31,31 @@ class ConfirmDeletePartnerViewSpec extends ViewBehaviours {
   private val postCall = ConfirmDeletePartnerController.onSubmit(establisherIndex = 0, partnerIndex = 0)
   private val cancelCall = AddPartnersController.onSubmit(index = 0)
 
-  private def createView: () => HtmlFormat.Appendable = () =>
+  private def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
     confirmDeletePartner(
-      frontendAppConfig,
+      appConfig(isHubEnabled),
       partnerName,
       postCall,
       cancelCall
     )(fakeRequest, messages)
 
   "ConfirmDeleteDirector view" must {
-    behave like normalPage(createView, messageKeyPrefix, Message(s"messages__${messageKeyPrefix}__heading").withArgs("John Doe"))
+    behave like normalPage(createView(), messageKeyPrefix, Message(s"messages__${messageKeyPrefix}__heading").withArgs("John Doe"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithBackLink(createView())
 
-    behave like pageWithSubmitButton(createView)
+    behave like pageWithSubmitButton(createView())
 
     "have a cancel link" in {
-      val doc = asDocument(createView())
+      val doc = asDocument(createView()())
       assertLink(doc, "cancel", cancelCall.url)
+    }
+  }
+
+  "ConfirmDeleteDirector view with hub enabled" must {
+    "not have a back link" in {
+      val doc = asDocument(createView(isHubEnabled = true)())
+      assertNotRenderedById(doc, "back-link")
     }
   }
 
