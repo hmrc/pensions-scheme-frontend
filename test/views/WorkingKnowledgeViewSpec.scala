@@ -51,10 +51,7 @@ class WorkingKnowledgeViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithSubmitButton(createView)
 
-    "have a link return to pension scheme details" in {
-      val doc = asDocument(createView())
-      assertLink(doc, linkId = "return-managing", url = frontendAppConfig.managePensionsSchemeOverviewUrl.url)
-    }
+    behave like pageWithReturnLink(createView, url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 
   }
 }
