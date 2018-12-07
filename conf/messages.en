@@ -1157,5 +1157,5 @@ messages__adviserName__blank = Enter the name of who has working knowledge of pe
 declarationDuties.checkYourAnswersLabel= Do you have working knowledge of pensions and pensions tax legislation?
 adviserName.checkYourAnswersLabel = Who has working knowledge of pensions and pensions tax legislation?
 adviserEmail.checkYourAnswersLabel = What is {0}’s email address?
-
-messages__adviserAddress__cyaHeading = {0}’s address
+adviserAddress.checkYourAnswersLabel = {0}’s address
+messages__visuallyhidden__adviserAddress = Change address

@@ -62,33 +62,13 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
         val adviserName = request.userAnswers.get(AdviserNameId).getOrElse(throw new RuntimeException("No adviser name"))
         implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
-          AddressCYA(label = Message("messages__adviserAddress__cyaHeading", adviserName))()
-
-
-        println( "\n\nDUTIES:" + request.userAnswers.get(DeclarationDutiesId))
-        println( "\n\nUA:" + request.userAnswers)
-
+          AddressCYA(label = Message("adviserAddress.checkYourAnswersLabel", adviserName))()
         val workingKnowldge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad().url)
         val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
         val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
           .map(ar => ar.copy(label = Messages(ar.label, adviserName)))
-
-        println( "\n\n>>>>>>>>>>>>>>>>>" + workingKnowldge)
-
-        Seq(AnswerSection(None, workingKnowldge ++ adviserNameRow ++ adviserEmailRow))
-
-        /*
-
-        val workingKnowldge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad().url)
-        val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
-        val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
-          .map(ar => ar.copy(label = Messages(ar.label, adviser.adviserName)))
         val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
-
         Seq(AnswerSection(None, workingKnowldge ++ adviserNameRow ++ adviserEmailRow ++ adviserAddressRow))
-         */
-
-
       } else {
         val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
         val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
