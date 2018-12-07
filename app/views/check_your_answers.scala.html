@@ -23,14 +23,34 @@
 
 @(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call)(implicit request: Request[_], messages: Messages)
 
+@heading=@{
+    messages(
+        if(appConfig.isHubEnabled){
+            "checkYourAnswers.hs.heading"
+        } else {
+            "checkYourAnswers.heading"
+        }
+    )
+}
+
+@title=@{
+    messages(
+        if(appConfig.isHubEnabled){
+            "checkYourAnswers.hs.title"
+        } else {
+            "checkYourAnswers.title"
+        }
+    )
+}
+
 @main_template(
-    title = messages("checkYourAnswers.title"),
+    title = title,
     appConfig = appConfig,
     bodyClasses = None) {
 
     @helpers.form(action = postUrl, 'autoComplete -> "off") {
         @components.heading(
-                headingKey = messages("checkYourAnswers.heading")
+                headingKey = heading
         )
 
         @for((section, i) <- answerSections.zipWithIndex){

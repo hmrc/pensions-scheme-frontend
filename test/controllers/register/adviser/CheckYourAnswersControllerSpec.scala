@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors._
 import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.register.adviser.CheckYourAnswersControllerSpec.frontendAppConfig
+import controllers.register.adviser.CheckYourAnswersControllerSpec.{fakeRequest, frontendAppConfig, messages}
 import identifiers.TypedIdentifier
 import identifiers.register.IsWorkingKnowledgeCompleteId
 import models.CheckMode
@@ -51,14 +51,14 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
   "CheckYourAnswers Controller" must {
 
     "return OK and the correct view for a GET" in {
-      val result = controller(getMandatoryAdviser).onPageLoad(fakeRequest)
+      val result = controller(getMandatoryAdviser, frontendAppConfig = appConfig(isHubEnabled = false)).onPageLoad(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad()(fakeRequest)
+      val result = controller(dontGetAnyData, frontendAppConfig = appConfig(isHubEnabled = true)).onPageLoad()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -105,7 +105,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
     }
 
     "redirect to the next page on a POST request" in {
-      val result = controller().onSubmit()(fakeRequest)
+      val result = controller(frontendAppConfig = appConfig(isHubEnabled = false)).onSubmit()(fakeRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -142,6 +142,31 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.ServiceUnavailableController.onPageLoad().url)
+    }
+
+    "return OK and the correct view for a GET when hub is enabled" in {
+      val result = controller(getMandatoryAdviser, frontendAppConfig = appConfig(true)).onPageLoad(fakeRequest)
+
+
+      lazy val adviserSection = AnswerSection(None,
+        Seq(
+          AnswerRow("declarationDuties.checkYourAnswersLabel", Seq("site.no"), answerIsMessageKey = true,
+            Some(controllers.routes.WorkingKnowledgeController.onPageLoad().url), "messages__visuallyhidden__declarationDuties"),
+          AnswerRow("adviserName.checkYourAnswersLabel", Seq("aaa"), answerIsMessageKey = false,
+            Some(routes.AdviserNameController.onPageLoad(CheckMode).url), "messages__visuallyhidden__adviserName"),
+          AnswerRow("adviserEmail.checkYourAnswersLabel", Seq("email@a.c"), answerIsMessageKey = false,
+            Some(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url), "messages__visuallyhidden__adviser__email_address")
+        )
+      )
+
+      val viewAsString: String = check_your_answers(
+        appConfig = appConfig(isHubEnabled = true),
+        Seq(adviserSection),
+        postUrl
+      )(fakeRequest, messages).toString
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString
     }
 
   }
@@ -229,7 +254,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
                  emailConnector: EmailConnector = fakeEmailConnector,
                  psaName: JsValue = psaName,
                  pensionsSchemeConnector: PensionsSchemeConnector = fakePensionsSchemeConnector,
-                 frontendAppConfig : FrontendAppConfig = frontendAppConfig
+                 frontendAppConfig : FrontendAppConfig
                 ): CheckYourAnswersController =
 
     new CheckYourAnswersController(
