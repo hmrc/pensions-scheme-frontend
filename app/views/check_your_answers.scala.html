@@ -42,7 +42,12 @@
             }
         }
 
-        @components.submit_button("site.continue")
+        @if(appConfig.isHubEnabled){
+            @components.submit_button()
+            @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
+        }else{
+            @components.submit_button("site.continue")
+        }
     }
 
 }

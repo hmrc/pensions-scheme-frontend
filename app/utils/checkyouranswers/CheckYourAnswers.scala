@@ -218,17 +218,6 @@ object CheckYourAnswers {
             ))
         }.getOrElse(Seq.empty[AnswerRow])
 
-      override def rowWithValue(id: I)(changeUrl: String, data:String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map {
-          string =>
-            Seq(AnswerRow(
-              s"${id.toString}.checkYourAnswersLabel",
-              Seq(retrieveStringAnswer(id, string)),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              s"messages__visuallyhidden__${id.toString}"
-            ))
-        }.getOrElse(Seq.empty[AnswerRow])
     }
   }
 

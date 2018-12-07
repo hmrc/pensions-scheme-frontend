@@ -27,7 +27,7 @@ import models.address.Address
 import models.register.AdviserDetails
 import models.requests.DataRequest
 import models.{CheckMode, NormalMode, PSAName}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.{JsValue, Reads}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
@@ -63,15 +63,18 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
         request.userAnswers.get(AdviserDetailsId).map {
           adviser =>
-          implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
-            AddressCYA(label = Message("messages__adviserAddress__cyaHeading", adviser.adviserName))()
+            implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
+              AddressCYA(label = Message("messages__adviserAddress__cyaHeading", adviser.adviserName))()
 
-          val workingKnowldge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad().url)
-          val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
-          val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
-          val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
+            val workingKnowldge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad().url)
+            val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
 
-          Seq(AnswerSection(None, workingKnowldge ++ adviserNameRow ++ adviserEmailRow ++  adviserAddressRow))
+            val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
+
+            val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
+              .map(ar => ar.copy(label = Messages(ar.label, adviser.adviserName)))
+
+            Seq(AnswerSection(None, workingKnowldge ++ adviserNameRow ++ adviserEmailRow ++ adviserAddressRow))
         }.getOrElse(Seq())
       } else {
         val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
@@ -87,7 +90,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       )
   }
 
-  private def hsAnswerSections()(implicit request:models.requests.DataRequest[play.api.mvc.AnyContent]):Seq[AnswerSection] = {
+  private def hsAnswerSections()(implicit request: models.requests.DataRequest[play.api.mvc.AnyContent]): Seq[AnswerSection] = {
     implicit def adviserDetails[I <: TypedIdentifier[AdviserDetails]](implicit rds: Reads[AdviserDetails]): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
         override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
@@ -123,17 +126,17 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     }
 
     implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
-      AddressCYA(label=Message("messages__adviserAddress__cyaHeading", ""))()
+      AddressCYA(label = Message("messages__adviserAddress__cyaHeading", ""))()
 
-   val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
-  //  val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
+    val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
+    //  val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
     Seq(AnswerSection(None, adviserDetailsRow))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       if (appConfig.isHubEnabled) {
-        sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId, request.userAnswers, value=true).map { _ =>
+        sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId, request.userAnswers, value = true).map { _ =>
           Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
         }
       } else {
