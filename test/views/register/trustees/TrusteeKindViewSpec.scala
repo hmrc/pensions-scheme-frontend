@@ -30,16 +30,30 @@ class TrusteeKindViewSpec extends ViewBehaviours {
   private val form = new TrusteeKindFormProvider()()
   private val index = Index(0)
 
-  private def createView = () => trusteeKind(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+  private def createView(isHubEnabled: Boolean = true) = () => trusteeKind(appConfig(isHubEnabled), form, NormalMode, index)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) => trusteeKind(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   private def trusteeKindOptions = TrusteeKind.options
 
-  "TrusteeKind view" must {
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+  "TrusteeKind view with hub enabled" must {
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView)
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    "not have a back link" in {
+      val doc = asDocument(createView()())
+      assertNotRenderedById(doc, "back-link")
+    }
+  }
+
+  "TrusteeKind view with hub disabled" must {
+    behave like pageWithBackLink(createView(isHubEnabled = false))
+
+    "not have a return link" in {
+      val doc = asDocument(createView(isHubEnabled = false)())
+      assertNotRenderedById(doc, "return-link")
+    }
   }
 
   "TrusteeKind view" when {
