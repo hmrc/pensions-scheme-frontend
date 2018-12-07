@@ -19,20 +19,23 @@ package controllers.register.adviser
 import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
-import identifiers.register.{IsWorkingKnowledgeCompleteId, SubmissionReferenceNumberId}
-import identifiers.register.adviser.{AdviserAddressId, AdviserDetailsId, CheckYourAnswersId}
+import identifiers.TypedIdentifier
+import identifiers.register.adviser._
+import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId, SubmissionReferenceNumberId}
 import javax.inject.Inject
+import models.address.Address
 import models.requests.DataRequest
-import models.{CheckMode, NormalMode, PSAName}
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsValue
+import models.{CheckMode, NormalMode}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.libs.json.{JsValue, Reads}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Adviser
 import utils.checkyouranswers.Ops._
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 import utils.{CountryOptions, Navigator, SectionComplete}
-import viewmodels.AnswerSection
+import viewmodels.{AnswerSection, Message}
 import views.html.check_your_answers
 
 import scala.concurrent.Future
@@ -55,11 +58,22 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
+      val sections = if (appConfig.isHubEnabled) {
 
-      val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
-      val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
-      val sections = Seq(AnswerSection(None, adviserDetailsRow ++ adviserAddressRow))
-
+        val adviserName = request.userAnswers.get(AdviserNameId).getOrElse(throw new RuntimeException("No adviser name"))
+        implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
+          AddressCYA(label = Message("adviserAddress.checkYourAnswersLabel", adviserName))()
+        val workingKnowldge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad().url)
+        val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
+        val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
+          .map(ar => ar.copy(label = Messages(ar.label, adviserName)))
+        val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
+        Seq(AnswerSection(None, workingKnowldge ++ adviserNameRow ++ adviserEmailRow ++ adviserAddressRow))
+      } else {
+        val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
+        val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
+        Seq(AnswerSection(None, adviserDetailsRow ++ adviserAddressRow))
+      }
       Ok(
         check_your_answers(
           appConfig,
@@ -72,7 +86,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       if (appConfig.isHubEnabled) {
-        sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId, request.userAnswers, value=true).map { _ =>
+        sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId, request.userAnswers, value = true).map { _ =>
           Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
         }
       } else {

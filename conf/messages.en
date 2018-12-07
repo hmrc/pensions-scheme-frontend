@@ -1,6 +1,9 @@
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
 
+checkYourAnswers.hs.heading = Check your answers
+checkYourAnswers.hs.title = Check your answers
+
 date.day = Day
 date.month = Month
 date.year = Year
@@ -1150,3 +1153,9 @@ messages__adviserName__name_label = The name of the adviser
 messages__adviserName__length = Enter a name using less than 108 letters
 messages__adviserName__invalid = Enter a name using only letters
 messages__adviserName__blank = Enter the name of who has working knowledge of pensions
+
+declarationDuties.checkYourAnswersLabel= Do you have working knowledge of pensions and pensions tax legislation?
+adviserName.checkYourAnswersLabel = Who has working knowledge of pensions and pensions tax legislation?
+adviserEmail.checkYourAnswersLabel = What is {0}’s email address?
+adviserAddress.checkYourAnswersLabel = {0}’s address
+

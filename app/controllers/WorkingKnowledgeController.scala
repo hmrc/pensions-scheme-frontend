@@ -40,29 +40,29 @@ class WorkingKnowledgeController @Inject()(
                                             @Register navigator: Navigator,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction,
                                             formProvider: WorkingKnowledgeFormProvider,
                                             sectionComplete: SectionComplete
                                           ) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(DeclarationDutiesId) match {
+      val preparedForm = request.userAnswers.flatMap(_.get(DeclarationDutiesId)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
       Ok(workingKnowledge(appConfig, preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode))),
         value =>
-          sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId, request.userAnswers, value).flatMap{_=>
+          sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
+            request.userAnswers.getOrElse(UserAnswers()), value).flatMap{_=>
             dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
               Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap))))
         }

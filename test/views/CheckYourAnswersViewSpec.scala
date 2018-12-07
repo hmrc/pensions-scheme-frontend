@@ -28,9 +28,9 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   private def emptyAnswerSections: Seq[Section] = Nil
 
-  def createView: () => HtmlFormat.Appendable = () =>
+  def createView(isHubEnabled:Boolean): () => HtmlFormat.Appendable = () =>
     check_your_answers(
-      frontendAppConfig,
+      appConfig = appConfig(isHubEnabled),
       emptyAnswerSections,
       routes.IndexController.onPageLoad()
     )(fakeRequest, messages)
@@ -43,9 +43,9 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     )(fakeRequest, messages)
 
   "check_your_answers view" must {
-    behave like normalPageWithTitle(createView, messageKeyPrefix, messages("checkYourAnswers.title"), messages("checkYourAnswers.heading"))
+    behave like normalPageWithTitle(createView(isHubEnabled=false), messageKeyPrefix, messages("checkYourAnswers.title"), messages("checkYourAnswers.heading"))
 
-    behave like pageWithSubmitButton(createView)
+    behave like pageWithSubmitButton(createView(isHubEnabled=false))
 
     behave like checkYourAnswersPage(createViewWithData)
   }
