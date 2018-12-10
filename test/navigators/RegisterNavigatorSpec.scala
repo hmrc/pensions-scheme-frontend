@@ -78,7 +78,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (DeclarationDutiesId, emptyAnswers, expired, false, None, false),
 
     // User Research page - return to SchemeOverview
-    (UserResearchDetailsId, emptyAnswers, schemeOverview(frontendAppConfig), false, None, false)
+    (UserResearchDetailsId, emptyAnswers, schemeOverview(appConfig(isHubEnabled = false)), false, None, false)
   )
 
   private def routesWithRestrictedEstablisherWithHnS = Table(
@@ -87,30 +87,18 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     //Check your answers - back to task list page
     (DeclarationId, hasEstablishers, schemeSuccess, true, None, false),
     (CheckYourAnswersId, emptyAnswers, taskList, true, None, false),
-    (DeclarationDutiesId, dutiesTrue, taskList, true, None, false)
+    (DeclarationDutiesId, dutiesTrue, adviserCheckYourAnswers, true, Some(adviserCheckYourAnswers), true)
   )
 
   "RegisterNavigator" must {
-
-    lazy val app = new GuiceApplicationBuilder().configure(
-      "features.is-hub-enabled" -> false
-    ).build()
-
-    val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled = false))
 
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 
   "RegisterNavigator with hub and spoke" must {
-
-    lazy val app = new GuiceApplicationBuilder().configure(
-      "features.is-hub-enabled" -> true
-    ).build()
-
-    val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled = true))
 
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisherWithHnS, dataDescriber)
     behave like nonMatchingNavigator(navigator)
@@ -187,5 +175,8 @@ object RegisterNavigatorSpec {
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 
   private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
+
+  private def adviserCheckYourAnswers: Call = controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad()
+
 
 }
