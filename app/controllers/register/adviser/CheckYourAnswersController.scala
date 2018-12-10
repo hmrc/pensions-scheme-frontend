@@ -60,19 +60,20 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       val sections = if (appConfig.isHubEnabled) {
         val workingKnowldge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
-        val optionSeqAnswerSection = request.userAnswers.get(DeclarationDutiesId).map {
+        val optionSeqAnswerSection = request.userAnswers.get(DeclarationDutiesId).flatMap {
           case ddi if ddi =>
-            Seq(AnswerSection(None, workingKnowldge))
+            Some(Seq(AnswerSection(None, workingKnowldge)))
           case _ =>
-            val adviserName = request.userAnswers.get(AdviserNameId).getOrElse("No adviser name")
-            implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
-              AddressCYA(label = Message("adviserAddress.checkYourAnswersLabel", adviserName))()
+            request.userAnswers.get(AdviserNameId).map { adviserName =>
+              implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
+                AddressCYA(label = Message("adviserAddress.checkYourAnswersLabel", adviserName))()
 
-            val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
-            val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
-              .map(ar => ar.copy(label = Messages(ar.label, adviserName)))
-            val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
-            Seq(AnswerSection(None, workingKnowldge ++ adviserNameRow ++ adviserEmailRow ++ adviserAddressRow))
+              val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
+              val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
+                .map(ar => ar.copy(label = Messages(ar.label, adviserName)))
+              val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
+              Seq(AnswerSection(None, workingKnowldge ++ adviserNameRow ++ adviserEmailRow ++ adviserAddressRow))
+            }
         }
         optionSeqAnswerSection.getOrElse(Seq.empty)
       } else {
