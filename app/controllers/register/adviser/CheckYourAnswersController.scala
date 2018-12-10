@@ -63,7 +63,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         val adviserName = request.userAnswers.get(AdviserNameId).getOrElse(throw new RuntimeException("No adviser name"))
         implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
           AddressCYA(label = Message("adviserAddress.checkYourAnswersLabel", adviserName))()
-        val workingKnowldge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad().url)
+        val workingKnowldge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
         val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
         val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
           .map(ar => ar.copy(label = Messages(ar.label, adviserName)))
