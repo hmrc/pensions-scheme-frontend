@@ -217,6 +217,7 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
 
   private lazy val aboutLinkText = messages("messages__schemeTaskList__about_link_text")
   private lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_add_link")
+  private lazy val changeWorkingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_change_link")
   private lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
   private lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
   private lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
@@ -239,6 +240,11 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
       controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode).url)
   }
 
+  private val workingKnowledgeCompletedLink: Link = {
+    Link(messages(changeWorkingKnowledgeLinkText),
+      controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad().url)
+  }
+
   private val userAnswersJson = readJsonFromFile("/payload.json")
   private val userAnswers = UserAnswers(userAnswersJson)
   val inProgressEst = Seq(EstablisherCompanyEntity(CompanyDetailsId(0), "test 1", false, true),
@@ -251,7 +257,7 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
 
   private val expectedWorkingKnowledgeSection = JourneyTaskListSection(
     Some(true),
-    workingKnowledgeDefaultLink,
+    workingKnowledgeCompletedLink,
     None)
 
   private val expectedEstablishersSection = Seq(

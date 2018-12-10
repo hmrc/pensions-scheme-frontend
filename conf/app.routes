@@ -33,5 +33,5 @@ GET        /scheme-details/:srn                         controllers.PSASchemeDet
 GET        /having-pensions-working-knowledge           controllers.WorkingKnowledgeController.onPageLoad(mode: Mode = NormalMode)
 POST       /having-pensions-working-knowledge           controllers.WorkingKnowledgeController.onSubmit(mode: Mode = NormalMode)
 
-GET        /change-having-pensions-working-knowledge           controllers.WorkingKnowledgeController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-having-pensions-working-knowledge           controllers.WorkingKnowledgeController.onSubmit(mode: Mode = CheckMode)
+GET        /change-having-pensions-working-knowledge    controllers.WorkingKnowledgeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-having-pensions-working-knowledge    controllers.WorkingKnowledgeController.onSubmit(mode: Mode = CheckMode)
