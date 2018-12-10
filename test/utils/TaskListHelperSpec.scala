@@ -236,7 +236,7 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
 
   private val workingKnowledgeDefaultLink: Link = {
     Link(messages(workingKnowledgeLinkText),
-      controllers.routes.WorkingKnowledgeController.onPageLoad().url)
+      controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode).url)
   }
 
   private val userAnswersJson = readJsonFromFile("/payload.json")
