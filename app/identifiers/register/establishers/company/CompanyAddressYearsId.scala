@@ -17,7 +17,7 @@
 package identifiers.register.establishers.company
 
 import identifiers.TypedIdentifier
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.AddressYears
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
@@ -33,6 +33,10 @@ case class CompanyAddressYearsId(index: Int) extends TypedIdentifier[AddressYear
           .remove(CompanyPreviousAddressPostcodeLookupId(this.index))
           .flatMap(_.remove(CompanyPreviousAddressId(this.index)))
           .flatMap(_.remove(CompanyPreviousAddressListId(this.index)))
+      case Some(AddressYears.UnderAYear) =>
+        userAnswers.set(IsCompanyCompleteId(index))(false).flatMap(
+          _.set(IsEstablisherCompleteId(index))(false)
+        )
       case _ => super.cleanup(value, userAnswers)
     }
   }

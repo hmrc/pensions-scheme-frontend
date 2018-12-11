@@ -26,6 +26,7 @@ case object UKBankAccountId extends TypedIdentifier[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(false) => userAnswers.remove(UKBankDetailsId)
+      case Some(true) => userAnswers.set(IsAboutSchemeCompleteId)(false)
       case _ => super.cleanup(value, userAnswers)
     }
   }

@@ -16,6 +16,7 @@
 
 package identifiers.register.trustees.company
 
+import identifiers.register.trustees.IsTrusteeCompleteId
 import models.AddressYears
 import models.address.{Address, TolerantAddress}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -31,6 +32,7 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
       .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+      .flatMap(_.set(IsTrusteeCompleteId(0))(true))
       .asOpt.value
 
     "`AddressYears` is set to `OverAYear`" when {
@@ -48,11 +50,19 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       "remove the data for `PreviousAddressList`" in {
         result.get(CompanyPreviousAddressListId(0)) mustNot be(defined)
       }
+
+      "do not change the value of IsTrusteeCompleteId" in {
+        result.get(IsTrusteeCompleteId(0)).value mustBe true
+      }
     }
 
     "`AddressYears` is set to `UnderAYear`" when {
 
       val result: UserAnswers = answers.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+
+      "set the value of IsTrusteeCompleteId to false" in {
+        result.get(IsTrusteeCompleteId(0)).value mustBe false
+      }
 
       "not remove the data for `PreviousPostCodeLookup`" in {
         result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustBe defined
