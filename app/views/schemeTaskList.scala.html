@@ -73,7 +73,7 @@
             </h2>
             <ul class="task-list-items">
                 <li>
-                    @if(taskSections.about.isCompleted){
+                    @if(taskSections.about.isCompleted.getOrElse(false)){
                         @if(taskSections.establishers.isEmpty){
                             <a id= "section-establishers-add-link" href="@EstablisherKindController.onPageLoad(NormalMode, 0)">
                                 @messages("messages__schemeTaskList__sectionEstablishers_add_link")
@@ -84,7 +84,7 @@
                             </a>
                         }
                     }else{
-                        <span id="section-establishers-text">@messages("messages__schemeTaskList__sectionEstablishers_schemeIncomplete")</span>
+                        <span id="section-establishers-scheme-incomplete-text">@messages("messages__schemeTaskList__sectionEstablishers_schemeIncomplete")</span>
                     }
                 </li>
 
@@ -113,7 +113,7 @@
             </h2>
             <ul class="task-list-items">
                 <li>
-                    @if(taskSections.about.isCompleted){
+                    @if(taskSections.about.isCompleted.getOrElse(false)){
                         <a id= "section-trustees-link"  href="@{taskSections.addTrusteeHeader.link.target}">
                             @messages(taskSections.addTrusteeHeader.link.text)
                         </a>
@@ -121,7 +121,7 @@
                         <strong class="@statusClass(isCompleted)" id="section-trustees-status">@messages(status(isCompleted))</strong>
                         }
                     }else{
-                        <span id="section-trustees-text">@messages("messages__schemeTaskList__sectionTrustees_schemeIncomplete")</span>
+                        <span id="section-trustees-scheme-incomplete-text">@messages("messages__schemeTaskList__sectionTrustees_schemeIncomplete")</span>
                     }
                 </li>
 
