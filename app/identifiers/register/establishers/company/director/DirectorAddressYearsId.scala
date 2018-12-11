@@ -17,7 +17,7 @@
 package identifiers.register.establishers.company.director
 
 import identifiers._
-import identifiers.register.establishers.EstablishersId
+import identifiers.register.establishers.{EstablishersId, IsEstablisherCompleteId}
 import models.AddressYears
 import play.api.libs.json.{JsPath, JsResult}
 import utils.UserAnswers
@@ -32,6 +32,10 @@ case class DirectorAddressYearsId(establisherIndex: Int, directorIndex: Int) ext
         userAnswers.remove(DirectorPreviousAddressPostcodeLookupId(establisherIndex, directorIndex))
           .flatMap(_.remove(DirectorPreviousAddressId(establisherIndex, directorIndex)))
           .flatMap(_.remove(DirectorPreviousAddressListId(establisherIndex, directorIndex)))
+      case Some(AddressYears.UnderAYear) =>
+        userAnswers.set(IsDirectorCompleteId(establisherIndex, directorIndex))(false).flatMap(
+          _.set(IsEstablisherCompleteId(establisherIndex))(false)
+        )
       case _ => super.cleanup(value, userAnswers)
     }
   }

@@ -45,6 +45,10 @@ class UKBankAccountIdSpec extends WordSpec with MustMatchers with OptionValues w
 
       val result: UserAnswers = answers.set(UKBankAccountId)(true).asOpt.value
 
+      "set the IsAboutSectionComplete to false" in {
+        result.get(IsAboutSchemeCompleteId).value mustBe false
+      }
+
       "not remove the data for `UBbankDetails`" in {
         result.get(UKBankDetailsId) mustBe defined
       }

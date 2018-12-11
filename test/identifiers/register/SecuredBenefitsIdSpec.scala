@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees
+package identifiers.register
 
-import identifiers.register._
 import models.address.Address
 import models.register.BenefitsInsurer
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -54,6 +53,10 @@ class SecuredBenefitsIdSpec extends WordSpec with MustMatchers with OptionValues
     "`SecuredBenefitsId` is set to `true`" must {
 
       val result: UserAnswers = answers.set(SecuredBenefitsId)(true).asOpt.value
+
+      "set the IsAboutSectionComplete to false" in {
+        result.get(IsAboutSchemeCompleteId).value mustBe false
+      }
 
       "not remove the data for `BenefitsInsurer`" in {
         result.get(BenefitsInsurerId) mustBe defined

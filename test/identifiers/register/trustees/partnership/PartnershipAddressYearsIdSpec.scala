@@ -31,6 +31,7 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
       .flatMap(_.set(PartnershipPreviousAddressPostcodeLookupId(0))(Seq.empty))
       .flatMap(_.set(PartnershipPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(PartnershipPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+      .flatMap(_.set(IsPartnershipCompleteId(0))(true))
       .asOpt.value
 
     "`AddressYears` is set to `OverAYear`" when {
@@ -48,11 +49,19 @@ class PartnershipAddressYearsIdSpec extends WordSpec with MustMatchers with Opti
       "remove the data for `PreviousAddressList`" in {
         result.get(PartnershipPreviousAddressListId(0)) mustNot be(defined)
       }
+
+      "do not change the value of IsPartnershipCompleteId" in {
+        result.get(IsPartnershipCompleteId(0)).value mustBe true
+      }
     }
 
     "`AddressYears` is set to `UnderAYear`" when {
 
       val result: UserAnswers = answers.set(PartnershipAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+
+      "set the value of IsTrusteeCompleteId to false" in {
+        result.get(IsPartnershipCompleteId(0)).value mustBe false
+      }
 
       "not remove the data for `PreviousPostCodeLookup`" in {
         result.get(PartnershipPreviousAddressPostcodeLookupId(0)) mustBe defined
