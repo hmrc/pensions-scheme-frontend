@@ -27,6 +27,10 @@ class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
+      case AdviserNameId =>
+        NavigateTo.save(controllers.register.adviser.routes.AdviserEmailAddressController.onPageLoad(NormalMode))
+      case AdviserEmailId =>
+        NavigateTo.save(controllers.register.adviser.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
       case AdviserDetailsId =>
         NavigateTo.save(controllers.register.adviser.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
       case AdviserAddressPostCodeLookupId =>
@@ -43,6 +47,10 @@ class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
+      case AdviserNameId =>
+        NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
+      case AdviserEmailId =>
+        NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
       case AdviserDetailsId =>
         NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
       case AdviserAddressPostCodeLookupId =>

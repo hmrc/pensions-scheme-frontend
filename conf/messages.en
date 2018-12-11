@@ -1082,6 +1082,7 @@ messages__schemeTaskList__company_link = Company details
 messages__schemeTaskList__individual_link = Individual details
 messages__schemeTaskList__partnership_link = Partnership details
 messages__schemeTaskList__working_knowledge_add_link = Add who has working knowledge
+messages__schemeTaskList__working_knowledge_change_link = Change who has working knowledge
 messages__schemeTaskList__declaration_link = Read declaration and send details to HMRC
 messages__schemeTaskList__returnlink = Return to pension scheme details
 

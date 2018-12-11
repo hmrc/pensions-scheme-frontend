@@ -17,7 +17,31 @@
 package identifiers.register.trustees
 
 import identifiers._
+import models.register.trustees.TrusteeKind
+import play.api.libs.json.{JsResult, JsSuccess}
+import utils.{Enumerable, UserAnswers}
 
-case object HaveAnyTrusteesId extends TypedIdentifier[Boolean] {
+case object HaveAnyTrusteesId extends TypedIdentifier[Boolean] with Enumerable.Implicits {
   override def toString: String = "haveAnyTrustees"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(false) =>
+        removeAllTrustees(userAnswers).flatMap(
+          _.remove(MoreThanTenTrusteesId)
+        )
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
+  }
+
+  private def removeAllTrustees(userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    userAnswers.getAllRecursive[TrusteeKind](TrusteeKindId.collectionPath) match {
+      case Some(allTrustees) if allTrustees.nonEmpty =>
+        userAnswers.remove(TrusteesId(0)).flatMap(
+          removeAllTrustees)
+      case _ =>
+        JsSuccess(userAnswers)
+    }
+  }
 }

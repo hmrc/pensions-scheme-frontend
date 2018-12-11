@@ -68,7 +68,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case DeclarationId =>
         declarationAnswersRoutes()
       case DeclarationDutiesId =>
-        declarationDutiesRoutes(from.userAnswers)
+        declarationDutiesRoutes(NormalMode, from.userAnswers)
       case UserResearchDetailsId => NavigateTo.dontSave(appConfig.managePensionsSchemeOverviewUrl)
       case _ => None
     }
@@ -105,6 +105,8 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         uKBankAccountRoutes(CheckMode, from.userAnswers)
       case UKBankDetailsId =>
         NavigateTo.save(checkYourAnswers)
+      case DeclarationDutiesId =>
+        declarationDutiesRoutes(CheckMode, from.userAnswers)
       case _ => None
     }
 
@@ -149,12 +151,16 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     }
   }
 
-  private def declarationDutiesRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
+  private def declarationDutiesRoutes(mode: Mode, userAnswers: UserAnswers): Option[NavigateTo] = {
     userAnswers.get(DeclarationDutiesId) match {
       case Some(true) =>
         workingKnowldgeAnswersRoutes()
       case Some(false) =>
-        NavigateTo.save(controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode))
+        if (appConfig.isHubEnabled) {
+          NavigateTo.save(controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode))
+        } else {
+          NavigateTo.save(controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(mode))
+        }
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
@@ -170,7 +176,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   private def workingKnowldgeAnswersRoutes(): Option[NavigateTo] = {
     if (appConfig.isHubEnabled) {
-      NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
+      NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
     } else {
       NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
     }

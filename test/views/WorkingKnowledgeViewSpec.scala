@@ -46,7 +46,7 @@ class WorkingKnowledgeViewSpec extends YesNoViewBehaviours {
     behave like yesNoPage(
       createView = createViewUsingForm,
       messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = routes.WorkingKnowledgeController.onSubmit().url
+      expectedFormAction = routes.WorkingKnowledgeController.onSubmit(NormalMode).url
     )
 
     behave like pageWithSubmitButton(createView)
