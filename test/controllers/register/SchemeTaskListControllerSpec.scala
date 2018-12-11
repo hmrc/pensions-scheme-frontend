@@ -86,8 +86,8 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
 
   private val expectedWorkingKnowledgeSection = JourneyTaskListSection(
     Some(true),
-    Link(messages("messages__schemeTaskList__working_knowledge_add_link"),
-      controllers.routes.WorkingKnowledgeController.onPageLoad().url),
+    Link(messages("messages__schemeTaskList__working_knowledge_change_link"),
+      controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad().url),
     None)
 
   private val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),

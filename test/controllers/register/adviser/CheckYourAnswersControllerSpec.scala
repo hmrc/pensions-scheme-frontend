@@ -23,7 +23,7 @@ import controllers.actions._
 import identifiers.TypedIdentifier
 import identifiers.register.adviser.{AdviserAddressId, AdviserEmailId, AdviserNameId}
 import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
-import models.CheckMode
+import models.{CheckMode, NormalMode}
 import models.address.Address
 import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -173,7 +173,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
       lazy val adviserSection = AnswerSection(None,
         Seq(
           AnswerRow("declarationDuties.checkYourAnswersLabel", Seq("site.no"), answerIsMessageKey = true,
-            Some(controllers.routes.WorkingKnowledgeController.onPageLoad().url), "messages__visuallyhidden__declarationDuties"),
+            Some(controllers.routes.WorkingKnowledgeController.onPageLoad(CheckMode).url), "messages__visuallyhidden__declarationDuties"),
           AnswerRow("adviserName.checkYourAnswersLabel", Seq(adviserName), answerIsMessageKey = false,
             Some(routes.AdviserNameController.onPageLoad(CheckMode).url), "messages__visuallyhidden__adviserName"),
           AnswerRow(Messages("adviserEmail.checkYourAnswersLabel", adviserName), Seq(adviserEmail), answerIsMessageKey = false,
