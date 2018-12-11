@@ -87,7 +87,8 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     //Check your answers - back to task list page
     (DeclarationId, hasEstablishers, schemeSuccess, true, None, false),
     (CheckYourAnswersId, emptyAnswers, taskList, true, None, false),
-    (DeclarationDutiesId, dutiesTrue, adviserCheckYourAnswers, true, Some(adviserCheckYourAnswers), true)
+    (DeclarationDutiesId, dutiesTrue, adviserCheckYourAnswers, true, Some(adviserCheckYourAnswers), true),
+    (DeclarationDutiesId, dutiesFalse, adviserName, true, Some(adviserName), true)
   )
 
   "RegisterNavigator" must {
@@ -165,6 +166,8 @@ object RegisterNavigatorSpec {
   private def whatYouWillNeed = controllers.routes.WhatYouWillNeedController.onPageLoad()
 
   private def adviserDetails = controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
+
+  private def adviserName = controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode)
 
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
 

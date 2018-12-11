@@ -157,11 +157,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         workingKnowldgeAnswersRoutes()
       case Some(false) =>
         if (appConfig.isHubEnabled) {
-          if (mode == NormalMode) {
-            NavigateTo.save(controllers.register.adviser.routes.AdviserNameController.onPageLoad(mode))
-          } else {
-            NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
-          }
+          NavigateTo.save(controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode))
         } else {
           NavigateTo.save(controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(mode))
         }
