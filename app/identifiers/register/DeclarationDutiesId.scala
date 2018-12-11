@@ -30,6 +30,7 @@ case object DeclarationDutiesId extends TypedIdentifier[Boolean] {
         userAnswers.remove(AdviserDetailsId)
           .flatMap(_.remove(AdviserEmailId))
           .flatMap(_.remove(AdviserNameId))
+          .flatMap(_.remove(AdviserAddressListId))
           .flatMap(_.remove(AdviserAddressPostCodeLookupId))
           .flatMap(_.remove(AdviserAddressId))
       case _ => super.cleanup(value, userAnswers)
