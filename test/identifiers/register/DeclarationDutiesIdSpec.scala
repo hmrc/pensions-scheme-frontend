@@ -17,7 +17,7 @@
 package identifiers.register
 
 import identifiers.register.adviser._
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.register.AdviserDetails
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json
@@ -32,7 +32,9 @@ class DeclarationDutiesIdSpec extends WordSpec with MustMatchers with OptionValu
       .flatMap(_.set(AdviserEmailId)("a@a.c"))
       .flatMap(_.set(AdviserNameId)("xxx"))
       .flatMap(_.set(AdviserAddressPostCodeLookupId)(Seq.empty))
-      .flatMap(_.set(AdviserAddressId)(Address("", "", None, None, None, ""))).asOpt.value
+      .flatMap(_.set(AdviserAddressId)(Address("", "", None, None, None, "")))
+      .flatMap(_.set(AdviserAddressListId)(TolerantAddress(Some("addr1"),Some("addr2"),Some("addr3"),Some("addr4"),Some("postcode"),Some("country"))))
+      .asOpt.value
 
     "`DeclarationDuties` set to `true`" must {
       val result = answers.set(DeclarationDutiesId)(true).asOpt.value
@@ -53,6 +55,11 @@ class DeclarationDutiesIdSpec extends WordSpec with MustMatchers with OptionValu
       "remove the data for `adviser email`" in {
         result.get(AdviserEmailId) mustNot be(defined)
       }
+
+      "remove the data for `adviser address list`" in {
+        result.get(AdviserAddressListId) mustNot be(defined)
+      }
+
     }
 
     "`DeclarationDuties` set to `false`" must {
@@ -73,6 +80,10 @@ class DeclarationDutiesIdSpec extends WordSpec with MustMatchers with OptionValu
 
       "not remove the data for `adviser email`" in {
         result.get(AdviserEmailId) mustBe defined
+      }
+
+      "not remove the data for `adviser address list`" in {
+        result.get(AdviserAddressListId) mustBe defined
       }
 
     }
