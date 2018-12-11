@@ -52,7 +52,7 @@ class HaveAnyTrusteesIdSpec extends WordSpec with MustMatchers with OptionValues
       }
     }
 
-    "`HaveAnyTrustees` changed from No to Yes" must {
+    "`HaveAnyTrustees` changed from Yes to Yes" must {
       val result = haveTrusteesYes.set(HaveAnyTrusteesId)(true).asOpt.value
 
       "not remove any data for `Trustees`" in {
