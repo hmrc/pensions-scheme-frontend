@@ -20,7 +20,7 @@ import identifiers._
 import identifiers.register.trustees.company._
 import identifiers.register.trustees.individual._
 import models.register.trustees.TrusteeKind
-import play.api.libs.json.{JsPath, JsResult}
+import play.api.libs.json.{JsPath, JsResult, __}
 import utils.UserAnswers
 
 case class TrusteeKindId(index: Int) extends TypedIdentifier[TrusteeKind] {
@@ -56,5 +56,6 @@ case class TrusteeKindId(index: Int) extends TypedIdentifier[TrusteeKind] {
 }
 
 object TrusteeKindId {
+  def collectionPath: JsPath = __ \ TrusteesId.toString \\ TrusteeKindId.toString
   override def toString: String = "trusteeKind"
 }
