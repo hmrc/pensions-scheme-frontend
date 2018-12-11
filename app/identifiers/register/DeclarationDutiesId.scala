@@ -17,7 +17,7 @@
 package identifiers.register
 
 import identifiers._
-import identifiers.register.adviser.{AdviserAddressId, AdviserAddressPostCodeLookupId, AdviserDetailsId}
+import identifiers.register.adviser._
 import play.api.libs.json.JsResult
 import utils.UserAnswers
 
@@ -28,6 +28,8 @@ case object DeclarationDutiesId extends TypedIdentifier[Boolean] {
     value match {
       case Some(true) =>
         userAnswers.remove(AdviserDetailsId)
+          .flatMap(_.remove(AdviserEmailId))
+          .flatMap(_.remove(AdviserNameId))
           .flatMap(_.remove(AdviserAddressPostCodeLookupId))
           .flatMap(_.remove(AdviserAddressId))
       case _ => super.cleanup(value, userAnswers)
