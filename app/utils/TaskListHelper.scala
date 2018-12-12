@@ -16,20 +16,21 @@
 
 package utils
 
-import identifiers.register.establishers.company.{CompanyDetailsId => EstablisherCompanyDetailsId}
+import identifiers.TypedIdentifier
+import identifiers.register.establishers.company.{IsCompanyDormantId, CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.establishers.partnership.{PartnershipDetailsId => EstablisherPartnershipDetailsId}
+import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId => EstablisherPartnershipDetailsId}
 import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 import identifiers.register.{IsAboutSchemeCompleteId, IsWorkingKnowledgeCompleteId, SchemeDetailsId}
 import models.NormalMode
-import models.register.{Entity, SchemeType}
+import models.register.{DeclarationDormant, Entity, Establisher, SchemeType}
 import play.api.i18n.Messages
 import viewmodels.{JourneyTaskList, JourneyTaskListSection, Link}
 
-class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) {
+class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) extends Enumerable.Implicits {
 
   def taskList: JourneyTaskList = {
     journey.fold(
@@ -107,13 +108,14 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     else None
   }
 
-  private def listOf(sections: Seq[Entity[_]]): Seq[JourneyTaskListSection] = {
-    for ((section, index) <- sections.zipWithIndex) yield
+  private def listOf(sections: Seq[Entity[_]])(implicit userAnswers: UserAnswers): Seq[JourneyTaskListSection] = {
+    for ((section, index) <- sections.zipWithIndex) yield {
       JourneyTaskListSection(
-        Some(section.isCompleted),
+        Some(isCompletedWithDormantCheck(section)),
         Link(linkText(section), linkTarget(section, index)),
         Some(section.name)
       )
+    }
   }
 
   private def linkText(item: Entity[_]): String = item.id match {
@@ -123,17 +125,40 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
   }
 
 
-  private def isAllEstablishersCompleted(implicit userAnswers: UserAnswers) : Boolean =
-    userAnswers.allEstablishersAfterDelete.nonEmpty && userAnswers.allEstablishersAfterDelete.forall(_.isCompleted)
+  private def isAllEstablishersCompleted(implicit userAnswers: UserAnswers): Boolean = {
+    userAnswers.allEstablishersAfterDelete.nonEmpty && userAnswers.allEstablishersAfterDelete.forall { entity =>
+      isCompletedWithDormantCheck(entity)
+    }
+  }
+
+  private def isCompletedWithDormantCheck(entity: Entity[_])(implicit userAnswers: UserAnswers) = {
+
+    def getFlag(isDormant: Option[DeclarationDormant], isCompleted: Boolean) = {
+       isDormant match {
+        case Some(_) =>
+          isCompleted
+        case None =>
+          false
+      }
+    }
+    entity match {
+      case models.register.EstablisherCompanyEntity(id, name, isDeleted, isCompleted) =>
+        getFlag(userAnswers.get(IsCompanyDormantId(entity.index)), isCompleted)
+      case models.register.EstablisherPartnershipEntity(id, name, isDeleted, isCompleted) =>
+        getFlag(userAnswers.get(IsPartnershipDormantId(entity.index)), isCompleted)
+      case _ =>
+        entity.isCompleted
+    }
+  }
 
   private def isTrusteesOptional(implicit userAnswers: UserAnswers): Boolean = {
     val listOfSchemeTypeTrusts: Seq[SchemeType] = Seq(SchemeType.SingleTrust, SchemeType.MasterTrust)
     userAnswers.get(SchemeDetailsId).forall(scheme => !listOfSchemeTypeTrusts.contains(scheme.schemeType))
   }
 
-  private def isAllTrusteesCompleted(implicit userAnswers: UserAnswers) : Boolean = {
+  private def isAllTrusteesCompleted(implicit userAnswers: UserAnswers): Boolean = {
 
-    val isOptionalTrusteesJourney = userAnswers.get(HaveAnyTrusteesId).fold(false)(_==false) && isTrusteesOptional
+    val isOptionalTrusteesJourney = userAnswers.get(HaveAnyTrusteesId).fold(false)(_ == false) && isTrusteesOptional
     val isMandatoryTrusteesJourney = userAnswers.allTrusteesAfterDelete.nonEmpty && userAnswers.allTrusteesAfterDelete.forall(_.isCompleted)
 
     isOptionalTrusteesJourney || isMandatoryTrusteesJourney
@@ -146,11 +171,15 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     Some(isAllTrusteesCompleted)
   ).forall(_.contains(true))
 
-  private[utils] def linkTarget(item: Entity[_], index : Int): String = item.id match {
-    case EstablisherCompanyDetailsId(_) if item.isCompleted =>
+  private[utils] def linkTarget(item: Entity[_], index: Int)(implicit userAnswers: UserAnswers) = item.id match {
+    case EstablisherCompanyDetailsId(_) if isCompletedWithDormantCheck(item) =>
       controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index).url
-    case EstablisherPartnershipDetailsId(_) if item.isCompleted =>
+    case id@EstablisherCompanyDetailsId(_) =>
+      controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id.index).url
+    case EstablisherPartnershipDetailsId(_) if isCompletedWithDormantCheck(item) =>
       controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(index).url
+    case id@EstablisherPartnershipDetailsId(_) =>
+      controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, id.index).url
     case _ => item.editLink
   }
 
@@ -169,7 +198,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
         Link(addTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
     }
 
-    if(userAnswers.allTrusteesAfterDelete.isEmpty && isAllTrusteesCompleted)
+    if (userAnswers.allTrusteesAfterDelete.isEmpty && isAllTrusteesCompleted)
       JourneyTaskListSection(Some(isAllTrusteesCompleted), link, None)
     else
       JourneyTaskListSection(None, link, None)
