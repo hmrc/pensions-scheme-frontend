@@ -131,9 +131,9 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     }
   }
 
-  private def isCompletedWithDormantCheck(entity: Entity[_])(implicit userAnswers: UserAnswers) = {
+  private def isCompletedWithDormantCheck(entity: Entity[_])(implicit userAnswers: UserAnswers):Boolean = {
 
-    def getFlag(isDormant: Option[DeclarationDormant], isCompleted: Boolean) = {
+    def isCompletedInclDormantFlagCheck(isDormant: Option[DeclarationDormant], isCompleted: Boolean) = {
        isDormant match {
         case Some(_) =>
           isCompleted
@@ -141,11 +141,12 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
           false
       }
     }
+
     entity match {
-      case models.register.EstablisherCompanyEntity(id, name, isDeleted, isCompleted) =>
-        getFlag(userAnswers.get(IsCompanyDormantId(entity.index)), isCompleted)
-      case models.register.EstablisherPartnershipEntity(id, name, isDeleted, isCompleted) =>
-        getFlag(userAnswers.get(IsPartnershipDormantId(entity.index)), isCompleted)
+      case models.register.EstablisherCompanyEntity(_, _, _, isCompleted) =>
+        isCompletedInclDormantFlagCheck(userAnswers.get(IsCompanyDormantId(entity.index)), isCompleted)
+      case models.register.EstablisherPartnershipEntity(_, _, _, isCompleted) =>
+        isCompletedInclDormantFlagCheck(userAnswers.get(IsPartnershipDormantId(entity.index)), isCompleted)
       case _ =>
         entity.isCompleted
     }
