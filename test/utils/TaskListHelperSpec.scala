@@ -39,7 +39,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
     "return valid about section based on user answers" in {
 
       new TaskListHelper(Some(userAnswers)).taskList mustBe JourneyTaskList(expectedAboutSection, expectedEstablishersSection,
-        expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink,expectedChangeTrusteeHeader)
+        expectedTrusteesSection, expectedWorkingKnowledgeSection, expectedDeclarationLink,expectedChangeTrusteeHeader, expectedChangeEstablisherHeader)
     }
 
     "return blank task list if there are no user answers" in {
@@ -49,7 +49,9 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
         Seq.empty,
         JourneyTaskListSection(None, workingKnowledgeDefaultLink, None),
         None,
-        expectedAddTrusteeHeader)
+        expectedAddTrusteeHeader,
+        expectedAddEstablisherHeader
+      )
 
       new TaskListHelper(None).taskList mustBe blankJourneyTaskList
     }
@@ -158,6 +160,39 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
     }
   }
 
+  "addEstablisherHeader" must {
+
+    "return the correct link and status if no establishers are added" in {
+      val helper = new TaskListHelper(Some(declarationWithoutEstabliserAndTrustees()))
+      helper.addEstablisherHeader(declarationWithoutEstabliserAndTrustees()) mustBe JourneyTaskListSection(
+        None,
+        Link(messages(addEstablisherLinkText),
+          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0).url),
+        None
+      )
+    }
+
+    "return the correct link and status if one establishers is deleted and adding another one" in {
+      val helper = new TaskListHelper(Some(declarationWithDeletedEst()))
+      helper.addEstablisherHeader(declarationWithDeletedEst()) mustBe JourneyTaskListSection(
+        None,
+        Link(messages(addEstablisherLinkText),
+          controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 1).url),
+        None
+      )
+    }
+
+    "return the correct link and status trustees are added" in {
+      val helper = new TaskListHelper(Some(declarationWithEstabliserAndTrustees()))
+      helper.addEstablisherHeader(declarationWithEstabliserAndTrustees()) mustBe JourneyTaskListSection(
+        None,
+        Link(messages(changeEstablisherLinkText),
+          controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url),
+        None
+      )
+    }
+  }
+
   "addTrusteeHeader" must {
 
     "return the correct link and status if scheme type is single or master and no trustees are added" in {
@@ -233,6 +268,8 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
   private lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
   private lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
   private lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
+  private lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
+  private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
   private lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
 
   private val aboutSectionDefaultLink: Link = {
@@ -296,12 +333,26 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
     None
   )
 
+  private val expectedChangeEstablisherHeader = JourneyTaskListSection(
+    None,
+    Link(messages(changeEstablisherLinkText),
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url),
+    None
+  )
+
   private val expectedAddTrusteeHeader = JourneyTaskListSection(
       None,
       Link(messages(addTrusteesLinkText),
         controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
       None
     )
+
+  private val expectedAddEstablisherHeader = JourneyTaskListSection(
+    None,
+    Link(messages(addEstablisherLinkText),
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url),
+    None
+  )
 
   private def actualSeqAnswerRow(result: Seq[SuperSection], headingKey: Option[String]): Seq[AnswerRow] =
     result.filter(_.headingKey == headingKey).flatMap(_.sections).take(1).flatMap(_.rows)
@@ -314,6 +365,15 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
       .set(SchemeDetailsId)(schemeDetails.copy(schemeType = schemeType)).asOpt.value
       .set(IsAboutSchemeCompleteId)(true).asOpt.value
       .set(IsWorkingKnowledgeCompleteId)(true).asOpt.value
+  }
+
+  private def declarationWithDeletedEst(schemeType: SchemeType = SchemeType.SingleTrust) : UserAnswers = {
+    UserAnswers()
+      .set(SchemeDetailsId)(schemeDetails.copy(schemeType = schemeType)).asOpt.value
+      .set(IsAboutSchemeCompleteId)(true).asOpt.value
+      .set(IsWorkingKnowledgeCompleteId)(true).asOpt.value
+      .set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now(), true)).asOpt.value
+      .set(IsEstablisherCompleteId(0))(true).asOpt.value
   }
 
   private def declarationWithDeletedTrustee(schemeType: SchemeType = SchemeType.SingleTrust) : UserAnswers = {

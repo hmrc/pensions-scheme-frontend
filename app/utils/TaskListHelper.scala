@@ -41,7 +41,9 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
         listOf(userAnswers.allTrusteesAfterDelete),
         workingKnowledgeSection,
         declarationLink,
-        addTrusteeHeader)
+        addTrusteeHeader,
+        addEstablisherHeader
+      )
     )
   }
 
@@ -52,7 +54,9 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
       Seq.empty,
       JourneyTaskListSection(None, workingKnowledgeDefaultLink, None),
       None,
-      addTrusteesDefaultLink)
+      addTrusteesDefaultLink,
+      addEstablisherDefaultLink
+    )
   }
 
   private lazy val aboutLinkText = messages("messages__schemeTaskList__about_link_text")
@@ -64,6 +68,9 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
   private lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
   private lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
   private lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  private lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
+  private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
+
 
   private val aboutSectionDefaultLink: Link = Link(aboutLinkText,
     controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
@@ -74,6 +81,12 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
   private val addTrusteesDefaultLink: JourneyTaskListSection = JourneyTaskListSection(
     None,
     Link(addTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+    None
+  )
+
+  private val addEstablisherDefaultLink: JourneyTaskListSection = JourneyTaskListSection(
+    None,
+    Link(addEstablisherLinkText, controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url),
     None
   )
 
@@ -152,6 +165,16 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     case EstablisherPartnershipDetailsId(_) if item.isCompleted =>
       controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(index).url
     case _ => item.editLink
+  }
+
+  private[utils] def addEstablisherHeader(implicit userAnswers: UserAnswers): JourneyTaskListSection = {
+    if(userAnswers.allEstablishersAfterDelete.isEmpty) {
+      JourneyTaskListSection(None, Link(addEstablisherLinkText,
+        controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size).url), None)
+    }else {
+      JourneyTaskListSection(None, Link(changeEstablisherLinkText,
+        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url), None)
+    }
   }
 
   private[utils] def addTrusteeHeader(implicit userAnswers: UserAnswers): JourneyTaskListSection = {

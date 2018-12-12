@@ -29,7 +29,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
   import SchemeTaskListControllerSpec._
 
   private val journeyTL = JourneyTaskList(expectedAboutSection, Seq(expectedEstablishersCompany, expectedEstablishersIndividual),
-    Seq(expectedTrustees), expectedWorkingKnowledgeSection, expectedDeclarationLink, expectedChangeTrusteeHeader)
+    Seq(expectedTrustees), expectedWorkingKnowledgeSection, expectedDeclarationLink, expectedChangeTrusteeHeader, changeEstablisherHeader)
 
   private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
 
@@ -59,6 +59,15 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
 object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
   private val userAnswersJson = readJsonFromFile("/payload.json")
+
+  private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
+
+  private val changeEstablisherHeader = JourneyTaskListSection(
+    None,
+    Link(messages(changeEstablisherLinkText),
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url),
+    None
+  )
 
   private val expectedAboutSection = JourneyTaskListSection(
     Some(true),
