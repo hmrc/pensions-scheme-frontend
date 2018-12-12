@@ -170,6 +170,16 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
       )
     }
 
+    "return the correct link and status if scheme type is single or master and one trustee is deleted" in {
+      val helper = new TaskListHelper(Some(declarationWithDeletedTrustee()))
+      helper.addTrusteeHeader(declarationWithDeletedTrustee()) mustBe JourneyTaskListSection(
+        None,
+        Link(messages(addTrusteesLinkText),
+          controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 1).url),
+        None
+      )
+    }
+
     "return the correct link and status if scheme type is not single or master and no trustees are added" in {
      val helper = new TaskListHelper(Some(declarationWithoutEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)))
       helper.addTrusteeHeader(declarationWithoutEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)) mustBe JourneyTaskListSection(
@@ -304,6 +314,15 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
       .set(SchemeDetailsId)(schemeDetails.copy(schemeType = schemeType)).asOpt.value
       .set(IsAboutSchemeCompleteId)(true).asOpt.value
       .set(IsWorkingKnowledgeCompleteId)(true).asOpt.value
+  }
+
+  private def declarationWithDeletedTrustee(schemeType: SchemeType = SchemeType.SingleTrust) : UserAnswers = {
+    UserAnswers()
+      .set(SchemeDetailsId)(schemeDetails.copy(schemeType = schemeType)).asOpt.value
+      .set(IsAboutSchemeCompleteId)(true).asOpt.value
+      .set(IsWorkingKnowledgeCompleteId)(true).asOpt.value
+      .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now(), true)).asOpt.value
+      .set(IsTrusteeCompleteId(0))(true).asOpt.value
   }
 
   private def declarationWithEstabliserAndTrustees(isEstablisherCompleteId : Boolean = true,
