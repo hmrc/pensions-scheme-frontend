@@ -73,7 +73,7 @@
             </h2>
             <ul class="task-list-items">
                 <li>
-                    @if(taskSections.about.isCompleted.getOrElse(false)){
+                    @if(taskSections.about.isCompleted.getOrElse(false) || taskSections.establishers.nonEmpty){
                         @if(taskSections.establishers.isEmpty){
                             <a id= "section-establishers-add-link" href="@EstablisherKindController.onPageLoad(NormalMode, 0)">
                                 @messages("messages__schemeTaskList__sectionEstablishers_add_link")
@@ -113,7 +113,7 @@
             </h2>
             <ul class="task-list-items">
                 <li>
-                    @if(taskSections.about.isCompleted.getOrElse(false)){
+                    @if(taskSections.about.isCompleted.getOrElse(false) || taskSections.trustees.nonEmpty){
                         <a id= "section-trustees-link"  href="@{taskSections.addTrusteeHeader.link.target}">
                             @messages(taskSections.addTrusteeHeader.link.text)
                         </a>
