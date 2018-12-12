@@ -115,6 +115,8 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
 
   "linkTarget" must {
 
+    implicit val userAnswers = UserAnswers(userAnswersJson)
+
     "return correct link for establishers company if its completed" in {
       val helper = new TaskListHelper(None)
       helper.linkTarget(establisherCompany, 0) mustBe
@@ -132,7 +134,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
     "return correct link for establishers partnership if its completed" in {
       val helper = new TaskListHelper(None)
       helper.linkTarget(establisherPartnership, 0) mustBe
-        controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(0).url
+        controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, 0).url
 
     }
 
