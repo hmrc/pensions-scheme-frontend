@@ -33,6 +33,9 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   private val about = genJourneyTaskListSection(header = None, isCompleted = Some(true),
     linkText = "aboutLinkText")
 
+  private val aboutIncomplete = genJourneyTaskListSection(header = None, isCompleted = Some(false),
+    linkText = "")
+
   private val establishers: Seq[JourneyTaskListSection] = Seq(
     genJourneyTaskListSection(header = Some("Company details"), isCompleted = Some(false), linkText = ""),
     genJourneyTaskListSection(header = Some("Organisation details"), isCompleted = Some(true), linkText = "")
@@ -64,6 +67,13 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
   private val pageHeader = messages("messages__schemeTaskList__title")
   private val messageKeyPrefix = "schemeTaskList"
+
+  private val addTrusteeHeader = JourneyTaskListSection(
+    None,
+    Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+      controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+    None
+  )
 
   "SchemeTaskListView" should {
 
@@ -99,9 +109,23 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
 
   "SchemeTaskListView Establishers section" when {
+    "scheme section not complete" should {
+        val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(aboutIncomplete, Seq.empty, Seq.empty, workingKnowledge, None, addTrusteeHeader)
+        val view = createView(journeyTaskListNoEstablisher)
+
+      "display readonly content" in {
+        val doc = asDocument(view())
+        assertRenderedByIdWithText(doc, id = "section-establishers-scheme-incomplete-text",
+          text = messages("messages__schemeTaskList__sectionEstablishers_schemeIncomplete"))
+      }
+
+      "display no add link to enter section" in {
+        val doc = asDocument(view())
+        assertNotRenderedById(doc, id = "section-establishers-add-link")
+      }
+    }
 
     "no establishers" should {
-
       val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(about, Seq.empty, Seq.empty, workingKnowledge, None,
         JourneyTaskListSection(
           None,
@@ -159,7 +183,24 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
       }
 
     }
+  }
 
+  "SchemeTaskListView Trustees section" when {
+    "scheme section not complete" should {
+      val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(aboutIncomplete, Seq.empty, Seq.empty, workingKnowledge, None, addTrusteeHeader)
+      val view = createView(journeyTaskListNoEstablisher)
+
+      "display readonly content" in {
+        val doc = asDocument(view())
+        assertRenderedByIdWithText(doc, id = "section-trustees-scheme-incomplete-text",
+          text = messages("messages__schemeTaskList__sectionTrustees_schemeIncomplete"))
+      }
+
+      "display no add link to enter section" in {
+        val doc = asDocument(view())
+        assertNotRenderedById(doc, id = "section-trustees-add-link")
+      }
+    }
   }
 
   "SchemeTaskListView Trustees section" should {
