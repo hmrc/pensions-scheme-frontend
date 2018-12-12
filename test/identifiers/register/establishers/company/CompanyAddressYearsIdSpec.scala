@@ -16,6 +16,7 @@
 
 package identifiers.register.establishers.company
 
+import identifiers.register.establishers.IsEstablisherCompleteId
 import models.AddressYears
 import models.address.{Address, TolerantAddress}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
@@ -31,6 +32,8 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
       .flatMap(_.set(CompanyPreviousAddressId(0))(Address("foo", "bar", None, None, None, "GB")))
       .flatMap(_.set(CompanyPreviousAddressListId(0))(TolerantAddress(Some("foo"), Some("bar"), None, None, None, Some("GB"))))
+      .flatMap(_.set(IsCompanyCompleteId(0))(true))
+      .flatMap(_.set(IsEstablisherCompleteId(0))(true))
       .asOpt.value
 
     "`AddressYears` is set to `OverAYear`" when {
@@ -48,11 +51,21 @@ class CompanyAddressYearsIdSpec extends WordSpec with MustMatchers with OptionVa
       "remove the data for `PreviousAddressList`" in {
         result.get(CompanyPreviousAddressListId(0)) mustNot be(defined)
       }
+
+      "do not change the value of IsCompanyCompleteId and IsEstablisherCompleteId" in {
+        result.get(IsCompanyCompleteId(0)).value mustBe true
+        result.get(IsEstablisherCompleteId(0)).value mustBe true
+      }
     }
 
     "`AddressYears` is set to `UnderAYear`" when {
 
       val result: UserAnswers = answers.set(CompanyAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
+
+      "set the value of IsCompanyCompleteId and IsEstablisherCompleteId to false" in {
+        result.get(IsCompanyCompleteId(0)).value mustBe false
+        result.get(IsEstablisherCompleteId(0)).value mustBe false
+      }
 
       "not remove the data for `PreviousPostCodeLookup`" in {
         result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustBe defined

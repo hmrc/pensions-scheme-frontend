@@ -33,6 +33,8 @@ case class PartnershipAddressYearsId(index: Int) extends TypedIdentifier[Address
           .remove(PartnershipPreviousAddressPostcodeLookupId(this.index))
           .flatMap(_.remove(PartnershipPreviousAddressId(this.index)))
           .flatMap(_.remove(PartnershipPreviousAddressListId(this.index)))
+      case Some(AddressYears.UnderAYear) =>
+        userAnswers.set(IsPartnershipCompleteId(index))(false)
       case _ => super.cleanup(value, userAnswers)
     }
   }

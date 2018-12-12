@@ -57,6 +57,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
 
   private lazy val aboutLinkText = messages("messages__schemeTaskList__about_link_text")
   private lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_add_link")
+  private lazy val changeWorkingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_change_link")
   private lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
   private lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
   private lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
@@ -68,7 +69,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
 
   private val workingKnowledgeDefaultLink: Link = Link(workingKnowledgeLinkText,
-    controllers.routes.WorkingKnowledgeController.onPageLoad().url)
+    controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode).url)
 
   private val addTrusteesDefaultLink: JourneyTaskListSection = JourneyTaskListSection(
     None,
@@ -86,11 +87,19 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     JourneyTaskListSection(userAnswers.get(IsAboutSchemeCompleteId), link, None)
   }
 
-  private def workingKnowledgeSection(implicit userAnswers: UserAnswers) = JourneyTaskListSection(
-    userAnswers.get(IsWorkingKnowledgeCompleteId),
-    Link(workingKnowledgeLinkText, controllers.routes.WorkingKnowledgeController.onPageLoad().url),
-    None
-  )
+  private def workingKnowledgeSection(implicit userAnswers: UserAnswers) = {
+    val isComplete = userAnswers.get(IsWorkingKnowledgeCompleteId)
+    val link = if (isComplete.getOrElse(false)) {
+      Link(changeWorkingKnowledgeLinkText, controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad().url)
+    } else {
+      Link(workingKnowledgeLinkText, controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode).url)
+    }
+    JourneyTaskListSection(
+      isComplete,
+      link,
+      None
+    )
+  }
 
   private def declarationLink(implicit userAnswers: UserAnswers): Option[Link] = {
     if (declarationEnabled)

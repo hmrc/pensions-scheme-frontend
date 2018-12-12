@@ -30,6 +30,7 @@ case object SecuredBenefitsId extends TypedIdentifier[Boolean] {
           _.remove(InsurerAddressId)
         )
       )
+      case Some(true) => userAnswers.set(IsAboutSchemeCompleteId)(false)
       case _ => super.cleanup(value, userAnswers)
     }
   }
