@@ -37,8 +37,8 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     )(implicit userAnswers =>
       JourneyTaskList(
         aboutSection,
-        listOf(userAnswers.allEstablishersAfterDelete),
-        listOf(userAnswers.allTrusteesAfterDelete),
+        listOf(userAnswers.allEstablishers),
+        listOf(userAnswers.allTrustees),
         workingKnowledgeSection,
         declarationLink,
         addTrusteeHeader,
@@ -120,13 +120,17 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     else None
   }
 
-  private def listOf(sections: Seq[Entity[_]]): Seq[JourneyTaskListSection] = {
-    for ((section, index) <- sections.zipWithIndex) yield
-      JourneyTaskListSection(
-        Some(section.isCompleted),
-        Link(linkText(section), linkTarget(section, index)),
-        Some(section.name)
-      )
+  private[utils] def listOf(sections: Seq[Entity[_]]): Seq[JourneyTaskListSection] = {
+    val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
+      if (section.isDeleted) None else {
+        Some(JourneyTaskListSection(
+          Some(section.isCompleted),
+          Link(linkText(section), linkTarget(section, index)),
+          Some(section.name))
+        )
+      }
+    }
+    notDeletedElements.flatten
   }
 
   private def linkText(item: Entity[_]): String = item.id match {

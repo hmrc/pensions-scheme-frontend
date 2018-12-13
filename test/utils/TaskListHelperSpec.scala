@@ -30,6 +30,7 @@ import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, WordSpec}
 import viewmodels._
+import views.html.register.schemeType
 
 class TaskListHelperSpec extends WordSpec with MustMatchers {
 
@@ -158,6 +159,54 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
         controllers.register.establishers.individual.routes.EstablisherDetailsController.onPageLoad(NormalMode, 0).url
 
     }
+
+    "return correct link for establishers individual if its not completed and one establisher has been deleted" in {
+
+      val userAnswersWithEstablishers = UserAnswers()
+        .set(SchemeDetailsId)(schemeDetails.copy(schemeType = SchemeType.SingleTrust)).asOpt.value
+        .set(IsAboutSchemeCompleteId)(true).asOpt.value
+        .set(IsWorkingKnowledgeCompleteId)(true).asOpt.value
+        .set(EstablisherDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now(), true)).asOpt.value
+        .set(EstablisherDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now(), false)).asOpt.value
+        .set(EstablisherDetailsId(2))(PersonDetails("firstName", None, "lastName", LocalDate.now(), true)).asOpt.value
+        .set(EstablisherDetailsId(3))(PersonDetails("firstName", None, "lastName", LocalDate.now(), false)).asOpt.value
+        .set(IsEstablisherCompleteId(0))(true).asOpt.value
+        .set(IsEstablisherCompleteId(1))(true).asOpt.value
+        .set(IsEstablisherCompleteId(2))(true).asOpt.value
+        .set(IsEstablisherCompleteId(3))(true).asOpt.value
+
+
+
+      val helper = new TaskListHelper(Some(userAnswersWithEstablishers))
+
+      helper.taskList.establishers.head.link.target must include("2")
+      helper.taskList.establishers.reverse.head.link.target must include("4")
+      helper.taskList.establishers.size mustBe 2
+    }
+
+    "return correct link for trustees individual if its not completed and one trustee has been deleted" in {
+
+      val userAnswersWithTrustees = UserAnswers()
+        .set(SchemeDetailsId)(schemeDetails.copy(schemeType = SchemeType.SingleTrust)).asOpt.value
+        .set(IsAboutSchemeCompleteId)(true).asOpt.value
+        .set(IsWorkingKnowledgeCompleteId)(true).asOpt.value
+        .set(TrusteeDetailsId(0))(PersonDetails("firstName", None, "lastName", LocalDate.now(), true)).asOpt.value
+        .set(TrusteeDetailsId(1))(PersonDetails("firstName", None, "lastName", LocalDate.now(), false)).asOpt.value
+        .set(TrusteeDetailsId(2))(PersonDetails("firstName", None, "lastName", LocalDate.now(), true)).asOpt.value
+        .set(TrusteeDetailsId(3))(PersonDetails("firstName", None, "lastName", LocalDate.now(), false)).asOpt.value
+        .set(IsTrusteeCompleteId(0))(true).asOpt.value
+        .set(IsTrusteeCompleteId(1))(true).asOpt.value
+        .set(IsTrusteeCompleteId(2))(true).asOpt.value
+        .set(IsTrusteeCompleteId(3))(true).asOpt.value
+
+
+
+      val helper = new TaskListHelper(Some(userAnswersWithTrustees))
+
+      helper.taskList.trustees.head.link.target must include("2")
+      helper.taskList.trustees.reverse.head.link.target must include("4")
+      helper.taskList.trustees.size mustBe 2
+    }    
   }
 
   "addEstablisherHeader" must {
