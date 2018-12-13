@@ -48,21 +48,17 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
         submissionReferenceNumber =>
           val schemeName = request.userAnswers.get(SchemeDetailsId).map(_.schemeName)
 
-          cacheConnector.removeAll(request.externalId) andThen {
-            case Failure(t: Throwable) => Logger.warn("Could not remove scheme data following successful submission.", t)
-          }
-
-          Future.successful(
-            Ok(
-              schemeSuccess(
-                appConfig,
-                schemeName,
-                LocalDate.now(),
-                submissionReferenceNumber.schemeReferenceNumber,
-                showMasterTrustContent
-              )
+          cacheConnector.removeAll(request.externalId).map { _ =>
+              Ok(
+                schemeSuccess(
+                  appConfig,
+                  schemeName,
+                  LocalDate.now(),
+                  submissionReferenceNumber.schemeReferenceNumber,
+                  showMasterTrustContent
+                )
             )
-          )
+          }
       }
   }
 
