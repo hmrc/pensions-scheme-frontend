@@ -276,7 +276,8 @@
           "isDirectorComplete": true
         }
       ],
-      "isEstablisherComplete": true
+      "isEstablisherComplete": true,
+      "isCompanyDormant" : "no"
     },
     {
       "establisherKind": "individual",
