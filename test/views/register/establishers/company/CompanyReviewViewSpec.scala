@@ -19,7 +19,7 @@ package views.register.establishers.company
 import controllers.register.establishers.company.routes
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.person.PersonDetails
-import models.{CheckMode, Index}
+import models.{CheckMode, Index, NormalMode}
 import org.joda.time.LocalDate
 import org.jsoup.Jsoup
 import play.api.libs.json.{JsObject, Json}
@@ -69,7 +69,7 @@ class CompanyReviewViewSpec extends ViewBehaviours {
 
     "have link to edit director details when there are less than 10 directors" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-director-details]") must haveLink(
-        routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index).url
+        routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index).url
       )
       Jsoup.parse(createView()().toString) must haveDynamicText("messages__companyReview__directors__editLink")
 
@@ -77,7 +77,7 @@ class CompanyReviewViewSpec extends ViewBehaviours {
 
     "have link to edit directors when there are 10 directors" in {
       Jsoup.parse(createView()().toString).select("a[id=edit-director-details]") must haveLink(
-        routes.AddCompanyDirectorsController.onPageLoad(CheckMode, index).url
+        routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index).url
       )
       Jsoup.parse(createSecView().toString) must haveDynamicText("messages__companyReview__directors__changeLink")
     }
