@@ -30,6 +30,7 @@ class DeclarationDutiesIdSpec extends WordSpec with MustMatchers with OptionValu
       .set(DeclarationDutiesId)(false)
       .flatMap(_.set(AdviserDetailsId)(AdviserDetails("name", "email", "phone")))
       .flatMap(_.set(AdviserEmailId)("a@a.c"))
+      .flatMap(_.set(AdviserPhoneId)("0000"))
       .flatMap(_.set(AdviserNameId)("xxx"))
       .flatMap(_.set(AdviserAddressPostCodeLookupId)(Seq.empty))
       .flatMap(_.set(AdviserAddressId)(Address("", "", None, None, None, "")))
@@ -56,6 +57,10 @@ class DeclarationDutiesIdSpec extends WordSpec with MustMatchers with OptionValu
         result.get(AdviserEmailId) mustNot be(defined)
       }
 
+      "remove the data for `adviser phone`" in {
+        result.get(AdviserPhoneId) mustNot be(defined)
+      }
+
       "remove the data for `adviser address list`" in {
         result.get(AdviserAddressListId) mustNot be(defined)
       }
@@ -80,6 +85,10 @@ class DeclarationDutiesIdSpec extends WordSpec with MustMatchers with OptionValu
 
       "not remove the data for `adviser email`" in {
         result.get(AdviserEmailId) mustBe defined
+      }
+
+      "not remove the data for `adviser phone`" in {
+        result.get(AdviserPhoneId) mustBe defined
       }
 
       "not remove the data for `adviser address list`" in {

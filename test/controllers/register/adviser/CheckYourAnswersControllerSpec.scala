@@ -150,6 +150,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 
       val adviserName = "Xyx"
       val adviserEmail = "x@x.c"
+      val adviserPhone = "0000"
       val adviserAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
 
       val getMandatoryAdviser = new FakeDataRetrievalAction(Some(UserAnswers()
@@ -165,6 +166,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
         .set(AdviserAddressId)(adviserAddress)
         .asOpt
         .value
+        .adviserPhone(adviserPhone)
         .json
       ))
 
@@ -178,6 +180,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
             Some(routes.AdviserNameController.onPageLoad(CheckMode).url), "messages__visuallyhidden__adviserName"),
           AnswerRow(Messages("adviserEmail.checkYourAnswersLabel", adviserName), Seq(adviserEmail), answerIsMessageKey = false,
             Some(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url), "messages__visuallyhidden__adviserEmail"),
+          AnswerRow(Messages("adviserPhone.checkYourAnswersLabel", adviserName), Seq(adviserPhone), answerIsMessageKey = false,
+            Some(routes.AdviserPhoneController.onPageLoad(CheckMode).url), "messages__visuallyhidden__adviserPhone"),
           AnswerRow(Messages("adviserAddress.checkYourAnswersLabel", adviserName),
             Seq(
               adviserAddress.addressLine1,
