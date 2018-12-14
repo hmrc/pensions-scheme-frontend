@@ -38,8 +38,6 @@ class AdviserEmailAddressViewSpec extends QuestionViewBehaviours[String] {
   behave like normalPage(createView, messageKeyPrefix,
     messages("messages__adviser__email__address__heading", adviserName))
 
-  behave like pageWithBackLink(createView)
-
   behave like pageWithTextFields(
     createViewWithForm,
     messageKeyPrefix,
