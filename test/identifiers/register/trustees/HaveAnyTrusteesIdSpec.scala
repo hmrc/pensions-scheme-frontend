@@ -18,6 +18,7 @@ package identifiers.register.trustees
 
 import identifiers.register.trustees.company._
 import identifiers.register.trustees.individual._
+import identifiers.register.trustees.partnership.PartnershipDetailsId
 import models.address.Address
 import models.person.PersonDetails
 import models._
@@ -37,6 +38,7 @@ class HaveAnyTrusteesIdSpec extends WordSpec with MustMatchers with OptionValues
       val result = haveTrusteesYes.set(HaveAnyTrusteesId)(false).asOpt.value
 
       "remove all the data for `Trustees`" in {
+        result.get(TrusteeKindId(0)) mustNot be(defined)
         result.get(CompanyDetailsId(0)) mustNot be(defined)
         result.get(CompanyRegistrationNumberId(0)) mustNot be(defined)
         result.get(CompanyUniqueTaxReferenceId(0)) mustNot be(defined)
@@ -46,8 +48,12 @@ class HaveAnyTrusteesIdSpec extends WordSpec with MustMatchers with OptionValues
         result.get(CompanyPreviousAddressPostcodeLookupId(0)) mustNot be(defined)
         result.get(CompanyPreviousAddressId(0)) mustNot be(defined)
         result.get(CompanyContactDetailsId(0)) mustNot be(defined)
+        result.get(TrusteeKindId(1)) mustNot be(defined)
         result.get(TrusteeDetailsId(1)) mustNot be(defined)
+        result.get(TrusteeKindId(2)) mustNot be(defined)
         result.get(CompanyDetailsId(2)) mustNot be(defined)
+        result.get(TrusteeKindId(3)) mustNot be(defined)
+        result.get(PartnershipDetailsId(2)) mustNot be(defined)
         result.get(MoreThanTenTrusteesId) mustNot be(defined)
       }
     }
@@ -87,8 +93,12 @@ object HaveAnyTrusteesIdSpec extends OptionValues with Enumerable.Implicits {
     .flatMap(_.set(CompanyPreviousAddressPostcodeLookupId(0))(Seq.empty))
     .flatMap(_.set(CompanyPreviousAddressId(0))(Address("", "", None, None, None, "")))
     .flatMap(_.set(CompanyContactDetailsId(0))(ContactDetails("", "")))
+    .flatMap(_.set(TrusteeKindId(1))(TrusteeKind.Individual))
     .flatMap(_.set(TrusteeDetailsId(1))(PersonDetails("", None, "", LocalDate.now)))
+    .flatMap(_.set(TrusteeKindId(2))(TrusteeKind.Company))
     .flatMap(_.set(CompanyDetailsId(2))(CompanyDetails("second", None, None)))
+    .flatMap(_.set(TrusteeKindId(3))(TrusteeKind.Partnership))
+    .flatMap(_.set(PartnershipDetailsId(3))(models.PartnershipDetails("third")))
     .flatMap(_.set(MoreThanTenTrusteesId)(true))
     .asOpt.value
 }
