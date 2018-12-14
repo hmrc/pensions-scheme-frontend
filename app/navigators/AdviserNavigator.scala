@@ -30,6 +30,8 @@ class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
       case AdviserNameId =>
         NavigateTo.save(controllers.register.adviser.routes.AdviserEmailAddressController.onPageLoad(NormalMode))
       case AdviserEmailId =>
+        NavigateTo.save(controllers.register.adviser.routes.AdviserPhoneController.onPageLoad(NormalMode))
+      case AdviserPhoneId =>
         NavigateTo.save(controllers.register.adviser.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
       case AdviserDetailsId =>
         NavigateTo.save(controllers.register.adviser.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
@@ -50,6 +52,8 @@ class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
       case AdviserNameId =>
         NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
       case AdviserEmailId =>
+        NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
+      case AdviserPhoneId =>
         NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
       case AdviserDetailsId =>
         NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())

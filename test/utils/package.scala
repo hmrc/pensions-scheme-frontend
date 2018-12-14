@@ -225,6 +225,10 @@ package object utils {
       answers.set(adviser.AdviserEmailId)(email).asOpt.value
     }
 
+    def adviserPhone(phone: String): UserAnswers = {
+      answers.set(adviser.AdviserPhoneId)(phone).asOpt.value
+    }
+
     def adviserName(name: String): UserAnswers = {
       answers.set(adviser.AdviserNameId)(name).asOpt.value
     }

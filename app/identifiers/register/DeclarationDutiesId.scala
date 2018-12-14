@@ -29,6 +29,7 @@ case object DeclarationDutiesId extends TypedIdentifier[Boolean] {
       case Some(true) =>
         userAnswers.remove(AdviserDetailsId)
           .flatMap(_.remove(AdviserEmailId))
+          .flatMap(_.remove(AdviserPhoneId))
           .flatMap(_.remove(AdviserNameId))
           .flatMap(_.remove(AdviserAddressListId))
           .flatMap(_.remove(AdviserAddressPostCodeLookupId))

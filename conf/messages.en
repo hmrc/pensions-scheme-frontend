@@ -1158,8 +1158,16 @@ messages__adviserName__length = Enter a name using less than 108 letters
 messages__adviserName__invalid = Enter a name using only letters
 messages__adviserName__blank = Enter the name of who has working knowledge of pensions
 
+messages__adviser__phone__title = What is the person's phone number?
+messages__adviser__phone__heading = What is {0}’s phone number?
+
+messages__adviser__phone__blank = Enter a phone number
+messages__adviser__phone__length = The phone number cannot be more than 24 characters
+messages__adviser__phone__invalid = The phone number can only contain numbers
+
 declarationDuties.checkYourAnswersLabel= Do you have working knowledge of pensions and pensions tax legislation?
 adviserName.checkYourAnswersLabel = Who has working knowledge of pensions and pensions tax legislation?
 adviserEmail.checkYourAnswersLabel = What is {0}’s email address?
+adviserPhone.checkYourAnswersLabel = What is {0}’s phone number?
 adviserAddress.checkYourAnswersLabel = {0}’s address
 
