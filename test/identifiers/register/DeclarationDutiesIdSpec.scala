@@ -57,7 +57,7 @@ class DeclarationDutiesIdSpec extends WordSpec with MustMatchers with OptionValu
         result.get(AdviserEmailId) mustNot be(defined)
       }
 
-      "remove the data for `adviser email`" in {
+      "remove the data for `adviser phone`" in {
         result.get(AdviserPhoneId) mustNot be(defined)
       }
 
@@ -87,7 +87,7 @@ class DeclarationDutiesIdSpec extends WordSpec with MustMatchers with OptionValu
         result.get(AdviserEmailId) mustBe defined
       }
 
-      "not remove the data for `adviser email`" in {
+      "not remove the data for `adviser phone`" in {
         result.get(AdviserPhoneId) mustBe defined
       }
 
