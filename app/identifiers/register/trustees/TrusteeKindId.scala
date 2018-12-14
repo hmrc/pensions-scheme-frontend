@@ -19,43 +19,68 @@ package identifiers.register.trustees
 import identifiers._
 import identifiers.register.trustees.company._
 import identifiers.register.trustees.individual._
+import identifiers.register.trustees.partnership._
+import models.Index
 import models.register.trustees.TrusteeKind
 import play.api.libs.json.{JsPath, JsResult, __}
 import utils.UserAnswers
 
 case class TrusteeKindId(index: Int) extends TypedIdentifier[TrusteeKind] {
+
+  import TrusteeKindId._
+
   override def path: JsPath = TrusteesId(index).path \ TrusteeKindId.toString
 
   override def cleanup(value: Option[TrusteeKind], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
       case Some(TrusteeKind.Individual) =>
-        userAnswers.remove(CompanyDetailsId(index)).flatMap(
-          _.remove(CompanyRegistrationNumberId(index))).flatMap(
-          _.remove(CompanyUniqueTaxReferenceId(index))).flatMap(
-          _.remove(CompanyPostcodeLookupId(index))).flatMap(
-          _.remove(CompanyAddressId(index))).flatMap(
-          _.remove(CompanyAddressYearsId(index))).flatMap(
-          _.remove(CompanyPreviousAddressPostcodeLookupId(index))).flatMap(
-          _.remove(CompanyPreviousAddressId(index))).flatMap(
-          _.remove(CompanyContactDetailsId(index))
-        )
+        userAnswers.removeAllOf(companyIdList(index) ++ partnershipIdList(index))
       case Some(TrusteeKind.Company) =>
-        userAnswers.remove(TrusteeDetailsId(index)).flatMap(
-          _.remove(TrusteeNinoId(index))).flatMap(
-          _.remove(UniqueTaxReferenceId(index))).flatMap(
-          _.remove(IndividualPostCodeLookupId(index))).flatMap(
-          _.remove(TrusteeAddressId(index))).flatMap(
-          _.remove(TrusteeAddressYearsId(index))).flatMap(
-          _.remove(IndividualPreviousAddressPostCodeLookupId(index))).flatMap(
-          _.remove(TrusteePreviousAddressId(index))).flatMap(
-          _.remove(TrusteeContactDetailsId(index))
-        )
+        userAnswers.removeAllOf(individualIdList(index) ++ partnershipIdList(index))
+      case Some(TrusteeKind.Partnership) =>
+        userAnswers.removeAllOf(companyIdList(index) ++ individualIdList(index))
       case _ => super.cleanup(value, userAnswers)
     }
   }
 }
 
 object TrusteeKindId {
+  private def partnershipIdList(index: Index): List[TypedIdentifier[_]] = List(
+    PartnershipDetailsId(index),
+    PartnershipPayeId(index), PartnershipVatId(index), PartnershipUniqueTaxReferenceId(index),
+    PartnershipPostcodeLookupId(index), PartnershipAddressListId(index), PartnershipAddressId(index), PartnershipAddressYearsId(index),
+    PartnershipPreviousAddressPostcodeLookupId(index), PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index),
+    PartnershipContactDetailsId(index), IsPartnershipCompleteId(index),
+    IsTrusteeCompleteId(index)
+  )
+
+  private def companyIdList(index: Index): List[TypedIdentifier[_]] = List(
+    CompanyDetailsId(index),
+    CompanyRegistrationNumberId(index),
+    CompanyUniqueTaxReferenceId(index),
+    CompanyPostcodeLookupId(index),
+    CompanyAddressId(index),
+    CompanyAddressYearsId(index),
+    CompanyPreviousAddressPostcodeLookupId(index),
+    CompanyPreviousAddressId(index),
+    CompanyContactDetailsId(index),
+    IsTrusteeCompleteId(index)
+  )
+
+  private def individualIdList(index: Index): List[TypedIdentifier[_]] = List(
+    TrusteeDetailsId(index),
+    TrusteeNinoId(index),
+    UniqueTaxReferenceId(index),
+    IndividualPostCodeLookupId(index),
+    TrusteeAddressId(index),
+    TrusteeAddressYearsId(index),
+    IndividualPreviousAddressPostCodeLookupId(index),
+    TrusteePreviousAddressId(index),
+    TrusteeContactDetailsId(index),
+    IsTrusteeCompleteId(index)
+  )
+
   def collectionPath: JsPath = __ \ TrusteesId.toString \\ TrusteeKindId.toString
+
   override def toString: String = "trusteeKind"
 }
