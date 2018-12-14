@@ -67,13 +67,14 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form.fill(TrusteeKind.values.head))
     }
 
-    "redirect to the next page when valid data is submitted" in {
+    "save the data and redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", TrusteeKind.options.head.value))
 
       val result = controller().onSubmit(NormalMode, index)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+      FakeUserAnswersCacheConnector.verify(TrusteeKindId(0), TrusteeKind.values.head)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
