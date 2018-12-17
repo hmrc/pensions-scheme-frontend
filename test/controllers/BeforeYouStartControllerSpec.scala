@@ -32,10 +32,6 @@ import views.html.beforeYouStart
 
 class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    conf = "features.is-hub-enabled" -> false
-  ).build().injector.instanceOf[FrontendAppConfig]
-
   def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad()
 
   private val fakePsaNameCacheConnector = mock[PSANameCacheConnector]
