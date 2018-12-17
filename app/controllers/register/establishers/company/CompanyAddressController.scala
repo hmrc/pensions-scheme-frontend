@@ -34,8 +34,6 @@ import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
-import scala.concurrent.ExecutionContext
-
 class CompanyAddressController @Inject()(
                                           val appConfig: FrontendAppConfig,
                                           val messagesApi: MessagesApi,
@@ -47,7 +45,7 @@ class CompanyAddressController @Inject()(
                                           val formProvider: AddressFormProvider,
                                           val countryOptions: CountryOptions,
                                           val auditService: AuditService
-                                        )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport {
+                                        ) extends ManualAddressController with I18nSupport {
 
   private[controllers] val postCall = routes.CompanyAddressController.onSubmit _
   private[controllers] val title: Message = "messages__companyAddress__title"

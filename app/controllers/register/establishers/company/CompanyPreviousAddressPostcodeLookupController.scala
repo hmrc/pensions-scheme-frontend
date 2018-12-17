@@ -32,8 +32,6 @@ import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
-import scala.concurrent.ExecutionContext
-
 class CompanyPreviousAddressPostcodeLookupController @Inject()(
                                                                 override val appConfig: FrontendAppConfig,
                                                                 override val messagesApi: MessagesApi,
@@ -44,7 +42,7 @@ class CompanyPreviousAddressPostcodeLookupController @Inject()(
                                                                 getData: DataRetrievalAction,
                                                                 requireData: DataRequiredAction,
                                                                 formProvider: PostCodeLookupFormProvider
-                                                              )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
+                                                              ) extends PostcodeLookupController {
 
   private val title: Message = "messages__companyPreviousAddressPostcodeLookup__title"
   private val heading: Message = "messages__companyPreviousAddressPostcodeLookup__title"

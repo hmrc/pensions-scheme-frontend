@@ -35,8 +35,6 @@ import utils.{CountryOptions, Navigator}
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 
-import scala.concurrent.ExecutionContext
-
 class DirectorPreviousAddressController @Inject()(
                                                    val appConfig: FrontendAppConfig,
                                                    val messagesApi: MessagesApi,
@@ -48,7 +46,7 @@ class DirectorPreviousAddressController @Inject()(
                                                    val formProvider: AddressFormProvider,
                                                    val countryOptions: CountryOptions,
                                                    val auditService: AuditService
-                                                 )(implicit val ec: ExecutionContext) extends ManualAddressController with I18nSupport with Retrievals {
+                                                 ) extends ManualAddressController with I18nSupport with Retrievals {
 
   private[controllers] val postCall = routes.DirectorPreviousAddressController.onSubmit _
   private[controllers] val title: Message = "messages__companyDirectorAddress__title"
