@@ -36,6 +36,7 @@ import views.html.register.schemeType
 import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeTypeControllerSpec extends ControllerSpecBase {
+  private val crypto: ApplicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
@@ -48,7 +49,7 @@ class SchemeTypeControllerSpec extends ControllerSpecBase {
 
   val minData = UserAnswers().schemeName(schemeName).dataRetrievalAction
 
-  object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, pensionAdministratorConnector, ApplicationCrypto, config) {
+  object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, pensionAdministratorConnector, crypto, config) {
     override def nameMatching(schemeName: String)
                              (implicit request: OptionalDataRequest[AnyContent],
                               ec: ExecutionContext,

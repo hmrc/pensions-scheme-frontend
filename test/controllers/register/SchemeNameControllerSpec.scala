@@ -36,6 +36,7 @@ import views.html.register.schemeName
 import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeNameControllerSpec extends ControllerSpecBase {
+  private val crypto: ApplicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
@@ -45,7 +46,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase {
   val config: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
   val pensionAdministratorConnector: PensionAdministratorConnector = injector.instanceOf[PensionAdministratorConnector]
 
-  object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, pensionAdministratorConnector, ApplicationCrypto, config) {
+  object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, pensionAdministratorConnector, crypto, config) {
     override def nameMatching(schemeName: String)
                              (implicit request: OptionalDataRequest[AnyContent],
                               ec: ExecutionContext,

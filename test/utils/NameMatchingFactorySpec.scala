@@ -38,6 +38,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class NameMatchingFactorySpec extends SpecBase with MockitoSugar with ScalaFutures with RecoverMethods {
+  private val crypto: ApplicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   val pensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
   val psaNameCacheConnector: PSANameCacheConnector = mock[PSANameCacheConnector]
@@ -45,7 +46,7 @@ class NameMatchingFactorySpec extends SpecBase with MockitoSugar with ScalaFutur
 
   implicit val request: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest("", ""), "externalId", None, PsaId("A0000000"))
 
-  private def nameMatchingFactory = new NameMatchingFactory(psaNameCacheConnector, pensionAdministratorConnector, ApplicationCrypto, frontendAppConfig)
+  private def nameMatchingFactory = new NameMatchingFactory(psaNameCacheConnector, pensionAdministratorConnector, crypto, frontendAppConfig)
 
   implicit val hc = HeaderCarrier()
 

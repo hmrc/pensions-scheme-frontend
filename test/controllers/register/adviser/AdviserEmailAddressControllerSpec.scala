@@ -69,7 +69,7 @@ class AdviserEmailAddressControllerSpec extends ControllerSpecBase with Controll
 }
 
 object AdviserEmailAddressControllerSpec {
-
+  implicit val global = scala.concurrent.ExecutionContext.Implicits.global
   val formProvider: AdviserEmailFormProvider = new AdviserEmailFormProvider()
   val form: Form[String] = formProvider.apply()
 
