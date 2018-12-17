@@ -25,8 +25,10 @@ import play.api.inject.Injector
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import uk.gov.hmrc.crypto.ApplicationCrypto
 
 trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
+  protected def crypto: ApplicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   def injector: Injector = app.injector
 

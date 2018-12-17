@@ -28,7 +28,6 @@ import play.api.data.Form
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
-import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, FakeSectionComplete, NameMatching, NameMatchingFactory}
 import views.html.register.schemeName
@@ -36,8 +35,6 @@ import views.html.register.schemeName
 import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeNameControllerSpec extends ControllerSpecBase {
-  private val crypto: ApplicationCrypto = injector.instanceOf[ApplicationCrypto]
-
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new SchemeNameFormProvider()
