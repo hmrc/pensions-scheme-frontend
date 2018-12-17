@@ -20,7 +20,9 @@ import play.api.data.Mapping
 
 trait PhoneNumberMapping extends Mappings with Transforms {
 
-  def phoneNumberMapping(keyPhoneNumberRequired: String, keyPhoneNumberLength: String, keyPhoneNumberInvalid: String): Mapping[String] = {
+  def phoneNumberMapping(keyPhoneNumberRequired: String = "messages__error__phone",
+                         keyPhoneNumberLength: String = "messages__error__phone_length",
+                         keyPhoneNumberInvalid: String = "messages__error__phone_invalid"): Mapping[String] = {
     text(keyPhoneNumberRequired).transform(standardTextTransform, noTransform)
       .verifying(
         returnOnFirstFailure(

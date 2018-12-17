@@ -71,8 +71,10 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
               val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
               val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
                 .map(ar => ar.copy(label = Messages(ar.label, adviserName)))
+              val adviserPhoneRow = AdviserPhoneId.row(routes.AdviserPhoneController.onPageLoad(CheckMode).url)
+                .map(ar => ar.copy(label = Messages(ar.label, adviserName)))
               val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
-              Seq(AnswerSection(None, workingKnowldge ++ adviserNameRow ++ adviserEmailRow ++ adviserAddressRow))
+              Seq(AnswerSection(None, workingKnowldge ++ adviserNameRow ++ adviserEmailRow ++ adviserPhoneRow ++ adviserAddressRow))
             }
         }
         optionSeqAnswerSection.getOrElse(Seq.empty)

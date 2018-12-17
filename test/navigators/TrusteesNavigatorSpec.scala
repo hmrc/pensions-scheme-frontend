@@ -43,6 +43,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
   private def routesWithHubEnabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                  "User Answers",               "Next Page (Normal Mode)",     "Save (NM)",           "Next Page (Check Mode)",       "Save (CM)"),
     (HaveAnyTrusteesId,     haveAnyTrusteesTrueWithNoTrustees, trusteeKind(0),     false,                   None,                           false),
+    (HaveAnyTrusteesId,     haveAnyTrusteesTrueWithOneDeletedTrustee, trusteeKind(1),     false,                   None,                           false),
     (HaveAnyTrusteesId,     haveAnyTrusteesTrueWithTrustees, addTrustee,                 true,                   None,                           false),
     (HaveAnyTrusteesId,       haveAnyTrusteesFalse,         taskList,                     false,                   None,                           false),
     (HaveAnyTrusteesId,       emptyAnswers,                 sessionExpired,               false,                  None,                           false),
@@ -92,6 +93,11 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
   private def haveAnyTrusteesTrue = emptyAnswers.haveAnyTrustees(true)
 
   private def haveAnyTrusteesTrueWithNoTrustees = emptyAnswers.haveAnyTrustees(true)
+    .addTrustee(true).trustees(0)
+
+  private def haveAnyTrusteesTrueWithOneDeletedTrustee = emptyAnswers
+    .set(TrusteeDetailsId(0))(PersonDetails("first", None, "last", LocalDate.now, true)).asOpt.value.
+    haveAnyTrustees(true)
     .addTrustee(true).trustees(0)
 
   private def haveAnyTrusteesTrueWithTrustees = emptyAnswers.haveAnyTrustees(true)

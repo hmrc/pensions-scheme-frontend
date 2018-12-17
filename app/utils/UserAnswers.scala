@@ -80,6 +80,24 @@ case class UserAnswers(json: JsValue = Json.obj()) {
       .flatMap(json => id.cleanup(None, UserAnswers(json)))
   }
 
+  def removeAllOf[I <: TypedIdentifier.PathDependent](ids: List[I]): JsResult[UserAnswers] = {
+
+    @tailrec
+    def removeRec[II <: TypedIdentifier.PathDependent](localIds: List[II], result: JsResult[UserAnswers]): JsResult[UserAnswers] = {
+      result match {
+        case JsSuccess(value, path) =>
+          localIds match {
+            case Nil => result
+            case id :: tail => removeRec(tail, result.flatMap(_.remove(id)))
+          }
+        case failure => failure
+      }
+    }
+
+    removeRec(ids, JsSuccess(this))
+  }
+
+
   private def traverse[A](seq: Seq[JsResult[A]]): JsResult[Seq[A]] = {
     seq match {
       case s if s.forall(_.isSuccess) =>
@@ -287,10 +305,12 @@ case class UserAnswers(json: JsValue = Json.obj()) {
   }
 
   def hasCompanies: Boolean = {
-    val establisherCompany = json \ "establishers" \\ "companyDetails"
-    val establisherPartnership = json \ "establishers" \\ "partnershipDetails"
-
-    establisherCompany.nonEmpty || establisherPartnership.nonEmpty
+    allEstablishersAfterDelete.exists {
+      _.id match {
+        case EstablisherCompanyDetailsId(_) | PartnershipDetailsId(_) => true
+        case _ => false
+      }
+    }
   }
 
   def upsert[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)

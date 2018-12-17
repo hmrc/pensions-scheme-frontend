@@ -25,14 +25,12 @@ import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteeKindId
 import javax.inject.Inject
 import models.{Index, Mode}
-import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
-import utils.{Enumerable, Navigator}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.trusteeKind
 
 import scala.concurrent.Future
@@ -68,14 +66,9 @@ class TrusteeKindController @Inject()(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index))),
           value =>
-            request.userAnswers.set(TrusteeKindId(index))(value).fold(
-              errors => {
-                Logger.error("Unable to set user answer", JsResultException(errors))
-                Future.successful(InternalServerError)
-              },
-              userAnswers =>
-                Future.successful(Redirect(navigator.nextPage(TrusteeKindId(index), mode, userAnswers)))
-            )
+            dataCacheConnector.save(request.externalId, TrusteeKindId(index), value).map { userAnswers =>
+              Redirect(navigator.nextPage(TrusteeKindId(index), mode, UserAnswers(userAnswers)))
+            }
         )
       }
   }

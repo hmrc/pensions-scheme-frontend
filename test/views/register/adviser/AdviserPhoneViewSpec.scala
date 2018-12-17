@@ -18,36 +18,31 @@ package views.register.adviser
 
 import forms.register.adviser.AdviserEmailFormProvider
 import models.NormalMode
-import org.jsoup.Jsoup
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.adviser.adviserEmailAddress
+import views.html.register.adviser.adviserPhone
 
-class AdviserEmailAddressViewSpec extends QuestionViewBehaviours[String] {
+class AdviserPhoneViewSpec extends QuestionViewBehaviours[String] {
 
-  val messageKeyPrefix = "adviser__email__address"
+  val messageKeyPrefix = "adviser__phone"
   val form = new AdviserEmailFormProvider().apply()
   val adviserName = "test adviser"
 
-  private val createView: () => HtmlFormat.Appendable = () => adviserEmailAddress(frontendAppConfig, form, NormalMode, adviserName)(fakeRequest, messages)
+  private val createView: () => HtmlFormat.Appendable = () => adviserPhone(frontendAppConfig, form, NormalMode, adviserName)(fakeRequest, messages)
 
   private val createViewWithForm: Form[String] => HtmlFormat.Appendable =
-    (form: Form[String]) => adviserEmailAddress(frontendAppConfig, form, NormalMode, adviserName)(fakeRequest, messages)
+    (form: Form[String]) => adviserPhone(frontendAppConfig, form, NormalMode, adviserName)(fakeRequest, messages)
 
   behave like normalPage(createView, messageKeyPrefix,
-    messages("messages__adviser__email__address__heading", adviserName))
+    messages("messages__adviser__phone__heading", adviserName))
 
   behave like pageWithTextFields(
     createViewWithForm,
     messageKeyPrefix,
-    controllers.register.adviser.routes.AdviserEmailAddressController.onSubmit(NormalMode).url,
-    "email"
+    controllers.register.adviser.routes.AdviserPhoneController.onSubmit(NormalMode).url,
+    "phone"
   )
-
-  "display the paragraph" in {
-    Jsoup.parse(createViewWithForm(form).toString()) must haveDynamicText(s"messages__${messageKeyPrefix}__p1", adviserName)
-  }
 
   behave like pageWithSubmitButton(createView)
 

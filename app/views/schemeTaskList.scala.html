@@ -74,15 +74,9 @@
             <ul class="task-list-items">
                 <li>
                     @if(taskSections.about.isCompleted.getOrElse(false) || taskSections.establishers.nonEmpty){
-                        @if(taskSections.establishers.isEmpty){
-                            <a id= "section-establishers-add-link" href="@EstablisherKindController.onPageLoad(NormalMode, 0)">
-                                @messages("messages__schemeTaskList__sectionEstablishers_add_link")
-                            </a>
-                        } else {
-                            <a id= "section-establishers-change-link" href="@AddEstablisherController.onPageLoad(NormalMode)">
-                                @messages("messages__schemeTaskList__sectionEstablishers_change_link")
-                            </a>
-                        }
+                        <a id= "section-establishers-link" href="@{taskSections.addEstablisherHeader.link.target}">
+                            @messages(taskSections.addEstablisherHeader.link.text)
+                        </a>
                     }else{
                         <span id="section-establishers-scheme-incomplete-text">@messages("messages__schemeTaskList__sectionEstablishers_schemeIncomplete")</span>
                     }

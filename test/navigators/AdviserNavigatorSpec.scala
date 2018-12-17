@@ -45,7 +45,8 @@ class AdviserNavigatorSpec extends SpecBase with NavigatorBehaviour {
     //Check your answers - back to task list page
     (CheckYourAnswersId, emptyAnswers, taskList, true, None, false),
     (AdviserNameId, emptyAnswers, adviserEmail(NormalMode), true, Some(adviserCYA), true),
-    (AdviserEmailId, emptyAnswers, adviserPostCodeLookup(NormalMode), true, Some(adviserCYA), true)
+    (AdviserEmailId, emptyAnswers, adviserPhone(NormalMode), true, Some(adviserCYA), true),
+    (AdviserPhoneId, emptyAnswers, adviserPostCodeLookup(NormalMode), true, Some(adviserCYA), true)
   )
 
 
@@ -87,6 +88,7 @@ object AdviserNavigatorSpec {
   private def task = controllers.register.routes.SchemeSuccessController.onPageLoad()
 
   private def adviserEmail(mode: Mode): Call = controllers.register.adviser.routes.AdviserEmailAddressController.onPageLoad(NormalMode)
+  private def adviserPhone(mode: Mode): Call = controllers.register.adviser.routes.AdviserPhoneController.onPageLoad(NormalMode)
 
   private def adviserCYA: Call = controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad()
 

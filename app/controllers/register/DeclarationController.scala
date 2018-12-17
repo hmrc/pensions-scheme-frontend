@@ -26,7 +26,7 @@ import identifiers.register.establishers.partnership.{IsPartnershipDormantId, Pa
 import identifiers.register._
 import javax.inject.Inject
 import models.NormalMode
-import models.register.DeclarationDormant
+import models.register.{DeclarationDormant, EstablisherCompanyEntity, EstablisherIndividualEntity, EstablisherPartnershipEntity}
 import models.register.DeclarationDormant.{No, Yes}
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
@@ -43,6 +43,8 @@ import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.Future
+import identifiers.register.establishers.company.CompanyDetailsId
+import identifiers.register.establishers.partnership.PartnershipDetailsId
 
 class DeclarationController @Inject()(
                                        appConfig: FrontendAppConfig,
@@ -101,7 +103,7 @@ class DeclarationController @Inject()(
     }
 
   private def nonHsShowPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
-    SchemeDetailsId.retrieve.right.map { details =>
+    SchemeDetailsId.retrieve.right.map { _ =>
       val isCompany = request.userAnswers.hasCompanies
       request.userAnswers.get(DeclarationDormantId) match {
         case Some(Yes) => Future.successful(
@@ -126,8 +128,9 @@ class DeclarationController @Inject()(
 
 
   private def hsShowPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
-    SchemeDetailsId.retrieve.right.map { details =>
+    SchemeDetailsId.retrieve.right.map { _ =>
       val isCompany = request.userAnswers.hasCompanies
+
       val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values(1) else DeclarationDormant.values.head
       val readyForRender = if (isCompany) {
         dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ => ())

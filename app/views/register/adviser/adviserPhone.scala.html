@@ -22,21 +22,19 @@
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, adviserName: String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = s"${messages("messages__adviser__email__address__title")}",
+    title = s"${messages("messages__adviser__phone__title")}",
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = AdviserEmailAddressController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = AdviserPhoneController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__adviser__email__address__heading", adviserName))
-
-        @components.paragraph_text(messages("messages__adviser__email__address__p1", adviserName))
+        @components.heading(messages("messages__adviser__phone__heading", adviserName))
 
         @components.input_text(
-            field = form("email"),
-            label = messages("messages__adviser__email__address__heading"),
+            field = form("phone"),
+            label = messages("messages__adviser__phone__title"),
             labelClass=Some("visually-hidden")
         )
 

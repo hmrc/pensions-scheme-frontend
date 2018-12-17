@@ -58,9 +58,16 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
     None
   )
 
+  private val expectedChangeEstablisherHeader = JourneyTaskListSection(
+    None,
+    Link(messages("messages__schemeTaskList__sectionEstablishers_change_link"),
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url),
+    None
+  )
+
 
   private val journeyTaskList: JourneyTaskList = JourneyTaskList(about, establishers, trustees,
-    workingKnowledge, None, expectedChangeTrusteeHeader)
+    workingKnowledge, None, expectedChangeTrusteeHeader, expectedChangeEstablisherHeader)
 
   private def createView(journeyTaskList:JourneyTaskList = journeyTaskList): () => HtmlFormat.Appendable = () =>
     schemeTaskList(frontendAppConfig, journeyTaskList)(fakeRequest, messages)
@@ -72,6 +79,13 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
     None,
     Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
       controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+    None
+  )
+
+  private val addEstablisherHeader = JourneyTaskListSection(
+    None,
+    Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
+      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url),
     None
   )
 
@@ -110,7 +124,8 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
   "SchemeTaskListView Establishers section" when {
     "scheme section not complete" should {
-        val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(aboutIncomplete, Seq.empty, Seq.empty, workingKnowledge, None, addTrusteeHeader)
+        val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(aboutIncomplete, Seq.empty, Seq.empty, workingKnowledge,
+          None, addTrusteeHeader, addEstablisherHeader)
         val view = createView(journeyTaskListNoEstablisher)
 
       "display readonly content" in {
@@ -132,7 +147,14 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
           None
-        ))
+        ),
+        JourneyTaskListSection(
+          None,
+          Link(messages("messages__schemeTaskList__sectionEstablishers_add_link"),
+            controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0).url),
+          None
+        )
+      )
       val view = createView(journeyTaskListNoEstablisher)
 
       "display correct header" in {
@@ -146,7 +168,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
         view must haveLinkWithText(
           url = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0).url,
           linkText = messages("messages__schemeTaskList__sectionEstablishers_add_link"),
-          linkId = "section-establishers-add-link"
+          linkId = "section-establishers-link"
         )
       }
     }
@@ -160,7 +182,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
         view must haveLinkWithText(
           url = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url,
           linkText = messages("messages__schemeTaskList__sectionEstablishers_change_link"),
-          linkId = "section-establishers-change-link"
+          linkId = "section-establishers-link"
         )
       }
 
@@ -187,7 +209,8 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
   "SchemeTaskListView Trustees section" when {
     "scheme section not complete" should {
-      val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(aboutIncomplete, Seq.empty, Seq.empty, workingKnowledge, None, addTrusteeHeader)
+      val journeyTaskListNoEstablisher: JourneyTaskList = JourneyTaskList(aboutIncomplete, Seq.empty, Seq.empty,
+        workingKnowledge, None, addTrusteeHeader, addEstablisherHeader)
       val view = createView(journeyTaskListNoEstablisher)
 
       "display readonly content" in {
@@ -213,7 +236,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
             controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
           None
-        ))
+        ), addEstablisherHeader)
       val view = createView(journeyTaskListNoEstablisher)
 
       "display correct header" in {

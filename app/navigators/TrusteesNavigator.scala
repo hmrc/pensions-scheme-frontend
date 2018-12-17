@@ -56,7 +56,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     answers.get(HaveAnyTrusteesId) match {
       case Some(true) =>
         if(appConfig.isHubEnabled && answers.allTrusteesAfterDelete.isEmpty) {
-          NavigateTo.dontSave(controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0))
+          NavigateTo.dontSave(controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.size))
         } else {
           NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
         }
