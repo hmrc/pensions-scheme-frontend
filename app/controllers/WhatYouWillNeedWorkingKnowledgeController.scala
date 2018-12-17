@@ -25,8 +25,6 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.whatYouWillNeedWorkingKnowledge
 
-import scala.concurrent.Future
-
 class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendAppConfig,
                                                          override val messagesApi: MessagesApi,
                                                          authenticate: AuthAction
@@ -37,8 +35,8 @@ class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendApp
       Ok(whatYouWillNeedWorkingKnowledge(appConfig))
   }
 
-  def onSubmit: Action[AnyContent] = authenticate.async {
+  def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      Future.successful(Redirect(controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode)))
+      Redirect(controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode))
   }
 }
