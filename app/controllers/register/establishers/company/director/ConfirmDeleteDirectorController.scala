@@ -33,7 +33,7 @@ import utils.annotations.EstablishersCompanyDirector
 import utils.{Navigator, SectionComplete}
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmDeleteDirectorController @Inject()(
                                                  appConfig: FrontendAppConfig,
@@ -44,7 +44,7 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
                                                  sectionComplete: SectionComplete
-                                               ) extends FrontendController with I18nSupport with Retrievals {
+                                               ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

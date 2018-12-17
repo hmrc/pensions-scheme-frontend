@@ -32,7 +32,7 @@ import utils.annotations.EstablishersCompany
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.company.otherDirectors
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class OtherDirectorsController @Inject()(
                                           appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class OtherDirectorsController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: OtherDirectorsFormProvider
-                                        ) extends FrontendController with Retrievals with I18nSupport {
+                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 

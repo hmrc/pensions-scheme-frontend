@@ -34,7 +34,7 @@ import utils.Navigator
 import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.addCompanyDirectors
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddCompanyDirectorsController @Inject()(
                                                appConfig: FrontendAppConfig,
@@ -45,7 +45,7 @@ class AddCompanyDirectorsController @Inject()(
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: AddCompanyDirectorsFormProvider
-                                             ) extends FrontendController with I18nSupport with Retrievals {
+                                             )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 

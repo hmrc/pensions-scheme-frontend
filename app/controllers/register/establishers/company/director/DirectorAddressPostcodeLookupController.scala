@@ -32,6 +32,8 @@ import utils.annotations.EstablishersCompanyDirector
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
+import scala.concurrent.ExecutionContext
+
 class DirectorAddressPostcodeLookupController @Inject()(
                                                          override val appConfig: FrontendAppConfig,
                                                          override val messagesApi: MessagesApi,
@@ -42,7 +44,7 @@ class DirectorAddressPostcodeLookupController @Inject()(
                                                          getData: DataRetrievalAction,
                                                          requireData: DataRequiredAction,
                                                          formProvider: PostCodeLookupFormProvider
-                                                       ) extends PostcodeLookupController {
+                                                       )(implicit val ec: ExecutionContext) extends PostcodeLookupController {
 
   protected val form: Form[String] = formProvider()
 

@@ -29,6 +29,8 @@ import utils._
 import utils.annotations.EstablishersCompanyDirector
 import viewmodels.{ContactDetailsViewModel, Message}
 
+import scala.concurrent.ExecutionContext
+
 class DirectorContactDetailsController @Inject()(
                                                   @EstablishersCompanyDirector override val navigator: Navigator,
                                                   override val appConfig: FrontendAppConfig,
@@ -38,7 +40,7 @@ class DirectorContactDetailsController @Inject()(
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
                                                   formProvider: ContactDetailsFormProvider
-                                                ) extends controllers.ContactDetailsController {
+                                                )(implicit val ec: ExecutionContext) extends controllers.ContactDetailsController {
 
   private val form = formProvider()
 

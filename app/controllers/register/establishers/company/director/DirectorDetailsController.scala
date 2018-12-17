@@ -35,7 +35,7 @@ import utils.annotations.EstablishersCompanyDirector
 import utils.{Navigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.company.director.directorDetails
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DirectorDetailsController @Inject()(
                                            appConfig: FrontendAppConfig,
@@ -47,7 +47,7 @@ class DirectorDetailsController @Inject()(
                                            requireData: DataRequiredAction,
                                            formProvider: PersonDetailsFormProvider,
                                            sectionComplete: SectionComplete
-                                         ) extends FrontendController with Retrievals with I18nSupport {
+                                         )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   private val form = formProvider()
 

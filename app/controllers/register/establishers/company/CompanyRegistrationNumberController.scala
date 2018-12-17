@@ -32,7 +32,7 @@ import utils._
 import utils.annotations.EstablishersCompany
 import views.html.register.establishers.company.companyRegistrationNumber
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CompanyRegistrationNumberController @Inject()(
                                                      appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class CompanyRegistrationNumberController @Inject()(
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyRegistrationNumberFormProvider
-                                                   ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
+                                                   )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
 

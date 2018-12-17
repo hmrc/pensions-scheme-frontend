@@ -33,7 +33,7 @@ import utils.annotations.Trustees
 import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.moreThanTenTrustees
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class MoreThanTenTrusteesController @Inject()(
                                                appConfig: FrontendAppConfig,
@@ -44,7 +44,7 @@ class MoreThanTenTrusteesController @Inject()(
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: MoreThanTenTrusteesFormProvider
-                                             ) extends FrontendController with Retrievals with I18nSupport {
+                                             ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 

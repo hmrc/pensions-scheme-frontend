@@ -32,7 +32,7 @@ import utils.annotations.TrusteesCompany
 import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.company.companyRegistrationNumber
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CompanyRegistrationNumberController @Inject()(
                                                      appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class CompanyRegistrationNumberController @Inject()(
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyRegistrationNumberFormProvider
-                                                   ) extends FrontendController with I18nSupport with Retrievals {
+                                                   ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

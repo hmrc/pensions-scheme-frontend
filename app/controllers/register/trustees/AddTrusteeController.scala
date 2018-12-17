@@ -35,7 +35,7 @@ import utils.Navigator
 import utils.annotations.Trustees
 import views.html.register.trustees.addTrustee
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddTrusteeController @Inject()(
                                       appConfig: FrontendAppConfig,
@@ -46,7 +46,7 @@ class AddTrusteeController @Inject()(
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
                                       formProvider: AddTrusteeFormProvider
-                                    ) extends FrontendController with I18nSupport with Retrievals {
+                                    ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

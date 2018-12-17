@@ -34,7 +34,7 @@ import utils.annotations.Register
 import utils.{NameMatchingFactory, Navigator, SectionComplete, UserAnswers}
 import views.html.register.schemeName
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
                                      override val messagesApi: MessagesApi,
@@ -45,7 +45,7 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
                                      requireData: DataRequiredAction,
                                      formProvider: SchemeNameFormProvider,
                                      nameMatchingFactory: NameMatchingFactory,
-                                     sectionComplete: SectionComplete) extends FrontendController with I18nSupport {
+                                     sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
 
   private val form = formProvider()
 

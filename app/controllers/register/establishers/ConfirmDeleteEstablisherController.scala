@@ -36,7 +36,7 @@ import utils.annotations.Establishers
 import utils.{Navigator, UserAnswers}
 import views.html.register.establishers.confirmDeleteEstablisher
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmDeleteEstablisherController @Inject()(
                                                     appConfig: FrontendAppConfig,
@@ -46,7 +46,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction
-                                                  ) extends FrontendController with I18nSupport with Retrievals {
+                                                  ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(index: Index, establisherKind: EstablisherKind): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {

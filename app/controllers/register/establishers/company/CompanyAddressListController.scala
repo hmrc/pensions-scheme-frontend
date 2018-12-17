@@ -33,7 +33,7 @@ import utils.annotations.EstablishersCompany
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CompanyAddressListController @Inject()(
                                               override val appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class CompanyAddressListController @Inject()(
                                               authenticate: AuthAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction
-                                            ) extends AddressListController with Retrievals {
+                                            )(implicit val ec: ExecutionContext) extends AddressListController with Retrievals {
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async { implicit request =>

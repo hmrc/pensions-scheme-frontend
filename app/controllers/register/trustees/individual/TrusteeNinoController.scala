@@ -32,7 +32,7 @@ import utils.Navigator
 import utils.annotations.TrusteesIndividual
 import views.html.register.trustees.individual.trusteeNino
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
                                       override val messagesApi: MessagesApi,
@@ -40,7 +40,8 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
                                       @TrusteesIndividual navigator: Navigator,
-                                      dataCacheConnector: UserAnswersCacheConnector) extends FrontendController with I18nSupport with Retrievals {
+                                      dataCacheConnector: UserAnswersCacheConnector) (implicit val ec: ExecutionContext)
+  extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Nino] = new TrusteeNinoFormProvider()()
 

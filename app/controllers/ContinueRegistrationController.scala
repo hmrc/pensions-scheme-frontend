@@ -25,11 +25,13 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 
+import scala.concurrent.ExecutionContext
+
 class ContinueRegistrationController @Inject()(
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 @Register navigator: Navigator
-                                              ) extends FrontendController {
+                                              )(implicit val ec: ExecutionContext) extends FrontendController {
 
   def continue(): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>

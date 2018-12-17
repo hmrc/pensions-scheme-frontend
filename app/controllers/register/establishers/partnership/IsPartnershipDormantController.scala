@@ -35,7 +35,7 @@ import utils.annotations.EstablisherPartnership
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.isDormant
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
@@ -44,7 +44,7 @@ class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
-                                               formProvider: IsDormantFormProvider) extends FrontendController
+                                               formProvider: IsDormantFormProvider) (implicit val ec: ExecutionContext) extends FrontendController
   with Enumerable.Implicits with I18nSupport with Retrievals {
 
   private val form: Form[DeclarationDormant] = formProvider()

@@ -32,7 +32,7 @@ import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 import views.html.register.securedBenefits
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SecuredBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                           override val messagesApi: MessagesApi,
@@ -42,7 +42,7 @@ class SecuredBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: SecuredBenefitsFormProvider
-                                         ) extends FrontendController with I18nSupport with Retrievals {
+                                         ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 

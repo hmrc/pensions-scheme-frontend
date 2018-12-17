@@ -31,7 +31,7 @@ import utils.Navigator
 import utils.annotations.Establishers
 import views.html.register.establishers.addEstablisher
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
@@ -40,7 +40,8 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: AddEstablisherFormProvider) extends FrontendController with Retrievals with I18nSupport {
+                                         formProvider: AddEstablisherFormProvider) (implicit val ec: ExecutionContext)
+  extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

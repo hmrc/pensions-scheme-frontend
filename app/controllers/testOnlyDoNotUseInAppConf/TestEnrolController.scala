@@ -30,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Enumerable
 import views.html.testOnlyDoNotUseInAppConf.testEnrol
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class TestEnrolController @Inject()(
                                      appConfig: FrontendAppConfig,
@@ -40,7 +40,7 @@ class TestEnrolController @Inject()(
                                      authenticate: AuthAction,
                                      getData: DataRetrievalAction,
                                      requireData: DataRequiredAction
-                                   ) extends FrontendController with Mappings with I18nSupport with Enumerable.Implicits with Retrievals {
+                                   ) (implicit val ec: ExecutionContext) extends FrontendController with Mappings with I18nSupport with Enumerable.Implicits with Retrievals {
 
   val formProvider: Form[String] =
     Form(

@@ -35,7 +35,7 @@ import utils.annotations.TrusteesCompany
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.company.companyDetails
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CompanyDetailsController @Inject()(
                                           appConfig: FrontendAppConfig,
@@ -46,7 +46,7 @@ class CompanyDetailsController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: CompanyDetailsFormProvider
-                                        ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
