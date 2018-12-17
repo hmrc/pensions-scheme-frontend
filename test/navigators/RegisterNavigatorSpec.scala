@@ -85,7 +85,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
 
     //Check your answers - back to task list page
-    (DeclarationId, hasEstablishers, schemeSuccess, true, None, false),
+    (DeclarationId, hasEstablishers, schemeSuccess, false, None, false),
     (CheckYourAnswersId, emptyAnswers, taskList, true, None, false),
     (DeclarationDutiesId, dutiesTrue, adviserCheckYourAnswers, true, Some(adviserCheckYourAnswers), true),
     (DeclarationDutiesId, dutiesFalse, adviserName, true, Some(adviserName), true)
