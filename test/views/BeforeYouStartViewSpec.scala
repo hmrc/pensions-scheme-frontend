@@ -16,19 +16,13 @@
 
 package views
 
-import config.FrontendAppConfig
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.beforeYouStart
 
 class BeforeYouStartViewSpec extends ViewBehaviours {
 
-  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    conf = "features.is-hub-enabled" -> false
-  ).build().injector.instanceOf[FrontendAppConfig]
-
-  val messageKeyPrefix = "what_you_will_need"
+  val messageKeyPrefix = "before_you_start"
 
   def createView: () => HtmlFormat.Appendable = () => beforeYouStart(frontendAppConfig)(fakeRequest, messages)
 
@@ -38,30 +32,6 @@ class BeforeYouStartViewSpec extends ViewBehaviours {
       "_lede", "_item_1", "_item_2", "_item_3", "_item_4")
 
     behave like pageWithSubmitButton(createView)
-  }
-}
-
-class BeforeYouStartHsViewSpec extends ViewBehaviours {
-
-  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    conf = "features.is-hub-enabled" -> true
-  ).build().injector.instanceOf[FrontendAppConfig]
-
-  val messageKeyPrefix = "hs_what_you_will_need"
-
-  def createView: () => HtmlFormat.Appendable = () => beforeYouStart(frontendAppConfig)(fakeRequest, messages)
-
-  "BeforeYouStart view (hub and spoke version)" must {
-
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"),
-      "_lede", "_p2", "_item_1", "_item_2", "_item_3", "_item_4", "_p3")
-
-    behave like pageWithSubmitButton(createView)
-
-    "have a link to the register a scheme page on gov uk" in {
-      val doc = asDocument(createView())
-      assertLink(doc, linkId = "apply-to-register-govuk-link", url = frontendAppConfig.applyToRegisterLink)
-    }
 
     "have a link to the managing pension schemes" in {
       val doc = asDocument(createView())
