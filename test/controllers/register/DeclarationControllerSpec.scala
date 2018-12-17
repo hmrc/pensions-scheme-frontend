@@ -16,7 +16,6 @@
 
 package controllers.register
 
-import config.FrontendAppConfig
 import connectors.{FakeUserAnswersCacheConnector, _}
 import controllers.ControllerSpecBase
 import controllers.actions._
@@ -36,7 +35,6 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSClient
 import play.api.mvc.Call
@@ -73,7 +71,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
-        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
+        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values.head)
       }
 
       "the establisher is non dormant company and partnership estabslihsre" in {
@@ -81,7 +79,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false)
-        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values.head)
+        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
       }
 
       "dormant company establisher and non dormant partnership" in {
@@ -89,7 +87,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
-        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
+        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values.head)
       }
 
       "dormant partnership establisher and non dormant company" in {
@@ -97,7 +95,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true)
-        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values(1))
+        FakeUserAnswersCacheConnector.verify(DeclarationDormantId, DeclarationDormant.values.head)
       }
     }
 

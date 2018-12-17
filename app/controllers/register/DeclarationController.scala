@@ -131,7 +131,7 @@ class DeclarationController @Inject()(
     SchemeDetailsId.retrieve.right.map { _ =>
       val isCompany = request.userAnswers.hasCompanies
 
-      val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values(1) else DeclarationDormant.values.head
+      val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant.values(1)
       val readyForRender = if (isCompany) {
         dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ => ())
       } else {
