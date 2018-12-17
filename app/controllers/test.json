@@ -1,0 +1,177 @@
+{
+  "customerAndSchemeDetails": {
+    "schemeName": "etw",
+    "isSchemeMasterTrust": false,
+    "schemeStructure": "A single trust under which all of the assets are held for the benefit of all members of the scheme",
+    "currentSchemeMembers": "1",
+    "futureSchemeMembers": "2 to 11",
+    "isReguledSchemeInvestment": false,
+    "isOccupationalPensionScheme": false,
+    "areBenefitsSecuredContractInsuranceCompany": false,
+    "doesSchemeProvideBenefits": "Defined Benefits only",
+    "schemeEstablishedCountry": "GB",
+    "haveInvalidBank": false
+  },
+  "pensionSchemeDeclaration": {
+    "box1": true,
+    "box2": true,
+    "box5": true,
+    "box6": true,
+    "box7": true,
+    "box8": true,
+    "box9": true,
+    "box11": true,
+    "pensionAdviserName": "wry",
+    "addressAndContactDetails": {
+      "addressDetails": {
+        "line1": "10 Other Place",
+        "line2": "Some District",
+        "line3": "Anytown",
+        "line4": "Somerset",
+        "countryCode": "GB",
+        "postalCode": "ZZ1 1ZZ",
+        "addressType": "UK"
+      },
+      "contactDetails": {
+        "telephone": "437",
+        "email": "test@test.com"
+      }
+    }
+  },
+  "establisherDetails": {
+    "individual": [],
+    "companyOrOrganization": [
+      {
+        "organizationName": "qet",
+        "noUtrReason": "et",
+        "noCrnReason": "et",
+        "haveMoreThanTenDirectorOrPartner": false,
+        "correspondenceAddressDetails": {
+          "addressDetails": {
+            "line1": "3 Other Place",
+            "line2": "Some District",
+            "line3": "Anytown",
+            "line4": "Somerset",
+            "countryCode": "GB",
+            "postalCode": "ZZ1 1ZZ",
+            "addressType": "UK"
+          }
+        },
+        "correspondenceContactDetails": {
+          "contactDetails": {
+            "telephone": "5467",
+            "email": "s@S.com"
+          }
+        },
+        "directorDetails": [
+          {
+            "personalDetails": {
+              "firstName": "et",
+              "lastName": "ewy",
+              "dateOfBirth": "2010-02-02"
+            },
+            "noNinoReason": "r",
+            "noUtrReason": "eut",
+            "correspondenceAddressDetails": {
+              "addressDetails": {
+                "line1": "3 Other Place",
+                "line2": "Some District",
+                "line3": "Anytown",
+                "line4": "Somerset",
+                "countryCode": "GB",
+                "postalCode": "ZZ1 1ZZ",
+                "addressType": "UK"
+              }
+            },
+            "correspondenceContactDetails": {
+              "contactDetails": {
+                "telephone": "468",
+                "email": "s@S.com"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "partnership": [
+      {
+        "organizationName": "rey",
+        "noUtrReason": "etu",
+        "haveMoreThanTenDirectorOrPartner": false,
+        "correspondenceAddressDetails": {
+          "addressDetails": {
+            "line1": "4 Other Place",
+            "line2": "Some District",
+            "line3": "Anytown",
+            "line4": "Somerset",
+            "countryCode": "GB",
+            "postalCode": "ZZ1 1ZZ",
+            "addressType": "UK"
+          }
+        },
+        "correspondenceContactDetails": {
+          "contactDetails": {
+            "telephone": "648",
+            "email": "s@S.com"
+          }
+        },
+        "partnerDetails": [
+          {
+            "personalDetails": {
+              "firstName": "ry",
+              "lastName": "eu",
+              "dateOfBirth": "2010-02-02"
+            },
+            "noNinoReason": "tr]",
+            "noUtrReason": "ri",
+            "correspondenceAddressDetails": {
+              "addressDetails": {
+                "line1": "4 Other Place",
+                "line2": "Some District",
+                "line3": "Anytown",
+                "line4": "Somerset",
+                "countryCode": "GB",
+                "postalCode": "ZZ1 1ZZ",
+                "addressType": "UK"
+              }
+            },
+            "correspondenceContactDetails": {
+              "contactDetails": {
+                "telephone": "57",
+                "email": "s@S.com"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "trusteeDetails": {
+    "individualTrusteeDetail": [],
+    "companyTrusteeDetail": [
+      {
+        "organizationName": "ryw",
+        "noUtrReason": "yw",
+        "noCrnReason": "wry",
+        "correspondenceAddressDetails": {
+          "addressDetails": {
+            "line1": "4 Other Place",
+            "line2": "Some District",
+            "line3": "Anytown",
+            "line4": "Somerset",
+            "countryCode": "GB",
+            "postalCode": "ZZ1 1ZZ",
+            "addressType": "UK"
+          }
+        },
+        "correspondenceContactDetails": {
+          "contactDetails": {
+            "telephone": "5478",
+            "email": "s@S.com"
+          }
+        }
+      }
+    ],
+    "partnershipTrusteeDetail": []
+  }
+}
