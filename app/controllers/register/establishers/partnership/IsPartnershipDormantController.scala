@@ -68,11 +68,11 @@ class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
             Future.successful(BadRequest(isDormant(appConfig, formWithErrors, partnershipName, postCall(mode, index)))),
           {
             case Yes =>
-              dataCacheConnector.save(request.externalId, IsPartnershipDormantId(index), DeclarationDormant.values(1)).map { cacheMap =>
+              dataCacheConnector.save(request.externalId, IsPartnershipDormantId(index), DeclarationDormant.values(0)).map { cacheMap =>
                 Redirect(navigator.nextPage(IsPartnershipDormantId(index), NormalMode, UserAnswers(cacheMap)))
               }
             case No =>
-              dataCacheConnector.save(request.externalId, IsPartnershipDormantId(index), DeclarationDormant.values(0)).map(cacheMap =>
+              dataCacheConnector.save(request.externalId, IsPartnershipDormantId(index), DeclarationDormant.values(1)).map(cacheMap =>
                 Redirect(navigator.nextPage(IsPartnershipDormantId(index), mode, UserAnswers(cacheMap))))
 
           }

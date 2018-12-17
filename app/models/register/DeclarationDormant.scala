@@ -28,7 +28,7 @@ object DeclarationDormant {
   case object Yes extends WithName("yes") with DeclarationDormant
 
   val values: Seq[DeclarationDormant] = Seq(
-    No, Yes
+    Yes, No
   )
 
   def options(config: FrontendAppConfig): Seq[InputOption] = values.map {
