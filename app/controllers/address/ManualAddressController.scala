@@ -79,7 +79,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
         val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address, existingAddress, selectedAddress, context)
 
-        dataCacheConnector.remove(request.externalId, postCodeLookupIdForCleanup).map(_ => ())
+        dataCacheConnector.remove(request.externalId, postCodeLookupIdForCleanup)
           .flatMap { _ =>
             dataCacheConnector.save(
               request.externalId,
