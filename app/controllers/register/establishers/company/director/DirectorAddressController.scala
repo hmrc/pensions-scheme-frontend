@@ -73,7 +73,7 @@ class DirectorAddressController @Inject()(
             vm,
             mode,
             context(vm),
-            Some(DirectorAddressPostcodeLookupId(establisherIndex, directorIndex))
+            DirectorAddressPostcodeLookupId(establisherIndex, directorIndex)
           )
       }
   }

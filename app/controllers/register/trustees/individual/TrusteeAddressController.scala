@@ -84,7 +84,7 @@ class TrusteeAddressController @Inject()(
       viewmodel(index, mode).retrieve.right.map {
         vm =>
           post(TrusteeAddressId(index), IndividualAddressListId(index), vm, mode, context(vm),
-            Some(IndividualPostCodeLookupId(index)))
+            IndividualPostCodeLookupId(index))
       }
   }
 

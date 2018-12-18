@@ -84,7 +84,7 @@ class PartnershipAddressController @Inject()(
         vm =>
           val context = s"Trustee Partnership Address: ${vm.secondaryHeader.get}"
           post(PartnershipAddressId(index), PartnershipAddressListId(index), vm, mode, context,
-            Some(PartnershipPostcodeLookupId(index))
+            PartnershipPostcodeLookupId(index)
           )
       }
   }

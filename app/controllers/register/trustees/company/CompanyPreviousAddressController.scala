@@ -85,7 +85,7 @@ class CompanyPreviousAddressController @Inject()(
       viewmodel(index, mode).retrieve.right.map {
         vm =>
           post(CompanyPreviousAddressId(index), CompanyPreviousAddressListId(index), vm, mode, context(vm),
-            Some(CompanyPreviousAddressPostcodeLookupId(index)))
+            CompanyPreviousAddressPostcodeLookupId(index))
       }
   }
 

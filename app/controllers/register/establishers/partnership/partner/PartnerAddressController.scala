@@ -73,7 +73,7 @@ class PartnerAddressController @Inject()(
             vm,
             mode,
             context(vm),
-            Some(PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex))
+            PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex)
           )
       }
   }
