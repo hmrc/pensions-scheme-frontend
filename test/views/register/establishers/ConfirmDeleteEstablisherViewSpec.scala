@@ -39,11 +39,22 @@ class ConfirmDeleteEstablisherViewSpec extends ViewBehaviours {
       val doc = asDocument(createView()())
       assertLink(doc, "cancel", cancelCall.url)
     }
+
+    "have the correct hint text where specified" in {
+      val hintText = "test hint"
+      val doc = asDocument(createView(hintText = Some(hintText))())
+      assertRenderedByIdWithText(doc,"delete-hint", hintText)
+    }
+    "have no hint text where not specified" in {
+      val doc = asDocument(createView()())
+      assertNotRenderedById(doc,"delete-hint")
+    }
+
   }
 
   "ConfirmDeleteEstablisher view with hub enabled" must {
     "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
+      val doc = asDocument(createView(isHubEnabled = true, None)())
       assertNotRenderedById(doc, "back-link")
     }
   }
@@ -59,10 +70,11 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
   private val postCall = ConfirmDeleteEstablisherController.onSubmit(firstIndex, EstablisherKind.Indivdual)
   private val cancelCall = AddEstablisherController.onSubmit(NormalMode)
 
-  private def createView(isHubEnabled: Boolean = false) = () =>
+  private def createView(isHubEnabled: Boolean = false, hintText:Option[String] = None) = () =>
     confirmDeleteEstablisher(
       appConfig(isHubEnabled),
       establisherName,
+      hintText,
       postCall,
       cancelCall
     )(fakeRequest, messages)

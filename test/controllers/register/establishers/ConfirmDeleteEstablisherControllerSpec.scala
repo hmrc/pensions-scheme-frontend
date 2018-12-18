@@ -31,6 +31,7 @@ import models.register.establishers.EstablisherKind
 import models.{CompanyDetails, Index, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
 import play.api.libs.json._
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
 import views.html.register.establishers.confirmDeleteEstablisher
@@ -46,6 +47,34 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+    }
+
+    "return OK and the correct view for a GET when establisher kind is company" in {
+      val establisherName = "Test Ltd"
+      val establisherIndex = Index(1)
+      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex, EstablisherKind.Company)
+      val data = new FakeDataRetrievalAction(Some(testData))
+      val result = controller(data).onPageLoad(establisherIndex, EstablisherKind.Company)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(
+        hintText = Some(messages("messages__confirmDeleteEstablisher__companyHint")),
+        estName = establisherName,
+        postCall = postCall)
+    }
+
+    "return OK and the correct view for a GET when establisher kind is partnership" in {
+      val establisherName = "Test Partnership Ltd"
+      val establisherIndex = Index(2)
+      val postCall = routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex, EstablisherKind.Partnership)
+      val data = new FakeDataRetrievalAction(Some(testData))
+      val result = controller(data).onPageLoad(establisherIndex, EstablisherKind.Partnership)(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe viewAsString(
+        hintText = Some(messages("messages__confirmDeleteEstablisher__partnershipHint")),
+        estName = establisherName,
+        postCall = postCall)
     }
 
     "redirect to already deleted view for a GET if the establisher was already deleted" in {
@@ -162,10 +191,12 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
       new DataRequiredActionImpl
     )
 
-  private def viewAsString() = confirmDeleteEstablisher(
+  private def viewAsString(hintText:Option[String] = None,
+                           estName:String = establisherName,
+                           postCall:Call = postCall) = confirmDeleteEstablisher(
     frontendAppConfig,
-    establisherName,
-    Some("hint"),
+    estName,
+    hintText,
     postCall,
     cancelCall
   )(fakeRequest, messages).toString
