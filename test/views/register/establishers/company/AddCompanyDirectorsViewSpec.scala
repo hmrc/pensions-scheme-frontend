@@ -123,7 +123,7 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
     "show the maximum number of directors message when there are 10 or more directors" in {
       val doc = asDocument(createView(Seq.fill(maxDirectors)(johnDoeEntity))())
       doc must haveDynamicText("messages__addCompanyDirectors_at_maximum")
-      doc must haveDynamicText("messages__addCompanyDirectors_tell_us_if_you_have_more")
+      doc must haveDynamicText("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more")
     }
 
   }
