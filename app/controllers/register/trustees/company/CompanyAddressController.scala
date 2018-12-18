@@ -23,7 +23,7 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.company.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId}
+import identifiers.register.trustees.company.{CompanyAddressId, CompanyAddressListId, CompanyDetailsId, CompanyPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -83,7 +83,7 @@ class CompanyAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm))
+          post(CompanyAddressId(index), CompanyAddressListId(index), vm, mode, context(vm),Some(CompanyPostcodeLookupId(index)))
       }
   }
 

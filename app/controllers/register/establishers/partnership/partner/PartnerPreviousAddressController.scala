@@ -23,7 +23,7 @@ import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerPreviousAddressId, PartnerPreviousAddressListId}
+import identifiers.register.establishers.partnership.partner.{PartnerDetailsId, PartnerPreviousAddressId, PartnerPreviousAddressListId, PartnerPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -86,7 +86,8 @@ class PartnerPreviousAddressController @Inject()(
             PartnerPreviousAddressListId(establisherIndex, partnerIndex),
             vm,
             mode,
-            context(vm)
+            context(vm),
+            Some(PartnerPreviousAddressPostcodeLookupId(establisherIndex, partnerIndex))
           )
       }
   }

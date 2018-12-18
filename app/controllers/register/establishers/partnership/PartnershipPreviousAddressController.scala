@@ -22,7 +22,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPreviousAddressId, PartnershipPreviousAddressListId}
+import identifiers.register.establishers.partnership.{PartnershipDetailsId, PartnershipPreviousAddressId, PartnershipPreviousAddressListId, PartnershipPreviousAddressPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -80,7 +80,8 @@ class PartnershipPreviousAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index), vm, mode, context(vm))
+          post(PartnershipPreviousAddressId(index), PartnershipPreviousAddressListId(index), vm, mode, context(vm),
+            Some(PartnershipPreviousAddressPostcodeLookupId(index)))
       }
   }
 

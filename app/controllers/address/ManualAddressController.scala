@@ -21,11 +21,13 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import identifiers.TypedIdentifier
+import identifiers.register.trustees.individual.IndividualPostCodeLookupId
 import models.Mode
 import models.address.{Address, TolerantAddress}
 import models.requests.DataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
+import play.api.libs.json._
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.{Navigator, UserAnswers}
@@ -66,7 +68,8 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
                       selectedId: TypedIdentifier[TolerantAddress],
                       viewModel: ManualAddressViewModel,
                       mode: Mode,
-                      context: String
+                      context: String,
+                      optionPostCodeLookupIdForCleanup: Option[TypedIdentifier[Seq[TolerantAddress]]] = None
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel))),
@@ -76,15 +79,19 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
 
         val auditEvent = AddressEvent.addressEntryEvent(request.externalId, address, existingAddress, selectedAddress, context)
 
-        dataCacheConnector.save(
-          request.externalId,
-          id,
-          address
-        ).map {
-          cacheMap =>
-            auditEvent.foreach(auditService.sendEvent(_))
-            Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap)))
-        }
+        optionPostCodeLookupIdForCleanup.map(pcli => dataCacheConnector.remove(request.externalId, pcli).map(_ => ()))
+          .fold(Future.successful(()))(identity)
+          .flatMap { _ =>
+            dataCacheConnector.save(
+              request.externalId,
+              id,
+              address
+            ).map {
+              cacheMap =>
+                auditEvent.foreach(auditService.sendEvent(_))
+                Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap)))
+            }
+          }
       }
     )
   }
