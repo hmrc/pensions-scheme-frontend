@@ -29,7 +29,7 @@ import models.register.establishers.EstablisherKind
 import models.register.establishers.EstablisherKind._
 import models.requests.DataRequest
 import models.{Index, NormalMode}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Establishers
@@ -48,6 +48,16 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     requireData: DataRequiredAction
                                                   ) extends FrontendController with I18nSupport with Retrievals {
 
+  private def getHintText(establisherKind: EstablisherKind):Option[String] = {
+    establisherKind match {
+      case EstablisherKind.Company =>
+        Some(Messages(s"messages__confirmDeleteEstablisher__companyHint"))
+      case EstablisherKind.Partnership =>
+        Some(Messages(s"messages__confirmDeleteEstablisher__partnershipHint"))
+      case _ => None
+    }
+  }
+
   def onPageLoad(index: Index, establisherKind: EstablisherKind): Action[AnyContent] =
     (authenticate andThen getData andThen requireData).async {
       implicit request =>
@@ -63,6 +73,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                       confirmDeleteEstablisher(
                         appConfig,
                         establisher.name,
+                        getHintText(establisherKind),
                         routes.ConfirmDeleteEstablisherController.onSubmit(index, establisherKind),
                         routes.AddEstablisherController.onPageLoad(NormalMode)
                       )
