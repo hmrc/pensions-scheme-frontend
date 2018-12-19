@@ -19,7 +19,9 @@
 @import play.api.mvc.Call
 @import viewmodels.Message
 
-@(appConfig: FrontendAppConfig, establisherName: String, postCall: Call, cancelCall: Call)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, establisherName: String, hintText: Option[String], postCall: Call, cancelCall: Call)(implicit request: Request[_], messages: Messages)
+
+
 
 @main_template(
     title = messages("messages__confirmDeleteEstablisher__title"),
@@ -35,7 +37,9 @@
                 headingKey=(Message("messages__confirmDeleteEstablisher__heading").withArgs(establisherName))
          )
 
-            <span class="form-hint">@messages("messages__confirmDeleteEstablisher__hint")</span>
+            @hintText.map{ ht =>
+                <span id="delete-hint" class="form-hint">@ht</span>
+            }
 
             @components.submit_button("site.confirm")
 

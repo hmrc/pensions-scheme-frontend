@@ -756,7 +756,8 @@ messages__deleteScheme__error__required = Select yes if you want to cancel your 
 
 messages__confirmDeleteEstablisher__title = Confirm deletion
 messages__confirmDeleteEstablisher__heading = Are you sure you want to delete {0}?
-messages__confirmDeleteEstablisher__hint = This will delete any directors you have added.
+messages__confirmDeleteEstablisher__companyHint = This will delete any directors you have added.
+messages__confirmDeleteEstablisher__partnershipHint = This will delete any partners you have added.
 
 messages__youNeedToRegister__title = You need to register
 messages__youNeedToRegister__heading = Manage and register your pension schemes
