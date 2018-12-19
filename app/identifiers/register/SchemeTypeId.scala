@@ -17,8 +17,23 @@
 package identifiers.register
 
 import identifiers.TypedIdentifier
+import identifiers.register.trustees.HaveAnyTrusteesId
 import models.register.SchemeType
+import models.register.SchemeType.{MasterTrust, SingleTrust}
+import play.api.libs.json.JsResult
+import utils.UserAnswers
 
 case object SchemeTypeId extends TypedIdentifier[SchemeType] {
   override def toString: String = "schemeType"
+
+  private val singleOrMasterTrustTypes = Seq(SingleTrust, MasterTrust)
+
+  override def cleanup(value: Option[SchemeType], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(st) if singleOrMasterTrustTypes.contains(st) =>
+        userAnswers.remove(HaveAnyTrusteesId)
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
+  }
 }

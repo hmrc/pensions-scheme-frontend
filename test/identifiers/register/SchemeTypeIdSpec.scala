@@ -1,0 +1,75 @@
+/*
+ * Copyright 2018 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package identifiers.register
+
+import identifiers.register.trustees.HaveAnyTrusteesId
+import models.register.SchemeType
+import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import play.api.libs.json.Json
+import utils.{Enumerable, UserAnswers}
+
+class SchemeTypeIdSpec extends WordSpec with MustMatchers with OptionValues with Enumerable.Implicits {
+
+  "cleanup" when {
+    val answers = UserAnswers(Json.obj())
+      .set(SchemeTypeId)(SchemeType.GroupLifeDeath)
+      .asOpt.value
+      .set(HaveAnyTrusteesId)(true)
+      .asOpt.value
+
+    "`SchemeType` set to `Master trust`" must {
+      val result = answers.set(SchemeTypeId)(SchemeType.MasterTrust).asOpt.value
+
+      "remove the data for `HaveAnyTrusteesId`" in {
+        result.get(HaveAnyTrusteesId) mustNot be(defined)
+      }
+    }
+
+    "`SchemeType` set to `Single trust`" must {
+      val result = answers.set(SchemeTypeId)(SchemeType.SingleTrust).asOpt.value
+
+      "remove the data for `HaveAnyTrusteesId`" in {
+        result.get(HaveAnyTrusteesId) mustNot be(defined)
+      }
+    }
+
+    "`SchemeType` set to `BodyCorporate`" must {
+      val result = answers.set(SchemeTypeId)(SchemeType.BodyCorporate).asOpt.value
+
+      "NOT remove the data for `HaveAnyTrusteesId`" in {
+        result.get(HaveAnyTrusteesId) must be(defined)
+      }
+    }
+
+    "`SchemeType` set to `Other`" must {
+      val result = answers.set(SchemeTypeId)(SchemeType.Other("reason")).asOpt.value
+
+      "NOT remove the data for `HaveAnyTrusteesId`" in {
+        result.get(HaveAnyTrusteesId) must be(defined)
+      }
+    }
+
+    "`SchemeType` set to `GroupLifeDeath`" must {
+      val result = answers.set(SchemeTypeId)(SchemeType.GroupLifeDeath).asOpt.value
+
+      "NOT remove the data for `HaveAnyTrusteesId`" in {
+        result.get(HaveAnyTrusteesId) must be(defined)
+      }
+    }
+
+  }
+}
