@@ -32,6 +32,8 @@ import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 import views.html.userResearchDetails
 
+import scala.concurrent.ExecutionContext
+
 class UserResearchDetailsController @Inject()(
                                                appConfig: FrontendAppConfig,
                                                override val messagesApi: MessagesApi,
@@ -42,7 +44,7 @@ class UserResearchDetailsController @Inject()(
                                                requireData: DataRequiredAction,
                                                formProvider: UserResearchDetailsFormProvider,
                                                auditService: AuditService
-                                             ) extends FrontendController with I18nSupport {
+                                             )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
 
   private val form = formProvider()
 

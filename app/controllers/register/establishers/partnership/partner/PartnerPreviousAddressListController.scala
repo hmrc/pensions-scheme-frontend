@@ -32,7 +32,7 @@ import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.AddressListViewModel
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class PartnerPreviousAddressListController @Inject()(
                                                       override val appConfig: FrontendAppConfig,

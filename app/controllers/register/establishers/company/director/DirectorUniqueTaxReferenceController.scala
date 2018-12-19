@@ -32,7 +32,7 @@ import utils.annotations.EstablishersCompanyDirector
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.company.director.directorUniqueTaxReference
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DirectorUniqueTaxReferenceController @Inject()(
                                                       appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class DirectorUniqueTaxReferenceController @Inject()(
                                                       getData: DataRetrievalAction,
                                                       requireData: DataRequiredAction,
                                                       formProvider: DirectorUniqueTaxReferenceFormProvider
-                                                    ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                    )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 

@@ -31,7 +31,7 @@ import utils.annotations.Register
 import utils.{Enumerable, Navigator, SectionComplete, UserAnswers}
 import views.html.workingKnowledge
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class WorkingKnowledgeController @Inject()(
                                             appConfig: FrontendAppConfig,
@@ -42,7 +42,7 @@ class WorkingKnowledgeController @Inject()(
                                             getData: DataRetrievalAction,
                                             formProvider: WorkingKnowledgeFormProvider,
                                             sectionComplete: SectionComplete
-                                          ) extends FrontendController with I18nSupport with Enumerable.Implicits {
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 

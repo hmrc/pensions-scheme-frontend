@@ -28,7 +28,6 @@ import play.api.data.Form
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.AnyContent
 import play.api.test.Helpers._
-import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{FakeNavigator, FakeSectionComplete, NameMatching, NameMatchingFactory}
 import views.html.register.schemeName
@@ -36,7 +35,6 @@ import views.html.register.schemeName
 import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeNameControllerSpec extends ControllerSpecBase {
-
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new SchemeNameFormProvider()
@@ -45,7 +43,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase {
   val config: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
   val pensionAdministratorConnector: PensionAdministratorConnector = injector.instanceOf[PensionAdministratorConnector]
 
-  object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, pensionAdministratorConnector, ApplicationCrypto, config) {
+  object FakeNameMatchingFactory extends NameMatchingFactory(FakeUserAnswersCacheConnector, pensionAdministratorConnector, crypto, config) {
     override def nameMatching(schemeName: String)
                              (implicit request: OptionalDataRequest[AnyContent],
                               ec: ExecutionContext,

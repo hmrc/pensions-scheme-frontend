@@ -31,7 +31,7 @@ import utils.annotations.EstablishersCompany
 import utils.{Navigator, SectionComplete}
 import views.html.register.establishers.company.companyReview
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -39,7 +39,7 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        sectionComplete: SectionComplete) extends FrontendController with I18nSupport with Retrievals {
+                                        sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

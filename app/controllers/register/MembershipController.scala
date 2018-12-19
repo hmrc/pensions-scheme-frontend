@@ -32,7 +32,7 @@ import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.membership
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class MembershipController @Inject()(appConfig: FrontendAppConfig,
                                      override val messagesApi: MessagesApi,
@@ -42,7 +42,7 @@ class MembershipController @Inject()(appConfig: FrontendAppConfig,
                                      getData: DataRetrievalAction,
                                      requireData: DataRequiredAction,
                                      formProvider: MembershipFormProvider
-                                    ) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
+                                    )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
 
   private val form = formProvider()
 

@@ -35,7 +35,7 @@ import utils.annotations.TrusteesIndividual
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.individual.trusteeDetails
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteeDetailsController @Inject()(
                                           appConfig: FrontendAppConfig,
@@ -46,7 +46,7 @@ class TrusteeDetailsController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: PersonDetailsFormProvider
-                                        ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 

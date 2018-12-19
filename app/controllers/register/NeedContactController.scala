@@ -17,7 +17,7 @@
 package controllers.register
 
 import config.FrontendAppConfig
-import connectors.{UserAnswersCacheConnector, PSANameCacheConnector}
+import connectors.{PSANameCacheConnector, UserAnswersCacheConnector}
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.NeedContactFormProvider
@@ -31,7 +31,7 @@ import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.register.needContact
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class NeedContactController @Inject()(
                                        appConfig: FrontendAppConfig,
@@ -41,7 +41,7 @@ class NeedContactController @Inject()(
                                        formProvider: NeedContactFormProvider,
                                        psaNameCacheConnector: PSANameCacheConnector,
                                        crypto: ApplicationCrypto
-                                     ) extends FrontendController with I18nSupport with Retrievals {
+                                     )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

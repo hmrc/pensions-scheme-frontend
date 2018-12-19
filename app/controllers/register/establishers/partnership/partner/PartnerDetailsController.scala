@@ -35,7 +35,7 @@ import utils.annotations.EstablishersPartner
 import utils.{Navigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.partnership.partner.partnerDetails
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class PartnerDetailsController @Inject()(
                                           appConfig: FrontendAppConfig,
@@ -47,7 +47,7 @@ class PartnerDetailsController @Inject()(
                                           requireData: DataRequiredAction,
                                           formProvider: PersonDetailsFormProvider,
                                           sectionComplete: SectionComplete
-                                        ) extends FrontendController with Retrievals with I18nSupport {
+                                        ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   private val form = formProvider()
 

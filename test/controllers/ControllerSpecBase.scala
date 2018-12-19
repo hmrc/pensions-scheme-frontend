@@ -18,7 +18,6 @@ package controllers
 
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
-import identifiers.register.{SchemeDetailsId, SchemeNameId}
 import identifiers.register.adviser.AdviserDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
@@ -28,6 +27,7 @@ import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.{SchemeDetailsId, SchemeNameId}
 import models.person.PersonDetails
 import models.register.{AdviserDetails, SchemeDetails, SchemeType}
 import models.{CompanyDetails, PartnershipDetails}
@@ -36,6 +36,8 @@ import play.api.libs.json.Json
 import utils.{Enumerable, MapFormats}
 
 trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapFormats {
+
+  implicit val global = scala.concurrent.ExecutionContext.Implicits.global
 
   val cacheMapId = "id"
 

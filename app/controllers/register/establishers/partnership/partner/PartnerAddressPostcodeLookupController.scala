@@ -32,6 +32,8 @@ import utils.annotations.EstablishersPartner
 import viewmodels.Message
 import viewmodels.address.PostcodeLookupViewModel
 
+import scala.concurrent.ExecutionContext
+
 class PartnerAddressPostcodeLookupController @Inject()(
                                                         override val appConfig: FrontendAppConfig,
                                                         override val messagesApi: MessagesApi,

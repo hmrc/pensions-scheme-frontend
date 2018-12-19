@@ -32,7 +32,7 @@ import utils.annotations.Adviser
 import utils.{Navigator, UserAnswers}
 import views.html.register.adviser.adviserPhone
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AdviserPhoneController @Inject()(
                                         appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class AdviserPhoneController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: AdviserPhoneFormProvider
-                                      ) extends FrontendController with I18nSupport with Retrievals {
+                                      ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

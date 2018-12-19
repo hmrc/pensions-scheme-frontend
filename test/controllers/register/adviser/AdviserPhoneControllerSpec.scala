@@ -69,7 +69,7 @@ class AdviserPhoneControllerSpec extends ControllerSpecBase with ControllerWithQ
 }
 
 object AdviserPhoneControllerSpec {
-
+  implicit val global = scala.concurrent.ExecutionContext.Implicits.global
   val formProvider: AdviserPhoneFormProvider = new AdviserPhoneFormProvider()
   val form: Form[String] = formProvider.apply()
 

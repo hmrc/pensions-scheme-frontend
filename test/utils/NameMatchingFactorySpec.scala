@@ -18,11 +18,10 @@ package utils
 
 import base.SpecBase
 import connectors.{PSANameCacheConnector, PensionAdministratorConnector}
-import models.PSAName
 import models.requests.OptionalDataRequest
-import org.mockito.Matchers.{eq => eqTo, _}
+import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.{OptionValues, RecoverMethods}
+import org.scalatest.RecoverMethods
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.inject.bind
@@ -38,14 +37,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class NameMatchingFactorySpec extends SpecBase with MockitoSugar with ScalaFutures with RecoverMethods {
-
   val pensionAdministratorConnector: PensionAdministratorConnector = mock[PensionAdministratorConnector]
   val psaNameCacheConnector: PSANameCacheConnector = mock[PSANameCacheConnector]
   val schemeName = "My Scheme Reg"
 
   implicit val request: OptionalDataRequest[AnyContent] = OptionalDataRequest(FakeRequest("", ""), "externalId", None, PsaId("A0000000"))
 
-  private def nameMatchingFactory = new NameMatchingFactory(psaNameCacheConnector, pensionAdministratorConnector, ApplicationCrypto, frontendAppConfig)
+  private def nameMatchingFactory = new NameMatchingFactory(psaNameCacheConnector, pensionAdministratorConnector, crypto, frontendAppConfig)
 
   implicit val hc = HeaderCarrier()
 

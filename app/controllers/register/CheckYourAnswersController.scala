@@ -30,6 +30,8 @@ import utils.{CountryOptions, Enumerable, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
+import scala.concurrent.ExecutionContext
+
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
                                            authenticate: AuthAction,
@@ -37,7 +39,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            requireData: DataRequiredAction,
                                            implicit val countryOptions: CountryOptions,
                                            @Register navigator: Navigator,
-                                           sectionComplete: SectionComplete) extends FrontendController with Enumerable.Implicits with I18nSupport {
+                                           sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>

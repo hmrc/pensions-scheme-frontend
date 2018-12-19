@@ -40,6 +40,8 @@ class ContinueRegistrationControllerSpec extends ControllerSpecBase {
 
 object ContinueRegistrationControllerSpec {
 
+  implicit val global = scala.concurrent.ExecutionContext.Implicits.global
+
   def nextPage: Call = Call("GET", "http://www.test.com")
 
   val fakeNavigator = new FakeNavigator(nextPage)

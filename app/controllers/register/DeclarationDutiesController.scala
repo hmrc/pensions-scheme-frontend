@@ -17,7 +17,6 @@
 package controllers.register
 
 import javax.inject.Inject
-
 import config.FrontendAppConfig
 import connectors._
 import controllers.Retrievals
@@ -37,7 +36,7 @@ import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declarationDuties
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationDutiesController @Inject()(
                                              appConfig: FrontendAppConfig,
@@ -53,7 +52,7 @@ class DeclarationDutiesController @Inject()(
                                              psaNameCacheConnector: PSANameCacheConnector,
                                              crypto: ApplicationCrypto,
                                              pensionAdministratorConnector: PensionAdministratorConnector
-                                           ) extends FrontendController with I18nSupport with Retrievals with Enumerable.Implicits {
+                                           )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals with Enumerable.Implicits {
 
   private val form = formProvider()
 

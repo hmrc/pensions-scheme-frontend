@@ -32,7 +32,7 @@ import utils.annotations.Register
 import utils.{Navigator, UserAnswers}
 import views.html.register.uKBankDetails
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
@@ -41,7 +41,7 @@ class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: UKBankDetailsFormProvider) extends FrontendController with I18nSupport with Retrievals {
+                                        formProvider: UKBankDetailsFormProvider) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

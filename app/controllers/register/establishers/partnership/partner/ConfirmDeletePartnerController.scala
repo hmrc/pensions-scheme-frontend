@@ -32,7 +32,7 @@ import utils.annotations.EstablishersPartner
 import utils.{Navigator, SectionComplete}
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmDeletePartnerController @Inject()(
                                                 appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class ConfirmDeletePartnerController @Inject()(
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
                                                 sectionComplete: SectionComplete
-                                              ) extends FrontendController with I18nSupport with Retrievals {
+                                              ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

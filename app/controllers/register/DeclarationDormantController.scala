@@ -32,7 +32,7 @@ import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declarationDormant
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationDormantController @Inject()(
                                               appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class DeclarationDormantController @Inject()(
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
                                               formProvider: DeclarationDormantFormProvider
-                                            ) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
+                                            )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
 
   private val form = formProvider()
 

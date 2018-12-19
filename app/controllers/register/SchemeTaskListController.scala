@@ -26,13 +26,13 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.TaskListHelper
 import views.html.schemeTaskList
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction
-                                        ) extends FrontendController with I18nSupport with Retrievals {
+                                        ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>

@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.register.schemeSuccess
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Failure
 
 class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
@@ -39,7 +39,7 @@ class SchemeSuccessController @Inject()(appConfig: FrontendAppConfig,
                                         cacheConnector: UserAnswersCacheConnector,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction) extends FrontendController with I18nSupport with Retrievals {
+                                        requireData: DataRequiredAction) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

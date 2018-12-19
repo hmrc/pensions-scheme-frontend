@@ -32,7 +32,7 @@ import utils.{CountryOptions, Navigator, SectionComplete}
 import viewmodels.{AnswerSection, Message}
 import views.html.check_your_answers
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            sectionComplete: SectionComplete,
                                            @TrusteesPartnership navigator: Navigator,
                                            implicit val countryOptions: CountryOptions
-                                          ) extends FrontendController with Retrievals with I18nSupport {
+                                          ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>

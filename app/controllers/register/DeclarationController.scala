@@ -42,7 +42,7 @@ import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declaration
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 
@@ -60,7 +60,7 @@ class DeclarationController @Inject()(
                                        psaNameCacheConnector: PSANameCacheConnector,
                                        crypto: ApplicationCrypto,
                                        pensionAdministratorConnector: PensionAdministratorConnector
-                                     ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 

@@ -34,7 +34,7 @@ import utils.Navigator
 import utils.annotations.EstablishersPartner
 import views.html.register.addPartners
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AddPartnersController @Inject()(
                                        appConfig: FrontendAppConfig,
@@ -45,7 +45,7 @@ class AddPartnersController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: AddPartnersFormProvider
-                                     ) extends FrontendController with I18nSupport with Retrievals {
+                                     ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 

@@ -31,7 +31,7 @@ import utils.annotations.Register
 import utils.{Enumerable, Navigator}
 import views.html.register.schemeReview
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
                                        override val messagesApi: MessagesApi,
@@ -39,7 +39,7 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction
-                                      ) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
+                                      )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

@@ -32,7 +32,7 @@ import utils.annotations.Register
 import utils.{NameMatchingFactory, Navigator, UserAnswers}
 import views.html.register.schemeType
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeTypeController @Inject()(appConfig: FrontendAppConfig,
                                      override val messagesApi: MessagesApi,
@@ -42,7 +42,8 @@ class SchemeTypeController @Inject()(appConfig: FrontendAppConfig,
                                      getData: DataRetrievalAction,
                                      requireData: DataRequiredAction,
                                      formProvider: SchemeTypeFormProvider,
-                                     nameMatchingFactory: NameMatchingFactory) extends FrontendController with I18nSupport with Retrievals {
+                                     nameMatchingFactory: NameMatchingFactory)(
+  implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

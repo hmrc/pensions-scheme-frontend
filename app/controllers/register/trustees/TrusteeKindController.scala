@@ -33,7 +33,7 @@ import utils.annotations.Trustees
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.trusteeKind
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class TrusteeKindController @Inject()(
                                        appConfig: FrontendAppConfig,
@@ -44,7 +44,7 @@ class TrusteeKindController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: TrusteeKindFormProvider
-                                     ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                     ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 

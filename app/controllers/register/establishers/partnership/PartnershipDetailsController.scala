@@ -32,7 +32,7 @@ import utils.annotations.EstablisherPartnership
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.partnership.partnershipDetails
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class PartnershipDetailsController @Inject()(
                                               appConfig: FrontendAppConfig,
@@ -43,7 +43,7 @@ class PartnershipDetailsController @Inject()(
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
                                               formProvider: PartnershipDetailsFormProvider
-                                            ) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                            ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
