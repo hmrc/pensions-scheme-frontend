@@ -119,6 +119,7 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
     "show the maximum number of partners message when there are 10 or more partners" in {
       val doc = asDocument(createView(Seq.fill(maxPartners)(johnDoeEntity))())
       doc must haveDynamicText("messages__addPartners_at_maximum")
+      doc must haveDynamicText("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more")
     }
 
     "not have a return link" in {
