@@ -77,7 +77,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode).url)
 
   private val workingKnowledgeDefaultLink: Link = Link(workingKnowledgeLinkText,
-    controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode).url)
+    controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url)
 
   private val addTrusteesDefaultLink: JourneyTaskListSection = JourneyTaskListSection(
     None,
@@ -106,7 +106,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
     val link = if (isComplete.getOrElse(false)) {
       Link(changeWorkingKnowledgeLinkText, controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad().url)
     } else {
-      Link(workingKnowledgeLinkText, controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode).url)
+      Link(workingKnowledgeLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url)
     }
     JourneyTaskListSection(
       isComplete,

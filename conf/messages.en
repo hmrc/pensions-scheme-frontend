@@ -1179,3 +1179,12 @@ adviserEmail.checkYourAnswersLabel = What is {0}’s email address?
 adviserPhone.checkYourAnswersLabel = What is {0}’s phone number?
 adviserAddress.checkYourAnswersLabel = {0}’s address
 
+messages__what_you_will_need_wk__title = Who has working knowledge of pensions and pensions tax legislation
+messages__what_you_will_need_wk__h1 = Who has working knowledge of pensions and pensions tax legislation
+messages__what_you_will_need_wk__lede = You will need to tell us the person’s:
+messages__what_you_will_need_wk__item_1 = name
+messages__what_you_will_need_wk__item_2 = email address
+messages__what_you_will_need_wk__item_3 = phone number
+messages__what_you_will_need_wk__item_4 = address
+
+

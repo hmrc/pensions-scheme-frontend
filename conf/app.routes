@@ -38,3 +38,6 @@ POST       /having-pensions-working-knowledge           controllers.WorkingKnowl
 
 GET        /change-having-pensions-working-knowledge    controllers.WorkingKnowledgeController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-having-pensions-working-knowledge    controllers.WorkingKnowledgeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /what-you-will-need-for-working-knowledge    controllers.WhatYouWillNeedWorkingKnowledgeController.onPageLoad
+POST       /what-you-will-need-for-working-knowledge    controllers.WhatYouWillNeedWorkingKnowledgeController.onSubmit
