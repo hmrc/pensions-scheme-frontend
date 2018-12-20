@@ -23,9 +23,9 @@ import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes.TrusteeAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.individual.{IndividualAddressListId, TrusteeAddressId, TrusteeDetailsId}
+import identifiers.register.trustees.individual.{IndividualAddressListId, IndividualPostCodeLookupId, TrusteeAddressId, TrusteeDetailsId}
 import javax.inject.Inject
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import models.{Index, Mode}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -83,7 +83,8 @@ class TrusteeAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(TrusteeAddressId(index), IndividualAddressListId(index), vm, mode, context(vm))
+          post(TrusteeAddressId(index), IndividualAddressListId(index), vm, mode, context(vm),
+            IndividualPostCodeLookupId(index))
       }
   }
 

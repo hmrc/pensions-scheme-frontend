@@ -22,7 +22,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId}
+import identifiers.register.trustees.partnership.{PartnershipAddressId, PartnershipAddressListId, PartnershipDetailsId, PartnershipPostcodeLookupId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -83,7 +83,9 @@ class PartnershipAddressController @Inject()(
       viewmodel(index, mode).retrieve.right.map {
         vm =>
           val context = s"Trustee Partnership Address: ${vm.secondaryHeader.get}"
-          post(PartnershipAddressId(index), PartnershipAddressListId(index), vm, mode, context)
+          post(PartnershipAddressId(index), PartnershipAddressListId(index), vm, mode, context,
+            PartnershipPostcodeLookupId(index)
+          )
       }
   }
 }

@@ -23,7 +23,7 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.establishers.partnership.partner.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerAddressListId, PartnerDetailsId}
+import identifiers.register.establishers.partnership.partner.{PartnerAddressId, PartnerAddressListId, PartnerAddressPostcodeLookupId, PartnerDetailsId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -72,7 +72,8 @@ class PartnerAddressController @Inject()(
             PartnerAddressListId(establisherIndex, partnerIndex),
             vm,
             mode,
-            context(vm)
+            context(vm),
+            PartnerAddressPostcodeLookupId(establisherIndex, partnerIndex)
           )
       }
   }

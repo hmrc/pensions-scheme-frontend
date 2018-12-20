@@ -23,7 +23,7 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.trustees.individual.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.trustees.individual.{TrusteeDetailsId, TrusteePreviousAddressId, TrusteePreviousAddressListId}
+import identifiers.register.trustees.individual.{IndividualPreviousAddressPostCodeLookupId, TrusteeDetailsId, TrusteePreviousAddressId, TrusteePreviousAddressListId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -81,7 +81,9 @@ class TrusteePreviousAddressController @Inject()(
     implicit request =>
       viewmodel(index, mode).retrieve.right.map {
         vm =>
-          post(TrusteePreviousAddressId(index), TrusteePreviousAddressListId(index), vm, mode, context(vm))
+          post(TrusteePreviousAddressId(index), TrusteePreviousAddressListId(index), vm, mode, context(vm),
+            IndividualPreviousAddressPostCodeLookupId(index)
+          )
       }
   }
 

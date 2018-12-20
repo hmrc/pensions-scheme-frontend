@@ -23,7 +23,7 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.establishers.company.director.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorAddressListId, DirectorDetailsId}
+import identifiers.register.establishers.company.director.{DirectorAddressId, DirectorAddressListId, DirectorAddressPostcodeLookupId, DirectorDetailsId}
 import javax.inject.Inject
 import models.address.Address
 import models.{Index, Mode}
@@ -72,7 +72,8 @@ class DirectorAddressController @Inject()(
             DirectorAddressListId(establisherIndex, directorIndex),
             vm,
             mode,
-            context(vm)
+            context(vm),
+            DirectorAddressPostcodeLookupId(establisherIndex, directorIndex)
           )
       }
   }

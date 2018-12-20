@@ -23,7 +23,7 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import controllers.register.adviser.routes._
 import forms.address.AddressFormProvider
-import identifiers.register.adviser.{AdviserAddressId, AdviserAddressListId}
+import identifiers.register.adviser.{AdviserAddressId, AdviserAddressListId, AdviserAddressPostCodeLookupId}
 import javax.inject.Inject
 import models.Mode
 import models.address.Address
@@ -66,7 +66,7 @@ class AdviserAddressController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      post(AdviserAddressId, AdviserAddressListId, viewmodel(mode), mode, "Adviser Address")
+      post(AdviserAddressId, AdviserAddressListId, viewmodel(mode), mode, "Adviser Address", AdviserAddressPostCodeLookupId)
   }
 
   private def viewmodel(mode: Mode): ManualAddressViewModel =
