@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.{PSANameCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import identifiers.{IndexId, PsaEmailId, PsaNameId}
@@ -29,6 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.annotations.ProductionMode
 import views.html.whatYouWillNeed
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +39,8 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                           authenticate: AuthAction,
                                           psaNameCacheConnector: PSANameCacheConnector,
                                           crypto: ApplicationCrypto,
-                                          userAnswersCacheConnector: UserAnswersCacheConnector
+                                          userAnswersCacheConnector: UserAnswersCacheConnector,
+                                          fs:FeatureSwitchManagementService
                                          ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate {
@@ -48,7 +50,15 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = authenticate.async {
     implicit request =>
-      if (appConfig.isHubEnabled) {
+
+      println( "\n\n>>>>" + fs.get("is-hub-enabled") )
+
+      fs.change("is-hub-enabled",false)
+
+      println( "\n\n>>>>" + fs.get("is-hub-enabled") )
+
+
+      if (fs.get("is-hub-enabled")) {
         Future.successful(Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad()))
       }
       else {
