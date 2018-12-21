@@ -22,7 +22,7 @@ class FeatureSwitchModule extends Module {
 
   override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
 
-    if(configuration.underlying.getBoolean("features.enable-dynamic-switches")){
+    if(configuration.underlying.getBoolean("enable-dynamic-switches")){
       Seq(
         bind[FeatureSwitchManagementService].to[FeatureSwitchManagementServiceTestImpl]
       )

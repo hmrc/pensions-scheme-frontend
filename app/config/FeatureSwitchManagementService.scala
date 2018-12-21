@@ -16,7 +16,7 @@
 
 package config
 
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -45,7 +45,7 @@ class FeatureSwitchManagementServiceProductionImpl @Inject()(override val runMod
   override def reset(name: String): Unit = ()
 }
 
-
+@Singleton
 class FeatureSwitchManagementServiceTestImpl @Inject()(override val runModeConfiguration: Configuration,
                                                              environment: Environment) extends
   FeatureSwitchManagementService with ServicesConfig {
