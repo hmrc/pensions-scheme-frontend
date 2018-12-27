@@ -58,26 +58,20 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
+      implicit val userAnswers = request.userAnswers
       val sections = if (appConfig.isHubEnabled) {
-        val workingKnowldge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
-        val optionSeqAnswerSection = request.userAnswers.get(DeclarationDutiesId).flatMap {
+        val workingKnowledge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
+        val seqAnswerSection = request.userAnswers.get(DeclarationDutiesId).map {
           case ddi if ddi =>
-            Some(Seq(AnswerSection(None, workingKnowldge)))
+            Seq(AnswerSection(None, workingKnowledge))
           case _ =>
-            request.userAnswers.get(AdviserNameId).map { adviserName =>
-              implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
-                AddressCYA(label = Message("adviserAddress.checkYourAnswersLabel", adviserName))()
-
               val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
               val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
-                .map(ar => ar.copy(label = Messages(ar.label, adviserName)))
               val adviserPhoneRow = AdviserPhoneId.row(routes.AdviserPhoneController.onPageLoad(CheckMode).url)
-                .map(ar => ar.copy(label = Messages(ar.label, adviserName)))
               val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
-              Seq(AnswerSection(None, workingKnowldge ++ adviserNameRow ++ adviserEmailRow ++ adviserPhoneRow ++ adviserAddressRow))
-            }
+              Seq(AnswerSection(None, workingKnowledge ++ adviserNameRow ++ adviserEmailRow ++ adviserPhoneRow ++ adviserAddressRow))
         }
-        optionSeqAnswerSection.getOrElse(Seq.empty)
+        seqAnswerSection.getOrElse(Seq.empty)
       } else {
         val adviserDetailsRow = AdviserDetailsId.row(routes.AdviserDetailsController.onPageLoad(CheckMode).url)
         val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)

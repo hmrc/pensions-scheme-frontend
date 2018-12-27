@@ -52,7 +52,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 
   "CheckYourAnswers Controller" must {
 
-    "return OK and the correct view for a GET" in {
+/*    "return OK and the correct view for a GET" in {
       val result = controller(getMandatoryAdviser, frontendAppConfig = appConfig(isHubEnabled = false)).onPageLoad(fakeRequest)
 
       status(result) mustBe OK
@@ -144,7 +144,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.ServiceUnavailableController.onPageLoad().url)
-    }
+    }*/
 
     "return OK and the correct view for a GET when hub is enabled" in {
 
@@ -191,7 +191,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
               adviserAddress.postcode.get,
               "Country of GB"),
             answerIsMessageKey = false,
-            Some(routes.AdviserAddressController.onPageLoad(CheckMode).url), "Change address")
+            Some(routes.AdviserAddressController.onPageLoad(CheckMode).url), "Change the adviser’s address")
         )
       )
 
