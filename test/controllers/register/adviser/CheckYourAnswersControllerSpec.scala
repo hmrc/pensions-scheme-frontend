@@ -23,7 +23,7 @@ import controllers.actions._
 import identifiers.TypedIdentifier
 import identifiers.register.adviser.{AdviserAddressId, AdviserEmailId, AdviserNameId}
 import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
-import models.{CheckMode, NormalMode}
+import models.CheckMode
 import models.address.Address
 import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -52,7 +52,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 
   "CheckYourAnswers Controller" must {
 
-/*    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
       val result = controller(getMandatoryAdviser, frontendAppConfig = appConfig(isHubEnabled = false)).onPageLoad(fakeRequest)
 
       status(result) mustBe OK
@@ -144,7 +144,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.ServiceUnavailableController.onPageLoad().url)
-    }*/
+    }
 
     "return OK and the correct view for a GET when hub is enabled" in {
 
