@@ -42,6 +42,15 @@ class FeatureSwitchManagementServiceSpec extends PlaySpec {
         )
         fs.get("is-hub-enabled") mustEqual true
       }
+
+      "change will get the changed feature toggle value from the config" in {
+        val fs = new FeatureSwitchManagementServiceTestImpl(
+          injector(false).instanceOf[Configuration],
+          injector(false).instanceOf[Environment]
+        )
+
+        fs.change("is-hub-enabled", newValue = false) mustEqual false
+      }
     }
 
     "dynamic switch is enabled" must {
