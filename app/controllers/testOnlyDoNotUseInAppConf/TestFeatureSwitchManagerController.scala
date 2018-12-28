@@ -24,19 +24,18 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import scala.concurrent.ExecutionContext
 
 class TestFeatureSwitchManagerController @Inject()(
-                                     fs: FeatureSwitchManagementService)(implicit val ec: ExecutionContext) extends FrontendController{
-
+                                                    fs: FeatureSwitchManagementService)(implicit val ec: ExecutionContext) extends FrontendController {
 
   def toggleOn(featureSwitch: String): Action[AnyContent] = Action {
     implicit request =>
-      fs.change(featureSwitch, true)
-      NoContent
+      val result = fs.change(featureSwitch, newValue = true)
+      if (result) NoContent else ExpectationFailed
   }
 
   def toggleOff(featureSwitch: String): Action[AnyContent] = Action {
     implicit request =>
-      fs.change(featureSwitch, false)
-      NoContent
+      val result = fs.change(featureSwitch, newValue = false)
+      if (result) ExpectationFailed else NoContent
   }
 
   def reset(featureSwitch: String): Action[AnyContent] = Action {

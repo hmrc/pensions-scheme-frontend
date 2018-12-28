@@ -57,16 +57,14 @@ class FeatureSwitchManagementServiceSpec extends PlaySpec {
         val fs = new FeatureSwitchManagementServiceTestImpl(
           config, environment
         )
-        fs.change("is-hub-enabled", newValue = false)
-        fs.get("is-hub-enabled") mustEqual false
+        fs.change("is-hub-enabled", newValue = false) mustEqual false
       }
 
       "change the feature toggle value from false to true" in {
         val fs = new FeatureSwitchManagementServiceTestImpl(
           config, environment
         )
-        fs.change("is-hub-enabled", newValue = true)
-        fs.get("is-hub-enabled") mustEqual true
+        fs.change("is-hub-enabled", newValue = true) mustEqual true
       }
 
       "reset will remove the feature toggle from the memory and get it from the config" in {

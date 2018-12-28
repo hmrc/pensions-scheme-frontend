@@ -20,47 +20,55 @@ import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
 import controllers.testOnlyDoNotUseInAppConf.TestFeatureSwitchManagerController
 import forms.mappings.Mappings
+import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
-import play.api.Configuration
 import play.api.mvc.Call
 import play.api.test.Helpers._
 
 class TestFeatureSwitchManagerControllerSpec extends ControllerSpecBase with Mappings with MockitoSugar {
 
-  val config = injector.instanceOf[Configuration]
-
   def onwardRoute: Call = controllers.routes.WhatYouWillNeedController.onPageLoad()
 
-  val fakeFeatureSwitchManagerService = new FeatureSwitchManagementService {
-    override def change(name: String, newValue: Boolean): Unit = ()
-
-    override def get(name: String): Boolean = true
-
-    override def reset(name: String): Unit = ()
-  }
+  private val fakeFeatureSwitchManagerService = mock[FeatureSwitchManagementService]
 
   def controller: TestFeatureSwitchManagerController =
     new TestFeatureSwitchManagerController(
       fakeFeatureSwitchManagerService
     )
 
-  "TestFeatureSwitchManager Controller" must {
+  "TestFeatureSwitchManager Controller" when {
 
-    "return NO content" when {
-      "toggle on is called" in {
+    "toggle on is called" must {
+      "return No Content if the toggle value is changed successfully" in {
+        when(fakeFeatureSwitchManagerService.change("test-toggle", newValue = true)).thenReturn(true)
         val result = controller.toggleOn("test-toggle")(fakeRequest)
         status(result) mustBe NO_CONTENT
       }
 
-      "toggle off is called" in {
+      "return Expectation Failed if changing the toggle value is failed" in {
+        when(fakeFeatureSwitchManagerService.change("test-toggle", newValue = true)).thenReturn(false)
+        val result = controller.toggleOn("test-toggle")(fakeRequest)
+        status(result) mustBe EXPECTATION_FAILED
+      }
+    }
+
+    "toggle off is called" must {
+      "return No Content if the toggle value is changed successfully" in {
+        when(fakeFeatureSwitchManagerService.change("test-toggle", newValue = false)).thenReturn(false)
         val result = controller.toggleOff("test-toggle")(fakeRequest)
         status(result) mustBe NO_CONTENT
       }
 
-      "reset is called" in {
-        val result = controller.reset("test-toggle")(fakeRequest)
-        status(result) mustBe NO_CONTENT
+      "return Expectation Failed if changing the toggle value is failed" in {
+        when(fakeFeatureSwitchManagerService.change("test-toggle", newValue = false)).thenReturn(true)
+        val result = controller.toggleOff("test-toggle")(fakeRequest)
+        status(result) mustBe EXPECTATION_FAILED
       }
+    }
+
+    "return No Content when reset is done successfully" in {
+      val result = controller.reset("test-toggle")(fakeRequest)
+      status(result) mustBe NO_CONTENT
     }
   }
 }

@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.config.ServicesConfig
 import scala.collection.mutable.ArrayBuffer
 
 trait FeatureSwitchManagementService {
-  def change(name: String, newValue: Boolean): Unit
+  def change(name: String, newValue: Boolean): Boolean
 
   def get(name: String): Boolean
 
@@ -37,7 +37,8 @@ class FeatureSwitchManagementServiceProductionImpl @Inject()(override val runMod
 
   override protected def mode:Mode = environment.mode
 
-  override def change(name: String, newValue: Boolean): Unit = ()
+  override def change(name: String, newValue: Boolean): Boolean =
+    runModeConfiguration.getBoolean(s"features.$name").getOrElse(false)
 
   override def get(name: String): Boolean =
     runModeConfiguration.getBoolean(s"features.$name").getOrElse(false)
@@ -54,9 +55,10 @@ class FeatureSwitchManagementServiceTestImpl @Inject()(override val runModeConfi
 
   override protected def mode:Mode = environment.mode
 
-  override def change(name: String, newValue: Boolean): Unit = {
+  override def change(name: String, newValue: Boolean): Boolean = {
     reset(name)
     featureSwitches += FeatureSwitch(name, newValue)
+    get(name)
   }
 
   override def get(name: String): Boolean =
