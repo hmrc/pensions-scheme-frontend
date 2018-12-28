@@ -22,12 +22,9 @@ import controllers.testOnlyDoNotUseInAppConf.TestFeatureSwitchManagerController
 import forms.mappings.Mappings
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
-import play.api.mvc.Call
 import play.api.test.Helpers._
 
 class TestFeatureSwitchManagerControllerSpec extends ControllerSpecBase with Mappings with MockitoSugar {
-
-  def onwardRoute: Call = controllers.routes.WhatYouWillNeedController.onPageLoad()
 
   private val fakeFeatureSwitchManagerService = mock[FeatureSwitchManagementService]
 
