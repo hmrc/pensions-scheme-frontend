@@ -16,12 +16,10 @@
 
 package views.register.establishers
 
-import config.FrontendAppConfig
 import forms.register.establishers.EstablisherKindFormProvider
 import models.register.establishers.EstablisherKind
 import models.{Index, NormalMode}
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.establisherKind
 
@@ -31,36 +29,20 @@ class EstablisherKindViewSpec extends ViewBehaviours {
 
   private val form = new EstablisherKindFormProvider()()
 
-  private def createView(isHubEnabled: Boolean = false) = () =>
-    establisherKind(appConfig(isHubEnabled), form, NormalMode, Index(1))(fakeRequest, messages)
+  private def createView() = () =>
+    establisherKind(frontendAppConfig, form, NormalMode, Index(1))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
     establisherKind(frontendAppConfig, form, NormalMode, Index(1))(fakeRequest, messages)
 
   private def establisherKindOptions = EstablisherKind.options
 
-  "EstablisherKind view" must {
-    behave like normalPage(createView(), messageKeyPrefix, messages("messages__establishers__add__title"))
-
-    behave like pageWithBackLink(createView())
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
-  "EstablisherKind view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
   "EstablisherKind view" when {
     "rendered" must {
+      behave like normalPage(createView(), messageKeyPrefix, messages("messages__establishers__add__title"))
+
+      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
         for (option <- establisherKindOptions) {

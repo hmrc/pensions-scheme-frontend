@@ -29,34 +29,18 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   val form = new UniqueTaxReferenceFormProvider()()
 
-  private def createView(isHubEnabled: Boolean = true) = () =>
-    uniqueTaxReference(appConfig(isHubEnabled), form, NormalMode, index)(fakeRequest, messages)
+  private def createView() = () =>
+    uniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
     uniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
-  "UniqueTaxReference view with hub enabled" must {
-    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
-
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
-  "UniqueTaxReference view with hub disabled" must {
-    behave like pageWithBackLink(createView(isHubEnabled = false))
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
   "UniqueTaxReference view" when {
     "rendered" must {
+      behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
       val utrOptions = Seq("true", "false")
 
       "contain radio buttons for the value" in {

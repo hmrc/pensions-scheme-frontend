@@ -16,11 +16,9 @@
 
 package views.register.establishers.company.director
 
-import config.FrontendAppConfig
 import forms.register.establishers.company.CompanyUniqueTaxReferenceFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.register.establishers.company.director.directorUniqueTaxReference
@@ -32,35 +30,18 @@ class DirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
   val establisherIndex = Index(1)
   val directorIndex = Index(1)
 
-  def createView(isHubEnabled: Boolean): () => HtmlFormat.Appendable = () =>
-    directorUniqueTaxReference(appConfig(isHubEnabled), form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () =>
+    directorUniqueTaxReference(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorUniqueTaxReference(frontendAppConfig, form,
     NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
 
-  "CompanyUniqueTaxReference view" must {
-
-    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, messages("messages__director_has_sautr__title"))
-
-    behave like pageWithBackLink(createView(isHubEnabled = false))
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
-  "CompanyUniqueTaxReference view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
   "CompanyUniqueTaxReference view" when {
     "rendered" must {
+      behave like normalPage(createView(), messageKeyPrefix, messages("messages__director_has_sautr__title"))
+
+      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
       val utrOptions = Seq("true", "false")
 
       "contain radio buttons for the value" in {

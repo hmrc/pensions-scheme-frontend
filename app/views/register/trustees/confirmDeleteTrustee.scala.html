@@ -27,10 +27,6 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @if(!appConfig.isHubEnabled) {
-        @components.back_link()
-    }
-
     @components.heading(
         headingKey=components.hyphen((Message("messages__confirmDeleteTrustee__heading").withArgs(trusteeName))).toString
     )

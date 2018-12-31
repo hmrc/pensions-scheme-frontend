@@ -33,8 +33,6 @@ class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
         NavigateTo.save(controllers.register.adviser.routes.AdviserPhoneController.onPageLoad(NormalMode))
       case AdviserPhoneId =>
         NavigateTo.save(controllers.register.adviser.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
-      case AdviserDetailsId =>
-        NavigateTo.save(controllers.register.adviser.routes.AdviserPostCodeLookupController.onPageLoad(NormalMode))
       case AdviserAddressPostCodeLookupId =>
         NavigateTo.save(controllers.register.adviser.routes.AdviserAddressListController.onPageLoad(NormalMode))
       case AdviserAddressListId =>
@@ -42,7 +40,7 @@ class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
       case AdviserAddressId =>
         NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
       case CheckYourAnswersId =>
-        workingKnowldgeAnswersRoutes()
+        NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
       case _ => None
     }
   }
@@ -66,13 +64,4 @@ class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
       case _ => None
     }
   }
-
-  private def workingKnowldgeAnswersRoutes(): Option[NavigateTo] = {
-    if (appConfig.isHubEnabled) {
-      NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
-    } else {
-      NavigateTo.save(controllers.register.routes.SchemeSuccessController.onPageLoad())
-    }
-  }
-
 }

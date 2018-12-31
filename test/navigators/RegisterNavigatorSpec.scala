@@ -25,7 +25,6 @@ import models._
 import models.address.Address
 import models.register.{SchemeDetails, SchemeType}
 import org.scalatest.MustMatchers
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -61,47 +60,26 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (UKBankAccountId, ukBankAccountFalse, checkYourAnswers, true, Some(checkYourAnswers), true),
     (UKBankAccountId, emptyAnswers, expired, false, Some(expired), false),
     (UKBankDetailsId, emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
-
-    //Check your answers - jump off to establishers
-    (CheckYourAnswersId, noEstablishers, addEstablisher, true, None, false),
-    (CheckYourAnswersId, hasEstablishers, addEstablisher, true, None, false),
-    (CheckYourAnswersId, needsTrustees, addEstablisher, true, None, false),
+    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false),
 
     // Review, declarations, success - return from establishers
     (SchemeReviewId, hasCompanies, declarationDormant, true, None, false),
     (SchemeReviewId, hasPartnership, declarationDormant, true, None, false),
     (SchemeReviewId, emptyAnswers, declaration, true, None, false),
     (DeclarationDormantId, emptyAnswers, declaration, true, None, false),
-    (DeclarationId, emptyAnswers, declarationDuties, true, None, false),
-    (DeclarationDutiesId, dutiesTrue, schemeSuccess, false, None, false),
-    (DeclarationDutiesId, dutiesFalse, adviserDetails, true, None, false),
-    (DeclarationDutiesId, emptyAnswers, expired, false, None, false),
+    (DeclarationId, hasEstablishers, schemeSuccess, false, None, false),
+    (DeclarationDutiesId, dutiesTrue, adviserCheckYourAnswers, true, Some(adviserCheckYourAnswers), true),
+    (DeclarationDutiesId, dutiesFalse, adviserName, true, Some(adviserName), true),
+      (DeclarationDutiesId, emptyAnswers, expired, false, None, false),
 
     // User Research page - return to SchemeOverview
-    (UserResearchDetailsId, emptyAnswers, schemeOverview(appConfig(isHubEnabled = false)), false, None, false)
-  )
-
-  private def routesWithRestrictedEstablisherWithHnS = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-
-    //Check your answers - back to task list page
-    (DeclarationId, hasEstablishers, schemeSuccess, false, None, false),
-    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false),
-    (DeclarationDutiesId, dutiesTrue, adviserCheckYourAnswers, true, Some(adviserCheckYourAnswers), true),
-    (DeclarationDutiesId, dutiesFalse, adviserName, true, Some(adviserName), true)
+    (UserResearchDetailsId, emptyAnswers, schemeOverview(frontendAppConfig), false, None, false)
   )
 
   "RegisterNavigator" must {
-    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled = false))
+    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
-    behave like nonMatchingNavigator(navigator)
-  }
-
-  "RegisterNavigator with hub and spoke" must {
-    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled = true))
-
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisherWithHnS, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 }
@@ -121,9 +99,7 @@ object RegisterNavigatorSpec {
   private val dutiesFalse = UserAnswers().declarationDuties(false)
   private val hasCompanies = UserAnswers().establisherCompanyDetails(0, CompanyDetails("test-company-name", None, None))
   private val hasPartnership = UserAnswers().establisherPartnershipDetails(0, models.PartnershipDetails("test-company-name"))
-  private val noEstablishers = emptyAnswers
   private val hasEstablishers = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.GroupLifeDeath))
-  private val needsTrustees = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.SingleTrust))
   private val savedLastPage = UserAnswers().lastPage(LastPage(lastPage.method, lastPage.url))
   private val insurerAddress = UserAnswers().insurerAddress(Address("line-1", "line-2", None, None, None, "GB"))
 
@@ -136,8 +112,6 @@ object RegisterNavigatorSpec {
   private def declaration = controllers.register.routes.DeclarationController.onPageLoad()
 
   private def declarationDormant = controllers.register.routes.DeclarationDormantController.onPageLoad()
-
-  private def declarationDuties = controllers.register.routes.DeclarationDutiesController.onPageLoad()
 
   private def insurerAddress(mode: Mode) = controllers.register.routes.InsurerAddressController.onPageLoad(mode)
 
@@ -165,11 +139,7 @@ object RegisterNavigatorSpec {
 
   private def whatYouWillNeed = controllers.routes.WhatYouWillNeedController.onPageLoad()
 
-  private def adviserDetails = controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(NormalMode)
-
   private def adviserName = controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode)
-
-  private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
 
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
 

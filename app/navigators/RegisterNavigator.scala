@@ -60,13 +60,13 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case UKBankDetailsId =>
         NavigateTo.save(controllers.register.routes.CheckYourAnswersController.onPageLoad())
       case CheckYourAnswersId =>
-        checkYourAnswersRoutes()
+        NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
       case SchemeReviewId =>
         schemeReviewRoutes(from.userAnswers)
       case DeclarationDormantId =>
         NavigateTo.save(controllers.register.routes.DeclarationController.onPageLoad())
       case DeclarationId =>
-        declarationAnswersRoutes()
+        NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
       case DeclarationDutiesId =>
         declarationDutiesRoutes(NormalMode, from.userAnswers)
       case UserResearchDetailsId => NavigateTo.dontSave(appConfig.managePensionsSchemeOverviewUrl)
@@ -154,40 +154,11 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   private def declarationDutiesRoutes(mode: Mode, userAnswers: UserAnswers): Option[NavigateTo] = {
     userAnswers.get(DeclarationDutiesId) match {
       case Some(true) =>
-        workingKnowldgeAnswersRoutes()
+        NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
       case Some(false) =>
-        if (appConfig.isHubEnabled) {
           NavigateTo.save(controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode))
-        } else {
-          NavigateTo.save(controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(mode))
-        }
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
-
-  private def checkYourAnswersRoutes(): Option[NavigateTo] = {
-    if (appConfig.isHubEnabled) {
-      NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
-    } else {
-      NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
-    }
-  }
-
-  private def workingKnowldgeAnswersRoutes(): Option[NavigateTo] = {
-    if (appConfig.isHubEnabled) {
-      NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
-    } else {
-      NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
-    }
-  }
-
-  private def declarationAnswersRoutes(): Option[NavigateTo] = {
-    if (appConfig.isHubEnabled) {
-      NavigateTo.dontSave(controllers.register.routes.SchemeSuccessController.onPageLoad())
-    } else {
-      NavigateTo.save(controllers.register.routes.DeclarationDutiesController.onPageLoad())
-    }
-  }
-
 }

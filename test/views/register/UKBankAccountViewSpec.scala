@@ -30,33 +30,19 @@ class UKBankAccountViewSpec extends YesNoViewBehaviours {
 
   val form = new UKBankAccountFormProvider()()
 
-  def createView(isHubEnabled:Boolean): () => HtmlFormat.Appendable = () => uKBankAccount(appConfig(isHubEnabled), form, NormalMode)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () => uKBankAccount(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     uKBankAccount(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   "UKBankAccount view" must {
 
-    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
-
-    behave like pageWithBackLink(createView(isHubEnabled = false))
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.UKBankAccountController.onSubmit(NormalMode).url)
 
-  }
+    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 
-  "UKBankAccount view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
   }
 }

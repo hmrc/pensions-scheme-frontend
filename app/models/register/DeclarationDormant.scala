@@ -33,10 +33,7 @@ object DeclarationDormant {
 
   def options(config: FrontendAppConfig): Seq[InputOption] = values.map {
     value =>
-      if(config.isHubEnabled)
-        InputOption(value.toString, s"messages__is_dormant__${value.toString}")
-      else
-        InputOption(value.toString, s"messages__declarationDormant__${value.toString}")
+      InputOption(value.toString, s"messages__is_dormant__${value.toString}")
   }
 
   implicit val enumerable: Enumerable[DeclarationDormant] =

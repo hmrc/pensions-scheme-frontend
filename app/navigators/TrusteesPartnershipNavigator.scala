@@ -57,11 +57,7 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
     case PartnershipContactDetailsId(index) =>
       NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
     case CheckYourAnswersId(index) =>
-      if(appConfig.isHubEnabled) {
         NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
-      } else {
-        NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
-      }
     case _ =>
       None
   }

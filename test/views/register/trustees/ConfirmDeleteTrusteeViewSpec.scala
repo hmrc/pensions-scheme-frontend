@@ -32,21 +32,11 @@ class ConfirmDeleteTrusteeViewSpec extends ViewBehaviours {
 
     behave like pageWithSubmitButton(createView())
 
-    "not have a back link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "back-link")
-    }
-
     "have a cancel link" in {
       val cancelUrl = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url
       createView() must haveLink(cancelUrl, "cancel")
     }
   }
-
-  "ConfirmDeleteTrustee view with hub disabled" must {
-    behave like pageWithBackLink(createView(isHubEnabled = false))
-  }
-
 }
 
 object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
@@ -54,9 +44,9 @@ object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
   private val messageKeyPrefix = "confirmDeleteTrustee"
   private val trusteeName = "test-trustee-name"
 
-  private def createView(isHubEnabled: Boolean = true) =
+  private def createView() =
     () => confirmDeleteTrustee(
-      appConfig(isHubEnabled),
+      frontendAppConfig,
       trusteeName,
       controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onSubmit(0, Company)
     )(fakeRequest, messages)

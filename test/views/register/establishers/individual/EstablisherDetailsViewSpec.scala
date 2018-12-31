@@ -32,8 +32,8 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   override val form = new PersonDetailsFormProvider()()
 
-  def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
-    establisherDetails(appConfig(isHubEnabled), form, NormalMode, Index(1))(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () =>
+    establisherDetails(frontendAppConfig, form, NormalMode, Index(1))(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     establisherDetails(frontendAppConfig, form, NormalMode, Index(1))(fakeRequest, messages)
@@ -55,8 +55,6 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView())
-
     behave like pageWithTextFields(
       createViewUsingForm,
       messageKeyPrefix,
@@ -66,18 +64,7 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
     behave like pageWithDateFields(createViewUsingForm, form)
 
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
 
-  "EstablisherDetails view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
 }

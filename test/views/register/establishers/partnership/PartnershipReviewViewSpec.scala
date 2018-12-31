@@ -40,8 +40,8 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     PartnerDetailsId.toString -> PersonDetails("partner", None, lastName, LocalDate.now())
   )
 
-  def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () => partnershipReview(
-    appConfig(isHubEnabled),
+  def createView(): () => HtmlFormat.Appendable = () => partnershipReview(
+    frontendAppConfig,
     index,
     partnershipName,
     partners
@@ -91,14 +91,7 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
         Jsoup.parse(createView()().toString) must haveDynamicText(partner)
     }
 
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 
-  "PartnershipDetails view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
-
 }

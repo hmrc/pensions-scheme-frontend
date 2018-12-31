@@ -34,8 +34,8 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   override val form = new PersonDetailsFormProvider()()
 
-  def createView(isHubEnabled: Boolean): () => HtmlFormat.Appendable = () =>
-    directorDetails(appConfig(isHubEnabled), form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () =>
+    directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
@@ -54,14 +54,7 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
   "DirectorDetails view" must {
 
-    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
-
-    behave like pageWithBackLink(createView(isHubEnabled = false))
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       controllers.register.establishers.company.director.routes.DirectorDetailsController.onSubmit(NormalMode, establisherIndex, directorIndex).url,
@@ -123,15 +116,7 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
       val doc = asDocument(createViewUsingForm(form.bind(invalidData)))
       doc.select("span.error-notification").text() mustEqual expectedError
     }
+
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
-
-  "DirectorDetails view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
 }

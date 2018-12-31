@@ -36,7 +36,7 @@ class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
-  private def schemeOptions = SchemeType.options(appConfig(isHubEnabled = true))
+  private def schemeOptions = SchemeType.options(frontendAppConfig)
 
   "SchemeType view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", schemeName))

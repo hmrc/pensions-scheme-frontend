@@ -58,11 +58,7 @@ class EstablishersIndividualNavigator @Inject()(
       case ContactDetailsId(index) =>
         checkYourAnswers(index)(from.userAnswers)
       case CheckYourAnswersId =>
-        if(appConfig.isHubEnabled) {
-          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
-        } else {
-          NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
-        }
+        NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
     }
   }
 

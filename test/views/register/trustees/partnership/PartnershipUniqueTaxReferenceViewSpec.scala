@@ -31,35 +31,18 @@ class PartnershipUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   val index = Index(1)
 
-  def createView(isHubEnabled: Boolean = true): () => HtmlFormat.Appendable = () =>
-    partnershipUniqueTaxReference(appConfig(isHubEnabled), form, NormalMode, index)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () =>
+    partnershipUniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => partnershipUniqueTaxReference(frontendAppConfig, form,
     NormalMode, index)(fakeRequest, messages)
 
-  "PartnershipUniqueTaxReference view with hub enabled" must {
-
-    behave like normalPage(createView(), messageKeyPrefix, messages("messages__partnership_has_utr__title"))
-
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
-  "PartnershipUniqueTaxReference view with hub disabled" must {
-    behave like pageWithBackLink(createView(isHubEnabled = false))
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
   "PartnershipUniqueTaxReference view" when {
     "rendered" must {
+      behave like normalPage(createView(), messageKeyPrefix, messages("messages__partnership_has_utr__title"))
+
+      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
       val utrOptions = Seq("true", "false")
 
       "contain radio buttons for the value" in {
