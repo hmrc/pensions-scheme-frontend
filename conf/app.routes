@@ -32,6 +32,8 @@ POST       /user-research-details                       controllers.UserResearch
 
 GET        /scheme-details/:srn                         controllers.PSASchemeDetailsController.onPageLoad(srn: String)
 
+GET        /what-you-will-need-benefits-insurance       controllers.WhatYouWillNeedBenefitsInsuranceController.onPageLoad
+POST       /what-you-will-need-benefits-insurance       controllers.WhatYouWillNeedBenefitsInsuranceController.onSubmit
 
 GET        /having-pensions-working-knowledge           controllers.WorkingKnowledgeController.onPageLoad(mode: Mode = NormalMode)
 POST       /having-pensions-working-knowledge           controllers.WorkingKnowledgeController.onSubmit(mode: Mode = NormalMode)
