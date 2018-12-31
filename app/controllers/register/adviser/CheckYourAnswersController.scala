@@ -19,22 +19,18 @@ package controllers.register.adviser
 import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
-import identifiers.TypedIdentifier
 import identifiers.register.adviser._
 import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import javax.inject.Inject
-import models.address.Address
 import models.{CheckMode, NormalMode}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.Reads
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Adviser
 import utils.checkyouranswers.Ops._
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 import utils.{CountryOptions, Navigator, SectionComplete}
-import viewmodels.{AnswerSection, Message}
+import viewmodels.AnswerSection
 import views.html.check_your_answers
 
 import scala.concurrent.ExecutionContext
@@ -57,29 +53,22 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
+      implicit val userAnswers = request.userAnswers
       val workingKnowledge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
-      val optionSeqAnswerSection = request.userAnswers.get(DeclarationDutiesId).flatMap {
+      val seqAnswerSection = request.userAnswers.get(DeclarationDutiesId).map {
         case ddi if ddi =>
-          Some(Seq(AnswerSection(None, workingKnowledge)))
+          Seq(AnswerSection(None, workingKnowledge))
         case _ =>
-          request.userAnswers.get(AdviserNameId).map { adviserName =>
-            implicit def address[I <: TypedIdentifier[Address]](implicit rds: Reads[Address], countryOptions: CountryOptions): CheckYourAnswers[I] =
-              AddressCYA(label = Message("adviserAddress.checkYourAnswersLabel", adviserName))()
-
-            val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
-            val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
-              .map(ar => ar.copy(label = Messages(ar.label, adviserName)))
-            val adviserPhoneRow = AdviserPhoneId.row(routes.AdviserPhoneController.onPageLoad(CheckMode).url)
-              .map(ar => ar.copy(label = Messages(ar.label, adviserName)))
-            val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
-
-            Seq(AnswerSection(None, workingKnowledge ++ adviserNameRow ++ adviserEmailRow ++ adviserPhoneRow ++ adviserAddressRow))
-          }
+          val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
+          val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
+          val adviserPhoneRow = AdviserPhoneId.row(routes.AdviserPhoneController.onPageLoad(CheckMode).url)
+          val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
+          Seq(AnswerSection(None, workingKnowledge ++ adviserNameRow ++ adviserEmailRow ++ adviserPhoneRow ++ adviserAddressRow))
       }
       Ok(
         check_your_answers(
           appConfig,
-          optionSeqAnswerSection.getOrElse(Seq.empty),
+          seqAnswerSection.getOrElse(Seq.empty),
           controllers.register.adviser.routes.CheckYourAnswersController.onSubmit()
         )
       )

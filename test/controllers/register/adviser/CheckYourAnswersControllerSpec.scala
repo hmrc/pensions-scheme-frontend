@@ -92,7 +92,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
               adviserAddress.postcode.get,
               "Country of GB"),
             answerIsMessageKey = false,
-            Some(routes.AdviserAddressController.onPageLoad(CheckMode).url), "Change address")
+            Some(routes.AdviserAddressController.onPageLoad(CheckMode).url), "Change the adviser’s address")
         )
       )
 
@@ -136,12 +136,9 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
   lazy val postUrl: Call = routes.CheckYourAnswersController.onSubmit()
   lazy val adviserSection = AnswerSection(None,
     Seq(
-      AnswerRow("messages__common__cya__name", Seq(adviserName), answerIsMessageKey = false,
-        adviserDetailsRoute, Message("messages__visuallyhidden__common__name", adviserName)),
-      AnswerRow("messages__adviserDetails__email", Seq("email"), answerIsMessageKey = false,
-        adviserDetailsRoute, "messages__visuallyhidden__adviser__email_address"),
-      AnswerRow("messages__adviserDetails__phone", Seq("phone"), answerIsMessageKey = false,
-        adviserDetailsRoute, "messages__visuallyhidden__adviser__phone_number")
+      AnswerRow("messages__common__cya__name", Seq(adviserName), answerIsMessageKey = false, adviserDetailsRoute, Message("messages__visuallyhidden__common__name", adviserName)),
+      AnswerRow("messages__adviserDetails__email", Seq("email"), answerIsMessageKey = false, adviserDetailsRoute, "messages__visuallyhidden__adviser__email_address"),
+      AnswerRow("messages__adviserDetails__phone", Seq("phone"), answerIsMessageKey = false, adviserDetailsRoute, "messages__visuallyhidden__adviser__phone_number")
     )
   )
 
