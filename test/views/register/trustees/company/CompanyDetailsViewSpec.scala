@@ -30,8 +30,8 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
   override val form = new CompanyDetailsFormProvider()()
   val firstIndex = Index(1)
 
-  private def createView(isHubEnabled: Boolean = true) = () =>
-    companyDetails(appConfig(isHubEnabled), form, NormalMode, firstIndex)(fakeRequest, messages)
+  private def createView() = () =>
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
     companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
@@ -45,19 +45,5 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
 
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       company.routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex).url, "companyName", "vatNumber", "payeNumber")
-
-    "not have a back link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
-  "CompanyDetails view with hub disabled" must {
-    behave like pageWithBackLink(createView(isHubEnabled = false))
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
   }
 }

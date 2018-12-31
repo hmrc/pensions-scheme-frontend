@@ -72,18 +72,16 @@
             <li>
                 @components.paragraph_text(messages("messages__declaration__statement7"))
             </li>
-            @if(appConfig.isHubEnabled) {
-                <li>
-                    @if(hasWorkingKnowledge){
-                            @components.paragraph_text(messages("messages__declaration__statement8_working_knowledge"))
-                    } else {
-                            @components.paragraph_text(messages("messages__declaration__statement8_no_working_knowledge"))
-                    }
-                </li>
-                <li>
-                    @components.paragraph_text(messages("messages__declaration__statement9"))
-                </li>
-            }
+            <li>
+                @if(hasWorkingKnowledge){
+                        @components.paragraph_text(messages("messages__declaration__statement8_working_knowledge"))
+                } else {
+                        @components.paragraph_text(messages("messages__declaration__statement8_no_working_knowledge"))
+                }
+            </li>
+            <li>
+                @components.paragraph_text(messages("messages__declaration__statement9"))
+            </li>
             @if(showMasterTrustDeclaration){
                 <li>
                     @components.paragraph_text(messages("messages__declaration__statement10"))
@@ -107,10 +105,7 @@
 
         @components.submit_button("site.save_and_continue")
 
-        @if(appConfig.isHubEnabled) {
-            <a id="return-pension-scheme-details" href="@controllers.register.routes.SchemeTaskListController.onPageLoad()">@messages("messages__complete__return_pension_scheme_details")</a>
-        } else {
-            <a id="cancel" href="@controllers.routes.WhatYouWillNeedController.onPageLoad()">@messages("site.cancel")</a>
-        }
+        <a id="return-pension-scheme-details" href="@controllers.register.routes.SchemeTaskListController.onPageLoad()">@messages("messages__complete__return_pension_scheme_details")</a>
+
     }
 }

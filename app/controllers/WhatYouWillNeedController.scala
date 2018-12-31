@@ -19,15 +19,10 @@ package controllers
 import config.FrontendAppConfig
 import connectors.{PSANameCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
-import identifiers.{IndexId, PsaEmailId, PsaNameId}
 import javax.inject.Inject
-import models.{NormalMode, PSAName}
-import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.whatYouWillNeed
 
@@ -39,7 +34,7 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
                                           psaNameCacheConnector: PSANameCacheConnector,
                                           crypto: ApplicationCrypto,
                                           userAnswersCacheConnector: UserAnswersCacheConnector
-                                         ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>
@@ -48,12 +43,7 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = authenticate.async {
     implicit request =>
-      if (appConfig.isHubEnabled) {
-        Future.successful(Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad()))
-      }
-      else {
-        Future.successful(Redirect(controllers.register.routes.SchemeDetailsController.onPageLoad(NormalMode)))
-      }
+      Future.successful(Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad()))
   }
 }
 

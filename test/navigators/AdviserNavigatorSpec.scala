@@ -17,11 +17,9 @@
 package navigators
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.register.adviser._
 import models.{CheckMode, Mode, NormalMode}
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -32,39 +30,21 @@ class AdviserNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   private def routes() = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (AdviserDetailsId, emptyAnswers, adviserPostCodeLookup(NormalMode), true, Some(checkYourAnswersPage), true),
+    (AdviserNameId, emptyAnswers, adviserEmail(NormalMode), true, Some(adviserCYA), true),
+    (AdviserEmailId, emptyAnswers, adviserPhone(NormalMode), true, Some(adviserCYA), true),
+    (AdviserPhoneId, emptyAnswers, adviserPostCodeLookup(NormalMode), true, Some(adviserCYA), true),
     (AdviserAddressPostCodeLookupId, emptyAnswers, adviserAddressList(NormalMode), true, Some(adviserAddressList(CheckMode)), true),
     (AdviserAddressListId, emptyAnswers, adviserAddress(NormalMode), true, Some(adviserAddress(CheckMode)), true),
     (AdviserAddressId, emptyAnswers, checkYourAnswersPage, true, Some(checkYourAnswersPage), true),
-    (CheckYourAnswersId, emptyAnswers, schemeSuccess, true, None, true)
+    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false)
   )
-
-  private def routesWithWorkingKnowldgeHS = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-
-    //Check your answers - back to task list page
-    (CheckYourAnswersId, emptyAnswers, taskList, true, None, false),
-    (AdviserNameId, emptyAnswers, adviserEmail(NormalMode), true, Some(adviserCYA), true),
-    (AdviserEmailId, emptyAnswers, adviserPhone(NormalMode), true, Some(adviserCYA), true),
-    (AdviserPhoneId, emptyAnswers, adviserPostCodeLookup(NormalMode), true, Some(adviserCYA), true)
-  )
-
 
   "AdviserNavigator" must {
-    val navigator = new AdviserNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled = false))
+    val navigator = new AdviserNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
     behave like nonMatchingNavigator(navigator)
-
   }
-
-  "AdviserNavigator with hub and spoke" must {
-    val navigator = new AdviserNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled = true))
-
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithWorkingKnowldgeHS, dataDescriber)
-    behave like nonMatchingNavigator(navigator)
-  }
-
 }
 
 object AdviserNavigatorSpec {
@@ -82,10 +62,6 @@ object AdviserNavigatorSpec {
   private def adviserPostCodeLookup(mode: Mode) = controllers.register.adviser.routes.AdviserPostCodeLookupController.onPageLoad(mode)
 
   private def checkYourAnswersPage = controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad()
-
-  private def schemeSuccess = controllers.register.routes.SchemeSuccessController.onPageLoad()
-
-  private def task = controllers.register.routes.SchemeSuccessController.onPageLoad()
 
   private def adviserEmail(mode: Mode): Call = controllers.register.adviser.routes.AdviserEmailAddressController.onPageLoad(NormalMode)
   private def adviserPhone(mode: Mode): Call = controllers.register.adviser.routes.AdviserPhoneController.onPageLoad(NormalMode)

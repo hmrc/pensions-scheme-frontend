@@ -16,12 +16,10 @@
 
 package views.register.establishers.company
 
-import config.FrontendAppConfig
 import controllers.register.establishers.company.routes
 import forms.register.establishers.company.OtherDirectorsFormProvider
 import models.{Index, NormalMode}
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import views.behaviours.YesNoViewBehaviours
 import views.html.register.establishers.company.otherDirectors
 
@@ -33,8 +31,8 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
 
   val form = new OtherDirectorsFormProvider()()
 
-  private def createView(isHubEnabled: Boolean = false) = () =>
-    otherDirectors(appConfig(isHubEnabled), form, NormalMode, index)(fakeRequest, messages)
+  private def createView() = () =>
+    otherDirectors(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
     otherDirectors(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
@@ -47,8 +45,6 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
       messages("messages__otherDirectors__heading")
     )
 
-    behave like pageWithBackLink(createView())
-
     behave like yesNoPage(createViewUsingForm,
       messageKeyPrefix,
       routes.OtherDirectorsController.onSubmit(NormalMode, index).url,
@@ -57,18 +53,6 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithSubmitButton(createView())
 
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
-  "OtherDirectors view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
 }

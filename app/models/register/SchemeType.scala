@@ -43,11 +43,7 @@ object SchemeType {
   ).map(v => (v.toString, v)).toMap
 
   def options(appConfig: FrontendAppConfig): Seq[InputOption] = {
-   val key = if(appConfig.isHubEnabled){
-     "scheme_type"
-    } else {
-     "scheme_details__type"
-   }
+    val key = "scheme_type"
     Seq(
       InputOption(
         SingleTrust.toString,
@@ -105,13 +101,13 @@ object SchemeType {
     }
   }
 
-  def getSchemeType(schemeTypeStr : Option[String], isMasterTrust: Boolean): Option[String] = {
+  def getSchemeType(schemeTypeStr: Option[String], isMasterTrust: Boolean): Option[String] = {
     if (isMasterTrust) {
       Some(s"messages__scheme_details__type_${MasterTrust.toString}")
     } else {
-      schemeTypeStr.flatMap{ schemeStr =>
-        List(SingleTrust.toString, GroupLifeDeath.toString, BodyCorporate.toString, other).find(scheme=>
-          schemeStr.toLowerCase.contains(scheme.toLowerCase)).map{ str =>
+      schemeTypeStr.flatMap { schemeStr =>
+        List(SingleTrust.toString, GroupLifeDeath.toString, BodyCorporate.toString, other).find(scheme =>
+          schemeStr.toLowerCase.contains(scheme.toLowerCase)).map { str =>
           s"messages__scheme_details__type_${str}"
         }
       }

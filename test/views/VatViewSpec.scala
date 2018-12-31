@@ -38,35 +38,18 @@ class VatViewSpec extends ViewBehaviours {
     subHeading = Some(Message("test company name"))
   )
 
-  def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
-    vat(appConfig(isHubEnabled), form, viewmodel)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () =>
+    vat(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     vat(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
 
-  "Vat view" must {
-
-    behave like normalPage(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading"))
-
-    behave like pageWithBackLink(createView())
-
-    "not have a return link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
-  "Vat view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
   "Vat view" when {
     "rendered" must {
+      behave like normalPage(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading"))
+
+      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
       val vatOptions = Seq("true", "false")
 
       "contain radio buttons for the value" in {

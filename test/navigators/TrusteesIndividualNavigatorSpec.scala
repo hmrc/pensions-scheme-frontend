@@ -17,13 +17,9 @@
 package navigators
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.Identifier
 import identifiers.register.trustees.individual._
 import models._
-import org.scalatest.prop.TableFor6
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -47,38 +43,24 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (TrusteePreviousAddressListId(0), emptyAnswers, previousAddress(NormalMode), true, Some(previousAddress(CheckMode)), true),
     (TrusteePreviousAddressId(0), emptyAnswers, contactDetails(NormalMode), true, Some(checkYourAnswers), true),
     (TrusteeContactDetailsId(0), emptyAnswers, checkYourAnswers, true, None, true),
-    (CheckYourAnswersId, emptyAnswers, addTrustee(NormalMode), true, None, true)
-  )
-
-  private def routesWithHubDisabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (CheckYourAnswersId, emptyAnswers, taskList, false, None, true)
   )
 
-  s"${navigator().getClass.getSimpleName} when isHubEnabled toggle is off" must {
-    appRunning()
-    behave like navigatorWithRoutes(navigator(), FakeUserAnswersCacheConnector, routes(), dataDescriber)
-    behave like nonMatchingNavigator(navigator())
-  }
+  private val navigator: TrusteesIndividualNavigator =
+    new TrusteesIndividualNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
-  s"${navigator(true).getClass.getSimpleName} when isHubEnabled toggle is on" must {
+
+  s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator(true), FakeUserAnswersCacheConnector, routesWithHubDisabled, dataDescriber)
-    behave like nonMatchingNavigator(navigator(true))
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
+    behave like nonMatchingNavigator(navigator)
   }
 
 }
 
 object TrusteesIndividualNavigatorSpec {
 
-  private def navigator(isHubEnabled: Boolean = false): TrusteesIndividualNavigator =
-    new TrusteesIndividualNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled))
-
   private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
-
-  private def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
 
   private val emptyAnswers = UserAnswers(Json.obj())
   val firstIndex = Index(0)

@@ -57,13 +57,13 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
 
   val form = new AddTrusteeFormProvider()()
 
-  private def createView(trustees: Seq[Trustee[_]] = Seq.empty, isHubEnabled: Boolean = true) = () =>
-    addTrustee(appConfig(isHubEnabled), form, NormalMode, trustees)(fakeRequest, messages)
+  private def createView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
+    addTrustee(frontendAppConfig, form, NormalMode, trustees)(fakeRequest, messages)
 
   private def createViewUsingForm(trustees: Seq[Trustee[_]] = Seq.empty) = (form: Form[Boolean]) =>
     addTrustee(frontendAppConfig, form, NormalMode, trustees)(fakeRequest, messages)
 
-  "AddTrustee view with hub enabled" must {
+  "AddTrustee view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
 
     behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
@@ -75,11 +75,6 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
       "_text",
       expectedHintKey = Some("_lede")
     )
-
-    "not have a back link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "back-link")
-    }
 
     "when there are no trustees" when {
       "not show the yes no inputs" in {
@@ -119,14 +114,5 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
 
     }
 
-  }
-
-  "AddTrustee view with hub disabled" must {
-    behave like pageWithBackLink(createView(isHubEnabled = false))
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
   }
 }

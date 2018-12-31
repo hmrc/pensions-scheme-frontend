@@ -17,7 +17,6 @@
 package navigators
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import controllers.register.establishers.partnership.routes
 import identifiers.Identifier
@@ -25,7 +24,6 @@ import identifiers.register.establishers.partnership._
 import models.{AddressYears, CheckMode, Mode, NormalMode}
 import org.scalatest.OptionValues
 import org.scalatest.prop.TableFor6
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -35,7 +33,7 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
 
   import EstablishersPartnershipNavigatorSpec._
 
-  private def routesWithHubEnabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
     (PartnershipDetailsId(0),                         emptyAnswers,                 partnershipVat(NormalMode),               true,         Some(checkYourAnswers),             true),
     (PartnershipVatId(0),                             emptyAnswers,                 partnershipPaye(NormalMode),              true,         Some(checkYourAnswers),             true),
@@ -56,26 +54,14 @@ class EstablishersPartnershipNavigatorSpec extends SpecBase with NavigatorBehavi
     (PartnershipReviewId(0),                          emptyAnswers,                 taskList,                                false,         None,                                 true)
   )
 
-  private def routesWithHubDisabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                          "User Answers",               "Next Page (Normal Mode)",                "Save (NM)",  "Next Page (Check Mode)",         "Save (CM)"),
-    (PartnershipContactDetailsId(0),                  emptyAnswers,                 checkYourAnswers,                        true,         Some(checkYourAnswers),               true)
-  )
+  private val navigator: EstablishersPartnershipNavigator =
+    new EstablishersPartnershipNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
-  def navigator(isHubEnabled: Boolean = true): EstablishersPartnershipNavigator =
-    new EstablishersPartnershipNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled))
-
-  s"${navigator().getClass.getSimpleName} when isHubEnabled toggle is on" must {
+  s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator(), FakeUserAnswersCacheConnector, routesWithHubEnabled, dataDescriber)
-    behave like nonMatchingNavigator(navigator())
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
+    behave like nonMatchingNavigator(navigator)
   }
-
-  s"${navigator(false).getClass.getSimpleName} when isHubEnabled toggle is off" must {
-    appRunning()
-    behave like navigatorWithRoutes(navigator(false), FakeUserAnswersCacheConnector, routesWithHubDisabled, dataDescriber)
-    behave like nonMatchingNavigator(navigator(false))
-  }
-
 }
 
 object EstablishersPartnershipNavigatorSpec extends OptionValues {
@@ -123,8 +109,4 @@ object EstablishersPartnershipNavigatorSpec extends OptionValues {
     .set(PartnershipAddressYearsId(0))(AddressYears.UnderAYear).asOpt.value
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
-
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
 }

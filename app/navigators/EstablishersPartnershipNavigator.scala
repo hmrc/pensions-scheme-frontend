@@ -54,11 +54,7 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case PartnershipPreviousAddressId(index) =>
       NavigateTo.save(routes.PartnershipContactDetailsController.onPageLoad(NormalMode, index))
     case PartnershipContactDetailsId(index) =>
-      if(appConfig.isHubEnabled){
         NavigateTo.save(routes.IsPartnershipDormantController.onPageLoad(NormalMode, index))
-      } else {
-        NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
-      }
     case IsPartnershipDormantId(index) =>
       NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
     case CheckYourAnswersId(index) =>
@@ -66,11 +62,7 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case OtherPartnersId(index) =>
       NavigateTo.save(routes.PartnershipReviewController.onPageLoad(index))
     case PartnershipReviewId(index) =>
-      if(appConfig.isHubEnabled){
         NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
-      } else {
-        NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
-      }
     case _ =>
       None
   }

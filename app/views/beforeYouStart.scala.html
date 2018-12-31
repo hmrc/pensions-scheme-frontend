@@ -21,7 +21,7 @@
 
 @(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
 
-@pageTitle=@{if(appConfig.isHubEnabled){messages("messages__before_you_start__title")}else{messages("messages__before_you_start__title")}}
+@pageTitle=@{messages("messages__before_you_start__title")}
 
 @main_template(
     title = pageTitle,
