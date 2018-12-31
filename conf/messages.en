@@ -1187,4 +1187,12 @@ messages__what_you_will_need_wk__item_2 = email address
 messages__what_you_will_need_wk__item_3 = phone number
 messages__what_you_will_need_wk__item_4 = address
 
+messages__what_you_will_need_members__title = Members
+messages__what_you_will_need_members__h1 = Members
+messages__what_you_will_need_members__lede = You will need to tell us how many members:
+messages__what_you_will_need_members__item_1 = the scheme has at the moment
+messages__what_you_will_need_members__item_2 = you expect the scheme to have in the next 12 months
+
+
+
 
