@@ -58,6 +58,27 @@ object CheckYourAnswers {
 
   implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] = ContactDetailsCYA()()
 
+  implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = StringCYA()()
+
+  case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None) {
+
+    def apply()(implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          userAnswers.get(id).map {
+            string =>
+              Seq(AnswerRow(
+                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq(retrieveStringAnswer(id, string)),
+                answerIsMessageKey = false,
+                Some(changeUrl),
+                s"messages__visuallyhidden__${id.toString}"
+              ))
+          }.getOrElse(Seq.empty[AnswerRow])
+      }
+    }
+  }
+
   implicit def boolean[I <: TypedIdentifier[Boolean]](implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
@@ -201,23 +222,6 @@ object CheckYourAnswers {
           )
         )
       } getOrElse Seq.empty[AnswerRow]
-    }
-  }
-
-  implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map {
-          string =>
-            Seq(AnswerRow(
-              s"${id.toString}.checkYourAnswersLabel",
-              Seq(retrieveStringAnswer(id, string)),
-              answerIsMessageKey = false,
-              Some(changeUrl),
-              s"messages__visuallyhidden__${id.toString}"
-            ))
-        }.getOrElse(Seq.empty[AnswerRow])
-
     }
   }
 

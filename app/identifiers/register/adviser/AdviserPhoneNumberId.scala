@@ -17,7 +17,17 @@
 package identifiers.register.adviser
 
 import identifiers.TypedIdentifier
+import play.api.i18n.Messages
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.{CountryOptions, UserAnswers}
 
 object AdviserPhoneId extends TypedIdentifier[String] {
+  self =>
   override def toString: String = "adviserPhone"
+
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, userAnswers: UserAnswers): CheckYourAnswers[self.type] =
+    StringCYA[self.type](
+      label = Some(messages("adviserPhone.checkYourAnswersLabel", userAnswers.get(AdviserNameId).getOrElse("")))
+    )()
 }

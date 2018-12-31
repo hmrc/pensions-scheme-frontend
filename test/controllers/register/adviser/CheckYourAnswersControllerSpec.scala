@@ -23,7 +23,7 @@ import controllers.actions._
 import identifiers.TypedIdentifier
 import identifiers.register.adviser.{AdviserAddressId, AdviserEmailId, AdviserNameId}
 import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
-import models.{CheckMode, NormalMode}
+import models.CheckMode
 import models.address.Address
 import models.register.SchemeSubmissionResponse
 import org.mockito.Matchers.{any, eq => eqTo}
@@ -191,7 +191,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
               adviserAddress.postcode.get,
               "Country of GB"),
             answerIsMessageKey = false,
-            Some(routes.AdviserAddressController.onPageLoad(CheckMode).url), "Change address")
+            Some(routes.AdviserAddressController.onPageLoad(CheckMode).url), "Change the adviser’s address")
         )
       )
 
