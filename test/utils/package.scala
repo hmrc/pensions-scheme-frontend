@@ -36,6 +36,10 @@ package object utils {
       answers.set(SchemeDetailsId)(schemeDetails).asOpt.value
     }
 
+    def occupationalPensionScheme(isOccupational: Boolean): UserAnswers = {
+      answers.set(identifiers.OccupationalPensionSchemeId)(isOccupational).asOpt.value
+    }
+
     def schemeName(schemeName: String): UserAnswers = {
       answers.set(SchemeNameId)(schemeName).asOpt.value
     }

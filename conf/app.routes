@@ -41,3 +41,8 @@ POST       /change-having-pensions-working-knowledge    controllers.WorkingKnowl
 
 GET        /what-you-will-need-for-working-knowledge    controllers.WhatYouWillNeedWorkingKnowledgeController.onPageLoad
 POST       /what-you-will-need-for-working-knowledge    controllers.WhatYouWillNeedWorkingKnowledgeController.onSubmit
+
+GET        /occupational-pension-scheme                 controllers.OccupationalPensionSchemeController.onPageLoad(mode: Mode = NormalMode)
+POST       /occupational-pension-scheme                 controllers.OccupationalPensionSchemeController.onSubmit(mode: Mode = NormalMode)
+GET        /change-occupational-pension-scheme          controllers.OccupationalPensionSchemeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-occupational-pension-scheme          controllers.OccupationalPensionSchemeController.onSubmit(mode: Mode = CheckMode)
