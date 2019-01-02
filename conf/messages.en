@@ -1187,4 +1187,13 @@ messages__what_you_will_need_wk__item_2 = email address
 messages__what_you_will_need_wk__item_3 = phone number
 messages__what_you_will_need_wk__item_4 = address
 
+messages__current_members__title = How many members does the scheme currently have?
+messages__current_members__h1 = How many members does {0} currently have?
+messages__current_members__body1 = You might have to register the pension scheme with The Pensions Regulator.
+messages__current_members__body2 = If the scheme has 2 or more members, HMRC will share the scheme and your contact details with The Pensions Regulator. They will then contact you to register the scheme with them.
 
+messages__future_members__title = How many members do you expect the scheme to have in 12 months time?
+messages__future_members__h1 = How many scheme members do you expect {0} to have in 12 months time?
+
+messages__investment_regulated_scheme__title = Is the scheme investment regulated?
+messages__investment_regulated_scheme__h1 = Is the scheme investment regulated?

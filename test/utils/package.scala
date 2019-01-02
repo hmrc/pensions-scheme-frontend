@@ -15,11 +15,11 @@
  */
 
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
-import identifiers.LastPageId
+import identifiers.{CurrentMembersId, FutureMembersId, InvestmentRegulatedSchemeId, LastPageId}
 import identifiers.register._
 import models._
 import models.address.{Address, TolerantAddress}
-import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
+import models.register.{DeclarationDormant, Membership, SchemeDetails, SchemeType}
 import org.scalatest.OptionValues
 
 //scalastyle:off number.of.methods
@@ -38,6 +38,18 @@ package object utils {
 
     def schemeName(schemeName: String): UserAnswers = {
       answers.set(SchemeNameId)(schemeName).asOpt.value
+    }
+
+    def currentMembers(currentMembers: Membership): UserAnswers = {
+      answers.set(CurrentMembersId)(currentMembers).asOpt.value
+    }
+
+    def futureMembers(futureMembers: Membership): UserAnswers = {
+      answers.set(FutureMembersId)(futureMembers).asOpt.value
+    }
+
+    def investmentRegulated(isInvestmentRegulated: Boolean): UserAnswers = {
+      answers.set(InvestmentRegulatedSchemeId)(isInvestmentRegulated).asOpt.value
     }
 
     def schemeType(schemeType: SchemeType): UserAnswers = {

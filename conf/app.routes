@@ -41,3 +41,18 @@ POST       /change-having-pensions-working-knowledge    controllers.WorkingKnowl
 
 GET        /what-you-will-need-for-working-knowledge    controllers.WhatYouWillNeedWorkingKnowledgeController.onPageLoad
 POST       /what-you-will-need-for-working-knowledge    controllers.WhatYouWillNeedWorkingKnowledgeController.onSubmit
+
+GET        /current-scheme-members                      controllers.CurrentMembersController.onPageLoad(mode: Mode = NormalMode)
+POST       /current-scheme-members                      controllers.CurrentMembersController.onSubmit(mode: Mode = NormalMode)
+GET        /change-current-scheme-members               controllers.CurrentMembersController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-current-scheme-members               controllers.CurrentMembersController.onSubmit(mode: Mode = CheckMode)
+
+GET        /future-scheme-members                       controllers.FutureMembersController.onPageLoad(mode: Mode = NormalMode)
+POST       /future-scheme-members                       controllers.FutureMembersController.onSubmit(mode: Mode = NormalMode)
+GET        /change-future-scheme-members                controllers.FutureMembersController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-future-scheme-members                controllers.FutureMembersController.onSubmit(mode: Mode = CheckMode)
+
+GET        /investment-regulated-scheme                 controllers.InvestmentRegulatedSchemeController.onPageLoad(mode: Mode = NormalMode)
+POST       /investment-regulated-scheme                 controllers.InvestmentRegulatedSchemeController.onSubmit(mode: Mode = NormalMode)
+GET        /change-investment-regulated-scheme          controllers.InvestmentRegulatedSchemeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-investment-regulated-scheme          controllers.InvestmentRegulatedSchemeController.onSubmit(mode: Mode = CheckMode)
