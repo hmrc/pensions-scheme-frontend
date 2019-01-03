@@ -21,12 +21,13 @@ import connectors.{PensionAdministratorFeatureSwitchConnectorImpl, PensionsSchem
 import controllers.ControllerSpecBase
 import controllers.testOnlyDoNotUseInAppConf.TestFeatureSwitchManagerController
 import forms.mappings.Mappings
+import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
+
 import scala.concurrent.Future
-import org.mockito.Matchers._
 
 class TestFeatureSwitchManagerControllerSpec extends ControllerSpecBase with Mappings with MockitoSugar {
 

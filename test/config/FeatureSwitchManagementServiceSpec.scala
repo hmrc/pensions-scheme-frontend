@@ -44,12 +44,12 @@ class FeatureSwitchManagementServiceSpec extends PlaySpec {
       }
 
       "change will get the changed feature toggle value from the config" in {
-        val fs = new FeatureSwitchManagementServiceTestImpl(
+        val fs = new FeatureSwitchManagementServiceProductionImpl(
           injector(false).instanceOf[Configuration],
           injector(false).instanceOf[Environment]
         )
 
-        fs.change("is-hub-enabled", newValue = false) mustEqual true
+        fs.change("is-hub-enabled", newValue = false) mustEqual false
       }
     }
 
