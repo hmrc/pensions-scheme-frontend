@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ class FeatureSwitchManagementServiceSpec extends PlaySpec {
           injector(false).instanceOf[Environment]
         )
 
-        fs.change("is-hub-enabled", newValue = false) mustEqual false
+        fs.change("is-hub-enabled", newValue = false) mustEqual true
       }
     }
 
@@ -62,11 +62,19 @@ class FeatureSwitchManagementServiceSpec extends PlaySpec {
         fs.get("is-hub-enabled") mustEqual true
       }
 
+      "return the toggle value without doing anything if toggle doesn't exist in config" in {
+        val injector = new GuiceApplicationBuilder().build().injector
+        val fs = new FeatureSwitchManagementServiceTestImpl(
+          injector.instanceOf[Configuration], injector.instanceOf[Environment]
+        )
+        fs.change("is-hub-enabled", newValue = false) mustEqual true
+      }
+
       "change the feature toggle value from true to false" in {
         val fs = new FeatureSwitchManagementServiceTestImpl(
           config, environment
         )
-        fs.change("is-hub-enabled", newValue = false) mustEqual false
+        fs.change("is-hub-enabled", newValue = false) mustEqual true
       }
 
       "change the feature toggle value from false to true" in {

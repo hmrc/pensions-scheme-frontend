@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
+import connectors.{FeatureSwitchConnector, PensionAdministratorFeatureSwitchConnectorImpl, PensionsSchemeFeatureSwitchConnectorImpl}
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -48,7 +49,8 @@ class FeatureSwitchManagementServiceProductionImpl @Inject()(override val runMod
 
 @Singleton
 class FeatureSwitchManagementServiceTestImpl @Inject()(override val runModeConfiguration: Configuration,
-                                                             environment: Environment) extends
+                                                             environment: Environment
+                                                      ) extends
   FeatureSwitchManagementService with ServicesConfig {
 
   private lazy val featureSwitches: ArrayBuffer[FeatureSwitch] = new ArrayBuffer[FeatureSwitch]()
@@ -56,9 +58,12 @@ class FeatureSwitchManagementServiceTestImpl @Inject()(override val runModeConfi
   override protected def mode:Mode = environment.mode
 
   override def change(name: String, newValue: Boolean): Boolean = {
-    reset(name)
-    featureSwitches += FeatureSwitch(name, newValue)
-    get(name)
+    val featureSwitchExists = runModeConfiguration.getBoolean(s"features.$name").getOrElse(false)
+    if(featureSwitchExists) {
+      reset(name)
+      featureSwitches += FeatureSwitch(name, newValue)
+    }
+    true
   }
 
   override def get(name: String): Boolean =
