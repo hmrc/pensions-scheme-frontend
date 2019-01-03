@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
       }
     }
 
-    "return OK, the correct view and save the DeclarationDormant if isHubEnabled toggle is on" when {
+    "return OK, the correct view and save the DeclarationDormant" when {
 
       "the establisher is a dormant company" in {
         val result = controller(dormantCompanyAndNonDormantPartnership).onPageLoad()(fakeRequest)
@@ -119,23 +119,6 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
       }
     }
 
-    "return OK and the correct view if isHubEnabled toggle is off" when {
-
-      "non-dormant company establisher" in {
-        val result = controller(nonDormantCompany, isHubEnabled = false).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = false, isHubEnabled = false)
-      }
-
-      "dormant company establisher" in {
-        val result = controller(dormantCompany, isHubEnabled = false).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(isCompany = true, isDormant = true, isHubEnabled = false)
-      }
-    }
-
     "redirect to the next page when valid data is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody("agree" -> "agreed")
 
@@ -145,7 +128,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
-    "send an email when valid data is submitted when hub enabled" which {
+    "send an email when valid data is submitted" which {
       "fetches from Get PSA Minimal Details" in {
 
         reset(mockEmailConnector)
@@ -153,7 +136,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
         when(mockEmailConnector.sendEmail(eqTo("email@test.com"), eqTo("pods_scheme_register"), any(), any())(any(), any()))
           .thenReturn(Future.successful(EmailSent))
 
-        val postRequest = fakeRequest.withFormUrlEncodedBody(("agree" -> "agreed"))
+        val postRequest = fakeRequest.withFormUrlEncodedBody("agree" -> "agreed")
 
         whenReady(controller(nonDormantCompany, fakeEmailConnector = mockEmailConnector,
           fakePsaNameCacheConnector = mockPSANameCacheConnector).onSubmit(postRequest)) { _ =>
@@ -219,13 +202,12 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private val formProvider = new DeclarationFormProvider()
   private val form = formProvider()
-  private val schemeName = "Test Scheme Name"
 
-  private def controller(dataRetrievalAction: DataRetrievalAction, isHubEnabled: Boolean = true,
+  private def controller(dataRetrievalAction: DataRetrievalAction,
                          fakeEmailConnector: EmailConnector = fakeEmailConnector,
                          fakePsaNameCacheConnector: PSANameCacheConnector = fakePsaNameCacheConnector): DeclarationController =
     new DeclarationController(
-      appConfig(isHubEnabled),
+      frontendAppConfig,
       messagesApi,
       FakeUserAnswersCacheConnector,
       new FakeNavigator(onwardRoute),
@@ -241,10 +223,9 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
     )
 
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,
-                           showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false,
-                           isHubEnabled: Boolean = true): String =
+                           showMasterTrustDeclaration: Boolean = false, hasWorkingKnowledge: Boolean = false): String =
     declaration(
-      appConfig(isHubEnabled),
+      frontendAppConfig,
       form,
       isCompany,
       isDormant,
@@ -266,13 +247,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       .schemeDetails()
       .companyEstablisher(0)
       .dormant(false)
-      .asDataRetrievalAction()
-
-  private val dormantCompany =
-    UserAnswers()
-      .schemeDetails()
-      .companyEstablisher(0)
-      .dormant(true)
       .asDataRetrievalAction()
 
   private val nonDormantCompanyAndPartnership =
@@ -386,14 +360,6 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
     (answers: UserAnswers, psaId: String)
     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
       Future.successful(validSchemeSubmissionResponse)
-    }
-  }
-
-  private val fakePensionsSchemeConnectorWithInvalidPayloadException = new PensionsSchemeConnector {
-    override def registerScheme
-    (answers: UserAnswers, psaId: String)
-    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SchemeSubmissionResponse] = {
-      Future.failed(new InvalidPayloadException)
     }
   }
 

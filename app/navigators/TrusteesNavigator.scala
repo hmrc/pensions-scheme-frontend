@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,11 +33,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case AddTrusteeId =>
         addTrusteeRoutes(from.userAnswers)
       case MoreThanTenTrusteesId =>
-        if (appConfig.isHubEnabled) {
           NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
-        } else {
-          NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
-        }
       case TrusteeKindId(index) =>
         trusteeKindRoutes(index, from.userAnswers)
       case ConfirmDeleteTrusteeId =>
@@ -55,17 +51,13 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   private def haveAnyTrusteesRoutes(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(HaveAnyTrusteesId) match {
       case Some(true) =>
-        if(appConfig.isHubEnabled && answers.allTrusteesAfterDelete.isEmpty) {
+        if(answers.allTrusteesAfterDelete.isEmpty) {
           NavigateTo.dontSave(controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, answers.allTrustees.size))
         } else {
           NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
         }
       case Some(false) =>
-        if(appConfig.isHubEnabled){
           NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
-        } else {
-          NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
-        }
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
@@ -77,11 +69,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
     answers.get(AddTrusteeId) match {
       case Some(false) =>
-        if (appConfig.isHubEnabled) {
           NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
-        } else {
-          NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
-        }
       case Some(true) =>
         NavigateTo.save(TrusteeKindController.onPageLoad(NormalMode, answers.trusteesCount))
       case None if trusteesLengthCompare >= 0 =>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ import connectors._
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationFormProvider
+import identifiers.register._
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId}
-import identifiers.register._
 import javax.inject.Inject
 import models.NormalMode
-import models.register.{DeclarationDormant, EstablisherCompanyEntity, EstablisherIndividualEntity, EstablisherPartnershipEntity}
-import models.register.DeclarationDormant.{No, Yes}
+import models.register.DeclarationDormant
+import models.register.DeclarationDormant.Yes
 import models.register.SchemeType.MasterTrust
 import models.requests.DataRequest
 import play.api.Logger
@@ -43,8 +43,6 @@ import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
-import identifiers.register.establishers.company.CompanyDetailsId
-import identifiers.register.establishers.partnership.PartnershipDetailsId
 
 class DeclarationController @Inject()(
                                        appConfig: FrontendAppConfig,
@@ -77,57 +75,20 @@ class DeclarationController @Inject()(
             (formWithErrors: Form[_]) => {
               showPage(BadRequest.apply, formWithErrors)
             },
-            value =>
-              if (appConfig.isHubEnabled) {
-                for {
-                  cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
-                  submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
-                  cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-                  _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
-                } yield {
-                  Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
-                }
-              } else {
-                dataCacheConnector.save(request.externalId, DeclarationId, value).map(cacheMap =>
-                  Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap))))
+            _ =>
+              for {
+                cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
+                submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
+                cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
+                _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
+              } yield {
+                Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
               }
           )
       }
   }
 
-  private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) =
-    if (appConfig.isHubEnabled) {
-      hsShowPage(status, form)
-    } else {
-      nonHsShowPage(status, form)
-    }
-
-  private def nonHsShowPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
-    SchemeDetailsId.retrieve.right.map { _ =>
-      val isCompany = request.userAnswers.hasCompanies
-      request.userAnswers.get(DeclarationDormantId) match {
-        case Some(Yes) => Future.successful(
-          status(
-            declaration(appConfig, form, isCompany, isDormant = true, showMasterTrustDeclaration, hasWorkingKnowledge = false)
-          )
-        )
-        case Some(No) => Future.successful(
-          status(
-            declaration(appConfig, form, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge = false)
-          )
-        )
-        case None if !isCompany => Future.successful(
-          status(
-            declaration(appConfig, form, isCompany, isDormant = false, showMasterTrustDeclaration, hasWorkingKnowledge = false)
-          )
-        )
-        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-      }
-    }
-  }
-
-
-  private def hsShowPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
+  private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
     SchemeDetailsId.retrieve.right.map { _ =>
       val isCompany = request.userAnswers.hasCompanies
 
@@ -139,7 +100,7 @@ class DeclarationController @Inject()(
       }
 
       readyForRender.flatMap { _ =>
-       request.userAnswers.get(DeclarationDutiesId) match {
+        request.userAnswers.get(DeclarationDutiesId) match {
           case Some(hasWorkingKnowledge) => Future.successful(
             status(
               declaration(appConfig, form, isCompany, isDormant = isDeclarationDormant, showMasterTrustDeclaration, hasWorkingKnowledge)

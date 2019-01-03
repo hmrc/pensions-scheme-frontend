@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,32 +30,16 @@ class MembershipViewSpec extends ViewBehaviours {
 
   val form = new MembershipFormProvider()()
 
-  def createView(isHubEnabled: Boolean): () => HtmlFormat.Appendable = () => membership(appConfig(isHubEnabled), form, NormalMode)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () => membership(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => membership(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  "Membership view with hub not enabled" must {
-    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "_body1", "_body2")
-
-    behave like pageWithBackLink(createView(isHubEnabled = false))
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
-  "Membership view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
   "Membership view" when {
     "rendered" must {
+      behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"), "_body1", "_body2")
+
+      behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
         for (option <- Membership.options) {

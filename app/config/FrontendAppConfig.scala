@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +89,6 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
   //FEATURES
   lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
   lazy val languageTranslationEnabled:Boolean = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
-  lazy val isHubEnabled: Boolean = runModeConfiguration.getBoolean("features.is-hub-enabled").getOrElse(false)
 
   def encryptionKey(crypto: String): String = loadConfig(s"$crypto.encryption.key")
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,13 +28,13 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
   val index = Index(0)
   val form = new CompanyRegistrationNumberFormProvider()()
 
-  private def createView(isHubEnabled: Boolean = true) = () =>
-    companyRegistrationNumber(appConfig(isHubEnabled), form, NormalMode, index)(fakeRequest, messages)
+  private def createView() = () =>
+    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
     companyRegistrationNumber(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
-  "CompanyRegistrationNumber view with hub enabled" must {
+  "CompanyRegistrationNumber view" when {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
     behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 
@@ -43,22 +43,6 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
       assertContainsText(doc, messages("messages__common__crn_hint"))
     }
 
-    "not have a back link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
-  "CompanyRegistrationNumber view with hub disabled" must {
-    behave like pageWithBackLink(createView(isHubEnabled = false))
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
-  "CompanyRegistrationNumber view" when {
     val crnOptions = Seq("true", "false")
     "rendered" must {
       "contain radio buttons for the value" in {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,11 @@
 package navigators
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
-import identifiers.register.trustees.HaveAnyTrusteesId
-import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.NormalMode
-import models.person.PersonDetails
 import models.register.establishers.EstablisherKind
-import models.register.{SchemeDetails, SchemeType}
-import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues}
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.{Enumerable, UserAnswers}
@@ -38,7 +30,7 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
 
   import EstablishersNavigatorSpec._
 
-  private def routesWithHubEnabled = Table(
+  private def routes = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (AddEstablisherId(None), emptyAnswers, establisherKind, true, None: Option[Call], false),
     (AddEstablisherId(Some(true)), addEstablishersTrue, establisherKind, true, None: Option[Call], false),
@@ -49,59 +41,25 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
     (EstablisherKindId(0), emptyAnswers, expired, false, None, false),
     (ConfirmDeleteEstablisherId, emptyAnswers, addEstablisher, true, None, false)
   )
+  private val navigator = new EstablishersNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
-  private def routesWithHubDisabled = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (AddEstablisherId(Some(false)), haveTrustee, addTrustee, true, None: Option[Call], false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseWithSingleTrust, addTrustee, true, None: Option[Call], false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseWithMasterTrust, addTrustee, true, None: Option[Call], false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseWithBodyCorporate, haveAnyTrustee, true, None: Option[Call], false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseHaveTrusteeTrue, addTrustee, true, None: Option[Call], false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseHaveTrusteeFalse, schemeReview, true, None: Option[Call], false),
-    (AddEstablisherId(Some(false)), addEstablishersFalseWithNoScheme, expired, false, None: Option[Call], false)
-  )
-
-  private def navigator(isHubEnabled: Boolean = true) = new EstablishersNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled))
-
-  s"${navigator().getClass.getSimpleName} when isHubEnabled toggle is on" must {
+  s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator(), FakeUserAnswersCacheConnector, routesWithHubEnabled, dataDescriber)
-    behave like nonMatchingNavigator(navigator())
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
+    behave like nonMatchingNavigator(navigator)
   }
-
-  s"${navigator(isHubEnabled = false).getClass.getSimpleName} when isHubEnabled toggle is off" must {
-    appRunning()
-    behave like navigatorWithRoutes(navigator(isHubEnabled = false), FakeUserAnswersCacheConnector, routesWithHubDisabled, dataDescriber)
-    behave like nonMatchingNavigator(navigator(isHubEnabled = false))
-  }
-
 }
 
 //noinspection MutatorLikeMethodIsParameterless
 object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private val emptyAnswers = UserAnswers(Json.obj())
-  private val haveTrustee = UserAnswers(Json.obj(AddEstablisherId.toString -> "true")).
-    set(SchemeDetailsId)(SchemeDetails("test scheme", SchemeType.SingleTrust)).asOpt.value.
-    set(TrusteeDetailsId(0))(PersonDetails("first", None, "last", LocalDate.now)).asOpt.value
-  private val addEstablishersFalseWithSingleTrust = UserAnswers(Json.obj(AddEstablisherId.toString -> "false")).
-    set(SchemeDetailsId)(SchemeDetails("test scheme", SchemeType.SingleTrust)).asOpt.value
-  private val addEstablishersFalseWithMasterTrust = UserAnswers(Json.obj(AddEstablisherId.toString -> "false")).
-    set(SchemeDetailsId)(SchemeDetails("test scheme", SchemeType.MasterTrust)).asOpt.value
-  private val addEstablishersFalseWithBodyCorporate = UserAnswers(Json.obj(AddEstablisherId.toString -> "false")).
-    set(SchemeDetailsId)(SchemeDetails("test scheme", SchemeType.BodyCorporate)).asOpt.value
-  private val addEstablishersFalseHaveTrusteeTrue = UserAnswers(Json.obj(AddEstablisherId.toString -> "false")).
-    set(SchemeDetailsId)(SchemeDetails("test scheme", SchemeType.BodyCorporate)).asOpt.value.set(HaveAnyTrusteesId)(true).asOpt.value
-  private val addEstablishersFalseHaveTrusteeFalse = UserAnswers(Json.obj(AddEstablisherId.toString -> "false")).
-    set(SchemeDetailsId)(SchemeDetails("test scheme", SchemeType.BodyCorporate)).asOpt.value.set(HaveAnyTrusteesId)(false).asOpt.value
   private val company = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Company).asOpt.value
   private val individual = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Indivdual).asOpt.value
   private val partnership = UserAnswers().set(EstablisherKindId(0))(EstablisherKind.Partnership).asOpt.value
   private val addEstablishersTrue = UserAnswers(Json.obj(AddEstablisherId.toString -> "true"))
   private val addEstablishersFalse = UserAnswers(Json.obj(AddEstablisherId.toString -> "false"))
   private val addEstablishersFalseWithNoScheme = UserAnswers(Json.obj(AddEstablisherId.toString -> "false"))
-
-  private def schemeReview = controllers.register.routes.SchemeReviewController.onPageLoad()
 
   private def companyDetails = controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, 0)
 
@@ -111,10 +69,6 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
 
   private def establisherKind = controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0)
 
-  private def addTrustee = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
-
-  private def haveAnyTrustee = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
-
   private def addEstablisher = controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode)
 
   private def expired = controllers.routes.SessionExpiredController.onPageLoad()
@@ -122,9 +76,5 @@ object EstablishersNavigatorSpec extends OptionValues with Enumerable.Implicits 
   private def taskList = controllers.register.routes.SchemeTaskListController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
-
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
 
 }

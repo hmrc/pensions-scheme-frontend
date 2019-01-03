@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,11 @@
 
 package views.address
 
-import config.FrontendAppConfig
 import controllers.register.routes
 import forms.address.AddressFormProvider
 import models.NormalMode
 import models.address.Address
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import utils.{FakeCountryOptions, InputOption}
 import viewmodels.Message
@@ -45,17 +43,15 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
 
   override val form = new AddressFormProvider(FakeCountryOptions())()
 
-  def createView(isHubEnabled: Boolean): () => _root_.play.twirl.api.HtmlFormat.Appendable = () =>
-    manualAddress(appConfig(isHubEnabled), new AddressFormProvider(FakeCountryOptions()).apply(), viewModel)(fakeRequest, messages)
+  def createView(): () => _root_.play.twirl.api.HtmlFormat.Appendable = () =>
+    manualAddress(frontendAppConfig, new AddressFormProvider(FakeCountryOptions()).apply(), viewModel)(fakeRequest, messages)
 
   def createViewUsingForm: (Form[_]) => _root_.play.twirl.api.HtmlFormat.Appendable = (form: Form[_]) =>
     manualAddress(frontendAppConfig, form, viewModel)(fakeRequest, messages)
 
   "ManualAddress view" must {
 
-    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, viewModel.heading)
-
-    behave like pageWithBackLink(createView(isHubEnabled = false))
+    behave like normalPage(createView(), messageKeyPrefix, viewModel.heading)
 
     behave like pageWithTextFields(
       createViewUsingForm,
@@ -64,20 +60,6 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
       "addressLine1", "addressLine2", "addressLine3", "addressLine4"
     )
 
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-
+    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
-
-  "ManualAddress view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
 }

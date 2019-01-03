@@ -1,5 +1,5 @@
 @*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 
 @(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
 
-@pageTitle=@{if(appConfig.isHubEnabled){messages("messages__before_you_start__title")}else{messages("messages__before_you_start__title")}}
+@pageTitle=@{messages("messages__before_you_start__title")}
 
 @main_template(
     title = pageTitle,

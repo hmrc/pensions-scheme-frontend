@@ -1,5 +1,5 @@
 @*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,6 @@
 
     @helpers.form(action = UKBankAccountController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @if(!appConfig.isHubEnabled) {
-            @components.back_link()
-        }
         @components.error_summary(form.errors)
 
         @components.heading(
@@ -45,8 +42,6 @@
 
         @components.submit_button()
 
-        @if(appConfig.isHubEnabled) {
-            @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
-        }
+        @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
     }
 }

@@ -1,5 +1,5 @@
 @*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,23 +24,11 @@
 @(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call)(implicit request: Request[_], messages: Messages)
 
 @heading=@{
-    messages(
-        if(appConfig.isHubEnabled){
-            "checkYourAnswers.hs.heading"
-        } else {
-            "checkYourAnswers.heading"
-        }
-    )
+    messages("checkYourAnswers.hs.heading")
 }
 
 @title=@{
-    messages(
-        if(appConfig.isHubEnabled){
-            "checkYourAnswers.hs.title"
-        } else {
-            "checkYourAnswers.title"
-        }
-    )
+    messages("checkYourAnswers.hs.title")
 }
 
 @main_template(
@@ -62,12 +50,8 @@
             }
         }
 
-        @if(appConfig.isHubEnabled){
-            @components.submit_button()
-            @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
-        }else{
-            @components.submit_button("site.continue")
-        }
+        @components.submit_button()
+        @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
     }
 
 }

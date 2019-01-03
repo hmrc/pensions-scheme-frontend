@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,11 +58,7 @@ class EstablishersIndividualNavigator @Inject()(
       case ContactDetailsId(index) =>
         checkYourAnswers(index)(from.userAnswers)
       case CheckYourAnswersId =>
-        if(appConfig.isHubEnabled) {
-          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
-        } else {
-          NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
-        }
+        NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
     }
   }
 

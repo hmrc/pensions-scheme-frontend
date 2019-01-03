@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package views.register.establishers
 
-import config.FrontendAppConfig
 import forms.register.establishers.AddEstablisherFormProvider
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
@@ -25,7 +24,6 @@ import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndivi
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import utils.UserAnswers
 import views.behaviours.{EntityListBehaviours, QuestionViewBehaviours}
@@ -68,14 +66,11 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
   private def createView: () => HtmlFormat.Appendable = () =>
     addEstablisher(frontendAppConfig, form, NormalMode, Seq.empty)(fakeRequest, messages)
 
-  private def createView(establishers: Seq[Establisher[_]] = Seq.empty,
-                         isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
-    addEstablisher(appConfig(isHubEnabled), form, NormalMode, establishers)(fakeRequest, messages)
+  private def createView(establishers: Seq[Establisher[_]] = Seq.empty): () => HtmlFormat.Appendable = () =>
+    addEstablisher(frontendAppConfig, form, NormalMode, establishers)(fakeRequest, messages)
 
   "AddEstablisher view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
-
-    behave like pageWithBackLink(createView())
 
     "when there are no establishers" when {
       "not show the yes no inputs" in {
@@ -103,18 +98,6 @@ class AddEstablisherViewSpec extends QuestionViewBehaviours[Option[Boolean]] wit
       doc.select("#value-no").size() mustEqual 1
     }
 
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
-  "AddEstablisher view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
 }

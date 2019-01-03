@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,10 +43,10 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   private val johnDoeEntity = DirectorEntity(DirectorDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
   private val joeBloggsEntity = DirectorEntity(DirectorDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
 
-  private def createView(directors: Seq[DirectorEntity] = Nil, isHubEnabled: Boolean = false) =
+  private def createView(directors: Seq[DirectorEntity] = Nil) =
     () =>
       addCompanyDirectors(
-        appConfig(isHubEnabled),
+        frontendAppConfig,
         form,
         NormalMode,
         establisherIndex,
@@ -66,13 +66,6 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
   "AddCompanyDirectors view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages("messages__addCompanyDirectors__heading"))
-
-    behave like pageWithBackLink(createView())
-
-    "not have a return link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "return-link")
-    }
 
     behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),
@@ -126,15 +119,6 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
       doc must haveDynamicText("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more")
     }
 
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
-
-  "AddCompanyDirectors view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
 }

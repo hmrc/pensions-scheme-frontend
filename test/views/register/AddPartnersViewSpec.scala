@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,10 +44,10 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   private val johnDoeEntity = PartnerEntity(PartnerDetailsId(0, 0), johnDoe.fullName, isDeleted = false, isCompleted = false)
   private val joeBloggsEntity = PartnerEntity(PartnerDetailsId(0, 1), joeBloggs.fullName, isDeleted = false, isCompleted = true)
 
-  private def createView(partners: Seq[PartnerEntity] = Nil, isHubEnabled: Boolean = false) =
+  private def createView(partners: Seq[PartnerEntity] = Nil) =
     () =>
       addPartners(
-        appConfig(isHubEnabled),
+        frontendAppConfig,
         form,
         establisherIndex,
         partners,
@@ -67,8 +67,6 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
   "AddPartnershipPartners view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages("messages__addPartners__heading"))
-
-    behave like pageWithBackLink(createView())
 
     behave like yesNoPage(
       createViewUsingForm(Seq(johnDoeEntity)),
@@ -122,20 +120,8 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
       doc must haveDynamicText("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more")
     }
 
-    "not have a return link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "return-link")
-    }
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 
-  }
-
-  "AddPartnershipPartners view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
   }
 
 }

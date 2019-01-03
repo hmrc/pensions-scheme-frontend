@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package navigators
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.Identifier
 import identifiers.register.establishers.EstablishersId
@@ -28,7 +27,6 @@ import models.person.PersonDetails
 import org.joda.time.LocalDate
 import org.scalatest.prop.TableFor6
 import org.scalatest.{MustMatchers, OptionValues}
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -40,7 +38,7 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
 
   import EstablishersCompanyNavigatorSpec._
 
-  private def routesWithHubEnabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",                "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
     (CompanyDetailsId(0),                         emptyAnswers,                     companyRegistrationNumber(NormalMode),    true,           Some(checkYourAnswers),                   true),
     (CompanyRegistrationNumberId(0),              emptyAnswers,                     companyUTR(NormalMode),                   true,           Some(checkYourAnswers),                   true),
@@ -66,24 +64,13 @@ class EstablishersCompanyNavigatorSpec extends SpecBase with MustMatchers with N
     (CheckYourAnswersId(0),                       emptyAnswers,                     addCompanyDirectors(0, NormalMode),true,           None,                                      false)
   )
 
-  private def routesWithHubDisabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id",                                      "User Answers",                   "Next Page (Normal Mode)",                "Save (NM)",    "Next Page (Check Mode)",                 "Save (CM)"),
-    (CompanyContactDetailsId(0),                  emptyAnswers,                     checkYourAnswers,                         true,           Some(checkYourAnswers),                   true)
-  )
+  private val navigator: EstablishersCompanyNavigator =
+    new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
-  def navigator(isHubEnabled: Boolean = true): EstablishersCompanyNavigator =
-    new EstablishersCompanyNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled))
-
-  s"${navigator().getClass.getSimpleName} when isHubEnabled toggle is on" must {
+  s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator(), FakeUserAnswersCacheConnector, routesWithHubEnabled, dataDescriber)
-    behave like nonMatchingNavigator(navigator())
-  }
-
-  s"${navigator(isHubEnabled = false).getClass.getSimpleName} when isHubEnabled toggle is off" must {
-    appRunning()
-    behave like navigatorWithRoutes(navigator(isHubEnabled = false), FakeUserAnswersCacheConnector, routesWithHubDisabled, dataDescriber)
-    behave like nonMatchingNavigator(navigator(isHubEnabled = false))
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
+    behave like nonMatchingNavigator(navigator)
   }
 }
 
@@ -159,9 +146,4 @@ object EstablishersCompanyNavigatorSpec extends OptionValues {
   private val addOneCompanyDirectors = UserAnswers(validData(johnDoe))
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
-
-  def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
-
 }

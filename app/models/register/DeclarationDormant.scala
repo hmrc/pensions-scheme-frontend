@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +33,7 @@ object DeclarationDormant {
 
   def options(config: FrontendAppConfig): Seq[InputOption] = values.map {
     value =>
-      if(config.isHubEnabled)
-        InputOption(value.toString, s"messages__is_dormant__${value.toString}")
-      else
-        InputOption(value.toString, s"messages__declarationDormant__${value.toString}")
+      InputOption(value.toString, s"messages__is_dormant__${value.toString}")
   }
 
   implicit val enumerable: Enumerable[DeclarationDormant] =

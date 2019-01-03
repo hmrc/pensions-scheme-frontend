@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,34 +30,18 @@ class TrusteeKindViewSpec extends ViewBehaviours {
   private val form = new TrusteeKindFormProvider()()
   private val index = Index(0)
 
-  private def createView(isHubEnabled: Boolean = true) = () => trusteeKind(appConfig(isHubEnabled), form, NormalMode, index)(fakeRequest, messages)
+  private def createView() = () => trusteeKind(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) => trusteeKind(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   private def trusteeKindOptions = TrusteeKind.options
 
-  "TrusteeKind view with hub enabled" must {
-    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
-
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
-  "TrusteeKind view with hub disabled" must {
-    behave like pageWithBackLink(createView(isHubEnabled = false))
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
   "TrusteeKind view" when {
     "rendered" must {
+      behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
         for (option <- trusteeKindOptions) {

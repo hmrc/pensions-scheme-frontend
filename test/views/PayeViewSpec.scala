@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,35 +38,18 @@ class PayeViewSpec extends ViewBehaviours {
     subHeading = Some(Message("test company name"))
   )
 
-  def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
-    paye(appConfig(isHubEnabled), form, viewmodel)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () =>
+    paye(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     paye(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
 
-  "Paye view" must {
-
-    behave like normalPage(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading"))
-
-    behave like pageWithBackLink(createView())
-
-    "not have a return link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
-  "Paye view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
   "Paye view" when {
     "rendered" must {
+      behave like normalPage(createView(), messageKeyPrefix, pageHeader = messages(s"messages__${messageKeyPrefix}__heading"))
+
+      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
       val payeOptions = Seq("true", "false")
 
       "contain radio buttons for the value" in {

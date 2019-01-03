@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   private def emptyAnswerSections: Seq[Section] = Nil
 
-  def createView(isHubEnabled:Boolean): () => HtmlFormat.Appendable = () =>
+  def createView(): () => HtmlFormat.Appendable = () =>
     check_your_answers(
-      appConfig = appConfig(isHubEnabled),
+      frontendAppConfig,
       emptyAnswerSections,
       routes.IndexController.onPageLoad()
     )(fakeRequest, messages)
@@ -43,9 +43,9 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     )(fakeRequest, messages)
 
   "check_your_answers view" must {
-    behave like normalPageWithTitle(createView(isHubEnabled=false), messageKeyPrefix, messages("checkYourAnswers.title"), messages("checkYourAnswers.heading"))
+    behave like normalPageWithTitle(createView(), messageKeyPrefix, messages("checkYourAnswers.title"), messages("checkYourAnswers.heading"))
 
-    behave like pageWithSubmitButton(createView(isHubEnabled=false))
+    behave like pageWithSubmitButton(createView())
 
     behave like checkYourAnswersPage(createViewWithData)
   }

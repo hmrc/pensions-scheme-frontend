@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package views.register.establishers.company
 
-import config.FrontendAppConfig
 import controllers.register.establishers.company.routes
 import forms.CompanyDetailsFormProvider
 import models.{CompanyDetails, Index, NormalMode}
@@ -32,8 +31,8 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
   override val form = new CompanyDetailsFormProvider()()
   val firstIndex = Index(1)
 
-  def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
-    companyDetails(appConfig(isHubEnabled), form, NormalMode, firstIndex)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () =>
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
@@ -42,23 +41,9 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithBackLink(createView())
-
-    "not have a return link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "return-link")
-    }
-
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       routes.CompanyDetailsController.onSubmit(NormalMode, firstIndex).url, "companyName", "vatNumber", "payeNumber")
-  }
 
-  "CompanyDetails view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
 }

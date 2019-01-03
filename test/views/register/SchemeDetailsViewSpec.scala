@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,40 +31,23 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
 
   override val form = new SchemeDetailsFormProvider()()
 
-  def createView(isHubEnabled:Boolean = false): () => HtmlFormat.Appendable = () =>
-    schemeDetails(appConfig(isHubEnabled = isHubEnabled), form, NormalMode)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () =>
+    schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    schemeDetails(appConfig(false), form, NormalMode)(fakeRequest, messages)
+    schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   private def schemeOptions = SchemeType.options(frontendAppConfig)
 
-  "SchemeDetails view with hub not enabled" must {
-
-    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
-
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.SchemeDetailsController.onSubmit(NormalMode).url,
-      "schemeName")
-
-    behave like pageWithBackLink(createView())
-
-    "not have a return link" in {
-      val doc = asDocument(createView()())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
-  "SchemeDetails view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
   "SchemeDetails view" when {
     "rendered" must {
+      behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+      behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.SchemeDetailsController.onSubmit(NormalMode).url,
+        "schemeName")
+
+      behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
 

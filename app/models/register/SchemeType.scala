@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,11 +43,7 @@ object SchemeType {
   ).map(v => (v.toString, v)).toMap
 
   def options(appConfig: FrontendAppConfig): Seq[InputOption] = {
-   val key = if(appConfig.isHubEnabled){
-     "scheme_type"
-    } else {
-     "scheme_details__type"
-   }
+    val key = "scheme_type"
     Seq(
       InputOption(
         SingleTrust.toString,
@@ -105,13 +101,13 @@ object SchemeType {
     }
   }
 
-  def getSchemeType(schemeTypeStr : Option[String], isMasterTrust: Boolean): Option[String] = {
+  def getSchemeType(schemeTypeStr: Option[String], isMasterTrust: Boolean): Option[String] = {
     if (isMasterTrust) {
       Some(s"messages__scheme_details__type_${MasterTrust.toString}")
     } else {
-      schemeTypeStr.flatMap{ schemeStr =>
-        List(SingleTrust.toString, GroupLifeDeath.toString, BodyCorporate.toString, other).find(scheme=>
-          schemeStr.toLowerCase.contains(scheme.toLowerCase)).map{ str =>
+      schemeTypeStr.flatMap { schemeStr =>
+        List(SingleTrust.toString, GroupLifeDeath.toString, BodyCorporate.toString, other).find(scheme =>
+          schemeStr.toLowerCase.contains(scheme.toLowerCase)).map { str =>
           s"messages__scheme_details__type_${str}"
         }
       }

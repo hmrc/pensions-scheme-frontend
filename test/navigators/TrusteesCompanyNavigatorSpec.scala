@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,39 +50,25 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
     (CompanyPreviousAddressId(0), emptyAnswers, companyContactDetails, true, Some(checkYourAnswers), true),
     (CompanyContactDetailsId(0), emptyAnswers, checkYourAnswers, true, Some(checkYourAnswers), true),
     (CompanyAddressYearsId(0), emptyAnswers, sessionExpired, false, Some(sessionExpired), false),
-    (CheckYourAnswersId, emptyAnswers, addTrustee, true, None, false)
-  )
-
-  private def routesWithHubDisabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
-    ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (CheckYourAnswersId, emptyAnswers, taskList, false, None, true)
   )
 
+  private val navigator: TrusteesCompanyNavigator =
+    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
-  s"${navigator().getClass.getSimpleName} when isHubEnabled toggle is off" must {
+  s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator(), FakeUserAnswersCacheConnector, routesTrusteeCompany, dataDescriber)
-    behave like nonMatchingNavigator(navigator())
-  }
-
-  s"${navigator(true).getClass.getSimpleName} when isHubEnabled toggle is on" must {
-    appRunning()
-    behave like navigatorWithRoutes(navigator(true), FakeUserAnswersCacheConnector, routesWithHubDisabled, dataDescriber)
-    behave like nonMatchingNavigator(navigator(true))
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesTrusteeCompany, dataDescriber)
+    behave like nonMatchingNavigator(navigator)
   }
 }
 
 //noinspection MutatorLikeMethodIsParameterless
 object TrusteesCompanyNavigatorSpec extends OptionValues {
 
-  private def navigator(isHubEnabled: Boolean = false): TrusteesCompanyNavigator =
-    new TrusteesCompanyNavigator(FakeUserAnswersCacheConnector, appConfig(isHubEnabled))
+
 
   private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
-
-  private def appConfig(isHubEnabled: Boolean): FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    "features.is-hub-enabled" -> isHubEnabled
-  ).build().injector.instanceOf[FrontendAppConfig]
 
   private def companyRegistrationNumber(mode: Mode): Call =
     controllers.register.trustees.company.routes.CompanyRegistrationNumberController.onPageLoad(mode, 0)

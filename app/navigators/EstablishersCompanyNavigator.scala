@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,11 +49,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case CompanyPreviousAddressId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.CompanyContactDetailsController.onPageLoad(NormalMode, index))
       case CompanyContactDetailsId(index) =>
-        if(appConfig.isHubEnabled){
           NavigateTo.save(controllers.register.establishers.company.routes.IsCompanyDormantController.onPageLoad(NormalMode, index))
-        } else {
-          NavigateTo.save(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index))
-        }
       case IsCompanyDormantId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.CheckYourAnswersController.onPageLoad(index))
       case AddCompanyDirectorsId(index) =>
@@ -61,11 +57,7 @@ class EstablishersCompanyNavigator @Inject()(val dataCacheConnector: UserAnswers
       case OtherDirectorsId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index))
       case CompanyReviewId(_) =>
-        if(appConfig.isHubEnabled) {
           NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
-        } else {
-          NavigateTo.save(controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode))
-        }
       case CheckYourAnswersId(index) =>
         NavigateTo.save(controllers.register.establishers.company.routes.AddCompanyDirectorsController.onPageLoad(NormalMode, index))
       case _ => None

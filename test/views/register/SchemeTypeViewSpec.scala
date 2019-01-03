@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
-  private def schemeOptions = SchemeType.options(appConfig(isHubEnabled = true))
+  private def schemeOptions = SchemeType.options(frontendAppConfig)
 
   "SchemeType view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", schemeName))

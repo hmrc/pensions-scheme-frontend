@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,42 +16,16 @@
 
 package views
 
-import config.FrontendAppConfig
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.whatYouWillNeed
 
 class WhatYouWillNeedViewSpec extends ViewBehaviours {
-
-  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    conf = "features.is-hub-enabled" -> false
-  ).build().injector.instanceOf[FrontendAppConfig]
-
-  val messageKeyPrefix = "what_you_will_need"
-
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeed(frontendAppConfig)(fakeRequest, messages)
-
-  "WhatYouWillNeed view" must {
-
-    behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"),
-      "_lede", "_item_1", "_item_2", "_item_3", "_item_4")
-
-    behave like pageWithSubmitButton(createView)
-  }
-}
-
-class WhatYouWillNeedHsViewSpec extends ViewBehaviours {
-
-  override def frontendAppConfig: FrontendAppConfig = new GuiceApplicationBuilder().configure(
-    conf = "features.is-hub-enabled" -> true
-  ).build().injector.instanceOf[FrontendAppConfig]
-
   val messageKeyPrefix = "hs_what_you_will_need"
 
   def createView: () => HtmlFormat.Appendable = () => whatYouWillNeed(frontendAppConfig)(fakeRequest, messages)
 
-  "WhatYouWillNeed view (hub and spoke version)" must {
+  "WhatYouWillNeed view " must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"),
       "_lede", "_p2", "_item_1", "_item_2", "_item_3", "_item_4", "_p3")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,17 @@
 package identifiers.register.adviser
 
 import identifiers.TypedIdentifier
+import play.api.i18n.Messages
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.{CountryOptions, UserAnswers}
 
 object AdviserPhoneId extends TypedIdentifier[String] {
+  self =>
   override def toString: String = "adviserPhone"
+
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages, userAnswers: UserAnswers): CheckYourAnswers[self.type] =
+    StringCYA[self.type](
+      label = Some(messages("adviserPhone.checkYourAnswersLabel", userAnswers.get(AdviserNameId).getOrElse("")))
+    )()
 }

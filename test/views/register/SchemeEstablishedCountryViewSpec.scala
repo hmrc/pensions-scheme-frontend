@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,32 +33,16 @@ class SchemeEstablishedCountryViewSpec extends StringViewBehaviours {
 
   val form = new SchemeEstablishedCountryFormProvider(countryOptions)()
 
-  def createView(isHubEnabled: Boolean): () => HtmlFormat.Appendable = () =>
-    schemeEstablishedCountry(appConfig(isHubEnabled = isHubEnabled), form, NormalMode, Seq.empty)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () =>
+    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, Seq.empty)(fakeRequest, messages)
 
   def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) =>
     schemeEstablishedCountry(frontendAppConfig, form, NormalMode, inputOptions)(fakeRequest, messages)
 
-  "SchemeEstablishedCountry view with hub not enabled" must {
-    behave like pageWithBackLink(createView(isHubEnabled = false))
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
-  "SchemeEstablishedCountry view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
   "SchemeEstablishedCountry view" must {
-    behave like normalPage(createView(isHubEnabled = false), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+
+    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 
     "contain select input options for the value" in {
       val doc = asDocument(createViewUsingForm(form))

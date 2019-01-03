@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package views.register.establishers.company
 import controllers.register.establishers.company.routes
 import identifiers.register.establishers.company.director.DirectorDetailsId
 import models.person.PersonDetails
-import models.{CheckMode, Index, NormalMode}
+import models.{Index, NormalMode}
 import org.joda.time.LocalDate
 import org.jsoup.Jsoup
 import play.api.libs.json.{JsObject, Json}
@@ -40,8 +40,8 @@ class CompanyReviewViewSpec extends ViewBehaviours {
     DirectorDetailsId.toString -> PersonDetails("director", None, lastName, LocalDate.now())
   )
 
-  def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
-    companyReview(appConfig(isHubEnabled), index, companyName, directors)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () =>
+    companyReview(frontendAppConfig, index, companyName, directors)(fakeRequest, messages)
 
   def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, companyName, tenDirectors)(fakeRequest, messages)
 
@@ -51,11 +51,6 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       messageKeyPrefix,
       messages(s"messages__${messageKeyPrefix}__heading"),
       "_directors__heading")
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
 
     "display company name" in {
       Jsoup.parse(createView()().toString) must haveDynamicText(companyName)
@@ -86,15 +81,8 @@ class CompanyReviewViewSpec extends ViewBehaviours {
       for (director <- directors)
         Jsoup.parse(createView()().toString) must haveDynamicText(director)
     }
-  }
 
-  "CompanyReview view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
 
 }

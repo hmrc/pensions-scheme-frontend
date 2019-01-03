@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,35 +31,16 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   val index = Index(1)
 
-  def createView(isHubEnabled: Boolean = false): () => HtmlFormat.Appendable = () =>
-    uniqueTaxReference(appConfig(isHubEnabled), form, NormalMode, index)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () =>
+    uniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => uniqueTaxReference(frontendAppConfig, form, NormalMode,
     index)(fakeRequest, messages)
 
-  "UniqueTaxReference view" must {
-
-    behave like normalPage(createView(), messageKeyPrefix, messages("messages__establisher__has_sautr__title"))
-
-    behave like pageWithBackLink(createView())
-
-    "not have a return link" in {
-      val doc = asDocument(createView(isHubEnabled = false)())
-      assertNotRenderedById(doc, "return-link")
-    }
-  }
-
-  "UniqueTaxReference view with hub enabled" must {
-    behave like pageWithReturnLink(createView(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-    "not have a back link" in {
-      val doc = asDocument(createView(isHubEnabled = true)())
-      assertNotRenderedById(doc, "back-link")
-    }
-  }
-
   "UniqueTaxReference view" when {
     "rendered" must {
+      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
       val utrOptions = Seq("true", "false")
 
       "contain radio buttons for the value" in {

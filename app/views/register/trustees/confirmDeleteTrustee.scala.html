@@ -1,5 +1,5 @@
 @*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,6 @@
     title = messages("messages__confirmDeleteTrustee__title"),
     appConfig = appConfig,
     bodyClasses = None) {
-
-    @if(!appConfig.isHubEnabled) {
-        @components.back_link()
-    }
 
     @components.heading(
         headingKey=components.hyphen((Message("messages__confirmDeleteTrustee__heading").withArgs(trusteeName))).toString
