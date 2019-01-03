@@ -41,3 +41,6 @@ POST       /change-having-pensions-working-knowledge    controllers.WorkingKnowl
 
 GET        /what-you-will-need-for-working-knowledge    controllers.WhatYouWillNeedWorkingKnowledgeController.onPageLoad
 POST       /what-you-will-need-for-working-knowledge    controllers.WhatYouWillNeedWorkingKnowledgeController.onSubmit
+
+GET        /check-your-answers-before-start             controllers.CheckYourAnswersController.onPageLoad()
+POST       /check-your-answers-before-start             controllers.CheckYourAnswersController.onSubmit()

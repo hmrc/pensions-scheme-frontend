@@ -20,11 +20,21 @@ import identifiers.TypedIdentifier
 import identifiers.register.trustees.HaveAnyTrusteesId
 import models.register.SchemeType
 import models.register.SchemeType.{MasterTrust, SingleTrust}
+import play.api.i18n.Messages
 import play.api.libs.json.JsResult
-import utils.UserAnswers
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.SchemeTypeCYA
+import utils.{CountryOptions, UserAnswers}
 
-case object SchemeTypeId extends TypedIdentifier[SchemeType] {
+object SchemeTypeId extends TypedIdentifier[SchemeType] {
+  self =>
   override def toString: String = "schemeType"
+
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
+                   userAnswers: UserAnswers): CheckYourAnswers[self.type] =
+    SchemeTypeCYA[self.type](
+      label = Some(messages("schemeType.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse("")))
+    )()
 
   private val singleOrMasterTrustTypes = Seq(SingleTrust, MasterTrust)
 
