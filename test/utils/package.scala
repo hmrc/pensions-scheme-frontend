@@ -15,7 +15,7 @@
  */
 
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
-import identifiers.LastPageId
+import identifiers.{EstablishedCountryId, LastPageId}
 import identifiers.register._
 import models._
 import models.address.{Address, TolerantAddress}
@@ -38,6 +38,10 @@ package object utils {
 
     def schemeName(schemeName: String): UserAnswers = {
       answers.set(SchemeNameId)(schemeName).asOpt.value
+    }
+
+    def establishedCountry(country: String): UserAnswers = {
+      answers.set(EstablishedCountryId)(country).asOpt.value
     }
 
     def schemeType(schemeType: SchemeType): UserAnswers = {

@@ -41,3 +41,8 @@ POST       /change-having-pensions-working-knowledge    controllers.WorkingKnowl
 
 GET        /what-you-will-need-for-working-knowledge    controllers.WhatYouWillNeedWorkingKnowledgeController.onPageLoad
 POST       /what-you-will-need-for-working-knowledge    controllers.WhatYouWillNeedWorkingKnowledgeController.onSubmit
+
+GET        /country-established-in                      controllers.EstablishedCountryController.onPageLoad(mode: Mode = NormalMode)
+POST       /country-established-in                      controllers.EstablishedCountryController.onSubmit(mode: Mode = NormalMode)
+GET        /change-country-established-in               controllers.EstablishedCountryController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-country-established-in               controllers.EstablishedCountryController.onSubmit(mode: Mode = CheckMode)

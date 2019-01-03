@@ -1187,4 +1187,5 @@ messages__what_you_will_need_wk__item_2 = email address
 messages__what_you_will_need_wk__item_3 = phone number
 messages__what_you_will_need_wk__item_4 = address
 
-
+messages__established_country__title = Which country was the scheme established in?
+messages__established_country__h1 = Which country was {0} established in?
