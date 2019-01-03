@@ -19,11 +19,11 @@ package controllers.register
 import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
+import identifiers.HaveAnyTrusteesId
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}
@@ -115,7 +115,7 @@ object SchemeReviewControllerSpec extends ControllerSpecBase {
   val establisherCompanyUrl: Call = controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0)
 
   private val addTrusteeUrl = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode)
-  private val haveAnyTrusteeUrl = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+  private val haveAnyTrusteeUrl = controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData):
   SchemeReviewController = {

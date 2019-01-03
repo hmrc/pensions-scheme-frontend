@@ -19,6 +19,7 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import identifiers.HaveAnyTrusteesId
 import identifiers.register.trustees._
 import models.NormalMode
 import models.register.trustees.TrusteeKind

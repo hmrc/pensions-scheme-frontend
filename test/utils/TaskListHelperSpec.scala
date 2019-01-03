@@ -17,12 +17,13 @@
 package utils
 
 import base.{JsonFileReader, SpecBase}
+import identifiers.HaveAnyTrusteesId
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.trustees.individual.TrusteeDetailsId
-import identifiers.register.trustees.{HaveAnyTrusteesId, IsTrusteeCompleteId}
+import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.{IsAboutSchemeCompleteId, IsWorkingKnowledgeCompleteId, SchemeDetailsId}
 import models.person.PersonDetails
 import models.register._
@@ -30,7 +31,7 @@ import models.{CompanyDetails, Index, NormalMode}
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, WordSpec}
 import viewmodels._
-import views.html.register.schemeType
+import views.html.schemeType
 
 class TaskListHelperSpec extends WordSpec with MustMatchers {
 
@@ -271,7 +272,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
       helper.addTrusteeHeader(declarationWithoutEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)) mustBe JourneyTaskListSection(
         None,
         Link(messages(addTrusteesLinkText),
-          controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+          controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
         None
       )
     }
@@ -281,7 +282,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
       helper.addTrusteeHeader(declarationWithEstabliserAndHaveAnyTrusteesAndOtherSchemeType()) mustBe JourneyTaskListSection(
         Some(true),
         Link(messages(changeTrusteesLinkText),
-          controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+          controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
         None
       )
     }
@@ -301,7 +302,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
       helper.addTrusteeHeader(declarationWithEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)) mustBe JourneyTaskListSection(
         None,
         Link(messages(changeTrusteesLinkText),
-          controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+          controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
         None
       )
     }
@@ -394,7 +395,7 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
   private val expectedAddTrusteeHeader = JourneyTaskListSection(
       None,
       Link(messages(addTrusteesLinkText),
-        controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+        controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
       None
     )
 

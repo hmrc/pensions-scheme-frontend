@@ -19,9 +19,9 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import identifiers.HaveAnyTrusteesId
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.{AddEstablisherId, ConfirmDeleteEstablisherId, EstablisherKindId}
-import identifiers.register.trustees.HaveAnyTrusteesId
 import models.NormalMode
 import models.register.establishers.EstablisherKind
 import models.register.{SchemeDetails, SchemeType}
@@ -68,7 +68,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
               case Some(false) =>
                 NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
               case _ =>
-                NavigateTo.save(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode))
+                NavigateTo.save(controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode))
             }
         }
       case None =>

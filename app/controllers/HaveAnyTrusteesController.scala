@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees
+package controllers
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
-import identifiers.register.trustees.HaveAnyTrusteesId
+import identifiers.HaveAnyTrusteesId
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
@@ -30,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
 import utils.{Navigator, UserAnswers}
-import views.html.register.trustees.haveAnyTrustees
+import views.html.haveAnyTrustees
 
 import scala.concurrent.{ExecutionContext, Future}
 

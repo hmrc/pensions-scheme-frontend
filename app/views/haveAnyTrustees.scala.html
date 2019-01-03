@@ -16,32 +16,30 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.register.routes._
+@import controllers.routes._
 @import models.Mode
-@import models.register._
-@import models.register.SchemeType.MasterTrust
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__scheme_name__title"),
+    title = messages("messages__haveAnyTrustees__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = SchemeNameController.onSubmit(mode), 'autoComplete -> "off") {
+    @helpers.form(action = HaveAnyTrusteesController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
-        @components.heading(messages("messages__scheme_name__heading"))
+        @components.heading(messages("messages__haveAnyTrustees__heading"))
 
-        @components.input_text(
-            field = form("schemeName"),
-            label = messages("messages__scheme_details__name_label"),
-            labelClass = Some("visually-hidden")
+        @components.input_yes_no(
+            field = form("value"),
+            label = messages("messages__haveAnyTrustees__title"),
+            labelClass = Some("bold-small visually-hidden")
         )
 
         @components.submit_button()
 
-        @components.return_link("site.return.overview", appConfig.managePensionsSchemeOverviewUrl)
+        @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad)
     }
 }

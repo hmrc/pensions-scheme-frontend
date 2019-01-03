@@ -17,6 +17,7 @@
 package utils
 
 import controllers.register.routes
+import identifiers.HaveAnyTrusteesId
 import identifiers.register._
 import identifiers.register.adviser.AdviserDetailsId
 import identifiers.register.establishers.company._
@@ -35,10 +36,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     x => AnswerRow("adviserDetails.checkYourAnswersLabel", Seq(s"${x.adviserName} ${x.emailAddress} ${x.phoneNumber}"), false, Some(controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(CheckMode).url))
   }
 
-  def haveAnyTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.HaveAnyTrusteesId) map {
+  def haveAnyTrustees: Option[AnswerRow] = userAnswers.get(HaveAnyTrusteesId) map {
     x =>
       AnswerRow("haveAnyTrustees.checkYourAnswersLabel", Seq(if (x) "site.yes" else "site.no"), true,
-        Some(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url))
+        Some(controllers.routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url))
   }
 
   def declaration: Option[AnswerRow] = userAnswers.get(identifiers.register.DeclarationId) map {
