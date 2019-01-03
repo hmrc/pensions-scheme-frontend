@@ -18,24 +18,24 @@ package controllers
 
 import base.SpecBase
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
-import controllers.actions._
+import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
-import forms.OccupationalPensionSchemeFormProvider
-import identifiers.OccupationalPensionSchemeId
+import forms.BenefitsSecuredByInsuranceFormProvider
+import identifiers.BenefitsSecuredByInsuranceId
 import models.NormalMode
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import utils.{FakeNavigator, Navigator, UserAnswers}
-import views.html.occupationalPensionScheme
+import views.html.benefitsSecuredByInsurance
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class OccupationalPensionSchemeControllerSpec extends ControllerWithQuestionPageBehaviours {
+class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPageBehaviours {
 
-  import OccupationalPensionSchemeControllerSpec._
+  import BenefitsSecuredByInsuranceControllerSpec._
 
-  "Occupational Pension Scheme Controller" when {
+  "Benefits secured by insurance Controller" when {
 
     behave like controllerWithOnPageLoadMethod(
       onPageLoadAction(this),
@@ -57,30 +57,29 @@ class OccupationalPensionSchemeControllerSpec extends ControllerWithQuestionPage
     behave like controllerThatSavesUserAnswers(
       saveAction(this),
       postRequest,
-      OccupationalPensionSchemeId,
+      BenefitsSecuredByInsuranceId,
       true
     )
   }
 }
 
-object OccupationalPensionSchemeControllerSpec {
-
-  private val formProvider = new OccupationalPensionSchemeFormProvider()
+object BenefitsSecuredByInsuranceControllerSpec {
+  private val formProvider = new BenefitsSecuredByInsuranceFormProvider()
   private val form = formProvider.apply()
-  private val validData: UserAnswers = UserAnswers().occupationalPensionScheme(true)
+  private val validData: UserAnswers = UserAnswers().benefitsSecuredByInsurance(true)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    occupationalPensionScheme(base.frontendAppConfig, form, NormalMode)(base.fakeRequest, base.messages).toString()
+    benefitsSecuredByInsurance(base.frontendAppConfig, form, NormalMode)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
-  ): OccupationalPensionSchemeController =
-    new OccupationalPensionSchemeController(
+  ): BenefitsSecuredByInsuranceController =
+    new BenefitsSecuredByInsuranceController(
       base.frontendAppConfig,
       base.messagesApi,
       cache,
@@ -101,3 +100,5 @@ object OccupationalPensionSchemeControllerSpec {
   private def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
     controller(base)(cache = cache).onSubmit(NormalMode)
 }
+
+

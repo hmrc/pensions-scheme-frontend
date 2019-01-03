@@ -17,31 +17,31 @@
 package views
 
 import controllers.routes
-import forms.OccupationalPensionSchemeFormProvider
+import forms.BenefitsSecuredByInsuranceFormProvider
 import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
-import views.html.occupationalPensionScheme
+import views.html.benefitsSecuredByInsurance
 
-class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
+class BenefitsSecuredByInsuranceViewSpec extends YesNoViewBehaviours {
 
-  val messageKeyPrefix = "occupational_pension_scheme"
+  val messageKeyPrefix = "contractofinsurance_pension_scheme"
 
-  val form = new OccupationalPensionSchemeFormProvider()()
+  val form = new BenefitsSecuredByInsuranceFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
 
-  "OccupationalPensionScheme view " must {
+  "BenefitsSecuredByInsurance view " must {
 
-    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"))
 
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
-      expectedFormAction = routes.OccupationalPensionSchemeController.onSubmit(NormalMode).url)
+      expectedFormAction = routes.BenefitsSecuredByInsuranceController.onSubmit(NormalMode).url)
 
     behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }

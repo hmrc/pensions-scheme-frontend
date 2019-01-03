@@ -19,7 +19,7 @@ import identifiers.LastPageId
 import identifiers.register._
 import models._
 import models.address.{Address, TolerantAddress}
-import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
+import models.register.{Benefits, DeclarationDormant, SchemeDetails, SchemeType}
 import org.scalatest.OptionValues
 
 //scalastyle:off number.of.methods
@@ -38,6 +38,14 @@ package object utils {
 
     def occupationalPensionScheme(isOccupational: Boolean): UserAnswers = {
       answers.set(identifiers.OccupationalPensionSchemeId)(isOccupational).asOpt.value
+    }
+
+    def typeOfBenefits(benefits: Benefits): UserAnswers = {
+      answers.set(identifiers.TypeOfBenefitsId)(benefits).asOpt.value
+    }
+
+    def benefitsSecuredByInsurance(isInsured: Boolean): UserAnswers = {
+      answers.set(identifiers.BenefitsSecuredByInsuranceId)(isInsured).asOpt.value
     }
 
     def schemeName(schemeName: String): UserAnswers = {

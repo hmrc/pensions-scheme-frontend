@@ -46,3 +46,13 @@ GET        /occupational-pension-scheme                 controllers.Occupational
 POST       /occupational-pension-scheme                 controllers.OccupationalPensionSchemeController.onSubmit(mode: Mode = NormalMode)
 GET        /change-occupational-pension-scheme          controllers.OccupationalPensionSchemeController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-occupational-pension-scheme          controllers.OccupationalPensionSchemeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /type-of-benefits                            controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = NormalMode)
+POST       /type-of-benefits                            controllers.TypeOfBenefitsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-type-of-benefits                     controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-type-of-benefits                     controllers.TypeOfBenefitsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /benefits-secured-by-insurance               controllers.BenefitsSecuredByInsuranceController.onPageLoad(mode: Mode = NormalMode)
+POST       /benefits-secured-by-insurance               controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode = NormalMode)
+GET        /change-benefits-secured-by-insurance        controllers.BenefitsSecuredByInsuranceController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-benefits-secured-by-insurance        controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode = CheckMode)
