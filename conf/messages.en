@@ -1187,6 +1187,9 @@ messages__what_you_will_need_wk__item_2 = email address
 messages__what_you_will_need_wk__item_3 = phone number
 messages__what_you_will_need_wk__item_4 = address
 
+messages__established_country__title = Which country was the scheme established in?
+messages__established_country__h1 = Which country was {0} established in?
+
 messages__what_you_will_need_bank_details__title = Bank details
 messages__what_you_will_need_bank_details__h1 = Bank details
 messages__what_you_will_need_bank_details__p1 = You will need to tell us if the scheme has a bank account.
