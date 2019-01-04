@@ -29,9 +29,9 @@ class InsuranceCompanyNameFormProviderSpec extends StringFieldBehaviours with Co
 
   ".companyName" must {
     val fieldName = "companyName"
-    val lengthKey = "messages__error__company_name_length"
-    val requiredKey = "messages__error__company_name"
-    val invalidKey = "messages__error__company_name_invalid"
+    val lengthKey = "messages__error__insurance_company_name_length"
+    val requiredKey = "messages__error__insurance_company_name"
+    val invalidKey = "messages__error__insurance_company_name_invalid"
 
     behave like fieldThatBindsValidData(
       form,

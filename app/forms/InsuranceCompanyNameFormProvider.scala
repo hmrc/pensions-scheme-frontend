@@ -24,9 +24,9 @@ class InsuranceCompanyNameFormProvider @Inject() extends Mappings with Constrain
   val maxLength = 160
 
   def apply(): Form[String] = Form(
-    "companyName" -> text("messages__error__company_name").
+    "companyName" -> text("messages__error__insurance_company_name").
       verifying(firstError(
-        maxLength(maxLength, "messages__error__company_name_length"),
-        safeText("messages__error__company_name_invalid")))
+        maxLength(maxLength, "messages__error__insurance_company_name_length"),
+        safeText("messages__error__insurance_company_name_invalid")))
   )
 }
