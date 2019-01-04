@@ -21,21 +21,21 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import views.html.whatYouWillNeedBenefitsInsurance
+import views.html.whatYouWillNeedMembers
 
-class WhatYouWillNeedBenefitsInsuranceControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
   def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedBenefitsInsuranceController =
-    new WhatYouWillNeedBenefitsInsuranceController(frontendAppConfig,
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedMembersController =
+    new WhatYouWillNeedMembersController(frontendAppConfig,
       messagesApi,
       FakeAuthAction
     )
 
-  def viewAsString(): String = whatYouWillNeedBenefitsInsurance(frontendAppConfig)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedMembers(frontendAppConfig)(fakeRequest, messages).toString
 
-  "WhatYouWillNeedBenefitsInsuranceController" when {
+  "WhatYouWillNeedMembersController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {

@@ -18,18 +18,18 @@ package views
 
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
-import views.html.whatYouWillNeedBenefitsInsurance
+import views.html.whatYouWillNeedMembers
 
-class WhatYouWillNeedBenefitsInsuranceViewSpec extends ViewBehaviours {
+class WhatYouWillNeedMembersViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "what_you_will_need_benefits"
+  val messageKeyPrefix = "what_you_will_need_members"
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedBenefitsInsurance(frontendAppConfig)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedMembers(frontendAppConfig)(fakeRequest, messages)
 
-  "WhatYouWillNeedBenefitsInsurance view" must {
+  "WhatYouWillNeedMembers view" must {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1"),
-      "_p1", "_item_1", "_item_2", "_item_3", "_item_4", "contract__p1", "contract__item_1", "contract__item_2", "contract__item_3")
+      "_lede", "_item_1", "_item_2")
 
     behave like pageWithSubmitButton(createView)
 

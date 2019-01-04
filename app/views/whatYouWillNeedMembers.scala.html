@@ -21,27 +21,18 @@
 @(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__what_you_will_need_benefits__title"),
+    title = messages("messages__what_you_will_need_members__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = WhatYouWillNeedBenefitsInsuranceController.onSubmit, 'autoComplete -> "off") {
+    @helpers.form(action = WhatYouWillNeedMembersController.onSubmit, 'autoComplete -> "off") {
 
-        @components.heading(headingKey = messages("messages__what_you_will_need_benefits__h1"))
+        @components.heading(headingKey = messages("messages__what_you_will_need_members__h1"))
 
-        <p>@messages("messages__what_you_will_need_benefits__p1")</p>
+        <p>@messages("messages__what_you_will_need_members__lede")</p>
         <ul class="list list-bullet">
-            <li>@messages("messages__what_you_will_need_benefits__item_1")</li>
-            <li>@messages("messages__what_you_will_need_benefits__item_2")</li>
-            <li>@messages("messages__what_you_will_need_benefits__item_3")</li>
-            <li>@messages("messages__what_you_will_need_benefits__item_4")</li>
-        </ul>
-
-        <p>@messages("messages__what_you_will_need_benefits_contract__p1")</p>
-        <ul class="list list-bullet">
-            <li>@messages("messages__what_you_will_need_benefits_contract__item_1")</li>
-            <li>@messages("messages__what_you_will_need_benefits_contract__item_2")</li>
-            <li>@messages("messages__what_you_will_need_benefits_contract__item_3")</li>
+            <li>@messages("messages__what_you_will_need_members__item_1")</li>
+            <li>@messages("messages__what_you_will_need_members__item_2")</li>
         </ul>
 
         @components.submit_button("site.save_and_continue")
