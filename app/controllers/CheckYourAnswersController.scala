@@ -57,7 +57,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
       )
 
-      Ok(check_your_answers( appConfig, Seq(beforeYouStart), routes.CheckYourAnswersController.onSubmit()))
+      Ok(check_your_answers(appConfig, Seq(beforeYouStart), routes.CheckYourAnswersController.onSubmit()))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
