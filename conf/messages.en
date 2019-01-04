@@ -1187,6 +1187,7 @@ messages__what_you_will_need_wk__item_2 = email address
 messages__what_you_will_need_wk__item_3 = phone number
 messages__what_you_will_need_wk__item_4 = address
 
+
 messages__what_you_will_need_benefits__title = Benefits and insurance
 messages__what_you_will_need_benefits__h1 = Benefits and insurance
 messages__what_you_will_need_benefits__p1 = You will need to tell us:
@@ -1198,6 +1199,11 @@ messages__what_you_will_need_benefits_contract__p1 = If the scheme is secured by
 messages__what_you_will_need_benefits_contract__item_1 = the name of the insurance company
 messages__what_you_will_need_benefits_contract__item_2 = the policy number
 messages__what_you_will_need_benefits_contract__item_3 = the insurance company’s address
+
+messages__membership_pension_regulator__title = The scheme details will be shared with The Pensions Regulator
+messages__membership_pension_regulator__h1 = The scheme details will be shared with The Pensions Regulator
+messages__membership_pension_regulator__p1 = HMRC will share the scheme and your contact details with The Pensions Regulator.
+messages__membership_pension_regulator__p2 = The Pensions Regulator will contact you to register the scheme with them.
 
 messages__established_country__title = Which country was the scheme established in?
 messages__established_country__h1 = Which country was {0} established in?

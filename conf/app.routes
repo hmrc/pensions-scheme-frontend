@@ -35,8 +35,13 @@ GET        /scheme-details/:srn                         controllers.PSASchemeDet
 GET        /what-you-will-need-benefits-insurance       controllers.WhatYouWillNeedBenefitsInsuranceController.onPageLoad
 POST       /what-you-will-need-benefits-insurance       controllers.WhatYouWillNeedBenefitsInsuranceController.onSubmit
 
+GET        /sharing-scheme-details                      controllers.MembershipPensionRegulatorController.onPageLoad
+POST       /sharing-scheme-details                      controllers.MembershipPensionRegulatorController.onSubmit
+
+
 GET        /what-you-will-need-bank-details             controllers.WhatYouWillNeedBankDetailsController.onPageLoad
 POST       /what-you-will-need-bank-details             controllers.WhatYouWillNeedBankDetailsController.onSubmit
+
 
 GET        /having-pensions-working-knowledge           controllers.WorkingKnowledgeController.onPageLoad(mode: Mode = NormalMode)
 POST       /having-pensions-working-knowledge           controllers.WorkingKnowledgeController.onSubmit(mode: Mode = NormalMode)
