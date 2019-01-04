@@ -56,7 +56,7 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
   private def trusteeEditUrl(haveAnyTrustees: Option[Boolean]) = {
     haveAnyTrustees match {
       case Some(false) =>
-        controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+        controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
       case _ =>
         controllers.register.trustees.routes.AddTrusteeController.onPageLoad(CheckMode)
     }

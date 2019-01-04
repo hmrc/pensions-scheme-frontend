@@ -68,7 +68,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
               case Some(false) =>
                 NavigateTo.save(controllers.register.routes.SchemeReviewController.onPageLoad())
               case _ =>
-                NavigateTo.save(controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode))
+                NavigateTo.save(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode))
             }
         }
       case None =>

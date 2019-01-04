@@ -36,10 +36,10 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers, countryOptions: CountryOp
     x => AnswerRow("adviserDetails.checkYourAnswersLabel", Seq(s"${x.adviserName} ${x.emailAddress} ${x.phoneNumber}"), false, Some(controllers.register.adviser.routes.AdviserDetailsController.onPageLoad(CheckMode).url))
   }
 
-  def haveAnyTrustees: Option[AnswerRow] = userAnswers.get(HaveAnyTrusteesId) map {
+  def haveAnyTrustees: Option[AnswerRow] = userAnswers.get(identifiers.register.trustees.HaveAnyTrusteesId) map {
     x =>
       AnswerRow("haveAnyTrustees.checkYourAnswersLabel", Seq(if (x) "site.yes" else "site.no"), true,
-        Some(controllers.routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url))
+        Some(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url))
   }
 
   def declaration: Option[AnswerRow] = userAnswers.get(identifiers.register.DeclarationId) map {

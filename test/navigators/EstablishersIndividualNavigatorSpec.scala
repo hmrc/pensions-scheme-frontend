@@ -18,9 +18,10 @@ package navigators
 
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.{HaveAnyTrusteesId, Identifier}
+import identifiers.Identifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual._
+import identifiers.register.trustees.HaveAnyTrusteesId
 import models._
 import models.register.{SchemeDetails, SchemeType}
 import org.scalatest.prop.TableFor6
@@ -96,7 +97,7 @@ object EstablishersIndividualNavigatorSpec extends OptionValues {
 
   private def previousAddress(mode: Mode) = controllers.register.establishers.individual.routes.PreviousAddressController.onPageLoad(mode, 0)
 
-  private def haveAnyTrustees = controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
+  private def haveAnyTrustees = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode)
 
   private def addTrustees = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode)
 
