@@ -19,7 +19,7 @@ import identifiers.LastPageId
 import identifiers.register._
 import models._
 import models.address.{Address, TolerantAddress}
-import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
+import models.register.{DeclarationDormant, SchemeDetails, SchemeType, UKBankDetails}
 import org.scalatest.OptionValues
 
 //scalastyle:off number.of.methods
@@ -38,6 +38,14 @@ package object utils {
 
     def schemeName(schemeName: String): UserAnswers = {
       answers.set(SchemeNameId)(schemeName).asOpt.value
+    }
+
+    def schemeUkBankAccount(haveUkBankAccount: Boolean): UserAnswers = {
+      answers.set(identifiers.UKBankAccountId)(haveUkBankAccount).asOpt.value
+    }
+
+    def bankAccountDetails(bankAccountDetails: UKBankDetails): UserAnswers = {
+      answers.set(identifiers.BankAccountDetailsId)(bankAccountDetails).asOpt.value
     }
 
     def schemeType(schemeType: SchemeType): UserAnswers = {

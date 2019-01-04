@@ -1187,4 +1187,14 @@ messages__what_you_will_need_wk__item_2 = email address
 messages__what_you_will_need_wk__item_3 = phone number
 messages__what_you_will_need_wk__item_4 = address
 
+messages__scheme_uk_bank_account__title = Does the scheme have a UK bank account?
+messages__scheme_uk_bank_account__h1 = Does {0} have a UK bank account?
 
+messages__bank_account_details__title = What are the scheme’s bank account details?
+messages__bank_account_details__h1 = What are {0}’s bank account details?
+messages__bank_account_details__bank_name = Bank name
+messages__bank_account_details__account_name = Account name
+messages__bank_account_details__sort_code = Sort code
+messages__bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
+messages__bank_account_details__account_number = Account number
+messages__bank_account_details__date_bank_account = Approximate date the account was opened

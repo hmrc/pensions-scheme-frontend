@@ -41,3 +41,13 @@ POST       /change-having-pensions-working-knowledge    controllers.WorkingKnowl
 
 GET        /what-you-will-need-for-working-knowledge    controllers.WhatYouWillNeedWorkingKnowledgeController.onPageLoad
 POST       /what-you-will-need-for-working-knowledge    controllers.WhatYouWillNeedWorkingKnowledgeController.onSubmit
+
+GET        /uk-bank-account                             controllers.UKBankAccountController.onPageLoad(mode: Mode = NormalMode)
+POST       /uk-bank-account                             controllers.UKBankAccountController.onSubmit(mode: Mode = NormalMode)
+GET        /change-uk-bank-account                      controllers.UKBankAccountController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-uk-bank-account                      controllers.UKBankAccountController.onSubmit(mode: Mode = CheckMode)
+
+GET        /bank-account-details                        controllers.BankAccountDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /bank-account-details                        controllers.BankAccountDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-bank-account-details                 controllers.BankAccountDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-bank-account-details                 controllers.BankAccountDetailsController.onSubmit(mode: Mode = CheckMode)
