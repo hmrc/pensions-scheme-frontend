@@ -58,3 +58,8 @@ GET        /any-trustees                                controllers.HaveAnyTrust
 POST       /any-trustees                                controllers.HaveAnyTrusteesController.onSubmit(mode: Mode = NormalMode)
 GET        /change-any-trustees                         controllers.HaveAnyTrusteesController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-any-trustees                         controllers.HaveAnyTrusteesController.onSubmit(mode: Mode = CheckMode)
+
+GET        /country-established-in                      controllers.EstablishedCountryController.onPageLoad(mode: Mode = NormalMode)
+POST       /country-established-in                      controllers.EstablishedCountryController.onSubmit(mode: Mode = NormalMode)
+GET        /change-country-established-in               controllers.EstablishedCountryController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-country-established-in               controllers.EstablishedCountryController.onSubmit(mode: Mode = CheckMode)
