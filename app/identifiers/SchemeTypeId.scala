@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package identifiers.register
+package identifiers
 
-import identifiers.TypedIdentifier
-import identifiers.register.trustees.HaveAnyTrusteesId
 import models.register.SchemeType
 import models.register.SchemeType.{MasterTrust, SingleTrust}
 import play.api.i18n.Messages

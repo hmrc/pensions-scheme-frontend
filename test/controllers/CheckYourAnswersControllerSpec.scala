@@ -17,11 +17,11 @@
 package controllers
 
 import controllers.actions._
-import identifiers.EstablishedCountryId
 import identifiers.register._
 import identifiers.register.trustees.HaveAnyTrusteesId
+import identifiers.{EstablishedCountryId, SchemeNameId, SchemeTypeId}
 import models.CheckMode
-import models.register.{Benefits, SchemeDetails, SchemeType}
+import models.register.SchemeType
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete}
@@ -92,28 +92,28 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         "schemeName.checkYourAnswersLabel",
         Seq("Test Scheme"),
         answerIsMessageKey = false,
-        Some(controllers.register.routes.SchemeNameController.onPageLoad(CheckMode).url),
+        Some(routes.SchemeNameController.onPageLoad(CheckMode).url),
         "messages__visuallyhidden__schemeName"
       ),
       AnswerRow(
         "What type of scheme is Test Scheme?",
         Seq(s"messages__scheme_type_${SchemeType.SingleTrust}"),
         answerIsMessageKey = true,
-        Some(register.routes.SchemeTypeController.onPageLoad(CheckMode).url),
+        Some(routes.SchemeTypeController.onPageLoad(CheckMode).url),
         "Change the type of scheme Test Scheme is"
       ),
       AnswerRow(
         "Does Test Scheme have any trustees?",
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url),
+        Some(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url),
         "Change if Test Scheme has any trustees"
       ),
       AnswerRow(
         "Which country was Test Scheme established in?",
         Seq("GB"),
         answerIsMessageKey = false,
-        Some(controllers.routes.EstablishedCountryController.onPageLoad(CheckMode).url),
+        Some(routes.EstablishedCountryController.onPageLoad(CheckMode).url),
         "Change the country Test Scheme was established in"
       ),
       AnswerRow(

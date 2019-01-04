@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees
+package identifiers
 
-import identifiers.{SchemeNameId, TypedIdentifier}
+import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteeKindId, TrusteesId}
 import models.register.trustees.TrusteeKind
-import play.api.i18n.Messages
 import play.api.libs.json.{JsResult, JsSuccess}
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
-import utils.{CountryOptions, Enumerable, UserAnswers}
+import utils.{Enumerable, UserAnswers}
 
 case object HaveAnyTrusteesId extends TypedIdentifier[Boolean] with Enumerable.Implicits {
-  self =>
   override def toString: String = "haveAnyTrustees"
-
-  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
-                   userAnswers: UserAnswers): CheckYourAnswers[self.type] =
-    BooleanCYA[self.type](
-      label = Some(messages("haveAnyTrustees.checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__haveAnyTrustees", userAnswers.get(SchemeNameId).getOrElse("")))
-    )()
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {

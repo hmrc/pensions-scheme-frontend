@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package identifiers.register
+package identifiers
 
-import identifiers.TypedIdentifier
 import play.api.i18n.Messages
 import utils.{CountryOptions, UserAnswers}
 import utils.checkyouranswers.CheckYourAnswers

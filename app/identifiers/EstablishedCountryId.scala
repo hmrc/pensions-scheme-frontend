@@ -16,7 +16,6 @@
 
 package identifiers
 
-import identifiers.register.SchemeNameId
 import play.api.i18n.Messages
 import utils.checkyouranswers.CheckYourAnswers
 import utils.checkyouranswers.CheckYourAnswers.StringCYA

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package identifiers.register
+package identifiers
 
-import identifiers.register.trustees.HaveAnyTrusteesId
 import models.register.SchemeType
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.libs.json.Json

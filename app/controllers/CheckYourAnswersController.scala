@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import identifiers.EstablishedCountryId
+import identifiers.{EstablishedCountryId, SchemeNameId, SchemeTypeId}
 import identifiers.register.{DeclarationDutiesId, _}
 import identifiers.register.trustees.HaveAnyTrusteesId
 import javax.inject.Inject
@@ -50,11 +50,11 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       val beforeYouStart = AnswerSection(
         None,
-        SchemeNameId.row(register.routes.SchemeNameController.onPageLoad(CheckMode).url) ++
-        SchemeTypeId.row(register.routes.SchemeTypeController.onPageLoad(CheckMode).url) ++
-        HaveAnyTrusteesId.row(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url) ++
-        EstablishedCountryId.row(controllers.routes.EstablishedCountryController.onPageLoad(CheckMode).url) ++
-        DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
+        SchemeNameId.row(routes.SchemeNameController.onPageLoad(CheckMode).url) ++
+        SchemeTypeId.row(routes.SchemeTypeController.onPageLoad(CheckMode).url) ++
+        HaveAnyTrusteesId.row(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url) ++
+        EstablishedCountryId.row(routes.EstablishedCountryController.onPageLoad(CheckMode).url) ++
+        DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
       )
 
       Ok(check_your_answers( appConfig, Seq(beforeYouStart), routes.CheckYourAnswersController.onSubmit()))
