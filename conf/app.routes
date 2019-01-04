@@ -73,5 +73,10 @@ POST       /country-established-in                      controllers.EstablishedC
 GET        /change-country-established-in               controllers.EstablishedCountryController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-country-established-in               controllers.EstablishedCountryController.onSubmit(mode: Mode = CheckMode)
 
+GET        /insurance-company-name                      controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /insurance-company-name                      controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = NormalMode)
+GET        /change-insurance-company-name               controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-insurance-company-name               controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = CheckMode)
+
 GET        /check-your-answers-before-start             controllers.CheckYourAnswersController.onPageLoad()
 POST       /check-your-answers-before-start             controllers.CheckYourAnswersController.onSubmit()

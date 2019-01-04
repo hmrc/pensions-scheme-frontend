@@ -15,8 +15,8 @@
  */
 
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
-import identifiers.{LastPageId, SchemeNameId, SchemeTypeId, EstablishedCountryId}
 import identifiers.register._
+import identifiers._
 import models._
 import models.address.{Address, TolerantAddress}
 import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
@@ -38,6 +38,10 @@ package object utils {
 
     def schemeName(schemeName: String): UserAnswers = {
       answers.set(SchemeNameId)(schemeName).asOpt.value
+    }
+
+    def insuranceCompanyName(companyName: String): UserAnswers = {
+      answers.set(InsuranceCompanyNameId)(companyName).asOpt.value
     }
 
     def establishedCountry(country: String): UserAnswers = {
