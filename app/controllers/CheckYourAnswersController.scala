@@ -18,9 +18,8 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import identifiers.{EstablishedCountryId, SchemeNameId, SchemeTypeId}
+import identifiers.{EstablishedCountryId, HaveAnyTrusteesId, SchemeNameId, SchemeTypeId}
 import identifiers.register.{DeclarationDutiesId, _}
-import identifiers.register.trustees.HaveAnyTrusteesId
 import javax.inject.Inject
 import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}

@@ -120,7 +120,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         "messages__workingKnowledge__title",
         Seq("site.no"),
         answerIsMessageKey = true,
-        Some(controllers.routes.WorkingKnowledgeController.onPageLoad(CheckMode).url),
+        Some(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url),
         "messages__visuallyhidden__declarationDuties"
       )
     )
