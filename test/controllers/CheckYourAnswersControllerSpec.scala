@@ -17,6 +17,7 @@
 package controllers
 
 import controllers.actions._
+import identifiers.EstablishedCountryId
 import identifiers.register._
 import identifiers.register.trustees.HaveAnyTrusteesId
 import models.CheckMode
@@ -79,6 +80,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       SchemeNameId.toString -> "Test Scheme",
       SchemeTypeId.toString -> SchemeType.SingleTrust,
       HaveAnyTrusteesId.toString -> true,
+      EstablishedCountryId.toString -> "GB",
       DeclarationDutiesId.toString -> false
     ))
   )
@@ -91,21 +93,28 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         Seq("Test Scheme"),
         answerIsMessageKey = false,
         Some(controllers.register.routes.SchemeNameController.onPageLoad(CheckMode).url),
-        "messages__visuallyhidden__scheme_name"
+        "messages__visuallyhidden__schemeName"
       ),
       AnswerRow(
         "What type of scheme is Test Scheme?",
         Seq(s"messages__scheme_type_${SchemeType.SingleTrust}"),
         answerIsMessageKey = true,
         Some(register.routes.SchemeTypeController.onPageLoad(CheckMode).url),
-        "messages__visuallyhidden__scheme_type"
+        "Change the type of scheme Test Scheme is"
       ),
       AnswerRow(
         "Does Test Scheme have any trustees?",
         Seq("site.yes"),
         answerIsMessageKey = true,
         Some(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url),
-        "messages__visuallyhidden__haveAnyTrustees"
+        "Change if Test Scheme has any trustees"
+      ),
+      AnswerRow(
+        "Which country was Test Scheme established in?",
+        Seq("GB"),
+        answerIsMessageKey = false,
+        Some(controllers.routes.EstablishedCountryController.onPageLoad(CheckMode).url),
+        "Change the country Test Scheme was established in"
       ),
       AnswerRow(
         "messages__workingKnowledge__title",
