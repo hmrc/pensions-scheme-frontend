@@ -1202,6 +1202,6 @@ messages__what_you_will_need_bank_details__item_4 = account number
 messages__insurance_company_name__title = What is the name of the insurance company that secures the scheme benefits?
 messages__insurance_company_name__h1 = What is the name of the insurance company that secures the scheme benefits?
 messages__error__insurance_company_name = Enter the name of the insurance company that secures the scheme benefits
-messages__error__insurance_company_name_invalid = Enter the insurance company's name only using European characters
-messages__error__insurance_company_name_length = Enter the insurance company's name using 160 characters or less
+messages__error__insurance_company_name_invalid = Enter the insurance company’s name only using European characters
+messages__error__insurance_company_name_length = Enter the insurance company’s name using 160 characters or less
 
