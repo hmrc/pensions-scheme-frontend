@@ -19,8 +19,7 @@ package controllers.register
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.establishers.EstablisherKindId
-import identifiers.register.trustees.HaveAnyTrusteesId
+import identifiers.HaveAnyTrusteesId
 import identifiers.register.{SchemeDetailsId, SchemeReviewId}
 import javax.inject.Inject
 import models.{CheckMode, NormalMode}
@@ -39,7 +38,8 @@ class SchemeReviewController @Inject()(appConfig: FrontendAppConfig,
                                        authenticate: AuthAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction
-                                      )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
+                                      )(implicit val ec: ExecutionContext) extends FrontendController
+                                        with I18nSupport with Enumerable.Implicits with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

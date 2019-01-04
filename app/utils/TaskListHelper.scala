@@ -16,11 +16,10 @@
 
 package utils
 
-import identifiers.TypedIdentifier
+import identifiers.{HaveAnyTrusteesId, TypedIdentifier}
 import identifiers.register.establishers.company.{IsCompanyDormantId, CompanyDetailsId => EstablisherCompanyDetailsId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId => EstablisherPartnershipDetailsId}
-import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
@@ -81,7 +80,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
 
   private val addTrusteesDefaultLink: JourneyTaskListSection = JourneyTaskListSection(
     None,
-    Link(addTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+    Link(addTrusteesLinkText, controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
     None
   )
 
@@ -218,11 +217,11 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
       case (false, false) =>
         Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size).url)
       case (true, true) =>
-        Link(changeTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
+        Link(changeTrusteesLinkText, controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
       case (true, false) if isAllTrusteesCompleted =>
-        Link(changeTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
+        Link(changeTrusteesLinkText, controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
       case (true, false) =>
-        Link(addTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
+        Link(addTrusteesLinkText, controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
     }
 
     if (userAnswers.allTrusteesAfterDelete.isEmpty && isAllTrusteesCompleted)

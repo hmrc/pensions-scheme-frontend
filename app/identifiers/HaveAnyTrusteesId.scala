@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees
+package identifiers
 
-import identifiers.TypedIdentifier
+import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteeKindId, TrusteesId}
 import models.register.trustees.TrusteeKind
 import play.api.libs.json.{JsResult, JsSuccess}
 import utils.{Enumerable, UserAnswers}
