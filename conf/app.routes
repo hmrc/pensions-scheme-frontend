@@ -53,3 +53,8 @@ GET        /insurance-company-name                      controllers.InsuranceCom
 POST       /insurance-company-name                      controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = NormalMode)
 GET        /change-insurance-company-name               controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-insurance-company-name               controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /insurance-policy-number                     controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /insurance-policy-number                     controllers.InsurancePolicyNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /change-insurance-policy-number              controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-insurance-policy-number              controllers.InsurancePolicyNumberController.onSubmit(mode: Mode = CheckMode)

@@ -1205,3 +1205,8 @@ messages__error__insurance_company_name = Enter the name of the insurance compan
 messages__error__insurance_company_name_invalid = Enter the insurance company's name only using European characters
 messages__error__insurance_company_name_length = Enter the insurance company's name using 160 characters or less
 
+messages__insurance_policy_number__title = What is the policy number with the insurance company?
+messages__insurance_policy_number__h1 = What is the policy number with {0}?
+messages__error__insurance_policy_number = Enter a policy number
+messages__error__insurance_policy_number_invalid = Enter the policy number only using European characters
+messages__error__insurance_policy_number_length = Enter a policy number using 55 characters or less
