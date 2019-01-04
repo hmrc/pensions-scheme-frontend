@@ -32,8 +32,12 @@ POST       /user-research-details                       controllers.UserResearch
 
 GET        /scheme-details/:srn                         controllers.PSASchemeDetailsController.onPageLoad(srn: String)
 
+GET        /what-you-will-need-benefits-insurance       controllers.WhatYouWillNeedBenefitsInsuranceController.onPageLoad
+POST       /what-you-will-need-benefits-insurance       controllers.WhatYouWillNeedBenefitsInsuranceController.onSubmit
+
 GET        /sharing-scheme-details                      controllers.MembershipPensionRegulatorController.onPageLoad
 POST       /sharing-scheme-details                      controllers.MembershipPensionRegulatorController.onSubmit
+
 
 GET        /what-you-will-need-bank-details             controllers.WhatYouWillNeedBankDetailsController.onPageLoad
 POST       /what-you-will-need-bank-details             controllers.WhatYouWillNeedBankDetailsController.onSubmit
