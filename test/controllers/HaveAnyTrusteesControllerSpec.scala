@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.register.trustees
+package controllers
 
 /*
  * Copyright 2019 HM Revenue & Customs
@@ -33,7 +33,6 @@ package controllers.register.trustees
  */
 
 import connectors.FakeUserAnswersCacheConnector
-import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
 import identifiers.HaveAnyTrusteesId
@@ -45,7 +44,7 @@ import play.api.libs.json._
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import utils.FakeNavigator
-import views.html.register.trustees.haveAnyTrustees
+import views.html.haveAnyTrustees
 
 class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
 

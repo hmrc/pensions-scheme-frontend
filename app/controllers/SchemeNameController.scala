@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
-import identifiers.register.{IsAboutSchemeCompleteId, SchemeNameId}
+import identifiers.SchemeNameId
+import identifiers.register.IsAboutSchemeCompleteId
 import javax.inject.Inject
 import models.Mode
 import models.PSAName._
@@ -32,7 +33,7 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{NameMatchingFactory, Navigator, SectionComplete, UserAnswers}
-import views.html.register.schemeName
+import views.html.schemeName
 
 import scala.concurrent.{ExecutionContext, Future}
 

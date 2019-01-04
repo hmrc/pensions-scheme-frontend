@@ -18,8 +18,9 @@ package navigators
 
 import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
-import controllers.register.routes
-import identifiers.register.{DeclarationDutiesId, SchemeEstablishedCountryId, SchemeNameId, SchemeTypeId}
+import controllers.routes._
+import identifiers.register.{DeclarationDutiesId, SchemeEstablishedCountryId}
+import identifiers.{SchemeNameId, SchemeTypeId}
 import models.NormalMode
 import models.register.SchemeType
 import utils.{Navigator, UserAnswers}
@@ -27,13 +28,13 @@ import utils.{Navigator, UserAnswers}
 class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
 
   private def checkYourAnswers: Option[NavigateTo] =
-    NavigateTo.save(routes.CheckYourAnswersController.onPageLoad())
+    NavigateTo.save(controllers.register.routes.CheckYourAnswersController.onPageLoad())
 
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
-    case SchemeNameId => NavigateTo.dontSave(routes.SchemeTypeController.onPageLoad(NormalMode))
+    case SchemeNameId => NavigateTo.dontSave(SchemeTypeController.onPageLoad(NormalMode))
     case SchemeTypeId => schemeTypeRoutes(from.userAnswers)
-    case SchemeEstablishedCountryId => NavigateTo.dontSave(controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode))
+    case SchemeEstablishedCountryId => NavigateTo.dontSave(WorkingKnowledgeController.onPageLoad(NormalMode))
     case DeclarationDutiesId => checkYourAnswers
   }
 
@@ -41,13 +42,11 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
 
   private def schemeTypeRoutes(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(SchemeTypeId) match {
-      case Some(SchemeType.SingleTrust) =>
-        NavigateTo.save(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode))
-      case Some(SchemeType.MasterTrust) =>
-        NavigateTo.save(controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode))
-      case Some(_) => NavigateTo.dontSave(routes.SchemeEstablishedCountryController.onPageLoad(NormalMode))
+      case Some(SchemeType.SingleTrust) | Some(SchemeType.MasterTrust) =>
+        NavigateTo.save(HaveAnyTrusteesController.onPageLoad(NormalMode))
+      case Some(_) => NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
       case None =>
-        NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
 }

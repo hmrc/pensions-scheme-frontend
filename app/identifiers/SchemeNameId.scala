@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package identifiers.register
-
-import identifiers.TypedIdentifier
+package identifiers
 
 case object SchemeNameId extends TypedIdentifier[String] {
   override def toString: String = "schemeName"
