@@ -20,8 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.EstablishedCountryFormProvider
-import identifiers.EstablishedCountryId
-import identifiers.register.SchemeNameId
+import identifiers.{EstablishedCountryId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
