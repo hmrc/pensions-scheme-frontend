@@ -1199,3 +1199,6 @@ messages__what_you_will_need_bank_details__item_2 = account name
 messages__what_you_will_need_bank_details__item_3 = sort code
 messages__what_you_will_need_bank_details__item_4 = account number
 
+messages__insurance_company_name__title = What is the name of the insurance company that secures the scheme benefits?
+messages__insurance_company_name__h1 = What is the name of the insurance company that secures the scheme benefits?
+
