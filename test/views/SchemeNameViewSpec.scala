@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package views.register
+package views
 
 import forms.register.SchemeNameFormProvider
 import models.NormalMode
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.schemeName
+import views.html.schemeName
 
 class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
 
@@ -38,7 +38,7 @@ class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
 
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.register.routes.SchemeNameController.onSubmit(NormalMode).url,
+    behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.routes.SchemeNameController.onSubmit(NormalMode).url,
       "schemeName")
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)

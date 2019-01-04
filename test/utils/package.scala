@@ -15,8 +15,8 @@
  */
 
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
-import identifiers.{EstablishedCountryId, InsuranceCompanyNameId, InsurancePolicyNumberId, LastPageId}
 import identifiers.register._
+import identifiers._
 import models._
 import models.address.{Address, TolerantAddress}
 import models.register.{DeclarationDormant, SchemeDetails, SchemeType}

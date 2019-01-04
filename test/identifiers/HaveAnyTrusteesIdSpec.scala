@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees
+package identifiers
 
 import identifiers.register.trustees.company._
 import identifiers.register.trustees.individual._
 import identifiers.register.trustees.partnership.PartnershipDetailsId
+import identifiers.register.trustees.{MoreThanTenTrusteesId, TrusteeKindId}
+import models._
 import models.address.Address
 import models.person.PersonDetails
-import models._
 import models.register.trustees.TrusteeKind
 import org.joda.time.LocalDate
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
