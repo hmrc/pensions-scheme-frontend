@@ -56,3 +56,18 @@ GET        /benefits-secured-by-insurance               controllers.BenefitsSecu
 POST       /benefits-secured-by-insurance               controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode = NormalMode)
 GET        /change-benefits-secured-by-insurance        controllers.BenefitsSecuredByInsuranceController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-benefits-secured-by-insurance        controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode = CheckMode)
+
+GET        /enter-postcode                              controllers.InsurerEnterPostcodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /enter-postcode                              controllers.InsurerEnterPostcodeController.onSubmit(mode: Mode = NormalMode)
+GET        /change-enter-postcode                       controllers.InsurerEnterPostcodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-enter-postcode                       controllers.InsurerEnterPostcodeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /select-address                              controllers.InsurerSelectAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /select-address                              controllers.InsurerSelectAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-select-address                       controllers.InsurerSelectAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-select-address                       controllers.InsurerSelectAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /confirm-address                             controllers.InsurerConfirmAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /confirm-address                             controllers.InsurerConfirmAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-confirm-address                      controllers.InsurerConfirmAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-confirm-address                      controllers.InsurerConfirmAddressController.onSubmit(mode: Mode = CheckMode)
