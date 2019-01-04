@@ -19,11 +19,11 @@ package controllers.register
 import config.FrontendAppConfig
 import controllers.ControllerSpecBase
 import controllers.actions._
+import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablisherKindId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
-import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import models.person.PersonDetails
 import models.register.{SchemeDetails, SchemeType}

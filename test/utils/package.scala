@@ -15,7 +15,7 @@
  */
 
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
-import identifiers.{EstablishedCountryId, LastPageId}
+import identifiers.{LastPageId, SchemeNameId, SchemeTypeId, EstablishedCountryId}
 import identifiers.register._
 import models._
 import models.address.{Address, TolerantAddress}
