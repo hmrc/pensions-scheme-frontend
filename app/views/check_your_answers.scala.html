@@ -52,7 +52,7 @@
 
         @components.submit_button()
         @if(resturnOverview){
-            @components.return_link("messages__schemesOverview__manage__link", appConfig.managePensionsSchemeOverviewUrl)
+            @components.return_link("site.return.managing.pension.schemes", appConfig.managePensionsSchemeOverviewUrl)
         } else {
             @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
         }

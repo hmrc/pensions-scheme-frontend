@@ -133,6 +133,7 @@ site.go_back = Go back
 site.signOut = Sign out
 site.printThisPage = Print this page
 site.return.tasklist = Return to pension scheme details
+site.return.managing.pension.schemes = Return to managing pension schemes
 
 messages__unauthorised__title = You can’t access this service with this account
 
