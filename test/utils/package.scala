@@ -44,6 +44,10 @@ package object utils {
       answers.set(InsuranceCompanyNameId)(companyName).asOpt.value
     }
 
+    def insurancePolicyNumber(policyNumber: String): UserAnswers = {
+      answers.set(InsurancePolicyNumberId)(policyNumber).asOpt.value
+    }
+
     def establishedCountry(country: String): UserAnswers = {
       answers.set(EstablishedCountryId)(country).asOpt.value
     }
