@@ -16,7 +16,7 @@
 
 package views.register.trustees
 
-import controllers.register.trustees.routes
+import controllers.routes
 import forms.register.trustees.HaveAnyTrusteesFormProvider
 import models.NormalMode
 import play.api.data.Form

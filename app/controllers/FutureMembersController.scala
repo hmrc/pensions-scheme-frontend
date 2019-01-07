@@ -20,8 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.FutureMembersFormProvider
-import identifiers.FutureMembersId
-import identifiers.register.SchemeNameId
+import identifiers.{FutureMembersId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form

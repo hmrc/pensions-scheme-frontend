@@ -20,8 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.CurrentMembersFormProvider
-import identifiers.CurrentMembersId
-import identifiers.register.SchemeNameId
+import identifiers.{CurrentMembersId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
@@ -31,6 +30,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.currentMembers
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class CurrentMembersController @Inject()(appConfig: FrontendAppConfig,

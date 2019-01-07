@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package identifiers.register
+package forms
 
-import identifiers.TypedIdentifier
+import forms.mappings.{Constraints, Mappings}
+import javax.inject.Inject
+import play.api.data.Form
 
-case object SchemeNameId extends TypedIdentifier[String] {
-  override def toString: String = "schemeName"
+class InsuranceCompanyNameFormProvider @Inject() extends Mappings with Constraints {
+  val maxLength = 160
+
+  def apply(): Form[String] = Form(
+    "companyName" -> text("messages__error__insurance_company_name").
+      verifying(firstError(
+        maxLength(maxLength, "messages__error__insurance_company_name_length"),
+        safeText("messages__error__insurance_company_name_invalid")))
+  )
 }
