@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import identifiers.register._
+import identifiers.{EstablishedCountryId, HaveAnyTrusteesId, SchemeNameId, SchemeTypeId}
+import identifiers.register.{DeclarationDutiesId, _}
 import javax.inject.Inject
 import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -26,7 +27,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Enumerable, Navigator, SectionComplete}
+import utils._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -46,35 +47,16 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
       implicit val userAnswers = request.userAnswers
 
-      val schemeDetailsSection = AnswerSection(
-        Some("messages__scheme_details__title"),
-        SchemeDetailsId.row(routes.SchemeDetailsController.onPageLoad(CheckMode).url) ++
-          SchemeEstablishedCountryId.row(routes.SchemeEstablishedCountryController.onPageLoad(CheckMode).url) ++
-          MembershipId.row(routes.MembershipController.onPageLoad(CheckMode).url) ++
-          MembershipFutureId.row(routes.MembershipFutureController.onPageLoad(CheckMode).url) ++
-          InvestmentRegulatedId.row(routes.InvestmentRegulatedController.onPageLoad(CheckMode).url) ++
-          OccupationalPensionSchemeId.row(routes.OccupationalPensionSchemeController.onPageLoad(CheckMode).url)
+      val beforeYouStart = AnswerSection(
+        None,
+        SchemeNameId.row(routes.SchemeNameController.onPageLoad(CheckMode).url) ++
+        SchemeTypeId.row(routes.SchemeTypeController.onPageLoad(CheckMode).url) ++
+        HaveAnyTrusteesId.row(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url) ++
+        EstablishedCountryId.row(routes.EstablishedCountryController.onPageLoad(CheckMode).url) ++
+        DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
       )
 
-      val schemeBenefitsSection = AnswerSection(
-        Some("messages__scheme_benefits_section"),
-        BenefitsId.row(routes.BenefitsController.onPageLoad(CheckMode).url) ++
-          SecuredBenefitsId.row(routes.SecuredBenefitsController.onPageLoad(CheckMode).url) ++
-          BenefitsInsurerId.row(routes.BenefitsInsurerController.onPageLoad(CheckMode).url) ++
-          InsurerAddressId.row(routes.InsurerAddressController.onPageLoad(CheckMode).url)
-      )
-
-      val bankAccountSection = AnswerSection(
-        Some("messages__uk_bank_account_details__title"),
-        UKBankAccountId.row(routes.UKBankAccountController.onPageLoad(CheckMode).url) ++
-          UKBankDetailsId.row(routes.UKBankDetailsController.onPageLoad(CheckMode).url)
-      )
-
-      Ok(check_your_answers(
-        appConfig,
-        Seq(schemeDetailsSection, schemeBenefitsSection, bankAccountSection),
-        routes.CheckYourAnswersController.onSubmit())
-      )
+      Ok(check_your_answers(appConfig, Seq(beforeYouStart), routes.CheckYourAnswersController.onSubmit()))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {

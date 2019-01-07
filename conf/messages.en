@@ -1174,6 +1174,7 @@ messages__adviser__phone__length = The phone number cannot be more than 24 chara
 messages__adviser__phone__invalid = The phone number can only contain numbers
 
 declarationDuties.checkYourAnswersLabel= Do you have working knowledge of pensions and pensions tax legislation?
+messages__visuallyhidden__declarationDuties = Change if you have working knowledge of pensions and pensions tax legislation
 adviserName.checkYourAnswersLabel = Who has working knowledge of pensions and pensions tax legislation?
 adviserEmail.checkYourAnswersLabel = What is {0}’s email address?
 adviserPhone.checkYourAnswersLabel = What is {0}’s phone number?
@@ -1217,12 +1218,32 @@ messages__what_you_will_need_bank_details__item_2 = account name
 messages__what_you_will_need_bank_details__item_3 = sort code
 messages__what_you_will_need_bank_details__item_4 = account number
 
+messages__insurance_company_name__title = What is the name of the insurance company that secures the scheme benefits?
+messages__insurance_company_name__h1 = What is the name of the insurance company that secures the scheme benefits?
+messages__error__insurance_company_name = Enter the name of the insurance company that secures the scheme benefits
+messages__error__insurance_company_name_invalid = Enter the insurance company’s name only using European characters
+messages__error__insurance_company_name_length = Enter the insurance company’s name using 160 characters or less
+
+messages__established_country__title = Which country was the scheme established in?
+messages__established_country__h1 = Which country was {0} established in?
+
 messages__what_you_will_need_members__title = Membership details
 messages__what_you_will_need_members__h1 = Membership details
 messages__what_you_will_need_members__lede = You will need to tell us how many members:
 messages__what_you_will_need_members__item_1 = the scheme has at the moment
 messages__what_you_will_need_members__item_2 = you expect the scheme to have in the next 12 months
 
+schemeName.checkYourAnswersLabel = What is the name of the scheme?
+messages__visuallyhidden__schemeName = Change the name of the scheme
+schemeType.checkYourAnswersLabel = What type of scheme is {0}?
+messages__visuallyhidden__schemeType = Change the type of scheme {0} is
+haveAnyTrustees.checkYourAnswersLabel = Does {0} have any trustees?
+messages__visuallyhidden__haveAnyTrustees = Change if {0} has any trustees
+schemeEstablishedCountry.hns_checkYourAnswersLabel = Which country was {0} established in?
+messages__visuallyhidden__hns_schemeEstablishedCountry = Change the country {0} was established in
 
-
-
+messages__insurance_policy_number__title = What is the policy number with the insurance company?
+messages__insurance_policy_number__h1 = What is the policy number with {0}?
+messages__error__insurance_policy_number = Enter a policy number
+messages__error__insurance_policy_number_invalid = Enter the policy number only using European characters
+messages__error__insurance_policy_number_length = Enter a policy number using 55 characters or less

@@ -60,7 +60,7 @@ object CheckYourAnswers {
 
   implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = StringCYA()()
 
-  case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None) {
+  case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
     def apply()(implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
@@ -72,12 +72,50 @@ object CheckYourAnswers {
                 Seq(retrieveStringAnswer(id, string)),
                 answerIsMessageKey = false,
                 Some(changeUrl),
-                s"messages__visuallyhidden__${id.toString}"
+                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
               ))
           }.getOrElse(Seq.empty[AnswerRow])
       }
     }
   }
+
+  case class BooleanCYA[I <: TypedIdentifier[Boolean]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+
+    def apply()(implicit rds: Reads[Boolean], countryOptions: CountryOptions): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          userAnswers.get(id).map {
+            flag =>
+              Seq(AnswerRow(
+                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq(if (flag) "site.yes" else "site.no"),
+                answerIsMessageKey = true,
+                Some(changeUrl),
+                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+              ))
+          }.getOrElse(Seq.empty[AnswerRow])
+      }
+    }
+  }
+
+  case class SchemeTypeCYA[I <: TypedIdentifier[SchemeType]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+
+    def apply()(implicit rds: Reads[SchemeType]): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          userAnswers.get(id).map {
+            schemeType =>
+              Seq(AnswerRow(
+                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq(s"messages__scheme_type_${schemeType.toString}"),
+                answerIsMessageKey = true,
+                Some(changeUrl),
+                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+              ))
+          }.getOrElse(Seq.empty[AnswerRow])
+        }
+      }
+    }
 
   implicit def boolean[I <: TypedIdentifier[Boolean]](implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
@@ -705,5 +743,4 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
         }.getOrElse(Seq.empty[AnswerRow])
     }
   }
-
 }
