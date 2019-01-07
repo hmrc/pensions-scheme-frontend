@@ -107,3 +107,6 @@ GET        /investment-regulated-scheme                 controllers.InvestmentRe
 POST       /investment-regulated-scheme                 controllers.InvestmentRegulatedSchemeController.onSubmit(mode: Mode = NormalMode)
 GET        /change-investment-regulated-scheme          controllers.InvestmentRegulatedSchemeController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-investment-regulated-scheme          controllers.InvestmentRegulatedSchemeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /check-your-answers-members                  controllers.CheckYourAnswersMembersController.onPageLoad()
+POST       /check-your-answers-members                  controllers.CheckYourAnswersMembersController.onSubmit()

@@ -88,6 +88,7 @@ class FrontendAppConfig @Inject()(override val runModeConfiguration: Configurati
 
   //FEATURES
   lazy val allowMasterTrust: Boolean = loadConfigOrDefault("features.allowMasterTrust", "false").toBoolean
+  lazy val hnsIterationTwo: Boolean = loadConfigOrDefault("features.hns-iteration-two", "false").toBoolean
   lazy val languageTranslationEnabled:Boolean = runModeConfiguration.getBoolean("features.welsh-translation").getOrElse(true)
 
   def encryptionKey(crypto: String): String = loadConfig(s"$crypto.encryption.key")

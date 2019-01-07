@@ -28,11 +28,12 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   private def emptyAnswerSections: Seq[Section] = Nil
 
-  def createView(): () => HtmlFormat.Appendable = () =>
+  def createView(isHnsIterationTwoEnabled: Boolean): () => HtmlFormat.Appendable = () =>
     check_your_answers(
       frontendAppConfig,
       emptyAnswerSections,
-      routes.IndexController.onPageLoad()
+      routes.IndexController.onPageLoad(),
+      isHnsIterationTwoEnabled
     )(fakeRequest, messages)
 
   def createViewWithData: (Seq[Section]) => HtmlFormat.Appendable = (sections) =>
@@ -42,12 +43,18 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       routes.IndexController.onPageLoad()
     )(fakeRequest, messages)
 
-  "check_your_answers view" must {
-    behave like normalPageWithTitle(createView(), messageKeyPrefix, messages("checkYourAnswers.title"), messages("checkYourAnswers.heading"))
+  "check_your_answers view with toggle On" must {
+    behave like normalPageWithTitle(createView(isHnsIterationTwoEnabled = true),
+      messageKeyPrefix, messages("checkYourAnswers.hs.title"), messages("checkYourAnswers.hs.heading"))
 
-    behave like pageWithSubmitButton(createView())
+    behave like pageWithSubmitButton(createView(isHnsIterationTwoEnabled = true))
 
     behave like checkYourAnswersPage(createViewWithData)
+  }
+
+  "check_your_answers view with toggle Off" must {
+    behave like normalPageWithTitle(createView(isHnsIterationTwoEnabled = false),
+      messageKeyPrefix, messages("checkYourAnswers.title"), messages("checkYourAnswers.heading"))
   }
 
 }

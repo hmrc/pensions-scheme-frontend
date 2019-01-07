@@ -60,6 +60,8 @@ object CheckYourAnswers {
 
   implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = StringCYA()()
 
+  implicit def members[I <: TypedIdentifier[Members]](implicit rds: Reads[Members]): CheckYourAnswers[I] = MembersCYA()()
+
   case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None) {
 
     def apply()(implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
@@ -206,6 +208,27 @@ object CheckYourAnswers {
             )
           )
       }.getOrElse(Seq.empty[AnswerRow])
+    }
+  }
+
+  case class MembersCYA[I <: TypedIdentifier[Members]](label: Option[String] = None,
+                                                       hiddenLabel: Option[String] = None) {
+
+    def apply()(implicit rds: Reads[Members]): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+          members =>
+            Seq(
+              AnswerRow(
+                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq(s"messages__members__$members"),
+                answerIsMessageKey = true,
+                Some(changeUrl),
+                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+              )
+            )
+        }.getOrElse(Seq.empty[AnswerRow])
+      }
     }
   }
 

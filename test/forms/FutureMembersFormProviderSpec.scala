@@ -17,26 +17,25 @@
 package forms
 
 import forms.behaviours.FormBehaviours
-import models.register.Membership
-import models.{Field, Invalid, Required}
+import models.{Field, Invalid, Members, Required}
 
 class FutureMembersFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
-    "value" -> Membership.options.head.value
+    "value" -> Members.options.head.value
   )
 
   val form = new FutureMembersFormProvider()()
 
   "Current Members form" must {
 
-    behave like questionForm[Membership](Membership.values.head)
+    behave like questionForm[Members](Members.values.head)
 
     behave like formWithOptionField(
       Field(
         "value",
         Required -> "messages__error__selection",
         Invalid -> "error.invalid"),
-      Membership.options.map(_.value): _*)
+      Members.options.map(_.value): _*)
   }
 }

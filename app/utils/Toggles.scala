@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-package forms
+package utils
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import models.Members
-import play.api.data.Form
+object Toggles {
 
-class FutureMembersFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[Members] =
-    Form(
-      "value" -> enumerable[Members]("messages__error__selection")
-    )
+  val hnsIterationTwo: String = "hns-iteration-two"
 }
