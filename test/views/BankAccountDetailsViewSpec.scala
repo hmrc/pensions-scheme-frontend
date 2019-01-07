@@ -18,15 +18,12 @@ package views
 
 import controllers.routes
 import forms.BankAccountDetailsFormProvider
-import models.NormalMode
-import models.register.UKBankDetails
-import org.apache.commons.lang3.RandomUtils
-import org.joda.time.LocalDate
-import play.api.data.{Form, FormError}
+import models.{BankAccountDetails, NormalMode}
+import play.api.data.Form
 import views.behaviours.QuestionViewBehaviours
 import views.html.bankAccountDetails
 
-class BankAccountDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
+class BankAccountDetailsViewSpec extends QuestionViewBehaviours[BankAccountDetails] {
 
   val messageKeyPrefix = "bank_account_details"
 
@@ -40,16 +37,6 @@ class BankAccountDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
   private def createViewUsingForm = (form: Form[_]) =>
     bankAccountDetails(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
-  val validData: Map[String, String] = Map(
-    "bankName" -> "test bank",
-    "accountName" -> "test account",
-    "sortCode" -> RandomUtils.nextInt(100000, 999999).toString,
-    "accountNumber" -> RandomUtils.nextInt(10000000, 99999999).toString,
-    "date.day" -> "1",
-    "date.month" -> "2",
-    "date.year" -> LocalDate.now().getYear.toString
-  )
-
   "Bank Account Details view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", schemeName))
@@ -61,50 +48,6 @@ class BankAccountDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
       "bankName", "accountName", "sortCode", "accountNumber"
     )
 
-    "display an input text box with the correct label and value for day" in {
-      val doc = asDocument(createViewUsingForm(form.bind(validData)))
-      doc must haveLabelAndValue("date_day", messages("messages__common__day"), "1")
-    }
-
-    "display an input text box with the correct label and value for month" in {
-      val doc = asDocument(createViewUsingForm(form.bind(validData)))
-      doc must haveLabelAndValue("date_month", messages("messages__common__month"), "2")
-    }
-
-    "display an input text box with the correct label and value for year" in {
-      val doc = asDocument(createViewUsingForm(form.bind(validData)))
-      doc must haveLabelAndValue("date_year", messages("messages__common__year"), LocalDate.now().getYear.toString)
-    }
-
-    "display error for day field on error summary" in {
-      val error = "error"
-      val doc = asDocument(createViewUsingForm(form.withError(FormError("date.day", error))))
-      doc must haveErrorOnSummary("date_day", error)
-    }
-
-    "display error for month field on error summary" in {
-      val error = "error"
-      val doc = asDocument(createViewUsingForm(form.withError(FormError("date.month", error))))
-      doc must haveErrorOnSummary("date_month", error)
-    }
-
-    "display error for year field on error summary" in {
-      val error = "error"
-      val doc = asDocument(createViewUsingForm(form.withError(FormError("date.year", error))))
-      doc must haveErrorOnSummary("date_year", error)
-    }
-
-    "display only one date error when all the date fields are missing" in {
-      val expectedError = messages("messages__error__date")
-      val invalidData: Map[String, String] = Map(
-        "bankName" -> "test bank",
-        "accountName" -> "test account",
-        "sortCode" -> RandomUtils.nextInt(100000, 999999).toString,
-        "accountNumber" -> RandomUtils.nextInt(10000000, 99999999).toString
-      )
-      val doc = asDocument(createViewUsingForm(form.bind(invalidData)))
-      doc.select("span.error-notification").text() mustEqual expectedError
-    }
     behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
 }

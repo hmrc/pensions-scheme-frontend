@@ -21,8 +21,8 @@ import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.BankAccountDetailsFormProvider
-import models.NormalMode
-import models.register.{SortCode, UKBankDetails}
+import models.register.SortCode
+import models.{BankAccountDetails, NormalMode}
 import org.apache.commons.lang3.RandomUtils
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -79,7 +79,7 @@ object BankAccountDetailsControllerSpec {
   private val sortCode = "344567"
   //scalastyle:on magic.number
 
-  val bankDetails = UKBankDetails("test bank", "test account",
+  val bankDetails = BankAccountDetails("test bank", "test account",
     SortCode("34", "45", "67"), accountNo, new LocalDate(LocalDate.now().getYear,
       LocalDate.now().getMonthOfYear, LocalDate.now().getDayOfMonth))
 

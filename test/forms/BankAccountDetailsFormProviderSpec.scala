@@ -19,7 +19,7 @@ package forms
 import forms.behaviours.{BankDetailsBehaviour, FormBehaviours}
 import forms.mappings.Constraints
 import models._
-import models.register.{SortCode, UKBankDetails}
+import models.register.SortCode
 import org.apache.commons.lang3.{RandomStringUtils, RandomUtils}
 import org.joda.time.LocalDate
 
@@ -44,13 +44,13 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
     "date.year" -> s"${year - 20}"
   )
 
-  val bankDetails = UKBankDetails("test bank", "test account",
+  val bankDetails = BankAccountDetails("test bank", "test account",
     testSortCode, testAccountNumber, new LocalDate(year - 20, month, day))
 
   val form = new BankAccountDetailsFormProvider()()
 
 
-  "UKBankDetails form" must {
+  "BankAccountDetails form" must {
     behave like questionForm(bankDetails)
 
     behave like formWithMandatoryTextFields(
@@ -76,7 +76,7 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
         "date.month" -> s"$month",
         "date.year" -> s"${year - 20}"
       ),
-      (bankDetails: UKBankDetails) => bankDetails.sortCode
+      (bankDetails: BankAccountDetails) => bankDetails.sortCode
     )
 
     "fail to bind when the bank name exceeds max length 28" in {

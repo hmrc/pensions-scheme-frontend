@@ -18,7 +18,7 @@ package forms
 
 import forms.mappings.BankDetailsMapping
 import javax.inject.Inject
-import models.register.UKBankDetails
+import models.BankAccountDetails
 import play.api.data.Form
 import play.api.data.Forms._
 
@@ -27,7 +27,7 @@ class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
   val nameMaxLength = 28
   val accountNoMaxLength = 8
 
-  def apply(): Form[UKBankDetails] = Form(
+  def apply(): Form[BankAccountDetails] = Form(
     mapping(
       "bankName" ->
         text("messages__error__bank_name").
@@ -45,6 +45,6 @@ class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
       "date" ->
         dateMapping("messages__error__date", "error.invalid_date")
           .verifying(futureDate("messages__error__date_future"))
-    )(UKBankDetails.apply)(UKBankDetails.unapply)
+    )(BankAccountDetails.apply)(BankAccountDetails.unapply)
   )
 }

@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package identifiers
+package models
 
-import models.BankAccountDetails
+import models.register.SortCode
+import org.joda.time.LocalDate
+import play.api.libs.json.Json
 
-case object BankAccountDetailsId extends TypedIdentifier[BankAccountDetails] {
-  override def toString: String = "bankAccountDetails"
+case class BankAccountDetails(bankName: String, accountName: String, sortCode: SortCode, accountNumber: String, date: LocalDate)
+object BankAccountDetails {
+  implicit val format = Json.format[BankAccountDetails]
 }
