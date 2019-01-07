@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import connectors.UserAnswersCacheConnector
 import controllers.routes._
 import identifiers.register.{DeclarationDutiesId, SchemeEstablishedCountryId}
-import identifiers.{SchemeNameId, SchemeTypeId}
+import identifiers.{EstablishedCountryId, HaveAnyTrusteesId, SchemeNameId, SchemeTypeId}
 import models.NormalMode
 import models.register.SchemeType
 import utils.{Navigator, UserAnswers}
@@ -34,17 +34,25 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
     case SchemeNameId => NavigateTo.dontSave(SchemeTypeController.onPageLoad(NormalMode))
     case SchemeTypeId => schemeTypeRoutes(from.userAnswers)
-    case SchemeEstablishedCountryId => NavigateTo.dontSave(WorkingKnowledgeController.onPageLoad(NormalMode))
+    case HaveAnyTrusteesId => NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
+    case EstablishedCountryId => NavigateTo.dontSave(WorkingKnowledgeController.onPageLoad(NormalMode))
     case DeclarationDutiesId => checkYourAnswers
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = ???
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
+    case SchemeNameId => checkYourAnswers
+    case SchemeTypeId => schemeTypeRoutes(from.userAnswers)
+    case HaveAnyTrusteesId => checkYourAnswers
+    case SchemeEstablishedCountryId => checkYourAnswers
+    case DeclarationDutiesId => checkYourAnswers
+  }
 
   private def schemeTypeRoutes(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(SchemeTypeId) match {
       case Some(SchemeType.SingleTrust) | Some(SchemeType.MasterTrust) =>
-        NavigateTo.save(HaveAnyTrusteesController.onPageLoad(NormalMode))
-      case Some(_) => NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
+      case Some(_) =>
+        NavigateTo.dontSave(HaveAnyTrusteesController.onPageLoad(NormalMode))
       case None =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }

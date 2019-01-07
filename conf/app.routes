@@ -1,7 +1,7 @@
 # microservice specific routes
 ->         /register                                    register.Routes
 
-GET        /                                            controllers.WhatYouWillNeedController.onPageLoad()
+GET        /                                            controllers.BeforeYouStartController.onPageLoad()
 
 GET        /what-you-will-need                          controllers.WhatYouWillNeedController.onPageLoad()
 POST       /what-you-will-need                          controllers.WhatYouWillNeedController.onSubmit()

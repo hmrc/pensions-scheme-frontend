@@ -18,7 +18,10 @@ package navigators
 
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.EstablishedCountryId
+import controllers.routes._
+import identifiers.register.DeclarationDutiesId
+import identifiers.{EstablishedCountryId, HaveAnyTrusteesId, SchemeNameId, SchemeTypeId}
+import models.NormalMode
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -27,15 +30,20 @@ class BeforeYouStartNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import BeforeYouStartNavigatorSpec._
 
-  private def routes() = Table(
+  private def routes = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (EstablishedCountryId, emptyAnswers, indexPage, false, None, false)
+    (SchemeNameId, emptyAnswers, schemeTypePage, false, Some(checkYourAnswersPage), false),
+    (SchemeTypeId, emptyAnswers, haveAnyTrusteesPage, false, Some(haveAnyTrusteesPage), false),
+    (SchemeTypeId, emptyAnswers, establishedCountryPage, false, Some(checkYourAnswersPage), false),
+    (HaveAnyTrusteesId, emptyAnswers, establishedCountryPage, false, Some(checkYourAnswersPage), false),
+    (EstablishedCountryId, emptyAnswers, workingKnowledgePage, false, Some(checkYourAnswersPage), false),
+    (DeclarationDutiesId, emptyAnswers, checkYourAnswersPage, false, Some(checkYourAnswersPage), false)
   )
 
+  val navigator = new BeforeYouStartNavigator(FakeUserAnswersCacheConnector)
   "BeforeYouStartNavigator" must {
-    val navigator = new BeforeYouStartNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes(), dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 }
@@ -44,7 +52,12 @@ object BeforeYouStartNavigatorSpec {
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private def dataDescriber(answers: UserAnswers): String = answers.toString
-  private def indexPage: Call = controllers.routes.IndexController.onPageLoad()
+  private def indexPage: Call = IndexController.onPageLoad()
+  private def schemeTypePage: Call = SchemeTypeController.onPageLoad(NormalMode)
+  private def haveAnyTrusteesPage: Call = HaveAnyTrusteesController.onPageLoad(NormalMode)
+  private def establishedCountryPage: Call = EstablishedCountryController.onPageLoad(NormalMode)
+  private def workingKnowledgePage: Call = WorkingKnowledgeController.onPageLoad(NormalMode)
+  private val checkYourAnswersPage: Call = controllers.register.routes.CheckYourAnswersController.onPageLoad()
 }
 
 
