@@ -1242,3 +1242,8 @@ messages__visuallyhidden__haveAnyTrustees = Change if {0} has any trustees
 schemeEstablishedCountry.hns_checkYourAnswersLabel = Which country was {0} established in?
 messages__visuallyhidden__hns_schemeEstablishedCountry = Change the country {0} was established in
 
+messages__insurance_policy_number__title = What is the policy number with the insurance company?
+messages__insurance_policy_number__h1 = What is the policy number with {0}?
+messages__error__insurance_policy_number = Enter a policy number
+messages__error__insurance_policy_number_invalid = Enter the policy number only using European characters
+messages__error__insurance_policy_number_length = Enter a policy number using 55 characters or less
