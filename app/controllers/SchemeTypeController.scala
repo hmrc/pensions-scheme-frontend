@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.register
+package controllers
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import controllers.Retrievals
 import controllers.actions._
 import forms.register.SchemeTypeFormProvider
-import identifiers.register.{SchemeNameId, SchemeTypeId}
+import identifiers.{SchemeNameId, SchemeTypeId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
@@ -30,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{NameMatchingFactory, Navigator, UserAnswers}
-import views.html.register.schemeType
+import views.html.schemeType
 
 import scala.concurrent.{ExecutionContext, Future}
 

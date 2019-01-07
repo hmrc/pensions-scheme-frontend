@@ -16,7 +16,7 @@
 
 package identifiers.register.trustees
 
-import identifiers._
+import identifiers.TypedIdentifier
 import models.register.trustees.TrusteeKind
 import play.api.libs.json.{JsResult, JsSuccess}
 import utils.{Enumerable, UserAnswers}

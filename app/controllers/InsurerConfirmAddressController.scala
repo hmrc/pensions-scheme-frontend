@@ -23,7 +23,6 @@ import controllers.actions._
 import controllers.address.ManualAddressController
 import forms.address.AddressFormProvider
 import identifiers._
-import identifiers.register.SchemeNameId
 import javax.inject.Inject
 import models.Mode
 import models.address.Address

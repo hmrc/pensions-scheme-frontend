@@ -20,12 +20,10 @@ import base.CSRFRequest
 import connectors.{AddressLookupConnector, FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import forms.address.PostCodeLookupFormProvider
-import identifiers.register.{SchemeDetailsId, SchemeNameId}
+import identifiers.SchemeNameId
 import models.NormalMode
 import models.address.TolerantAddress
 import models.person.PersonDetails
-import models.register.SchemeDetails
-import models.register.SchemeType.SingleTrust
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -38,7 +36,7 @@ import play.api.mvc.{Call, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, route, _}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.annotations.{AboutBenefitsAndInsurance, Register}
+import utils.annotations.AboutBenefitsAndInsurance
 import utils.{FakeNavigator, Navigator}
 import viewmodels.address.PostcodeLookupViewModel
 import views.html.address.postcodeLookup

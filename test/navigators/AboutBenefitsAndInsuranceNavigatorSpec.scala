@@ -18,7 +18,7 @@ package navigators
 
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.OccupationalPensionSchemeId
+import identifiers._
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -29,7 +29,8 @@ class AboutBenefitsAndInsuranceNavigatorSpec extends SpecBase with NavigatorBeha
 
   private def routes() = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
-    (OccupationalPensionSchemeId, emptyAnswers, indexPage, false, None, false)
+    (OccupationalPensionSchemeId, emptyAnswers, indexPage, false, None, false),
+    (InsuranceCompanyNameId, emptyAnswers, indexPage, false, None, false)
   )
 
   "AboutBenefitsAndInsuranceNavigator" must {

@@ -22,7 +22,6 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
 import forms.address.AddressFormProvider
 import identifiers._
-import identifiers.register.SchemeNameId
 import models.NormalMode
 import models.address.{Address, TolerantAddress}
 import org.scalatest.concurrent.ScalaFutures

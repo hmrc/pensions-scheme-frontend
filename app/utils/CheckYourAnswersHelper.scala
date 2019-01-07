@@ -17,6 +17,7 @@
 package utils
 
 import controllers.register.routes
+import identifiers.HaveAnyTrusteesId
 import identifiers.register._
 import identifiers.register.adviser.AdviserDetailsId
 import identifiers.register.establishers.company._
