@@ -1191,6 +1191,11 @@ messages__what_you_will_need_wk__item_4 = address
 messages__scheme_uk_bank_account__title = Does the scheme have a UK bank account?
 messages__scheme_uk_bank_account__h1 = Does {0} have a UK bank account?
 
+messages__current_members__title = How many members does the scheme currently have?
+messages__current_members__h1 = How many members does {0} currently have?
+messages__current_members__body1 = You might have to register the pension scheme with The Pensions Regulator.
+messages__current_members__body2 = If the scheme has 2 or more members, HMRC will share the scheme and your contact details with The Pensions Regulator. They will then contact you to register the scheme with them.
+
 messages__what_you_will_need_benefits__title = Benefits and insurance
 messages__what_you_will_need_benefits__h1 = Benefits and insurance
 messages__what_you_will_need_benefits__p1 = You will need to tell us:
@@ -1249,6 +1254,13 @@ messages__insurance_policy_number__h1 = What is the policy number with {0}?
 messages__error__insurance_policy_number = Enter a policy number
 messages__error__insurance_policy_number_invalid = Enter the policy number only using European characters
 messages__error__insurance_policy_number_length = Enter a policy number using 55 characters or less
+
+messages__future_members__title = How many members do you expect the scheme to have in 12 months time?
+messages__future_members__h1 = How many scheme members do you expect {0} to have in 12 months time?
+
+messages__investment_regulated_scheme__title = Is the scheme investment regulated?
+messages__investment_regulated_scheme__h1 = Is the scheme investment regulated?
+
 messages__bank_account_details__title = What are the scheme’s bank account details?
 messages__bank_account_details__h1 = What are {0}’s bank account details?
 messages__bank_account_details__bank_name = Bank name
