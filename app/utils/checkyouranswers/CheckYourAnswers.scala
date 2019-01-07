@@ -79,6 +79,25 @@ object CheckYourAnswers {
     }
   }
 
+  case class BooleanCYA[I <: TypedIdentifier[Boolean]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+
+    def apply()(implicit rds: Reads[Boolean], countryOptions: CountryOptions): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          userAnswers.get(id).map {
+            flag =>
+              Seq(AnswerRow(
+                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq(if (flag) "site.yes" else "site.no"),
+                answerIsMessageKey = true,
+                Some(changeUrl),
+                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+              ))
+          }.getOrElse(Seq.empty[AnswerRow])
+      }
+    }
+  }
+
   implicit def boolean[I <: TypedIdentifier[Boolean]](implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
@@ -443,7 +462,9 @@ case class BankDetailsCYA[I <: TypedIdentifier[UKBankDetails]](
                                                                 accountNumberLabel: String = "messages__uk_bank_account_details__account_number",
                                                                 changeAccountNumber: String = "messages__visuallyhidden__uKBankAccount__account_number",
                                                                 dateLabel: String = "bankAccountDate.checkYourAnswersLabel",
-                                                                changeDate: String = "messages__visuallyhidden__uKBankAccount__date_bank_account"
+                                                                changeDate: String = "messages__visuallyhidden__uKBankAccount__date_bank_account",
+                                                                label: Option[String] = None,
+                                                                hiddenLabel: Option[String] = None
                                                               ) {
 
   def apply()(implicit rds: Reads[UKBankDetails]): CheckYourAnswers[I] = {
@@ -491,6 +512,29 @@ case class BankDetailsCYA[I <: TypedIdentifier[UKBankDetails]](
     }
   }
 
+}
+
+case class BankDetailsHnSCYA[I <: TypedIdentifier[UKBankDetails]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+
+  def apply()(implicit rds: Reads[UKBankDetails], countryOptions: CountryOptions): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map {
+          bankDetails =>
+            Seq(AnswerRow(
+              label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+              Seq(bankDetails.bankName,
+                bankDetails.accountName,
+                s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
+                bankDetails.accountNumber,
+                DateHelper.formatDate(bankDetails.date)),
+              answerIsMessageKey = false,
+              Some(changeUrl),
+              hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+            ))
+        }.getOrElse(Seq.empty[AnswerRow])
+    }
+  }
 }
 
 case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "messages__establisher_address_years__title",

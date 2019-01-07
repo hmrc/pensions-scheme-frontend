@@ -6,8 +6,8 @@ GET        /                                            controllers.WhatYouWillN
 GET        /what-you-will-need                          controllers.WhatYouWillNeedController.onPageLoad()
 POST       /what-you-will-need                          controllers.WhatYouWillNeedController.onSubmit()
 
-GET        /what-you-will-need-before-start             controllers.BeforeYouStartController.onPageLoad()
-POST       /what-you-will-need-before-start             controllers.BeforeYouStartController.onSubmit()
+GET        /what-you-will-need-bank-details             controllers.BeforeYouStartController.onPageLoad()
+POST       /what-you-will-need-bank-details             controllers.BeforeYouStartController.onSubmit()
 
 GET        /index                                       controllers.IndexController.onPageLoad
 
@@ -92,3 +92,7 @@ GET        /bank-account-details                        controllers.BankAccountD
 POST       /bank-account-details                        controllers.BankAccountDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-bank-account-details                 controllers.BankAccountDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-bank-account-details                 controllers.BankAccountDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /check-your-answers-bank-details             controllers.CheckYourAnswersBankDetailsController.onPageLoad()
+POST       /check-your-answers-bank-details             controllers.CheckYourAnswersBankDetailsController.onSubmit()
+

@@ -729,7 +729,7 @@ messages__listSchemes__status_rejected_appeal = Rejected under appeal
 messages__listSchemes__schemeName__screen_reader = The scheme name is: {0}
 messages__listSchemes__SRN__screen_reader = {0}’s, submission reference number is {1}
 messages__listSchemes__PSTR__screen_reader = {0}’s, Pension Scheme Tax Reference number is {1}
-messages__listSchemes__status__screen_reader = {0}'s' status is {1}
+messages__listSchemes__status__screen_reader = {0}’s' status is {1}
 messages__listSchemes__date__screen_reader = {0} was opened on {1}
 
 messages__schemesOverview__title = Manage and register your pension schemes
@@ -935,7 +935,7 @@ messages__psaSchemeDetails__title = Scheme Details
 messages__psaSchemeDetails__establishers = Establishers
 messages__psaSchemeDetails__trustees = Trustees
 messages__psaSchemeDetails__director_details = Director details
-messages__psaSchemeDetails__partner_details = Partner's details
+messages__psaSchemeDetails__partner_details = Partner’s details
 
 messages__psaSchemeDetails__scheme_type = Scheme type
 messages__psaSchemeDetails__country_established = Country established
@@ -1166,7 +1166,7 @@ messages__adviserName__length = Enter a name using less than 108 letters
 messages__adviserName__invalid = Enter a name using only letters
 messages__adviserName__blank = Enter the name of who has working knowledge of pensions
 
-messages__adviser__phone__title = What is the person's phone number?
+messages__adviser__phone__title = What is the person’s phone number?
 messages__adviser__phone__heading = What is {0}’s phone number?
 
 messages__adviser__phone__blank = Enter a phone number
@@ -1247,3 +1247,9 @@ messages__bank_account_details__sort_code = Sort code
 messages__bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
 messages__bank_account_details__account_number = Account number
 messages__bank_account_details__date_bank_account = Approximate date the account was opened
+
+uKBankAccount.hns_checkYourAnswersLabel = Does {0} have a UK bank account?
+messages__visuallyhidden__hns_uKBankAccount = Change if {0}’s bank account details
+uKBankDetails.hns_checkYourAnswersLabel = What are {0}’s bank account details?
+messages__visuallyhidden__hns_uKBankAccount = Change {0}’s bank account details
+
