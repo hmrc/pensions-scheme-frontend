@@ -17,171 +17,115 @@
 package controllers
 
 import audit.testdoubles.StubSuccessfulAuditService
-import audit.{AddressAction, AddressEvent}
-import connectors.FakeUserAnswersCacheConnector
+import base.SpecBase
+import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
+import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.address.AddressFormProvider
 import identifiers._
 import models.NormalMode
-import models.address.{Address, TolerantAddress}
-import org.scalatest.concurrent.ScalaFutures
+import models.address.Address
 import play.api.data.Form
-import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
+import play.api.test.FakeRequest
 import utils._
 import viewmodels.Message
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
-class InsurerConfirmAddressControllerSpec extends ControllerSpecBase with ScalaFutures {
+class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBehaviours {
 
-  def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
+  import InsurerConfirmAddressControllerSpec._
 
-  val formProvider = new AddressFormProvider(FakeCountryOptions())
-  val form: Form[Address] = formProvider()
-  val schemeName: String = "Test Scheme Name"
+  "InsurerConfirmAddressController" when {
 
-  val fakeAuditService = new StubSuccessfulAuditService()
+    behave like controllerWithOnPageLoadMethod(
+      onPageLoadAction(this),
+      minData,
+      validData.dataRetrievalAction,
+      form,
+      form.fill(insurerAddressData),
+      viewAsString(this)(form)
+    )
 
+    behave like controllerWithOnPageLoadMethodMissingRequiredData(
+      onPageLoadAction(this),
+      getEmptyData
+    )
+
+    behave like controllerWithOnSubmitMethod(
+      onSubmitAction(this, navigator),
+      validData.dataRetrievalAction,
+      form.bind(Map.empty[String, String]),
+      viewAsString(this)(form),
+      postRequest
+    )
+
+    behave like controllerThatSavesUserAnswers(
+      saveAction(this),
+      postRequest,
+      InsurerConfirmAddressId,
+      insurerAddressData
+    )
+  }
+}
+
+object InsurerConfirmAddressControllerSpec {
+
+  implicit val global = scala.concurrent.ExecutionContext.Implicits.global
+  private val schemeName = "test scheme"
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
+  val insurerAddressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
+  private val minData = UserAnswers().schemeName(schemeName).dataRetrievalAction
+  private val validData: UserAnswers = UserAnswers().schemeName(schemeName).insurerConfirmAddress(insurerAddressData)
+
+  private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest().withFormUrlEncodedBody(("addressLine1", "value 1"),
+    ("addressLine2", "value 2"), ("postCode", "AB1 1AB"), "country" -> "GB")
 
   def countryOptions: CountryOptions = new CountryOptions(options)
+  val fakeAuditService = new StubSuccessfulAuditService()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): InsurerConfirmAddressController =
+  val formProvider: AddressFormProvider = new AddressFormProvider(countryOptions)
+  val form: Form[Address] = formProvider.apply()
+
+  def viewAsString(base: SpecBase)(form: Form[_]): Form[_] => String =
+    form =>
+      manualAddress(
+        base.frontendAppConfig,
+        form,ManualAddressViewModel(
+          routes.InsurerConfirmAddressController.onSubmit(NormalMode),
+          options,
+          Message("messages__benefits_insurance_addr__title"),
+          Message("messages__benefits_insurance_addr__h1"),
+          Some(schemeName)
+        )
+      )(base.fakeRequest, base.messages).toString()
+
+  private def controller(base: ControllerSpecBase)(
+    dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
+    authAction: AuthAction = FakeAuthAction,
+    navigator: Navigator = FakeNavigator,
+    cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
+  ): InsurerConfirmAddressController =
     new InsurerConfirmAddressController(
-      frontendAppConfig,
-      messagesApi,
-      FakeUserAnswersCacheConnector,
-      new FakeNavigator(desiredRoute = onwardRoute),
-      FakeAuthAction,
+      base.frontendAppConfig,
+      base.messagesApi,
+      cache,
+      navigator,
+      authAction,
       dataRetrievalAction,
-      new DataRequiredActionImpl,
+      new DataRequiredActionImpl(),
       formProvider,
       countryOptions,
       fakeAuditService
     )
 
-  def viewAsString(form: Form[_] = form): String =
-    manualAddress(
-      frontendAppConfig,
-      form,
-      ManualAddressViewModel(
-        routes.InsurerConfirmAddressController.onSubmit(NormalMode),
-        options,
-        Message("messages__benefits_insurance_addr__title"),
-        Message("messages__benefits_insurance_addr__title"),
-        Some(schemeName)
-      )
-    )(fakeRequest, messages).toString
+  def onPageLoadAction(base: ControllerSpecBase)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(base)(dataRetrievalAction, authAction).onPageLoad(NormalMode)
 
-  val insurerAddressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
+  def onSubmitAction(base: ControllerSpecBase, navigator: Navigator)(dataRetrievalAction: DataRetrievalAction, authAction: AuthAction): Action[AnyContent] =
+    controller(base)(dataRetrievalAction, authAction, navigator).onSubmit(NormalMode)
 
-  val validData: JsObject = Json.obj(
-    SchemeNameId.toString -> Json.toJson(schemeName),
-    InsurerConfirmAddressId.toString -> Json.toJson(insurerAddressData)
-  )
-
-  "InsurerAddress Controller" must {
-
-    "return OK and the correct view for a GET when scheme name is present" in {
-      val result = controller().onPageLoad(NormalMode)(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
-    }
-
-    "populate the view correctly on a GET when the question has previously been answered" in {
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-
-      val result = controller(getRelevantData).onPageLoad(NormalMode)(fakeRequest)
-
-      contentAsString(result) mustBe viewAsString(form.fill(insurerAddressData))
-    }
-
-    "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("addressLine1", "value 1"),
-        ("addressLine2", "value 2"), ("postCode", "AB1 1AB"), "country" -> "GB")
-
-      val result = controller().onSubmit(NormalMode)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(onwardRoute.url)
-    }
-
-    "return a Bad Request and errors when invalid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
-
-      val result = controller().onSubmit(NormalMode)(postRequest)
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe viewAsString(boundForm)
-    }
-
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "redirect to Session Expired for a POST if no existing data is found" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("field1", "value 1"), ("field2", "value 2"))
-      val result = controller(dontGetAnyData).onSubmit(NormalMode)(postRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
-    "send an audit event when valid data is submitted" in {
-
-      val existingAddress = Address(
-        "existing-line-1",
-        "existing-line-2",
-        None,
-        None,
-        None,
-        "existing-country"
-      )
-
-      val selectedAddress = TolerantAddress(None, None, None, None, None, None)
-
-      val data =
-        UserAnswers()
-          .insurersAddress(existingAddress)
-          .insurersAddressList(selectedAddress)
-          .dataRetrievalAction
-
-      val postRequest = fakeRequest.withFormUrlEncodedBody(
-        ("addressLine1", "value 1"),
-        ("addressLine2", "value 2"),
-        ("postCode", "NE1 1NE"),
-        "country" -> "GB"
-      )
-
-      fakeAuditService.reset()
-
-      val result = controller(data).onSubmit(NormalMode)(postRequest)
-
-      whenReady(result) {
-        _ =>
-          fakeAuditService.verifySent(
-            AddressEvent(
-              FakeAuthAction.externalId,
-              AddressAction.LookupChanged,
-              "Insurer Address",
-              Address(
-                "value 1",
-                "value 2",
-                None,
-                None,
-                Some("NE1 1NE"),
-                "GB"
-              )
-            )
-          )
-      }
-    }
-  }
+  def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
+    controller(base)(cache = cache).onSubmit(NormalMode)
 }

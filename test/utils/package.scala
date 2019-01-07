@@ -72,6 +72,10 @@ package object utils {
       answers.set(SecuredBenefitsId)(securedBenefits).asOpt.value
     }
 
+    def insurerConfirmAddress(address: Address): UserAnswers = {
+      answers.set(identifiers.InsurerConfirmAddressId)(address).asOpt.value
+    }
+
     def insurerAddress(address: Address): UserAnswers = {
       answers.set(InsurerAddressId)(address).asOpt.value
     }

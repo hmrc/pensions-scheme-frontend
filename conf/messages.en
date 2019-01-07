@@ -1193,8 +1193,8 @@ messages__what_you_will_need_wk__item_4 = address
 messages__insurer_enter_postcode__title = Enter the insurance company’s postcode
 messages__insurer_enter_postcode__h1 = Enter the insurance company’s postcode
 
-messages__insurer_confirm_address__title = Confirm the address
-messages__insurer_confirm_address__h1 = Confirm {0}’s address
+messages__insurer_confirm_address__title = Insurance company’s address
+messages__insurer_confirm_address__h1 = Insurance company’s address
 
 messages__what_you_will_need_benefits__title = Benefits and insurance
 messages__what_you_will_need_benefits__h1 = Benefits and insurance
