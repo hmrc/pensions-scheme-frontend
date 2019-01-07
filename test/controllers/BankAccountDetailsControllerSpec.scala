@@ -76,7 +76,6 @@ object BankAccountDetailsControllerSpec {
   private val form = formProvider.apply()
   //scalastyle:off magic.number
   private val accountNo = RandomUtils.nextInt(10000000, 99999999).toString
-  private val sortCode = "344567"
   //scalastyle:on magic.number
 
   val bankDetails = BankAccountDetails("test bank", "test account",
@@ -85,10 +84,11 @@ object BankAccountDetailsControllerSpec {
   private val validData: UserAnswers = UserAnswers().schemeName(schemeName).bankAccountDetails(bankDetails)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("bankName", "test bank"),
-      ("accountName", "test account"), ("sortCode", sortCode),
-      ("accountNumber", accountNo),
-      ("date.day", LocalDate.now().getDayOfMonth.toString), ("date.month", LocalDate.now().getMonthOfYear.toString),
-      ("date.year", LocalDate.now().getYear.toString))
+      ("accountName", "test account"),
+      ("sortCode.first", "34"),
+      ("sortCode.second", "45"),
+      ("sortCode.third", "67"),
+      ("accountNumber", accountNo))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
     bankAccountDetails(base.frontendAppConfig, form, NormalMode, schemeName)(base.fakeRequest, base.messages).toString()

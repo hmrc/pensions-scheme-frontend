@@ -22,8 +22,53 @@ import models._
 import models.register.SortCode
 import org.apache.commons.lang3.{RandomStringUtils, RandomUtils}
 import org.joda.time.LocalDate
+import play.api.data.{Form, FormError}
 
 class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints with BankDetailsBehaviour {
+
+
+  override def formWithSortCode[T](testForm: Form[T],
+                                   keyRequired: String,
+                                   keyLengthError: String,
+                                   keyInvalid: String,
+                                   validOtherData: Map[String, String],
+                                   getSortCode: T => SortCode
+                                  ): Unit = {
+
+
+    "behave like form with SortCode" should {
+
+      s"bind a valid sort code" in {
+        val result = testForm.bind(validOtherData ++ Map("sortCode.first" -> "12", "sortCode.second" -> "34", "sortCode.third" -> "56"))
+        getSortCode(result.get) shouldBe SortCode("12", "34", "56")
+      }
+
+      "not bind when sort code is not supplied" in {
+        val result = testForm.bind(validOtherData)
+        result.errors shouldBe Seq(FormError("sortCode", keyRequired))
+      }
+
+      s"not bind an invalid sort code using non-alpha chars" in {
+        val result = testForm.bind(validOtherData ++ Map("sortCode.first" -> "1%", "sortCode.second" -> "3&", "sortCode.third" -> "56"))
+        result.errors shouldBe Seq(FormError("sortCode", keyInvalid))
+      }
+
+      s"not bind an invalid sort code using alpha chars" in {
+        val result = testForm.bind(validOtherData ++ Map("sortCode.first" -> "ab", "sortCode.second" -> "cd", "sortCode.third" -> "ef"))
+        result.errors shouldBe Seq(FormError("sortCode", keyInvalid))
+      }
+
+      s"not bind a sort code which exceeds max length" in {
+        val result = testForm.bind(validOtherData ++ Map("sortCode.first" -> "11", "sortCode.second" -> "22", "sortCode.third" -> "333"))
+        result.errors shouldBe Seq(FormError("sortCode", keyLengthError))
+      }
+
+      s"not bind a sort code which is less than expected length" in {
+        val result = testForm.bind(validOtherData ++ Map("sortCode.first" -> "11", "sortCode.second" -> "22", "sortCode.third" -> "3"))
+        result.errors shouldBe Seq(FormError("sortCode", keyLengthError))
+      }
+    }
+  }
 
   //scalastyle:off magic.number
 
@@ -37,7 +82,9 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
   val validData: Map[String, String] = Map(
     "bankName" -> "test bank",
     "accountName" -> "test account",
-    "sortCode" -> "24 56 56",
+    "sortCode.first" -> "24",
+    "sortCode.second" -> "56",
+    "sortCode.third" -> "56",
     "accountNumber" -> testAccountNumber
   )
 
@@ -48,20 +95,18 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
 
 
   "BankAccountDetails form" must {
-    behave like questionForm(bankDetails)
 
     behave like formWithMandatoryTextFields(
       Field("bankName", Required -> "messages__error__bank_name"),
       Field("accountName", Required -> "messages__error__account_name"),
-      Field("sortCode", Required -> "messages__error__sort_code"),
       Field("accountNumber", Required -> "messages__error__account_number")
     )
 
     behave like formWithSortCode(
       form,
-      "messages__error__sort_code",
-      "messages__error__sort_code_invalid",
-      "messages__error__sort_code_length",
+      "messages__error__sort_code__blank",
+      "messages__error__sort_code__length",
+      "messages__error__sort_code__invalid",
       Map(
         "bankName" -> "test bank",
         "accountName" -> "test account",
