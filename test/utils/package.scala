@@ -19,7 +19,7 @@ import identifiers.register._
 import identifiers._
 import models._
 import models.address.{Address, TolerantAddress}
-import models.register.{DeclarationDormant, SchemeDetails, SchemeType}
+import models.register.{DeclarationDormant, SchemeDetails, SchemeType, UKBankDetails}
 import org.scalatest.OptionValues
 
 //scalastyle:off number.of.methods
@@ -52,6 +52,14 @@ package object utils {
       answers.set(EstablishedCountryId)(country).asOpt.value
     }
 
+    def schemeUkBankAccount(haveUkBankAccount: Boolean): UserAnswers = {
+      answers.set(identifiers.UKBankAccountId)(haveUkBankAccount).asOpt.value
+    }
+
+    def bankAccountDetails(bankAccountDetails: UKBankDetails): UserAnswers = {
+      answers.set(identifiers.BankAccountDetailsId)(bankAccountDetails).asOpt.value
+    }
+
     def schemeType(schemeType: SchemeType): UserAnswers = {
       answers.set(SchemeTypeId)(schemeType).asOpt.value
     }
@@ -65,7 +73,7 @@ package object utils {
     }
 
     def ukBankAccount(ukBankAccount: Boolean): UserAnswers = {
-      answers.set(UKBankAccountId)(ukBankAccount).asOpt.value
+      answers.set(identifiers.UKBankAccountId)(ukBankAccount).asOpt.value
     }
 
     //Establishers Individual
