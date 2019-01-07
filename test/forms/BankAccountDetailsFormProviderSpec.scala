@@ -38,14 +38,11 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
     "bankName" -> "test bank",
     "accountName" -> "test account",
     "sortCode" -> "24 56 56",
-    "accountNumber" -> testAccountNumber,
-    "date.day" -> s"$day",
-    "date.month" -> s"$month",
-    "date.year" -> s"${year - 20}"
+    "accountNumber" -> testAccountNumber
   )
 
   val bankDetails = BankAccountDetails("test bank", "test account",
-    testSortCode, testAccountNumber, new LocalDate(year - 20, month, day))
+    testSortCode, testAccountNumber)
 
   val form = new BankAccountDetailsFormProvider()()
 
@@ -57,10 +54,7 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
       Field("bankName", Required -> "messages__error__bank_name"),
       Field("accountName", Required -> "messages__error__account_name"),
       Field("sortCode", Required -> "messages__error__sort_code"),
-      Field("accountNumber", Required -> "messages__error__account_number"),
-      Field("date.day", Required -> "error.date.day_blank"),
-      Field("date.month", Required -> "error.date.month_blank"),
-      Field("date.year", Required -> "error.date.year_blank")
+      Field("accountNumber", Required -> "messages__error__account_number")
     )
 
     behave like formWithSortCode(
@@ -71,10 +65,7 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
       Map(
         "bankName" -> "test bank",
         "accountName" -> "test account",
-        "accountNumber" -> testAccountNumber,
-        "date.day" -> s"$day",
-        "date.month" -> s"$month",
-        "date.year" -> s"${year - 20}"
+        "accountNumber" -> testAccountNumber
       ),
       (bankDetails: BankAccountDetails) => bankDetails.sortCode
     )
@@ -108,14 +99,6 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
       val data = validData + ("accountNumber" -> "123456789")
 
       val expectedError = error("accountNumber", "messages__error__account_number_length", 8)
-      checkForError(form, data, expectedError)
-    }
-
-    "fail to bind when the date is in future" in {
-      val tomorrow = LocalDate.now.plusDays(1)
-      val data = validData + ("date.day" -> s"${tomorrow.getDayOfMonth}", "date.month" -> s"${tomorrow.getMonthOfYear}", "date.year" -> s"${tomorrow.getYear}")
-
-      val expectedError = error("date", "messages__error__date_future")
       checkForError(form, data, expectedError)
     }
   }

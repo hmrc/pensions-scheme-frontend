@@ -80,8 +80,7 @@ object BankAccountDetailsControllerSpec {
   //scalastyle:on magic.number
 
   val bankDetails = BankAccountDetails("test bank", "test account",
-    SortCode("34", "45", "67"), accountNo, new LocalDate(LocalDate.now().getYear,
-      LocalDate.now().getMonthOfYear, LocalDate.now().getDayOfMonth))
+    SortCode("34", "45", "67"), accountNo)
 
   private val validData: UserAnswers = UserAnswers().schemeName(schemeName).bankAccountDetails(bankDetails)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =

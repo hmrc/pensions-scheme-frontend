@@ -41,10 +41,7 @@ class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
       "accountNumber" ->
         text("messages__error__account_number").
           verifying(returnOnFirstFailure(regexp(regexAccountNo, "messages__error__account_number_invalid"),
-            maxLength(accountNoMaxLength, "messages__error__account_number_length"))),
-      "date" ->
-        dateMapping("messages__error__date", "error.invalid_date")
-          .verifying(futureDate("messages__error__date_future"))
+            maxLength(accountNoMaxLength, "messages__error__account_number_length")))
     )(BankAccountDetails.apply)(BankAccountDetails.unapply)
   )
 }

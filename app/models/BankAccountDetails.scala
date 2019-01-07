@@ -17,10 +17,9 @@
 package models
 
 import models.register.SortCode
-import org.joda.time.LocalDate
 import play.api.libs.json.Json
 
-case class BankAccountDetails(bankName: String, accountName: String, sortCode: SortCode, accountNumber: String, date: LocalDate)
+case class BankAccountDetails(bankName: String, accountName: String, sortCode: SortCode, accountNumber: String)
 object BankAccountDetails {
   implicit val format = Json.format[BankAccountDetails]
 }
