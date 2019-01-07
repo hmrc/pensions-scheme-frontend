@@ -16,17 +16,27 @@
 
 package forms.mappings
 
+import models.register.SortCode
 import org.joda.time.LocalDate
 import play.api.data.Forms.{of, _}
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.data.{FieldMapping, Mapping}
 import utils.Enumerable
 
 import scala.util.Try
 
 trait Mappings extends Formatters with Constraints {
+  protected def stopOnFirstFail[T](constraints: Seq[Constraint[T]]): Constraint[T] = Constraint { field: T =>
+    constraints.toList dropWhile (_ (field) == Valid) match {
+      case Nil => Valid
+      case constraint :: _ => constraint(field)
+    }
+  }
 
   protected def text(errorKey: String = "error.required"): FieldMapping[String] =
     of(stringFormatter(errorKey))
+
+  protected def text: FieldMapping[String] = of(stringFormatterDefaultToEmptyString)
 
   protected def optionalText(): FieldMapping[Option[String]] =
     of(optionalStringFormatter)
@@ -64,6 +74,5 @@ trait Mappings extends Formatters with Constraints {
       "year" -> int(requiredKey = "error.date.year_blank", wholeNumberKey = "error.date.year_invalid", nonNumericKey = "error.date.year_invalid")
     ).verifying(invalidKey, inputs => validDate(inputs))
       .transform(toLocalDate, fromLocalDate)
-
   }
 }

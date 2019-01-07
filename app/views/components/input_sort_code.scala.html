@@ -1,0 +1,56 @@
+@*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@(
+field: Field,
+label: String,
+legendClass: String = "",
+secondaryLabel: Option[String] = None,
+hint: Option[String] = None
+)(implicit messages: Messages)
+
+<div class="form-field @if(Seq(field, field("first"), field("second"), field("third")).flatMap(_.errors).nonEmpty){form-field--error}">
+    <fieldset id="@field.id">
+        <legend>
+            <span class="bold form-label @if(legendClass.nonEmpty){@legendClass}">
+              @label
+            </span>
+
+            @if(hint.nonEmpty){
+            <span class="form-hint" id="@{field.id}-sort-code-hint">@hint</span>
+            }
+
+            @if(field("first").errors.nonEmpty || field("second").errors.nonEmpty || field("third").errors.nonEmpty){
+                <span class="error-notification" id="error-message-date">@messages("messages__error__date")</span>
+            } else {
+                @field.errors.map { error =>
+                    <span class="error-notification" id="error-message-@{field.id}-input">@messages(error.message, error.args: _*)</span>
+                }
+            }
+        </legend>
+        <div class="form-date">
+            <div class="form-group form-group-day">
+                <input class="form-control" id='@field("first").id' name='@field("first").name' type="number" min="1" aria-describedby="@field.id-first-hint" value='@field("first").value'/>
+            </div>
+            <div class="form-group form-group-month">
+                <input class="form-control" id='@field("second").id' name='@field("second").name' type="number" min="1" aria-describedby="@field.id-second-hint" value='@field("second").value'/>
+            </div>
+            <div class="form-group form-group-year">
+                <input class="form-control" id='@field("third").id' name='@field("third").name' type="number" min="1" aria-describedby="@field.id-third-hint" value='@field("third").value'/>
+            </div>
+        </div>
+    </fieldset>
+</div>

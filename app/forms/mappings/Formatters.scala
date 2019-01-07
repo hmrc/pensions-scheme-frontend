@@ -37,6 +37,16 @@ trait Formatters {
       Map(key -> value)
   }
 
+  private[mappings] def stringFormatterDefaultToEmptyString: Formatter[String] = new Formatter[String] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+      Right(standardiseText(data
+        .getOrElse(key, "")))
+
+    override def unbind(key: String, value: String): Map[String, String] =
+      Map(key -> value)
+  }
+
   private[mappings] val optionalStringFormatter: Formatter[Option[String]] = new Formatter[Option[String]] {
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
       Right(

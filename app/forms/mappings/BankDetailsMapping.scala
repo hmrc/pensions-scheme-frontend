@@ -18,6 +18,7 @@ package forms.mappings
 
 import models.register.SortCode
 import play.api.data.format.Formatter
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.data.{FormError, Forms, Mapping}
 
 trait BankDetailsMapping extends Mappings {
@@ -54,4 +55,20 @@ trait BankDetailsMapping extends Mappings {
     Forms.of(formatter)
   }
 
+  protected def fullSortCodeFromTuple(input: (String, String, String)): String = input._1.trim + input._2.trim + input._3.trim
+
+  protected def sortCodeRequiredConstraint(key:String):Constraint[(String,String,String)] = Constraint(key)({
+    text =>
+      if (fullSortCodeFromTuple(text).length > 0) Valid else Invalid(Seq(ValidationError(key)))
+  })
+
+  protected def sortCodeLengthConstraint(key:String):Constraint[(String,String,String)] = Constraint(key)({
+    text =>
+      if (fullSortCodeFromTuple(text).length == 6) Valid else Invalid(Seq(ValidationError(key)))
+  })
+
+  protected def sortCodeInvalidConstraint(key:String):Constraint[(String,String,String)] = Constraint(key)({
+    text =>
+      if (fullSortCodeFromTuple(text).matches(regexSortCode)) Valid else Invalid(Seq(ValidationError(key)))
+  })
 }
