@@ -15,11 +15,11 @@
  */
 
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
-import identifiers.register._
 import identifiers._
+import identifiers.register._
 import models._
 import models.address.{Address, TolerantAddress}
-import models.register.{DeclarationDormant, Membership, SchemeDetails, SchemeType}
+import models.register.{establishers => _, trustees => _, _}
 import org.scalatest.OptionValues
 
 //scalastyle:off number.of.methods
@@ -52,6 +52,14 @@ package object utils {
       answers.set(EstablishedCountryId)(country).asOpt.value
     }
 
+    def schemeUkBankAccount(haveUkBankAccount: Boolean): UserAnswers = {
+      answers.set(identifiers.UKBankAccountId)(haveUkBankAccount).asOpt.value
+    }
+
+    def bankAccountDetails(bankAccountDetails: UKBankDetails): UserAnswers = {
+      answers.set(identifiers.BankAccountDetailsId)(bankAccountDetails).asOpt.value
+    }
+
     def currentMembers(currentMembers: Membership): UserAnswers = {
       answers.set(CurrentMembersId)(currentMembers).asOpt.value
     }
@@ -77,7 +85,7 @@ package object utils {
     }
 
     def ukBankAccount(ukBankAccount: Boolean): UserAnswers = {
-      answers.set(UKBankAccountId)(ukBankAccount).asOpt.value
+      answers.set(identifiers.UKBankAccountId)(ukBankAccount).asOpt.value
     }
 
     //Establishers Individual
