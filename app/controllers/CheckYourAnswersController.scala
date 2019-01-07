@@ -31,7 +31,7 @@ import utils._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            override val messagesApi: MessagesApi,
@@ -56,14 +56,12 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
       )
 
-      Ok(check_your_answers(appConfig, Seq(beforeYouStart), routes.CheckYourAnswersController.onSubmit()))
+      Ok(check_your_answers(appConfig, Seq(beforeYouStart), routes.CheckYourAnswersController.onSubmit(), resturnOverview=true))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      sectionComplete.setCompleteFlag(request.externalId, IsAboutSchemeCompleteId, request.userAnswers, value = true) map { _ =>
-        Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers))
-      }
+        Future.successful(Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers)))
   }
 
 }

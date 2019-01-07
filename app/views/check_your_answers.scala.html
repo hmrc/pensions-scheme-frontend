@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.play.views.html._
 @import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
 
-@(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call, resturnOverview: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @heading=@{
     messages("checkYourAnswers.hs.heading")
@@ -51,7 +51,12 @@
         }
 
         @components.submit_button()
-        @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
+        @if(resturnOverview){
+            @components.return_link("messages__schemesOverview__manage__link", appConfig.managePensionsSchemeOverviewUrl)
+        } else {
+            @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
+        }
+
     }
 
 }
