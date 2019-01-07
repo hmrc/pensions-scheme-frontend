@@ -83,6 +83,16 @@ POST       /insurance-policy-number                     controllers.InsurancePol
 GET        /change-insurance-policy-number              controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-insurance-policy-number              controllers.InsurancePolicyNumberController.onSubmit(mode: Mode = CheckMode)
 
+GET        /uk-bank-account                             controllers.UKBankAccountController.onPageLoad(mode: Mode = NormalMode)
+POST       /uk-bank-account                             controllers.UKBankAccountController.onSubmit(mode: Mode = NormalMode)
+GET        /change-uk-bank-account                      controllers.UKBankAccountController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-uk-bank-account                      controllers.UKBankAccountController.onSubmit(mode: Mode = CheckMode)
+
+GET        /bank-account-details                        controllers.BankAccountDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /bank-account-details                        controllers.BankAccountDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-bank-account-details                 controllers.BankAccountDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-bank-account-details                 controllers.BankAccountDetailsController.onSubmit(mode: Mode = CheckMode)
+
 GET        /occupational-pension-scheme                 controllers.OccupationalPensionSchemeController.onPageLoad(mode: Mode = NormalMode)
 POST       /occupational-pension-scheme                 controllers.OccupationalPensionSchemeController.onSubmit(mode: Mode = NormalMode)
 GET        /change-occupational-pension-scheme          controllers.OccupationalPensionSchemeController.onPageLoad(mode: Mode = CheckMode)

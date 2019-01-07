@@ -21,7 +21,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
-import identifiers.HaveAnyTrusteesId
+import identifiers.register.trustees.HaveAnyTrusteesId
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
