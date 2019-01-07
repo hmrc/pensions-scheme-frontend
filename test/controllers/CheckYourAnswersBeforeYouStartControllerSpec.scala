@@ -22,9 +22,6 @@ import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.{EstablishedCountryId, SchemeNameId, SchemeTypeId}
 import models.CheckMode
 import models.register.SchemeType
-import org.jsoup.Jsoup
-import org.jsoup.select.Elements
-import org.scalatest.matchers.{MatchResult, Matcher}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete}
@@ -44,11 +41,6 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
       }
-
-      "have link to return to your pension schemes" in {
-        Jsoup.parse(viewAsString.toString()).select("a[id=return-link]") must
-          haveLink(frontendAppConfig.managePensionsSchemeOverviewUrl.toString)
-      }
     }
 
     "onSubmit is called" must {
@@ -61,16 +53,6 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
     }
 
   }
-  private def haveLink(url: String): Matcher[Elements] = Matcher[Elements] {
-    elements =>
-      val href = elements.attr("href")
-      MatchResult(
-        href == url,
-        s"href $href is not equal to the url $url",
-        s"href $href is equal to the url $url"
-      )
-  }
-
 }
 
 object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
