@@ -94,7 +94,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
         "Does Test Scheme Name have a UK bank account?",
         Seq("site.yes"),
         answerIsMessageKey = true,
-        Some(controllers.register.routes.UKBankAccountController.onPageLoad(CheckMode).url),
+        Some(controllers.routes.UKBankAccountController.onPageLoad(CheckMode).url),
         "Change if Test Scheme Name has a UK bank account"
       ),
       AnswerRow(
@@ -104,8 +104,8 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
           s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
           bankDetails.accountNumber,
           DateHelper.formatDate(bankDetails.date)),
-        answerIsMessageKey = true,
-        Some(controllers.register.routes.UKBankDetailsController.onPageLoad(CheckMode).url),
+        answerIsMessageKey = false,
+        Some(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url),
         "Change Test Scheme Name’s bank account details"
       )
     )
