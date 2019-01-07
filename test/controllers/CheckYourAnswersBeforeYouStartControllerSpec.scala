@@ -31,9 +31,9 @@ import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
-  import CheckYourAnswersControllerSpec._
+  import CheckYourAnswersBeforeYouStartControllerSpec._
 
   "CheckYourAnswers Controller" when {
 
@@ -73,13 +73,13 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
 }
 
-object CheckYourAnswersControllerSpec extends ControllerSpecBase {
+object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val fakeNavigator = new FakeNavigator(onwardRoute)
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
-    new CheckYourAnswersController(
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBeforeYouStartController =
+    new CheckYourAnswersBeforeYouStartController(
       frontendAppConfig,
       messagesApi,
       FakeAuthAction,
@@ -90,7 +90,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       FakeSectionComplete
     )
 
-  private val postUrl = routes.CheckYourAnswersController.onSubmit()
+  private val postUrl = routes.CheckYourAnswersBeforeYouStartController.onSubmit()
 
   private val schemeInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
@@ -147,7 +147,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
     frontendAppConfig,
     Seq(beforeYouStart),
     postUrl,
-    resturnOverview=true
+    returnOverview=true
   )(fakeRequest, messages).toString
 
 }

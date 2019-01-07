@@ -108,5 +108,5 @@ POST       /investment-regulated-scheme                 controllers.InvestmentRe
 GET        /change-investment-regulated-scheme          controllers.InvestmentRegulatedSchemeController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-investment-regulated-scheme          controllers.InvestmentRegulatedSchemeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /check-your-answers-before-start             controllers.CheckYourAnswersController.onPageLoad()
-POST       /check-your-answers-before-start             controllers.CheckYourAnswersController.onSubmit()
+GET        /check-your-answers-before-start             controllers.CheckYourAnswersBeforeYouStartController.onPageLoad()
+POST       /check-your-answers-before-start             controllers.CheckYourAnswersBeforeYouStartController.onSubmit()

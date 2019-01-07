@@ -33,14 +33,14 @@ import views.html.check_your_answers
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
-                                           override val messagesApi: MessagesApi,
-                                           authenticate: AuthAction,
-                                           getData: DataRetrievalAction,
-                                           requireData: DataRequiredAction,
-                                           implicit val countryOptions: CountryOptions,
-                                           @Register navigator: Navigator,
-                                           sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
+class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppConfig,
+                                                         override val messagesApi: MessagesApi,
+                                                         authenticate: AuthAction,
+                                                         getData: DataRetrievalAction,
+                                                         requireData: DataRequiredAction,
+                                                         implicit val countryOptions: CountryOptions,
+                                                         @Register navigator: Navigator,
+                                                         sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -56,7 +56,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
       )
 
-      Ok(check_your_answers(appConfig, Seq(beforeYouStart), routes.CheckYourAnswersController.onSubmit(), resturnOverview=true))
+      Ok(check_your_answers(appConfig, Seq(beforeYouStart), routes.CheckYourAnswersBeforeYouStartController.onSubmit(), returnOverview=true))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
