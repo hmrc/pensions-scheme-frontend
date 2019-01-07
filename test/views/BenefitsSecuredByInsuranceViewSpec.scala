@@ -26,7 +26,7 @@ import views.html.benefitsSecuredByInsurance
 
 class BenefitsSecuredByInsuranceViewSpec extends YesNoViewBehaviours {
 
-  val messageKeyPrefix = "contractofinsurance_pension_scheme"
+  val messageKeyPrefix = "benefits_secured_by_insurance"
 
   val form = new BenefitsSecuredByInsuranceFormProvider()()
 
