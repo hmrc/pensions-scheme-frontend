@@ -41,7 +41,7 @@ class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
   "SchemeType view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", schemeName))
 
-    behave like pageWithReturnLink(createView, controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }
 
   "SchemeType view" when {

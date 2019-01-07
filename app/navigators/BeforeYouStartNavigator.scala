@@ -17,6 +17,7 @@
 package navigators
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.routes._
 import identifiers.register.{DeclarationDutiesId, SchemeEstablishedCountryId}
@@ -25,10 +26,10 @@ import models.NormalMode
 import models.register.SchemeType
 import utils.{Navigator, UserAnswers}
 
-class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector) extends Navigator {
+class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, frontendAppConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers: Option[NavigateTo] =
-    NavigateTo.save(controllers.register.routes.CheckYourAnswersController.onPageLoad())
+    NavigateTo.dontSave(controllers.register.routes.CheckYourAnswersController.onPageLoad())
 
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
@@ -37,20 +38,33 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
     case HaveAnyTrusteesId => NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
     case EstablishedCountryId => NavigateTo.dontSave(WorkingKnowledgeController.onPageLoad(NormalMode))
     case DeclarationDutiesId => checkYourAnswers
+    case _ => None
   }
 
   override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
     case SchemeNameId => checkYourAnswers
-    case SchemeTypeId => schemeTypeRoutes(from.userAnswers)
+    case SchemeTypeId => schemeTypeEditRoutes(from.userAnswers)
     case HaveAnyTrusteesId => checkYourAnswers
-    case SchemeEstablishedCountryId => checkYourAnswers
+    case EstablishedCountryId => checkYourAnswers
     case DeclarationDutiesId => checkYourAnswers
+    case _ => None
   }
 
   private def schemeTypeRoutes(answers: UserAnswers): Option[NavigateTo] = {
     answers.get(SchemeTypeId) match {
       case Some(SchemeType.SingleTrust) | Some(SchemeType.MasterTrust) =>
         NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
+      case Some(_) =>
+        NavigateTo.dontSave(HaveAnyTrusteesController.onPageLoad(NormalMode))
+      case None =>
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
+    }
+  }
+
+  private def schemeTypeEditRoutes(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(SchemeTypeId) match {
+      case Some(SchemeType.SingleTrust) | Some(SchemeType.MasterTrust) =>
+        checkYourAnswers
       case Some(_) =>
         NavigateTo.dontSave(HaveAnyTrusteesController.onPageLoad(NormalMode))
       case None =>
