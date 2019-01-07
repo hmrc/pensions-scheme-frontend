@@ -1237,11 +1237,14 @@ messages__what_you_will_need_members__lede = You will need to tell us how many m
 messages__what_you_will_need_members__item_1 = the scheme has at the moment
 messages__what_you_will_need_members__item_2 = you expect the scheme to have in the next 12 months
 
-
-
-
 messages__insurance_policy_number__title = What is the policy number with the insurance company?
 messages__insurance_policy_number__h1 = What is the policy number with {0}?
 messages__error__insurance_policy_number = Enter a policy number
 messages__error__insurance_policy_number_invalid = Enter the policy number only using European characters
 messages__error__insurance_policy_number_length = Enter a policy number using 55 characters or less
+
+messages__type_of_benefits__title = How does the scheme provide benefits?
+messages__type_of_benefits__h1 = How does the scheme provide benefits?
+messages__type_of_benefits__opt1 = Money Purchase benefits only (defined contribution)
+messages__type_of_benefits__opt2 = Defined Benefits only
+messages__type_of_benefits__opt3 = Mixture of money purchase benefits and defined benefits

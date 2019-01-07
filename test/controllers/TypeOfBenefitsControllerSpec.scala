@@ -22,13 +22,13 @@ import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAct
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.TypeOfBenefitsFormProvider
 import identifiers.TypeOfBenefitsId
-import models.NormalMode
-import models.register.Benefits
+import models.{NormalMode, TypeOfBenefits}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import views.html.typeOfBenefits
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours {
@@ -42,7 +42,7 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
       getMandatorySchemeNameHs,
       validData.dataRetrievalAction,
       form,
-      form.fill(Benefits.values.head),
+      form.fill(TypeOfBenefits.values.head),
       viewAsString(this)(form)
     )
 
@@ -58,16 +58,16 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
       saveAction(this),
       postRequest,
       TypeOfBenefitsId,
-      Benefits.values.head
+      TypeOfBenefits.values.head
     )
   }
 }
 object TypeOfBenefitsControllerSpec {
   private val formProvider = new TypeOfBenefitsFormProvider()
   private val form = formProvider.apply()
-  private val validData: UserAnswers = UserAnswers().typeOfBenefits(Benefits.values.head)
+  private val validData: UserAnswers = UserAnswers().typeOfBenefits(TypeOfBenefits.values.head)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest().withFormUrlEncodedBody(("value", Benefits.values.head.toString))
+    FakeRequest().withFormUrlEncodedBody(("value", TypeOfBenefits.values.head.toString))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
     typeOfBenefits(base.frontendAppConfig, form, NormalMode)(base.fakeRequest, base.messages).toString()

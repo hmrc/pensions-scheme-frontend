@@ -18,13 +18,13 @@ package forms
 
 import forms.mappings.Mappings
 import javax.inject.Inject
-import models.register.Benefits
+import models.TypeOfBenefits
 import play.api.data.Form
 
 class TypeOfBenefitsFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Benefits] =
+  def apply(): Form[TypeOfBenefits] =
     Form(
-      "value" -> enumerable[Benefits]("messages__error__selection")
+      "value" -> enumerable[TypeOfBenefits]("messages__error__selection")
     )
 }

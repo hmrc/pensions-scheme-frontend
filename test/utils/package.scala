@@ -40,7 +40,7 @@ package object utils {
       answers.set(identifiers.OccupationalPensionSchemeId)(isOccupational).asOpt.value
     }
 
-    def typeOfBenefits(benefits: Benefits): UserAnswers = {
+    def typeOfBenefits(benefits: TypeOfBenefits): UserAnswers = {
       answers.set(identifiers.TypeOfBenefitsId)(benefits).asOpt.value
     }
 

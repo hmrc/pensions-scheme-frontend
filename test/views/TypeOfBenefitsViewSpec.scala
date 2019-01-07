@@ -17,15 +17,14 @@
 package views
 
 import forms.TypeOfBenefitsFormProvider
-import models.NormalMode
-import models.register.Benefits
+import models.{NormalMode, TypeOfBenefits}
 import play.api.data.Form
 import views.behaviours.ViewBehaviours
 import views.html.typeOfBenefits
 
 class TypeOfBenefitsViewSpec extends ViewBehaviours {
 
-  val messageKeyPrefix = "benefits"
+  val messageKeyPrefix = "type_of_benefits"
 
   val form = new TypeOfBenefitsFormProvider()()
 
@@ -43,19 +42,19 @@ class TypeOfBenefitsViewSpec extends ViewBehaviours {
 
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))
-        for (option <- Benefits.options) {
+        for (option <- TypeOfBenefits.options) {
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, false)
         }
       }
     }
 
-    for (option <- Benefits.options) {
+    for (option <- TypeOfBenefits.options) {
       s"rendered with a value of '${option.value}'" must {
         s"have the '${option.value}' radio button selected" in {
           val doc = asDocument(createViewUsingForm(form.bind(Map("value" -> s"${option.value}"))))
           assertContainsRadioButton(doc, s"value-${option.value}", "value", option.value, true)
 
-          for (unselectedOption <- Benefits.options.filterNot(o => o == option)) {
+          for (unselectedOption <- TypeOfBenefits.options.filterNot(o => o == option)) {
             assertContainsRadioButton(doc, s"value-${unselectedOption.value}", "value", unselectedOption.value, false)
           }
         }

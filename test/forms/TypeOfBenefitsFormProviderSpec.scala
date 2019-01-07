@@ -17,26 +17,25 @@
 package forms
 
 import forms.behaviours.FormBehaviours
-import models.register.Benefits
-import models.{Field, Invalid, Required}
+import models.{Field, Invalid, Required, TypeOfBenefits}
 
 class TypeOfBenefitsFormProviderSpec extends FormBehaviours {
 
   val validData: Map[String, String] = Map(
-    "value" -> Benefits.options.head.value
+    "value" -> TypeOfBenefits.options.head.value
   )
 
   val form = new TypeOfBenefitsFormProvider()()
 
   "Benefits form" must {
 
-    behave like questionForm[Benefits](Benefits.values.head)
+    behave like questionForm[TypeOfBenefits](TypeOfBenefits.values.head)
 
     behave like formWithOptionField(
       Field(
         "value",
         Required -> "messages__error__selection",
         Invalid -> "error.invalid"),
-      Benefits.options.map(_.value): _*)
+      TypeOfBenefits.options.map(_.value): _*)
   }
 }
