@@ -30,12 +30,20 @@ class PODSModule extends AbstractModule {
       .to(classOf[PSANameCacheConnector])
 
     bind(classOf[Navigator])
+      .annotatedWith(classOf[AboutBenefitsAndInsurance])
+      .to(classOf[AboutBenefitsAndInsuranceNavigator])
+
+    bind(classOf[Navigator])
       .annotatedWith(classOf[AboutBankDetails])
       .to(classOf[AboutBankDetailsNavigator])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[Register])
       .to(classOf[RegisterNavigator])
+
+    bind(classOf[Navigator])
+      .annotatedWith(classOf[BeforeYouStart])
+      .to(classOf[BeforeYouStartNavigator])
 
     bind(classOf[Navigator])
       .annotatedWith(classOf[EstablishersCompany])

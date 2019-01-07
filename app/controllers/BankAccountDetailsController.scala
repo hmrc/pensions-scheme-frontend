@@ -20,8 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.BankAccountDetailsFormProvider
-import identifiers.BankAccountDetailsId
-import identifiers.register.SchemeNameId
+import identifiers.{BankAccountDetailsId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form

@@ -19,7 +19,7 @@ package navigators
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.Identifier
+import identifiers.{Identifier}
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees._
 import identifiers.register.trustees.individual.TrusteeDetailsId

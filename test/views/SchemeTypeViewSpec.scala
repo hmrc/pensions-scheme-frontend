@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.register
+package views
 
 import forms.register.SchemeTypeFormProvider
 import models.NormalMode
@@ -22,7 +22,7 @@ import models.register.SchemeType
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
-import views.html.register.schemeType
+import views.html.schemeType
 
 class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
 

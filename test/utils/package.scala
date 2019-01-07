@@ -15,8 +15,8 @@
  */
 
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
-import identifiers.LastPageId
 import identifiers.register._
+import identifiers._
 import models._
 import models.address.{Address, TolerantAddress}
 import models.register.{DeclarationDormant, SchemeDetails, SchemeType, UKBankDetails}
@@ -40,6 +40,18 @@ package object utils {
       answers.set(SchemeNameId)(schemeName).asOpt.value
     }
 
+    def insuranceCompanyName(companyName: String): UserAnswers = {
+      answers.set(InsuranceCompanyNameId)(companyName).asOpt.value
+    }
+
+    def insurancePolicyNumber(policyNumber: String): UserAnswers = {
+      answers.set(InsurancePolicyNumberId)(policyNumber).asOpt.value
+    }
+
+    def establishedCountry(country: String): UserAnswers = {
+      answers.set(EstablishedCountryId)(country).asOpt.value
+    }
+
     def schemeUkBankAccount(haveUkBankAccount: Boolean): UserAnswers = {
       answers.set(identifiers.UKBankAccountId)(haveUkBankAccount).asOpt.value
     }
@@ -61,7 +73,7 @@ package object utils {
     }
 
     def ukBankAccount(ukBankAccount: Boolean): UserAnswers = {
-      answers.set(UKBankAccountId)(ukBankAccount).asOpt.value
+      answers.set(identifiers.UKBankAccountId)(ukBankAccount).asOpt.value
     }
 
     //Establishers Individual
