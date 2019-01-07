@@ -17,6 +17,7 @@
 package controllers
 
 import audit.testdoubles.StubSuccessfulAuditService
+import audit.{AddressAction, AddressEvent}
 import base.SpecBase
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
@@ -24,7 +25,7 @@ import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.address.AddressFormProvider
 import identifiers._
 import models.NormalMode
-import models.address.Address
+import models.address.{Address, TolerantAddress}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
@@ -48,11 +49,6 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       viewAsString(this)(form)
     )
 
-    behave like controllerWithOnPageLoadMethodMissingRequiredData(
-      onPageLoadAction(this),
-      getEmptyData
-    )
-
     behave like controllerWithOnSubmitMethod(
       onSubmitAction(this, navigator),
       validData.dataRetrievalAction,
@@ -67,6 +63,33 @@ class InsurerConfirmAddressControllerSpec extends ControllerWithQuestionPageBeha
       InsurerConfirmAddressId,
       insurerAddressData
     )
+
+    "send an audit event when valid data is submitted" in {
+      fakeAuditService.reset()
+      val insurerUpdatedData = Address("address line updated", "address line 2", None, None, Some("AB1 1AB"), "country:AF")
+
+      val validData: UserAnswers = UserAnswers().schemeName(schemeName).insurerConfirmAddress(insurerUpdatedData).insurerSelectAddress(selectedAddress)
+      val result = controller(this)(validData.dataRetrievalAction, FakeAuthAction).onSubmit(NormalMode)(postRequest)
+
+      whenReady(result) {
+        _ =>
+          fakeAuditService.verifySent(
+            AddressEvent(
+              FakeAuthAction.externalId,
+              AddressAction.Lookup,
+              "Insurer Address",
+              Address(
+                "address line 1",
+                "address line 2",
+                None,
+                None,
+                Some("AB1 1AB"),
+                "country:AF"
+              )
+            )
+          ) mustBe true
+      }
+    }
   }
 }
 
@@ -75,12 +98,13 @@ object InsurerConfirmAddressControllerSpec {
   implicit val global = scala.concurrent.ExecutionContext.Implicits.global
   private val schemeName = "test scheme"
   val options = Seq(InputOption("territory:AE-AZ", "Abu Dhabi"), InputOption("country:AF", "Afghanistan"))
-  val insurerAddressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")
+  val insurerAddressData = Address("address line 1", "address line 2", None, None, Some("AB1 1AB"), "country:AF")
+  val selectedAddress = TolerantAddress(Some("address line 1"), Some("address line 2"), None, None, Some("AB1 1AB"), Some("country:AF"))
   private val minData = UserAnswers().schemeName(schemeName).dataRetrievalAction
-  private val validData: UserAnswers = UserAnswers().schemeName(schemeName).insurerConfirmAddress(insurerAddressData)
+  private val validData: UserAnswers = UserAnswers().schemeName(schemeName).insurerConfirmAddress(insurerAddressData).insurerSelectAddress(selectedAddress)
 
-  private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest().withFormUrlEncodedBody(("addressLine1", "value 1"),
-    ("addressLine2", "value 2"), ("postCode", "AB1 1AB"), "country" -> "GB")
+  private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest().withFormUrlEncodedBody(("addressLine1", "address line 1"),
+    ("addressLine2", "address line 2"), ("postCode", "AB1 1AB"), ("country" -> "country:AF"))
 
   def countryOptions: CountryOptions = new CountryOptions(options)
   val fakeAuditService = new StubSuccessfulAuditService()
@@ -95,9 +119,9 @@ object InsurerConfirmAddressControllerSpec {
         form,ManualAddressViewModel(
           routes.InsurerConfirmAddressController.onSubmit(NormalMode),
           options,
-          Message("messages__benefits_insurance_addr__title"),
-          Message("messages__benefits_insurance_addr__h1"),
-          Some(schemeName)
+          Message("messages__insurer_confirm_address__title"),
+          Message("messages__insurer_confirm_address__h1"),
+          None
         )
       )(base.fakeRequest, base.messages).toString()
 
