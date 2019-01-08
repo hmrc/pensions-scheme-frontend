@@ -137,3 +137,6 @@ GET        /confirm-address                             controllers.InsurerConfi
 POST       /confirm-address                             controllers.InsurerConfirmAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /change-confirm-address                      controllers.InsurerConfirmAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-confirm-address                      controllers.InsurerConfirmAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /check-your-answers-before-start             controllers.CheckYourAnswersBeforeYouStartController.onPageLoad()
+POST       /check-your-answers-before-start             controllers.CheckYourAnswersBeforeYouStartController.onSubmit()

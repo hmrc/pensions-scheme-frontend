@@ -28,11 +28,12 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   private def emptyAnswerSections: Seq[Section] = Nil
 
-  def createView(): () => HtmlFormat.Appendable = () =>
+  def createView(returnOverview : Boolean = false): () => HtmlFormat.Appendable = () =>
     check_your_answers(
       frontendAppConfig,
       emptyAnswerSections,
-      routes.IndexController.onPageLoad()
+      routes.IndexController.onPageLoad(),
+      returnOverview
     )(fakeRequest, messages)
 
   def createViewWithData: (Seq[Section]) => HtmlFormat.Appendable = (sections) =>
@@ -46,6 +47,10 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     behave like normalPageWithTitle(createView(), messageKeyPrefix, messages("checkYourAnswers.title"), messages("checkYourAnswers.heading"))
 
     behave like pageWithSubmitButton(createView())
+
+    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
+    behave like pageWithReturnLink(createView(returnOverview=true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
 
     behave like checkYourAnswersPage(createViewWithData)
   }
