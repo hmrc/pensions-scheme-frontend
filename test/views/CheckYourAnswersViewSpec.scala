@@ -53,8 +53,6 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     behave like pageWithReturnLink(createView(returnOverview=true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
 
     behave like checkYourAnswersPage(createViewWithData)
-
-    behave like checkYourAnswersPage(createViewWithData)
   }
 
 }
