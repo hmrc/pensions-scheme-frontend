@@ -19,11 +19,10 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import controllers.routes._
-import identifiers.register.DeclarationDutiesId
-import identifiers.register.trustees.company.CompanyAddressYearsId
+import identifiers.register.{CheckYourAnswersId, DeclarationDutiesId}
 import identifiers.{EstablishedCountryId, HaveAnyTrusteesId, SchemeNameId, SchemeTypeId}
 import models.register.SchemeType
-import models.{AddressYears, NormalMode}
+import models.{CheckMode, NormalMode}
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -35,11 +34,12 @@ class BeforeYouStartNavigatorSpec extends SpecBase with NavigatorBehaviour {
   private def routes = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (SchemeNameId, emptyAnswers, schemeTypePage, false, Some(checkYourAnswersPage), false),
-    (SchemeTypeId, schemeTypeGroupLife, haveAnyTrusteesPage, false, Some(haveAnyTrusteesPage), false),
+    (SchemeTypeId, schemeTypeGroupLife, haveAnyTrusteesPage, false, Some(haveAnyTrusteesCheckPage), false),
     (SchemeTypeId, schemeTypeSingleTrust, establishedCountryPage, false, Some(checkYourAnswersPage), false),
     (HaveAnyTrusteesId, emptyAnswers, establishedCountryPage, false, Some(checkYourAnswersPage), false),
     (EstablishedCountryId, emptyAnswers, workingKnowledgePage, false, Some(checkYourAnswersPage), false),
-    (DeclarationDutiesId, emptyAnswers, checkYourAnswersPage, false, Some(checkYourAnswersPage), false)
+    (DeclarationDutiesId, emptyAnswers, checkYourAnswersPage, false, Some(checkYourAnswersPage), false),
+    (CheckYourAnswersId, emptyAnswers, taskListPage, false, None, false)
   )
 
   val navigator = new BeforeYouStartNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
@@ -54,14 +54,13 @@ object BeforeYouStartNavigatorSpec {
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private def dataDescriber(answers: UserAnswers): String = answers.toString
-  private def schemeTypePage: Call = controllers.routes.SchemeTypeController.onPageLoad(NormalMode)
-  private def haveAnyTrusteesPage: Call = HaveAnyTrusteesController.onPageLoad(NormalMode)
-  private def establishedCountryPage: Call = EstablishedCountryController.onPageLoad(NormalMode)
-  private def workingKnowledgePage: Call = WorkingKnowledgeController.onPageLoad(NormalMode)
-  private val checkYourAnswersPage: Call = controllers.register.routes.CheckYourAnswersController.onPageLoad()
-
-//  private val schemeTypeSingleTrust = UserAnswers(Json.obj())
-//    .set(SchemeTypeId)(SchemeType.SingleTrust)
+  private val schemeTypePage: Call = SchemeTypeController.onPageLoad(NormalMode)
+  private val haveAnyTrusteesPage: Call = HaveAnyTrusteesController.onPageLoad(NormalMode)
+  private val haveAnyTrusteesCheckPage: Call = HaveAnyTrusteesController.onPageLoad(CheckMode)
+  private val establishedCountryPage: Call = EstablishedCountryController.onPageLoad(NormalMode)
+  private val workingKnowledgePage: Call = WorkingKnowledgeController.onPageLoad(NormalMode)
+  private val checkYourAnswersPage: Call = controllers.routes.CheckYourAnswersController.onPageLoad()
+  private val taskListPage: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
 
   private val schemeTypeSingleTrust = UserAnswers(Json.obj(SchemeTypeId.toString -> SchemeType.SingleTrust))
   private val schemeTypeGroupLife = UserAnswers(Json.obj(SchemeTypeId.toString -> SchemeType.GroupLifeDeath))

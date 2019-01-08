@@ -20,16 +20,16 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.routes._
-import identifiers.register.{DeclarationDutiesId, SchemeEstablishedCountryId}
+import identifiers.register.{CheckYourAnswersId, DeclarationDutiesId, SchemeEstablishedCountryId}
 import identifiers.{EstablishedCountryId, HaveAnyTrusteesId, SchemeNameId, SchemeTypeId}
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import models.register.SchemeType
 import utils.{Navigator, UserAnswers}
 
 class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, frontendAppConfig: FrontendAppConfig) extends Navigator {
 
   private def checkYourAnswers: Option[NavigateTo] =
-    NavigateTo.dontSave(controllers.register.routes.CheckYourAnswersController.onPageLoad())
+    NavigateTo.dontSave(controllers.routes.CheckYourAnswersController.onPageLoad())
 
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
@@ -38,6 +38,7 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
     case HaveAnyTrusteesId => NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
     case EstablishedCountryId => NavigateTo.dontSave(WorkingKnowledgeController.onPageLoad(NormalMode))
     case DeclarationDutiesId => checkYourAnswers
+    case CheckYourAnswersId => NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
     case _ => None
   }
 
@@ -66,7 +67,7 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
       case Some(SchemeType.SingleTrust) | Some(SchemeType.MasterTrust) =>
         checkYourAnswers
       case Some(_) =>
-        NavigateTo.dontSave(HaveAnyTrusteesController.onPageLoad(NormalMode))
+        NavigateTo.dontSave(HaveAnyTrusteesController.onPageLoad(CheckMode))
       case None =>
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }

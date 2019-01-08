@@ -1,7 +1,7 @@
 # microservice specific routes
 ->         /register                                    register.Routes
 
-GET        /                                            controllers.BeforeYouStartController.onPageLoad()
+GET        /                                            controllers.WhatYouWillNeedController.onPageLoad()
 
 GET        /what-you-will-need                          controllers.WhatYouWillNeedController.onPageLoad()
 POST       /what-you-will-need                          controllers.WhatYouWillNeedController.onSubmit()
@@ -60,8 +60,8 @@ POST       /change-scheme-name                          controllers.SchemeNameCo
 
 GET        /scheme-type                                 controllers.SchemeTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /scheme-type                                 controllers.SchemeTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /scheme-type                                 controllers.SchemeTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /scheme-type                                 controllers.SchemeTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /change-scheme-type                                 controllers.SchemeTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-scheme-type                                 controllers.SchemeTypeController.onSubmit(mode: Mode = CheckMode)
 
 GET        /any-trustees                                controllers.HaveAnyTrusteesController.onPageLoad(mode: Mode = NormalMode)
 POST       /any-trustees                                controllers.HaveAnyTrusteesController.onSubmit(mode: Mode = NormalMode)
@@ -77,6 +77,11 @@ GET        /insurance-company-name                      controllers.InsuranceCom
 POST       /insurance-company-name                      controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = NormalMode)
 GET        /change-insurance-company-name               controllers.InsuranceCompanyNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-insurance-company-name               controllers.InsuranceCompanyNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /insurance-policy-number                     controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /insurance-policy-number                     controllers.InsurancePolicyNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /change-insurance-policy-number              controllers.InsurancePolicyNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-insurance-policy-number              controllers.InsurancePolicyNumberController.onSubmit(mode: Mode = CheckMode)
 
 GET        /check-your-answers-before-start             controllers.CheckYourAnswersController.onPageLoad()
 POST       /check-your-answers-before-start             controllers.CheckYourAnswersController.onSubmit()
