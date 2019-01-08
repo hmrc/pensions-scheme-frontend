@@ -1258,6 +1258,6 @@ messages__bank_account_details__h1 = What are {0}’s bank account details?
 messages__bank_account_details__bank_name = Bank name
 messages__bank_account_details__account_name = Account name
 messages__bank_account_details__sort_code = Sort code
-messages__bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
+messages__bank_account_details__sort_code_hint = For example, 08 32 10
 messages__bank_account_details__account_number = Account number
 messages__bank_account_details__date_bank_account = Approximate date the account was opened
