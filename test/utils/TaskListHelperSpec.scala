@@ -272,7 +272,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
       helper.addTrusteeHeader(declarationWithoutEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)) mustBe JourneyTaskListSection(
         None,
         Link(messages(addTrusteesLinkText),
-          controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+          controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
         None
       )
     }
@@ -282,7 +282,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
       helper.addTrusteeHeader(declarationWithEstabliserAndHaveAnyTrusteesAndOtherSchemeType()) mustBe JourneyTaskListSection(
         Some(true),
         Link(messages(changeTrusteesLinkText),
-          controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+          controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
         None
       )
     }
@@ -302,7 +302,7 @@ class TaskListHelperSpec extends WordSpec with MustMatchers {
       helper.addTrusteeHeader(declarationWithEstabliserAndTrustees(schemeType = SchemeType.BodyCorporate)) mustBe JourneyTaskListSection(
         None,
         Link(messages(changeTrusteesLinkText),
-          controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+          controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
         None
       )
     }
@@ -395,7 +395,7 @@ object TaskListHelperSpec extends SpecBase with JsonFileReader {
   private val expectedAddTrusteeHeader = JourneyTaskListSection(
       None,
       Link(messages(addTrusteesLinkText),
-        controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+        controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
       None
     )
 
