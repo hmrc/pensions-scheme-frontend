@@ -153,6 +153,23 @@ object CheckYourAnswers {
     }
   }
 
+  implicit def typeOfBenefitsCYA[I <: TypedIdentifier[TypeOfBenefits]](implicit rds: Reads[TypeOfBenefits]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+        typeOfBenefits =>
+          Seq(
+            AnswerRow(
+              "messages__type_of_benefits_cya_label",
+              Seq(s"messages__type_of_benefits__$typeOfBenefits"),
+              answerIsMessageKey = true,
+              Some(changeUrl),
+              "messages__visuallyhidden__type_of_benefits_change"
+            )
+          )
+      }.getOrElse(Seq.empty[AnswerRow])
+    }
+  }
+
   case class ContactDetailsCYA[I <: TypedIdentifier[ContactDetails]](changeEmailAddress: String = "messages__visuallyhidden__common__email_address",
                                                                      changePhoneNumber: String = "messages__visuallyhidden__common__phone_number") {
 
