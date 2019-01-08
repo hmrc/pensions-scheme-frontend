@@ -19,13 +19,20 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import utils.Navigator
+import identifiers.CurrentMembersId
+import utils.{Navigator, UserAnswers}
 
 class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
-      case _ => None
+      case CurrentMembersId => currentMembersNavigationRoutes(from.userAnswers)
+    }
+  }
+
+  private def currentMembersNavigationRoutes(userAnswers: UserAnswers): Option[NavigateTo] = {
+    userAnswers.get(CurrentMembersId) match {
+      case 
     }
   }
 

@@ -19,6 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
+import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -27,7 +28,7 @@ import views.html.whatYouWillNeedMembers
 class WhatYouWillNeedMembersController @Inject()(appConfig: FrontendAppConfig,
                                                  override val messagesApi: MessagesApi,
                                                  authenticate: AuthAction
-                                                        ) extends FrontendController with I18nSupport {
+                                                ) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>
@@ -36,6 +37,6 @@ class WhatYouWillNeedMembersController @Inject()(appConfig: FrontendAppConfig,
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      Redirect(controllers.routes.SessionExpiredController.onPageLoad)
+      Redirect(controllers.routes.CurrentMembersController.onPageLoad(NormalMode))
   }
 }

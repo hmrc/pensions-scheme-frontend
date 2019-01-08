@@ -17,25 +17,34 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.UserAnswersCacheConnector
 import controllers.actions._
+import identifiers.MembershipPensionRegulatorId
 import javax.inject.Inject
+import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.Navigator
+import utils.annotations.AboutMembers
 import views.html.membershipPensionRegulator
 
 class MembershipPensionRegulatorController @Inject()(appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
-                                                     authenticate: AuthAction
-                                                        ) extends FrontendController with I18nSupport {
+                                                     @AboutMembers navigator: Navigator,
+                                                     userAnswersCacheConnector: UserAnswersCacheConnector,
+                                                     authenticate: AuthAction,
+                                                     getData: DataRetrievalAction,
+                                                     requireData: DataRequiredAction
+                                                    ) extends FrontendController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authenticate {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       Ok(membershipPensionRegulator(appConfig))
   }
 
-  def onSubmit: Action[AnyContent] = authenticate {
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Redirect(controllers.routes.SessionExpiredController.onPageLoad)
+      Redirect(navigator.nextPage(MembershipPensionRegulatorId, NormalMode, request.userAnswers))
   }
 }
