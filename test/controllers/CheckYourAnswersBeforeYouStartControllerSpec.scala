@@ -95,25 +95,25 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
         "messages__visuallyhidden__schemeName"
       ),
       AnswerRow(
-        "What type of scheme is Test Scheme?",
+        messages("schemeType.checkYourAnswersLabel", "Test Scheme"),
         Seq(s"messages__scheme_type_${SchemeType.SingleTrust}"),
         answerIsMessageKey = true,
         Some(routes.SchemeTypeController.onPageLoad(CheckMode).url),
-        "Change the type of scheme Test Scheme is"
+        messages("messages__visuallyhidden__schemeType", "Test Scheme")
       ),
       AnswerRow(
-        "Does Test Scheme have any trustees?",
+        messages("haveAnyTrustees.checkYourAnswersLabel", "Test Scheme"),
         Seq("site.yes"),
         answerIsMessageKey = true,
         Some(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url),
-        "Change if Test Scheme has any trustees"
+        messages("messages__visuallyhidden__haveAnyTrustees", "Test Scheme")
       ),
       AnswerRow(
-        "Which country was Test Scheme established in?",
+        messages("schemeEstablishedCountry.hns_checkYourAnswersLabel", "Test Scheme"),
         Seq("Country of GB"),
         answerIsMessageKey = false,
         Some(routes.EstablishedCountryController.onPageLoad(CheckMode).url),
-        "Change the country Test Scheme was established in"
+        messages("messages__visuallyhidden__hns_schemeEstablishedCountry", "Test Scheme")
       ),
       AnswerRow(
         "messages__workingKnowledge__title",
