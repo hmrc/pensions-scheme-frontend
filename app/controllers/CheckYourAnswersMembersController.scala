@@ -24,7 +24,7 @@ import models.CheckMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Toggles.hnsIterationTwo
+import utils.Toggles.enableHubV2
 import utils.checkyouranswers.Ops._
 import utils.{Enumerable, SectionComplete}
 import viewmodels.AnswerSection
@@ -53,7 +53,7 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
         appConfig,
         Seq(membersSection),
         routes.CheckYourAnswersMembersController.onSubmit(),
-        fs.get(hnsIterationTwo)
+        fs.get(enableHubV2)
       ))
   }
 

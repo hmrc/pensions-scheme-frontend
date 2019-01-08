@@ -18,5 +18,5 @@ package utils
 
 object Toggles {
 
-  val hnsIterationTwo: String = "hns-iteration-two"
+  val enableHubV2: String = "enable-hub-v2"
 }
