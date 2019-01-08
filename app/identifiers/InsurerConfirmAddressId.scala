@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package identifiers
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import models.Members
-import play.api.data.Form
+import models.address.Address
+import utils.CountryOptions
+import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
 
-class FutureMembersFormProvider @Inject() extends Mappings {
+case object InsurerConfirmAddressId extends TypedIdentifier[Address] {
+  self =>
+  override def toString: String = "insurerAddress"
 
-  def apply(): Form[Members] =
-    Form(
-      "value" -> enumerable[Members]("messages__error__selection")
-    )
+  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] =
+    AddressCYA(
+      label = "messages__benefits_insurance_addr__cya_label",
+      changeAddress = "messages__visuallyhidden__insurer_address"
+    )()
 }

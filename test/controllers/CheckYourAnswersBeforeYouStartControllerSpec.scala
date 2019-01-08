@@ -28,9 +28,9 @@ import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
-  import CheckYourAnswersControllerSpec._
+  import CheckYourAnswersBeforeYouStartControllerSpec._
 
   "CheckYourAnswers Controller" when {
 
@@ -53,16 +53,15 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
     }
 
   }
-
 }
 
-object CheckYourAnswersControllerSpec extends ControllerSpecBase {
+object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
   private val fakeNavigator = new FakeNavigator(onwardRoute)
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =
-    new CheckYourAnswersController(
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBeforeYouStartController =
+    new CheckYourAnswersBeforeYouStartController(
       frontendAppConfig,
       messagesApi,
       FakeAuthAction,
@@ -73,7 +72,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       FakeSectionComplete
     )
 
-  private val postUrl = routes.CheckYourAnswersController.onSubmit()
+  private val postUrl = routes.CheckYourAnswersBeforeYouStartController.onSubmit()
 
   private val schemeInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
@@ -96,25 +95,25 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
         "messages__visuallyhidden__schemeName"
       ),
       AnswerRow(
-        "What type of scheme is Test Scheme?",
+        messages("schemeType.checkYourAnswersLabel", "Test Scheme"),
         Seq(s"messages__scheme_type_${SchemeType.SingleTrust}"),
         answerIsMessageKey = true,
         Some(routes.SchemeTypeController.onPageLoad(CheckMode).url),
-        "Change the type of scheme Test Scheme is"
+        messages("messages__visuallyhidden__schemeType", "Test Scheme")
       ),
       AnswerRow(
-        "Does Test Scheme have any trustees?",
+        messages("haveAnyTrustees.checkYourAnswersLabel", "Test Scheme"),
         Seq("site.yes"),
         answerIsMessageKey = true,
         Some(routes.HaveAnyTrusteesController.onPageLoad(CheckMode).url),
-        "Change if Test Scheme has any trustees"
+        messages("messages__visuallyhidden__haveAnyTrustees", "Test Scheme")
       ),
       AnswerRow(
-        "Which country was Test Scheme established in?",
-        Seq("GB"),
+        messages("schemeEstablishedCountry.hns_checkYourAnswersLabel", "Test Scheme"),
+        Seq("Country of GB"),
         answerIsMessageKey = false,
         Some(routes.EstablishedCountryController.onPageLoad(CheckMode).url),
-        "Change the country Test Scheme was established in"
+        messages("messages__visuallyhidden__hns_schemeEstablishedCountry", "Test Scheme")
       ),
       AnswerRow(
         "messages__workingKnowledge__title",
@@ -129,7 +128,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   private def viewAsString(): String = check_your_answers(
     frontendAppConfig,
     Seq(beforeYouStart),
-    postUrl
+    postUrl,
+    returnOverview=true
   )(fakeRequest, messages).toString
 
 }

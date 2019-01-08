@@ -16,7 +16,7 @@
 
 package utils.checkyouranswers
 
-import identifiers.TypedIdentifier
+import identifiers.{EstablishedCountryId, TypedIdentifier}
 import identifiers.register.SchemeEstablishedCountryId
 import models._
 import models.address.Address
@@ -59,6 +59,8 @@ object CheckYourAnswers {
   implicit def contactDetails[I <: TypedIdentifier[ContactDetails]](implicit rds: Reads[ContactDetails]): CheckYourAnswers[I] = ContactDetailsCYA()()
 
   implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = StringCYA()()
+
+  implicit def members[I <: TypedIdentifier[Members]](implicit rds: Reads[Members]): CheckYourAnswers[I] = MembersCYA()()
 
   case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
@@ -247,6 +249,27 @@ object CheckYourAnswers {
     }
   }
 
+  case class MembersCYA[I <: TypedIdentifier[Members]](label: Option[String] = None,
+                                                       hiddenLabel: Option[String] = None) {
+
+    def apply()(implicit rds: Reads[Members]): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+          members =>
+            Seq(
+              AnswerRow(
+                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq(s"messages__members__$members"),
+                answerIsMessageKey = true,
+                Some(changeUrl),
+                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+              )
+            )
+        }.getOrElse(Seq.empty[AnswerRow])
+      }
+    }
+  }
+
   implicit def partnershipDetails[I <: TypedIdentifier[PartnershipDetails]](implicit rds: Reads[PartnershipDetails]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { partnershipDetails =>
@@ -329,7 +352,7 @@ object CheckYourAnswers {
 
   private def retrieveStringAnswer[I](id: I, stringValue: String)(implicit countryOptions: CountryOptions): String = {
     id match {
-      case SchemeEstablishedCountryId =>
+      case SchemeEstablishedCountryId | EstablishedCountryId =>
         countryOptions.options.find(_.value == stringValue).map(_.label).getOrElse(stringValue)
       case _ => stringValue
     }

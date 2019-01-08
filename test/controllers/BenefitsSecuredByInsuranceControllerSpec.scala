@@ -20,35 +20,30 @@ import base.SpecBase
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
-import forms.FutureMembersFormProvider
-import identifiers.FutureMembersId
-import models.{Members, NormalMode}
+import forms.BenefitsSecuredByInsuranceFormProvider
+import identifiers.BenefitsSecuredByInsuranceId
+import models.NormalMode
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import utils.{FakeNavigator, Navigator, UserAnswers}
-import views.html.futureMembers
+import views.html.benefitsSecuredByInsurance
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class FutureMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
+class BenefitsSecuredByInsuranceControllerSpec extends ControllerWithQuestionPageBehaviours {
 
-  import FutureMembersControllerSpec._
+  import BenefitsSecuredByInsuranceControllerSpec._
 
-  "Future Members Controller" when {
+  "Benefits secured by insurance Controller" when {
 
     behave like controllerWithOnPageLoadMethod(
       onPageLoadAction(this),
       getMandatorySchemeNameHs,
       validData.dataRetrievalAction,
       form,
-      form.fill(Members.values.head),
+      form.fill(true),
       viewAsString(this)(form)
-    )
-
-    behave like controllerWithOnPageLoadMethodMissingRequiredData(
-      onPageLoadAction(this),
-      getEmptyData
     )
 
     behave like controllerWithOnSubmitMethod(
@@ -62,30 +57,29 @@ class FutureMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
     behave like controllerThatSavesUserAnswers(
       saveAction(this),
       postRequest,
-      FutureMembersId,
-      Members.values.head
+      BenefitsSecuredByInsuranceId,
+      true
     )
   }
 }
 
-object FutureMembersControllerSpec {
-  private val schemeName = "Test Scheme Name"
-  private val formProvider = new FutureMembersFormProvider()
+object BenefitsSecuredByInsuranceControllerSpec {
+  private val formProvider = new BenefitsSecuredByInsuranceFormProvider()
   private val form = formProvider.apply()
-  private val validData: UserAnswers = UserAnswers().schemeName(schemeName).futureMembers(Members.values.head)
+  private val validData: UserAnswers = UserAnswers().benefitsSecuredByInsurance(true)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest().withFormUrlEncodedBody(("value", Members.values.head.toString))
+    FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    futureMembers(base.frontendAppConfig, form, NormalMode, schemeName)(base.fakeRequest, base.messages).toString()
+    benefitsSecuredByInsurance(base.frontendAppConfig, form, NormalMode)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
-  ): FutureMembersController =
-    new FutureMembersController(
+  ): BenefitsSecuredByInsuranceController =
+    new BenefitsSecuredByInsuranceController(
       base.frontendAppConfig,
       base.messagesApi,
       cache,

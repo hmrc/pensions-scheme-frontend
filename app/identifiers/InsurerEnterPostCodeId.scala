@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package identifiers
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import models.Members
-import play.api.data.Form
+import models.address.TolerantAddress
 
-class FutureMembersFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Members] =
-    Form(
-      "value" -> enumerable[Members]("messages__error__selection")
-    )
+object InsurerEnterPostCodeId extends TypedIdentifier[Seq[TolerantAddress]] {
+  override def toString: String = "insurerAddresses"
 }
+

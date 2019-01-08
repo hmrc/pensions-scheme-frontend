@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.Register
+import utils.annotations.AboutMembers
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.futureMembers
 
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class FutureMembersController @Inject()(appConfig: FrontendAppConfig,
                                         override val messagesApi: MessagesApi,
                                         dataCacheConnector: UserAnswersCacheConnector,
-                                        @Register navigator: Navigator,
+                                        @AboutMembers navigator: Navigator,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,

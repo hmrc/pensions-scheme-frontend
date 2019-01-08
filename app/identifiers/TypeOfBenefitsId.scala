@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package forms
+package identifiers
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import models.Members
-import play.api.data.Form
+import models.TypeOfBenefits
 
-class FutureMembersFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[Members] =
-    Form(
-      "value" -> enumerable[Members]("messages__error__selection")
-    )
+case object TypeOfBenefitsId extends TypedIdentifier[TypeOfBenefits] {
+  override def toString: String = "benefits"
 }

@@ -20,35 +20,30 @@ import base.SpecBase
 import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
-import forms.FutureMembersFormProvider
-import identifiers.FutureMembersId
-import models.{Members, NormalMode}
+import forms.TypeOfBenefitsFormProvider
+import identifiers.TypeOfBenefitsId
+import models.{NormalMode, TypeOfBenefits}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import utils.{FakeNavigator, Navigator, UserAnswers}
-import views.html.futureMembers
+import views.html.typeOfBenefits
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class FutureMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
+class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours {
 
-  import FutureMembersControllerSpec._
+  import TypeOfBenefitsControllerSpec._
 
-  "Future Members Controller" when {
+  "Type of benefits Controller" when {
 
     behave like controllerWithOnPageLoadMethod(
       onPageLoadAction(this),
       getMandatorySchemeNameHs,
       validData.dataRetrievalAction,
       form,
-      form.fill(Members.values.head),
+      form.fill(TypeOfBenefits.values.head),
       viewAsString(this)(form)
-    )
-
-    behave like controllerWithOnPageLoadMethodMissingRequiredData(
-      onPageLoadAction(this),
-      getEmptyData
     )
 
     behave like controllerWithOnSubmitMethod(
@@ -62,30 +57,28 @@ class FutureMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
     behave like controllerThatSavesUserAnswers(
       saveAction(this),
       postRequest,
-      FutureMembersId,
-      Members.values.head
+      TypeOfBenefitsId,
+      TypeOfBenefits.values.head
     )
   }
 }
-
-object FutureMembersControllerSpec {
-  private val schemeName = "Test Scheme Name"
-  private val formProvider = new FutureMembersFormProvider()
+object TypeOfBenefitsControllerSpec {
+  private val formProvider = new TypeOfBenefitsFormProvider()
   private val form = formProvider.apply()
-  private val validData: UserAnswers = UserAnswers().schemeName(schemeName).futureMembers(Members.values.head)
+  private val validData: UserAnswers = UserAnswers().typeOfBenefits(TypeOfBenefits.values.head)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest().withFormUrlEncodedBody(("value", Members.values.head.toString))
+    FakeRequest().withFormUrlEncodedBody(("value", TypeOfBenefits.values.head.toString))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    futureMembers(base.frontendAppConfig, form, NormalMode, schemeName)(base.fakeRequest, base.messages).toString()
+    typeOfBenefits(base.frontendAppConfig, form, NormalMode)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
     authAction: AuthAction = FakeAuthAction,
     navigator: Navigator = FakeNavigator,
     cache: UserAnswersCacheConnector = FakeUserAnswersCacheConnector
-  ): FutureMembersController =
-    new FutureMembersController(
+  ): TypeOfBenefitsController =
+    new TypeOfBenefitsController(
       base.frontendAppConfig,
       base.messagesApi,
       cache,
@@ -106,5 +99,4 @@ object FutureMembersControllerSpec {
   private def saveAction(base: ControllerSpecBase)(cache: UserAnswersCacheConnector): Action[AnyContent] =
     controller(base)(cache = cache).onSubmit(NormalMode)
 }
-
 

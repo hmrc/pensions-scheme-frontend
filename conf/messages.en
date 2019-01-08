@@ -133,6 +133,7 @@ site.go_back = Go back
 site.signOut = Sign out
 site.printThisPage = Print this page
 site.return.tasklist = Return to pension scheme details
+site.return.managing.pension.schemes = Return to managing pension schemes
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -215,11 +216,14 @@ messages__membership__opt6 = more than 10,000
 
 messages__investment_regulated__title = Is the scheme investment regulated?
 
+#Duplicated these messages with the new keys, it can be deleted once the Benefits insurer page is deleted from register routes
 messages__contractofinsurance_pension_scheme__title = Are any of the scheme benefits secured by a contract of insurance or annuity?
 messages__contractofinsurance_pension_scheme__copy = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
 
 messages__occupational_pension_scheme__title = Is the scheme an occupational pension scheme?
+messages__occupational_pension_scheme__h1 = Is the scheme an occupational pension scheme?
 
+#Duplicated these messages with the new keys, it can be deleted once the Benefits page is deleted from register routes
 messages__benefits__title = How does the scheme provide benefits?
 messages__benefits__opt1 = Money Purchase benefits only (defined contribution)
 messages__benefits__opt2 = Defined Benefits only
@@ -1191,10 +1195,29 @@ messages__what_you_will_need_wk__item_4 = address
 messages__scheme_uk_bank_account__title = Does the scheme have a UK bank account?
 messages__scheme_uk_bank_account__h1 = Does {0} have a UK bank account?
 
+messages__members__opt1 = None
+messages__members__opt2 = 1
+messages__members__opt3 = 2 - 11
+messages__members__opt4 = 12 - 50
+messages__members__opt5 = 51 - 10,000
+messages__members__opt6 = more than 10,000
+
 messages__current_members__title = How many members does the scheme currently have?
 messages__current_members__h1 = How many members does {0} currently have?
-messages__current_members__body1 = You might have to register the pension scheme with The Pensions Regulator.
-messages__current_members__body2 = If the scheme has 2 or more members, HMRC will share the scheme and your contact details with The Pensions Regulator. They will then contact you to register the scheme with them.
+
+messages__future_members__title = How many members do you expect the scheme to have in 12 months time?
+messages__future_members__h1 = How many scheme members do you expect {0} to have in 12 months time?
+
+messages__current_members_cya_label = How many members does {0} currently have?
+messages__visuallyhidden__current_members_change = Change how many members {0} currently has
+messages__future_members_cya_label = How many scheme members do you expect {0} to have in 12 months time?
+messages__visuallyhidden__future_members_change = Change how many members you expect {0} to have in 12 months time
+
+messages__insurer_enter_postcode__title = Enter the insurance company’s postcode
+messages__insurer_enter_postcode__h1 = Enter the insurance company’s postcode
+
+messages__insurer_confirm_address__title = Insurance company’s address
+messages__insurer_confirm_address__h1 = Insurance company’s address
 
 messages__what_you_will_need_benefits__title = Benefits and insurance
 messages__what_you_will_need_benefits__h1 = Benefits and insurance
@@ -1255,9 +1278,6 @@ messages__error__insurance_policy_number = Enter a policy number
 messages__error__insurance_policy_number_invalid = Enter the policy number only using European characters
 messages__error__insurance_policy_number_length = Enter a policy number using 55 characters or less
 
-messages__future_members__title = How many members do you expect the scheme to have in 12 months time?
-messages__future_members__h1 = How many scheme members do you expect {0} to have in 12 months time?
-
 messages__investment_regulated_scheme__title = Is the scheme investment regulated?
 messages__investment_regulated_scheme__h1 = Is the scheme investment regulated?
 
@@ -1269,3 +1289,13 @@ messages__bank_account_details__sort_code = Sort code
 messages__bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
 messages__bank_account_details__account_number = Account number
 messages__bank_account_details__date_bank_account = Approximate date the account was opened
+
+messages__type_of_benefits__title = How does the scheme provide benefits?
+messages__type_of_benefits__h1 = How does the scheme provide benefits?
+messages__type_of_benefits__opt1 = Money Purchase benefits only (defined contribution)
+messages__type_of_benefits__opt2 = Defined Benefits only
+messages__type_of_benefits__opt3 = Mixture of money purchase benefits and defined benefits
+
+messages__benefits_secured_by_insurance__title = Are any of the scheme benefits secured by a contract of insurance or annuity?
+messages__benefits_secured_by_insurance__h1 = Are any of the scheme benefits secured by a contract of insurance or annuity?
+messages__benefits_secured_by_insurance__lede = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.

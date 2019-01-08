@@ -16,15 +16,26 @@
 
 package forms
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import models.Members
-import play.api.data.Form
+import forms.behaviours.FormBehaviours
+import models.{Field, Invalid, Required, TypeOfBenefits}
 
-class FutureMembersFormProvider @Inject() extends Mappings {
+class TypeOfBenefitsFormProviderSpec extends FormBehaviours {
 
-  def apply(): Form[Members] =
-    Form(
-      "value" -> enumerable[Members]("messages__error__selection")
-    )
+  val validData: Map[String, String] = Map(
+    "value" -> TypeOfBenefits.options.head.value
+  )
+
+  val form = new TypeOfBenefitsFormProvider()()
+
+  "Benefits form" must {
+
+    behave like questionForm[TypeOfBenefits](TypeOfBenefits.values.head)
+
+    behave like formWithOptionField(
+      Field(
+        "value",
+        Required -> "messages__error__selection",
+        Invalid -> "error.invalid"),
+      TypeOfBenefits.options.map(_.value): _*)
+  }
 }
