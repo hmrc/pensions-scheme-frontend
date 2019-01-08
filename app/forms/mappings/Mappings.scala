@@ -16,22 +16,14 @@
 
 package forms.mappings
 
-import models.register.SortCode
 import org.joda.time.LocalDate
 import play.api.data.Forms.{of, _}
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.data.{FieldMapping, Mapping}
 import utils.Enumerable
 
 import scala.util.Try
 
 trait Mappings extends Formatters with Constraints {
-  protected def stopOnFirstFail[T](constraints: Seq[Constraint[T]]): Constraint[T] = Constraint { field: T =>
-    constraints.toList dropWhile (_ (field) == Valid) match {
-      case Nil => Valid
-      case constraint :: _ => constraint(field)
-    }
-  }
 
   protected def text(errorKey: String = "error.required"): FieldMapping[String] =
     of(stringFormatter(errorKey))

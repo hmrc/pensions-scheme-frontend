@@ -31,8 +31,8 @@ class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
       "third" -> text
     )
       .verifying(
-        stopOnFirstFail(
-          Seq(sortCodeRequiredConstraint(requiredKey), sortCodeLengthConstraint(lengthKey), sortCodeInvalidConstraint(invalidKey))
+        returnOnFirstFailure(
+          sortCodeRequiredConstraint(requiredKey), sortCodeLengthConstraint(lengthKey), sortCodeInvalidConstraint(invalidKey)
         )
       )
       .transform(
@@ -40,8 +40,8 @@ class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
         sortCode => (sortCode.first, sortCode.second, sortCode.third))
   }
 
-  val nameMaxLength = 28
-  val accountNoExactLength = 8
+  protected val nameMaxLength = 28
+  protected val accountNoExactLength = 8
 
   def apply(): Form[BankAccountDetails] = Form(
     mapping(

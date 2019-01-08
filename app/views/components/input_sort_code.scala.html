@@ -22,7 +22,7 @@ secondaryLabel: Option[String] = None,
 hint: Option[String] = None
 )(implicit messages: Messages)
 
-<div class="form-field @if(Seq(field, field("first"), field("second"), field("third")).flatMap(_.errors).nonEmpty){form-field--error}">
+<div class='form-field @if(Seq(field, field("first"), field("second"), field("third")).flatMap(_.errors).nonEmpty){form-field--error}'>
     <fieldset id="@field.id">
         <legend>
             <span class="bold form-label @if(legendClass.nonEmpty){@legendClass}">
