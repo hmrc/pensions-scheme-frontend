@@ -28,8 +28,6 @@ trait Mappings extends Formatters with Constraints {
   protected def text(errorKey: String = "error.required"): FieldMapping[String] =
     of(stringFormatter(errorKey))
 
-  protected def text: FieldMapping[String] = of(stringFormatterDefaultToEmptyString)
-
   protected def optionalText(): FieldMapping[Option[String]] =
     of(optionalStringFormatter)
 
