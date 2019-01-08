@@ -136,7 +136,7 @@ object CheckYourAnswers {
 
   implicit def schemeBenefits[I <: TypedIdentifier[Benefits]](implicit rds: Reads[Benefits]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
         benefits =>
           Seq(
             AnswerRow(
@@ -482,9 +482,7 @@ case class BankDetailsCYA[I <: TypedIdentifier[UKBankDetails]](
                                                                 accountNumberLabel: String = "messages__uk_bank_account_details__account_number",
                                                                 changeAccountNumber: String = "messages__visuallyhidden__uKBankAccount__account_number",
                                                                 dateLabel: String = "bankAccountDate.checkYourAnswersLabel",
-                                                                changeDate: String = "messages__visuallyhidden__uKBankAccount__date_bank_account",
-                                                                label: Option[String] = None,
-                                                                hiddenLabel: Option[String] = None
+                                                                changeDate: String = "messages__visuallyhidden__uKBankAccount__date_bank_account"
                                                               ) {
 
   def apply()(implicit rds: Reads[UKBankDetails]): CheckYourAnswers[I] = {
