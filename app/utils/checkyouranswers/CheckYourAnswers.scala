@@ -100,6 +100,23 @@ object CheckYourAnswers {
     }
   }
 
+  implicit def boolean[I <: TypedIdentifier[Boolean]](implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map {
+          flag =>
+            Seq(AnswerRow(
+              s"${id.toString}.checkYourAnswersLabel",
+              Seq(if (flag) "site.yes" else "site.no"),
+              answerIsMessageKey = true,
+              Some(changeUrl),
+              s"messages__visuallyhidden__${id.toString}"
+            ))
+        }.getOrElse(Seq.empty)
+    }
+  }
+
+
   case class SchemeTypeCYA[I <: TypedIdentifier[SchemeType]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
     def apply()(implicit rds: Reads[SchemeType]): CheckYourAnswers[I] = {
@@ -115,23 +132,7 @@ object CheckYourAnswers {
                 hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
               ))
           }.getOrElse(Seq.empty[AnswerRow])
-        }
       }
-    }
-
-  implicit def boolean[I <: TypedIdentifier[Boolean]](implicit rds: Reads[Boolean]): CheckYourAnswers[I] = {
-    new CheckYourAnswers[I] {
-      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
-        userAnswers.get(id).map {
-          flag =>
-            Seq(AnswerRow(
-              s"${id.toString}.checkYourAnswersLabel",
-              Seq(if (flag) "site.yes" else "site.no"),
-              answerIsMessageKey = true,
-              Some(changeUrl),
-              s"messages__visuallyhidden__${id.toString}"
-            ))
-        }.getOrElse(Seq.empty)
     }
   }
 
@@ -552,6 +553,29 @@ case class BankDetailsCYA[I <: TypedIdentifier[UKBankDetails]](
     }
   }
 
+}
+
+case class BankDetailsHnSCYA[I <: TypedIdentifier[UKBankDetails]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+
+  def apply()(implicit rds: Reads[UKBankDetails], countryOptions: CountryOptions): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map {
+          bankDetails =>
+            Seq(AnswerRow(
+              label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+              Seq(bankDetails.bankName,
+                bankDetails.accountName,
+                s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
+                bankDetails.accountNumber,
+                DateHelper.formatDate(bankDetails.date)),
+              answerIsMessageKey = false,
+              Some(changeUrl),
+              hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+            ))
+        }.getOrElse(Seq.empty[AnswerRow])
+    }
+  }
 }
 
 case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "messages__establisher_address_years__title",
