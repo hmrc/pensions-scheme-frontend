@@ -93,6 +93,21 @@ POST       /bank-account-details                        controllers.BankAccountD
 GET        /change-bank-account-details                 controllers.BankAccountDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-bank-account-details                 controllers.BankAccountDetailsController.onSubmit(mode: Mode = CheckMode)
 
+GET        /current-scheme-members                      controllers.CurrentMembersController.onPageLoad(mode: Mode = NormalMode)
+POST       /current-scheme-members                      controllers.CurrentMembersController.onSubmit(mode: Mode = NormalMode)
+GET        /change-current-scheme-members               controllers.CurrentMembersController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-current-scheme-members               controllers.CurrentMembersController.onSubmit(mode: Mode = CheckMode)
+
+GET        /future-scheme-members                       controllers.FutureMembersController.onPageLoad(mode: Mode = NormalMode)
+POST       /future-scheme-members                       controllers.FutureMembersController.onSubmit(mode: Mode = NormalMode)
+GET        /change-future-scheme-members                controllers.FutureMembersController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-future-scheme-members                controllers.FutureMembersController.onSubmit(mode: Mode = CheckMode)
+
+GET        /investment-regulated-scheme                 controllers.InvestmentRegulatedSchemeController.onPageLoad(mode: Mode = NormalMode)
+POST       /investment-regulated-scheme                 controllers.InvestmentRegulatedSchemeController.onSubmit(mode: Mode = NormalMode)
+GET        /change-investment-regulated-scheme          controllers.InvestmentRegulatedSchemeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-investment-regulated-scheme          controllers.InvestmentRegulatedSchemeController.onSubmit(mode: Mode = CheckMode)
+
 GET        /occupational-pension-scheme                 controllers.OccupationalPensionSchemeController.onPageLoad(mode: Mode = NormalMode)
 POST       /occupational-pension-scheme                 controllers.OccupationalPensionSchemeController.onSubmit(mode: Mode = NormalMode)
 GET        /change-occupational-pension-scheme          controllers.OccupationalPensionSchemeController.onPageLoad(mode: Mode = CheckMode)
