@@ -21,13 +21,15 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import identifiers.MembershipPensionRegulatorId
 import javax.inject.Inject
-import models.NormalMode
+import models.{Mode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Navigator
 import utils.annotations.AboutMembers
 import views.html.membershipPensionRegulator
+
+import scala.concurrent.ExecutionContext
 
 class MembershipPensionRegulatorController @Inject()(appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
@@ -36,15 +38,15 @@ class MembershipPensionRegulatorController @Inject()(appConfig: FrontendAppConfi
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction
-                                                    ) extends FrontendController with I18nSupport {
+                                                    )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Ok(membershipPensionRegulator(appConfig))
+      Ok(membershipPensionRegulator(appConfig, mode))
   }
 
-  def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
+  def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Redirect(navigator.nextPage(MembershipPensionRegulatorId, NormalMode, request.userAnswers))
+      Redirect(navigator.nextPage(MembershipPensionRegulatorId, mode, request.userAnswers))
   }
 }

@@ -19,7 +19,7 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.{CurrentMembersId, FutureMembersId, MembershipPensionRegulatorId}
-import models.{Members, Mode, NormalMode}
+import models.{CheckMode, Members, Mode, NormalMode}
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -32,11 +32,11 @@ class AboutMembersNavigatorSpec extends SpecBase with NavigatorBehaviour {
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (CurrentMembersId, noMembers, futureMembers(NormalMode), false, Some(cya), false),
     (CurrentMembersId, oneMember, futureMembers(NormalMode), false, Some(cya), false),
-    (CurrentMembersId, twoToElevenMembers, membershipPensionRegulator, false, Some(membershipPensionRegulator), false),
-    (CurrentMembersId, twelveToFiftyMembers, membershipPensionRegulator, false, Some(membershipPensionRegulator), false),
-    (CurrentMembersId, fiftyOneToTenThousandMembers, membershipPensionRegulator, false, Some(membershipPensionRegulator), false),
-    (CurrentMembersId, moreThanTenThousandMembers, membershipPensionRegulator, false, Some(membershipPensionRegulator), false),
-    (MembershipPensionRegulatorId, emptyAnswers, futureMembers(NormalMode), false, None, false),
+    (CurrentMembersId, twoToElevenMembers, membershipPensionRegulator(NormalMode), false, Some(membershipPensionRegulator(CheckMode)), false),
+    (CurrentMembersId, twelveToFiftyMembers, membershipPensionRegulator(NormalMode), false, Some(membershipPensionRegulator(CheckMode)), false),
+    (CurrentMembersId, fiftyOneToTenThousandMembers, membershipPensionRegulator(NormalMode), false, Some(membershipPensionRegulator(CheckMode)), false),
+    (CurrentMembersId, moreThanTenThousandMembers, membershipPensionRegulator(NormalMode), false, Some(membershipPensionRegulator(CheckMode)), false),
+    (MembershipPensionRegulatorId, emptyAnswers, futureMembers(NormalMode), false, Some(cya), false),
     (FutureMembersId, emptyAnswers, cya, false, None, false)
   )
 
@@ -62,7 +62,7 @@ object AboutMembersNavigatorSpec {
 
   private def futureMembers(mode: Mode): Call = controllers.routes.FutureMembersController.onPageLoad(mode)
 
-  private def membershipPensionRegulator: Call = controllers.routes.MembershipPensionRegulatorController.onPageLoad()
+  private def membershipPensionRegulator(mode: Mode): Call = controllers.routes.MembershipPensionRegulatorController.onPageLoad(mode)
 
   private def cya: Call = controllers.routes.CheckYourAnswersMembersController.onPageLoad()
 
