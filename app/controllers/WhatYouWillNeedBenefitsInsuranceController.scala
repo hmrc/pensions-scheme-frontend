@@ -37,6 +37,6 @@ class WhatYouWillNeedBenefitsInsuranceController @Inject()(appConfig: FrontendAp
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      Redirect(controllers.routes.SessionExpiredController.onPageLoad)
+      Redirect(controllers.routes.InvestmentRegulatedSchemeController.onPageLoad(NormalMode))
   }
 }
