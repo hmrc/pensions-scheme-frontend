@@ -44,6 +44,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
 
+      implicit val userAnswers = request.userAnswers
+
       val schemeDetailsSection = AnswerSection(
         Some("messages__scheme_details__title"),
         SchemeDetailsId.row(routes.SchemeDetailsController.onPageLoad(CheckMode).url) ++

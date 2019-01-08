@@ -119,7 +119,7 @@ trait ViewBehaviours extends ViewSpecBase {
   }
 
   def pageWithReturnLink(view: () => HtmlFormat.Appendable, url: String): Unit = {
-    "have a return link" in {
+    s"have a return link $url" in {
       val doc = asDocument(view())
       assertLink(doc, "return-link", url)
     }
