@@ -97,9 +97,9 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
   "BankAccountDetails form" must {
 
     behave like formWithMandatoryTextFields(
-      Field("bankName", Required -> "messages__error__bank_name"),
-      Field("accountName", Required -> "messages__error__account_name"),
-      Field("accountNumber", Required -> "messages__error__account_number")
+      Field("bankName", Required -> "messages__error__bank_name__blank"),
+      Field("accountName", Required -> "messages__error__bank_account_holder_name__blank"),
+      Field("accountNumber", Required -> "messages__error__bank_accno__blank")
     )
 
     behave like formWithSortCode(
@@ -119,7 +119,7 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
       val testString = RandomStringUtils.random(29)
       val data = validData + ("bankName" -> testString)
 
-      val expectedError = error("bankName", "messages__error__bank_name_length", 28)
+      val expectedError = error("bankName", "messages__error__bank_name__length", 28)
       checkForError(form, data, expectedError)
     }
 
@@ -127,7 +127,7 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
       val testString = RandomStringUtils.random(29)
       val data = validData + ("accountName" -> testString)
 
-      val expectedError = error("accountName", "messages__error__account_name_length", 28)
+      val expectedError = error("accountName", "messages__error__bank_account_holder_name__length", 28)
       checkForError(form, data, expectedError)
     }
 
@@ -135,15 +135,22 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
       s"fail to bind when account number $code is invalid" in {
         val data = validData + ("accountNumber" -> code)
 
-        val expectedError = error("accountNumber", "messages__error__account_number_invalid", regexAccountNo)
+        val expectedError = error("accountNumber", "messages__error__bank_accno__invalid", regexAccountNo)
         checkForError(form, data, expectedError)
       }
     }
 
-    "fail to bind when account number exceeds max length 8" in {
+    "fail to bind when account number is less than length 8" in {
+      val data = validData + ("accountNumber" -> "1234567")
+
+      val expectedError = error("accountNumber", "messages__error__bank_accno__length", 8)
+      checkForError(form, data, expectedError)
+    }
+
+    "fail to bind when account number exceeds length 8" in {
       val data = validData + ("accountNumber" -> "123456789")
 
-      val expectedError = error("accountNumber", "messages__error__account_number_length", 8)
+      val expectedError = error("accountNumber", "messages__error__bank_accno__length", 8)
       checkForError(form, data, expectedError)
     }
   }

@@ -20,45 +20,45 @@ import forms.mappings.BankDetailsMapping
 import javax.inject.Inject
 import models.BankAccountDetails
 import models.register.SortCode
-import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
-import play.api.data.validation.Constraint
+import play.api.data.{Form, Mapping}
 
 class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
   override protected def sortCodeMapping(requiredKey: String, lengthKey: String, invalidKey: String): Mapping[SortCode] = {
-    def constraints: Seq[Constraint[(String,String,String)]] =
-      Seq(sortCodeRequiredConstraint(requiredKey), sortCodeLengthConstraint(lengthKey), sortCodeInvalidConstraint(invalidKey))
-
     tuple(
       "first" -> text,
       "second" -> text,
       "third" -> text
     )
-      .verifying(stopOnFirstFail(constraints))
+      .verifying(
+        stopOnFirstFail(
+          Seq(sortCodeRequiredConstraint(requiredKey), sortCodeLengthConstraint(lengthKey), sortCodeInvalidConstraint(invalidKey))
+        )
+      )
       .transform(
         input => SortCode(input._1, input._2, input._3),
         sortCode => (sortCode.first, sortCode.second, sortCode.third))
   }
 
   val nameMaxLength = 28
-  val accountNoMaxLength = 8
+  val accountNoExactLength = 8
 
   def apply(): Form[BankAccountDetails] = Form(
     mapping(
       "bankName" ->
-        text("messages__error__bank_name").
-          verifying(maxLength(nameMaxLength, "messages__error__bank_name_length")),
+        text("messages__error__bank_name__blank").
+          verifying(maxLength(nameMaxLength, "messages__error__bank_name__length")),
       "accountName" ->
-        text("messages__error__account_name").
-          verifying(maxLength(nameMaxLength, "messages__error__account_name_length")),
+        text("messages__error__bank_account_holder_name__blank").
+          verifying(maxLength(nameMaxLength, "messages__error__bank_account_holder_name__length")),
       "sortCode" ->
         sortCodeMapping("messages__error__sort_code__blank",
           "messages__error__sort_code__length",
           "messages__error__sort_code__invalid"),
       "accountNumber" ->
-        text("messages__error__account_number").
-          verifying(returnOnFirstFailure(regexp(regexAccountNo, "messages__error__account_number_invalid"),
-            maxLength(accountNoMaxLength, "messages__error__account_number_length")))
+        text("messages__error__bank_accno__blank").
+          verifying(returnOnFirstFailure(regexp(regexAccountNo, "messages__error__bank_accno__invalid"),
+            exactLength(accountNoExactLength, "messages__error__bank_accno__length")))
     )(BankAccountDetails.apply)(BankAccountDetails.unapply)
   )
 }
