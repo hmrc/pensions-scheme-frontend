@@ -91,14 +91,14 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
     None,
     Seq(
       AnswerRow(
-        "Does Test Scheme Name have a UK bank account?",
+        messages("uKBankAccount.hns_checkYourAnswersLabel", "Test Scheme Name"),
         Seq("site.yes"),
         answerIsMessageKey = true,
         Some(controllers.routes.UKBankAccountController.onPageLoad(CheckMode).url),
-        "Change if Test Scheme Name has a UK bank account"
+        messages("messages__visuallyhidden__hns_uKBankAccount", "Test Scheme Name")
       ),
       AnswerRow(
-        "What are Test Scheme Name’s bank account details?",
+        messages("uKBankDetails.hns_checkYourAnswersLabel", "Test Scheme Name"),
         Seq(bankDetails.bankName,
           bankDetails.accountName,
           s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
@@ -106,7 +106,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
           DateHelper.formatDate(bankDetails.date)),
         answerIsMessageKey = false,
         Some(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url),
-        "Change Test Scheme Name’s bank account details"
+        messages("messages__visuallyhidden__hns_uKBankDetails", "Test Scheme Name")
       )
     )
   )
