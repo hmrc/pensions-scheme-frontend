@@ -22,13 +22,13 @@ import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAct
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.FutureMembersFormProvider
 import identifiers.FutureMembersId
-import models.NormalMode
-import models.register.Membership
+import models.{Members, NormalMode}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import utils.{FakeNavigator, Navigator, UserAnswers}
 import views.html.futureMembers
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class FutureMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
@@ -42,7 +42,7 @@ class FutureMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
       getMandatorySchemeNameHs,
       validData.dataRetrievalAction,
       form,
-      form.fill(Membership.values.head),
+      form.fill(Members.values.head),
       viewAsString(this)(form)
     )
 
@@ -63,7 +63,7 @@ class FutureMembersControllerSpec extends ControllerWithQuestionPageBehaviours {
       saveAction(this),
       postRequest,
       FutureMembersId,
-      Membership.values.head
+      Members.values.head
     )
   }
 }
@@ -72,9 +72,9 @@ object FutureMembersControllerSpec {
   private val schemeName = "Test Scheme Name"
   private val formProvider = new FutureMembersFormProvider()
   private val form = formProvider.apply()
-  private val validData: UserAnswers = UserAnswers().schemeName(schemeName).futureMembers(Membership.values.head)
+  private val validData: UserAnswers = UserAnswers().schemeName(schemeName).futureMembers(Members.values.head)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest().withFormUrlEncodedBody(("value", Membership.values.head.toString))
+    FakeRequest().withFormUrlEncodedBody(("value", Members.values.head.toString))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
     futureMembers(base.frontendAppConfig, form, NormalMode, schemeName)(base.fakeRequest, base.messages).toString()

@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package forms
+package navigators
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import models.Members
-import play.api.data.Form
+import com.google.inject.Inject
+import config.FrontendAppConfig
+import connectors.UserAnswersCacheConnector
+import utils.Navigator
 
-class FutureMembersFormProvider @Inject() extends Mappings {
+class AboutMembersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
 
-  def apply(): Form[Members] =
-    Form(
-      "value" -> enumerable[Members]("messages__error__selection")
-    )
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
+    from.id match {
+      case _ => None
+    }
+  }
+
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
+    from.id match {
+      case _ => None
+    }
+  }
 }

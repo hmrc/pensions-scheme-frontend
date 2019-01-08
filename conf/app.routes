@@ -140,3 +140,6 @@ POST       /change-confirm-address                      controllers.InsurerConfi
 
 GET        /check-your-answers-before-start             controllers.CheckYourAnswersBeforeYouStartController.onPageLoad()
 POST       /check-your-answers-before-start             controllers.CheckYourAnswersBeforeYouStartController.onSubmit()
+
+GET        /check-your-answers-members                  controllers.CheckYourAnswersMembersController.onPageLoad()
+POST       /check-your-answers-members                  controllers.CheckYourAnswersMembersController.onSubmit()

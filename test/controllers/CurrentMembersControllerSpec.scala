@@ -22,8 +22,7 @@ import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.CurrentMembersFormProvider
 import identifiers.CurrentMembersId
-import models.NormalMode
-import models.register.Membership
+import models.{Members, NormalMode}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
@@ -43,7 +42,7 @@ class CurrentMembersControllerSpec extends ControllerWithQuestionPageBehaviours 
       getMandatorySchemeNameHs,
       validData.dataRetrievalAction,
       form,
-      form.fill(Membership.values.head),
+      form.fill(Members.values.head),
       viewAsString(this)(form)
     )
 
@@ -64,7 +63,7 @@ class CurrentMembersControllerSpec extends ControllerWithQuestionPageBehaviours 
       saveAction(this),
       postRequest,
       CurrentMembersId,
-      Membership.values.head
+      Members.values.head
     )
   }
 }
@@ -73,9 +72,9 @@ object CurrentMembersControllerSpec {
   private val schemeName = "Test Scheme Name"
   private val formProvider = new CurrentMembersFormProvider()
   private val form = formProvider.apply()
-  private val validData: UserAnswers = UserAnswers().schemeName(schemeName).currentMembers(Membership.values.head)
+  private val validData: UserAnswers = UserAnswers().schemeName(schemeName).currentMembers(Members.values.head)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest().withFormUrlEncodedBody(("value", Membership.values.head.toString))
+    FakeRequest().withFormUrlEncodedBody(("value", Members.values.head.toString))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
     currentMembers(base.frontendAppConfig, form, NormalMode, schemeName)(base.fakeRequest, base.messages).toString()

@@ -28,11 +28,12 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   private def emptyAnswerSections: Seq[Section] = Nil
 
-  def createView(returnOverview : Boolean = false): () => HtmlFormat.Appendable = () =>
+  def createView(enableHubV2: Boolean, returnOverview : Boolean = false): () => HtmlFormat.Appendable = () =>
     check_your_answers(
       frontendAppConfig,
       emptyAnswerSections,
       routes.IndexController.onPageLoad(),
+      enableHubV2,
       returnOverview
     )(fakeRequest, messages)
 
@@ -43,16 +44,22 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       routes.IndexController.onPageLoad()
     )(fakeRequest, messages)
 
-  "check_your_answers view" must {
-    behave like normalPageWithTitle(createView(), messageKeyPrefix, messages("checkYourAnswers.title"), messages("checkYourAnswers.heading"))
+  "check_your_answers view with toggle On" must {
+    behave like normalPageWithTitle(createView(enableHubV2 = true),
+      messageKeyPrefix, messages("checkYourAnswers.hs.title"), messages("checkYourAnswers.hs.heading"))
 
-    behave like pageWithSubmitButton(createView())
+    behave like pageWithSubmitButton(createView(enableHubV2 = true))
 
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(enableHubV2 = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 
-    behave like pageWithReturnLink(createView(returnOverview=true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
+    behave like pageWithReturnLink(createView(enableHubV2 = true, returnOverview = true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
 
     behave like checkYourAnswersPage(createViewWithData)
+  }
+
+  "check_your_answers view with toggle Off" must {
+    behave like normalPageWithTitle(createView(enableHubV2 = false),
+      messageKeyPrefix, messages("checkYourAnswers.title"), messages("checkYourAnswers.heading"))
   }
 
 }

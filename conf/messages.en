@@ -1195,10 +1195,23 @@ messages__what_you_will_need_wk__item_4 = address
 messages__scheme_uk_bank_account__title = Does the scheme have a UK bank account?
 messages__scheme_uk_bank_account__h1 = Does {0} have a UK bank account?
 
+messages__members__opt1 = None
+messages__members__opt2 = 1
+messages__members__opt3 = 2 - 11
+messages__members__opt4 = 12 - 50
+messages__members__opt5 = 51 - 10,000
+messages__members__opt6 = more than 10,000
+
 messages__current_members__title = How many members does the scheme currently have?
 messages__current_members__h1 = How many members does {0} currently have?
-messages__current_members__body1 = You might have to register the pension scheme with The Pensions Regulator.
-messages__current_members__body2 = If the scheme has 2 or more members, HMRC will share the scheme and your contact details with The Pensions Regulator. They will then contact you to register the scheme with them.
+
+messages__future_members__title = How many members do you expect the scheme to have in 12 months time?
+messages__future_members__h1 = How many scheme members do you expect {0} to have in 12 months time?
+
+messages__current_members_cya_label = How many members does {0} currently have?
+messages__visuallyhidden__current_members_change = Change how many members {0} currently has
+messages__future_members_cya_label = How many scheme members do you expect {0} to have in 12 months time?
+messages__visuallyhidden__future_members_change = Change how many members you expect {0} to have in 12 months time
 
 messages__insurer_enter_postcode__title = Enter the insurance company’s postcode
 messages__insurer_enter_postcode__h1 = Enter the insurance company’s postcode
@@ -1264,9 +1277,6 @@ messages__insurance_policy_number__h1 = What is the policy number with {0}?
 messages__error__insurance_policy_number = Enter a policy number
 messages__error__insurance_policy_number_invalid = Enter the policy number only using European characters
 messages__error__insurance_policy_number_length = Enter a policy number using 55 characters or less
-
-messages__future_members__title = How many members do you expect the scheme to have in 12 months time?
-messages__future_members__h1 = How many scheme members do you expect {0} to have in 12 months time?
 
 messages__investment_regulated_scheme__title = Is the scheme investment regulated?
 messages__investment_regulated_scheme__h1 = Is the scheme investment regulated?
