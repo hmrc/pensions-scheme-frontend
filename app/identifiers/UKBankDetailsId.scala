@@ -16,19 +16,19 @@
 
 package identifiers
 
+import models.register.UKBankDetails
 import play.api.i18n.Messages
+import utils.checkyouranswers.{BankDetailsHnSCYA, CheckYourAnswers}
 import utils.{CountryOptions, UserAnswers}
-import utils.checkyouranswers.CheckYourAnswers
-import utils.checkyouranswers.CheckYourAnswers.BooleanCYA
 
-case object UKBankAccountId extends TypedIdentifier[Boolean] {
+case object UKBankDetailsId extends TypedIdentifier[UKBankDetails] {
   self =>
-  override def toString: String = "uKBankAccount"
+  override def toString: String = "uKBankDetails"
 
   implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
                    userAnswers: UserAnswers): CheckYourAnswers[self.type] =
-    BooleanCYA[self.type](
-      label = Some(messages("uKBankAccount.hns_checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
-      hiddenLabel = Some(messages("messages__visuallyhidden__hns_uKBankAccount", userAnswers.get(SchemeNameId).getOrElse("")))
+    BankDetailsHnSCYA[self.type](
+      label = Some(messages("uKBankDetails.hns_checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
+      hiddenLabel = Some(messages("messages__visuallyhidden__hns_uKBankDetails", userAnswers.get(SchemeNameId).getOrElse("")))
     )()
 }
