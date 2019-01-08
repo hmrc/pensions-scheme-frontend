@@ -22,11 +22,10 @@ import utils.UserAnswers
 case object UKBankAccountId extends TypedIdentifier[Boolean] {
   override def toString: String = "uKBankAccount"
 
- /* override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
     value match {
-      case Some(false) => userAnswers.remove(UKBankDetailsId)
-      case Some(true) => userAnswers.set(IsAboutSchemeCompleteId)(false)
+      case Some(false) => userAnswers.remove(BankAccountDetailsId)
       case _ => super.cleanup(value, userAnswers)
     }
-  }*/
+  }
 }
