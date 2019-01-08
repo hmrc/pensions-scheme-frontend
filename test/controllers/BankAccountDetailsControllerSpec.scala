@@ -85,9 +85,7 @@ object BankAccountDetailsControllerSpec {
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("bankName", "test bank"),
       ("accountName", "test account"),
-      ("sortCode.first", "34"),
-      ("sortCode.second", "45"),
-      ("sortCode.third", "67"),
+      ("sortCode", "344567"),
       ("accountNumber", accountNo))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>

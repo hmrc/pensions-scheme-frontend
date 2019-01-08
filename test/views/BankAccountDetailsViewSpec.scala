@@ -45,21 +45,8 @@ class BankAccountDetailsViewSpec extends QuestionViewBehaviours[BankAccountDetai
       createViewUsingForm,
       messageKeyPrefix,
       routes.BankAccountDetailsController.onSubmit(NormalMode).url,
-      "bankName", "accountName", "accountNumber"
+      "bankName", "accountName", "accountNumber", "sortCode"
     )
-
-    "contain an input for each sortCode field" in {
-      Seq("sortCode_first", "sortCode_second", "sortCode_third") foreach { field =>
-        val doc = asDocument(createViewUsingForm(form))
-        assertRenderedById(doc, field)
-      }
-    }
-
-    "show an error in the legend for sortCode when sort code field has error" in {
-      val doc = asDocument(createViewUsingForm(form.withError(FormError("sortCode", "error"))))
-      val errorSpan = doc.getElementsByClass("error-notification").first
-      errorSpan.id mustBe "error-message-sortCode-input"
-    }
 
     behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }

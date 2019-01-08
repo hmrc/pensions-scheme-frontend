@@ -19,26 +19,10 @@ package forms
 import forms.mappings.BankDetailsMapping
 import javax.inject.Inject
 import models.BankAccountDetails
-import models.register.SortCode
+import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.{Form, Mapping}
 
 class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
-  override protected def sortCodeMapping(requiredKey: String, lengthKey: String, invalidKey: String): Mapping[SortCode] = {
-    tuple(
-      "first" -> text,
-      "second" -> text,
-      "third" -> text
-    )
-      .verifying(
-        returnOnFirstFailure(
-          sortCodeRequiredConstraint(requiredKey), sortCodeLengthConstraint(lengthKey), sortCodeInvalidConstraint(invalidKey)
-        )
-      )
-      .transform(
-        input => SortCode(input._1, input._2, input._3),
-        sortCode => (sortCode.first, sortCode.second, sortCode.third))
-  }
 
   protected val nameMaxLength = 28
   protected val accountNoExactLength = 8
@@ -52,9 +36,10 @@ class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
         text("messages__error__bank_account_holder_name__blank").
           verifying(maxLength(nameMaxLength, "messages__error__bank_account_holder_name__length")),
       "sortCode" ->
-        sortCodeMapping("messages__error__sort_code__blank",
-          "messages__error__sort_code__length",
-          "messages__error__sort_code__invalid"),
+        sortCodeMappingHS("messages__error__sort_code__blank",
+          "messages__error__sort_code__invalid",
+          "messages__error__sort_code__length"
+          ),
       "accountNumber" ->
         text("messages__error__bank_accno__blank").
           verifying(returnOnFirstFailure(regexp(regexAccountNo, "messages__error__bank_accno__invalid"),
