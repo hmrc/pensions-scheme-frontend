@@ -147,3 +147,5 @@ POST       /check-your-answers-members                  controllers.CheckYourAns
 GET        /check-your-answers-bank-details             controllers.CheckYourAnswersBankDetailsController.onPageLoad()
 POST       /check-your-answers-bank-details             controllers.CheckYourAnswersBankDetailsController.onSubmit()
 
+GET        /check-your-answers-benefits-insurance       controllers.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad()
+POST       /check-your-answers-benefits-insurance       controllers.CheckYourAnswersBenefitsAndInsuranceController.onSubmit()
