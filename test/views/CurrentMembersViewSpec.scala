@@ -39,8 +39,7 @@ class CurrentMembersViewSpec extends ViewBehaviours {
 
   "Current Members view" when {
     "rendered" must {
-      behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", schemeName),
-        "_body1", "_body2")
+      behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", schemeName))
 
       behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 

@@ -72,11 +72,11 @@ package object utils {
       answers.set(identifiers.BankAccountDetailsId)(bankAccountDetails).asOpt.value
     }
 
-    def currentMembers(currentMembers: Membership): UserAnswers = {
+    def currentMembers(currentMembers: Members): UserAnswers = {
       answers.set(CurrentMembersId)(currentMembers).asOpt.value
     }
 
-    def futureMembers(futureMembers: Membership): UserAnswers = {
+    def futureMembers(futureMembers: Members): UserAnswers = {
       answers.set(FutureMembersId)(futureMembers).asOpt.value
     }
 

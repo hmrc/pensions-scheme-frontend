@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 @import models.{Mode}
-@import models.register.Membership
+@import models.Members
 
 @(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName: String)(implicit request: Request[_], messages: Messages)
 
@@ -39,7 +39,7 @@
             field = form("value"),
             legend = messages("messages__future_members__title"),
             legendClass = Some("visually-hidden"),
-            inputs = Membership.options
+            inputs = Members.options
         )
 
         @components.submit_button()
