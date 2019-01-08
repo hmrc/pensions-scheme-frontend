@@ -21,7 +21,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import identifiers.MembershipPensionRegulatorId
 import javax.inject.Inject
-import models.{Mode, NormalMode}
+import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController

@@ -16,6 +16,6 @@
 
 package identifiers
 
-case object MembershipPensionRegulatorId extends TypedIdentifier[Boolean] {
+case object MembershipPensionRegulatorId extends TypedIdentifier[Nothing] {
   override def toString: String = "membershipPensionRegulator"
 }
