@@ -108,5 +108,38 @@ POST       /investment-regulated-scheme                 controllers.InvestmentRe
 GET        /change-investment-regulated-scheme          controllers.InvestmentRegulatedSchemeController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-investment-regulated-scheme          controllers.InvestmentRegulatedSchemeController.onSubmit(mode: Mode = CheckMode)
 
+GET        /occupational-pension-scheme                 controllers.OccupationalPensionSchemeController.onPageLoad(mode: Mode = NormalMode)
+POST       /occupational-pension-scheme                 controllers.OccupationalPensionSchemeController.onSubmit(mode: Mode = NormalMode)
+GET        /change-occupational-pension-scheme          controllers.OccupationalPensionSchemeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-occupational-pension-scheme          controllers.OccupationalPensionSchemeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /type-of-benefits                            controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = NormalMode)
+POST       /type-of-benefits                            controllers.TypeOfBenefitsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-type-of-benefits                     controllers.TypeOfBenefitsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-type-of-benefits                     controllers.TypeOfBenefitsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /benefits-secured-by-insurance               controllers.BenefitsSecuredByInsuranceController.onPageLoad(mode: Mode = NormalMode)
+POST       /benefits-secured-by-insurance               controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode = NormalMode)
+GET        /change-benefits-secured-by-insurance        controllers.BenefitsSecuredByInsuranceController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-benefits-secured-by-insurance        controllers.BenefitsSecuredByInsuranceController.onSubmit(mode: Mode = CheckMode)
+
+GET        /enter-postcode                              controllers.InsurerEnterPostcodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /enter-postcode                              controllers.InsurerEnterPostcodeController.onSubmit(mode: Mode = NormalMode)
+GET        /change-enter-postcode                       controllers.InsurerEnterPostcodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-enter-postcode                       controllers.InsurerEnterPostcodeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /select-address                              controllers.InsurerSelectAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /select-address                              controllers.InsurerSelectAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-select-address                       controllers.InsurerSelectAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-select-address                       controllers.InsurerSelectAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /confirm-address                             controllers.InsurerConfirmAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /confirm-address                             controllers.InsurerConfirmAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-confirm-address                      controllers.InsurerConfirmAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-confirm-address                      controllers.InsurerConfirmAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /check-your-answers-before-start             controllers.CheckYourAnswersBeforeYouStartController.onPageLoad()
+POST       /check-your-answers-before-start             controllers.CheckYourAnswersBeforeYouStartController.onSubmit()
+
 GET        /check-your-answers-members                  controllers.CheckYourAnswersMembersController.onPageLoad()
 POST       /check-your-answers-members                  controllers.CheckYourAnswersMembersController.onSubmit()

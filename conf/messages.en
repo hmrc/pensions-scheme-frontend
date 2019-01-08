@@ -133,6 +133,7 @@ site.go_back = Go back
 site.signOut = Sign out
 site.printThisPage = Print this page
 site.return.tasklist = Return to pension scheme details
+site.return.managing.pension.schemes = Return to managing pension schemes
 
 messages__unauthorised__title = You can’t access this service with this account
 
@@ -215,11 +216,14 @@ messages__membership__opt6 = more than 10,000
 
 messages__investment_regulated__title = Is the scheme investment regulated?
 
+#Duplicated these messages with the new keys, it can be deleted once the Benefits insurer page is deleted from register routes
 messages__contractofinsurance_pension_scheme__title = Are any of the scheme benefits secured by a contract of insurance or annuity?
 messages__contractofinsurance_pension_scheme__copy = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
 
 messages__occupational_pension_scheme__title = Is the scheme an occupational pension scheme?
+messages__occupational_pension_scheme__h1 = Is the scheme an occupational pension scheme?
 
+#Duplicated these messages with the new keys, it can be deleted once the Benefits page is deleted from register routes
 messages__benefits__title = How does the scheme provide benefits?
 messages__benefits__opt1 = Money Purchase benefits only (defined contribution)
 messages__benefits__opt2 = Defined Benefits only
@@ -1174,6 +1178,7 @@ messages__adviser__phone__length = The phone number cannot be more than 24 chara
 messages__adviser__phone__invalid = The phone number can only contain numbers
 
 declarationDuties.checkYourAnswersLabel= Do you have working knowledge of pensions and pensions tax legislation?
+messages__visuallyhidden__declarationDuties = Change if you have working knowledge of pensions and pensions tax legislation
 adviserName.checkYourAnswersLabel = Who has working knowledge of pensions and pensions tax legislation?
 adviserEmail.checkYourAnswersLabel = What is {0}’s email address?
 adviserPhone.checkYourAnswersLabel = What is {0}’s phone number?
@@ -1207,6 +1212,12 @@ messages__current_members_cya_label = How many members does {0} currently have?
 messages__visuallyhidden__current_members_change = Change how many members {0} currently has
 messages__future_members_cya_label = How many scheme members do you expect {0} to have in 12 months time?
 messages__visuallyhidden__future_members_change = Change how many members you expect {0} to have in 12 months time
+
+messages__insurer_enter_postcode__title = Enter the insurance company’s postcode
+messages__insurer_enter_postcode__h1 = Enter the insurance company’s postcode
+
+messages__insurer_confirm_address__title = Insurance company’s address
+messages__insurer_confirm_address__h1 = Insurance company’s address
 
 messages__what_you_will_need_benefits__title = Benefits and insurance
 messages__what_you_will_need_benefits__h1 = Benefits and insurance
@@ -1243,11 +1254,23 @@ messages__error__insurance_company_name = Enter the name of the insurance compan
 messages__error__insurance_company_name_invalid = Enter the insurance company’s name only using European characters
 messages__error__insurance_company_name_length = Enter the insurance company’s name using 160 characters or less
 
+messages__established_country__title = Which country was the scheme established in?
+messages__established_country__h1 = Which country was {0} established in?
+
 messages__what_you_will_need_members__title = Membership details
 messages__what_you_will_need_members__h1 = Membership details
 messages__what_you_will_need_members__lede = You will need to tell us how many members:
 messages__what_you_will_need_members__item_1 = the scheme has at the moment
 messages__what_you_will_need_members__item_2 = you expect the scheme to have in the next 12 months
+
+schemeName.checkYourAnswersLabel = What is the name of the scheme?
+messages__visuallyhidden__schemeName = Change the name of the scheme
+schemeType.checkYourAnswersLabel = What type of scheme is {0}?
+messages__visuallyhidden__schemeType = Change the type of scheme {0} is
+haveAnyTrustees.checkYourAnswersLabel = Does {0} have any trustees?
+messages__visuallyhidden__haveAnyTrustees = Change if {0} has any trustees
+schemeEstablishedCountry.hns_checkYourAnswersLabel = Which country was {0} established in?
+messages__visuallyhidden__hns_schemeEstablishedCountry = Change the country {0} was established in
 
 messages__insurance_policy_number__title = What is the policy number with the insurance company?
 messages__insurance_policy_number__h1 = What is the policy number with {0}?
@@ -1266,3 +1289,13 @@ messages__bank_account_details__sort_code = Sort code
 messages__bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
 messages__bank_account_details__account_number = Account number
 messages__bank_account_details__date_bank_account = Approximate date the account was opened
+
+messages__type_of_benefits__title = How does the scheme provide benefits?
+messages__type_of_benefits__h1 = How does the scheme provide benefits?
+messages__type_of_benefits__opt1 = Money Purchase benefits only (defined contribution)
+messages__type_of_benefits__opt2 = Defined Benefits only
+messages__type_of_benefits__opt3 = Mixture of money purchase benefits and defined benefits
+
+messages__benefits_secured_by_insurance__title = Are any of the scheme benefits secured by a contract of insurance or annuity?
+messages__benefits_secured_by_insurance__h1 = Are any of the scheme benefits secured by a contract of insurance or annuity?
+messages__benefits_secured_by_insurance__lede = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.

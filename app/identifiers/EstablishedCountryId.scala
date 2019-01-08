@@ -16,6 +16,19 @@
 
 package identifiers
 
+import play.api.i18n.Messages
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.{CountryOptions, UserAnswers}
+
 case object EstablishedCountryId extends TypedIdentifier[String] {
+  self =>
   override def toString: String = "schemeEstablishedCountry"
+
+  implicit def cya(implicit countryOptions: CountryOptions, messages: Messages,
+                   userAnswers: UserAnswers): CheckYourAnswers[self.type] =
+    StringCYA[self.type](
+      label = Some(messages("schemeEstablishedCountry.hns_checkYourAnswersLabel", userAnswers.get(SchemeNameId).getOrElse(""))),
+      hiddenLabel = Some(messages("messages__visuallyhidden__hns_schemeEstablishedCountry", userAnswers.get(SchemeNameId).getOrElse("")))
+    )()
 }

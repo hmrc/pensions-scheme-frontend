@@ -36,6 +36,18 @@ package object utils {
       answers.set(SchemeDetailsId)(schemeDetails).asOpt.value
     }
 
+    def occupationalPensionScheme(isOccupational: Boolean): UserAnswers = {
+      answers.set(identifiers.OccupationalPensionSchemeId)(isOccupational).asOpt.value
+    }
+
+    def typeOfBenefits(benefits: TypeOfBenefits): UserAnswers = {
+      answers.set(identifiers.TypeOfBenefitsId)(benefits).asOpt.value
+    }
+
+    def benefitsSecuredByInsurance(isInsured: Boolean): UserAnswers = {
+      answers.set(identifiers.BenefitsSecuredByInsuranceId)(isInsured).asOpt.value
+    }
+
     def schemeName(schemeName: String): UserAnswers = {
       answers.set(SchemeNameId)(schemeName).asOpt.value
     }
@@ -78,6 +90,14 @@ package object utils {
 
     def securedBenefits(securedBenefits: Boolean): UserAnswers = {
       answers.set(SecuredBenefitsId)(securedBenefits).asOpt.value
+    }
+
+    def insurerConfirmAddress(address: Address): UserAnswers = {
+      answers.set(identifiers.InsurerConfirmAddressId)(address).asOpt.value
+    }
+
+    def insurerSelectAddress(address: TolerantAddress): UserAnswers = {
+      answers.set(identifiers.InsurerSelectAddressId)(address).asOpt.value
     }
 
     def insurerAddress(address: Address): UserAnswers = {
