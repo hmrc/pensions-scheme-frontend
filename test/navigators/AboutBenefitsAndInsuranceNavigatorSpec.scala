@@ -67,7 +67,7 @@ object AboutBenefitsAndInsuranceNavigatorSpec extends OptionValues {
   private def insurerPostcode: Call = InsurerEnterPostcodeController.onPageLoad(NormalMode)
   private def insurerAddressList: Call = InsurerSelectAddressController.onPageLoad(NormalMode)
   private def insurerAddress: Call = InsurerConfirmAddressController.onPageLoad(NormalMode)
-  private def checkYouAnswers: Call = CheckYourAnswersBeforeYouStartController.onPageLoad()
+  private def checkYouAnswers: Call = CheckYourAnswersBenefitsAndInsuranceController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 }
