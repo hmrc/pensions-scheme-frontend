@@ -68,7 +68,7 @@ package object utils {
       answers.set(identifiers.UKBankAccountId)(haveUkBankAccount).asOpt.value
     }
 
-    def bankAccountDetails(bankAccountDetails: UKBankDetails): UserAnswers = {
+    def bankAccountDetails(bankAccountDetails: BankAccountDetails): UserAnswers = {
       answers.set(identifiers.BankAccountDetailsId)(bankAccountDetails).asOpt.value
     }
 

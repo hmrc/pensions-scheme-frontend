@@ -21,8 +21,8 @@ import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.BankAccountDetailsFormProvider
-import models.NormalMode
-import models.register.{SortCode, UKBankDetails}
+import models.register.SortCode
+import models.{BankAccountDetails, NormalMode}
 import org.apache.commons.lang3.RandomUtils
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -76,20 +76,17 @@ object BankAccountDetailsControllerSpec {
   private val form = formProvider.apply()
   //scalastyle:off magic.number
   private val accountNo = RandomUtils.nextInt(10000000, 99999999).toString
-  private val sortCode = "344567"
   //scalastyle:on magic.number
 
-  val bankDetails = UKBankDetails("test bank", "test account",
-    SortCode("34", "45", "67"), accountNo, new LocalDate(LocalDate.now().getYear,
-      LocalDate.now().getMonthOfYear, LocalDate.now().getDayOfMonth))
+  val bankDetails = BankAccountDetails("test bank", "test account",
+    SortCode("34", "45", "67"), accountNo)
 
   private val validData: UserAnswers = UserAnswers().schemeName(schemeName).bankAccountDetails(bankDetails)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("bankName", "test bank"),
-      ("accountName", "test account"), ("sortCode", sortCode),
-      ("accountNumber", accountNo),
-      ("date.day", LocalDate.now().getDayOfMonth.toString), ("date.month", LocalDate.now().getMonthOfYear.toString),
-      ("date.year", LocalDate.now().getYear.toString))
+      ("accountName", "test account"),
+      ("sortCode", "344567"),
+      ("accountNumber", accountNo))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
     bankAccountDetails(base.frontendAppConfig, form, NormalMode, schemeName)(base.fakeRequest, base.messages).toString()

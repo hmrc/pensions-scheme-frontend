@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package identifiers
+package models
 
-import models.BankAccountDetails
+import models.register.SortCode
+import play.api.libs.json.Json
 
-case object BankAccountDetailsId extends TypedIdentifier[BankAccountDetails] {
-  override def toString: String = "uKBankDetails"
+case class BankAccountDetails(bankName: String, accountName: String, sortCode: SortCode, accountNumber: String)
+object BankAccountDetails {
+  implicit val format = Json.format[BankAccountDetails]
 }

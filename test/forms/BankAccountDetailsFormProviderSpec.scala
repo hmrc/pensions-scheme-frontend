@@ -19,7 +19,7 @@ package forms
 import forms.behaviours.{BankDetailsBehaviour, FormBehaviours}
 import forms.mappings.Constraints
 import models._
-import models.register.{SortCode, UKBankDetails}
+import models.register.SortCode
 import org.apache.commons.lang3.{RandomStringUtils, RandomUtils}
 import org.joda.time.LocalDate
 
@@ -38,52 +38,41 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
     "bankName" -> "test bank",
     "accountName" -> "test account",
     "sortCode" -> "24 56 56",
-    "accountNumber" -> testAccountNumber,
-    "date.day" -> s"$day",
-    "date.month" -> s"$month",
-    "date.year" -> s"${year - 20}"
+    "accountNumber" -> testAccountNumber
   )
 
-  val bankDetails = UKBankDetails("test bank", "test account",
-    testSortCode, testAccountNumber, new LocalDate(year - 20, month, day))
+  val bankDetails = BankAccountDetails("test bank", "test account",
+    testSortCode, testAccountNumber)
 
   val form = new BankAccountDetailsFormProvider()()
 
 
-  "UKBankDetails form" must {
-    behave like questionForm(bankDetails)
+  "BankAccountDetails form" must {
 
     behave like formWithMandatoryTextFields(
-      Field("bankName", Required -> "messages__error__bank_name"),
-      Field("accountName", Required -> "messages__error__account_name"),
-      Field("sortCode", Required -> "messages__error__sort_code"),
-      Field("accountNumber", Required -> "messages__error__account_number"),
-      Field("date.day", Required -> "error.date.day_blank"),
-      Field("date.month", Required -> "error.date.month_blank"),
-      Field("date.year", Required -> "error.date.year_blank")
+      Field("bankName", Required -> "messages__error__bank_name__blank"),
+      Field("accountName", Required -> "messages__error__bank_account_holder_name__blank"),
+      Field("sortCode", Required -> "messages__error__sort_code__blank"),
+      Field("accountNumber", Required -> "messages__error__bank_accno__blank")
     )
 
-    behave like formWithSortCode(
+    behave like formWithSortCodeHS(
       form,
-      "messages__error__sort_code",
-      "messages__error__sort_code_invalid",
-      "messages__error__sort_code_length",
+      "messages__error__sort_code__blank",
+      "messages__error__sort_code__length",
       Map(
         "bankName" -> "test bank",
         "accountName" -> "test account",
-        "accountNumber" -> testAccountNumber,
-        "date.day" -> s"$day",
-        "date.month" -> s"$month",
-        "date.year" -> s"${year - 20}"
+        "accountNumber" -> testAccountNumber
       ),
-      (bankDetails: UKBankDetails) => bankDetails.sortCode
+      (bankDetails: BankAccountDetails) => bankDetails.sortCode
     )
 
     "fail to bind when the bank name exceeds max length 28" in {
       val testString = RandomStringUtils.random(29)
       val data = validData + ("bankName" -> testString)
 
-      val expectedError = error("bankName", "messages__error__bank_name_length", 28)
+      val expectedError = error("bankName", "messages__error__bank_name__length", 28)
       checkForError(form, data, expectedError)
     }
 
@@ -91,7 +80,7 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
       val testString = RandomStringUtils.random(29)
       val data = validData + ("accountName" -> testString)
 
-      val expectedError = error("accountName", "messages__error__account_name_length", 28)
+      val expectedError = error("accountName", "messages__error__bank_account_holder_name__length", 28)
       checkForError(form, data, expectedError)
     }
 
@@ -99,23 +88,22 @@ class BankAccountDetailsFormProviderSpec extends FormBehaviours with Constraints
       s"fail to bind when account number $code is invalid" in {
         val data = validData + ("accountNumber" -> code)
 
-        val expectedError = error("accountNumber", "messages__error__account_number_invalid", regexAccountNo)
+        val expectedError = error("accountNumber", "messages__error__bank_accno__invalid", regexAccountNo)
         checkForError(form, data, expectedError)
       }
     }
 
-    "fail to bind when account number exceeds max length 8" in {
-      val data = validData + ("accountNumber" -> "123456789")
+    "fail to bind when account number is less than length 8" in {
+      val data = validData + ("accountNumber" -> "1234567")
 
-      val expectedError = error("accountNumber", "messages__error__account_number_length", 8)
+      val expectedError = error("accountNumber", "messages__error__bank_accno__length", 8)
       checkForError(form, data, expectedError)
     }
 
-    "fail to bind when the date is in future" in {
-      val tomorrow = LocalDate.now.plusDays(1)
-      val data = validData + ("date.day" -> s"${tomorrow.getDayOfMonth}", "date.month" -> s"${tomorrow.getMonthOfYear}", "date.year" -> s"${tomorrow.getYear}")
+    "fail to bind when account number exceeds length 8" in {
+      val data = validData + ("accountNumber" -> "123456789")
 
-      val expectedError = error("date", "messages__error__date_future")
+      val expectedError = error("accountNumber", "messages__error__bank_accno__length", 8)
       checkForError(form, data, expectedError)
     }
   }
