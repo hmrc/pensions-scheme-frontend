@@ -46,5 +46,3 @@ class WhatYouWillNeedController @Inject()(appConfig: FrontendAppConfig,
       Future.successful(Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad()))
   }
 }
-
-final case class PSANameNotFoundException() extends Exception("Unable to retrieve PSA Name")

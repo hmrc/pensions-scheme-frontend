@@ -17,8 +17,7 @@
 package controllers
 
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
-import identifiers.{UKBankAccountId, UKBankDetailsId}
-import identifiers.{SchemeNameId, UKBankAccountId}
+import identifiers.{SchemeNameId, UKBankAccountId, UKBankDetailsId}
 import models.CheckMode
 import models.register._
 import org.joda.time.LocalDate
@@ -48,7 +47,7 @@ class CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
         val result = controller().onSubmit(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
+        redirectLocation(result) mustBe Some(controllers.register.routes.SchemeTaskListController.onPageLoad().url)
       }
     }
 
@@ -68,7 +67,6 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       new FakeCountryOptions,
-      fakeNavigator,
       FakeSectionComplete
     )
 
