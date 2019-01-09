@@ -17,6 +17,7 @@
 package controllers
 
 import controllers.actions._
+import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
@@ -25,7 +26,7 @@ import views.html.whatYouWillNeedBenefitsInsurance
 
 class WhatYouWillNeedBenefitsInsuranceControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
+  def onwardRoute: Call = controllers.routes.InvestmentRegulatedSchemeController.onPageLoad(NormalMode)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedBenefitsInsuranceController =
     new WhatYouWillNeedBenefitsInsuranceController(frontendAppConfig,
