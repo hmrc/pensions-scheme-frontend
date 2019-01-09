@@ -51,7 +51,7 @@ class WorkingKnowledgeViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithSubmitButton(createView)
 
-    behave like pageWithReturnLink(createView, url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
 
   }
 }

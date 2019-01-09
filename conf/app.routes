@@ -38,8 +38,10 @@ POST       /what-you-will-need-members                  controllers.WhatYouWillN
 GET        /what-you-will-need-benefits-insurance       controllers.WhatYouWillNeedBenefitsInsuranceController.onPageLoad
 POST       /what-you-will-need-benefits-insurance       controllers.WhatYouWillNeedBenefitsInsuranceController.onSubmit
 
-GET        /sharing-scheme-details                      controllers.MembershipPensionRegulatorController.onPageLoad
-POST       /sharing-scheme-details                      controllers.MembershipPensionRegulatorController.onSubmit
+GET        /sharing-scheme-details                      controllers.MembershipPensionRegulatorController.onPageLoad(mode: Mode = NormalMode)
+POST       /sharing-scheme-details                      controllers.MembershipPensionRegulatorController.onSubmit(mode: Mode = NormalMode)
+GET        /change-sharing-scheme-details               controllers.MembershipPensionRegulatorController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-sharing-scheme-details               controllers.MembershipPensionRegulatorController.onSubmit(mode: Mode = CheckMode)
 
 GET        /what-you-will-need-bank-details             controllers.WhatYouWillNeedBankDetailsController.onPageLoad
 POST       /what-you-will-need-bank-details             controllers.WhatYouWillNeedBankDetailsController.onSubmit
@@ -60,8 +62,8 @@ POST       /change-scheme-name                          controllers.SchemeNameCo
 
 GET        /scheme-type                                 controllers.SchemeTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /scheme-type                                 controllers.SchemeTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /scheme-type                                 controllers.SchemeTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /scheme-type                                 controllers.SchemeTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /change-scheme-type                                 controllers.SchemeTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-scheme-type                                 controllers.SchemeTypeController.onSubmit(mode: Mode = CheckMode)
 
 GET        /any-trustees                                controllers.HaveAnyTrusteesController.onPageLoad(mode: Mode = NormalMode)
 POST       /any-trustees                                controllers.HaveAnyTrusteesController.onSubmit(mode: Mode = NormalMode)
@@ -147,3 +149,5 @@ POST       /check-your-answers-members                  controllers.CheckYourAns
 GET        /check-your-answers-bank-details             controllers.CheckYourAnswersBankDetailsController.onPageLoad()
 POST       /check-your-answers-bank-details             controllers.CheckYourAnswersBankDetailsController.onSubmit()
 
+GET        /check-your-answers-benefits-insurance       controllers.CheckYourAnswersBenefitsAndInsuranceController.onPageLoad()
+POST       /check-your-answers-benefits-insurance       controllers.CheckYourAnswersBenefitsAndInsuranceController.onSubmit()

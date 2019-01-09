@@ -32,7 +32,7 @@ import views.html.beforeYouStart
 
 class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad()
+  def onwardRoute: Call = controllers.routes.SchemeNameController.onPageLoad(NormalMode)
 
   private val fakePsaNameCacheConnector = mock[PSANameCacheConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
@@ -71,7 +71,7 @@ class BeforeYouStartControllerSpec extends ControllerSpecBase with MockitoSugar 
     }
 
     "on a POST" must {
-      "redirect to session expired page" in {
+      "redirect to the scheme name page" in {
         val result = controller().onSubmit()(fakeRequest)
 
         status(result) mustBe SEE_OTHER

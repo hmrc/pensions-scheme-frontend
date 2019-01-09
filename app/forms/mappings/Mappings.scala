@@ -64,6 +64,5 @@ trait Mappings extends Formatters with Constraints {
       "year" -> int(requiredKey = "error.date.year_blank", wholeNumberKey = "error.date.year_invalid", nonNumericKey = "error.date.year_invalid")
     ).verifying(invalidKey, inputs => validDate(inputs))
       .transform(toLocalDate, fromLocalDate)
-
   }
 }

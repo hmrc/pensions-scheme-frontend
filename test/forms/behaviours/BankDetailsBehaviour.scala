@@ -66,4 +66,47 @@ trait BankDetailsBehaviour extends FormSpec with BankDetailsMapping {
       }
     }
   }
+
+  def formWithSortCodeHS[T](testForm: Form[T],
+                          keyRequired: String,
+                          keyLengthError: String,
+                          validOtherData: Map[String, String],
+                          getSortCode: T => SortCode
+                         ): Unit = {
+
+
+    "behave like form with SortCode" should {
+
+      Seq("12 34 56", "12-34-56", " 123456").foreach { sortCode =>
+        s"bind a valid sort code $sortCode" in {
+          val result = testForm.bind(validOtherData ++ Map("sortCode" -> sortCode))
+          getSortCode(result.get) shouldBe SortCode("12", "34", "56")
+        }
+      }
+
+      "not bind when sort code is not supplied" in {
+        val result = testForm.bind(validOtherData)
+        result.errors shouldBe Seq(FormError("sortCode", keyRequired))
+      }
+
+      Seq("$9J223XXX", "abdgf").foreach { sortCode =>
+        s"not bind an invalid sort code $sortCode" in {
+          val result = testForm.bind(validOtherData ++ Map("sortCode" -> sortCode))
+          result.errors shouldBe Seq(FormError("sortCode", keyLengthError))
+        }
+      }
+
+      Seq("12 34 56 56", "12345678").foreach { sortCode =>
+        s"not bind a sort code $sortCode which exceeds max length" in {
+          val result = testForm.bind(validOtherData ++ Map("sortCode" -> sortCode))
+          result.errors shouldBe Seq(FormError("sortCode", keyLengthError))
+        }
+      }
+
+      "not bind a sort code which is less than the expected length" in {
+        val result = testForm.bind(validOtherData ++ Map("sortCode" -> "12345"))
+        result.errors shouldBe Seq(FormError("sortCode", keyLengthError))
+      }
+    }
+  }
 }
