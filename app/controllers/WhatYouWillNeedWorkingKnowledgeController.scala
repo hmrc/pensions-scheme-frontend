@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.actions._
 import javax.inject.Inject
 import models.NormalMode
@@ -24,11 +24,13 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.whatYouWillNeedWorkingKnowledge
+import utils.Toggles.enableHubV2
 
 class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendAppConfig,
-                                                         override val messagesApi: MessagesApi,
-                                                         authenticate: AuthAction
-                                                        ) extends FrontendController with I18nSupport {
+                                                          override val messagesApi: MessagesApi,
+                                                          authenticate: AuthAction,
+                                                          fs: FeatureSwitchManagementService
+                                                         ) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>
@@ -37,6 +39,10 @@ class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendApp
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      Redirect(controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode))
+      if (fs.get(enableHubV2)) {
+        Redirect(controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode))
+      } else {
+        Redirect(controllers.register.adviser.routes.WorkingKnowledgeController.onPageLoad(NormalMode))
+      }
   }
 }
