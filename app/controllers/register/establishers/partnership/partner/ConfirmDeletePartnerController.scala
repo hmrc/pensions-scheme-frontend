@@ -20,11 +20,13 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
+import forms.register.establishers.partnership.partner.ConfirmDeletePartnerFormProvider
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.{ConfirmDeletePartnerId, PartnerDetailsId}
 import javax.inject.Inject
 import models.{Index, NormalMode}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -42,8 +44,11 @@ class ConfirmDeletePartnerController @Inject()(
                                                 authenticate: AuthAction,
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
-                                                sectionComplete: SectionComplete
+                                                sectionComplete: SectionComplete,
+                                                formProvider : ConfirmDeletePartnerFormProvider
                                               ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+
+  private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
@@ -52,13 +57,17 @@ class ConfirmDeletePartnerController @Inject()(
           if (partner.isDeleted) {
             Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, partnerIndex)))
           } else {
+            val preparedForm = request.userAnswers.get(ConfirmDeletePartnerId(establisherIndex)) match {
+              case None => form
+              case Some(value) => form.fill(value)
+            }
             Future.successful(
               Ok(
                 confirmDeletePartner(
                   appConfig,
+                  preparedForm,
                   partner.fullName,
-                  routes.ConfirmDeletePartnerController.onSubmit(establisherIndex, partnerIndex),
-                  controllers.register.establishers.partnership.routes.AddPartnersController.onPageLoad(establisherIndex)
+                  routes.ConfirmDeletePartnerController.onSubmit(establisherIndex, partnerIndex)
                 )
               )
             )
@@ -70,16 +79,33 @@ class ConfirmDeletePartnerController @Inject()(
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map {
         partnerDetails =>
-          dataCacheConnector.save(PartnerDetailsId(establisherIndex, partnerIndex), partnerDetails.copy(isDeleted = true)).flatMap {
-            userAnswers =>
-              if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
-                sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(establisherIndex), request.userAnswers, value = false).map { _ =>
-                  Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), NormalMode, userAnswers))
-                }
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(confirmDeletePartner(
+                appConfig,
+                formWithErrors,
+                partnerDetails.fullName,
+                routes.ConfirmDeletePartnerController.onSubmit(establisherIndex, partnerIndex)
+              ))),
+            value => {
+              val deletionResult = if (value) {
+                dataCacheConnector.save(PartnerDetailsId(establisherIndex, partnerIndex), partnerDetails.copy(isDeleted = true))
               } else {
-                Future.successful(Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), NormalMode, userAnswers)))
+                Future.successful(request.userAnswers)
               }
-          }
+              deletionResult.flatMap {
+                userAnswers =>
+                  if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
+                    sectionComplete.setCompleteFlag(
+                      request.externalId, IsEstablisherCompleteId(establisherIndex), request.userAnswers, value = false).map { _ =>
+                      Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), NormalMode, userAnswers))
+                    }
+                  } else {
+                    Future.successful(Redirect(navigator.nextPage(ConfirmDeletePartnerId(establisherIndex), NormalMode, userAnswers)))
+                  }
+              }
+            }
+          )
       }
   }
 }
