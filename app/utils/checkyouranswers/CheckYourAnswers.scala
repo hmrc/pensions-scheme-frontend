@@ -572,9 +572,9 @@ case class BankDetailsCYA[I <: TypedIdentifier[UKBankDetails]](
 
 }
 
-case class BankDetailsHnSCYA[I <: TypedIdentifier[UKBankDetails]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+case class BankDetailsHnSCYA[I <: TypedIdentifier[BankAccountDetails]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
-  def apply()(implicit rds: Reads[UKBankDetails], countryOptions: CountryOptions): CheckYourAnswers[I] = {
+  def apply()(implicit rds: Reads[BankAccountDetails], countryOptions: CountryOptions): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
         userAnswers.get(id).map {
@@ -584,8 +584,7 @@ case class BankDetailsHnSCYA[I <: TypedIdentifier[UKBankDetails]](label: Option[
               Seq(bankDetails.bankName,
                 bankDetails.accountName,
                 s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
-                bankDetails.accountNumber,
-                DateHelper.formatDate(bankDetails.date)),
+                bankDetails.accountNumber),
               answerIsMessageKey = false,
               Some(changeUrl),
               hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)

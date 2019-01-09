@@ -18,20 +18,19 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import identifiers.{EstablishedCountryId, HaveAnyTrusteesId, SchemeNameId, SchemeTypeId}
-import identifiers.register.{DeclarationDutiesId, _}
+import identifiers._
+import identifiers.register.DeclarationDutiesId
 import javax.inject.Inject
-import models.{CheckMode, NormalMode}
+import models.CheckMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.Register
-import utils.checkyouranswers.Ops._
 import utils._
+import utils.checkyouranswers.Ops._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppConfig,
                                                          override val messagesApi: MessagesApi,
@@ -39,8 +38,8 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                          getData: DataRetrievalAction,
                                                          requireData: DataRequiredAction,
                                                          implicit val countryOptions: CountryOptions,
-                                                         @Register navigator: Navigator,
-                                                         sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
+                                                         sectionComplete: SectionComplete
+                                                        )(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -61,7 +60,9 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-        Future.successful(Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers)))
+      sectionComplete.setCompleteFlag(request.externalId, IsBeforeYouStartCompleteId, request.userAnswers, value = true) map { _ =>
+        Redirect(controllers.routes.SchemeDetailsTaskListController.onPageLoad())
+      }
   }
 
 }

@@ -60,7 +60,7 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsAboutMembersCompleteId, request.userAnswers, value = true) map { _ =>
-        Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        Redirect(controllers.routes.SchemeDetailsTaskListController.onPageLoad())
       }
   }
 

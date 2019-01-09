@@ -19,9 +19,8 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.{BankAccountDetailsId, UKBankAccountId}
-import models.NormalMode
-import models.register.{SortCode, UKBankDetails}
-import org.joda.time.LocalDate
+import models.register.SortCode
+import models.{BankAccountDetails, NormalMode}
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -54,9 +53,8 @@ object AboutBankDetailsNavigatorSpec {
   private val ukBankAccount = UserAnswers(Json.obj()).set(UKBankAccountId)(true).get
   private val noUKBankAccount = UserAnswers(Json.obj()).set(UKBankAccountId)(false).get
 
-  private val bankDetails = UKBankDetails("test bank", "test account",
-    SortCode("34", "45", "67"), "1234567890", new LocalDate(LocalDate.now().getYear,
-      LocalDate.now().getMonthOfYear, LocalDate.now().getDayOfMonth))
+  private val bankDetails = BankAccountDetails("test bank", "test account",
+    SortCode("34", "45", "67"), "1234567890")
 
   private val ukBankAccountDetails = UserAnswers(Json.obj()).set(BankAccountDetailsId)(bankDetails).get
 

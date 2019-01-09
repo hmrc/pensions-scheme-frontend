@@ -17,13 +17,12 @@
 package controllers
 
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
-import identifiers.{SchemeNameId, UKBankAccountId, UKBankDetailsId}
-import models.CheckMode
+import identifiers.{IsAboutBankDetailsCompleteId, SchemeNameId, UKBankAccountId, UKBankDetailsId}
 import models.register._
-import org.joda.time.LocalDate
+import models.{BankAccountDetails, CheckMode}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import utils.{DateHelper, FakeCountryOptions, FakeNavigator, FakeSectionComplete}
+import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -47,7 +46,8 @@ class CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
         val result = controller().onSubmit(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SchemeDetailsTaskListController.onPageLoad().url)
+        FakeSectionComplete.verify(IsAboutBankDetailsCompleteId, true)
       }
     }
 
@@ -72,9 +72,8 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 
   private val postUrl = routes.CheckYourAnswersBankDetailsController.onSubmit()
 
-  val bankDetails = UKBankDetails("test bank name", "test account name",
-    SortCode("34", "45", "67"), "test account number", new LocalDate(LocalDate.now().getYear,
-      LocalDate.now().getMonthOfYear, LocalDate.now().getDayOfMonth))
+  val bankDetails = BankAccountDetails("test bank name", "test account name",
+    SortCode("34", "45", "67"), "test account number")
 
   private val schemeInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
@@ -100,8 +99,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
         Seq(bankDetails.bankName,
           bankDetails.accountName,
           s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
-          bankDetails.accountNumber,
-          DateHelper.formatDate(bankDetails.date)),
+          bankDetails.accountNumber),
         answerIsMessageKey = false,
         Some(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url),
         messages("messages__visuallyhidden__hns_uKBankDetails", "Test Scheme Name")

@@ -16,11 +16,8 @@
 
 package identifiers
 
-import models.register.UKBankDetails
-import play.api.i18n.Messages
-import utils.checkyouranswers.{BankDetailsHnSCYA, CheckYourAnswers}
-import utils.{CountryOptions, UserAnswers}
-
-case object UKBankDetailsId extends TypedIdentifier[UKBankDetails] {
-  override def toString: String = "uKBankDetails"
+case object IsAboutBankDetailsCompleteId extends TypedIdentifier[Boolean] {
+  override def toString: String = "IsAboutBankDetailsComplete"
 }
+
+

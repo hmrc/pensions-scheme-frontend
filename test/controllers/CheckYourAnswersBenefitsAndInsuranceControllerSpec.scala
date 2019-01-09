@@ -47,7 +47,7 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
         val result = controller().onSubmit(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.register.routes.SchemeTaskListController.onPageLoad().url
+        redirectLocation(result).value mustBe controllers.routes.SchemeDetailsTaskListController.onPageLoad().url
         FakeSectionComplete.verify(IsAboutBenefitsAndInsuranceCompleteId, true)
       }
     }

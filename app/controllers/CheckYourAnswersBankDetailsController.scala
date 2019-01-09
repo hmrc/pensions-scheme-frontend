@@ -49,7 +49,7 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
       val bankAccountSection = AnswerSection(
         None,
         UKBankAccountId.row(controllers.routes.UKBankAccountController.onPageLoad(CheckMode).url) ++
-        UKBankDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
+          BankAccountDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
       )
 
       Ok(check_your_answers(appConfig, Seq(bankAccountSection), controllers.routes.CheckYourAnswersBankDetailsController.onSubmit()))
@@ -57,7 +57,9 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      Future.successful(Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad()))
+      sectionComplete.setCompleteFlag(request.externalId, IsAboutBankDetailsCompleteId, request.userAnswers, value = true) map { _ =>
+        Redirect(controllers.routes.SchemeDetailsTaskListController.onPageLoad())
+      }
   }
 
 }
