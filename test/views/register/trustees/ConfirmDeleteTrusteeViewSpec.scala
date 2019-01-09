@@ -16,26 +16,29 @@
 
 package views.register.trustees
 
-import models.NormalMode
+import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
 import models.register.trustees.TrusteeKind.Company
-import viewmodels.Message
+import play.api.data.Form
+import play.twirl.api.HtmlFormat
 import views.ViewSpecBase
-import views.behaviours.ViewBehaviours
+import views.behaviours.YesNoViewBehaviours
 import views.html.register.trustees.confirmDeleteTrustee
 
-class ConfirmDeleteTrusteeViewSpec extends ViewBehaviours {
+class ConfirmDeleteTrusteeViewSpec extends YesNoViewBehaviours {
 
   import ConfirmDeleteTrusteeViewSpec._
 
+  override val form: Form[Boolean] = formLocal
+
   "ConfirmDeleteTrustee view with hub enabled" must {
-    behave like normalPage(createView(), messageKeyPrefix, Message(s"messages__${messageKeyPrefix}__heading").withArgs(trusteeName))
 
-    behave like pageWithSubmitButton(createView())
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", trusteeName))
 
-    "have a cancel link" in {
-      val cancelUrl = controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url
-      createView() must haveLink(cancelUrl, "cancel")
-    }
+    behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = postCall.url)
+
+    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
   }
 }
 
@@ -44,11 +47,24 @@ object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
   private val messageKeyPrefix = "confirmDeleteTrustee"
   private val trusteeName = "test-trustee-name"
 
+  val formLocal = new ConfirmDeleteTrusteeFormProvider()()
+
+  val postCall = controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onSubmit(0, Company)
+
   private def createView() =
     () => confirmDeleteTrustee(
       frontendAppConfig,
+      formLocal,
       trusteeName,
-      controllers.register.trustees.routes.ConfirmDeleteTrusteeController.onSubmit(0, Company)
+      postCall
+    )(fakeRequest, messages)
+
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    confirmDeleteTrustee(
+      frontendAppConfig,
+      form,
+      trusteeName,
+      postCall
     )(fakeRequest, messages)
 
 }
