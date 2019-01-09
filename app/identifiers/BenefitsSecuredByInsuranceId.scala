@@ -16,6 +16,18 @@
 
 package identifiers
 
+import play.api.libs.json.JsResult
+import utils.UserAnswers
+
 case object BenefitsSecuredByInsuranceId extends TypedIdentifier[Boolean] {
   override def toString: String = "securedBenefits"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): JsResult[UserAnswers] = {
+    value match {
+      case Some(false) => userAnswers.removeAllOf(List(InsuranceCompanyNameId, InsurancePolicyNumberId,
+        InsurerEnterPostCodeId, InsurerSelectAddressId, InsurerConfirmAddressId))
+      case Some(true) => userAnswers.set(IsAboutBenefitsAndInsuranceCompleteId)(false)
+      case _ => super.cleanup(value, userAnswers)
+    }
+  }
 }
