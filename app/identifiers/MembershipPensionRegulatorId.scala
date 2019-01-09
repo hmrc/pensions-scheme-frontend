@@ -16,17 +16,6 @@
 
 package identifiers
 
-import models.address.Address
-import utils.CountryOptions
-import utils.checkyouranswers.{AddressCYA, CheckYourAnswers}
-
-case object InsurerConfirmAddressId extends TypedIdentifier[Address] {
-  self =>
-  override def toString: String = "insurerAddress"
-
-  implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] =
-    AddressCYA(
-      label = "messages__insurer_confirm_address_cya_label",
-      changeAddress = "messages__visuallyhidden__insurer_confirm_address"
-    )()
+case object MembershipPensionRegulatorId extends TypedIdentifier[Nothing] {
+  override def toString: String = "membershipPensionRegulator"
 }

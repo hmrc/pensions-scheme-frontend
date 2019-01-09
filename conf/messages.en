@@ -571,9 +571,7 @@ messages__scheme_benefits_section=Scheme benefits
 membership.checkYourAnswersLabel = Current membership
 membershipFuture.checkYourAnswersLabel = Membership within 12 months
 schemeEstablishedCountry.checkYourAnswersLabel = Where was the scheme established?
-investmentRegulated.checkYourAnswersLabel = Is the scheme investment regulated?
-occupationalPensionScheme.checkYourAnswersLabel = Is the scheme an occupational pension scheme?
-securedBenefits.checkYourAnswersLabel=Are any of the scheme benefits secured by a contract of insurance or annuity?
+
 uKBankAccount.checkYourAnswersLabel = Does the scheme have a UK bank account?
 bankAccountDate.checkYourAnswersLabel = Approximate date the account was opened
 
@@ -993,10 +991,7 @@ messages__visuallyhidden__scheme_type = Change the type of scheme
 messages__visuallyhidden__schemeEstablishedCountry = Change the country the scheme was established in
 messages__visuallyhidden__membership = Change how many members the scheme currently has
 messages__visuallyhidden__membershipFuture = Change how many members you expect the scheme to have in the next 12 months
-messages__visuallyhidden__investmentRegulated = Change whether the scheme is investment regulated
-messages__visuallyhidden__occupationalPensionScheme = Change whether the scheme is an occupational pension scheme
 messages__visuallyhidden__benefits = Change how the scheme provides benefits
-messages__visuallyhidden__securedBenefits = Change whether any of the scheme benefits are secured by a contract of insurance or annuity
 messages__visuallyhidden__benefits_insurance__name = Change the name of the insurance company
 messages__visuallyhidden__benefits_insurance__policy = Change the policy number
 messages__visuallyhidden__insurer_address = Change the address of the insurance company
@@ -1212,12 +1207,6 @@ messages__visuallyhidden__current_members_change = Change how many members {0} c
 messages__future_members_cya_label = How many scheme members do you expect {0} to have in 12 months time?
 messages__visuallyhidden__future_members_change = Change how many members you expect {0} to have in 12 months time
 
-messages__insurer_enter_postcode__title = Enter the insurance company’s postcode
-messages__insurer_enter_postcode__h1 = Enter the insurance company’s postcode
-
-messages__insurer_confirm_address__title = Insurance company’s address
-messages__insurer_confirm_address__h1 = Insurance company’s address
-
 messages__what_you_will_need_benefits__title = Benefits and insurance
 messages__what_you_will_need_benefits__h1 = Benefits and insurance
 messages__what_you_will_need_benefits__p1 = You will need to tell us:
@@ -1247,11 +1236,51 @@ messages__what_you_will_need_bank_details__item_2 = account name
 messages__what_you_will_need_bank_details__item_3 = sort code
 messages__what_you_will_need_bank_details__item_4 = account number
 
+messages__investment_regulated_scheme__title = Is the scheme investment regulated?
+messages__investment_regulated_scheme__h1 = Is the scheme investment regulated?
+investmentRegulated.checkYourAnswersLabel = Is the scheme investment regulated?
+messages__visuallyhidden__investmentRegulated = Change if the scheme is investment regulated
+
+occupationalPensionScheme.checkYourAnswersLabel = Is the scheme an occupational pension scheme?
+messages__visuallyhidden__occupationalPensionScheme = Change if the scheme an occupational pension scheme
+
+messages__type_of_benefits__title = How does the scheme provide benefits?
+messages__type_of_benefits__h1 = How does the scheme provide benefits?
+messages__type_of_benefits__opt1 = Money Purchase benefits only (defined contribution)
+messages__type_of_benefits__opt2 = Defined Benefits only
+messages__type_of_benefits__opt3 = Mixture of money purchase benefits and defined benefits
+messages__type_of_benefits_cya_label = How does the scheme provide benefits?
+messages__visuallyhidden__type_of_benefits_change = Change how the scheme provides benefits
+
+messages__benefits_secured_by_insurance__title = Are any of the scheme benefits secured by a contract of insurance or annuity?
+messages__benefits_secured_by_insurance__h1 = Are any of the scheme benefits secured by a contract of insurance or annuity?
+messages__benefits_secured_by_insurance__lede = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
+securedBenefits.checkYourAnswersLabel = Are any of the scheme benefits secured by a contract of insurance or annuity?
+messages__visuallyhidden__securedBenefits = Change if any of the scheme benefits are secured by a contract of insurance or annuity
+
 messages__insurance_company_name__title = What is the name of the insurance company that secures the scheme benefits?
 messages__insurance_company_name__h1 = What is the name of the insurance company that secures the scheme benefits?
 messages__error__insurance_company_name = Enter the name of the insurance company that secures the scheme benefits
 messages__error__insurance_company_name_invalid = Enter the insurance company’s name only using European characters
 messages__error__insurance_company_name_length = Enter the insurance company’s name using 160 characters or less
+insuranceCompanyName.checkYourAnswersLabel = What is the name of the insurance company that secures the scheme benefits?
+messages__visuallyhidden__insuranceCompanyName = Change the name of the insurance company that secures the scheme benefits
+
+messages__insurance_policy_number__title = What is the policy number with the insurance company?
+messages__insurance_policy_number__h1 = What is the policy number with {0}?
+messages__error__insurance_policy_number = Enter a policy number
+messages__error__insurance_policy_number_invalid = Enter the policy number only using European characters
+messages__error__insurance_policy_number_length = Enter a policy number using 55 characters or less
+messages__insurance_policy_number_cya_label = What is the policy number with {0}?
+messages__visuallyhidden__insurance_policy_number = Change the policy number with {0}
+
+messages__insurer_enter_postcode__title = Enter the insurance company’s postcode
+messages__insurer_enter_postcode__h1 = Enter the insurance company’s postcode
+
+messages__insurer_confirm_address__title = Insurance company’s address
+messages__insurer_confirm_address__h1 = Insurance company’s address
+messages__insurer_confirm_address_cya_label = Insurance company’s address
+messages__visuallyhidden__insurer_confirm_address = Change the insurance company’s address
 
 messages__established_country__title = Which country was the scheme established in?
 messages__established_country__h1 = Which country was {0} established in?
@@ -1271,14 +1300,6 @@ messages__visuallyhidden__haveAnyTrustees = Change if {0} has any trustees
 schemeEstablishedCountry.hns_checkYourAnswersLabel = Which country was {0} established in?
 messages__visuallyhidden__hns_schemeEstablishedCountry = Change the country {0} was established in
 
-messages__insurance_policy_number__title = What is the policy number with the insurance company?
-messages__insurance_policy_number__h1 = What is the policy number with {0}?
-messages__error__insurance_policy_number = Enter a policy number
-messages__error__insurance_policy_number_invalid = Enter the policy number only using European characters
-messages__error__insurance_policy_number_length = Enter a policy number using 55 characters or less
-
-messages__investment_regulated_scheme__title = Is the scheme investment regulated?
-messages__investment_regulated_scheme__h1 = Is the scheme investment regulated?
 
 messages__bank_account_details__title = What are the scheme’s bank account details?
 messages__bank_account_details__h1 = What are {0}’s bank account details?
@@ -1288,16 +1309,6 @@ messages__bank_account_details__sort_code = Sort code
 messages__bank_account_details__sort_code_hint = For example ’00 55 66’ or ’00-55-66’
 messages__bank_account_details__account_number = Account number
 messages__bank_account_details__date_bank_account = Approximate date the account was opened
-
-messages__type_of_benefits__title = How does the scheme provide benefits?
-messages__type_of_benefits__h1 = How does the scheme provide benefits?
-messages__type_of_benefits__opt1 = Money Purchase benefits only (defined contribution)
-messages__type_of_benefits__opt2 = Defined Benefits only
-messages__type_of_benefits__opt3 = Mixture of money purchase benefits and defined benefits
-
-messages__benefits_secured_by_insurance__title = Are any of the scheme benefits secured by a contract of insurance or annuity?
-messages__benefits_secured_by_insurance__h1 = Are any of the scheme benefits secured by a contract of insurance or annuity?
-messages__benefits_secured_by_insurance__lede = The benefits in the scheme can be secured by a contract of insurance or annuity contract by an insurance company that provides administration services to the scheme.
 
 uKBankAccount.hns_checkYourAnswersLabel = Does {0} have a UK bank account?
 messages__visuallyhidden__hns_uKBankAccount = Change if {0} has a UK bank account

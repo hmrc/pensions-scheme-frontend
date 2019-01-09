@@ -17,15 +17,16 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
+@import models.Mode
 
-@(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__membership_pension_regulator__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = MembershipPensionRegulatorController.onSubmit, 'autoComplete -> "off") {
+    @helpers.form(action = MembershipPensionRegulatorController.onSubmit(mode), 'autoComplete -> "off") {
 
         @components.heading(headingKey = messages("messages__membership_pension_regulator__h1"))
 
