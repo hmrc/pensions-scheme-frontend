@@ -48,7 +48,6 @@ class WorkingKnowledgeController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
-      println("\n\n\n correct onpage load")
       val preparedForm = request.userAnswers.flatMap(_.get(DeclarationDutiesId)) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -62,7 +61,6 @@ class WorkingKnowledgeController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode))),
         value => {
-          println("\n\n\ncoming in onsubmit")
           sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
             request.userAnswers.getOrElse(UserAnswers()), value).flatMap { _ =>
             dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>

@@ -61,7 +61,6 @@ class WorkingKnowledgeController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode))),
         value => {
-          println("\n\n\n coming in wrong")
           sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
             request.userAnswers.getOrElse(UserAnswers()), value).flatMap { _ =>
             dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
