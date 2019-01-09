@@ -53,21 +53,21 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v=> form.fill(v))
-      Ok(schemeName(appConfig, preparedForm, mode))
+      Ok(schemeName(appConfig, preparedForm, mode, request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(schemeName(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(schemeName(appConfig, formWithErrors, mode, request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")))),
         value =>
           nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>
             if (nameMatching.isMatch) {
               Future.successful(BadRequest(schemeName(appConfig, form.withError(
                 "schemeName",
                 "messages__error__scheme_name_psa_name_match"
-              ), mode)))
+              ), mode, request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse(""))))
             } else {
               dataCacheConnector.save(request.externalId, SchemeNameId, value).flatMap { cacheMap =>
                 sectionComplete.setCompleteFlag(request.externalId, IsAboutSchemeCompleteId, UserAnswers(cacheMap), value = false).map { json =>

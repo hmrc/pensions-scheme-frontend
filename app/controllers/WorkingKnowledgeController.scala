@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
+import identifiers.SchemeNameId
 import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import javax.inject.Inject
 import models.Mode
@@ -52,14 +53,15 @@ class WorkingKnowledgeController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(workingKnowledge(appConfig, preparedForm, mode))
+
+      Ok(workingKnowledge(appConfig, preparedForm, mode, request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode, request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")))),
         value => {
           sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
             request.userAnswers.getOrElse(UserAnswers()), value).flatMap { _ =>
