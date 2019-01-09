@@ -15,11 +15,11 @@
  */
 
 import controllers.actions.{DataRetrievalAction, FakeDataRetrievalAction}
-import identifiers.register._
 import identifiers._
+import identifiers.register._
 import models._
 import models.address.{Address, TolerantAddress}
-import models.register.{DeclarationDormant, SchemeDetails, SchemeType, UKBankDetails}
+import models.register.{establishers => _, trustees => _, _}
 import org.scalatest.OptionValues
 
 //scalastyle:off number.of.methods
@@ -34,6 +34,18 @@ package object utils {
 
     def schemeDetails(schemeDetails: SchemeDetails): UserAnswers = {
       answers.set(SchemeDetailsId)(schemeDetails).asOpt.value
+    }
+
+    def occupationalPensionScheme(isOccupational: Boolean): UserAnswers = {
+      answers.set(identifiers.OccupationalPensionSchemeId)(isOccupational).asOpt.value
+    }
+
+    def typeOfBenefits(benefits: TypeOfBenefits): UserAnswers = {
+      answers.set(identifiers.TypeOfBenefitsId)(benefits).asOpt.value
+    }
+
+    def benefitsSecuredByInsurance(isInsured: Boolean): UserAnswers = {
+      answers.set(identifiers.BenefitsSecuredByInsuranceId)(isInsured).asOpt.value
     }
 
     def schemeName(schemeName: String): UserAnswers = {
@@ -60,12 +72,32 @@ package object utils {
       answers.set(identifiers.BankAccountDetailsId)(bankAccountDetails).asOpt.value
     }
 
+    def currentMembers(currentMembers: Members): UserAnswers = {
+      answers.set(CurrentMembersId)(currentMembers).asOpt.value
+    }
+
+    def futureMembers(futureMembers: Members): UserAnswers = {
+      answers.set(FutureMembersId)(futureMembers).asOpt.value
+    }
+
+    def investmentRegulated(isInvestmentRegulated: Boolean): UserAnswers = {
+      answers.set(InvestmentRegulatedSchemeId)(isInvestmentRegulated).asOpt.value
+    }
+
     def schemeType(schemeType: SchemeType): UserAnswers = {
       answers.set(SchemeTypeId)(schemeType).asOpt.value
     }
 
     def securedBenefits(securedBenefits: Boolean): UserAnswers = {
       answers.set(SecuredBenefitsId)(securedBenefits).asOpt.value
+    }
+
+    def insurerConfirmAddress(address: Address): UserAnswers = {
+      answers.set(identifiers.InsurerConfirmAddressId)(address).asOpt.value
+    }
+
+    def insurerSelectAddress(address: TolerantAddress): UserAnswers = {
+      answers.set(identifiers.InsurerSelectAddressId)(address).asOpt.value
     }
 
     def insurerAddress(address: Address): UserAnswers = {

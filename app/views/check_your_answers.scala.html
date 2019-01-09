@@ -21,24 +21,32 @@
 @import uk.gov.hmrc.play.views.html._
 @import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
 
-@(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call, enableHubV2: Boolean = false, returnOverview: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @heading=@{
-    messages("checkYourAnswers.hs.heading")
+    if(enableHubV2) {
+        messages("checkYourAnswers.hs.heading")
+    } else {
+        messages("checkYourAnswers.heading")
+    }
 }
 
 @title=@{
-    messages("checkYourAnswers.hs.title")
+    if(enableHubV2) {
+        messages("checkYourAnswers.hs.title")
+    } else {
+        messages("checkYourAnswers.title")
+    }
 }
 
 @main_template(
-    title = messages("checkYourAnswers.title"),
+    title = title,
     appConfig = appConfig,
     bodyClasses = None) {
 
     @helpers.form(action = postUrl, 'autoComplete -> "off") {
         @components.heading(
-                headingKey = messages("checkYourAnswers.heading")
+                headingKey = heading
         )
 
         @for((section, i) <- answerSections.zipWithIndex){
@@ -51,7 +59,12 @@
         }
 
         @components.submit_button()
-        @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
+        @if(returnOverview){
+            @components.return_link("messages__complete__return", appConfig.managePensionsSchemeOverviewUrl)
+        } else {
+            @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
+        }
+
     }
 
 }

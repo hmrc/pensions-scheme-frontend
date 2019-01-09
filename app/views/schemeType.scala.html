@@ -48,6 +48,6 @@
 
         @components.submit_button()
 
-        @components.return_link(messages("messages__schemeTaskList__returnlink"), controllers.register.routes.SchemeTaskListController.onPageLoad())
+        @components.return_link(messages("messages__complete__return"), appConfig.managePensionsSchemeOverviewUrl)
     }
 }

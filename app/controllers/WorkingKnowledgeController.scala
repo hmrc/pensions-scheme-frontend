@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.Register
+import utils.annotations.BeforeYouStart
 import utils.{Enumerable, Navigator, SectionComplete, UserAnswers}
 import views.html.workingKnowledge
 
@@ -37,7 +37,7 @@ class WorkingKnowledgeController @Inject()(
                                             appConfig: FrontendAppConfig,
                                             override val messagesApi: MessagesApi,
                                             dataCacheConnector: UserAnswersCacheConnector,
-                                            @Register navigator: Navigator,
+                                            @BeforeYouStart navigator: Navigator,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             formProvider: WorkingKnowledgeFormProvider,
@@ -60,11 +60,12 @@ class WorkingKnowledgeController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode))),
-        value =>
+        value => {
           sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
-            request.userAnswers.getOrElse(UserAnswers()), value).flatMap{_=>
+            request.userAnswers.getOrElse(UserAnswers()), value).flatMap { _ =>
             dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
               Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap))))
+          }
         }
       )
   }

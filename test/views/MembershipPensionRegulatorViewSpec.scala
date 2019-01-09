@@ -16,6 +16,7 @@
 
 package views
 
+import models.NormalMode
 import play.twirl.api.HtmlFormat
 import views.behaviours.ViewBehaviours
 import views.html.membershipPensionRegulator
@@ -24,7 +25,7 @@ class MembershipPensionRegulatorViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "membership_pension_regulator"
 
-  def createView: () => HtmlFormat.Appendable = () => membershipPensionRegulator(frontendAppConfig)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => membershipPensionRegulator(frontendAppConfig, NormalMode)(fakeRequest, messages)
 
   "MembershipPensionRegulator view" must {
 

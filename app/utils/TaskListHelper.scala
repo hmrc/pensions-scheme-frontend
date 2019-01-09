@@ -80,7 +80,7 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
 
   private val addTrusteesDefaultLink: JourneyTaskListSection = JourneyTaskListSection(
     None,
-    Link(addTrusteesLinkText, controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+    Link(addTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
     None
   )
 
@@ -217,11 +217,11 @@ class TaskListHelper(journey: Option[UserAnswers])(implicit messages: Messages) 
       case (false, false) =>
         Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, userAnswers.allTrustees.size).url)
       case (true, true) =>
-        Link(changeTrusteesLinkText, controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
+        Link(changeTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
       case (true, false) if isAllTrusteesCompleted =>
-        Link(changeTrusteesLinkText, controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
+        Link(changeTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
       case (true, false) =>
-        Link(addTrusteesLinkText, controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
+        Link(addTrusteesLinkText, controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url)
     }
 
     if (userAnswers.allTrusteesAfterDelete.isEmpty && isAllTrusteesCompleted)

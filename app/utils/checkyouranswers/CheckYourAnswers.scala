@@ -16,7 +16,7 @@
 
 package utils.checkyouranswers
 
-import identifiers.TypedIdentifier
+import identifiers.{EstablishedCountryId, TypedIdentifier}
 import identifiers.register.SchemeEstablishedCountryId
 import models._
 import models.address.Address
@@ -60,7 +60,9 @@ object CheckYourAnswers {
 
   implicit def string[I <: TypedIdentifier[String]](implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = StringCYA()()
 
-  case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None) {
+  implicit def members[I <: TypedIdentifier[Members]](implicit rds: Reads[Members]): CheckYourAnswers[I] = MembersCYA()()
+
+  case class StringCYA[I <: TypedIdentifier[String]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
 
     def apply()(implicit rds: Reads[String], countryOptions: CountryOptions): CheckYourAnswers[I] = {
       new CheckYourAnswers[I] {
@@ -72,7 +74,26 @@ object CheckYourAnswers {
                 Seq(retrieveStringAnswer(id, string)),
                 answerIsMessageKey = false,
                 Some(changeUrl),
-                s"messages__visuallyhidden__${id.toString}"
+                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+              ))
+          }.getOrElse(Seq.empty[AnswerRow])
+      }
+    }
+  }
+
+  case class BooleanCYA[I <: TypedIdentifier[Boolean]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+
+    def apply()(implicit rds: Reads[Boolean], countryOptions: CountryOptions): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          userAnswers.get(id).map {
+            flag =>
+              Seq(AnswerRow(
+                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq(if (flag) "site.yes" else "site.no"),
+                answerIsMessageKey = true,
+                Some(changeUrl),
+                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
               ))
           }.getOrElse(Seq.empty[AnswerRow])
       }
@@ -95,6 +116,26 @@ object CheckYourAnswers {
     }
   }
 
+
+  case class SchemeTypeCYA[I <: TypedIdentifier[SchemeType]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+
+    def apply()(implicit rds: Reads[SchemeType]): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+          userAnswers.get(id).map {
+            schemeType =>
+              Seq(AnswerRow(
+                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq(s"messages__scheme_type_${schemeType.toString}"),
+                answerIsMessageKey = true,
+                Some(changeUrl),
+                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+              ))
+          }.getOrElse(Seq.empty[AnswerRow])
+      }
+    }
+  }
+
   implicit def schemeBenefits[I <: TypedIdentifier[Benefits]](implicit rds: Reads[Benefits]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
@@ -106,6 +147,23 @@ object CheckYourAnswers {
               answerIsMessageKey = true,
               Some(changeUrl),
               "messages__visuallyhidden__benefits"
+            )
+          )
+      }.getOrElse(Seq.empty[AnswerRow])
+    }
+  }
+
+  implicit def typeOfBenefitsCYA[I <: TypedIdentifier[TypeOfBenefits]](implicit rds: Reads[TypeOfBenefits]): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+        typeOfBenefits =>
+          Seq(
+            AnswerRow(
+              "messages__type_of_benefits_cya_label",
+              Seq(s"messages__type_of_benefits__$typeOfBenefits"),
+              answerIsMessageKey = true,
+              Some(changeUrl),
+              "messages__visuallyhidden__type_of_benefits_change"
             )
           )
       }.getOrElse(Seq.empty[AnswerRow])
@@ -209,6 +267,27 @@ object CheckYourAnswers {
     }
   }
 
+  case class MembersCYA[I <: TypedIdentifier[Members]](label: Option[String] = None,
+                                                       hiddenLabel: Option[String] = None) {
+
+    def apply()(implicit rds: Reads[Members]): CheckYourAnswers[I] = {
+      new CheckYourAnswers[I] {
+        override def row(id: I)(changeUrl: String, userAnswers: UserAnswers) = userAnswers.get(id).map {
+          members =>
+            Seq(
+              AnswerRow(
+                label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+                Seq(s"messages__members__$members"),
+                answerIsMessageKey = true,
+                Some(changeUrl),
+                hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+              )
+            )
+        }.getOrElse(Seq.empty[AnswerRow])
+      }
+    }
+  }
+
   implicit def partnershipDetails[I <: TypedIdentifier[PartnershipDetails]](implicit rds: Reads[PartnershipDetails]): CheckYourAnswers[I] = {
     new CheckYourAnswers[I] {
       override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] = userAnswers.get(id).map { partnershipDetails =>
@@ -291,7 +370,7 @@ object CheckYourAnswers {
 
   private def retrieveStringAnswer[I](id: I, stringValue: String)(implicit countryOptions: CountryOptions): String = {
     id match {
-      case SchemeEstablishedCountryId =>
+      case SchemeEstablishedCountryId | EstablishedCountryId =>
         countryOptions.options.find(_.value == stringValue).map(_.label).getOrElse(stringValue)
       case _ => stringValue
     }
@@ -491,6 +570,29 @@ case class BankDetailsCYA[I <: TypedIdentifier[UKBankDetails]](
     }
   }
 
+}
+
+case class BankDetailsHnSCYA[I <: TypedIdentifier[UKBankDetails]](label: Option[String] = None, hiddenLabel: Option[String] = None) {
+
+  def apply()(implicit rds: Reads[UKBankDetails], countryOptions: CountryOptions): CheckYourAnswers[I] = {
+    new CheckYourAnswers[I] {
+      override def row(id: I)(changeUrl: String, userAnswers: UserAnswers): Seq[AnswerRow] =
+        userAnswers.get(id).map {
+          bankDetails =>
+            Seq(AnswerRow(
+              label.fold(s"${id.toString}.checkYourAnswersLabel")(customLabel => customLabel),
+              Seq(bankDetails.bankName,
+                bankDetails.accountName,
+                s"${bankDetails.sortCode.first}-${bankDetails.sortCode.second}-${bankDetails.sortCode.third}",
+                bankDetails.accountNumber,
+                DateHelper.formatDate(bankDetails.date)),
+              answerIsMessageKey = false,
+              Some(changeUrl),
+              hiddenLabel.fold(s"messages__visuallyhidden__${id.toString}")(customHiddenLabel => customHiddenLabel)
+            ))
+        }.getOrElse(Seq.empty[AnswerRow])
+    }
+  }
 }
 
 case class AddressYearsCYA[I <: TypedIdentifier[AddressYears]](label: String = "messages__establisher_address_years__title",
@@ -705,5 +807,4 @@ case class CompanyDetailsCYA[I <: TypedIdentifier[CompanyDetails]](
         }.getOrElse(Seq.empty[AnswerRow])
     }
   }
-
 }

@@ -78,7 +78,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
   private val addTrusteeHeader = JourneyTaskListSection(
     None,
     Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
-      controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+      controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
     None
   )
 
@@ -145,7 +145,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
         JourneyTaskListSection(
           None,
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
-            controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+            controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
           None
         ),
         JourneyTaskListSection(
@@ -234,7 +234,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
         JourneyTaskListSection(
           None,
           Link(messages("messages__schemeTaskList__sectionTrustees_add_link"),
-            controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
+            controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url),
           None
         ), addEstablisherHeader)
       val view = createView(journeyTaskListNoEstablisher)
@@ -247,7 +247,7 @@ class SchemeTaskListViewSpec extends ViewBehaviours {
 
       "display the correct link" in {
         view must haveLinkWithText(
-          url = controllers.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url,
+          url = controllers.register.trustees.routes.HaveAnyTrusteesController.onPageLoad(NormalMode).url,
           linkText = messages("messages__schemeTaskList__sectionTrustees_add_link"),
           linkId = "section-trustees-link"
         )
