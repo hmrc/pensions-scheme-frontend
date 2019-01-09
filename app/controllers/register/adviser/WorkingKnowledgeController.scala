@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.register.adviser
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
@@ -27,9 +27,9 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.BeforeYouStart
+import utils.annotations.Register
 import utils.{Enumerable, Navigator, SectionComplete, UserAnswers}
-import views.html.workingKnowledge
+import views.html.register.adviser.workingKnowledge
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,7 +37,7 @@ class WorkingKnowledgeController @Inject()(
                                             appConfig: FrontendAppConfig,
                                             override val messagesApi: MessagesApi,
                                             dataCacheConnector: UserAnswersCacheConnector,
-                                            @BeforeYouStart navigator: Navigator,
+                                            @Register navigator: Navigator,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             formProvider: WorkingKnowledgeFormProvider,
@@ -48,6 +48,7 @@ class WorkingKnowledgeController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
+      println("\n\n\n correct onpage load")
       val preparedForm = request.userAnswers.flatMap(_.get(DeclarationDutiesId)) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -61,7 +62,7 @@ class WorkingKnowledgeController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode))),
         value => {
-          println("\n\n\n coming in wrong")
+          println("\n\n\ncoming in onsubmit")
           sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
             request.userAnswers.getOrElse(UserAnswers()), value).flatMap { _ =>
             dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>

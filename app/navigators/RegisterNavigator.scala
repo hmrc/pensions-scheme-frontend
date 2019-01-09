@@ -153,6 +153,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   }
 
   private def declarationDutiesRoutes(mode: Mode, userAnswers: UserAnswers): Option[NavigateTo] = {
+    println("\n\n\n coming "+userAnswers.get(DeclarationDutiesId))
     userAnswers.get(DeclarationDutiesId) match {
       case Some(true) =>
         NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
