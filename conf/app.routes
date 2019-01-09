@@ -38,8 +38,10 @@ POST       /what-you-will-need-members                  controllers.WhatYouWillN
 GET        /what-you-will-need-benefits-insurance       controllers.WhatYouWillNeedBenefitsInsuranceController.onPageLoad
 POST       /what-you-will-need-benefits-insurance       controllers.WhatYouWillNeedBenefitsInsuranceController.onSubmit
 
-GET        /sharing-scheme-details                      controllers.MembershipPensionRegulatorController.onPageLoad
-POST       /sharing-scheme-details                      controllers.MembershipPensionRegulatorController.onSubmit
+GET        /sharing-scheme-details                      controllers.MembershipPensionRegulatorController.onPageLoad(mode: Mode = NormalMode)
+POST       /sharing-scheme-details                      controllers.MembershipPensionRegulatorController.onSubmit(mode: Mode = NormalMode)
+GET        /change-sharing-scheme-details               controllers.MembershipPensionRegulatorController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-sharing-scheme-details               controllers.MembershipPensionRegulatorController.onSubmit(mode: Mode = CheckMode)
 
 GET        /what-you-will-need-bank-details             controllers.WhatYouWillNeedBankDetailsController.onPageLoad
 POST       /what-you-will-need-bank-details             controllers.WhatYouWillNeedBankDetailsController.onSubmit
