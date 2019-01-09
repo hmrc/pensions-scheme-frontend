@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.company.director
+package forms.register.establishers.company.director
 
-import identifiers.TypedIdentifier
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-case class ConfirmDeleteDirectorId(establisherIndex: Int) extends TypedIdentifier[Boolean]
+class ConfirmDeleteDirectorFormProvider @Inject() extends Mappings {
 
-object ConfirmDeleteDirectorId {
-  override def toString: String = "confirmDeleteDirector"
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__error__selection")
+    )
 }

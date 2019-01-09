@@ -21,11 +21,13 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import controllers.register.establishers.company.routes.AddCompanyDirectorsController
+import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.company.director.{ConfirmDeleteDirectorId, DirectorDetailsId}
 import javax.inject.Inject
 import models.{Index, NormalMode}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -43,8 +45,11 @@ class ConfirmDeleteDirectorController @Inject()(
                                                  authenticate: AuthAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
-                                                 sectionComplete: SectionComplete
+                                                 sectionComplete: SectionComplete,
+                                                 formProvider: ConfirmDeleteDirectorFormProvider
                                                ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+
+  private val form: Form[Boolean] = formProvider()
 
   def onPageLoad(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
@@ -52,13 +57,17 @@ class ConfirmDeleteDirectorController @Inject()(
         case company ~ director =>
           director.isDeleted match {
             case false =>
+              val preparedForm = request.userAnswers.get(ConfirmDeleteDirectorId(establisherIndex)) match {
+                case None => form
+                case Some(value) => form.fill(value)
+              }
               Future.successful(
                 Ok(
                   confirmDeleteDirector(
                     appConfig,
+                    preparedForm,
                     director.fullName,
-                    routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
-                    AddCompanyDirectorsController.onPageLoad(NormalMode, establisherIndex)
+                    routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex)
                   )
                 )
               )
@@ -70,19 +79,37 @@ class ConfirmDeleteDirectorController @Inject()(
 
   def onSubmit(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map {
-        case directorDetails =>
-          dataCacheConnector.save(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true)).flatMap {
-            userAnswers =>
-              if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
-                sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(establisherIndex), request.userAnswers, false).map { _ =>
-                  Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers))
-                }
-              } else {
-                Future.successful(Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers)))
-              }
 
-          }
+      (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
+        case company ~ directorDetails  =>
+
+          form.bindFromRequest().fold(
+            (formWithErrors: Form[_]) =>
+              Future.successful(BadRequest(confirmDeleteDirector(
+                appConfig,
+                formWithErrors,
+                directorDetails.fullName,
+                routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex)
+              ))),
+            value => {
+              val deletionResult = if (value) {
+                dataCacheConnector.save(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true))
+              } else {
+                Future.successful(request.userAnswers)
+              }
+              deletionResult.flatMap {
+                userAnswers =>
+                  if (userAnswers.allDirectorsAfterDelete(establisherIndex).isEmpty) {
+                    sectionComplete.setCompleteFlag(request.externalId, IsEstablisherCompleteId(establisherIndex), request.userAnswers, false).map { _ =>
+                      Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers))
+                    }
+                  } else {
+                    Future.successful(Redirect(navigator.nextPage(ConfirmDeleteDirectorId(establisherIndex), NormalMode, userAnswers)))
+                  }
+              }
+            }
+
+          )
       }
   }
 }

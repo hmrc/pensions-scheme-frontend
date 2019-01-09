@@ -62,7 +62,7 @@ class DirectorUniqueTaxReferenceController @Inject()(
   def onSubmit(mode: Mode, establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       DirectorDetailsId(establisherIndex, directorIndex).retrieve.right.map { director =>
-        form.bindFromRequest().fold(
+        val res = form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             Future.successful(BadRequest(directorUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, directorIndex))),
           (value) =>
@@ -75,6 +75,7 @@ class DirectorUniqueTaxReferenceController @Inject()(
                 Redirect(navigator.nextPage(DirectorUniqueTaxReferenceId(establisherIndex, directorIndex), mode, new UserAnswers(json)))
             }
         )
+        res
       }
   }
 
