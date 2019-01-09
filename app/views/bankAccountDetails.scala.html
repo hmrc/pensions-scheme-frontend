@@ -56,11 +56,6 @@
             label = messages("messages__bank_account_details__account_number")
         )
 
-        @components.input_date(
-            field = form("date"),
-            label = messages("messages__bank_account_details__date_bank_account"),
-            hint = Some(messages("messages__common__dob__hint"))
-        )
         @components.submit_button()
 
         @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
