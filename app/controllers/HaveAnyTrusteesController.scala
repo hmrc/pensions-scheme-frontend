@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
-import identifiers.HaveAnyTrusteesId
+import identifiers.{HaveAnyTrusteesId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
@@ -51,14 +51,14 @@ class HaveAnyTrusteesController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode)))
+      Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode, request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse(""))))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode, request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")))),
         value =>
           dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>
             Redirect(navigator.nextPage(HaveAnyTrusteesId, mode, UserAnswers(cacheMap))))
