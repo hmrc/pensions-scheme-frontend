@@ -18,33 +18,32 @@ package forms
 
 import forms.mappings.BankDetailsMapping
 import javax.inject.Inject
-import models.register.UKBankDetails
+import models.BankAccountDetails
 import play.api.data.Form
 import play.api.data.Forms._
 
 class BankAccountDetailsFormProvider @Inject() extends BankDetailsMapping {
 
-  val nameMaxLength = 28
-  val accountNoMaxLength = 8
+  protected val nameMaxLength = 28
+  protected val accountNoExactLength = 8
 
-  def apply(): Form[UKBankDetails] = Form(
+  def apply(): Form[BankAccountDetails] = Form(
     mapping(
       "bankName" ->
-        text("messages__error__bank_name").
-          verifying(maxLength(nameMaxLength, "messages__error__bank_name_length")),
+        text("messages__error__bank_name__blank").
+          verifying(maxLength(nameMaxLength, "messages__error__bank_name__length")),
       "accountName" ->
-        text("messages__error__account_name").
-          verifying(maxLength(nameMaxLength, "messages__error__account_name_length")),
+        text("messages__error__bank_account_holder_name__blank").
+          verifying(maxLength(nameMaxLength, "messages__error__bank_account_holder_name__length")),
       "sortCode" ->
-        sortCodeMapping("messages__error__sort_code",
-          "messages__error__sort_code_invalid", "messages__error__sort_code_length"),
+        sortCodeMappingHS("messages__error__sort_code__blank",
+          "messages__error__sort_code__invalid",
+          "messages__error__sort_code__length"
+          ),
       "accountNumber" ->
-        text("messages__error__account_number").
-          verifying(returnOnFirstFailure(regexp(regexAccountNo, "messages__error__account_number_invalid"),
-            maxLength(accountNoMaxLength, "messages__error__account_number_length"))),
-      "date" ->
-        dateMapping("messages__error__date", "error.invalid_date")
-          .verifying(futureDate("messages__error__date_future"))
-    )(UKBankDetails.apply)(UKBankDetails.unapply)
+        text("messages__error__bank_accno__blank").
+          verifying(returnOnFirstFailure(regexp(regexAccountNo, "messages__error__bank_accno__invalid"),
+            exactLength(accountNoExactLength, "messages__error__bank_accno__length")))
+    )(BankAccountDetails.apply)(BankAccountDetails.unapply)
   )
 }

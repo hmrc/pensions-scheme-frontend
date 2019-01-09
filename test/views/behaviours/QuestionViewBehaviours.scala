@@ -32,7 +32,7 @@ trait QuestionViewBehaviours[A] extends ViewBehaviours {
                          expectedFormAction: String,
                          fields: String*) = {
 
-    "behave like a question page" when {
+    "behave like a text fields page" when {
       "rendered" must {
         for (field <- fields) {
           s"contain an input for $field" in {

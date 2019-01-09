@@ -98,6 +98,14 @@ trait Constraints {
         Invalid(errorKey, maximum)
     }
 
+  protected def exactLength(exact: Int, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.length == exact =>
+        Valid
+      case _ =>
+        Invalid(errorKey, exact)
+    }
+
   protected def psaNameMatch(psaName: String, errorKey: String): Constraint[String] = {
     Constraint {
       input =>

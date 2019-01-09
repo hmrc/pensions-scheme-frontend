@@ -16,6 +16,18 @@
 
 package identifiers
 
+import play.api.i18n.Messages
+import utils.checkyouranswers.CheckYourAnswers
+import utils.checkyouranswers.CheckYourAnswers.StringCYA
+import utils.{CountryOptions, UserAnswers}
+
 case object InsurancePolicyNumberId extends TypedIdentifier[String] {
+  self =>
   override def toString: String = "insurancePolicyNumber"
+
+  implicit def cya(implicit userAnswers: UserAnswers, messages: Messages, countryOptions: CountryOptions): CheckYourAnswers[self.type] =
+    StringCYA[self.type](
+      label = Some(messages("messages__insurance_policy_number_cya_label", userAnswers.get(InsuranceCompanyNameId).getOrElse(""))),
+      hiddenLabel = Some(messages("messages__visuallyhidden__insurance_policy_number", userAnswers.get(InsuranceCompanyNameId).getOrElse("")))
+    )()
 }

@@ -16,8 +16,8 @@
 
 package identifiers
 
-import models.BankAccountDetails
-
-case object BankAccountDetailsId extends TypedIdentifier[BankAccountDetails] {
-  override def toString: String = "uKBankDetails"
+case object IsAboutBenefitsAndInsuranceCompleteId extends TypedIdentifier[Boolean] {
+  override def toString: String = "isAboutBenefitsAndInsuranceComplete"
 }
+
+

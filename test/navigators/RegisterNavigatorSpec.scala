@@ -17,7 +17,7 @@
 package navigators
 
 import base.SpecBase
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementServiceTestImpl, FrontendAppConfig}
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.UserResearchDetailsId
 import identifiers.register._
@@ -25,6 +25,7 @@ import models._
 import models.address.Address
 import models.register.{SchemeDetails, SchemeType}
 import org.scalatest.MustMatchers
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -37,8 +38,8 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
   private def routesWithRestrictedEstablisher = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     // Start - continue or what you will need
-    (ContinueRegistrationId, emptyAnswers, whatYouWillNeed, false, None, false),
-    (ContinueRegistrationId, savedLastPage, whatYouWillNeed, false, None, false),
+    (ContinueRegistrationId, emptyAnswers, beforeYouStart, false, None, false),
+    (ContinueRegistrationId, savedLastPage, beforeYouStart, false, None, false),
 
     // Scheme registration
     (SchemeDetailsId, emptyAnswers, schemeEstablishedCountry(NormalMode), true, Some(checkYourAnswers), true),
@@ -70,15 +71,19 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     (DeclarationId, hasEstablishers, schemeSuccess, false, None, false),
     (DeclarationDutiesId, dutiesTrue, adviserCheckYourAnswers, true, Some(adviserCheckYourAnswers), true),
     (DeclarationDutiesId, dutiesFalse, adviserName, true, Some(adviserName), true),
-      (DeclarationDutiesId, emptyAnswers, expired, false, None, false),
+    (DeclarationDutiesId, emptyAnswers, expired, false, None, false),
 
     // User Research page - return to SchemeOverview
     (UserResearchDetailsId, emptyAnswers, schemeOverview(frontendAppConfig), false, None, false)
   )
 
-  "RegisterNavigator" must {
-    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+  private val config = app.injector.instanceOf[Configuration]
+  val fakeFeatureSwitchManagementService = new FeatureSwitchManagementServiceTestImpl(config, environment)
 
+
+  "RegisterNavigator" must {
+    fakeFeatureSwitchManagementService.change("enable-hub-v2", true)
+    val navigator = new RegisterNavigator(FakeUserAnswersCacheConnector, frontendAppConfig, fakeFeatureSwitchManagementService)
     behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithRestrictedEstablisher, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
@@ -138,6 +143,8 @@ object RegisterNavigatorSpec {
   private def uKBankDetails(mode: Mode) = controllers.register.routes.UKBankDetailsController.onPageLoad(mode)
 
   private def whatYouWillNeed = controllers.routes.WhatYouWillNeedController.onPageLoad()
+
+  private def beforeYouStart = controllers.routes.BeforeYouStartController.onPageLoad()
 
   private def adviserName = controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode)
 

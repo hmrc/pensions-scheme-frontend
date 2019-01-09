@@ -16,11 +16,14 @@
 
 package controllers
 
+import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
+import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
 import play.api.test.Helpers._
+import utils.FakeNavigator
 import views.html.membershipPensionRegulator
 
 class MembershipPensionRegulatorControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
@@ -30,16 +33,20 @@ class MembershipPensionRegulatorControllerSpec extends ControllerSpecBase with M
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): MembershipPensionRegulatorController =
     new MembershipPensionRegulatorController(frontendAppConfig,
       messagesApi,
-      FakeAuthAction
+      new FakeNavigator(onwardRoute),
+      FakeUserAnswersCacheConnector,
+      FakeAuthAction,
+      dataRetrievalAction,
+      new DataRequiredActionImpl()
     )
 
-  def viewAsString(): String = membershipPensionRegulator(frontendAppConfig)(fakeRequest, messages).toString
+  def viewAsString(): String = membershipPensionRegulator(frontendAppConfig, NormalMode)(fakeRequest, messages).toString
 
   "MembershipPensionRegulatorController" when {
 
     "on a GET" must {
       "return OK and the correct view" in {
-        val result = controller().onPageLoad(fakeRequest)
+        val result = controller().onPageLoad(NormalMode)(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
@@ -48,7 +55,7 @@ class MembershipPensionRegulatorControllerSpec extends ControllerSpecBase with M
 
     "on a POST" must {
       "redirect to session redirect page" in {
-        val result = controller().onSubmit()(fakeRequest)
+        val result = controller().onSubmit(NormalMode)(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)

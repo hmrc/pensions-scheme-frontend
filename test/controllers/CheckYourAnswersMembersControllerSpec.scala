@@ -61,9 +61,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
 
   private def fakeFeatureSwitchManager = new FeatureSwitchManagementService {
     override def change(name: String, newValue: Boolean): Boolean = ???
-
     override def get(name: String): Boolean = true
-
     override def reset(name: String): Unit = ???
   }
 

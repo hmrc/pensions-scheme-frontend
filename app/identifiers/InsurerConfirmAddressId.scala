@@ -26,7 +26,7 @@ case object InsurerConfirmAddressId extends TypedIdentifier[Address] {
 
   implicit def cya(implicit countryOptions: CountryOptions): CheckYourAnswers[self.type] =
     AddressCYA(
-      label = "messages__benefits_insurance_addr__cya_label",
-      changeAddress = "messages__visuallyhidden__insurer_address"
+      label = "messages__insurer_confirm_address_cya_label",
+      changeAddress = "messages__visuallyhidden__insurer_confirm_address"
     )()
 }
