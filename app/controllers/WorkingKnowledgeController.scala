@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.BeforeYouStart
+import utils.annotations.{BeforeYouStart, Register}
 import utils.{Enumerable, Navigator, SectionComplete, UserAnswers}
 import views.html.workingKnowledge
 
@@ -37,7 +37,7 @@ class WorkingKnowledgeController @Inject()(
                                             appConfig: FrontendAppConfig,
                                             override val messagesApi: MessagesApi,
                                             dataCacheConnector: UserAnswersCacheConnector,
-                                            @BeforeYouStart navigator: Navigator,
+                                            @Register navigator: Navigator,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
                                             formProvider: WorkingKnowledgeFormProvider,
