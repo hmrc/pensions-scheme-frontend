@@ -17,36 +17,35 @@
 package views.register.establishers.partnership.partner
 
 import controllers.register.establishers.partnership.partner.routes.ConfirmDeletePartnerController
-import controllers.register.establishers.partnership.routes.AddPartnersController
+import forms.register.establishers.partnership.partner.ConfirmDeletePartnerFormProvider
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
-import viewmodels.Message
-import views.behaviours.ViewBehaviours
+import views.behaviours.YesNoViewBehaviours
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
 
-class ConfirmDeletePartnerViewSpec extends ViewBehaviours {
+class ConfirmDeletePartnerViewSpec extends YesNoViewBehaviours{
 
   val messageKeyPrefix = "confirmDeletePartner"
 
   private val partnerName = "John Doe"
   private val postCall = ConfirmDeletePartnerController.onSubmit(establisherIndex = 0, partnerIndex = 0)
-  private val cancelCall = AddPartnersController.onSubmit(index = 0)
 
-  private def createView(): () => HtmlFormat.Appendable = () =>
-    confirmDeletePartner(
-      frontendAppConfig,
-      partnerName,
-      postCall,
-      cancelCall
-    )(fakeRequest, messages)
+  val form = new ConfirmDeletePartnerFormProvider()()
+
+  private def createView() = () =>
+    confirmDeletePartner(frontendAppConfig, form, partnerName, postCall)(fakeRequest, messages)
+
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    confirmDeletePartner(frontendAppConfig, form, partnerName, postCall)(fakeRequest, messages)
 
   "ConfirmDeleteDirector view" must {
-    behave like normalPage(createView(), messageKeyPrefix, Message(s"messages__${messageKeyPrefix}__heading").withArgs("John Doe"))
 
-    behave like pageWithSubmitButton(createView())
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", partnerName))
 
-    "have a cancel link" in {
-      val doc = asDocument(createView()())
-      assertLink(doc, "cancel", cancelCall.url)
-    }
+    behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = postCall.url)
+
+    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+
   }
 }
