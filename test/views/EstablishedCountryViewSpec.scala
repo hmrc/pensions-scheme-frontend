@@ -43,7 +43,7 @@ class EstablishedCountryViewSpec extends StringViewBehaviours {
   "EstablishedCountry view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__h1", schemeName))
 
-    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
 
     "contain select input options for the value" in {
       val doc = asDocument(createViewUsingForm(form))

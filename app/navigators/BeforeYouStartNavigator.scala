@@ -19,19 +19,57 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import utils.Navigator
+import controllers.routes._
+import identifiers.register.{CheckYourAnswersId, DeclarationDutiesId, SchemeEstablishedCountryId}
+import identifiers.{EstablishedCountryId, HaveAnyTrusteesId, SchemeNameId, SchemeTypeId}
+import models.{CheckMode, NormalMode}
+import models.register.SchemeType
+import utils.{Navigator, UserAnswers}
 
-class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
+class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, frontendAppConfig: FrontendAppConfig) extends Navigator {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
-    from.id match {
-      case _ => None
+  private def checkYourAnswers: Option[NavigateTo] =
+    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad())
+
+
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
+    case SchemeNameId => NavigateTo.dontSave(SchemeTypeController.onPageLoad(NormalMode))
+    case SchemeTypeId => schemeTypeRoutes(from.userAnswers)
+    case HaveAnyTrusteesId => NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
+    case EstablishedCountryId => NavigateTo.dontSave(WorkingKnowledgeController.onPageLoad(NormalMode))
+    case DeclarationDutiesId => checkYourAnswers
+    case CheckYourAnswersId => NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+    case _ => None
+  }
+
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = from.id match {
+    case SchemeNameId => checkYourAnswers
+    case SchemeTypeId => schemeTypeEditRoutes(from.userAnswers)
+    case HaveAnyTrusteesId => checkYourAnswers
+    case EstablishedCountryId => checkYourAnswers
+    case DeclarationDutiesId => checkYourAnswers
+    case _ => None
+  }
+
+  private def schemeTypeRoutes(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(SchemeTypeId) match {
+      case Some(SchemeType.SingleTrust) | Some(SchemeType.MasterTrust) =>
+        NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
+      case Some(_) =>
+        NavigateTo.dontSave(HaveAnyTrusteesController.onPageLoad(NormalMode))
+      case None =>
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
-    from.id match {
-      case _ => None
+  private def schemeTypeEditRoutes(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(SchemeTypeId) match {
+      case Some(SchemeType.SingleTrust) | Some(SchemeType.MasterTrust) =>
+        checkYourAnswers
+      case Some(_) =>
+        NavigateTo.dontSave(HaveAnyTrusteesController.onPageLoad(CheckMode))
+      case None =>
+        NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
 }
