@@ -34,8 +34,8 @@ class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {
   def createView(): () => HtmlFormat.Appendable = () =>
     haveAnyTrustees(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
 
-  def createViewInCheckMode(): () => HtmlFormat.Appendable = () =>
-    haveAnyTrustees(frontendAppConfig, form, CheckMode, scheme)(fakeRequest, messages)
+  def createViewInCheckMode(isHubEnabled:Boolean): () => HtmlFormat.Appendable = () =>
+    haveAnyTrustees(appConfig(isHubEnabled = isHubEnabled), form, CheckMode, scheme)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => haveAnyTrustees(frontendAppConfig, form,
     NormalMode, scheme)(fakeRequest, messages)
@@ -49,8 +49,12 @@ class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {
     behave like pageWithReturnLink(createView(), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }
 
-  "HaveAnyTrustees view in check mode" must {
-    behave like pageWithReturnLink(createViewInCheckMode(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+  "HaveAnyTrustees view in check mode where hub enabled" must {
+    behave like pageWithReturnLink(createViewInCheckMode(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+  }
+
+  "HaveAnyTrustees view in check mode where hub disabled" must {
+    behave like pageWithReturnLink(createViewInCheckMode(isHubEnabled = false), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }
 
 }
