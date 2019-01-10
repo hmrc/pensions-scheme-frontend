@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package identifiers.register.trustees
+package forms.register.trustees
 
-import identifiers.{Identifier, TypedIdentifier}
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-case object ConfirmDeleteTrusteeId extends TypedIdentifier[Boolean] {
-  override def toString: String = "confirmDeleteTrustee"
+class ConfirmDeleteTrusteeFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__error__selection")
+    )
 }

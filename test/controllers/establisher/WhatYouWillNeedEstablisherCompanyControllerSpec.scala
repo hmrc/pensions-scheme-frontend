@@ -14,29 +14,24 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.establisher
 
+import controllers.ControllerSpecBase
 import controllers.actions._
-import models.NormalMode
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.mockito.MockitoSugar
-import play.api.mvc.Call
 import play.api.test.Helpers._
-import views.html.whatYouWillNeedBankDetails
+import views.html.establisher.whatYouWillNeedEstablisherCompany
 
-class WhatYouWillNeedBankDetailsControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
+class WhatYouWillNeedEstablisherCompanyControllerSpec extends ControllerSpecBase {
 
-  def onwardRoute: Call = controllers.routes.SessionExpiredController.onPageLoad
-
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedBankDetailsController =
-    new WhatYouWillNeedBankDetailsController(frontendAppConfig,
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedEstablisherCompanyController =
+    new WhatYouWillNeedEstablisherCompanyController(frontendAppConfig,
       messagesApi,
       FakeAuthAction
     )
 
-  def viewAsString(): String = whatYouWillNeedBankDetails(frontendAppConfig)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedEstablisherCompany(frontendAppConfig)(fakeRequest, messages).toString
 
-  "WhatYouWillNeedBankDetailsController" when {
+  "WhatYouWillNeedEstablisherCompanyController " when {
 
     "on a GET" must {
       "return OK and the correct view" in {
@@ -48,13 +43,12 @@ class WhatYouWillNeedBankDetailsControllerSpec extends ControllerSpecBase with M
     }
 
     "on a POST" must {
-      "redirect to bank account page" in {
+      "redirect to index page" in {
         val result = controller().onSubmit()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UKBankAccountController.onPageLoad(NormalMode).url)
+        redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
       }
     }
   }
 }
-

@@ -1329,3 +1329,11 @@ messages__visuallyhidden__hns_uKBankAccount = Change if {0} has a UK bank accoun
 uKBankDetails.hns_checkYourAnswersLabel = What are {0}’s bank account details?
 messages__visuallyhidden__hns_uKBankDetails = Change {0}’s bank account details
 
+messages__whatYouWillNeedEstablisherCompany__title = Company details
+messages__whatYouWillNeedEstablisherCompany__h1 = Company details
+messages__whatYouWillNeedEstablisherCompany__lede = You will need to tell us the company’s:
+messages__whatYouWillNeedEstablisherCompany__item1 = registration number
+messages__whatYouWillNeedEstablisherCompany__item2 = Unique Taxpayer Reference (UTR)
+messages__whatYouWillNeedEstablisherCompany__item3 = VAT number
+messages__whatYouWillNeedEstablisherCompany__item4 = employer PAYE number
+

@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.Register
+import utils.annotations.{AboutBenefitsAndInsurance, Register}
 import utils.{Navigator, UserAnswers}
 import views.html.investmentRegulatedScheme
 
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig,
                                                     override val messagesApi: MessagesApi,
                                                     dataCacheConnector: UserAnswersCacheConnector,
-                                                    @Register navigator: Navigator,
+                                                    @AboutBenefitsAndInsurance navigator: Navigator,
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
