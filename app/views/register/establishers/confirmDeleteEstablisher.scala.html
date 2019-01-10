@@ -36,6 +36,10 @@
         headingKey = messages("messages__confirmDeleteEstablisher__heading", establisherName)
         )
 
+        @hintText.map{ ht =>
+            <span id="delete-hint" class="form-hint">@ht</span>
+        }
+
         @components.input_yes_no(
         field = form("value"),
         label = messages("messages__confirmDeleteEstablisher__title"),

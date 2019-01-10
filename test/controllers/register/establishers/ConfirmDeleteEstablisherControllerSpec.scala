@@ -108,7 +108,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "dont delete the establisher individual on a POST if selcted NO" in {
       FakeUserAnswersCacheConnector.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(establisherIndex, establisherKind)(postRequest)
+      val result = controller(data).onSubmit(establisherIndex, establisherKind)(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersCacheConnector.verifyNot(EstablisherDetailsId(establisherIndex))
@@ -125,7 +125,7 @@ class ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     "dont delete the establisher company on a POST if selected NO" in {
       FakeUserAnswersCacheConnector.reset()
       val data = new FakeDataRetrievalAction(Some(testData))
-      val result = controller(data).onSubmit(Index(1), EstablisherKind.Company)(postRequest)
+      val result = controller(data).onSubmit(Index(1), EstablisherKind.Company)(postRequestForCancle)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersCacheConnector.verifyNot(CompanyDetailsId(Index(1)))
