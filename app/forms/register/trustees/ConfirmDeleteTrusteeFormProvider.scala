@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers.partnership.partner
+package forms.register.trustees
 
-import identifiers.TypedIdentifier
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-case class ConfirmDeletePartnerId(establisherIndex: Int) extends TypedIdentifier[Boolean]
+class ConfirmDeleteTrusteeFormProvider @Inject() extends Mappings {
 
-object ConfirmDeletePartnerId {
-  override def toString: String = "confirmDeletePartner"
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__error__selection")
+    )
 }

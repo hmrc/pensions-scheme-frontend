@@ -17,30 +17,34 @@
 package views.register.establishers.company.director
 
 import controllers.register.establishers.company.director.routes.ConfirmDeleteDirectorController
-import controllers.register.establishers.company.routes.AddCompanyDirectorsController
-import models.NormalMode
-import views.behaviours.ViewBehaviours
+import forms.register.establishers.company.director.ConfirmDeleteDirectorFormProvider
+import play.api.data.Form
+import play.twirl.api.HtmlFormat
+import views.behaviours.YesNoViewBehaviours
 import views.html.register.establishers.company.director.confirmDeleteDirector
 
-class ConfirmDeleteDirectorViewSpec extends ViewBehaviours {
+class ConfirmDeleteDirectorViewSpec extends YesNoViewBehaviours {
 
   val messageKeyPrefix = "confirmDeleteDirector"
 
+  val form = new ConfirmDeleteDirectorFormProvider()()
+
   private val directorName = "John Doe"
   private val postCall = ConfirmDeleteDirectorController.onSubmit(0, 0)
-  private val cancelCall = AddCompanyDirectorsController.onSubmit(NormalMode, 0)
 
   private def createView() = () =>
-    confirmDeleteDirector(frontendAppConfig, directorName, postCall, cancelCall)(fakeRequest, messages)
+    confirmDeleteDirector(frontendAppConfig, form, directorName, postCall)(fakeRequest, messages)
+
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    confirmDeleteDirector(frontendAppConfig, form, directorName, postCall)(fakeRequest, messages)
 
   "ConfirmDeleteDirector view" must {
-    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading").format("John Doe"))
 
-    behave like pageWithSubmitButton(createView())
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", directorName))
 
-    "have a cancel link" in {
-      val doc = asDocument(createView()())
-      assertLink(doc, "cancel", cancelCall.url)
-    }
+    behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = postCall.url)
+
+    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
 }

@@ -18,7 +18,7 @@ package identifiers.register.establishers.company.director
 
 import identifiers.TypedIdentifier
 
-case class ConfirmDeleteDirectorId(establisherIndex: Int) extends TypedIdentifier[Nothing]
+case class ConfirmDeleteDirectorId(establisherIndex: Int) extends TypedIdentifier[Boolean]
 
 object ConfirmDeleteDirectorId {
   override def toString: String = "confirmDeleteDirector"

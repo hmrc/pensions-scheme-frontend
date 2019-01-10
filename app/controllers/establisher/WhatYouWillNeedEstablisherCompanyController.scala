@@ -14,38 +14,30 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.establisher
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.actions._
-import controllers.register.adviser.routes.{AdviserNameController, WorkingKnowledgeController}
 import javax.inject.Inject
 import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Toggles.enableHubV2
+import views.html.establisher.whatYouWillNeedEstablisherCompany
 import views.html.whatYouWillNeedWorkingKnowledge
 
-class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendAppConfig,
-                                                          override val messagesApi: MessagesApi,
-                                                          authenticate: AuthAction,
-                                                          fs: FeatureSwitchManagementService
+class WhatYouWillNeedEstablisherCompanyController @Inject()(appConfig: FrontendAppConfig,
+                                                            override val messagesApi: MessagesApi,
+                                                            authenticate: AuthAction
                                                          ) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>
-      Ok(whatYouWillNeedWorkingKnowledge(appConfig))
+      Ok(whatYouWillNeedEstablisherCompany(appConfig))
   }
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      Redirect(
-        if (fs.get(enableHubV2)) {
-          AdviserNameController.onPageLoad(NormalMode)
-        } else {
-          WorkingKnowledgeController.onPageLoad(NormalMode)
-        }
-      )
+      Redirect(controllers.routes.IndexController.onPageLoad)
   }
 }
