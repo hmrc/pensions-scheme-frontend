@@ -19,19 +19,33 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import utils.Navigator
+import identifiers.{BankAccountDetailsId, UKBankAccountId}
+import models.NormalMode
+import controllers.routes._
+import utils.{Navigator, UserAnswers}
 
 class AboutBankDetailsNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, appConfig: FrontendAppConfig) extends Navigator {
 
-  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = {
+  private def checkYourAnswers: Option[NavigateTo] =
+    NavigateTo.dontSave(controllers.routes.CheckYourAnswersBankDetailsController.onPageLoad())
+
+  override protected def routeMap(from: NavigateFrom): Option[NavigateTo] = navRouteMap(from)
+
+  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = navRouteMap(from)
+
+  private def navRouteMap(from: NavigateFrom): Option[NavigateTo] = {
     from.id match {
+      case UKBankAccountId => ukBankAccountRoutes(from.userAnswers)
+      case BankAccountDetailsId => checkYourAnswers
       case _ => None
     }
   }
 
-  override protected def editRouteMap(from: NavigateFrom): Option[NavigateTo] = {
-    from.id match {
-      case _ => None
+  private def ukBankAccountRoutes(answers: UserAnswers): Option[NavigateTo] = {
+    answers.get(UKBankAccountId) match {
+      case Some(true) => NavigateTo.dontSave(BankAccountDetailsController.onPageLoad(NormalMode))
+      case Some(false) => checkYourAnswers
+      case None => NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
 }

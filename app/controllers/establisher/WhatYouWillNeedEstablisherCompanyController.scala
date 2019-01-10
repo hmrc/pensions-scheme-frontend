@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.establisher
 
 import config.FrontendAppConfig
 import controllers.actions._
@@ -23,20 +23,21 @@ import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import views.html.whatYouWillNeedBankDetails
+import views.html.establisher.whatYouWillNeedEstablisherCompany
+import views.html.whatYouWillNeedWorkingKnowledge
 
-class WhatYouWillNeedBankDetailsController @Inject()(appConfig: FrontendAppConfig,
-                                                     override val messagesApi: MessagesApi,
-                                                     authenticate: AuthAction
-                                                    ) extends FrontendController with I18nSupport {
+class WhatYouWillNeedEstablisherCompanyController @Inject()(appConfig: FrontendAppConfig,
+                                                            override val messagesApi: MessagesApi,
+                                                            authenticate: AuthAction
+                                                         ) extends FrontendController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>
-      Ok(whatYouWillNeedBankDetails(appConfig))
+      Ok(whatYouWillNeedEstablisherCompany(appConfig))
   }
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      Redirect(controllers.routes.UKBankAccountController.onPageLoad(NormalMode))
+      Redirect(controllers.routes.IndexController.onPageLoad)
   }
 }
