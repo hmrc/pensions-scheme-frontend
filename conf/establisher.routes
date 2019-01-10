@@ -1,0 +1,4 @@
+# routes for establishers
+
+GET        /company-details                                                                                    controllers.establisher.WhatYouWillNeedEstablisherCompanyController.onPageLoad
+POST       /company-details                                                                                    controllers.establisher.WhatYouWillNeedEstablisherCompanyController.onSubmit
