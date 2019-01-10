@@ -16,7 +16,7 @@
 
 package identifiers.register.establishers
 
-import identifiers.{Identifier, TypedIdentifier}
+import identifiers.TypedIdentifier
 
 case object ConfirmDeleteEstablisherId extends TypedIdentifier[Boolean] {
   override def toString: String = "confirmDeleteEstablisher"
