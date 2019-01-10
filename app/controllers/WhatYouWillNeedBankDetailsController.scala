@@ -19,6 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
+import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
@@ -36,6 +37,6 @@ class WhatYouWillNeedBankDetailsController @Inject()(appConfig: FrontendAppConfi
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      Redirect(controllers.routes.SessionExpiredController.onPageLoad)
+      Redirect(controllers.routes.UKBankAccountController.onPageLoad(NormalMode))
   }
 }

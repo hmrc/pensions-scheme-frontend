@@ -39,7 +39,6 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
                                                       getData: DataRetrievalAction,
                                                       requireData: DataRequiredAction,
                                                       implicit val countryOptions: CountryOptions,
-                                                      @Register navigator: Navigator,
                                                       sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
@@ -58,7 +57,7 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      Future.successful(Redirect(navigator.nextPage(CheckYourAnswersId, NormalMode, request.userAnswers)))
+      Future.successful(Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad()))
   }
 
 }

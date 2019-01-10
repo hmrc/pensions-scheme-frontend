@@ -17,6 +17,7 @@
 package controllers
 
 import controllers.actions._
+import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import play.api.mvc.Call
@@ -47,12 +48,11 @@ class WhatYouWillNeedBankDetailsControllerSpec extends ControllerSpecBase with M
     }
 
     "on a POST" must {
-      //TODO: It should be fixed as part of navigation
-      "redirect to session expired page" in {
+      "redirect to bank account page" in {
         val result = controller().onSubmit()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(onwardRoute.url)
+        redirectLocation(result) mustBe Some(controllers.routes.UKBankAccountController.onPageLoad(NormalMode).url)
       }
     }
   }
