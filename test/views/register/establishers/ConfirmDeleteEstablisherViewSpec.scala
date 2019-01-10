@@ -17,26 +17,29 @@
 package views.register.establishers
 
 import controllers.register.establishers.routes._
+import forms.register.establishers.ConfirmDeleteEstablisherFormProvider
 import models.register.establishers.EstablisherKind
 import models.{Index, NormalMode}
-import viewmodels.Message
+import play.api.data.Form
+import play.twirl.api.HtmlFormat
 import views.ViewSpecBase
-import views.behaviours.ViewBehaviours
+import views.behaviours.YesNoViewBehaviours
 import views.html.register.establishers.confirmDeleteEstablisher
 
-class ConfirmDeleteEstablisherViewSpec extends ViewBehaviours {
+class ConfirmDeleteEstablisherViewSpec extends YesNoViewBehaviours {
 
   import ConfirmDeleteEstablisherViewSpec._
 
+  override val form: Form[Boolean] = formLocal
+
   "ConfirmDeleteEstablisher view" must {
-    behave like normalPage(createView(), messageKeyPrefix, Message(s"messages__${messageKeyPrefix}__heading").withArgs(establisherName))
 
-    behave like pageWithSubmitButton(createView())
+    behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", establisherName))
 
-    "have a cancel link" in {
-      val doc = asDocument(createView()())
-      assertLink(doc, "cancel", cancelCall.url)
-    }
+    behave like yesNoPage(createView = createViewUsingForm(), messageKeyPrefix = messageKeyPrefix,
+      expectedFormAction = postCall.url)
+
+    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 
     "have the correct hint text where specified" in {
       val hintText = "test hint"
@@ -54,18 +57,29 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
 
   val messageKeyPrefix = "confirmDeleteEstablisher"
 
+  val formLocal = new ConfirmDeleteEstablisherFormProvider()()
+
   private val firstIndex = Index(0)
   private val establisherName = "John Doe"
   private val postCall = ConfirmDeleteEstablisherController.onSubmit(firstIndex, EstablisherKind.Indivdual)
   private val cancelCall = AddEstablisherController.onSubmit(NormalMode)
 
-  private def createView(hintText:Option[String] = None) = () =>
-    confirmDeleteEstablisher(
+  private def createView(hintText:Option[String] = None) =
+    () => confirmDeleteEstablisher(
       frontendAppConfig,
+      formLocal,
       establisherName,
       hintText,
-      postCall,
-      cancelCall
+      postCall
+    )(fakeRequest, messages)
+
+  def createViewUsingForm(hintText:Option[String] = None): Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
+    confirmDeleteEstablisher(
+      frontendAppConfig,
+      form,
+      establisherName,
+      hintText,
+      postCall
     )(fakeRequest, messages)
 
 }

@@ -74,15 +74,11 @@ class ConfirmDeleteEstablisherController @Inject()(
             } else {
               retrieveSchemeName {
                 _ =>
-                  val preparedForm = request.userAnswers.get(ConfirmDeleteEstablisherId) match {
-                    case None => form
-                    case Some(value) => form.fill(value)
-                  }
                   Future.successful(
                     Ok(
                       confirmDeleteEstablisher(
                         appConfig,
-                        preparedForm,
+                        form,
                         establisher.name,
                         getHintText(establisherKind),
                         routes.ConfirmDeleteEstablisherController.onSubmit(index, establisherKind)
@@ -97,17 +93,26 @@ class ConfirmDeleteEstablisherController @Inject()(
 
   def onSubmit(establisherIndex: Index, establisherKind: EstablisherKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      deleteEstablisher(establisherKind, establisherIndex) match {
-        case Right(futureUserAnswers) =>
-          futureUserAnswers.map { userAnswers =>
-            Redirect(navigator.nextPage(ConfirmDeleteEstablisherId, NormalMode, userAnswers))
+
+      establisherKind match {
+        case Company =>
+          CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
+            updateEstablisherKind(companyDetails.companyName, establisherKind, establisherIndex, Some(companyDetails), None, None)
           }
-        case Left(result) =>
-          result
+        case Indivdual =>
+          EstablisherDetailsId(establisherIndex).retrieve.right.map { trusteeDetails =>
+            updateEstablisherKind(trusteeDetails.fullName, establisherKind, establisherIndex, None, Some(trusteeDetails), None)
+          }
+        case Partnership =>
+          PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
+            updateEstablisherKind(partnershipDetails.name, establisherKind, establisherIndex, None, None, Some(partnershipDetails))
+          }
+        case _ =>
+          Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
       }
   }
 
-  private def updateTrusteeKind(name: String,
+  private def updateEstablisherKind(name: String,
                                 establisherKind: EstablisherKind,
                                 establisherIndex: Index,
                                 companyDetails: Option[CompanyDetails],
@@ -140,25 +145,6 @@ class ConfirmDeleteEstablisherController @Inject()(
         }
       }
     )
-  }
-
-  private def deleteEstablisher(establisherKind: EstablisherKind, establisherIndex: Index)(implicit dataRequest: DataRequest[AnyContent]) = {
-    establisherKind match {
-      case Company =>
-        CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
-          dataCacheConnector.save(CompanyDetailsId(establisherIndex), companyDetails.copy(isDeleted = true))
-        }
-      case Indivdual =>
-        EstablisherDetailsId(establisherIndex).retrieve.right.map { establisherDetails =>
-          dataCacheConnector.save(EstablisherDetailsId(establisherIndex), establisherDetails.copy(isDeleted = true))
-        }
-      case Partnership =>
-        PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
-          dataCacheConnector.save(PartnershipDetailsId(establisherIndex), partnershipDetails.copy(isDeleted = true))
-        }
-      case _ =>
-        Left(Future.successful(SeeOther(controllers.routes.SessionExpiredController.onPageLoad().url)))
-    }
   }
 
   private case class DeletableEstablisher(name: String, isDeleted: Boolean)
