@@ -65,6 +65,15 @@ class ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
       FakeUserAnswersCacheConnector.verify(DirectorDetailsId(establisherIndex, directorIndex), directorDetails.copy(isDeleted = true))
     }
 
+    "dont delete the director on a POST if No selected" in {
+      FakeUserAnswersCacheConnector.reset()
+      val data = new FakeDataRetrievalAction(Some(testData()))
+      val result = controller(data).onSubmit(establisherIndex, directorIndex)(postRequestForCancel)
+
+      status(result) mustBe SEE_OTHER
+      FakeUserAnswersCacheConnector.verifyNot(DirectorDetailsId(establisherIndex, directorIndex))
+    }
+
     "redirect to the next page on a successful POST" in {
       val data = new FakeDataRetrievalAction(Some(testData()))
       val result = controller(data).onSubmit(establisherIndex, directorIndex)(postRequest)
@@ -124,6 +133,8 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
   private val directorDetails = PersonDetails("John", None, "Doe", LocalDate.now(), false)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
+  private val postRequestForCancel: FakeRequest[AnyContentAsFormUrlEncoded] =
+    FakeRequest().withFormUrlEncodedBody(("value", "false"))
 
   private def testData(directors: PersonDetails = directorDetails) = Json.obj(
     EstablishersId.toString -> Json.arr(
