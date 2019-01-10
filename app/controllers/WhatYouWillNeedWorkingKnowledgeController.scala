@@ -40,7 +40,7 @@ class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendApp
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
       if (fs.get(enableHubV2)) {
-        Redirect(controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode))
+        Redirect(controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode))
       } else {
         Redirect(controllers.register.adviser.routes.WorkingKnowledgeController.onPageLoad(NormalMode))
       }

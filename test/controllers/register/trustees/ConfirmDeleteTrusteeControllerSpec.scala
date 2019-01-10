@@ -170,8 +170,7 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
   private def testData[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data]): DataRetrievalAction = {
     val userAnswers = UserAnswers()
-      .set(SchemeDetailsId)(scheme)
-      .flatMap(_.set(id)(value))
+      .set(id)(value)
       .asOpt.value
 
     new FakeDataRetrievalAction(Some(userAnswers.json))

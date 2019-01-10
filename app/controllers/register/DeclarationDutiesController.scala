@@ -16,20 +16,20 @@
 
 package controllers.register
 
-import javax.inject.Inject
 import config.FrontendAppConfig
 import connectors._
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationDutiesFormProvider
 import identifiers.register.{DeclarationDutiesId, SubmissionReferenceNumberId}
+import javax.inject.Inject
+import models.NormalMode
 import models.requests.DataRequest
-import models.{NormalMode, PSAName}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.crypto.{ApplicationCrypto, PlainText}
+import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
@@ -58,39 +58,33 @@ class DeclarationDutiesController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          val result = request.userAnswers.get(DeclarationDutiesId) match {
-            case Some(value) => Ok(declarationDuties(appConfig, form.fill(value)))
-            case None => Ok(declarationDuties(appConfig, form))
-          }
-          Future.successful(result)
+      val result = request.userAnswers.get(DeclarationDutiesId) match {
+        case Some(value) => Ok(declarationDuties(appConfig, form.fill(value)))
+        case None => Ok(declarationDuties(appConfig, form))
       }
+      Future.successful(result)
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(declarationDuties(appConfig, formWithErrors))),
-            {
-              case true =>
-                for {
-                  cacheMap <- dataCacheConnector.save(request.externalId, DeclarationDutiesId, true)
-                  submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
-                  cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-                  _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
-                } yield {
-                  Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
-                }
-              case false =>
-                dataCacheConnector.save(request.externalId, DeclarationDutiesId, false).map( cacheMap =>
-                  Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap))))
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) =>
+          Future.successful(BadRequest(declarationDuties(appConfig, formWithErrors))),
+        {
+          case true =>
+            for {
+              cacheMap <- dataCacheConnector.save(request.externalId, DeclarationDutiesId, true)
+              submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
+              cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
+              _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
+            } yield {
+              Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap)))
             }
-          )
-      } recoverWith {
+          case false =>
+            dataCacheConnector.save(request.externalId, DeclarationDutiesId, false).map(cacheMap =>
+              Redirect(navigator.nextPage(DeclarationDutiesId, NormalMode, UserAnswers(cacheMap))))
+        }
+      ) recoverWith {
         case _: InvalidPayloadException =>
           Future.successful(Redirect(controllers.routes.ServiceUnavailableController.onPageLoad()))
       }

@@ -40,31 +40,25 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          authenticate: AuthAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: AddEstablisherFormProvider) (implicit val ec: ExecutionContext)
+                                         formProvider: AddEstablisherFormProvider)(implicit val ec: ExecutionContext)
   extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          val establishers = request.userAnswers.allEstablishersAfterDelete
-          Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
-            establishers)))
-      }
+      val establishers = request.userAnswers.allEstablishersAfterDelete
+      Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
+        establishers)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          val establishers = request.userAnswers.allEstablishersAfterDelete
-          formProvider(establishers).bindFromRequest().fold(
-            formWithErrors =>
-              Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
-                establishers))),
-            value =>
-              Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers)))
-          )
-      }
+      val establishers = request.userAnswers.allEstablishersAfterDelete
+      formProvider(establishers).bindFromRequest().fold(
+        formWithErrors =>
+          Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
+            establishers))),
+        value =>
+          Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers)))
+      )
   }
 }

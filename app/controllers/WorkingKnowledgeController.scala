@@ -40,8 +40,7 @@ class WorkingKnowledgeController @Inject()(
                                             @BeforeYouStart navigator: Navigator,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
-                                            formProvider: WorkingKnowledgeFormProvider,
-                                            sectionComplete: SectionComplete
+                                            formProvider: WorkingKnowledgeFormProvider
                                           )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -60,13 +59,9 @@ class WorkingKnowledgeController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode))),
-        value => {
-          sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
-            request.userAnswers.getOrElse(UserAnswers()), value).flatMap { _ =>
+        value =>
             dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
               Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap))))
-          }
-        }
       )
   }
 }

@@ -46,9 +46,9 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     authenticate: AuthAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction
-                                                  ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                  )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
-  private def getHintText(establisherKind: EstablisherKind):Option[String] = {
+  private def getHintText(establisherKind: EstablisherKind): Option[String] = {
     establisherKind match {
       case EstablisherKind.Company =>
         Some(Messages(s"messages__confirmDeleteEstablisher__companyHint"))
@@ -66,20 +66,17 @@ class ConfirmDeleteEstablisherController @Inject()(
             if (establisher.isDeleted) {
               Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(index, establisherKind)))
             } else {
-              retrieveSchemeName {
-                schemeName =>
-                  Future.successful(
-                    Ok(
-                      confirmDeleteEstablisher(
-                        appConfig,
-                        establisher.name,
-                        getHintText(establisherKind),
-                        routes.ConfirmDeleteEstablisherController.onSubmit(index, establisherKind),
-                        routes.AddEstablisherController.onPageLoad(NormalMode)
-                      )
-                    )
+              Future.successful(
+                Ok(
+                  confirmDeleteEstablisher(
+                    appConfig,
+                    establisher.name,
+                    getHintText(establisherKind),
+                    routes.ConfirmDeleteEstablisherController.onSubmit(index, establisherKind),
+                    routes.AddEstablisherController.onPageLoad(NormalMode)
                   )
-              }
+                )
+              )
             }
         } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }

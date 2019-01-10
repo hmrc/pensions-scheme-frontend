@@ -49,37 +49,31 @@ class CompanyDetailsController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          val redirectResult = request.userAnswers
-            .get(CompanyDetailsId(index)) match {
-            case None =>
-              Ok(companyDetails(appConfig, form, mode, index))
-            case Some(value) =>
-              Ok(companyDetails(appConfig, form.fill(value), mode, index))
-          }
-          Future.successful(redirectResult)
+      val redirectResult = request.userAnswers
+        .get(CompanyDetailsId(index)) match {
+        case None =>
+          Ok(companyDetails(appConfig, form, mode, index))
+        case Some(value) =>
+          Ok(companyDetails(appConfig, form.fill(value), mode, index))
       }
+      Future.successful(redirectResult)
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index))),
-            value =>
-              dataCacheConnector.save(
-                request.externalId,
-                CompanyDetailsId(index),
-                value
-              ).map {
-                json =>
-                  Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json)))
-              }
-          )
-      }
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) =>
+          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index))),
+        value =>
+          dataCacheConnector.save(
+            request.externalId,
+            CompanyDetailsId(index),
+            value
+          ).map {
+            json =>
+              Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json)))
+          }
+      )
   }
 
 }

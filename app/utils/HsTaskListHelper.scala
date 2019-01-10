@@ -16,10 +16,19 @@
 
 package utils
 
+import identifiers.register.establishers.individual.EstablisherDetailsId
+import identifiers.register.trustees.individual.TrusteeDetailsId
+import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import identifiers.{IsAboutBankDetailsCompleteId, IsAboutBenefitsAndInsuranceCompleteId, IsAboutMembersCompleteId, IsBeforeYouStartCompleteId}
 import models.NormalMode
+import models.register.{DeclarationDormant, Entity}
 import play.api.i18n.Messages
 import viewmodels._
+import identifiers.register.establishers.company.{IsCompanyDormantId, CompanyDetailsId => EstablisherCompanyDetailsId}
+import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
+import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId => EstablisherPartnershipDetailsId}
+import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
+import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
 
 class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extends Enumerable.Implicits {
 
@@ -27,11 +36,20 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
   private lazy val aboutMembersLinkText = messages("messages__schemeDetailsTaskList__about_members_link_text")
   private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeDetailsTaskList__about_benefits_and_insurance_link_text")
   private lazy val aboutBankDetailsLinkText = messages("messages__schemeDetailsTaskList__about_bank_details_link_text")
+  private lazy val workingKnowledgeLinkText = messages("messages__schemeDetailsTaskList__working_knowledge_link_text")
+  private lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
+  private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
+  private lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
+  private lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")
+  private lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
 
   def taskList: SchemeDetailsTaskList = {
     SchemeDetailsTaskList(
       beforeYouStartSection(answers),
-      aboutSection(answers)
+      aboutSection(answers),
+      workingKnowledgeSection(answers),
+      addEstablisherHeader(answers),
+      listOf(answers.allEstablishers, answers)
     )
   }
 
@@ -62,6 +80,81 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
     Seq(SchemeDetailsTaskListSection(userAnswers.get(IsAboutMembersCompleteId), membersLink, None),
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBenefitsAndInsuranceCompleteId), benefitsAndInsuranceLink, None),
       SchemeDetailsTaskListSection(userAnswers.get(IsAboutBankDetailsCompleteId), bankDetailsLink, None))
+  }
+
+  private def workingKnowledgeSection(userAnswers: UserAnswers): Option[SchemeDetailsTaskListSection] = {
+    userAnswers.get(DeclarationDutiesId) match {
+      case Some(false) =>
+        val wkLink = userAnswers.get(IsWorkingKnowledgeCompleteId) match {
+          case Some(true) => Link(workingKnowledgeLinkText, controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad().url)
+          case _ => Link(workingKnowledgeLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url)
+        }
+        Some(SchemeDetailsTaskListSection(userAnswers.get(IsWorkingKnowledgeCompleteId), wkLink, None))
+      case _ =>
+        None
+    }
+  }
+
+  private[utils] def addEstablisherHeader(userAnswers: UserAnswers): SchemeDetailsTaskListSection = {
+    if(userAnswers.allEstablishersAfterDelete.isEmpty) {
+      SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
+        controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, userAnswers.allEstablishers.size).url), None)
+    }else {
+      SchemeDetailsTaskListSection(None, Link(changeEstablisherLinkText,
+        controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url), None)
+    }
+  }
+
+  private def linkText(item: Entity[_]): String = item.id match {
+    case EstablisherCompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
+    case EstablisherDetailsId(_) | TrusteeDetailsId(_) => individualLinkText
+    case EstablisherPartnershipDetailsId(_) | TrusteePartnershipDetailsId(_) => partnershipLinkText
+  }
+
+  private def isCompletedWithDormantCheck(entity: Entity[_], userAnswers: UserAnswers):Boolean = {
+
+    def isCompletedInclDormantFlagCheck(isDormant: Option[DeclarationDormant], isCompleted: Boolean) = {
+      isDormant match {
+        case Some(_) =>
+          isCompleted
+        case None =>
+          false
+      }
+    }
+
+    entity match {
+      case models.register.EstablisherCompanyEntity(_, _, _, isCompleted) =>
+        isCompletedInclDormantFlagCheck(userAnswers.get(IsCompanyDormantId(entity.index)), isCompleted)
+      case models.register.EstablisherPartnershipEntity(_, _, _, isCompleted) =>
+        isCompletedInclDormantFlagCheck(userAnswers.get(IsPartnershipDormantId(entity.index)), isCompleted)
+      case _ =>
+        entity.isCompleted
+    }
+  }
+
+  private[utils] def linkTarget(item: Entity[_], index: Int, userAnswers: UserAnswers) = item.id match {
+    case EstablisherCompanyDetailsId(_) if isCompletedWithDormantCheck(item, userAnswers) =>
+      controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(index).url
+    case id@EstablisherCompanyDetailsId(_) =>
+      controllers.register.establishers.company.routes.CompanyDetailsController.onPageLoad(NormalMode, id.index).url
+    case EstablisherPartnershipDetailsId(_) if isCompletedWithDormantCheck(item, userAnswers) =>
+      controllers.register.establishers.partnership.routes.PartnershipReviewController.onPageLoad(index).url
+    case id@EstablisherPartnershipDetailsId(_) =>
+      controllers.register.establishers.partnership.routes.PartnershipDetailsController.onPageLoad(NormalMode, id.index).url
+    case _ => item.editLink
+  }
+
+  private[utils] def listOf(sections: Seq[Entity[_]], userAnswers: UserAnswers): Seq[SchemeDetailsTaskListSection] = {
+    val notDeletedElements = for ((section, index) <- sections.zipWithIndex) yield {
+      if (section.isDeleted) None else {
+        Some(SchemeDetailsTaskListSection(
+          Some(section.isCompleted),
+          Link(linkText(section), linkTarget(section, index, userAnswers)),
+          Some(section.name))
+        )
+      }
+    }
+    notDeletedElements.flatten
   }
 
 }

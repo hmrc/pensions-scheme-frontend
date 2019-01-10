@@ -16,11 +16,12 @@
 
 package controllers.register
 
-import config.FrontendAppConfig
+import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors._
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.DeclarationFormProvider
+import identifiers.SchemeTypeId
 import identifiers.register._
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId}
@@ -41,6 +42,7 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
 import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declaration
+import utils.Toggles.enableHubV2
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -57,7 +59,8 @@ class DeclarationController @Inject()(
                                        emailConnector: EmailConnector,
                                        psaNameCacheConnector: PSANameCacheConnector,
                                        crypto: ApplicationCrypto,
-                                       pensionAdministratorConnector: PensionAdministratorConnector
+                                       pensionAdministratorConnector: PensionAdministratorConnector,
+                                       fs: FeatureSwitchManagementService
                                      )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -69,51 +72,52 @@ class DeclarationController @Inject()(
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) => {
+          showPage(BadRequest.apply, formWithErrors)
+        },
         _ =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) => {
-              showPage(BadRequest.apply, formWithErrors)
-            },
-            _ =>
-              for {
-                cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
-                submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
-                cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
-                _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
-              } yield {
-                Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
-              }
-          )
-      }
+          for {
+            cacheMap <- dataCacheConnector.save(request.externalId, DeclarationId, value = true)
+            submissionResponse <- pensionsSchemeConnector.registerScheme(UserAnswers(cacheMap), request.psaId.id)
+            cacheMap <- dataCacheConnector.save(request.externalId, SubmissionReferenceNumberId, submissionResponse)
+            _ <- sendEmail(submissionResponse.schemeReferenceNumber, request.psaId)
+          } yield {
+            Redirect(navigator.nextPage(DeclarationId, NormalMode, UserAnswers(cacheMap)))
+          }
+      )
   }
 
   private def showPage(status: HtmlFormat.Appendable => Result, form: Form[_])(implicit request: DataRequest[AnyContent]) = {
-    SchemeDetailsId.retrieve.right.map { _ =>
-      val isCompany = request.userAnswers.hasCompanies
+    val isCompany = request.userAnswers.hasCompanies
 
-      val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant.values(1)
-      val readyForRender = if (isCompany) {
-        dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ => ())
-      } else {
-        Future.successful(())
-      }
+    val declarationDormantValue = if (isDeclarationDormant) DeclarationDormant.values.head else DeclarationDormant.values(1)
+    val readyForRender = if (isCompany) {
+      dataCacheConnector.save(request.externalId, DeclarationDormantId, declarationDormantValue).map(_ => ())
+    } else {
+      Future.successful(())
+    }
 
-      readyForRender.flatMap { _ =>
-        request.userAnswers.get(DeclarationDutiesId) match {
-          case Some(hasWorkingKnowledge) => Future.successful(
-            status(
-              declaration(appConfig, form, isCompany, isDormant = isDeclarationDormant, showMasterTrustDeclaration, hasWorkingKnowledge)
-            )
+    readyForRender.flatMap { _ =>
+      request.userAnswers.get(DeclarationDutiesId) match {
+        case Some(hasWorkingKnowledge) => Future.successful(
+          status(
+            declaration(appConfig, form, isCompany, isDormant = isDeclarationDormant, showMasterTrustDeclaration, hasWorkingKnowledge)
           )
-          case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-        }
+        )
+        case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
       }
     }
   }
 
-  private def showMasterTrustDeclaration(implicit request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers.get(SchemeDetailsId).map(_.schemeType).contains(MasterTrust)
+  private def showMasterTrustDeclaration(implicit request: DataRequest[AnyContent]): Boolean = {
+    if(fs.get(enableHubV2)) {
+      request.userAnswers.get(SchemeTypeId).contains(MasterTrust)
+    } else {
+      request.userAnswers.get(SchemeDetailsId).map(_.schemeType).contains(MasterTrust)
+    }
+  }
+
 
   private def isDeclarationDormant(implicit request: DataRequest[AnyContent]): Boolean =
     request.userAnswers.allEstablishersAfterDelete.exists { allEstablishers =>

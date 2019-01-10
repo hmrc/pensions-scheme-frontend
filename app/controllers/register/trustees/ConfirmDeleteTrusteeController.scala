@@ -44,7 +44,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                @Trustees navigator: Navigator,
-                                               dataCacheConnector: UserAnswersCacheConnector) (implicit val ec: ExecutionContext)
+                                               dataCacheConnector: UserAnswersCacheConnector)(implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(index: Index, trusteeKind: TrusteeKind): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -54,18 +54,15 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           if (trustee.isDeleted) {
             Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(index, trusteeKind)))
           } else {
-            retrieveSchemeName {
-              schemeName =>
-                Future.successful(
-                  Ok(
-                    confirmDeleteTrustee(
-                      appConfig,
-                      trustee.name,
-                      routes.ConfirmDeleteTrusteeController.onSubmit(index, trusteeKind)
-                    )
-                  )
+            Future.successful(
+              Ok(
+                confirmDeleteTrustee(
+                  appConfig,
+                  trustee.name,
+                  routes.ConfirmDeleteTrusteeController.onSubmit(index, trusteeKind)
                 )
-            }
+              )
+            )
           }
       } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
   }

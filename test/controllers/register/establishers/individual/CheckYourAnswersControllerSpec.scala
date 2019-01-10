@@ -30,7 +30,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   val countryOptions: CountryOptions = new CountryOptions(Seq(InputOption("GB", "United Kingdom")))
   val firstIndex = Index(0)
-  val testSchemeName = "Test Scheme Name"
 
   val checkYourAnswersFactory = new CheckYourAnswersFactory(countryOptions)
 
@@ -53,7 +52,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
   private val onwardRoute = controllers.routes.IndexController.onPageLoad()
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisher): CheckYourAnswersController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatoryEstablisherHns): CheckYourAnswersController =
     new CheckYourAnswersController(
       frontendAppConfig,
       messagesApi,
@@ -73,12 +72,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       status(result) mustBe OK
       contentAsString(result) mustBe check_your_answers(frontendAppConfig,
         Seq(AnswerSection(None, answers)), postUrl)(fakeRequest, messages).toString
-    }
-
-    "redirect to Session Expired page for a GET when establisher name is not present" in {
-      val result = controller(getEmptyData).onPageLoad(firstIndex)(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {

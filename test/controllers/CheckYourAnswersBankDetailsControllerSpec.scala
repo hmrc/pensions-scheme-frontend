@@ -46,7 +46,7 @@ class CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
         val result = controller().onSubmit(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SchemeDetailsTaskListController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.register.routes.SchemeTaskListController.onPageLoad().url)
         FakeSectionComplete.verify(IsAboutBankDetailsCompleteId, true)
       }
     }

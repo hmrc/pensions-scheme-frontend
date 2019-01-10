@@ -161,7 +161,6 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
   private val deletedEstablisher = personDetails.copy(isDeleted = true)
 
   private val testData = Json.obj(
-    SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString -> personDetails

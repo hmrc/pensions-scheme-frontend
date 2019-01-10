@@ -58,7 +58,7 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
 object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
-  private val onwardRoute = controllers.routes.SchemeDetailsTaskListController.onPageLoad()
+  private val onwardRoute = controllers.register.routes.SchemeTaskListController.onPageLoad()
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBeforeYouStartController =
     new CheckYourAnswersBeforeYouStartController(

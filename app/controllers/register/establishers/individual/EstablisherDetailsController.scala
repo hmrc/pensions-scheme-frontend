@@ -43,42 +43,36 @@ class EstablisherDetailsController @Inject()(
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
                                               formProvider: PersonDetailsFormProvider
-                                            ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                            )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          val redirectResult = request.userAnswers.get(EstablisherDetailsId(index)) match {
-            case None =>
-              Ok(establisherDetails(appConfig, form, mode, index))
-            case Some(value) =>
-              Ok(establisherDetails(appConfig, form.fill(value), mode, index))
-          }
-          Future.successful(redirectResult)
+      val redirectResult = request.userAnswers.get(EstablisherDetailsId(index)) match {
+        case None =>
+          Ok(establisherDetails(appConfig, form, mode, index))
+        case Some(value) =>
+          Ok(establisherDetails(appConfig, form.fill(value), mode, index))
       }
+      Future.successful(redirectResult)
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index))),
-            (value) =>
-              dataCacheConnector.save(
-                request.externalId,
-                EstablisherDetailsId(index),
-                value
-              ).map {
-                json =>
-                  Redirect(navigator.nextPage(EstablisherDetailsId(index), mode, new UserAnswers(json)))
-              }
-          )
-      }
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) =>
+          Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index))),
+        value =>
+          dataCacheConnector.save(
+            request.externalId,
+            EstablisherDetailsId(index),
+            value
+          ).map {
+            json =>
+              Redirect(navigator.nextPage(EstablisherDetailsId(index), mode, new UserAnswers(json)))
+          }
+      )
   }
 
 }

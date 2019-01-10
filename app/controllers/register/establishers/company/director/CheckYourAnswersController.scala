@@ -45,30 +45,28 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(companyIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      retrieveSchemeName { schemeName =>
-        val checkYourAnswersHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
+      val checkYourAnswersHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
 
-        val companyDirectorDetails = AnswerSection(
-          Some("messages__director__cya__details_heading"),
-          checkYourAnswersHelper.directorDetails(companyIndex.id, directorIndex.id) ++
-            checkYourAnswersHelper.directorNino(companyIndex.id, directorIndex.id) ++
-            checkYourAnswersHelper.directorUniqueTaxReference(companyIndex.id, directorIndex.id)
-        )
+      val companyDirectorDetails = AnswerSection(
+        Some("messages__director__cya__details_heading"),
+        checkYourAnswersHelper.directorDetails(companyIndex.id, directorIndex.id) ++
+          checkYourAnswersHelper.directorNino(companyIndex.id, directorIndex.id) ++
+          checkYourAnswersHelper.directorUniqueTaxReference(companyIndex.id, directorIndex.id)
+      )
 
-        val companyDirectorContactDetails = AnswerSection(
-          Some("messages__director__cya__contact__details_heading"),
-          checkYourAnswersHelper.directorAddress(companyIndex.id, directorIndex.id) ++
-            checkYourAnswersHelper.directorAddressYears(companyIndex.id, directorIndex.id) ++
-            checkYourAnswersHelper.directorPreviousAddress(companyIndex.id, directorIndex.id) ++
-            checkYourAnswersHelper.directorContactDetails(companyIndex.id, directorIndex.id)
-        )
+      val companyDirectorContactDetails = AnswerSection(
+        Some("messages__director__cya__contact__details_heading"),
+        checkYourAnswersHelper.directorAddress(companyIndex.id, directorIndex.id) ++
+          checkYourAnswersHelper.directorAddressYears(companyIndex.id, directorIndex.id) ++
+          checkYourAnswersHelper.directorPreviousAddress(companyIndex.id, directorIndex.id) ++
+          checkYourAnswersHelper.directorContactDetails(companyIndex.id, directorIndex.id)
+      )
 
-        Future.successful(Ok(check_your_answers(
-          appConfig,
-          Seq(companyDirectorDetails, companyDirectorContactDetails),
-          company.director.routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex)))
-        )
-      }
+      Future.successful(Ok(check_your_answers(
+        appConfig,
+        Seq(companyDirectorDetails, companyDirectorContactDetails),
+        company.director.routes.CheckYourAnswersController.onSubmit(companyIndex, directorIndex)))
+      )
   }
 
   def onSubmit(companyIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {

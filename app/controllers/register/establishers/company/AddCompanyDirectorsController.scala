@@ -65,7 +65,6 @@ class AddCompanyDirectorsController @Inject()(
         Future.successful(Redirect(navigator.nextPage(AddCompanyDirectorsId(index), mode, request.userAnswers)))
       }
       else {
-
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
             retrieveCompanyName(index) {

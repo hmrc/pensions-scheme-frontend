@@ -87,6 +87,55 @@
 
             </ul>
         </li>
+
+        <li>
+            @taskSections.workingKnowledge.map { wk =>
+                <h2 id="section-working-knowledge-header" class="heading-large">
+                    @messages("messages__schemeDetailsTaskList__working_knowledge_header")
+                </h2>
+                <ul class="task-list-items">
+                    <li class="task-list-item">
+                        <a id= "section-working-knowledge-link" href="@wk.link.target" aria-describedby="section-about-status">
+                            @messages(wk.link.text)
+                        </a>
+
+                        @wk.isCompleted.map{ isCompleted =>
+                        <strong class="@statusClass(isCompleted)" id="section-working-knowledge-status">@messages(status(isCompleted))</strong>
+                        }
+                    </li>
+                </ul>
+            }
+        </li>
+
+        <li>
+            <h2 id="section-establishers-header" class="heading-large">
+                @messages("messages__schemeTaskList__sectionEstablishers_header")
+            </h2>
+            <ul class="task-list-items">
+                <li>
+                    <a id= "section-establishers-link" href="@{taskSections.addEstablisherHeader.link.target}">
+                        @messages(taskSections.addEstablisherHeader.link.text)
+                    </a>
+                </li>
+
+                @for((item, i) <- taskSections.establishers.zipWithIndex){
+                @defining(i+1) { index =>
+                <li class="task-list-item">
+                    <h3 class="task-list-section">@messages(item.header.getOrElse(""))</h3>
+                </li>
+                <li class="task-list-item">
+                    <a id= "section-establishers-link-0@index" href="@{item.link.target}">
+                        @messages(item.link.text)
+                    </a>
+                    @item.isCompleted.map{ isCompleted =>
+                    <strong class="@statusClass(isCompleted)" id="section-establishers-status-0@index">@messages(status(isCompleted))</strong>
+                    }
+                </li>
+                }
+                }
+
+            </ul>
+        </li>
     </ol>
 
     <br>

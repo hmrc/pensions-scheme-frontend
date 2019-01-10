@@ -66,6 +66,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
             Future.successful(BadRequest(isDormant(appConfig, formWithErrors, companyName, postCall(mode, index)))),
           {
             case Yes =>
+              println("\n\n\n coming in dormant")
               dataCacheConnector.save(request.externalId, IsCompanyDormantId(index), DeclarationDormant.values(0)).map { cacheMap =>
                  Redirect(navigator.nextPage(IsCompanyDormantId(index), NormalMode, UserAnswers(cacheMap)))
              }

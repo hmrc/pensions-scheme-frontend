@@ -19,7 +19,11 @@ package viewmodels
 import play.api.libs.json.{Json, OFormat}
 
 case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
-                                 about: Seq[SchemeDetailsTaskListSection]) {
+                                 about: Seq[SchemeDetailsTaskListSection],
+                                 workingKnowledge: Option[SchemeDetailsTaskListSection],
+                                 addEstablisherHeader : SchemeDetailsTaskListSection,
+                                 establishers: Seq[SchemeDetailsTaskListSection]
+                                ) {
 
 }
 

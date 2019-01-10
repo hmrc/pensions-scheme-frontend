@@ -17,6 +17,7 @@
 package controllers.register
 
 import base.{JsonFileReader, SpecBase}
+import config.FeatureSwitchManagementService
 import controllers.ControllerSpecBase
 import controllers.actions._
 import models.NormalMode
@@ -33,12 +34,21 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
   private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
 
-  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
+  private def fakeFeatureSwitchManager(isEnabledV2: Boolean) = new FeatureSwitchManagementService {
+    override def change(name: String, newValue: Boolean): Boolean = ???
+
+    override def get(name: String): Boolean = isEnabledV2
+
+    override def reset(name: String): Unit = ???
+  }
+
+  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers, isEnabledV2: Boolean = true): SchemeTaskListController =
     new SchemeTaskListController(
       frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      dataRetrievalAction
+      dataRetrievalAction,
+      fakeFeatureSwitchManager(isEnabledV2)
     )
 
   def viewAsString(): String =
