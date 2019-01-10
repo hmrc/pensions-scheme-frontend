@@ -35,7 +35,7 @@ class WhatYouWillNeedWorkingKnowledgeControllerSpec extends ControllerSpecBase w
     override def reset(name: String): Unit = ???
   }
 
-  def onwardRoute: Call = controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode)
+  def onwardRoute: Call = controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, isEnabledV2: Boolean = false): WhatYouWillNeedWorkingKnowledgeController =
     new WhatYouWillNeedWorkingKnowledgeController(frontendAppConfig,
