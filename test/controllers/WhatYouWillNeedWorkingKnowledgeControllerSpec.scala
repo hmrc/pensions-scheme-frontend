@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FeatureSwitchManagementService
 import controllers.actions._
 import models.NormalMode
 import org.scalatest.BeforeAndAfterEach
@@ -26,12 +27,21 @@ import views.html.whatYouWillNeedWorkingKnowledge
 
 class WhatYouWillNeedWorkingKnowledgeControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.routes.WorkingKnowledgeController.onPageLoad(NormalMode)
+  private def featureSwitchManagementService(isEnabledV2: Boolean): FeatureSwitchManagementService = new FeatureSwitchManagementService {
+    override def change(name: String, newValue: Boolean): Boolean = ???
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedWorkingKnowledgeController =
+    override def get(name: String): Boolean = isEnabledV2
+
+    override def reset(name: String): Unit = ???
+  }
+
+  def onwardRoute: Call = controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode)
+
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, isEnabledV2: Boolean = false): WhatYouWillNeedWorkingKnowledgeController =
     new WhatYouWillNeedWorkingKnowledgeController(frontendAppConfig,
       messagesApi,
-      FakeAuthAction
+      FakeAuthAction,
+      featureSwitchManagementService(isEnabledV2)
     )
 
   def viewAsString(): String = whatYouWillNeedWorkingKnowledge(frontendAppConfig)(fakeRequest, messages).toString
@@ -48,8 +58,15 @@ class WhatYouWillNeedWorkingKnowledgeControllerSpec extends ControllerSpecBase w
     }
 
     "on a POST" must {
-      "redirect to working knowledge page" in {
+      "redirect to working knowledge page when toggle is off" in {
         val result = controller().onSubmit()(fakeRequest)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.register.adviser.routes.WorkingKnowledgeController.onPageLoad(NormalMode).url)
+      }
+
+      "redirect to adviser working knowledge page when toggle is on" in {
+        val result = controller(isEnabledV2 = true).onSubmit()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
