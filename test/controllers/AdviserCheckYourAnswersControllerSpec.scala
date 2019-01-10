@@ -47,9 +47,6 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
       val adviserAddress = Address("addr1", "addr2", Some("addr3"), Some("addr4"), Some("xxx"), "GB")
 
       val getMandatoryAdviser = new FakeDataRetrievalAction(Some(UserAnswers()
-        .set(DeclarationDutiesId)(false)
-        .asOpt
-        .value
         .set(AdviserNameId)(adviserName)
         .asOpt
         .value
@@ -67,8 +64,6 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
 
       lazy val adviserSection = AnswerSection(None,
         Seq(
-          AnswerRow("declarationDuties.checkYourAnswersLabel", Seq("site.no"), answerIsMessageKey = true,
-            Some(controllers.routes.WorkingKnowledgeController.onPageLoad(CheckMode).url), "messages__visuallyhidden__declarationDuties"),
           AnswerRow("adviserName.checkYourAnswersLabel", Seq(adviserName), answerIsMessageKey = false,
             Some(routes.AdviserNameController.onPageLoad(CheckMode).url), "messages__visuallyhidden__adviserName"),
           AnswerRow(Messages("adviserEmail.checkYourAnswersLabel", adviserName), Seq(adviserEmail), answerIsMessageKey = false,

@@ -48,21 +48,18 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
       implicit val userAnswers = request.userAnswers
-      val workingKnowledge = DeclarationDutiesId.row(controllers.routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
-      val seqAnswerSection = request.userAnswers.get(DeclarationDutiesId).map {
-        case ddi if ddi =>
-          Seq(AnswerSection(None, workingKnowledge))
-        case _ =>
+
+      val seqAnswerSection = {
           val adviserNameRow = AdviserNameId.row(routes.AdviserNameController.onPageLoad(CheckMode).url)
           val adviserEmailRow = AdviserEmailId.row(routes.AdviserEmailAddressController.onPageLoad(CheckMode).url)
           val adviserPhoneRow = AdviserPhoneId.row(routes.AdviserPhoneController.onPageLoad(CheckMode).url)
           val adviserAddressRow = AdviserAddressId.row(routes.AdviserAddressController.onPageLoad(CheckMode).url)
-          Seq(AnswerSection(None, workingKnowledge ++ adviserNameRow ++ adviserEmailRow ++ adviserPhoneRow ++ adviserAddressRow))
+          Seq(AnswerSection(None, adviserNameRow ++ adviserEmailRow ++ adviserPhoneRow ++ adviserAddressRow))
       }
       Ok(
         check_your_answers(
           appConfig,
-          seqAnswerSection.getOrElse(Seq.empty),
+          seqAnswerSection,
           controllers.routes.AdviserCheckYourAnswersController.onSubmit()
         )
       )
