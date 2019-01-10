@@ -62,15 +62,11 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           } else {
             retrieveSchemeName {
               _ =>
-                val preparedForm = request.userAnswers.get(ConfirmDeleteTrusteeId) match {
-                  case None => form
-                  case Some(value) => form.fill(value)
-                }
                 Future.successful(
                   Ok(
                     confirmDeleteTrustee(
                       appConfig,
-                      preparedForm,
+                      form,
                       trustee.name,
                       routes.ConfirmDeleteTrusteeController.onSubmit(index, trusteeKind)
                     )

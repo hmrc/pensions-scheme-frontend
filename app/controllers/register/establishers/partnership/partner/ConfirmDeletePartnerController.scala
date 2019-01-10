@@ -57,15 +57,11 @@ class ConfirmDeletePartnerController @Inject()(
           if (partner.isDeleted) {
             Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(establisherIndex, partnerIndex)))
           } else {
-            val preparedForm = request.userAnswers.get(ConfirmDeletePartnerId(establisherIndex)) match {
-              case None => form
-              case Some(value) => form.fill(value)
-            }
             Future.successful(
               Ok(
                 confirmDeletePartner(
                   appConfig,
-                  preparedForm,
+                  form,
                   partner.fullName,
                   routes.ConfirmDeletePartnerController.onSubmit(establisherIndex, partnerIndex)
                 )
