@@ -57,15 +57,11 @@ class ConfirmDeleteDirectorController @Inject()(
         case company ~ director =>
           director.isDeleted match {
             case false =>
-              val preparedForm = request.userAnswers.get(ConfirmDeleteDirectorId(establisherIndex)) match {
-                case None => form
-                case Some(value) => form.fill(value)
-              }
               Future.successful(
                 Ok(
                   confirmDeleteDirector(
                     appConfig,
-                    preparedForm,
+                    form,
                     director.fullName,
                     routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex)
                   )
@@ -80,8 +76,8 @@ class ConfirmDeleteDirectorController @Inject()(
   def onSubmit(establisherIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
 
-      (CompanyDetailsId(establisherIndex) and DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
-        case company ~ directorDetails  =>
+      (DirectorDetailsId(establisherIndex, directorIndex)).retrieve.right.map {
+        case directorDetails  =>
 
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
