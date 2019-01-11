@@ -28,7 +28,7 @@ import views.html.whatYouWillNeedWorkingKnowledge
 
 class WhatYouWillNeedWorkingKnowledgeControllerSpec extends ControllerSpecBase with MockitoSugar with BeforeAndAfterEach {
 
-  def onwardRoute: Call = controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode)
+  def onwardRoute: Call = controllers.routes.AdviserNameController.onPageLoad(NormalMode)
 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData, isEnabledV2: Boolean = false): WhatYouWillNeedWorkingKnowledgeController =
     new WhatYouWillNeedWorkingKnowledgeController(frontendAppConfig,

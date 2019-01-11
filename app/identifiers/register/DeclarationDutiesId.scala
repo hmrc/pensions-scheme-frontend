@@ -16,7 +16,7 @@
 
 package identifiers.register
 
-import identifiers._
+import identifiers.TypedIdentifier
 import identifiers.register.adviser._
 import play.api.libs.json.JsResult
 import utils.UserAnswers

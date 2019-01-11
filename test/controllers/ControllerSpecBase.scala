@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import controllers.actions.FakeDataRetrievalAction
-import identifiers.SchemeNameId
+import identifiers.{AdviserNameId, SchemeNameId}
 import identifiers.register.adviser.AdviserDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
@@ -180,6 +180,12 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
       AdviserDetailsId.toString ->
         AdviserDetails("name", "email", "phone")
+    ))
+  )
+
+  def getMandatoryWorkingKnowledgePerson: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(AdviserNameId.toString ->
+        "name"
     ))
   )
 }
