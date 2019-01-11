@@ -22,7 +22,10 @@ case class SchemeDetailsTaskList(beforeYouStart: SchemeDetailsTaskListSection,
                                  about: Seq[SchemeDetailsTaskListSection],
                                  workingKnowledge: Option[SchemeDetailsTaskListSection],
                                  addEstablisherHeader : SchemeDetailsTaskListSection,
-                                 establishers: Seq[SchemeDetailsTaskListSection]
+                                 establishers: Seq[SchemeDetailsTaskListSection],
+                                 addTrusteeHeader : Option[SchemeDetailsTaskListSection],
+                                 trustees: Seq[SchemeDetailsTaskListSection],
+                                 declaration: Option[Link] = None
                                 ) {
 
 }

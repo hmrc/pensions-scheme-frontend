@@ -44,32 +44,28 @@ class TrusteeKindController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: TrusteeKindFormProvider
-                                     ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { schemeDetails =>
-        val preparedForm = request.userAnswers.get(TrusteeKindId(index)) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        Future.successful(Ok(trusteeKind(appConfig, preparedForm, mode, index)))
+      val preparedForm = request.userAnswers.get(TrusteeKindId(index)) match {
+        case None => form
+        case Some(value) => form.fill(value)
       }
+      Future.successful(Ok(trusteeKind(appConfig, preparedForm, mode, index)))
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { schemeDetails =>
-        form.bindFromRequest().fold(
-          (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index))),
-          value =>
-            dataCacheConnector.save(request.externalId, TrusteeKindId(index), value).map { userAnswers =>
-              Redirect(navigator.nextPage(TrusteeKindId(index), mode, UserAnswers(userAnswers)))
-            }
-        )
-      }
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) =>
+          Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index))),
+        value =>
+          dataCacheConnector.save(request.externalId, TrusteeKindId(index), value).map { userAnswers =>
+            Redirect(navigator.nextPage(TrusteeKindId(index), mode, UserAnswers(userAnswers)))
+          }
+      )
   }
 }

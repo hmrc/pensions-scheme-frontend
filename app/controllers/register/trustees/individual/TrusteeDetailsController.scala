@@ -21,7 +21,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteeKindId
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import javax.inject.Inject
@@ -46,39 +45,33 @@ class TrusteeDetailsController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: PersonDetailsFormProvider
-                                        ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map {
-        schemeDetails =>
-          val redirectResult = request.userAnswers.get(TrusteeDetailsId(index)) match {
-            case None => Ok(trusteeDetails(appConfig, form, mode, index))
-            case Some(value) => Ok(trusteeDetails(appConfig, form.fill(value), mode, index))
-          }
-          Future.successful(redirectResult)
+      val redirectResult = request.userAnswers.get(TrusteeDetailsId(index)) match {
+        case None => Ok(trusteeDetails(appConfig, form, mode, index))
+        case Some(value) => Ok(trusteeDetails(appConfig, form.fill(value), mode, index))
       }
+      Future.successful(redirectResult)
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map {
-        schemeDetails =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(trusteeDetails(appConfig, formWithErrors, mode, index))),
-            (value) =>
-              request.userAnswers.upsert(TrusteeDetailsId(index))(value) {
-                _.upsert(TrusteeKindId(index))(Individual) { answers =>
-                  dataCacheConnector.upsert(request.externalId, answers.json).map { cacheMap =>
-                    Redirect(navigator.nextPage(TrusteeDetailsId(index), mode, new UserAnswers(cacheMap)))
-                  }
-                }
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) =>
+          Future.successful(BadRequest(trusteeDetails(appConfig, formWithErrors, mode, index))),
+        (value) =>
+          request.userAnswers.upsert(TrusteeDetailsId(index))(value) {
+            _.upsert(TrusteeKindId(index))(Individual) { answers =>
+              dataCacheConnector.upsert(request.externalId, answers.json).map { cacheMap =>
+                Redirect(navigator.nextPage(TrusteeDetailsId(index), mode, new UserAnswers(cacheMap)))
               }
-          )
-      }
+            }
+          }
+      )
   }
 
 }

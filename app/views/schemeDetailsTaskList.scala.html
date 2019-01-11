@@ -136,6 +136,61 @@
 
             </ul>
         </li>
+
+        @taskSections.addTrusteeHeader.map { header =>
+            <li>
+                <h2 id="section-trustees-header" class="heading-large">
+                    @messages("messages__schemeTaskList__sectionTrustees_header")
+                </h2>
+                <ul class="task-list-items">
+                    <li>
+                        <a id= "section-trustees-link"  href="@{header.link.target}">
+                            @messages(header.link.text)
+                        </a>
+                        @header.isCompleted.map{ isCompleted =>
+                            <strong class="@statusClass(isCompleted)" id="section-trustees-status">@messages(status(isCompleted))</strong>
+                        }
+                    </li>
+
+                    @for((item, i) <- taskSections.trustees.zipWithIndex){
+                    @defining(i+1) { index =>
+                        <li class="task-list-item">
+                            <h3 class="task-list-section">@messages(item.header.getOrElse(""))</h3>
+                        </li>
+                        <li class="task-list-item">
+                            <a id= "section-trustees-link-0@index"  href="@{item.link.target}">
+                                @messages(item.link.text)
+                            </a>
+                            @item.isCompleted.map{ isCompleted =>
+                            <strong class="@statusClass(isCompleted)" id="section-trustees-status-0@index">@messages(status(isCompleted))</strong>
+                            }
+                        </li>
+                        }
+                    }
+
+                </ul>
+            </li>
+        }
+
+        <li>
+            <h2 id="section-declaration-header" class="heading-large">
+                @messages("messages__schemeTaskList__sectionDeclaration_header")
+            </h2>
+            <ul class="task-list-items">
+                <li class="task-list-item">
+                    @if(taskSections.declaration.isDefined){
+                    @taskSections.declaration.map{ link =>
+                    <a id= "section-declaration-link" href="@link.target">
+                        @messages(link.text)
+                    </a>
+                    }
+                    }else{
+                    <span id="section-declaration-text">@messages("messages__schemeTaskList__sectionDeclaration_incomplete")</span>
+                    }
+                </li>
+            </ul>
+        </li>
+
     </ol>
 
     <br>
