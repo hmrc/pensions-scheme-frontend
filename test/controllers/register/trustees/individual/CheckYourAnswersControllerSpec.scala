@@ -39,16 +39,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString
     }
 
-    "redirect to Session Expired page" when {
-      "GET" when {
-        "trustee name is not present" in {
-          val result = controller(getEmptyData).onPageLoad(firstIndex)(fakeRequest)
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-        }
-      }
-    }
-
     "redirect to Add Trustee page" when {
       "POST is called" in {
         val result = controller().onSubmit(firstIndex)(fakeRequest)

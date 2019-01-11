@@ -56,12 +56,12 @@
             </h2>
             <ul class="task-list-items">
                 <li class="task-list-item">
-                    <a id= "section-before-you-start-link" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-about-status">
+                    <a id= "section-before-you-start-link" href="@taskSections.beforeYouStart.link.target" aria-describedby="section-beforeYouStart-status">
                         @messages(taskSections.beforeYouStart.link.text)
                     </a>
 
                     @taskSections.beforeYouStart.isCompleted.map{ isCompleted =>
-                    <strong class="@statusClass(isCompleted)" id="section-about-status">@messages(status(isCompleted))</strong>
+                    <strong class="@statusClass(isCompleted)" id="section-beforeYouStart-status">@messages(status(isCompleted))</strong>
                     }
                 </li>
             </ul>
@@ -95,7 +95,7 @@
                 </h2>
                 <ul class="task-list-items">
                     <li class="task-list-item">
-                        <a id= "section-working-knowledge-link" href="@wk.link.target" aria-describedby="section-about-status">
+                        <a id= "section-working-knowledge-link" href="@wk.link.target" aria-describedby="section-working-knowledge-status">
                             @messages(wk.link.text)
                         </a>
 
