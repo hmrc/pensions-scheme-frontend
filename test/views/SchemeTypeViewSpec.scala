@@ -33,8 +33,8 @@ class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
 
   def createView: () => HtmlFormat.Appendable = () => schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
-  def createViewInCheckMode(isHubEnabled:Boolean): () => HtmlFormat.Appendable = () =>
-    schemeType(appConfig(isHubEnabled = isHubEnabled), form, CheckMode, schemeName)(fakeRequest, messages)
+  def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
+    schemeType(appConfig(isHubEnabled = true), form, CheckMode, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
@@ -79,11 +79,6 @@ class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
   }
 
   "SchemeType view in check mode where hub enabled" must {
-    behave like pageWithReturnLink(createViewInCheckMode(isHubEnabled = true), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createViewInCheckMode, controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
-
-  "SchemeType view in check mode where hub disabled" must {
-    behave like pageWithReturnLink(createViewInCheckMode(isHubEnabled = false), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
-  }
-
 }
