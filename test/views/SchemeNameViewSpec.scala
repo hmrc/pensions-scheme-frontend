@@ -17,22 +17,25 @@
 package views
 
 import forms.register.SchemeNameFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
 import views.html.schemeName
 
 class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
-
+  private val scheme = "A scheme"
   val messageKeyPrefix = "scheme_name"
 
   override val form = new SchemeNameFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => schemeName(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => schemeName(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    schemeName(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    schemeName(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
+
+  def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
+    schemeName(appConfig(isHubEnabled = true), form, CheckMode, scheme)(fakeRequest, messages)
 
   "SchemeName view" must {
 
@@ -42,5 +45,9 @@ class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
       "schemeName")
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
+  }
+
+  "SchemeName view in check mode with hub enabled" must {
+    behave like pageWithReturnLink(createViewInCheckMode, controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
 }
