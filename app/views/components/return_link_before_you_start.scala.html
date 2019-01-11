@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package identifiers.register.establishers.partnership.partner
+@import config.FrontendAppConfig
+@import models.Mode
 
-import identifiers.TypedIdentifier
+@(appConfig: FrontendAppConfig, mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
 
-case class ConfirmDeletePartnerId(establisherIndex: Int) extends TypedIdentifier[Boolean]
-
-object ConfirmDeletePartnerId {
-  override def toString: String = "confirmDeletePartner"
+@{
+ (appConfig.enableHubV2, mode) match {
+  case (true, CheckMode) =>
+   components.return_link(messages("messages__psaSchemeDetails__return_link", schemeName), controllers.register.routes.SchemeTaskListController.onPageLoad())
+  case _ =>
+   components.return_link(messages("messages__complete__return"), appConfig.managePensionsSchemeOverviewUrl)
+ }
 }

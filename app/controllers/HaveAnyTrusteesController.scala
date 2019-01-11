@@ -20,9 +20,10 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
-import identifiers.HaveAnyTrusteesId
+import identifiers.{HaveAnyTrusteesId, SchemeNameId}
 import javax.inject.Inject
 import models.Mode
+import models.requests.OptionalDataRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -45,20 +46,23 @@ class HaveAnyTrusteesController @Inject()(
 
   private val form: Form[Boolean] = formProvider()
 
+  private def existingSchemeNameOrEmptyString(implicit request:OptionalDataRequest[AnyContent]):String =
+    request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(HaveAnyTrusteesId)) match {
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode)))
+      Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode, existingSchemeNameOrEmptyString)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode, existingSchemeNameOrEmptyString))),
         value =>
           dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>
             Redirect(navigator.nextPage(HaveAnyTrusteesId, mode, UserAnswers(cacheMap))))

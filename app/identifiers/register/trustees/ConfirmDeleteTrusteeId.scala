@@ -16,8 +16,8 @@
 
 package identifiers.register.trustees
 
-import identifiers.Identifier
+import identifiers.{Identifier, TypedIdentifier}
 
-case object ConfirmDeleteTrusteeId extends Identifier {
+case object ConfirmDeleteTrusteeId extends TypedIdentifier[Boolean] {
   override def toString: String = "confirmDeleteTrustee"
 }

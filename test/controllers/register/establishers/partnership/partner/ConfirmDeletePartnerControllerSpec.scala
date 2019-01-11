@@ -19,7 +19,7 @@ package controllers.register.establishers.partnership.partner
 import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
-import controllers.register.establishers.partnership.routes.AddPartnersController
+import forms.register.establishers.partnership.partner.ConfirmDeletePartnerFormProvider
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
 import identifiers.register.establishers.partnership.partner.PartnerDetailsId
@@ -29,6 +29,8 @@ import models.register.{SchemeDetails, SchemeType}
 import models.{Index, PartnershipDetails}
 import org.joda.time.LocalDate
 import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.AnyContentAsFormUrlEncoded
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.{FakeNavigator, FakeSectionComplete}
 import views.html.register.establishers.partnership.partner.confirmDeletePartner
@@ -56,15 +58,24 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
 
     "delete the partner on a POST" in {
       val data = new FakeDataRetrievalAction(Some(testData()))
-      val result = controller(data).onSubmit(establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller(data).onSubmit(establisherIndex, partnerIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersCacheConnector.verify(PartnerDetailsId(establisherIndex, partnerIndex), partnerDetails.copy(isDeleted = true))
     }
 
+    "never delete the partner on a POST if selected No" in {
+      FakeUserAnswersCacheConnector.reset()
+      val data = new FakeDataRetrievalAction(Some(testData()))
+      val result = controller(data).onSubmit(establisherIndex, partnerIndex)(postRequestForCancle)
+
+      status(result) mustBe SEE_OTHER
+      FakeUserAnswersCacheConnector.verifyNot(PartnerDetailsId(establisherIndex, partnerIndex))
+    }
+
     "redirect to the next page on a successful POST" in {
       val data = new FakeDataRetrievalAction(Some(testData()))
-      val result = controller(data).onSubmit(establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller(data).onSubmit(establisherIndex, partnerIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
@@ -78,7 +89,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {
-      val result = controller(dontGetAnyData).onSubmit(establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller(dontGetAnyData).onSubmit(establisherIndex, partnerIndex)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -102,7 +113,7 @@ class ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
         )
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onSubmit(establisherIndex, partnerIndex)(fakeRequest)
+      val result = controller(getRelevantData).onSubmit(establisherIndex, partnerIndex)(postRequest)
       status(result) mustBe SEE_OTHER
       FakeSectionComplete.verify(IsEstablisherCompleteId(0), false)
     }
@@ -117,9 +128,16 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
   private val partnershipName = "My Partnership Ltd"
   private val partnerName = "John Doe"
 
+  private val formProvider = new ConfirmDeletePartnerFormProvider()
+  private val form = formProvider.apply()
+
   private lazy val postCall = routes.ConfirmDeletePartnerController.onSubmit(establisherIndex, partnerIndex)
-  private lazy val cancelCall = AddPartnersController.onPageLoad(establisherIndex)
   private val partnerDetails = PersonDetails("John", None, "Doe", LocalDate.now())
+
+  private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
+    FakeRequest().withFormUrlEncodedBody(("value", "true"))
+  private val postRequestForCancle: FakeRequest[AnyContentAsFormUrlEncoded] =
+    FakeRequest().withFormUrlEncodedBody(("value", "false"))
 
   private def testData(partners: PersonDetails = partnerDetails) = Json.obj(
     EstablishersId.toString -> Json.arr(
@@ -148,14 +166,15 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      FakeSectionComplete
+      FakeSectionComplete,
+      formProvider
     )
 
   private def viewAsString() = confirmDeletePartner(
     frontendAppConfig,
+    form,
     partnerName,
-    postCall,
-    cancelCall
+    postCall
   )(fakeRequest, messages).toString
 
 }

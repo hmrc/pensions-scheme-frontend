@@ -19,7 +19,7 @@
 @import play.api.mvc.Call
 @import viewmodels.Message
 
-@(appConfig: FrontendAppConfig, partnerName: String, postCall: Call, cancelCall: Call)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], partnerName: String, postCall: Call)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__confirmDeletePartner__title"),
@@ -28,14 +28,21 @@
 
     @helpers.form(action = postCall, 'autoComplete -> "off") {
 
+
+        @components.error_summary(form.errors)
+
         @components.heading(
-            headingKey = components.hyphen((Message("messages__confirmDeletePartner__heading").withArgs(partnerName))).toString
+            headingKey = messages("messages__confirmDeletePartner__heading", partnerName)
         )
 
-        @components.submit_button("site.confirm")
+        @components.input_yes_no(
+            field = form("value"),
+            label = messages("messages__confirmDeletePartner__title"),
+            labelClass = Some("visually-hidden")
+        )
 
-        <a id="cancel" href="@cancelCall.url">
-            @messages("site.cancel")
-        </a>
+        @components.submit_button()
+
+        @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
     }
 }

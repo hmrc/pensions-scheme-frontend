@@ -19,6 +19,7 @@ package controllers.register.trustees
 import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
+import forms.register.trustees.ConfirmDeleteTrusteeFormProvider
 import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.company.CompanyDetailsId
@@ -31,6 +32,8 @@ import models.register.trustees.TrusteeKind.{Company, Individual, Partnership}
 import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.libs.json.Writes
+import play.api.mvc.AnyContentAsFormUrlEncoded
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.{FakeNavigator, UserAnswers}
 import views.html.register.trustees.confirmDeleteTrustee
@@ -79,35 +82,43 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 
 
     "remove the trustee in a POST request for a company trustee" in {
-      val result = controller(testData(companyId)(companyTrustee)).onSubmit(0, Company)(fakeRequest)
+      val result = controller(testData(companyId)(companyTrustee)).onSubmit(0, Company)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersCacheConnector.verify(companyId, companyTrustee.copy(isDeleted = true))
     }
 
     "remove the trustee in a POST request for an individual trustee" in {
-      val result = controller(testData(individualId)(individualTrustee)).onSubmit(0, Individual)(fakeRequest)
+      val result = controller(testData(individualId)(individualTrustee)).onSubmit(0, Individual)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersCacheConnector.verify(individualId, individualTrustee.copy(isDeleted = true))
     }
 
     "remove the trustee in a POST request for a partnership trustee" in {
-      val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(0, Partnership)(fakeRequest)
+      val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(0, Partnership)(postRequest)
 
       status(result) mustBe SEE_OTHER
       FakeUserAnswersCacheConnector.verify(partnershipId, partnershipTrustee.copy(isDeleted = true))
     }
 
+    "redirect to the next page following a POST request when selected no" in {
+      FakeUserAnswersCacheConnector.reset()
+      val result = controller(testData(partnershipId)(partnershipTrustee)).onSubmit(0, Partnership)(postRequestForCancle)
+
+      status(result) mustBe SEE_OTHER
+      FakeUserAnswersCacheConnector.verifyNot(partnershipId)
+    }
+
     "redirect to the next page following a POST request" in {
-      val result = controller(testData(companyId)(companyTrustee)).onSubmit(0, Company)(fakeRequest)
+      val result = controller(testData(companyId)(companyTrustee)).onSubmit(0, Company)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
     }
 
     "redirect to Session Expired following a POST if no cached data exists" in {
-      val result = controller(dontGetAnyData).onSubmit(0, Company)(fakeRequest)
+      val result = controller(dontGetAnyData).onSubmit(0, Company)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
@@ -118,6 +129,15 @@ class ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
 }
 
 object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
+
+  private val formProvider = new ConfirmDeleteTrusteeFormProvider()
+  private val form = formProvider.apply()
+
+  private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
+    FakeRequest().withFormUrlEncodedBody(("value", "true"))
+
+  private val postRequestForCancle: FakeRequest[AnyContentAsFormUrlEncoded] =
+    FakeRequest().withFormUrlEncodedBody(("value", "false"))
 
   private val scheme = SchemeDetails(
     "test-scheme-name",
@@ -158,12 +178,14 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       new FakeNavigator(onwardRoute),
-      FakeUserAnswersCacheConnector
+      FakeUserAnswersCacheConnector,
+      formProvider
     )
 
   private def viewAsString(trusteeName: String, trusteeKind: TrusteeKind) =
     confirmDeleteTrustee(
       frontendAppConfig,
+      form,
       trusteeName,
       routes.ConfirmDeleteTrusteeController.onSubmit(0, trusteeKind)
     )(fakeRequest, messages).toString

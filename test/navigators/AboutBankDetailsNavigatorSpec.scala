@@ -19,8 +19,9 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.{BankAccountDetailsId, UKBankAccountId}
-import models.register.SortCode
 import models.{BankAccountDetails, NormalMode}
+import models.register.SortCode
+import org.joda.time.LocalDate
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers

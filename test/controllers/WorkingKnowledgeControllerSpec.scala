@@ -28,7 +28,7 @@ import utils.FakeNavigator
 import views.html.workingKnowledge
 
 class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
-
+  private val scheme = "A scheme"
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new WorkingKnowledgeFormProvider()
@@ -45,7 +45,7 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = workingKnowledge(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = workingKnowledge(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages).toString
 
   "WorkingKnowledgeController" must {
 
