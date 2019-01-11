@@ -24,6 +24,7 @@ import identifiers.SchemeNameId
 import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import javax.inject.Inject
 import models.Mode
+import models.requests.OptionalDataRequest
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -47,6 +48,9 @@ class WorkingKnowledgeController @Inject()(
 
   private val form = formProvider()
 
+  private def existingSchemeNameOrEmptyString(implicit request:OptionalDataRequest[AnyContent]):String =
+    request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(DeclarationDutiesId)) match {
@@ -54,14 +58,14 @@ class WorkingKnowledgeController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(workingKnowledge(appConfig, preparedForm, mode, request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")))
+      Ok(workingKnowledge(appConfig, preparedForm, mode, existingSchemeNameOrEmptyString))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode, request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")))),
+          Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode, existingSchemeNameOrEmptyString))),
         value => {
           sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
             request.userAnswers.getOrElse(UserAnswers()), value).flatMap { _ =>

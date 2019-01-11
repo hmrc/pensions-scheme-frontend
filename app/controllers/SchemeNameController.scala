@@ -25,6 +25,7 @@ import identifiers.register.IsAboutSchemeCompleteId
 import javax.inject.Inject
 import models.Mode
 import models.PSAName._
+import models.requests.OptionalDataRequest
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -50,25 +51,27 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
 
   private val form = formProvider()
 
+  private def existingSchemeNameOrEmptyString(implicit request:OptionalDataRequest[AnyContent]):String =
+    request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(SchemeNameId)).fold(form)(v=> form.fill(v))
-      Ok(schemeName(appConfig, preparedForm, mode, request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")))
+      Ok(schemeName(appConfig, preparedForm, mode, existingSchemeNameOrEmptyString))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
-      val existingSchemeName = request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(schemeName(appConfig, formWithErrors, mode, existingSchemeName))),
+          Future.successful(BadRequest(schemeName(appConfig, formWithErrors, mode, existingSchemeNameOrEmptyString))),
         value =>
           nameMatchingFactory.nameMatching(value).flatMap { nameMatching =>
             if (nameMatching.isMatch) {
               Future.successful(BadRequest(schemeName(appConfig, form.withError(
                 "schemeName",
                 "messages__error__scheme_name_psa_name_match"
-              ), mode, existingSchemeName)))
+              ), mode, existingSchemeNameOrEmptyString)))
             } else {
               dataCacheConnector.save(request.externalId, SchemeNameId, value).flatMap { cacheMap =>
                 sectionComplete.setCompleteFlag(request.externalId, IsAboutSchemeCompleteId, UserAnswers(cacheMap), value = false).map { json =>
