@@ -99,7 +99,12 @@ class DeclarationController @Inject()(
     }
 
     readyForRender.flatMap { _ =>
-      request.userAnswers.get(DeclarationDutiesId) match {
+      val declarationDuties = if (fs.get(enableHubV2)) {
+        request.userAnswers.get(identifiers.DeclarationDutiesId)
+      } else {
+        request.userAnswers.get(DeclarationDutiesId)
+      }
+      declarationDuties match {
         case Some(hasWorkingKnowledge) => Future.successful(
           status(
             declaration(appConfig, form, isCompany, isDormant = isDeclarationDormant, showMasterTrustDeclaration, hasWorkingKnowledge)
@@ -111,7 +116,7 @@ class DeclarationController @Inject()(
   }
 
   private def showMasterTrustDeclaration(implicit request: DataRequest[AnyContent]): Boolean = {
-    if(fs.get(enableHubV2)) {
+    if (fs.get(enableHubV2)) {
       request.userAnswers.get(SchemeTypeId).contains(MasterTrust)
     } else {
       request.userAnswers.get(SchemeDetailsId).map(_.schemeType).contains(MasterTrust)

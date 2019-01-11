@@ -19,12 +19,12 @@ package controllers
 import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
-import identifiers.register.DeclarationDutiesId
+import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import models.NormalMode
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import utils.FakeNavigator
+import utils.{FakeNavigator, FakeSectionComplete}
 import views.html.workingKnowledge
 
 class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
@@ -42,7 +42,8 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
       new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction,
       dataRetrievalAction,
-      formProvider
+      formProvider,
+      FakeSectionComplete
     )
 
   private def viewAsString(form: Form[_] = form) = workingKnowledge(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages).toString
@@ -67,13 +68,14 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form.fill(true))
     }
 
-    "redirect to the next page when valid data is submitted" in {
-      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
+    "save the complete flag and redirect to the next page when valid data is submitted for true" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+      FakeSectionComplete.verify(IsWorkingKnowledgeCompleteId, true)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

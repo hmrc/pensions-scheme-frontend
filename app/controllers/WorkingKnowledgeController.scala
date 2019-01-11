@@ -21,7 +21,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
 import identifiers.SchemeNameId
-import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
+import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import javax.inject.Inject
 import models.Mode
 import models.requests.OptionalDataRequest
@@ -42,7 +42,8 @@ class WorkingKnowledgeController @Inject()(
                                             @BeforeYouStart navigator: Navigator,
                                             authenticate: AuthAction,
                                             getData: DataRetrievalAction,
-                                            formProvider: WorkingKnowledgeFormProvider
+                                            formProvider: WorkingKnowledgeFormProvider,
+                                            sectionComplete: SectionComplete
                                           )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
@@ -66,9 +67,23 @@ class WorkingKnowledgeController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode, existingSchemeNameOrEmptyString))),
         value => {
-          dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap))))
+
+          dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).flatMap(cacheMap =>
+            setCompleteFlag(value, UserAnswers(cacheMap)).map { _ =>
+              Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap)))
+            }
+          )
         }
       )
+  }
+
+  private def setCompleteFlag(value: Boolean, userAnswers: UserAnswers)
+                             (implicit request: OptionalDataRequest[AnyContent]): Future[UserAnswers] = {
+    if (value) {
+      sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
+        userAnswers, true)
+    } else {
+      Future.successful(userAnswers)
+    }
   }
 }

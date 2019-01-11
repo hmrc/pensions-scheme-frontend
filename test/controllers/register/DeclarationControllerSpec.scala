@@ -121,7 +121,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
       "master trust with toggle on" in {
 
         val data = new FakeDataRetrievalAction(Some(UserAnswers()
-          .set(DeclarationDutiesId)(false)
+          .set(identifiers.DeclarationDutiesId)(false)
           .asOpt
           .value
           .set(SchemeTypeId)(SchemeType.MasterTrust)
@@ -258,8 +258,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
     UserAnswers()
       .schemeDetails()
       .individualEstablisher()
-      .set(DeclarationDutiesId)(false)
-      .asOpt
+      .set(identifiers.DeclarationDutiesId)(false).asOpt
       .value
       .asDataRetrievalAction()
 
@@ -274,7 +273,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
     UserAnswers()
       .schemeDetails()
       .companyEstablisher(0)
-      .set(DeclarationDutiesId)(false)
+      .set(identifiers.DeclarationDutiesId)(false)
       .asOpt
       .value
       .dormantCompany(false, 0)
@@ -286,7 +285,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
     UserAnswers()
       .schemeDetails()
       .companyEstablisher(0)
-      .set(DeclarationDutiesId)(false)
+      .set(identifiers.DeclarationDutiesId)(false)
       .asOpt
       .value
       .dormantCompany(false, 0)
@@ -300,7 +299,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
     UserAnswers()
       .schemeDetails()
       .companyEstablisher(0)
-      .set(DeclarationDutiesId)(false)
+      .set(identifiers.DeclarationDutiesId)(false)
       .asOpt
       .value
       .dormantCompany(false, 0)

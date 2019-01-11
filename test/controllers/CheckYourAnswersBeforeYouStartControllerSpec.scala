@@ -79,7 +79,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       SchemeTypeId.toString -> SchemeType.SingleTrust,
       HaveAnyTrusteesId.toString -> true,
       EstablishedCountryId.toString -> "GB",
-      DeclarationDutiesId.toString -> false
+      identifiers.DeclarationDutiesId.toString -> false
     ))
   )
 

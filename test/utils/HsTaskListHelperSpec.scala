@@ -26,7 +26,7 @@ import identifiers.register.trustees.IsTrusteeCompleteId
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{IsPartnershipCompleteId, PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
+import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import models.person.PersonDetails
 import models.{CompanyDetails, NormalMode, PartnershipDetails}
 import org.joda.time.LocalDate
@@ -119,7 +119,7 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
       val helper = new HsTaskListHelper(userAnswers)
       helper.workingKnowledgeSection(userAnswers).value mustBe
         SchemeDetailsTaskListSection(Some(true), Link(workingKnowledgeLinkText,
-          controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad().url), None)
+          controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url), None)
     }
   }
 

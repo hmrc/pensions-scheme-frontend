@@ -23,7 +23,7 @@ import identifiers.register.establishers.partnership.{PartnershipDetailsId => Es
 import identifiers.register.trustees.company.{CompanyDetailsId => TrusteeCompanyDetailsId}
 import identifiers.register.trustees.individual.TrusteeDetailsId
 import identifiers.register.trustees.partnership.{PartnershipDetailsId => TrusteePartnershipDetailsId}
-import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
+import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import models.NormalMode
 import models.register.Entity
 import play.api.i18n.Messages
@@ -91,7 +91,7 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
     userAnswers.get(DeclarationDutiesId) match {
       case Some(false) =>
         val wkLink = userAnswers.get(IsWorkingKnowledgeCompleteId) match {
-          case Some(true) => Link(workingKnowledgeLinkText, controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad().url)
+          case Some(true) => Link(workingKnowledgeLinkText, controllers.routes.AdviserCheckYourAnswersController.onPageLoad().url)
           case _ => Link(workingKnowledgeLinkText, controllers.routes.WhatYouWillNeedWorkingKnowledgeController.onPageLoad.url)
         }
         Some(SchemeDetailsTaskListSection(userAnswers.get(IsWorkingKnowledgeCompleteId), wkLink, None))

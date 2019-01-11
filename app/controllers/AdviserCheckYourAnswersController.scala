@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors._
 import controllers.actions._
 import identifiers._
-import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
+import identifiers.IsWorkingKnowledgeCompleteId
 import javax.inject.Inject
 import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
