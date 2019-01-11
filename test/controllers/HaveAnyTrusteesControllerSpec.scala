@@ -53,7 +53,6 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
   private val scheme = "A scheme"
   val formProvider = new HaveAnyTrusteesFormProvider()
   val form = formProvider()
-  val schemeName = "Test Scheme Name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): HaveAnyTrusteesController =
     new HaveAnyTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
