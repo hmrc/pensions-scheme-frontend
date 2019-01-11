@@ -16,11 +16,22 @@
 
 @(
 messageKey: String,
-href: Call
+enableHubV2: Boolean,
+anotherReturn: Option[Call] = None
 )(implicit messages: Messages)
+
+@returnCall=@{
+ if(enableHubV2) {
+  controllers.routes.SchemeTaskListController.onPageLoad()
+ } else {
+  controllers.register.routes.SchemeTaskListController.onPageLoad()
+ }
+}
 
 <div class="grid-row">
  <div class="column-two-thirds">
-  <p class="govuk-margin-top-5"><a id="return-link" href="@href">@messages(messageKey)</a></p>
+  <p class="govuk-margin-top-5">
+   <a id="return-link" href="@anotherReturn.fold(returnCall)(call=>call)">@messages(messageKey)</a>
+  </p>
  </div>
 </div>

@@ -21,10 +21,10 @@
 @import uk.gov.hmrc.play.views.html._
 @import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
 
-@(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call, enableHubV2: Boolean = false, returnOverview: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call, returnOverview: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @heading=@{
-    if(enableHubV2) {
+    if(appConfig.enableHubV2) {
         messages("checkYourAnswers.hs.heading")
     } else {
         messages("checkYourAnswers.heading")
@@ -32,7 +32,7 @@
 }
 
 @title=@{
-    if(enableHubV2) {
+    if(appConfig.enableHubV2) {
         messages("checkYourAnswers.hs.title")
     } else {
         messages("checkYourAnswers.title")
@@ -60,9 +60,9 @@
 
         @components.submit_button()
         @if(returnOverview){
-            @components.return_link("messages__complete__return", appConfig.managePensionsSchemeOverviewUrl)
+            @components.return_link("messages__complete__return", appConfig.enableHubV2, Some(appConfig.managePensionsSchemeOverviewUrl))
         } else {
-            @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
+            @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
         }
 
     }

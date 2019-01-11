@@ -45,7 +45,7 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
       "_statement9")
 
     "have a return link" in {
-      Jsoup.parse(createView()().toString).select("a[id=return-pension-scheme-details]") must
+      Jsoup.parse(createView()().toString).select("a[id=return-link]") must
         haveLink(controllers.register.routes.SchemeTaskListController.onPageLoad().url)
     }
   }

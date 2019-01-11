@@ -41,6 +41,6 @@ bodyClasses = None) {
 
         @components.submit_button("messages__common__continue")
 
-        @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad())
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
     }
 }
