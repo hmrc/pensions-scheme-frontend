@@ -21,7 +21,7 @@
 @import models.register._
 @import models.register.SchemeType.MasterTrust
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__scheme_name__title"),
@@ -42,7 +42,6 @@
 
         @components.submit_button()
 
-        @components.return_link("messages__complete__return", appConfig.enableHubV2, Some(appConfig.managePensionsSchemeOverviewUrl))
-
+        @components.return_link_before_you_start(appConfig, mode, schemeName)
     }
 }

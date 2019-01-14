@@ -30,15 +30,9 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   private def emptyAnswerSections: Seq[Section] = Nil
 
-  private def frontendAppConfigWithFalg(isHubEnabled:Boolean) : FrontendAppConfig ={
-    new GuiceApplicationBuilder()
-      .configure("features.enable-hub-v2" -> isHubEnabled)
-      .build().injector.instanceOf[FrontendAppConfig]
-  }
+  private lazy val frontendAppConfigWithHubEnabled = appConfig(isHubEnabled=true)
 
-  private lazy val frontendAppConfigWithHubEnabled = frontendAppConfigWithFalg(isHubEnabled=true)
-
-  private lazy val frontendAppConfigWithoutHubEnabled = frontendAppConfigWithFalg(isHubEnabled=false)
+  private lazy val frontendAppConfigWithoutHubEnabled = appConfig(isHubEnabled=false)
   
   def createView(appConfig : FrontendAppConfig, returnOverview : Boolean = false): () => HtmlFormat.Appendable = () =>
     check_your_answers(

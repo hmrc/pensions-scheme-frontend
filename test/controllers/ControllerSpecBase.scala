@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import config.FrontendAppConfig
 import controllers.actions.FakeDataRetrievalAction
-import identifiers.SchemeNameId
+import identifiers.{AdviserNameId, SchemeNameId}
 import identifiers.register.adviser.AdviserDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
@@ -176,10 +176,11 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
     ))
   )
 
-  lazy val frontendAppConfigWithHubEnabled : FrontendAppConfig = {
-    val app = new GuiceApplicationBuilder()
-      .configure("features.enable-hub-v2" -> true)
-      .build()
-    app.injector.instanceOf[FrontendAppConfig]
-  }
+  def getMandatoryWorkingKnowledgePerson: FakeDataRetrievalAction = new FakeDataRetrievalAction(
+    Some(Json.obj(AdviserNameId.toString ->
+        "name"
+    ))
+  )
+
+  lazy val frontendAppConfigWithHubEnabled = appConfig(isHubEnabled=true)
 }

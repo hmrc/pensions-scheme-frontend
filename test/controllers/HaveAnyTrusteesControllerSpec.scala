@@ -50,15 +50,15 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
 
   def onwardRoute: Call = controllers.routes.IndexController.onPageLoad()
 
+  private val scheme = "A scheme"
   val formProvider = new HaveAnyTrusteesFormProvider()
   val form = formProvider()
-  val schemeName = "Test Scheme Name"
 
   def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): HaveAnyTrusteesController =
     new HaveAnyTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = haveAnyTrustees(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = haveAnyTrustees(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages).toString
 
   "HaveAnyTrustees Controller" must {
 

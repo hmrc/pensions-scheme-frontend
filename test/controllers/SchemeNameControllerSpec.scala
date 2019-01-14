@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeNameControllerSpec extends ControllerSpecBase {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
-
+  private val scheme = "A scheme"
   val formProvider = new SchemeNameFormProvider()
   val form = formProvider()
 
@@ -65,7 +65,7 @@ class SchemeNameControllerSpec extends ControllerSpecBase {
       FakeSectionComplete
     )
 
-  private def viewAsString(form: Form[_] = form) = schemeName(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = schemeName(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages).toString
 
   "SchemeName Controller" must {
 

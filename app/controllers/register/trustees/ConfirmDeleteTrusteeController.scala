@@ -60,19 +60,16 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           if (trustee.isDeleted) {
             Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(index, trusteeKind)))
           } else {
-            retrieveSchemeName {
-              _ =>
-                Future.successful(
-                  Ok(
-                    confirmDeleteTrustee(
-                      appConfig,
-                      form,
-                      trustee.name,
-                      routes.ConfirmDeleteTrusteeController.onSubmit(index, trusteeKind)
-                    )
-                  )
+            Future.successful(
+              Ok(
+                confirmDeleteTrustee(
+                  appConfig,
+                  form,
+                  trustee.name,
+                  routes.ConfirmDeleteTrusteeController.onSubmit(index, trusteeKind)
                 )
-            }
+              )
+            )
           }
       } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
   }

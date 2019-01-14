@@ -18,7 +18,8 @@ package controllers
 
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import controllers.actions._
-import controllers.register.adviser.routes.{AdviserNameController, WorkingKnowledgeController}
+import controllers.register.adviser.routes.WorkingKnowledgeController
+import controllers.routes.AdviserNameController
 import javax.inject.Inject
 import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}

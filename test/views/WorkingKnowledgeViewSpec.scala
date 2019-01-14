@@ -18,14 +18,14 @@ package views
 
 import controllers.routes
 import forms.WorkingKnowledgeFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
 import views.html.workingKnowledge
 
 class WorkingKnowledgeViewSpec extends YesNoViewBehaviours {
-
+  private val scheme = "A scheme"
   val messageKeyPrefix = "workingKnowledge"
 
   val workingKnowledgeOptions = Seq("true", "false")
@@ -33,10 +33,13 @@ class WorkingKnowledgeViewSpec extends YesNoViewBehaviours {
   val form = new WorkingKnowledgeFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () =>
-    workingKnowledge(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    workingKnowledge(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
+
+  def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
+    workingKnowledge(appConfig(isHubEnabled = true), form, CheckMode, scheme)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    workingKnowledge(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    workingKnowledge(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
 
   "Working Knowledge view" must {
 
@@ -53,5 +56,9 @@ class WorkingKnowledgeViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
 
+  }
+
+  "Working Knowledge  view in check mode where hub enabled" must {
+    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.SchemeTaskListController.onPageLoad().url)
   }
 }

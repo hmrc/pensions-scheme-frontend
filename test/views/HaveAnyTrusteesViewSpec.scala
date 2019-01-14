@@ -18,7 +18,7 @@ package views
 
 import controllers.routes
 import forms.register.trustees.HaveAnyTrusteesFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
@@ -26,15 +26,19 @@ import views.html.haveAnyTrustees
 
 class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {
 
+  private val scheme = "A scheme"
   val messageKeyPrefix = "haveAnyTrustees"
 
   val form = new HaveAnyTrusteesFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    haveAnyTrustees(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    haveAnyTrustees(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
+
+  def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
+    haveAnyTrustees(appConfig(isHubEnabled = true), form, CheckMode, scheme)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => haveAnyTrustees(frontendAppConfig, form,
-    NormalMode)(fakeRequest, messages)
+    NormalMode, scheme)(fakeRequest, messages)
 
   "HaveAnyTrustees view with hub enabled" must {
 
@@ -45,4 +49,7 @@ class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {
     behave like pageWithReturnLink(createView(), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
   }
 
+  "HaveAnyTrustees view in check mode where hub enabled" must {
+    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.SchemeTaskListController.onPageLoad().url)
+  }
 }
