@@ -705,9 +705,13 @@ messages__adviserDetails__error__email_required = Enter an email address
 messages__adviserDetails__error__adviser_name_length = The adviser name cannot be more than 107 characters
 messages__adviserDetails__error__adviser_name_invalid = The adviser name contains invalid characters
 
+messages__confirmAdviserAddress__title = Confirm the person’s address
+messages__confirmAdviserAddress__heading = Confirm {0}’s address
+
+#Delete 3 messages later
+messages__adviserAddress__secondary = Pension adviser
 messages__adviserAddress__title = Pension adviser’s address
 messages__adviserAddress__heading = Pension adviser’s address
-messages__adviserAddress__secondary = Pension adviser
 
 messages__adviser__secondary_heading = Pension adviser
 
@@ -715,6 +719,9 @@ messages__adviserPostCodeLookupAddress__title=Pension adviser’s address
 messages__adviserPostCodeLookupAddress__heading=Pension adviser’s address
 messages__adviserPostCodeLookupAddress__secondary=Pension adviser
 messages__adviserPostCodeLookupAddress__enterPostCode= Enter the postcode below, or if you have an overseas address{0} enter the address manually {1}
+messages__adviserPostCodeLookup__title=What is the person’s postcode?
+messages__adviserPostCodeLookup__heading=What is {0}’s postcode?
+
 
 messages__enrolment__error__name_invalid = Enter a PSA Name
 
