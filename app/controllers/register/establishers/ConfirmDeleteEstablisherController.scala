@@ -72,20 +72,17 @@ class ConfirmDeleteEstablisherController @Inject()(
             if (establisher.isDeleted) {
               Future.successful(Redirect(routes.AlreadyDeletedController.onPageLoad(index, establisherKind)))
             } else {
-              retrieveSchemeName {
-                _ =>
-                  Future.successful(
-                    Ok(
-                      confirmDeleteEstablisher(
-                        appConfig,
-                        form,
-                        establisher.name,
-                        getHintText(establisherKind),
-                        routes.ConfirmDeleteEstablisherController.onSubmit(index, establisherKind)
-                      )
-                    )
+              Future.successful(
+                Ok(
+                  confirmDeleteEstablisher(
+                    appConfig,
+                    form,
+                    establisher.name,
+                    getHintText(establisherKind),
+                    routes.ConfirmDeleteEstablisherController.onSubmit(index, establisherKind)
                   )
-              }
+                )
+              )
             }
         } getOrElse Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
     }
