@@ -60,10 +60,12 @@ class InvestmentRegulatedSchemeControllerSpec extends ControllerWithQuestionPage
       true
     )
 
-    "set the IsAboutBenefitsAndInsuranceCompleteId to false to change to in progress status" in {
-      controller(this)(dataRetrievalAction = validData.dataRetrievalAction, sectionComplete = FakeSectionComplete).onSubmit(NormalMode)(postRequest)
+    "calling onSubmit" must {
+      "set the IsAboutBenefitsAndInsuranceCompleteId to false to change to in progress status" in {
+        controller(this)(dataRetrievalAction = validData.dataRetrievalAction, sectionComplete = FakeSectionComplete).onSubmit(NormalMode)(postRequest)
 
-      FakeSectionComplete.verify(IsAboutBenefitsAndInsuranceCompleteId, false)
+        FakeSectionComplete.verify(IsAboutBenefitsAndInsuranceCompleteId, false)
+      }
     }
   }
 }

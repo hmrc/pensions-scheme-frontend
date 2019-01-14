@@ -81,7 +81,7 @@ class WorkingKnowledgeController @Inject()(
                              (implicit request: OptionalDataRequest[AnyContent]): Future[UserAnswers] = {
     if (value) {
       sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
-        userAnswers, true)
+        userAnswers, value)
     } else {
       Future.successful(userAnswers)
     }

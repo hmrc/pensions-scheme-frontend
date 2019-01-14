@@ -49,11 +49,8 @@ class EstablisherKindController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val redirectResult = request.userAnswers.get(EstablisherKindId(index)) match {
-        case None => Ok(establisherKind(appConfig, form, mode, index))
-        case Some(value) => Ok(establisherKind(appConfig, form.fill(value), mode, index))
-      }
-      Future.successful(redirectResult)
+      val formWithData = request.userAnswers.get(EstablisherKindId(index)).fold(form)(form.fill)
+      Future.successful(Ok(establisherKind(appConfig, formWithData, mode, index)))
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {

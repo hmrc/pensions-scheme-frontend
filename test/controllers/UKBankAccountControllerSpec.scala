@@ -66,10 +66,12 @@ class UKBankAccountControllerSpec extends ControllerWithQuestionPageBehaviours {
       true
     )
 
-    "set the IsAboutBankDetailsCompleteId to false to change to in progress status" in {
-      controller(this)(dataRetrievalAction = validData.dataRetrievalAction, sectionComplete = FakeSectionComplete).onSubmit(NormalMode)(postRequest)
+    "calling onSubmit" must {
+      "set the IsAboutBankDetailsCompleteId to false to change to in progress status" in {
+        controller(this)(dataRetrievalAction = validData.dataRetrievalAction, sectionComplete = FakeSectionComplete).onSubmit(NormalMode)(postRequest)
 
-      FakeSectionComplete.verify(IsAboutBankDetailsCompleteId, false)
+        FakeSectionComplete.verify(IsAboutBankDetailsCompleteId, false)
+      }
     }
   }
 }
