@@ -17,7 +17,7 @@
 package views
 
 import forms.EstablishedCountryFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import utils.{CountryOptions, InputOption}
@@ -36,6 +36,9 @@ class EstablishedCountryViewSpec extends StringViewBehaviours {
 
   def createView(): () => HtmlFormat.Appendable = () =>
     establishedCountry(frontendAppConfig, form, NormalMode, Seq.empty, schemeName)(fakeRequest, messages)
+
+  def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
+    establishedCountry(appConfig(isHubEnabled = true), form, CheckMode, Seq.empty, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) =>
     establishedCountry(frontendAppConfig, form, NormalMode, inputOptions, schemeName)(fakeRequest, messages)
@@ -62,5 +65,9 @@ class EstablishedCountryViewSpec extends StringViewBehaviours {
         }
       }
     }
+  }
+
+  "EstablishedCountry view in check mode where hub enabled" must {
+    behave like pageWithReturnLink(createViewInCheckMode, controllers.register.routes.SchemeTaskListController.onPageLoad().url)
   }
 }
