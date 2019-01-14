@@ -145,7 +145,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
   )
 
   private def viewAsString(): String = check_your_answers(
-    frontendAppConfig,
+    frontendAppConfigWithHubEnabled,
     Seq(
       benefitsAndInsuranceSection
     ),

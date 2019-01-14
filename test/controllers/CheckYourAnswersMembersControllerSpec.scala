@@ -97,7 +97,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
   )
 
   private def viewAsString(): String = check_your_answers(
-    frontendAppConfig,
+    frontendAppConfigWithHubEnabled,
     Seq(
       membersSection
     ),

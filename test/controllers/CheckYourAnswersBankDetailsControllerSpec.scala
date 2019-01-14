@@ -110,7 +110,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
   )
 
   private def viewAsString(): String = check_your_answers(
-    frontendAppConfig, Seq(bankAccountSection), postUrl)(fakeRequest, messages).toString
+    frontendAppConfigWithHubEnabled, Seq(bankAccountSection), postUrl)(fakeRequest, messages).toString
 
 }
 
