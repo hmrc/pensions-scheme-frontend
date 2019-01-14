@@ -52,7 +52,7 @@
     <ol class="task-list">
         <li>
             <h2 id="section-before-you-start-header" class="heading-large">
-                @messages("messages__schemeDetailsTaskList__before_you_start_header")
+                @messages("messages__schemeTaskList__before_you_start_header")
             </h2>
             <ul class="task-list-items">
                 <li class="task-list-item">
@@ -69,7 +69,7 @@
 
         <li>
             <h2 id="section-about-header" class="heading-large">
-                @messages("messages__schemeDetailsTaskList__about_header")
+                @messages("messages__schemeTaskList__about_header")
             </h2>
             <ul class="task-list-items">
                 @for((item, i) <- taskSections.about.zipWithIndex){
@@ -91,7 +91,7 @@
         <li>
             @taskSections.workingKnowledge.map { wk =>
                 <h2 id="section-working-knowledge-header" class="heading-large">
-                    @messages("messages__schemeDetailsTaskList__working_knowledge_header")
+                    @messages("messages__schemeTaskList__working_knowledge_header")
                 </h2>
                 <ul class="task-list-items">
                     <li class="task-list-item">

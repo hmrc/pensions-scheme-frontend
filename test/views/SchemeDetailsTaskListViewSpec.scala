@@ -50,7 +50,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     val completed = schemeDetailsTaskListData.copy(beforeYouStart = beforeYouStartSection.copy(isCompleted = Some(true)))
 
     behave like simpleSection(headerId = "section-before-you-start-header",
-      headerText = "messages__schemeDetailsTaskList__before_you_start_header",
+      headerText = "messages__schemeTaskList__before_you_start_header",
       linkId = "section-before-you-start-link",
       linkUrl = beforeYouStartSection.link.target,
       linkText = beforeYouStartSection.link.text,
@@ -66,7 +66,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
     val completed = schemeDetailsTaskListData.copy(workingKnowledge = Some(wkSection.copy(isCompleted = Some(true))))
 
     behave like simpleSection(headerId = "section-working-knowledge-header",
-      headerText = "messages__schemeDetailsTaskList__working_knowledge_header",
+      headerText = "messages__schemeTaskList__working_knowledge_header",
       linkId = "section-working-knowledge-link",
       linkUrl = wkSection.link.target,
       linkText = wkSection.link.text,
@@ -81,7 +81,7 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 
     "display correct header" in {
       val doc = asDocument(view())
-      assertRenderedByIdWithText(doc, id = "section-about-header", text = messages("messages__schemeDetailsTaskList__about_header"))
+      assertRenderedByIdWithText(doc, id = "section-about-header", text = messages("messages__schemeTaskList__about_header"))
     }
 
     Seq(("01", "members", "messages__schemeTaskList__inProgress"), ("02", "benefits and insurance", "messages__schemeTaskList__completed"),
@@ -308,10 +308,10 @@ class SchemeDetailsTaskListViewSpec extends ViewBehaviours {
 }
 
 object SchemeDetailsTaskListViewSpec extends ViewSpecBase {
-  private lazy val beforeYouStartLinkText = messages("messages__schemeDetailsTaskList__before_you_start_link_text")
-  private lazy val aboutMembersLinkText = messages("messages__schemeDetailsTaskList__about_members_link_text")
-  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeDetailsTaskList__about_benefits_and_insurance_link_text")
-  private lazy val aboutBankDetailsLinkText = messages("messages__schemeDetailsTaskList__about_bank_details_link_text")
+  private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
+  private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
+  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
+  private lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
   private lazy val workingKnowledgeLinkText = messages("messages__schemeDetailsTaskList__working_knowledge_link_text")
   private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
   private lazy val individualLinkText = messages("messages__schemeTaskList__individual_link")

@@ -31,11 +31,11 @@ import viewmodels._
 
 class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extends Enumerable.Implicits {
 
-  private lazy val beforeYouStartLinkText = messages("messages__schemeDetailsTaskList__before_you_start_link_text")
-  private lazy val aboutMembersLinkText = messages("messages__schemeDetailsTaskList__about_members_link_text")
-  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeDetailsTaskList__about_benefits_and_insurance_link_text")
-  private lazy val aboutBankDetailsLinkText = messages("messages__schemeDetailsTaskList__about_bank_details_link_text")
-  private lazy val workingKnowledgeLinkText = messages("messages__schemeDetailsTaskList__working_knowledge_link_text")
+  private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
+  private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
+  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
+  private lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
+  private lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_link_text")
   private lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
   private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
   private lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
@@ -153,6 +153,12 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
     ).forall(_.contains(true))
   }
 
+  private[utils] def declarationLink(userAnswers: UserAnswers): Option[Link] = {
+    if (declarationEnabled(userAnswers))
+      Some(Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url))
+    else None
+  }
+
   private def linkText(item: Entity[_]): String = item.id match {
     case EstablisherCompanyDetailsId(_) | TrusteeCompanyDetailsId(_) => companyLinkText
     case EstablisherDetailsId(_) | TrusteeDetailsId(_) => individualLinkText
@@ -189,11 +195,4 @@ class HsTaskListHelper(answers: UserAnswers)(implicit messages: Messages) extend
   private def isAllEstablishersCompleted(userAnswers: UserAnswers): Boolean = {
     userAnswers.allEstablishersAfterDelete.nonEmpty && userAnswers.allEstablishersAfterDelete.forall(_.isCompleted)
   }
-
-  private def declarationLink(userAnswers: UserAnswers): Option[Link] = {
-    if (declarationEnabled(userAnswers))
-      Some(Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url))
-    else None
-  }
-
 }

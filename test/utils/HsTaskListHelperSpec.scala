@@ -360,14 +360,28 @@ class HsTaskListHelperSpec extends WordSpec with MustMatchers with OptionValues 
       helper.declarationEnabled(userAnswers) mustBe false
     }
   }
+
+  "declarationLink" must {
+    "return the link when all the sections are completed" in {
+        val userAnswers = answersData().asOpt.value
+        val helper = new HsTaskListHelper(userAnswers)
+        helper.declarationLink(userAnswers).value mustBe Link(declarationLinkText, controllers.register.routes.DeclarationController.onPageLoad().url)
+    }
+
+    "return None when all the sections are not completed" in {
+      val userAnswers = answersData(isCompleteBeforeStart = false).asOpt.value
+      val helper = new HsTaskListHelper(userAnswers)
+      helper.declarationLink(userAnswers) mustBe None
+    }
+  }
 }
 
 object HsTaskListHelperSpec extends SpecBase {
-  private lazy val beforeYouStartLinkText = messages("messages__schemeDetailsTaskList__before_you_start_link_text")
-  private lazy val aboutMembersLinkText = messages("messages__schemeDetailsTaskList__about_members_link_text")
-  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeDetailsTaskList__about_benefits_and_insurance_link_text")
-  private lazy val aboutBankDetailsLinkText = messages("messages__schemeDetailsTaskList__about_bank_details_link_text")
-  private lazy val workingKnowledgeLinkText = messages("messages__schemeDetailsTaskList__working_knowledge_link_text")
+  private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
+  private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
+  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
+  private lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
+  private lazy val workingKnowledgeLinkText = messages("messages__schemeTaskList__working_knowledge_link_text")
   private lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
   private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
   private lazy val companyLinkText = messages("messages__schemeTaskList__company_link")
@@ -375,6 +389,7 @@ object HsTaskListHelperSpec extends SpecBase {
   private lazy val partnershipLinkText = messages("messages__schemeTaskList__partnership_link")
   private lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
   private lazy val changeTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_change_link")
+  private lazy val declarationLinkText = messages("messages__schemeTaskList__declaration_link")
 
   private def beforeYouStartLink(link: String) = {
     Link(

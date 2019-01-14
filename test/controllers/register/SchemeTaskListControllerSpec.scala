@@ -65,11 +65,11 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
   private val userAnswersJson = readJsonFromFile("/payload.json")
 
   private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
-  private lazy val beforeYouStartLinkText = messages("messages__schemeDetailsTaskList__before_you_start_link_text")
+  private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
   private lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
-  private lazy val aboutMembersLinkText = messages("messages__schemeDetailsTaskList__about_members_link_text")
-  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeDetailsTaskList__about_benefits_and_insurance_link_text")
-  private lazy val aboutBankDetailsLinkText = messages("messages__schemeDetailsTaskList__about_bank_details_link_text")
+  private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
+  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
+  private lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
   private lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
 
   private val schemeDetailsTL = SchemeDetailsTaskList(
