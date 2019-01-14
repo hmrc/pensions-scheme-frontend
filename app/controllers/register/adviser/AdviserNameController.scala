@@ -16,7 +16,7 @@
 
 package controllers.register.adviser
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.AdviserNameFormProvider

@@ -34,7 +34,6 @@ case object DeclarationDutiesId extends TypedIdentifier[Boolean] {
           .flatMap(_.remove(AdviserAddressListId))
           .flatMap(_.remove(AdviserAddressPostCodeLookupId))
           .flatMap(_.remove(AdviserAddressId))
-          .flatMap(_.remove(IsWorkingKnowledgeCompleteId))
       case _ => super.cleanup(value, userAnswers)
     }
   }
