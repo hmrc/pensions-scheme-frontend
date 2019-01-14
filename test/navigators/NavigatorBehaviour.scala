@@ -16,6 +16,7 @@
 
 package navigators
 
+import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import identifiers.{Identifier, LastPageId}
 import models.requests.IdentifiedRequest
@@ -23,6 +24,7 @@ import models.{CheckMode, LastPage, NormalMode}
 import org.scalatest.exceptions.TableDrivenPropertyCheckFailedException
 import org.scalatest.prop.{PropertyChecks, TableFor6}
 import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Navigator, UserAnswers}
@@ -31,6 +33,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 trait NavigatorBehaviour extends PropertyChecks with OptionValues {
   this: WordSpec with MustMatchers =>
+
+  lazy val frontendAppConfigWithHubEnabled : FrontendAppConfig = {
+    val app = new GuiceApplicationBuilder()
+      .configure("features.enable-hub-v2" -> true)
+      .build()
+    app.injector.instanceOf[FrontendAppConfig]
+  }
 
   protected implicit val request: IdentifiedRequest = new IdentifiedRequest {
     override def externalId: String = "test-external-id"

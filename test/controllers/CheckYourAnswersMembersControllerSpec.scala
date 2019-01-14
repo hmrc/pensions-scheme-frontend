@@ -46,7 +46,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
         val result = controller().onSubmit(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.register.routes.SchemeTaskListController.onPageLoad().url
+        redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad().url
         FakeSectionComplete.verify(IsAboutMembersCompleteId, true)
       }
     }
@@ -67,7 +67,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersMembersController =
     new CheckYourAnswersMembersController(
-      frontendAppConfig,
+      frontendAppConfigWithHubEnabled,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,

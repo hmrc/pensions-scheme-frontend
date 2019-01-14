@@ -44,6 +44,6 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix,
       routes.PartnershipDetailsController.onSubmit(NormalMode, firstIndex).url, "partnershipName")
 
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
   }
 }

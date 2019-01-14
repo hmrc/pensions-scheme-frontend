@@ -49,7 +49,7 @@ class ContactDetailsViewSpec extends QuestionViewBehaviours[ContactDetails] {
 
     behave like normalPage(createView(), messageKeyPrefix, pageHeader = "Enter the scheme establisher’s contact details")
 
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
 
     behave like pageWithTextFields(
       createViewUsingForm,

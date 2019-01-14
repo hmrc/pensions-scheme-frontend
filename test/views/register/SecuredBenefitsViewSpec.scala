@@ -45,6 +45,6 @@ class SecuredBenefitsViewSpec extends YesNoViewBehaviours {
       expectedFormAction = routes.SecuredBenefitsController.onSubmit(NormalMode).url
     )
 
-    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
   }
 }

@@ -44,7 +44,7 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
       assertContainsText(doc, messages("messages__common__crn_hint"))
     }
 
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
 
     "rendered" must {
       "contain radio buttons for the value" in {

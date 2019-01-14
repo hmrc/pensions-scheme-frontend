@@ -119,6 +119,6 @@ class AddCompanyDirectorsViewSpec extends YesNoViewBehaviours with EntityListBeh
       doc must haveDynamicText("messages__addCompanyDirectorsOrPartners_tell_us_if_you_have_more")
     }
 
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
   }
 }

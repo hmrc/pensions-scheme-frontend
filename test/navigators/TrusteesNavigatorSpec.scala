@@ -40,6 +40,8 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import TrusteesNavigatorSpec._
 
+  override lazy val frontendAppConfig = frontendAppConfigWithHubEnabled
+
   private def routesWithHubEnabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (HaveAnyTrusteesId, haveAnyTrusteesTrueWithNoTrustees, trusteeKind(0), false, None, false),
@@ -108,7 +110,7 @@ object TrusteesNavigatorSpec extends OptionValues with Enumerable.Implicits {
 
   private def sessionExpired = controllers.routes.SessionExpiredController.onPageLoad()
 
-  private def taskList = controllers.register.routes.SchemeTaskListController.onPageLoad()
+  private def taskList = controllers.routes.SchemeTaskListController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = {
     val haveAnyTrustees = answers.get(HaveAnyTrusteesId) map { value =>

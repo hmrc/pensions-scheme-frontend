@@ -48,6 +48,6 @@ class BankAccountDetailsViewSpec extends QuestionViewBehaviours[BankAccountDetai
       "bankName", "accountName", "accountNumber", "sortCode"
     )
 
-    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
   }
 }

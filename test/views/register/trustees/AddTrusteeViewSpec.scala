@@ -66,7 +66,7 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
   "AddTrustee view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
 
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
 
     behave like yesNoPage(
       createViewUsingForm(trustees),

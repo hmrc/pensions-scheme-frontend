@@ -39,7 +39,7 @@ class PartnershipUniqueTaxReferenceViewSpec extends ViewBehaviours {
 
   "PartnershipUniqueTaxReference view" when {
     "rendered" must {
-      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+      behave like pageWithReturnLink(createView(), getReturnLink)
 
       val utrOptions = Seq("true", "false")
 

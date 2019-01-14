@@ -42,6 +42,6 @@ class InvestmentRegulatedViewSpec extends YesNoViewBehaviours {
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.InvestmentRegulatedController.onSubmit(NormalMode).url)
 
-    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
   }
 }

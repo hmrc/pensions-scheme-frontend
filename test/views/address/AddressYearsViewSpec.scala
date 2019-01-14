@@ -48,7 +48,7 @@ class AddressYearsViewSpec extends ViewBehaviours {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, viewmodel.heading)
 
-      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+      behave like pageWithReturnLink(createView(), getReturnLink)
 
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))

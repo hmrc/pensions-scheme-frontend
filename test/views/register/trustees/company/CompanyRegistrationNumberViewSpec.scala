@@ -36,7 +36,7 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
 
   "CompanyRegistrationNumber view" when {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
 
     "Generate correct hint text" in {
       val doc = asDocument(createView()())

@@ -47,7 +47,7 @@ class CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
         val result = controller().onSubmit(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad().url)
       }
     }
 
@@ -61,7 +61,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBankDetailsController =
     new CheckYourAnswersBankDetailsController(
-      frontendAppConfig,
+      frontendAppConfigWithHubEnabled,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,

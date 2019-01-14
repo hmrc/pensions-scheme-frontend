@@ -47,7 +47,7 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
         val result = controller().onSubmit(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.register.routes.SchemeTaskListController.onPageLoad().url
+        redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad().url
         FakeSectionComplete.verify(IsAboutBenefitsAndInsuranceCompleteId, true)
       }
     }
@@ -74,7 +74,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBenefitsAndInsuranceController =
     new CheckYourAnswersBenefitsAndInsuranceController(
-      frontendAppConfig,
+      frontendAppConfigWithHubEnabled,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,

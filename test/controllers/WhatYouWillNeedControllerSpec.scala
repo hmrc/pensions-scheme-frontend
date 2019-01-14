@@ -29,7 +29,7 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedController =
-    new WhatYouWillNeedController(frontendAppConfig,
+    new WhatYouWillNeedController(frontendAppConfigWithHubEnabled,
       messagesApi,
       FakeAuthAction,
       fakePsaNameCacheConnector,
@@ -48,7 +48,7 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar
         val result = controller().onSubmit()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.SchemeTaskListController.onPageLoad().url)
       }
     }
   }

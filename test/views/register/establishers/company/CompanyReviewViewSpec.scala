@@ -82,7 +82,7 @@ class CompanyReviewViewSpec extends ViewBehaviours {
         Jsoup.parse(createView()().toString) must haveDynamicText(director)
     }
 
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
   }
 
 }

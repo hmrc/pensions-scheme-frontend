@@ -44,7 +44,7 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
 
     behave like pageWithTextFields(
       createViewUsingForm,

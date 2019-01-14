@@ -53,6 +53,6 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithSubmitButton(createView())
 
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
   }
 }

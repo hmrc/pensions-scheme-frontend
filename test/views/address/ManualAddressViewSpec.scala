@@ -60,6 +60,6 @@ class ManualAddressViewSpec extends QuestionViewBehaviours[Address] {
       "addressLine1", "addressLine2", "addressLine3", "addressLine4"
     )
 
-    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
   }
 }

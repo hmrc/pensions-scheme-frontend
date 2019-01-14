@@ -63,7 +63,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     behave like pageWithSubmitButton(createView(appConfig = frontendAppConfigWithHubEnabled))
 
     behave like pageWithReturnLink(
-      createView(appConfig = frontendAppConfigWithHubEnabled), controllers.routes.SchemeTaskListController.onPageLoad().url)
+      createView(appConfig = frontendAppConfigWithHubEnabled), getReturnLink)
 
     behave like pageWithReturnLink(
       createView(frontendAppConfigWithHubEnabled, returnOverview = true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)

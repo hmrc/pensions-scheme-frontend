@@ -40,7 +40,7 @@ class DirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, messages("messages__director_has_sautr__title"))
 
-      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+      behave like pageWithReturnLink(createView(), getReturnLink)
 
       val utrOptions = Seq("true", "false")
 

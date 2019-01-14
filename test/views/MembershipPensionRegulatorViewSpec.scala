@@ -34,7 +34,7 @@ class MembershipPensionRegulatorViewSpec extends ViewBehaviours {
 
     behave like pageWithSubmitButton(createView)
 
-    behave like pageWithReturnLink(createView, url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView, getReturnLink)
   }
 }
 

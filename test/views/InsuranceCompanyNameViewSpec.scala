@@ -41,6 +41,6 @@ class InsuranceCompanyNameViewSpec extends QuestionViewBehaviours[String] {
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.routes.InsuranceCompanyNameController.onSubmit(NormalMode).url,
       "companyName")
 
-    behave like pageWithReturnLink(createView, controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView, getReturnLink)
   }
 }

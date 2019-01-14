@@ -67,8 +67,8 @@ class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
 
   private def navigateToTaskList() =
     if(appConfig.enableHubV2){
-      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+      NavigateTo.save(controllers.routes.SchemeTaskListController.onPageLoad())
     } else {
-      NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+      NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
     }
 }

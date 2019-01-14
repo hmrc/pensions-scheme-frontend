@@ -40,7 +40,7 @@ class DirectorNinoViewSpec extends ViewBehaviours {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, messages("messages__director_nino__title"))
 
-      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+      behave like pageWithReturnLink(createView(), getReturnLink)
 
       val ninoOptions = Seq("true", "false")
 

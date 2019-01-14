@@ -27,6 +27,13 @@ import play.twirl.api.{Html, HtmlFormat}
 trait ViewSpecBase extends SpecBase {
   type View = () => HtmlFormat.Appendable
 
+  def getReturnLink : String =
+    if (frontendAppConfig.enableHubV2)
+      controllers.routes.SchemeTaskListController.onPageLoad().url
+    else
+      controllers.register.routes.SchemeTaskListController.onPageLoad().url
+
+
   def haveLink(url: String): Matcher[Elements] = Matcher[Elements] {
     elements =>
       val href = elements.attr("href")

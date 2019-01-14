@@ -34,6 +34,8 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
 
   import EstablishersIndividualNavigatorSpec._
 
+  override lazy val frontendAppConfig = frontendAppConfigWithHubEnabled
+
   private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (EstablisherDetailsId(0), emptyAnswers, establisherNino(NormalMode), true, Some(checkYourAnswers), true),
@@ -61,7 +63,7 @@ class EstablishersIndividualNavigatorSpec extends SpecBase with MustMatchers wit
 }
 
 object EstablishersIndividualNavigatorSpec extends OptionValues {
-  private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
 
   private val emptyAnswers = UserAnswers(Json.obj())
   private val addressYearsOverAYear = UserAnswers(Json.obj())

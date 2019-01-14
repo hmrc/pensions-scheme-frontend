@@ -17,12 +17,14 @@
 package navigators
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import controllers.routes._
 import identifiers.register.{CheckYourAnswersId, DeclarationDutiesId}
 import identifiers.{EstablishedCountryId, HaveAnyTrusteesId, SchemeNameId, SchemeTypeId}
 import models.register.SchemeType
 import models.{CheckMode, NormalMode}
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import utils.UserAnswers
@@ -42,6 +44,8 @@ class BeforeYouStartNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (CheckYourAnswersId, emptyAnswers, taskListPage, false, None, false)
   )
 
+  override lazy val frontendAppConfig = frontendAppConfigWithHubEnabled
+
   val navigator = new BeforeYouStartNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
   "BeforeYouStartNavigator" must {
 
@@ -60,7 +64,7 @@ object BeforeYouStartNavigatorSpec {
   private val establishedCountryPage: Call = EstablishedCountryController.onPageLoad(NormalMode)
   private val workingKnowledgePage: Call = WorkingKnowledgeController.onPageLoad(NormalMode)
   private val checkYourAnswersPage: Call = controllers.routes.CheckYourAnswersBeforeYouStartController.onPageLoad()
-  private val taskListPage: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
+  private val taskListPage: Call = controllers.routes.SchemeTaskListController.onPageLoad()
 
   private val schemeTypeSingleTrust = UserAnswers(Json.obj(SchemeTypeId.toString -> SchemeType.SingleTrust))
   private val schemeTypeGroupLife = UserAnswers(Json.obj(SchemeTypeId.toString -> SchemeType.GroupLifeDeath))
