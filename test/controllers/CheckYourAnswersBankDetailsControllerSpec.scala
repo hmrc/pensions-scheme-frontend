@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
-import identifiers.{IsAboutBankDetailsCompleteId, SchemeNameId, UKBankAccountId, UKBankDetailsId}
+import identifiers.{BankAccountDetailsId, IsAboutBankDetailsCompleteId, SchemeNameId, UKBankAccountId}
 import models.register._
 import models.{BankAccountDetails, CheckMode}
 import play.api.libs.json.Json
@@ -77,7 +77,7 @@ object CheckYourAnswersBankDetailsControllerSpec extends ControllerSpecBase {
 
   private val schemeInfo = new FakeDataRetrievalAction(
     Some(Json.obj(
-      UKBankDetailsId.toString -> Json.toJson(bankDetails),
+      BankAccountDetailsId.toString -> Json.toJson(bankDetails),
       UKBankAccountId.toString -> true,
       SchemeNameId.toString -> "Test Scheme Name"
     ))
