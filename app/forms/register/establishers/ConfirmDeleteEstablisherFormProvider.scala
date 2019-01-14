@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package identifiers.register.establishers
+package forms.register.establishers
 
-import identifiers.TypedIdentifier
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-case object ConfirmDeleteEstablisherId extends TypedIdentifier[Boolean] {
-  override def toString: String = "confirmDeleteEstablisher"
+class ConfirmDeleteEstablisherFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("messages__error__selection")
+    )
 }
