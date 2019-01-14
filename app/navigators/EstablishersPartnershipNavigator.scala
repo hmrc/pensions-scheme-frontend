@@ -62,7 +62,7 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
     case OtherPartnersId(index) =>
       NavigateTo.save(routes.PartnershipReviewController.onPageLoad(index))
     case PartnershipReviewId(index) =>
-        NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+      navigateToTaskList()
     case _ =>
       None
   }
@@ -121,4 +121,11 @@ class EstablishersPartnershipNavigator @Inject()(val dataCacheConnector: UserAns
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
+
+  private def navigateToTaskList() =
+    if(appConfig.enableHubV2){
+      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+    } else {
+      NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+    }
 }

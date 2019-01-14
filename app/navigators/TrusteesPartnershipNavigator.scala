@@ -57,7 +57,7 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
     case PartnershipContactDetailsId(index) =>
       NavigateTo.save(routes.CheckYourAnswersController.onPageLoad(index))
     case CheckYourAnswersId(index) =>
-        NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+      navigateToTaskList()
     case _ =>
       None
   }
@@ -112,4 +112,11 @@ class TrusteesPartnershipNavigator @Inject()(val dataCacheConnector: UserAnswers
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
+
+  private def navigateToTaskList() =
+    if(appConfig.enableHubV2){
+      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+    } else {
+      NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+    }
 }

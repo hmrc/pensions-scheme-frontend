@@ -66,7 +66,11 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsAboutBenefitsAndInsuranceCompleteId, request.userAnswers, value = true) map { _ =>
-        Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        if(appConfig.enableHubV2){
+          Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
+        } else {
+          Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        }
       }
   }
 

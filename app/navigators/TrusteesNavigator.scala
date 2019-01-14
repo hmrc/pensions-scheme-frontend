@@ -33,7 +33,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case AddTrusteeId =>
         addTrusteeRoutes(from.userAnswers)
       case MoreThanTenTrusteesId =>
-          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        navigateToTaskList()
       case TrusteeKindId(index) =>
         trusteeKindRoutes(index, from.userAnswers)
       case ConfirmDeleteTrusteeId =>
@@ -57,7 +57,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
           NavigateTo.save(controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode))
         }
       case Some(false) =>
-          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        navigateToTaskList()
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
@@ -69,7 +69,7 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
     answers.get(AddTrusteeId) match {
       case Some(false) =>
-          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        navigateToTaskList()
       case Some(true) =>
         NavigateTo.save(TrusteeKindController.onPageLoad(NormalMode, answers.trusteesCount))
       case None if trusteesLengthCompare >= 0 =>
@@ -92,4 +92,10 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     }
   }
 
+  private def navigateToTaskList() =
+    if(appConfig.enableHubV2){
+      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+    } else {
+      NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+    }
 }

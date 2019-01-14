@@ -57,7 +57,11 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      Future.successful(Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad()))
+      if(appConfig.enableHubV2){
+        Future.successful(Redirect(controllers.routes.SchemeTaskListController.onPageLoad()))
+      } else {
+        Future.successful(Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad()))
+      }
   }
 
 }

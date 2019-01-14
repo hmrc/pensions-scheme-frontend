@@ -40,7 +40,7 @@ class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
       case AdviserAddressId =>
         NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
       case CheckYourAnswersId =>
-        NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        navigateToTaskList()
       case _ => None
     }
   }
@@ -64,4 +64,11 @@ class AdviserNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnect
       case _ => None
     }
   }
+
+  private def navigateToTaskList() =
+    if(appConfig.enableHubV2){
+      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+    } else {
+      NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+    }
 }
