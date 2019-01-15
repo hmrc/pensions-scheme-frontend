@@ -35,11 +35,18 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
   "CheckYourAnswers Controller" when {
 
     "onPageLoad() is called" must {
-      "return OK and the correct view" in {
-        val result = controller(schemeInfo).onPageLoad(fakeRequest)
+      "return OK and the correct view with return to tasklist" in {
+        val result = controller(schemeInfoWithCompleteFlag).onPageLoad(fakeRequest)
 
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString()
+      }
+
+      "return OK and the correct view with return to Manage" in {
+        val result = controller(schemeInfo).onPageLoad(fakeRequest)
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe viewAsStringWithReturnToManage()
       }
     }
 
@@ -80,6 +87,17 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       HaveAnyTrusteesId.toString -> true,
       EstablishedCountryId.toString -> "GB",
       identifiers.DeclarationDutiesId.toString -> false
+    ))
+  )
+
+  private val schemeInfoWithCompleteFlag = new FakeDataRetrievalAction(
+    Some(Json.obj(
+      SchemeNameId.toString -> "Test Scheme",
+      SchemeTypeId.toString -> SchemeType.SingleTrust,
+      HaveAnyTrusteesId.toString -> true,
+      EstablishedCountryId.toString -> "GB",
+      identifiers.DeclarationDutiesId.toString -> false,
+      identifiers.IsBeforeYouStartCompleteId.toString -> true
     ))
   )
 
@@ -125,7 +143,13 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
   )
 
   private def viewAsString(): String = check_your_answers(
-    frontendAppConfig,
+    frontendAppConfigWithHubEnabled,
+    Seq(beforeYouStart),
+    postUrl
+  )(fakeRequest, messages).toString
+
+  private def viewAsStringWithReturnToManage(): String = check_your_answers(
+    frontendAppConfigWithHubEnabled,
     Seq(beforeYouStart),
     postUrl,
     returnOverview=true

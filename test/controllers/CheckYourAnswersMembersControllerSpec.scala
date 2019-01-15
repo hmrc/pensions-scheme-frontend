@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FeatureSwitchManagementService
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.IsAboutMembersCompleteId
 import models.{CheckMode, Members}
@@ -59,12 +58,6 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
   private val postUrl = routes.CheckYourAnswersMembersController.onSubmit()
   private val data = UserAnswers().schemeName(schemeName).currentMembers(Members.One).futureMembers(Members.None).dataRetrievalAction
 
-  private def fakeFeatureSwitchManager = new FeatureSwitchManagementService {
-    override def change(name: String, newValue: Boolean): Boolean = ???
-    override def get(name: String): Boolean = true
-    override def reset(name: String): Unit = ???
-  }
-
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersMembersController =
     new CheckYourAnswersMembersController(
       frontendAppConfigWithHubEnabled,
@@ -72,8 +65,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      FakeSectionComplete,
-      fakeFeatureSwitchManager
+      FakeSectionComplete
     )
 
   private val membersSection = AnswerSection(
@@ -101,8 +93,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
     Seq(
       membersSection
     ),
-    postUrl,
-    true
+    postUrl
   )(fakeRequest, messages).toString
 
 }

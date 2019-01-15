@@ -38,7 +38,6 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                                getData: DataRetrievalAction,
                                                                requireData: DataRequiredAction,
                                                                sectionComplete: SectionComplete,
-                                                               fs: FeatureSwitchManagementService,
                                                                implicit val countryOptions: CountryOptions
                                                               )(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
 
@@ -58,8 +57,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
       Ok(check_your_answers(
         appConfig,
         Seq(benefitsAndInsuranceSection),
-        routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(),
-        fs.get(enableHubV2)
+        routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit()
       ))
   }
 

@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FeatureSwitchManagementService
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.IsAboutBenefitsAndInsuranceCompleteId
 import models.address.Address
@@ -64,14 +63,6 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(insuranceCompanyName).
     insurancePolicyNumber(policyNumber).insurerConfirmAddress(insurerAddress).dataRetrievalAction
 
-  private def fakeFeatureSwitchManager: FeatureSwitchManagementService = new FeatureSwitchManagementService {
-    override def change(name: String, newValue: Boolean): Boolean = ???
-
-    override def get(name: String): Boolean = true
-
-    override def reset(name: String): Unit = ???
-  }
-
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBenefitsAndInsuranceController =
     new CheckYourAnswersBenefitsAndInsuranceController(
       frontendAppConfigWithHubEnabled,
@@ -80,7 +71,6 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
       dataRetrievalAction,
       new DataRequiredActionImpl,
       FakeSectionComplete,
-      fakeFeatureSwitchManager,
       new FakeCountryOptions
     )
 
@@ -149,8 +139,7 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     Seq(
       benefitsAndInsuranceSection
     ),
-    postUrl,
-    true
+    postUrl
   )(fakeRequest, messages).toString
 
 }
