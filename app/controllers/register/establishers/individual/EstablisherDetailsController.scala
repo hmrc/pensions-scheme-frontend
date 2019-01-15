@@ -49,13 +49,8 @@ class EstablisherDetailsController @Inject()(
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      val redirectResult = request.userAnswers.get(EstablisherDetailsId(index)) match {
-        case None =>
-          Ok(establisherDetails(appConfig, form, mode, index))
-        case Some(value) =>
-          Ok(establisherDetails(appConfig, form.fill(value), mode, index))
-      }
-      Future.successful(redirectResult)
+      val filledForm = request.userAnswers.get(EstablisherDetailsId(index)).fold(form)(form.fill)
+      Future.successful(Ok(establisherDetails(appConfig, filledForm, mode, index)))
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
