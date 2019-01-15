@@ -74,9 +74,8 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
   }
 
   private def navigateToTaskList() =
-    if(frontendAppConfig.enableHubV2){
+    if(frontendAppConfig.enableHubV2)
       NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
-    } else {
+    else
       NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
-    }
 }

@@ -170,10 +170,8 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       NavigateTo.dontSave(controllers.routes.WhatYouWillNeedController.onPageLoad())
 
   private def navigateToTaskList() =
-    if(appConfig.enableHubV2){
+    if(appConfig.enableHubV2)
       NavigateTo.save(controllers.routes.SchemeTaskListController.onPageLoad())
-    } else {
+    else
       NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
-    }
-
 }

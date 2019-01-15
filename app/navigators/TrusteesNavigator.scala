@@ -93,9 +93,8 @@ class TrusteesNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   }
 
   private def navigateToTaskList() =
-    if(appConfig.enableHubV2){
+    if(appConfig.enableHubV2)
       NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
-    } else {
+    else
       NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
-    }
 }

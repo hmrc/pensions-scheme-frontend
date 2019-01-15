@@ -90,10 +90,8 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
   }
 
   private def navigateToTaskList() =
-    if(config.enableHubV2){
+    if(config.enableHubV2)
       NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
-    } else {
+    else
       NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
-    }
-
 }
