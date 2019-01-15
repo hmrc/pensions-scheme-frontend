@@ -46,20 +46,17 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      retrieveSchemeName {
-        schemeName =>
-          val checkYourAnswerHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
-          val sections = Seq(
-            AnswerSection(None, checkYourAnswerHelper.establisherDetails(index.id) ++
-              checkYourAnswerHelper.establisherNino(index.id) ++ UniqueTaxReferenceId(index).row(
-              routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url
-            ) ++
-              checkYourAnswerHelper.address(index) ++ checkYourAnswerHelper.addressYears(index) ++
-              checkYourAnswerHelper.previousAddress(index) ++
-              checkYourAnswerHelper.contactDetails(index))
-          )
-          Future.successful(Ok(check_your_answers(appConfig, sections, routes.CheckYourAnswersController.onSubmit(index))))
-      }
+      val checkYourAnswerHelper = checkYourAnswersFactory.checkYourAnswersHelper(request.userAnswers)
+      val sections = Seq(
+        AnswerSection(None, checkYourAnswerHelper.establisherDetails(index.id) ++
+          checkYourAnswerHelper.establisherNino(index.id) ++ UniqueTaxReferenceId(index).row(
+          routes.UniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url
+        ) ++
+          checkYourAnswerHelper.address(index) ++ checkYourAnswerHelper.addressYears(index) ++
+          checkYourAnswerHelper.previousAddress(index) ++
+          checkYourAnswerHelper.contactDetails(index))
+      )
+      Future.successful(Ok(check_your_answers(appConfig, sections, routes.CheckYourAnswersController.onSubmit(index))))
   }
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {

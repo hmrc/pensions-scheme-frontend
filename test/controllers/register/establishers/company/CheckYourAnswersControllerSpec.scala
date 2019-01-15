@@ -45,12 +45,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(answerSections(request))
     }
 
-    "redirect to Session Expired page for a GET when establisher name is not present" in {
-      val result = controller(getEmptyData).onPageLoad(index)(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
     "redirect to Session Expired for a GET if no existing data is found" in {
       val result = controller(dontGetAnyData).onPageLoad(index)(fakeRequest)
 

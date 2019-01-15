@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.SchemeNameFormProvider
-import identifiers.SchemeNameId
+import identifiers.{IsBeforeYouStartCompleteId, SchemeNameId}
 import identifiers.register.IsAboutSchemeCompleteId
 import javax.inject.Inject
 import models.Mode
@@ -74,7 +74,7 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
               ), mode, existingSchemeNameOrEmptyString)))
             } else {
               dataCacheConnector.save(request.externalId, SchemeNameId, value).flatMap { cacheMap =>
-                sectionComplete.setCompleteFlag(request.externalId, IsAboutSchemeCompleteId, UserAnswers(cacheMap), value = false).map { json =>
+                sectionComplete.setCompleteFlag(request.externalId, IsBeforeYouStartCompleteId, UserAnswers(cacheMap), value = false).map { json =>
                   Redirect(navigator.nextPage(SchemeNameId, mode, json))
                 }
               }

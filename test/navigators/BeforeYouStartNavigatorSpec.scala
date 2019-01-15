@@ -19,8 +19,8 @@ package navigators
 import base.SpecBase
 import connectors.FakeUserAnswersCacheConnector
 import controllers.routes._
-import identifiers.register.{CheckYourAnswersId, DeclarationDutiesId}
-import identifiers.{EstablishedCountryId, HaveAnyTrusteesId, SchemeNameId, SchemeTypeId}
+import identifiers.register.CheckYourAnswersId
+import identifiers._
 import models.register.SchemeType
 import models.{CheckMode, NormalMode}
 import play.api.libs.json.Json

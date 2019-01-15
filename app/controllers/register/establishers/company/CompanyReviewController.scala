@@ -19,7 +19,6 @@ package controllers.register.establishers.company
 import config.FrontendAppConfig
 import controllers.Retrievals
 import controllers.actions._
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.IsEstablisherCompleteId
 import identifiers.register.establishers.company.{CompanyDetailsId, CompanyReviewId, IsCompanyCompleteId}
 import javax.inject.Inject
@@ -43,8 +42,8 @@ class CompanyReviewController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      (SchemeDetailsId and CompanyDetailsId(index)).retrieve.right.map {
-        case schemeDetails ~ companyDetails =>
+      CompanyDetailsId(index).retrieve.right.map {
+        case companyDetails =>
           val directors: Seq[String] = request.userAnswers.allDirectorsAfterDelete(index).map(_.name)
 
           Future.successful(Ok(companyReview(appConfig, index, companyDetails.companyName, directors)))

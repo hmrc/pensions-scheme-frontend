@@ -48,7 +48,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                                requireData: DataRequiredAction,
                                                @Trustees navigator: Navigator,
                                                dataCacheConnector: UserAnswersCacheConnector,
-                                               formProvider: ConfirmDeleteTrusteeFormProvider) (implicit val ec: ExecutionContext)
+                                               formProvider: ConfirmDeleteTrusteeFormProvider)(implicit val ec: ExecutionContext)
   extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
@@ -99,7 +99,7 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                                 trusteeIndex: Index,
                                 companyDetails: Option[CompanyDetails],
                                 trusteeDetails: Option[PersonDetails],
-                                partnershipDetails: Option[PartnershipDetails])(implicit dataRequest: DataRequest[AnyContent]) : Future[Result] ={
+                                partnershipDetails: Option[PartnershipDetails])(implicit dataRequest: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
         Future.successful(BadRequest(confirmDeleteTrustee(
@@ -112,11 +112,11 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
         val deletionResult = if (value) {
           trusteeKind match {
             case Company => companyDetails.fold(Future.successful(dataRequest.userAnswers))(
-              company=>dataCacheConnector.save(CompanyDetailsId(trusteeIndex), company.copy(isDeleted = true)))
+              company => dataCacheConnector.save(CompanyDetailsId(trusteeIndex), company.copy(isDeleted = true)))
             case Individual => trusteeDetails.fold(Future.successful(dataRequest.userAnswers))(
-              trustee=> dataCacheConnector.save(TrusteeDetailsId(trusteeIndex), trustee.copy(isDeleted = true)))
+              trustee => dataCacheConnector.save(TrusteeDetailsId(trusteeIndex), trustee.copy(isDeleted = true)))
             case Partnership => partnershipDetails.fold(Future.successful(dataRequest.userAnswers))(
-              partnership=> dataCacheConnector.save(PartnershipDetailsId(trusteeIndex), partnership.copy(isDeleted = true)))
+              partnership => dataCacheConnector.save(PartnershipDetailsId(trusteeIndex), partnership.copy(isDeleted = true)))
           }
         } else {
           Future.successful(dataRequest.userAnswers)

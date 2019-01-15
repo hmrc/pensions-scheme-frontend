@@ -50,50 +50,47 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
 
-      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+      val companyDetailsRow = CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url)
 
-        val companyDetailsRow = CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url)
+      val companyRegistrationNumber = CompanyRegistrationNumberId(index).row(
+        routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index).url
+      )
 
-        val companyRegistrationNumber = CompanyRegistrationNumberId(index).row(
-          routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, index).url
-        )
+      val companyUtr = CompanyUniqueTaxReferenceId(index).row(
+        routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, index).url
+      )
 
-        val companyUtr = CompanyUniqueTaxReferenceId(index).row(
-          routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, index).url
-        )
+      val companyDetailsSection = AnswerSection(
+        Some("messages__checkYourAnswers__section__company_details"),
+        companyDetailsRow ++ companyRegistrationNumber ++ companyUtr
+      )
 
-        val companyDetailsSection = AnswerSection(
-          Some("messages__checkYourAnswers__section__company_details"),
-          companyDetailsRow ++ companyRegistrationNumber ++ companyUtr
-        )
+      val companyAddress = CompanyAddressId(index).row(
+        routes.CompanyAddressController.onPageLoad(CheckMode, index).url
+      )
 
-        val companyAddress = CompanyAddressId(index).row(
-          routes.CompanyAddressController.onPageLoad(CheckMode, index).url
-        )
+      val companyAddressYears = CompanyAddressYearsId(index).row(
+        routes.CompanyAddressYearsController.onPageLoad(CheckMode, index).url
+      )
 
-        val companyAddressYears = CompanyAddressYearsId(index).row(
-          routes.CompanyAddressYearsController.onPageLoad(CheckMode, index).url
-        )
+      val companyPreviousAddress = CompanyPreviousAddressId(index).row(
+        routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url
+      )
 
-        val companyPreviousAddress = CompanyPreviousAddressId(index).row(
-          routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url
-        )
+      val companyContactDetails = CompanyContactDetailsId(index).row(
+        routes.CompanyContactDetailsController.onPageLoad(CheckMode, index).url
+      )
 
-        val companyContactDetails = CompanyContactDetailsId(index).row(
-          routes.CompanyContactDetailsController.onPageLoad(CheckMode, index).url
-        )
+      val contactDetailsSection = AnswerSection(
+        Some("messages__checkYourAnswers__section__contact_details"),
+        companyAddress ++ companyAddressYears ++ companyPreviousAddress ++ companyContactDetails
+      )
 
-        val contactDetailsSection = AnswerSection(
-          Some("messages__checkYourAnswers__section__contact_details"),
-          companyAddress ++ companyAddressYears ++ companyPreviousAddress ++ companyContactDetails
-        )
-
-        Future.successful(Ok(check_your_answers(
-          appConfig,
-          Seq(companyDetailsSection, contactDetailsSection),
-          routes.CheckYourAnswersController.onSubmit(index)
-        )))
-      }
+      Future.successful(Ok(check_your_answers(
+        appConfig,
+        Seq(companyDetailsSection, contactDetailsSection),
+        routes.CheckYourAnswersController.onSubmit(index)
+      )))
   }
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {

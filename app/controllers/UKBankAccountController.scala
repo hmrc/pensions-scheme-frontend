@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.UKBankAccountFormProvider
-import identifiers.{SchemeNameId, UKBankAccountId}
+import identifiers.{IsAboutBankDetailsCompleteId, SchemeNameId, UKBankAccountId}
 import javax.inject.Inject
 import models.Mode
 import play.api.data.Form
@@ -28,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutBankDetails
-import utils.{Navigator, UserAnswers}
+import utils.{Navigator, SectionComplete, UserAnswers}
 import views.html.uKBankAccount
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +40,8 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: UKBankAccountFormProvider
+                                        formProvider: UKBankAccountFormProvider,
+                                        sectionComplete: SectionComplete
                                        )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
@@ -64,8 +65,11 @@ class UKBankAccountController @Inject()(appConfig: FrontendAppConfig,
             Future.successful(BadRequest(uKBankAccount(appConfig, formWithErrors, mode, schemeName)))
           },
         value =>
-          dataCacheConnector.save(request.externalId, UKBankAccountId, value).map(cacheMap =>
-            Redirect(navigator.nextPage(UKBankAccountId, mode, UserAnswers(cacheMap))))
+          dataCacheConnector.save(request.externalId, UKBankAccountId, value).flatMap { cacheMap =>
+            sectionComplete.setCompleteFlag(request.externalId, IsAboutBankDetailsCompleteId, UserAnswers(cacheMap), value = false).map { answers =>
+              Redirect(navigator.nextPage(UKBankAccountId, mode, answers))
+            }
+          }
       )
   }
 }

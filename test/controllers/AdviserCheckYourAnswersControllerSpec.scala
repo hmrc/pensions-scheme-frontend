@@ -18,7 +18,7 @@ package controllers
 
 import connectors._
 import controllers.actions._
-import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
+import identifiers.register.IsWorkingKnowledgeCompleteId
 import identifiers.{AdviserAddressId, AdviserEmailId, AdviserNameId}
 import models.CheckMode
 import models.address.Address

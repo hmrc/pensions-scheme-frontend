@@ -20,11 +20,9 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.EstablisherKindFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.{EstablisherKindId, EstablishersId}
 import models._
 import models.register.establishers.EstablisherKind
-import models.register.{SchemeDetails, SchemeType}
 import play.api.data.Form
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
@@ -40,13 +38,11 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
 
   val formProvider = new EstablisherKindFormProvider()
   val form = formProvider()
-  val schemeName = "Test Scheme Name"
 
   val firstIndex = Index(0)
   val invalidIndex = Index(11)
 
   def validData: JsValue = Json.obj(
-    SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)),
     EstablishersId.toString -> Json.arr(
       Json.obj(
         EstablisherKindId.toString ->
@@ -55,7 +51,7 @@ class EstablisherKindControllerSpec extends ControllerSpecBase {
     )
   )
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): EstablisherKindController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): EstablisherKindController =
     new EstablisherKindController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute),
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 

@@ -70,7 +70,7 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
   }
 
   def controller(emailConnector: EmailConnector = fakeEmailConnector,
-                 dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName,
+                 dataRetrievalAction: DataRetrievalAction = getEmptyData,
                  pensionsSchemeConnector: PensionsSchemeConnector = fakePensionsSchemeConnector
                 ): DeclarationDutiesController =
     new DeclarationDutiesController(
@@ -101,7 +101,6 @@ class DeclarationDutiesControllerSpec extends ControllerSpecBase with MockitoSug
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val validData = Json.obj(
-        SchemeDetailsId.toString -> SchemeDetails("Test Scheme Name", SchemeType.SingleTrust),
         DeclarationDutiesId.toString -> true
       )
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))

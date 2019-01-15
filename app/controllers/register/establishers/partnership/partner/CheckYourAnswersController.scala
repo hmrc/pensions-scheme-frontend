@@ -41,44 +41,41 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            sectionComplete: SectionComplete,
                                            @EstablishersPartner navigator: Navigator,
                                            implicit val countryOptions: CountryOptions
-                                          ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(establisherIndex: Index, partnerIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
-      retrieveSchemeName { schemeName =>
-        val partnerDetails = AnswerSection(
-          Some("messages__partner__cya__details_heading"),
-          Seq(
-            PartnerDetailsId(establisherIndex, partnerIndex).
-              row(routes.PartnerDetailsController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
-            PartnerNinoId(establisherIndex, partnerIndex).
-              row(routes.PartnerNinoController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
-            PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex).
-              row(routes.PartnerUniqueTaxReferenceController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url)
-          ).flatten
-        )
+      val partnerDetails = AnswerSection(
+        Some("messages__partner__cya__details_heading"),
+        Seq(
+          PartnerDetailsId(establisherIndex, partnerIndex).
+            row(routes.PartnerDetailsController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
+          PartnerNinoId(establisherIndex, partnerIndex).
+            row(routes.PartnerNinoController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
+          PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex).
+            row(routes.PartnerUniqueTaxReferenceController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url)
+        ).flatten
+      )
 
-        val partnerContactDetails = AnswerSection(
-          Some("messages__partner__cya__contact__details_heading"),
-          Seq(
-            PartnerAddressId(establisherIndex, partnerIndex).
-              row(routes.PartnerAddressController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
-            PartnerAddressYearsId(establisherIndex, partnerIndex).
-              row(routes.PartnerAddressYearsController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
-            PartnerPreviousAddressId(establisherIndex, partnerIndex).
-              row(routes.PartnerPreviousAddressController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
-            PartnerContactDetailsId(establisherIndex, partnerIndex).
-              row(routes.PartnerContactDetailsController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url)
-          ).flatten
-        )
+      val partnerContactDetails = AnswerSection(
+        Some("messages__partner__cya__contact__details_heading"),
+        Seq(
+          PartnerAddressId(establisherIndex, partnerIndex).
+            row(routes.PartnerAddressController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
+          PartnerAddressYearsId(establisherIndex, partnerIndex).
+            row(routes.PartnerAddressYearsController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
+          PartnerPreviousAddressId(establisherIndex, partnerIndex).
+            row(routes.PartnerPreviousAddressController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url),
+          PartnerContactDetailsId(establisherIndex, partnerIndex).
+            row(routes.PartnerContactDetailsController.onPageLoad(CheckMode, establisherIndex, partnerIndex).url)
+        ).flatten
+      )
 
-        Future.successful(Ok(check_your_answers(
-          appConfig,
-          Seq(partnerDetails, partnerContactDetails),
-          routes.CheckYourAnswersController.onSubmit(establisherIndex, partnerIndex)
-        )))
-
-      }
+      Future.successful(Ok(check_your_answers(
+        appConfig,
+        Seq(partnerDetails, partnerContactDetails),
+        routes.CheckYourAnswersController.onSubmit(establisherIndex, partnerIndex)
+      )))
 
   }
 

@@ -44,8 +44,8 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      (SchemeDetailsId and PartnershipDetailsId(index)).retrieve.right.map {
-        case schemeDetails ~ partnershipDetails =>
+      PartnershipDetailsId(index).retrieve.right.map {
+        case partnershipDetails =>
           val partners: Seq[String] = request.userAnswers.allPartnersAfterDelete(index).map(_.name)
 
           Future.successful(Ok(partnershipReview(appConfig, index, partnershipDetails.name, partners)))

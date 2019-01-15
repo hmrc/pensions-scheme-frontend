@@ -47,30 +47,27 @@ class CheckYourAnswersController @Inject()(
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+      val companyDetails = AnswerSection(
+        Some("messages__common__company_details__title"),
+        CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url) ++
+          CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url) ++
+          CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url) ++
+          IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(CheckMode, Index(index)).url)
+      )
 
-        val companyDetails = AnswerSection(
-          Some("messages__common__company_details__title"),
-          CompanyDetailsId(index).row(routes.CompanyDetailsController.onPageLoad(CheckMode, index).url) ++
-            CompanyRegistrationNumberId(index).row(routes.CompanyRegistrationNumberController.onPageLoad(CheckMode, Index(index)).url) ++
-            CompanyUniqueTaxReferenceId(index).row(routes.CompanyUniqueTaxReferenceController.onPageLoad(CheckMode, Index(index)).url) ++
-            IsCompanyDormantId(index).row(routes.IsCompanyDormantController.onPageLoad(CheckMode, Index(index)).url)
-        )
+      val companyContactDetails = AnswerSection(
+        Some("messages__establisher_company_contact_details__title"),
+        CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(CheckMode, Index(index)).url) ++
+          CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(CheckMode, index).url) ++
+          CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url) ++
+          CompanyContactDetailsId(index).row(routes.CompanyContactDetailsController.onPageLoad(CheckMode, index).url)
+      )
 
-        val companyContactDetails = AnswerSection(
-          Some("messages__establisher_company_contact_details__title"),
-          CompanyAddressId(index).row(routes.CompanyAddressController.onPageLoad(CheckMode, Index(index)).url) ++
-            CompanyAddressYearsId(index).row(routes.CompanyAddressYearsController.onPageLoad(CheckMode, index).url) ++
-            CompanyPreviousAddressId(index).row(routes.CompanyPreviousAddressController.onPageLoad(CheckMode, index).url) ++
-            CompanyContactDetailsId(index).row(routes.CompanyContactDetailsController.onPageLoad(CheckMode, index).url)
-        )
-
-        Future.successful(Ok(check_your_answers(
-          appConfig,
-          Seq(companyDetails, companyContactDetails),
-          routes.CheckYourAnswersController.onSubmit(index)))
-        )
-      }
+      Future.successful(Ok(check_your_answers(
+        appConfig,
+        Seq(companyDetails, companyContactDetails),
+        routes.CheckYourAnswersController.onSubmit(index)))
+      )
   }
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {

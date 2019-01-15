@@ -46,43 +46,36 @@ class CompanyDetailsController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: CompanyDetailsFormProvider
-                                        ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map {
-        schemeDetails =>
-          val redirectResult = request.userAnswers.get(CompanyDetailsId(index)) match {
-            case None =>
-              Ok(companyDetails(appConfig, form, mode, index))
-            case Some(value) =>
-              Ok(companyDetails(appConfig, form.fill(value), mode, index))
-          }
-          Future.successful(redirectResult)
-
+      val redirectResult = request.userAnswers.get(CompanyDetailsId(index)) match {
+        case None =>
+          Ok(companyDetails(appConfig, form, mode, index))
+        case Some(value) =>
+          Ok(companyDetails(appConfig, form.fill(value), mode, index))
       }
+      Future.successful(redirectResult)
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map {
-        schemeDetails =>
-          form.bindFromRequest().fold(
-            (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index))),
-            (value) =>
-              request.userAnswers.upsert(CompanyDetailsId(index))(value) {
-                _.upsert(TrusteeKindId(index))(Company) { answers =>
-                  dataCacheConnector.upsert(request.externalId, answers.json).map {
-                    json =>
-                      Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json)))
-                  }
-                }
+      form.bindFromRequest().fold(
+        (formWithErrors: Form[_]) =>
+          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index))),
+        (value) =>
+          request.userAnswers.upsert(CompanyDetailsId(index))(value) {
+            _.upsert(TrusteeKindId(index))(Company) { answers =>
+              dataCacheConnector.upsert(request.externalId, answers.json).map {
+                json =>
+                  Redirect(navigator.nextPage(CompanyDetailsId(index), mode, UserAnswers(json)))
               }
-          )
-      }
+            }
+          }
+      )
   }
 
 }
