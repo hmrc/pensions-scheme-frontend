@@ -16,37 +16,30 @@
 
 package controllers
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Toggles.enableHubV2
-import utils.{HsTaskListHelper, TaskListHelper}
-import views.html.{schemeDetailsTaskList, schemeTaskList}
+import utils.HsTaskListHelper
+import views.html.schemeDetailsTaskList
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
-                                         getData: DataRetrievalAction,
-                                         fs: FeatureSwitchManagementService
+                                         getData: DataRetrievalAction
                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
-      if (fs.get(enableHubV2)) {
-        request.userAnswers match {
-          case Some(userAnswers) =>
-            Future.successful(Ok(schemeDetailsTaskList(appConfig, new HsTaskListHelper(userAnswers).taskList)))
-          case _ =>
-            Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-        }
-
-      } else {
-        Future.successful(Ok(schemeTaskList(appConfig, new TaskListHelper(request.userAnswers).taskList)))
+      request.userAnswers match {
+        case Some(userAnswers) =>
+          Future.successful(Ok(schemeDetailsTaskList(appConfig, new HsTaskListHelper(userAnswers).taskList)))
+        case _ =>
+          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
       }
   }
 }

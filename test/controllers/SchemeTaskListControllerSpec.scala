@@ -28,13 +28,12 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
   import SchemeTaskListControllerSpec._
 
-  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers, isEnabledV2: Boolean = true): SchemeTaskListController =
+  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
     new SchemeTaskListController(
       frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      dataRetrievalAction,
-      new FakeFeatureSwitchManagementService(isEnabledV2)
+      dataRetrievalAction
     )
 
   def viewAsString(): String =
@@ -44,14 +43,7 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
   "SchemeTaskList Controller" must {
 
-    "return OK and the correct view for a GET when toggle is off" in {
-      val result = controller(isEnabledV2 = false).onPageLoad()(fakeRequest)
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe viewAsString()
-    }
-
-    "return OK and the correct view for a GET when toggle is on" in {
+    "return OK and the correct view" in {
       val result = controller(UserAnswers().dataRetrievalAction).onPageLoad()(fakeRequest)
 
       status(result) mustBe OK

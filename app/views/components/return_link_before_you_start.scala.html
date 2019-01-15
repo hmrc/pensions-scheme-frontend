@@ -22,7 +22,7 @@
 @{
  (appConfig.enableHubV2, mode) match {
   case (true, CheckMode) =>
-   components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+   components.return_link(messages("messages__psaSchemeDetails__return_link", schemeName), appConfig.enableHubV2)
   case _ =>
    components.return_link(messages("messages__complete__return"), appConfig.enableHubV2, Some(appConfig.managePensionsSchemeOverviewUrl))
  }
