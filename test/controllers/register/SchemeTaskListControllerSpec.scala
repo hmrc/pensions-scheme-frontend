@@ -21,24 +21,21 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import models.NormalMode
 import play.api.test.Helpers._
+import utils.{FakeFeatureSwitchManagementService, UserAnswers}
 import viewmodels._
-import views.html.schemeTaskList
+import views.html.{schemeDetailsTaskList, schemeTaskList}
 
 class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
   import SchemeTaskListControllerSpec._
 
-  private val journeyTL = JourneyTaskList(expectedAboutSection, Seq(expectedEstablishersCompany, expectedEstablishersIndividual),
-    Seq(expectedTrustees), expectedWorkingKnowledgeSection, expectedDeclarationLink, expectedChangeTrusteeHeader, changeEstablisherHeader)
-
-  private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
-
-  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers): SchemeTaskListController =
+  def controller(dataRetrievalAction: DataRetrievalAction = userAnswers, isEnabledV2: Boolean = true): SchemeTaskListController =
     new SchemeTaskListController(
       frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      dataRetrievalAction
+      dataRetrievalAction,
+      new FakeFeatureSwitchManagementService(isEnabledV2)
     )
 
   def viewAsString(): String =
@@ -48,17 +45,49 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
   "SchemeTaskList Controller" must {
 
-    "return OK and the correct view for a GET" in {
-      val result = controller().onPageLoad()(fakeRequest)
+    "return OK and the correct view for a GET when toggle is off" in {
+      val result = controller(isEnabledV2 = false).onPageLoad()(fakeRequest)
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString()
+    }
+
+    "return OK and the correct view for a GET when toggle is on" in {
+      val result = controller(UserAnswers().dataRetrievalAction).onPageLoad()(fakeRequest)
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe schemeDetailsTaskList(frontendAppConfig, schemeDetailsTL)(fakeRequest, messages).toString()
     }
   }
 }
 
 object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
   private val userAnswersJson = readJsonFromFile("/payload.json")
+
+  private val userAnswers = new FakeDataRetrievalAction(Some(userAnswersJson))
+  private lazy val beforeYouStartLinkText = messages("messages__schemeTaskList__before_you_start_link_text")
+  private lazy val addEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_add_link")
+  private lazy val aboutMembersLinkText = messages("messages__schemeTaskList__about_members_link_text")
+  private lazy val aboutBenefitsAndInsuranceLinkText = messages("messages__schemeTaskList__about_benefits_and_insurance_link_text")
+  private lazy val aboutBankDetailsLinkText = messages("messages__schemeTaskList__about_bank_details_link_text")
+  private lazy val addTrusteesLinkText = messages("messages__schemeTaskList__sectionTrustees_add_link")
+
+  private val schemeDetailsTL = SchemeDetailsTaskList(
+    SchemeDetailsTaskListSection(None, Link(beforeYouStartLinkText, controllers.routes.SchemeNameController.onPageLoad(NormalMode).url)),
+    Seq(SchemeDetailsTaskListSection(None, Link(aboutMembersLinkText, controllers.routes.WhatYouWillNeedMembersController.onPageLoad.url), None),
+      SchemeDetailsTaskListSection(None, Link(aboutBenefitsAndInsuranceLinkText,
+        controllers.routes.WhatYouWillNeedBenefitsInsuranceController.onPageLoad.url), None),
+      SchemeDetailsTaskListSection(None, Link(aboutBankDetailsLinkText, controllers.routes.WhatYouWillNeedBankDetailsController.onPageLoad.url), None)), None,
+    SchemeDetailsTaskListSection(None, Link(addEstablisherLinkText,
+      controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, 0).url), None),
+    Seq.empty,
+    Some(SchemeDetailsTaskListSection(None,
+      Link(addTrusteesLinkText, controllers.register.trustees.routes.TrusteeKindController.onPageLoad(NormalMode, 0).url),
+      None
+    )),
+    Seq.empty,
+    None
+  )
 
   private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
 
@@ -108,4 +137,8 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
       controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url),
     None
   )
+
+  private val journeyTL = JourneyTaskList(expectedAboutSection, Seq(expectedEstablishersCompany, expectedEstablishersIndividual),
+    Seq(expectedTrustees), expectedWorkingKnowledgeSection, expectedDeclarationLink, expectedChangeTrusteeHeader, changeEstablisherHeader)
+
 }

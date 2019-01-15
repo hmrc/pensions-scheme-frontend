@@ -20,8 +20,8 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors.FakeUserAnswersCacheConnector
 import controllers.routes._
-import identifiers.register.{CheckYourAnswersId, DeclarationDutiesId}
-import identifiers.{EstablishedCountryId, HaveAnyTrusteesId, SchemeNameId, SchemeTypeId}
+import identifiers.register.CheckYourAnswersId
+import identifiers._
 import models.register.SchemeType
 import models.{CheckMode, NormalMode}
 import play.api.inject.guice.GuiceApplicationBuilder

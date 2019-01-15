@@ -20,10 +20,8 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction, FakeDataRetrievalAction}
 import forms.register.PartnershipDetailsFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.TrusteesId
 import identifiers.register.trustees.partnership.PartnershipDetailsId
-import models.register.{SchemeDetails, SchemeType}
 import models.{Index, NormalMode, PartnershipDetails}
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
@@ -42,7 +40,7 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
   val invalidIndex = Index(3)
   val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): TrusteeDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): TrusteeDetailsController =
     new TrusteeDetailsController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -54,8 +52,6 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
   )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(
-    SchemeDetailsId.toString ->
-      SchemeDetails(schemeName, SchemeType.SingleTrust),
     TrusteesId.toString -> Json.arr(
       Json.obj(
         PartnershipDetailsId.toString ->
@@ -80,20 +76,6 @@ class TrusteeDetailsControllerSpec extends ControllerSpecBase {
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
 
       contentAsString(result) mustBe viewAsString(form.fill(PartnershipDetails("test partnership name")))
-    }
-
-    "redirect to session expired page on a GET when the index is not valid" in {
-      val validData = Json.obj(
-        "trustees" -> Json.arr(
-          Json.obj(
-            PartnershipDetailsId.toString -> PartnershipDetails("test name")
-          )
-        )
-      )
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to the next page when valid data is submitted" in {

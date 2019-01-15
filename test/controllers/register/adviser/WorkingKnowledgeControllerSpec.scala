@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.register.adviser
 
 import connectors.FakeUserAnswersCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
-import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
+import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import models.NormalMode
 import play.api.data.Form
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.{FakeNavigator, FakeSectionComplete}
-import views.html.workingKnowledge
+import views.html.register.adviser.workingKnowledge
 
 class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
-  private val scheme = "A scheme"
+
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
 
   val formProvider = new WorkingKnowledgeFormProvider()
@@ -46,7 +47,7 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
       FakeSectionComplete
     )
 
-  private def viewAsString(form: Form[_] = form) = workingKnowledge(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = workingKnowledge(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
 
   "WorkingKnowledgeController" must {
 
@@ -68,14 +69,26 @@ class WorkingKnowledgeControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString(form.fill(true))
     }
 
-    "save the complete flag and redirect to the next page when valid data is submitted for true" in {
+    "redirect to the next page when true is submitted" in {
       val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "true"))
 
       val result = controller().onSubmit(NormalMode)(postRequest)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(onwardRoute.url)
+
       FakeSectionComplete.verify(IsWorkingKnowledgeCompleteId, true)
+    }
+
+    "redirect to the next page when false is submitted" in {
+      val postRequest = fakeRequest.withFormUrlEncodedBody(("value", "false"))
+
+      val result = controller().onSubmit(NormalMode)(postRequest)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(onwardRoute.url)
+
+      FakeSectionComplete.verify(IsWorkingKnowledgeCompleteId, false)
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {

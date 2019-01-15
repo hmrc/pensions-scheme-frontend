@@ -44,37 +44,33 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            requiredData: DataRequiredAction,
                                            sectionComplete: SectionComplete,
                                            implicit val countryOptions: CountryOptions
-                                          ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
+      val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, index).url)
+      val trusteeNinoRow = TrusteeNinoId(index).row(routes.TrusteeNinoController.onPageLoad(CheckMode, index).url)
+      val trusteeUtrRow = UniqueTaxReferenceId(index).row(routes.UniqueTaxReferenceController.onPageLoad(CheckMode, index).url)
+      val trusteeAddressRow = TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(CheckMode, index).url)
+      val trusteeAddressYearsRow = TrusteeAddressYearsId(index).row(
+        routes.TrusteeAddressYearsController.onPageLoad(CheckMode, index).url)
+      val trusteePreviousAddressRow = TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(CheckMode,
+        index).url)
+      val trusteeContactDetails = TrusteeContactDetailsId(index).row(routes.TrusteeContactDetailsController.onPageLoad(CheckMode, index).url)
 
-      SchemeDetailsId.retrieve.right.map { schemeDetails =>
+      val trusteeDetailsSection = AnswerSection(None,
+        trusteeDetailsRow ++ trusteeNinoRow ++ trusteeUtrRow
+      )
+      val contactDetailsSection = AnswerSection(
+        Some("messages__checkYourAnswers__section__contact_details"),
+        trusteeAddressRow ++ trusteeAddressYearsRow ++ trusteePreviousAddressRow ++ trusteeContactDetails
+      )
 
-        val trusteeDetailsRow = TrusteeDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, index).url)
-        val trusteeNinoRow = TrusteeNinoId(index).row(routes.TrusteeNinoController.onPageLoad(CheckMode, index).url)
-        val trusteeUtrRow = UniqueTaxReferenceId(index).row(routes.UniqueTaxReferenceController.onPageLoad(CheckMode, index).url)
-        val trusteeAddressRow = TrusteeAddressId(index).row(routes.TrusteeAddressController.onPageLoad(CheckMode, index).url)
-        val trusteeAddressYearsRow = TrusteeAddressYearsId(index).row(
-          routes.TrusteeAddressYearsController.onPageLoad(CheckMode, index).url)
-        val trusteePreviousAddressRow = TrusteePreviousAddressId(index).row(routes.TrusteePreviousAddressController.onPageLoad(CheckMode,
-          index).url)
-        val trusteeContactDetails = TrusteeContactDetailsId(index).row(routes.TrusteeContactDetailsController.onPageLoad(CheckMode, index).url)
-
-        val trusteeDetailsSection = AnswerSection(None,
-          trusteeDetailsRow ++ trusteeNinoRow ++ trusteeUtrRow
-        )
-        val contactDetailsSection = AnswerSection(
-          Some("messages__checkYourAnswers__section__contact_details"),
-          trusteeAddressRow ++ trusteeAddressYearsRow ++ trusteePreviousAddressRow ++ trusteeContactDetails
-        )
-
-        Future.successful(Ok(check_your_answers(
-          appConfig,
-          Seq(trusteeDetailsSection, contactDetailsSection),
-          routes.CheckYourAnswersController.onSubmit(index)
-        )))
-      }
+      Future.successful(Ok(check_your_answers(
+        appConfig,
+        Seq(trusteeDetailsSection, contactDetailsSection),
+        routes.CheckYourAnswersController.onSubmit(index)
+      )))
   }
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {

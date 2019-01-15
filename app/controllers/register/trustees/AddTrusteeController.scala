@@ -21,7 +21,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
 import forms.register.trustees.AddTrusteeFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.trustees.AddTrusteeId
 import javax.inject.Inject
 import models.Mode
@@ -46,17 +45,15 @@ class AddTrusteeController @Inject()(
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
                                       formProvider: AddTrusteeFormProvider
-                                    ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                    )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      SchemeDetailsId.retrieve.right.map { schemeDetails =>
-        val trustees = request.userAnswers.allTrusteesAfterDelete
+      val trustees = request.userAnswers.allTrusteesAfterDelete
 
-        Future.successful(Ok(addTrustee(appConfig, form, mode, trustees)))
-      }
+      Future.successful(Ok(addTrustee(appConfig, form, mode, trustees)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -69,9 +66,7 @@ class AddTrusteeController @Inject()(
       else {
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            SchemeDetailsId.retrieve.right.map { schemeDetails =>
-              Future.successful(BadRequest(addTrustee(appConfig, formWithErrors, mode, trustees)))
-            },
+            Future.successful(BadRequest(addTrustee(appConfig, formWithErrors, mode, trustees))),
           value =>
             request.userAnswers.set(AddTrusteeId)(value).fold(
               errors => {

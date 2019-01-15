@@ -21,7 +21,7 @@ import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.WorkingKnowledgeFormProvider
 import identifiers.SchemeNameId
-import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
+import identifiers.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
 import javax.inject.Inject
 import models.Mode
 import models.requests.OptionalDataRequest
@@ -48,7 +48,7 @@ class WorkingKnowledgeController @Inject()(
 
   private val form = formProvider()
 
-  private def existingSchemeNameOrEmptyString(implicit request:OptionalDataRequest[AnyContent]):String =
+  private def existingSchemeNameOrEmptyString(implicit request: OptionalDataRequest[AnyContent]): String =
     request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
@@ -67,12 +67,23 @@ class WorkingKnowledgeController @Inject()(
         (formWithErrors: Form[_]) =>
           Future.successful(BadRequest(workingKnowledge(appConfig, formWithErrors, mode, existingSchemeNameOrEmptyString))),
         value => {
-          sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
-            request.userAnswers.getOrElse(UserAnswers()), value).flatMap { _ =>
-            dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).map(cacheMap =>
-              Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap))))
-          }
+
+          dataCacheConnector.save(request.externalId, DeclarationDutiesId, value).flatMap(cacheMap =>
+            setCompleteFlag(value, UserAnswers(cacheMap)).map { _ =>
+              Redirect(navigator.nextPage(DeclarationDutiesId, mode, UserAnswers(cacheMap)))
+            }
+          )
         }
       )
+  }
+
+  private def setCompleteFlag(value: Boolean, userAnswers: UserAnswers)
+                             (implicit request: OptionalDataRequest[AnyContent]): Future[UserAnswers] = {
+    if (value) {
+      sectionComplete.setCompleteFlag(request.externalId, IsWorkingKnowledgeCompleteId,
+        userAnswers, value)
+    } else {
+      Future.successful(userAnswers)
+    }
   }
 }

@@ -18,12 +18,9 @@ package controllers.register.establishers.partnership.partner
 
 import controllers.ControllerSpecBase
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.partnership.partner._
 import models.address.Address
 import models.person.PersonDetails
-import models.register.SchemeDetails
-import models.register.SchemeType.SingleTrust
 import models.{CheckMode, Index, _}
 import org.joda.time.LocalDate
 import org.scalatest.OptionValues
@@ -91,12 +88,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
         status(result) mustBe OK
         contentAsString(result) mustBe viewAsString
       }
-
-      "redirect to Session Expired when scheme name is not present" in {
-        val result = controller().onPageLoad(firstIndex, firstIndex)(request)
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-      }
     }
 
     "onSubmit" must {
@@ -117,8 +108,7 @@ object CheckYourAnswersControllerSpec extends OptionValues {
   val desiredRoute = controllers.routes.IndexController.onPageLoad()
 
   val partnerAnswers = UserAnswers()
-    .set(SchemeDetailsId)(SchemeDetails(schemeName, SingleTrust))
-    .flatMap(_.set(PartnerDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false)))
+    .set(PartnerDetailsId(firstIndex, firstIndex))(PersonDetails("first name", None, "last name", LocalDate.now(), false))
     .flatMap(_.set(PartnerNinoId(firstIndex, firstIndex))(Nino.Yes("AB100100A")))
     .flatMap(_.set(PartnerUniqueTaxReferenceId(firstIndex, firstIndex))(UniqueTaxReference.Yes("1234567890")))
     .flatMap(_.set(PartnerAddressId(firstIndex, firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))

@@ -199,7 +199,6 @@ object ConfirmDeleteEstablisherControllerSpec extends ControllerSpecBase {
     FakeRequest().withFormUrlEncodedBody(("value", "false"))
 
   private val testData = Json.obj(
-    SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
     EstablishersId.toString -> Json.arr(
       Json.obj(
         EstablisherDetailsId.toString -> personDetails

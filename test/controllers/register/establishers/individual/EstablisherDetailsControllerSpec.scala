@@ -20,11 +20,9 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.PersonDetailsFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models._
 import models.person.PersonDetails
-import models.register.{SchemeDetails, SchemeType}
 import org.joda.time.LocalDate
 import play.api.data.Form
 import play.api.libs.json.Json
@@ -51,10 +49,7 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
 
   val establisherDetailsObj = PersonDetails("firstName", None, "lastName", new LocalDate(year, month, day))
 
-  val minimalDataCacheMap = new FakeDataRetrievalAction(Some(Json.obj(
-    SchemeDetailsId.toString -> Json.toJson(SchemeDetails(schemeName, SchemeType.SingleTrust)))))
-
-  def controller(dataRetrievalAction: DataRetrievalAction = minimalDataCacheMap): EstablisherDetailsController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): EstablisherDetailsController =
     new EstablisherDetailsController(
       frontendAppConfig,
       messagesApi,
@@ -79,8 +74,6 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
       val validData = Json.obj(
-        SchemeDetailsId.toString ->
-          SchemeDetails(schemeName, SchemeType.SingleTrust),
         "establishers" -> Json.arr(
           Json.obj(EstablisherDetailsId.toString -> establisherDetailsObj)
         )
@@ -88,20 +81,6 @@ class EstablisherDetailsControllerSpec extends ControllerSpecBase {
       val getRelevantData = new FakeDataRetrievalAction(Some(validData))
       val result = controller(getRelevantData).onPageLoad(NormalMode, firstIndex)(fakeRequest)
       contentAsString(result) mustBe viewAsString(form.fill(establisherDetailsObj))
-    }
-
-    "redirect to session expired page on a GET when the index is not valid" in {
-      val validData = Json.obj(
-        "establishers" -> Json.arr(
-          Json.obj(
-            EstablisherDetailsId.toString -> establisherDetailsObj
-          )
-        )
-      )
-      val getRelevantData = new FakeDataRetrievalAction(Some(validData))
-      val result = controller(getRelevantData).onPageLoad(NormalMode, invalidIndex)(fakeRequest)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to the next page when valid data is submitted" in {

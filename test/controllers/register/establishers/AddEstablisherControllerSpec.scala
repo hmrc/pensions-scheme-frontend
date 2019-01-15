@@ -20,13 +20,11 @@ import connectors.FakeUserAnswersCacheConnector
 import controllers.ControllerSpecBase
 import controllers.actions._
 import forms.register.establishers.AddEstablisherFormProvider
-import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import models.person.PersonDetails
-import models.register.SchemeType.SingleTrust
-import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity, SchemeDetails}
+import models.register.{Establisher, EstablisherCompanyEntity, EstablisherIndividualEntity}
 import models.{CompanyDetails, NormalMode}
 import org.joda.time.LocalDate
 import play.api.data.Form
@@ -125,7 +123,7 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
 
   protected def fakeNavigator() = new FakeNavigator(desiredRoute = onwardRoute)
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AddEstablisherController =
+  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): AddEstablisherController =
     new AddEstablisherController(
       frontendAppConfig,
       messagesApi,
@@ -169,7 +167,6 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
 
   private def individualEstablisherDataRetrieval: FakeDataRetrievalAction = {
     val validData = Json.obj(
-      SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
       EstablishersId.toString -> Json.arr(
         Json.obj(
           EstablisherDetailsId.toString -> personDetails
@@ -181,7 +178,6 @@ object AddEstablisherControllerSpec extends AddEstablisherControllerSpec {
 
   private def establisherWithDeletedDataRetrieval: FakeDataRetrievalAction = {
     val validData = Json.obj(
-      SchemeDetailsId.toString -> SchemeDetails(schemeName, SingleTrust),
       EstablishersId.toString -> Json.arr(
         Json.obj(
           EstablisherDetailsId.toString -> personDetails

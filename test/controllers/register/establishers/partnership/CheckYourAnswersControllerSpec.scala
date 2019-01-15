@@ -37,8 +37,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
   val partnershipName = "PartnershipName"
   val schemeName = "testScheme"
   val partnershipAnswers = UserAnswers()
-    .set(SchemeDetailsId)(SchemeDetails(schemeName, SingleTrust))
-    .flatMap(_.set(PartnershipDetailsId(firstIndex))(PartnershipDetails(partnershipName)))
+    .set(PartnershipDetailsId(firstIndex))(PartnershipDetails(partnershipName))
     .flatMap(_.set(PartnershipVatId(firstIndex))(Vat.No))
     .flatMap(_.set(PartnershipUniqueTaxReferenceID(firstIndex))(UniqueTaxReference.Yes("0987654321")))
     .flatMap(_.set(PartnershipAddressId(firstIndex))(Address("Address 1", "Address 2", None, None, None, "GB")))
@@ -99,14 +98,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe OK
       contentAsString(result) mustBe viewAsString
-    }
-
-    "redirect to Session Expired when establisher name cannot be retrieved" in {
-
-      val result = controller().onPageLoad(firstIndex)(request)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Add Partners page on submit" which {

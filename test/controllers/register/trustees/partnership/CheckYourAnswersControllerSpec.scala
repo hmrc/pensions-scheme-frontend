@@ -99,14 +99,6 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustBe viewAsString
     }
 
-    "redirect to Session Expired when establisher name cannot be retrieved" in {
-
-      val result = controller().onPageLoad(firstIndex)(request)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
-    }
-
     "redirect to Add Trustees page on submit" which {
       "marks partnership as complete on submit" in {
 

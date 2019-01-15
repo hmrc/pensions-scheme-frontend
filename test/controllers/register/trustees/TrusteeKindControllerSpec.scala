@@ -39,9 +39,8 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
   val formProvider = new TrusteeKindFormProvider()
   val form = formProvider()
   val index = Index(0)
-  val schemeName = "Test Scheme Name"
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): TrusteeKindController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): TrusteeKindController =
     new TrusteeKindController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
@@ -85,13 +84,6 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe viewAsString(boundForm)
-    }
-
-    "redirect to Session Expired for a GET if no existing data is found" in {
-      val result = controller(dontGetAnyData).onPageLoad(NormalMode, index)(fakeRequest)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in {

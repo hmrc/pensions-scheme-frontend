@@ -19,12 +19,12 @@ package controllers
 import controllers.actions._
 import identifiers.register._
 import identifiers.register.trustees.HaveAnyTrusteesId
-import identifiers.{EstablishedCountryId, SchemeNameId, SchemeTypeId}
+import identifiers.{EstablishedCountryId, IsBeforeYouStartCompleteId, SchemeNameId, SchemeTypeId}
 import models.CheckMode
 import models.register.SchemeType
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import utils.{FakeCountryOptions, FakeNavigator, FakeSectionComplete}
+import utils.{FakeCountryOptions, FakeSectionComplete}
 import viewmodels.{AnswerRow, AnswerSection}
 import views.html.check_your_answers
 
@@ -49,6 +49,7 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(onwardRoute.url)
+        FakeSectionComplete.verify(IsBeforeYouStartCompleteId, true)
       }
     }
 
@@ -57,8 +58,7 @@ class CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
 object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
-  private val onwardRoute = controllers.routes.IndexController.onPageLoad()
-  private val fakeNavigator = new FakeNavigator(onwardRoute)
+  private val onwardRoute = controllers.register.routes.SchemeTaskListController.onPageLoad()
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBeforeYouStartController =
     new CheckYourAnswersBeforeYouStartController(
@@ -68,7 +68,6 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl,
       new FakeCountryOptions,
-      fakeNavigator,
       FakeSectionComplete
     )
 
@@ -80,7 +79,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
       SchemeTypeId.toString -> SchemeType.SingleTrust,
       HaveAnyTrusteesId.toString -> true,
       EstablishedCountryId.toString -> "GB",
-      DeclarationDutiesId.toString -> false
+      identifiers.DeclarationDutiesId.toString -> false
     ))
   )
 

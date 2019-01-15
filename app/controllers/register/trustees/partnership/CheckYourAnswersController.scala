@@ -43,40 +43,35 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            sectionComplete: SectionComplete,
                                            @TrusteesPartnership navigator: Navigator,
                                            implicit val countryOptions: CountryOptions
-                                          ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
+      val partnershipDetails = AnswerSection(
+        Some("messages__partnership__checkYourAnswers__partnership_details"),
+        Seq(
+          PartnershipDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, index).url),
+          PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(CheckMode, index).url),
+          PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(CheckMode, index).url),
+          PartnershipUniqueTaxReferenceId(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, index).url)
+        ).flatten
+      )
 
-      SchemeDetailsId.retrieve.right.map { details =>
+      val partnershipContactDetails = AnswerSection(
+        Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
+        Seq(
+          PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(CheckMode, index).url),
+          PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(CheckMode, index).url),
+          PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(CheckMode, index).url),
+          PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(CheckMode, index).url)
+        ).flatten
+      )
 
-        val partnershipDetails = AnswerSection(
-          Some("messages__partnership__checkYourAnswers__partnership_details"),
-          Seq(
-            PartnershipDetailsId(index).row(routes.TrusteeDetailsController.onPageLoad(CheckMode, index).url),
-            PartnershipVatId(index).row(routes.PartnershipVatController.onPageLoad(CheckMode, index).url),
-            PartnershipPayeId(index).row(routes.PartnershipPayeController.onPageLoad(CheckMode, index).url),
-            PartnershipUniqueTaxReferenceId(index).row(routes.PartnershipUniqueTaxReferenceController.onPageLoad(CheckMode, index).url)
-          ).flatten
-        )
-
-        val partnershipContactDetails = AnswerSection(
-          Some("messages__partnership__checkYourAnswers__partnership_contact_details"),
-          Seq(
-            PartnershipAddressId(index).row(routes.PartnershipAddressController.onPageLoad(CheckMode, index).url),
-            PartnershipAddressYearsId(index).row(routes.PartnershipAddressYearsController.onPageLoad(CheckMode, index).url),
-            PartnershipPreviousAddressId(index).row(routes.PartnershipPreviousAddressController.onPageLoad(CheckMode, index).url),
-            PartnershipContactDetailsId(index).row(routes.PartnershipContactDetailsController.onPageLoad(CheckMode, index).url)
-          ).flatten
-        )
-
-        Future.successful(Ok(check_your_answers(
-          appConfig,
-          Seq(partnershipDetails, partnershipContactDetails),
-          routes.CheckYourAnswersController.onSubmit(index)
-        )))
-
-      }
+      Future.successful(Ok(check_your_answers(
+        appConfig,
+        Seq(partnershipDetails, partnershipContactDetails),
+        routes.CheckYourAnswersController.onSubmit(index)
+      )))
   }
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {

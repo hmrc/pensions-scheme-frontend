@@ -20,10 +20,10 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.routes._
-import identifiers.register.{CheckYourAnswersId, DeclarationDutiesId, SchemeEstablishedCountryId}
-import identifiers.{EstablishedCountryId, HaveAnyTrusteesId, SchemeNameId, SchemeTypeId}
-import models.{CheckMode, NormalMode}
+import identifiers.register.CheckYourAnswersId
+import identifiers._
 import models.register.SchemeType
+import models.{CheckMode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
 class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector, frontendAppConfig: FrontendAppConfig) extends Navigator {

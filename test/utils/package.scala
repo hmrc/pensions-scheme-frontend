@@ -29,7 +29,7 @@ package object utils {
 
     // Scheme details
     def declarationDuties(declarationDuties: Boolean): UserAnswers = {
-      answers.set(DeclarationDutiesId)(declarationDuties).asOpt.value
+      answers.set(identifiers.register.DeclarationDutiesId)(declarationDuties).asOpt.value
     }
 
     def schemeDetails(schemeDetails: SchemeDetails): UserAnswers = {
