@@ -47,6 +47,6 @@
 
         @components.submit_button("messages__common__continue")
 
-        <a id="return-managing" href="@appConfig.managePensionsSchemeOverviewUrl">@messages("messages__complete__return")</a>
+        @components.return_link("messages__complete__return", appConfig.enableHubV2, Some(appConfig.managePensionsSchemeOverviewUrl))
     }
 }

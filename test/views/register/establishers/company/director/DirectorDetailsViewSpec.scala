@@ -117,6 +117,6 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
       doc.select("span.error-notification").text() mustEqual expectedError
     }
 
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
   }
 }

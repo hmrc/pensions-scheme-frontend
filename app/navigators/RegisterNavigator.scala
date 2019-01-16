@@ -61,7 +61,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case UKBankDetailsId =>
         NavigateTo.save(controllers.register.routes.CheckYourAnswersController.onPageLoad())
       case CheckYourAnswersId =>
-        NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        navigateToTaskList()
       case SchemeReviewId =>
         schemeReviewRoutes(from.userAnswers)
       case DeclarationDormantId =>
@@ -168,4 +168,10 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
     else
       NavigateTo.dontSave(controllers.routes.WhatYouWillNeedController.onPageLoad())
+
+  private def navigateToTaskList() =
+    if(appConfig.enableHubV2)
+      NavigateTo.save(controllers.routes.SchemeTaskListController.onPageLoad())
+    else
+      NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
 }

@@ -105,7 +105,7 @@
 
         @components.submit_button("site.save_and_continue")
 
-        <a id="return-pension-scheme-details" href="@controllers.register.routes.SchemeTaskListController.onPageLoad()">@messages("messages__complete__return_pension_scheme_details")</a>
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
 
     }
 }

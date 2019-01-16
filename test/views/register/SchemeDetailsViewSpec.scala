@@ -46,7 +46,7 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
       behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, routes.SchemeDetailsController.onSubmit(NormalMode).url,
         "schemeName")
 
-      behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+      behave like pageWithReturnLink(createView(), getReturnLink)
 
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))

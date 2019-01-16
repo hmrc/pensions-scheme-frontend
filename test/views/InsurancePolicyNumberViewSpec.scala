@@ -43,6 +43,6 @@ class InsurancePolicyNumberViewSpec extends QuestionViewBehaviours[String] {
     behave like pageWithTextFields(createViewUsingForm, messageKeyPrefix, controllers.routes.InsurancePolicyNumberController.onSubmit(NormalMode).url,
       "policyNumber")
 
-    behave like pageWithReturnLink(createView, controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView, getReturnLink)
   }
 }

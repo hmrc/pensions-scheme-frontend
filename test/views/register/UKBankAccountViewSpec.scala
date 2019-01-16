@@ -42,7 +42,7 @@ class UKBankAccountViewSpec extends YesNoViewBehaviours {
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = routes.UKBankAccountController.onSubmit(NormalMode).url)
 
-    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
 
   }
 }

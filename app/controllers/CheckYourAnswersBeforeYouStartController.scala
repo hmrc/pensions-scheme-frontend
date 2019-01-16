@@ -55,13 +55,18 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
       )
 
-      Ok(check_your_answers(appConfig, Seq(beforeYouStart), routes.CheckYourAnswersBeforeYouStartController.onSubmit(), returnOverview=true))
+      Ok(check_your_answers(appConfig, Seq(beforeYouStart), routes.CheckYourAnswersBeforeYouStartController.onSubmit(),
+        returnOverview = !userAnswers.get(IsBeforeYouStartCompleteId).getOrElse(false)))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsBeforeYouStartCompleteId, request.userAnswers, value = true) map { _ =>
-        Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        if(appConfig.enableHubV2){
+          Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
+        } else {
+          Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        }
       }
   }
 

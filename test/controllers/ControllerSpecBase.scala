@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import config.FrontendAppConfig
 import controllers.actions.FakeDataRetrievalAction
 import identifiers.{AdviserNameId, SchemeNameId}
 import identifiers.register.adviser.AdviserDetailsId
@@ -33,6 +34,7 @@ import models.person.PersonDetails
 import models.register.{AdviserDetails, SchemeDetails, SchemeType}
 import models.{CompanyDetails, PartnershipDetails}
 import org.joda.time.LocalDate
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import utils.{Enumerable, MapFormats}
 
@@ -188,4 +190,6 @@ trait ControllerSpecBase extends SpecBase with Enumerable.Implicits with MapForm
         "name"
     ))
   )
+
+  lazy val frontendAppConfigWithHubEnabled = appConfig(isHubEnabled=true)
 }

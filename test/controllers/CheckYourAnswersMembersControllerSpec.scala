@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FeatureSwitchManagementService
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.IsAboutMembersCompleteId
 import models.{CheckMode, Members}
@@ -46,7 +45,7 @@ class CheckYourAnswersMembersControllerSpec extends ControllerSpecBase with Opti
         val result = controller().onSubmit(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.register.routes.SchemeTaskListController.onPageLoad().url
+        redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad().url
         FakeSectionComplete.verify(IsAboutMembersCompleteId, true)
       }
     }
@@ -59,21 +58,14 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
   private val postUrl = routes.CheckYourAnswersMembersController.onSubmit()
   private val data = UserAnswers().schemeName(schemeName).currentMembers(Members.One).futureMembers(Members.None).dataRetrievalAction
 
-  private def fakeFeatureSwitchManager = new FeatureSwitchManagementService {
-    override def change(name: String, newValue: Boolean): Boolean = ???
-    override def get(name: String): Boolean = true
-    override def reset(name: String): Unit = ???
-  }
-
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersMembersController =
     new CheckYourAnswersMembersController(
-      frontendAppConfig,
+      frontendAppConfigWithHubEnabled,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
-      FakeSectionComplete,
-      fakeFeatureSwitchManager
+      FakeSectionComplete
     )
 
   private val membersSection = AnswerSection(
@@ -97,12 +89,11 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
   )
 
   private def viewAsString(): String = check_your_answers(
-    frontendAppConfig,
+    frontendAppConfigWithHubEnabled,
     Seq(
       membersSection
     ),
-    postUrl,
-    true
+    postUrl
   )(fakeRequest, messages).toString
 
 }

@@ -48,6 +48,6 @@ class SchemeNameViewSpec extends QuestionViewBehaviours[String] {
   }
 
   "SchemeName view in check mode with hub enabled" must {
-    behave like pageWithReturnLink(createViewInCheckMode, controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.SchemeTaskListController.onPageLoad().url)
   }
 }

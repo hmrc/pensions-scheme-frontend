@@ -33,6 +33,8 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
 
   import TrusteesPartnershipNavigatorSpec._
 
+  override lazy val frontendAppConfig = frontendAppConfigWithHubEnabled
+
   private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (PartnershipDetailsId(0), emptyAnswers, partnershipVat(NormalMode), true, Some(checkYourAnswers), true),
@@ -64,7 +66,7 @@ class TrusteesPartnershipNavigatorSpec extends SpecBase with NavigatorBehaviour 
 
 object TrusteesPartnershipNavigatorSpec extends OptionValues {
 
-  private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
 
   private val emptyAnswers = UserAnswers(Json.obj())
 

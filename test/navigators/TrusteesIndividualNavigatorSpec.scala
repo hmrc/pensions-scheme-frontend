@@ -28,6 +28,8 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import TrusteesIndividualNavigatorSpec._
 
+  override lazy val frontendAppConfig = frontendAppConfigWithHubEnabled
+
   private def routes() = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (TrusteeDetailsId(0), emptyAnswers, nino(NormalMode), true, Some(checkYourAnswers), true),
@@ -60,7 +62,7 @@ class TrusteesIndividualNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
 object TrusteesIndividualNavigatorSpec {
 
-  private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
 
   private val emptyAnswers = UserAnswers(Json.obj())
   val firstIndex = Index(0)

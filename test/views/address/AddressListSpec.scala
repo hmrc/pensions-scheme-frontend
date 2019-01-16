@@ -73,7 +73,7 @@ class AddressListSpec extends ViewBehaviours {
       "have link for enter address manually" in {
         Jsoup.parse(createView()().toString()).select("a[id=manual-address-link]") must haveLink(call.url)
       }
-      behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+      behave like pageWithReturnLink(createView(), getReturnLink)
 
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))

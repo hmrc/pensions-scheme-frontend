@@ -64,7 +64,7 @@ class EstablisherDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
 
     behave like pageWithDateFields(createViewUsingForm, form)
 
-    behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
   }
 
 }

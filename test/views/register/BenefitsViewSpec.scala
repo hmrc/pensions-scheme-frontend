@@ -39,7 +39,7 @@ class BenefitsViewSpec extends ViewBehaviours {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-      behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+      behave like pageWithReturnLink(createView(), getReturnLink)
 
       "contain radio buttons for the value" in {
         val doc = asDocument(createViewUsingForm(form))

@@ -37,7 +37,7 @@ class ConfirmDeleteTrusteeViewSpec extends YesNoViewBehaviours {
     behave like yesNoPage(createView = createViewUsingForm, messageKeyPrefix = messageKeyPrefix,
       expectedFormAction = postCall.url)
 
-    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
 
   }
 }

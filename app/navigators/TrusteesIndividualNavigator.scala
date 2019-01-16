@@ -56,7 +56,7 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
       case TrusteeContactDetailsId(index) =>
         NavigateTo.save(controllers.register.trustees.individual.routes.CheckYourAnswersController.onPageLoad(index))
       case CheckYourAnswersId =>
-          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        navigateToTaskList()
       case _ =>
         None
     }
@@ -105,4 +105,10 @@ class TrusteesIndividualNavigator @Inject()(val dataCacheConnector: UserAnswersC
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
+
+  private def navigateToTaskList() =
+    if(appConfig.enableHubV2)
+      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+    else
+      NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
 }

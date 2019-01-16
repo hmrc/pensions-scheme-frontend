@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FeatureSwitchManagementService
 import controllers.actions.{DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import identifiers.IsAboutBenefitsAndInsuranceCompleteId
 import models.address.Address
@@ -47,7 +46,7 @@ class CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpecB
         val result = controller().onSubmit(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.register.routes.SchemeTaskListController.onPageLoad().url
+        redirectLocation(result).value mustBe controllers.routes.SchemeTaskListController.onPageLoad().url
         FakeSectionComplete.verify(IsAboutBenefitsAndInsuranceCompleteId, true)
       }
     }
@@ -64,23 +63,14 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     typeOfBenefits(TypeOfBenefits.Defined).benefitsSecuredByInsurance(true).insuranceCompanyName(insuranceCompanyName).
     insurancePolicyNumber(policyNumber).insurerConfirmAddress(insurerAddress).dataRetrievalAction
 
-  private def fakeFeatureSwitchManager: FeatureSwitchManagementService = new FeatureSwitchManagementService {
-    override def change(name: String, newValue: Boolean): Boolean = ???
-
-    override def get(name: String): Boolean = true
-
-    override def reset(name: String): Unit = ???
-  }
-
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBenefitsAndInsuranceController =
     new CheckYourAnswersBenefitsAndInsuranceController(
-      frontendAppConfig,
+      frontendAppConfigWithHubEnabled,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
       new DataRequiredActionImpl,
       FakeSectionComplete,
-      fakeFeatureSwitchManager,
       new FakeCountryOptions
     )
 
@@ -145,12 +135,11 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
   )
 
   private def viewAsString(): String = check_your_answers(
-    frontendAppConfig,
+    frontendAppConfigWithHubEnabled,
     Seq(
       benefitsAndInsuranceSection
     ),
-    postUrl,
-    true
+    postUrl
   )(fakeRequest, messages).toString
 
 }

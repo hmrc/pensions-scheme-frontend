@@ -44,7 +44,7 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
   private def addEstablisherRoutes(value: Option[Boolean], answers: UserAnswers): Option[NavigateTo] = {
     value match {
       case Some(false) =>
-          NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        navigateToTaskList()
       case Some(true) =>
         NavigateTo.save(controllers.register.establishers.routes.EstablisherKindController.onPageLoad(NormalMode, answers.establishersCount))
       case None =>
@@ -89,4 +89,9 @@ class EstablishersNavigator @Inject()(val dataCacheConnector: UserAnswersCacheCo
     }
   }
 
+  private def navigateToTaskList() =
+    if(config.enableHubV2)
+      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+    else
+      NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
 }

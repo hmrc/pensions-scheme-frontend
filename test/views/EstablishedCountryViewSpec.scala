@@ -29,6 +29,7 @@ class EstablishedCountryViewSpec extends StringViewBehaviours {
   val messageKeyPrefix = "established_country"
   private val schemeName = "Test Scheme Name"
 
+
   val inputOptions: Seq[InputOption] = Seq(InputOption("country:AF", "Afghanistan"), InputOption("territory:AE-AZ", "Abu Dhabi"))
   val countryOptions: CountryOptions = new CountryOptions(inputOptions)
 
@@ -68,6 +69,6 @@ class EstablishedCountryViewSpec extends StringViewBehaviours {
   }
 
   "EstablishedCountry view in check mode where hub enabled" must {
-    behave like pageWithReturnLink(createViewInCheckMode, controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.SchemeTaskListController.onPageLoad().url)
   }
 }

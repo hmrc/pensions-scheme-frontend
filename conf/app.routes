@@ -4,6 +4,8 @@
 
 GET        /                                            controllers.WhatYouWillNeedController.onPageLoad()
 
+GET        /scheme-details                              controllers.SchemeTaskListController.onPageLoad
+
 GET        /what-you-will-need                          controllers.WhatYouWillNeedController.onPageLoad()
 POST       /what-you-will-need                          controllers.WhatYouWillNeedController.onSubmit()
 

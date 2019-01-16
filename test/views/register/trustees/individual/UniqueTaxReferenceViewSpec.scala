@@ -39,7 +39,7 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
     "rendered" must {
       behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 
-      behave like pageWithReturnLink(createView(), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+      behave like pageWithReturnLink(createView(), getReturnLink)
 
       val utrOptions = Seq("true", "false")
 

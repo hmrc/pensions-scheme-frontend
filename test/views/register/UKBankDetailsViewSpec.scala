@@ -103,6 +103,6 @@ class UKBankDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
       val doc = asDocument(createViewUsingForm(form.bind(invalidData)))
       doc.select("span.error-notification").text() mustEqual expectedError
     }
-    behave like pageWithReturnLink(createView(), url = controllers.register.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), getReturnLink)
   }
 }

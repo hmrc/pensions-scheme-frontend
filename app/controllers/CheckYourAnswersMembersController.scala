@@ -37,8 +37,7 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
                                                   authenticate: AuthAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
-                                                  sectionComplete: SectionComplete,
-                                                  fs: FeatureSwitchManagementService
+                                                  sectionComplete: SectionComplete
                                                  )(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
@@ -52,15 +51,18 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
       Ok(check_your_answers(
         appConfig,
         Seq(membersSection),
-        routes.CheckYourAnswersMembersController.onSubmit(),
-        fs.get(enableHubV2)
+        routes.CheckYourAnswersMembersController.onSubmit()
       ))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsAboutMembersCompleteId, request.userAnswers, value = true) map { _ =>
-        Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        if(appConfig.enableHubV2){
+          Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
+        } else {
+          Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        }
       }
   }
 

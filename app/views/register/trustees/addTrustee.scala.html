@@ -66,7 +66,7 @@
 
         @components.submit_button("site.save_and_continue", disableSubmission)
 
-        @components.return_link("site.return.tasklist", controllers.register.routes.SchemeTaskListController.onPageLoad)
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
 
     }
 }

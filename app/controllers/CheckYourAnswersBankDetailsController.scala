@@ -19,19 +19,17 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import identifiers._
-import identifiers.register.{CheckYourAnswersId}
 import javax.inject.Inject
-import models.{CheckMode, NormalMode}
+import models.CheckMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.Register
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Enumerable, Navigator, SectionComplete}
+import utils.{CountryOptions, Enumerable, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                       override val messagesApi: MessagesApi,
@@ -49,7 +47,7 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
       val bankAccountSection = AnswerSection(
         None,
         UKBankAccountId.row(controllers.routes.UKBankAccountController.onPageLoad(CheckMode).url) ++
-          BankAccountDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
+        BankAccountDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
       )
 
       Ok(check_your_answers(appConfig, Seq(bankAccountSection), controllers.routes.CheckYourAnswersBankDetailsController.onSubmit()))
@@ -58,7 +56,11 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsAboutBankDetailsCompleteId, request.userAnswers, value = true) map { _ =>
-        Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        if(appConfig.enableHubV2){
+          Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
+        } else {
+          Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        }
       }
   }
 
