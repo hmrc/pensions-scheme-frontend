@@ -30,16 +30,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class SchemeTaskListController @Inject()(appConfig: FrontendAppConfig,
                                          override val messagesApi: MessagesApi,
                                          authenticate: AuthAction,
-                                         getData: DataRetrievalAction
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction
                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
-      request.userAnswers match {
-        case Some(userAnswers) =>
-          Future.successful(Ok(schemeDetailsTaskList(appConfig, new HsTaskListHelper(userAnswers).taskList)))
-        case _ =>
-          Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
-      }
+      Future.successful(Ok(schemeDetailsTaskList(appConfig, new HsTaskListHelper(request.userAnswers).taskList)))
   }
 }
