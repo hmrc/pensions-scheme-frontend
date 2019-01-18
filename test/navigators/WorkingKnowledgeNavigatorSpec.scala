@@ -51,7 +51,7 @@ object WorkingKnowledgeNavigatorSpec {
 
   private val emptyAnswers = UserAnswers(Json.obj())
 
-  private def taskList: Call = controllers.register.routes.SchemeTaskListController.onPageLoad()
+  private def taskList: Call = controllers.routes.SchemeTaskListController.onPageLoad()
 
   private def dataDescriber(answers: UserAnswers): String = answers.toString
 

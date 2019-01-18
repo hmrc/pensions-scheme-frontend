@@ -40,7 +40,7 @@ class WorkingKnowledgeNavigator @Inject()(val dataCacheConnector: UserAnswersCac
       case AdviserAddressId =>
         NavigateTo.save(controllers.routes.AdviserCheckYourAnswersController.onPageLoad())
       case AdviserCheckYourAnswersId =>
-        NavigateTo.save(controllers.register.routes.SchemeTaskListController.onPageLoad())
+        NavigateTo.save(controllers.routes.SchemeTaskListController.onPageLoad())
       case _ => None
     }
   }

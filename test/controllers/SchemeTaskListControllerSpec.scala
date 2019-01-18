@@ -20,7 +20,7 @@ import base.{JsonFileReader, SpecBase}
 import controllers.actions._
 import models.NormalMode
 import play.api.test.Helpers._
-import utils.{FakeFeatureSwitchManagementService, UserAnswers}
+import utils.UserAnswers
 import viewmodels._
 import views.html.{schemeDetailsTaskList, schemeTaskList}
 
@@ -33,7 +33,8 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       messagesApi,
       FakeAuthAction,
-      dataRetrievalAction
+      dataRetrievalAction,
+      new DataRequiredActionImpl
     )
 
   def viewAsString(): String =
