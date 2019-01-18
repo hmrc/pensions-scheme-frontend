@@ -86,7 +86,8 @@ class AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Scal
       val viewAsString: String = check_your_answers(
         frontendAppConfig,
         Seq(adviserSection),
-        postUrl
+        postUrl,
+        None
       )(fakeRequest, messages).toString
 
       status(result) mustBe OK
@@ -153,7 +154,8 @@ object AdviserCheckYourAnswersControllerSpec extends ControllerSpecBase with Moc
   lazy val viewAsString: String = check_your_answers(
     frontendAppConfig,
     Seq(adviserSection),
-    postUrl
+    postUrl,
+    None
   )(fakeRequest, messages).toString
 
 }

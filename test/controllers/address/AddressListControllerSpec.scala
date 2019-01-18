@@ -223,7 +223,7 @@ object AddressListControllerSpec {
       case None => new AddressListFormProvider()(viewModel.addresses)
     }
 
-    addressList(appConfig, form, viewModel)(request, messages).toString()
+    addressList(appConfig, form, viewModel, None)(request, messages).toString()
 
   }
 

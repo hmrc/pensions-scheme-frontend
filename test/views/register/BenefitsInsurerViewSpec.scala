@@ -32,10 +32,10 @@ class BenefitsInsurerViewSpec extends QuestionViewBehaviours[BenefitsInsurer] {
   val schemeName = "myScheme"
 
   private def createView() = () =>
-    benefitsInsurer(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+    benefitsInsurer(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    benefitsInsurer(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
+    benefitsInsurer(frontendAppConfig, form, NormalMode, Some(schemeName))(fakeRequest, messages)
 
 
   "BenefitsInsurer view" must {

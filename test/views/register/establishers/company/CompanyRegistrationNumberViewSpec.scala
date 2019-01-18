@@ -29,10 +29,10 @@ class CompanyRegistrationNumberViewSpec extends ViewBehaviours {
   val form = new CompanyRegistrationNumberFormProvider()()
 
   private def createView() = () =>
-    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+    companyRegistrationNumber(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
 
   "CompanyRegistrationNumber view" when {
     val crnOptions = Seq("true", "false")

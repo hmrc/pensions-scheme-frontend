@@ -39,10 +39,10 @@ class VatViewSpec extends ViewBehaviours {
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    vat(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
+    vat(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    vat(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
+    vat(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
 
   "Vat view" when {
     "rendered" must {

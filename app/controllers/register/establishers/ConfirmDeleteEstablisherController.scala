@@ -36,7 +36,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Establishers
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.establishers.confirmDeleteEstablisher
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,7 +50,7 @@ class ConfirmDeleteEstablisherController @Inject()(
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
                                                     formProvider: ConfirmDeleteEstablisherFormProvider
-                                                  ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                  ) (implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -79,7 +79,8 @@ class ConfirmDeleteEstablisherController @Inject()(
                     form,
                     establisher.name,
                     getHintText(establisherKind),
-                    routes.ConfirmDeleteEstablisherController.onSubmit(index, establisherKind)
+                    routes.ConfirmDeleteEstablisherController.onSubmit(index, establisherKind),
+                    existingSchemeName
                   )
                 )
               )
@@ -122,7 +123,8 @@ class ConfirmDeleteEstablisherController @Inject()(
           formWithErrors,
           name,
           getHintText(establisherKind),
-          routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex, establisherKind)
+          routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex, establisherKind),
+          existingSchemeName
         ))),
       value => {
         val deletionResult = if (value) {

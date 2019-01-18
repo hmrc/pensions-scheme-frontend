@@ -75,7 +75,8 @@ class PreviousAddressListControllerSpec extends ControllerSpecBase with Enumerab
         title = Message("messages__select_the_previous_address__title"),
         heading = Message("messages__select_the_previous_address__title"),
         subHeading = Some(establisherName)
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   def address(postCode: String): TolerantAddress = TolerantAddress(

@@ -94,7 +94,7 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual addressYears(appConfig, formProvider("error")(messages), viewmodel)(request, messages).toString
+          contentAsString(result) mustEqual addressYears(appConfig, formProvider("error")(messages), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -119,7 +119,8 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
           contentAsString(result) mustEqual addressYears(
             appConfig,
             formProvider("error")(messages).fill(AddressYears.OverAYear),
-            viewmodel
+            viewmodel,
+            None
           )(request, messages).toString
       }
     }
@@ -176,7 +177,8 @@ class AddressYearsControllerSpec extends WordSpec with MustMatchers with OptionV
           contentAsString(result) mustEqual addressYears(
             appConfig,
             formProvider("error")(messages).bind(Map.empty[String, String]),
-            viewmodel
+            viewmodel,
+            None
           )(request, messages).toString
       }
     }

@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.uKBankDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +41,7 @@ class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         authenticate: AuthAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: UKBankDetailsFormProvider) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                        formProvider: UKBankDetailsFormProvider) (implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
@@ -52,7 +52,7 @@ class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(uKBankDetails(appConfig, preparedForm, mode)))
+        Future.successful(Ok(uKBankDetails(appConfig, preparedForm, mode, existingSchemeName)))
       }
   }
 
@@ -61,7 +61,7 @@ class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
-            Future.successful(BadRequest(uKBankDetails(appConfig, formWithErrors, mode)))
+            Future.successful(BadRequest(uKBankDetails(appConfig, formWithErrors, mode, existingSchemeName)))
           },
         value =>
           dataCacheConnector.save(request.externalId, UKBankDetailsId, value).map(cacheMap =>

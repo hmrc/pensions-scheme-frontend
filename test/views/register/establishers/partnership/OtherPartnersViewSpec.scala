@@ -32,10 +32,10 @@ class OtherPartnersViewSpec extends YesNoViewBehaviours {
   val form = new OtherPartnersFormProvider()()
 
   private def createView() = () =>
-    otherPartners(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+    otherPartners(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    otherPartners(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+    otherPartners(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
 
   "OtherPartners view" must {
 

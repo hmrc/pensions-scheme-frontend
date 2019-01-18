@@ -28,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutBenefitsAndInsurance
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.insuranceCompanyName
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,21 +40,21 @@ class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                formProvider: InsuranceCompanyNameFormProvider
-                                              )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                              )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(InsuranceCompanyNameId)).fold(form)(v => form.fill(v))
-      Ok(insuranceCompanyName(appConfig, preparedForm, mode))
+      Ok(insuranceCompanyName(appConfig, preparedForm, mode, existingSchemeName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(insuranceCompanyName(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(insuranceCompanyName(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, InsuranceCompanyNameId, value).map(cacheMap =>
             Redirect(navigator.nextPage(InsuranceCompanyNameId, mode, UserAnswers(cacheMap))))

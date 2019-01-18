@@ -63,7 +63,8 @@ class DirectorDetailsControllerSpec extends ControllerSpecBase {
     form,
     NormalMode,
     firstEstablisherIndex,
-    firstDirectorIndex)(fakeRequest, messages).toString
+    firstDirectorIndex,
+    None)(fakeRequest, messages).toString
 
   private val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"),
     ("date.day", day.toString), ("date.month", month.toString), ("date.year", year.toString))

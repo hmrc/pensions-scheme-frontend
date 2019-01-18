@@ -73,7 +73,8 @@ class AddressYearsControllerSpec extends ControllerSpecBase {
     addressYears(
       frontendAppConfig,
       form,
-      viewModel
+      viewModel,
+      None
     )(fakeRequest, messages).toString
 
   private val validData = Json.obj(SchemeDetailsId.toString -> Json.toJson(

@@ -27,7 +27,7 @@ import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.{IDataFromRequest, Navigator}
 import utils.annotations.Establishers
 import views.html.register.establishers.addEstablisher
 
@@ -41,13 +41,13 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: AddEstablisherFormProvider)(implicit val ec: ExecutionContext)
-  extends FrontendController with Retrievals with I18nSupport {
+  extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val establishers = request.userAnswers.allEstablishersAfterDelete
       Future.successful(Ok(addEstablisher(appConfig, formProvider(establishers), mode,
-        establishers)))
+        establishers, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -56,7 +56,7 @@ class AddEstablisherController @Inject()(appConfig: FrontendAppConfig,
       formProvider(establishers).bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(addEstablisher(appConfig, formWithErrors, mode,
-            establishers))),
+            establishers, existingSchemeName))),
         value =>
           Future.successful(Redirect(navigator.nextPage(AddEstablisherId(value), mode, request.userAnswers)))
       )

@@ -28,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutBenefitsAndInsurance
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.occupationalPensionScheme
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +41,7 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
                                                     formProvider: OccupationalPensionSchemeFormProvider
-                                                   )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                                   )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -51,14 +51,14 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(occupationalPensionScheme(appConfig, preparedForm, mode)))
+      Future.successful(Ok(occupationalPensionScheme(appConfig, preparedForm, mode, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(occupationalPensionScheme(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(occupationalPensionScheme(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, OccupationalPensionSchemeId, value).map(cacheMap =>
             Redirect(navigator.nextPage(OccupationalPensionSchemeId, mode, UserAnswers(cacheMap))))

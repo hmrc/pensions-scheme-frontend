@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.establishers.company.otherDirectors
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class OtherDirectorsController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: OtherDirectorsFormProvider
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -51,8 +51,8 @@ class OtherDirectorsController @Inject()(
     implicit request =>
       retrieveCompanyName(establisherIndex) { companyName =>
         val redirectResult = request.userAnswers.get(OtherDirectorsId(establisherIndex)) match {
-          case None => Ok(otherDirectors(appConfig, form, mode, establisherIndex))
-          case Some(value) => Ok(otherDirectors(appConfig, form.fill(value), mode, establisherIndex))
+          case None => Ok(otherDirectors(appConfig, form, mode, establisherIndex, existingSchemeName))
+          case Some(value) => Ok(otherDirectors(appConfig, form.fill(value), mode, establisherIndex, existingSchemeName))
         }
         Future.successful(redirectResult)
       }
@@ -65,7 +65,7 @@ class OtherDirectorsController @Inject()(
         companyName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(otherDirectors(appConfig, formWithErrors, mode, establisherIndex))),
+              Future.successful(BadRequest(otherDirectors(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName))),
             value =>
               dataCacheConnector.save(request.externalId, OtherDirectorsId(establisherIndex), value).map(cacheMap =>
                 Redirect(navigator.nextPage(OtherDirectorsId(establisherIndex), mode, UserAnswers(cacheMap))))

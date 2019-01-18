@@ -30,10 +30,10 @@ class UniqueTaxReferenceViewSpec extends ViewBehaviours {
   val form = new UniqueTaxReferenceFormProvider()()
 
   private def createView() = () =>
-    uniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    uniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+    uniqueTaxReference(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
 
   "UniqueTaxReference view" when {
     "rendered" must {

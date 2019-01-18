@@ -35,10 +35,10 @@ class PartnerDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
   override val form = new PersonDetailsFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex)(fakeRequest, messages)
+    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex)(fakeRequest, messages)
+    partnerDetails(frontendAppConfig, form, NormalMode, establisherIndex, partnerIndex, None)(fakeRequest, messages)
 
   private val day = LocalDate.now().getDayOfMonth
   private val year = LocalDate.now().getYear

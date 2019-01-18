@@ -31,10 +31,10 @@ class OccupationalPensionSchemeViewSpec extends YesNoViewBehaviours {
   val form = new OccupationalPensionSchemeFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    occupationalPensionScheme(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    occupationalPensionScheme(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    occupationalPensionScheme(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   "OccupationalPensionScheme view  with hub disabled" must {
 

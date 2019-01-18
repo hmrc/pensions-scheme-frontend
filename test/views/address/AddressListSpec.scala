@@ -54,7 +54,8 @@ class AddressListSpec extends ViewBehaviours {
       addressList(
         frontendAppConfig,
         form,
-        viewModel
+        viewModel,
+        None
       )(fakeRequest, messages)
 
   private def createViewUsingForm: Form[_] => HtmlFormat.Appendable =
@@ -62,7 +63,8 @@ class AddressListSpec extends ViewBehaviours {
       addressList(
         frontendAppConfig,
         form,
-        viewModel
+        viewModel,
+        None
       )(fakeRequest, messages)
 
   "AddressListView view" when {

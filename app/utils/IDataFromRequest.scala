@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.FrontendAppConfig
-@import models.Mode
+package utils
 
-@(appConfig: FrontendAppConfig, mode: Mode, schemeName:String)(implicit request: Request[_], messages: Messages)
+import identifiers.SchemeNameId
+import models.requests.{DataRequest, OptionalDataRequest}
+import play.api.mvc.{AnyContent, WrappedRequest}
 
-@{
- (appConfig.enableHubV2, mode) match {
-  case (true, CheckMode) =>
-   components.return_link(messages("messages__psaSchemeDetails__return_link", schemeName), appConfig.enableHubV2)
-  case _ =>
-   components.return_link(messages("messages__complete__return"), appConfig.enableHubV2, None, Some(appConfig.managePensionsSchemeOverviewUrl))
- }
+trait IDataFromRequest {
+
+  protected def existingSchemeName[A <:WrappedRequest[AnyContent]](implicit request:A):Option[String] =
+    request match {
+      case optionalDataRequest: OptionalDataRequest[_] => optionalDataRequest.userAnswers.flatMap(_.get(SchemeNameId))
+      case dataRequest: DataRequest[_] => dataRequest.userAnswers.get(SchemeNameId)
+      case _ => None
+    }
 }

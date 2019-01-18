@@ -34,10 +34,10 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
   override val form = new PersonDetailsFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+    trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
 
 
   "TrusteeDetails view with hub enabled" must {

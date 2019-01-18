@@ -25,6 +25,7 @@ import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.IDataFromRequest
 import utils.Toggles.enableHubV2
 import views.html.whatYouWillNeedWorkingKnowledge
 
@@ -32,11 +33,11 @@ class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendApp
                                                           override val messagesApi: MessagesApi,
                                                           authenticate: AuthAction,
                                                           fs: FeatureSwitchManagementService
-                                                         ) extends FrontendController with I18nSupport {
+                                                         ) extends FrontendController with IDataFromRequest with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>
-      Ok(whatYouWillNeedWorkingKnowledge(appConfig))
+      Ok(whatYouWillNeedWorkingKnowledge(appConfig, existingSchemeName))
   }
 
   def onSubmit: Action[AnyContent] = authenticate {

@@ -28,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutBenefitsAndInsurance
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.insurancePolicyNumber
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +41,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
                                                 formProvider: InsurancePolicyNumberFormProvider
-                                              )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                              )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
@@ -52,7 +52,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(insurancePolicyNumber(appConfig, preparedForm, mode, companyName)))
+        Future.successful(Ok(insurancePolicyNumber(appConfig, preparedForm, mode, companyName, existingSchemeName)))
       }
   }
 
@@ -61,7 +61,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           InsuranceCompanyNameId.retrieve.right.map { companyName =>
-            Future.successful(BadRequest(insurancePolicyNumber(appConfig, formWithErrors, mode, companyName)))
+            Future.successful(BadRequest(insurancePolicyNumber(appConfig, formWithErrors, mode, companyName, existingSchemeName)))
           },
         value =>
           dataCacheConnector.save(request.externalId, InsurancePolicyNumberId, value).map(cacheMap =>

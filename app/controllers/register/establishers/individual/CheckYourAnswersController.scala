@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
 import utils.checkyouranswers.Ops._
-import utils.{CheckYourAnswersFactory, Navigator, SectionComplete}
+import utils.{CheckYourAnswersFactory, IDataFromRequest, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -42,7 +42,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            checkYourAnswersFactory: CheckYourAnswersFactory,
                                            sectionComplete: SectionComplete,
                                            @EstablishersIndividual navigator: Navigator)(implicit val ec: ExecutionContext)
-  extends FrontendController with Retrievals with I18nSupport {
+  extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
@@ -56,7 +56,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           checkYourAnswerHelper.previousAddress(index) ++
           checkYourAnswerHelper.contactDetails(index))
       )
-      Future.successful(Ok(check_your_answers(appConfig, sections, routes.CheckYourAnswersController.onSubmit(index))))
+      Future.successful(Ok(check_your_answers(appConfig, sections, routes.CheckYourAnswersController.onSubmit(index), existingSchemeName)))
   }
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {

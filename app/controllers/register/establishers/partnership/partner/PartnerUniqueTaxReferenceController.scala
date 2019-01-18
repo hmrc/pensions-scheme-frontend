@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersPartner
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.establishers.partnership.partner.partnerUniqueTaxReference
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class PartnerUniqueTaxReferenceController @Inject()(
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
                                                      formProvider: PartnerUniqueTaxReferenceFormProvider
-                                                   ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                   ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
@@ -51,9 +51,9 @@ class PartnerUniqueTaxReferenceController @Inject()(
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.flatMap { partner =>
         PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex).retrieve.right.map { value =>
-          Future.successful(Ok(partnerUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, partnerIndex)))
+          Future.successful(Ok(partnerUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, partnerIndex, existingSchemeName)))
         }.left.map { _ =>
-          Future.successful(Ok(partnerUniqueTaxReference(appConfig, form, mode, establisherIndex, partnerIndex)))
+          Future.successful(Ok(partnerUniqueTaxReference(appConfig, form, mode, establisherIndex, partnerIndex, existingSchemeName)))
         }
       }
   }
@@ -64,7 +64,7 @@ class PartnerUniqueTaxReferenceController @Inject()(
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partner =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(partnerUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, partnerIndex))),
+            Future.successful(BadRequest(partnerUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,

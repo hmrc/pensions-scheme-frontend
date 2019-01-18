@@ -102,7 +102,8 @@ class PartnerPreviousAddressControllerSpec extends ControllerSpecBase with Mocki
           contentAsString(result) mustEqual manualAddress(
             frontendAppConfig,
             form,
-            viewmodel
+            viewmodel,
+            None
           )(request, messages).toString
 
       }

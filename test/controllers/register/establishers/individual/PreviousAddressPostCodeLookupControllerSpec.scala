@@ -72,7 +72,8 @@ class PreviousAddressPostCodeLookupControllerSpec extends ControllerSpecBase wit
       Message("messages__establisher_individual_previous_address__title"),
       Some(establisherName),
       Some(Message("messages__establisher_individual_previous_address_lede"))
-    )
+    ),
+    None
   )(fakeRequest, messages).toString
 
 

@@ -37,7 +37,7 @@ class WhatYouWillNeedWorkingKnowledgeControllerSpec extends ControllerSpecBase w
       new FakeFeatureSwitchManagementService(isEnabledV2)
     )
 
-  def viewAsString(): String = whatYouWillNeedWorkingKnowledge(frontendAppConfig)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedWorkingKnowledge(frontendAppConfig, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedWorkingKnowledgeController" when {
 

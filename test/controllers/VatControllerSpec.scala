@@ -97,7 +97,7 @@ class VatControllerSpec extends WordSpec with MustMatchers with OptionValues wit
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual vat(appConfig, formProvider(), viewmodel)(request, messages).toString
+          contentAsString(result) mustEqual vat(appConfig, formProvider(), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -122,7 +122,8 @@ class VatControllerSpec extends WordSpec with MustMatchers with OptionValues wit
           contentAsString(result) mustEqual vat(
             appConfig,
             formProvider().fill(Vat.Yes("123456789")),
-            viewmodel
+            viewmodel,
+            None
           )(request, messages).toString
       }
     }
@@ -179,7 +180,8 @@ class VatControllerSpec extends WordSpec with MustMatchers with OptionValues wit
           contentAsString(result) mustEqual vat(
             appConfig,
             formProvider().bind(Map.empty[String, String]),
-            viewmodel
+            viewmodel,
+            None
           )(request, messages).toString
       }
     }

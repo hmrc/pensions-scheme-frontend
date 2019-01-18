@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablisherPartnership
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.establishers.partnership.partnershipUniqueTaxReference
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class PartnershipUniqueTaxReferenceController @Inject()(
                                                          getData: DataRetrievalAction,
                                                          requireData: DataRequiredAction,
                                                          formProvider: PartnershipUniqueTaxReferenceFormProvider
-                                                       ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                       ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
@@ -53,9 +53,9 @@ class PartnershipUniqueTaxReferenceController @Inject()(
         partnershipName =>
           val redirectResult = request.userAnswers.get(PartnershipUniqueTaxReferenceID(index)) match {
             case None =>
-              Ok(partnershipUniqueTaxReference(appConfig, form, mode, index))
+              Ok(partnershipUniqueTaxReference(appConfig, form, mode, index, existingSchemeName))
             case Some(value) =>
-              Ok(partnershipUniqueTaxReference(appConfig, form.fill(value), mode, index))
+              Ok(partnershipUniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName))
           }
           Future.successful(redirectResult)
       }
@@ -67,7 +67,7 @@ class PartnershipUniqueTaxReferenceController @Inject()(
         partnershipName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(partnershipUniqueTaxReference(appConfig, formWithErrors, mode, index))),
+              Future.successful(BadRequest(partnershipUniqueTaxReference(appConfig, formWithErrors, mode, index,existingSchemeName))),
             value =>
               dataCacheConnector.save(
                 request.externalId,

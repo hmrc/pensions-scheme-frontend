@@ -77,7 +77,8 @@ trait ControllerBehaviours extends ControllerSpecBase
           contentAsString(result) mustEqual manualAddressView(
             frontendAppConfig,
             form,
-            viewmodel
+            viewmodel,
+            None
           )(request, messages).toString
       }
     }

@@ -106,7 +106,8 @@ class CompanyPreviousAddressPostcodeLookupControllerSpec extends ControllerSpecB
         Message("messages__companyPreviousAddressPostcodeLookup__title"),
         Message("messages__companyPreviousAddressPostcodeLookup__title"),
         Some(companyName)
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   "CompanyPreviousAddressPostcodeLookup Controller" must {

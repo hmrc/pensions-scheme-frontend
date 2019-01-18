@@ -70,7 +70,7 @@ object TypeOfBenefitsControllerSpec {
     FakeRequest().withFormUrlEncodedBody(("value", TypeOfBenefits.values.head.toString))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    typeOfBenefits(base.frontendAppConfig, form, NormalMode)(base.fakeRequest, base.messages).toString()
+    typeOfBenefits(base.frontendAppConfig, form, NormalMode, None)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,

@@ -30,10 +30,10 @@ class InvestmentRegulatedViewSpec extends YesNoViewBehaviours {
   val form = new InvestmentRegulatedFormProvider()()
 
   private def createView() = () =>
-    investmentRegulated(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    investmentRegulated(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    investmentRegulated(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    investmentRegulated(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   "InvestmentRegulated view with hub switched off" must {
 

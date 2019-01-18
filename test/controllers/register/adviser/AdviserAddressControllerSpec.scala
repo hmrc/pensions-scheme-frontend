@@ -96,7 +96,8 @@ class AdviserAddressControllerSpec extends ControllerSpecBase with MockitoSugar 
           contentAsString(result) mustEqual manualAddress(
             frontendAppConfig,
             form,
-            viewmodel
+            viewmodel,
+            None
           )(request, messages).toString
 
       }

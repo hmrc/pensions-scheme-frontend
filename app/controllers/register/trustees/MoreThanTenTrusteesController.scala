@@ -30,7 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.trustees.moreThanTenTrustees
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +44,7 @@ class MoreThanTenTrusteesController @Inject()(
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: MoreThanTenTrusteesFormProvider
-                                             ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                             ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -55,7 +55,7 @@ class MoreThanTenTrusteesController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(moreThanTenTrustees(appConfig, preparedForm, mode)))
+        Future.successful(Ok(moreThanTenTrustees(appConfig, preparedForm, mode, existingSchemeName)))
       }
   }
 
@@ -64,7 +64,7 @@ class MoreThanTenTrusteesController @Inject()(
       SchemeDetailsId.retrieve.right.map { details =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(moreThanTenTrustees(appConfig, formWithErrors, mode))),
+            Future.successful(BadRequest(moreThanTenTrustees(appConfig, formWithErrors, mode, existingSchemeName))),
           value =>
             dataCacheConnector.save(request.externalId, MoreThanTenTrusteesId, value).map(cacheMap =>
               Redirect(navigator.nextPage(MoreThanTenTrusteesId, mode, UserAnswers(cacheMap))))

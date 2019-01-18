@@ -21,7 +21,8 @@
 @import uk.gov.hmrc.play.views.html._
 @import viewmodels.{Section, AnswerSection, RepeaterAnswerSection}
 
-@(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call, returnOverview: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call, schemeName: Option[String],
+    returnOverview: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @heading=@{
     if(appConfig.enableHubV2) {
@@ -37,6 +38,10 @@
     } else {
         messages("checkYourAnswers.title")
     }
+}
+
+@returnMessage=@{
+    schemeName.fold(messages("messages__complete__return"))(name=>messages("messages__psaSchemeDetails__return_link", name))
 }
 
 @main_template(
@@ -60,9 +65,9 @@
 
         @components.submit_button()
         @if(returnOverview){
-            @components.return_link("messages__complete__return", appConfig.enableHubV2, Some(appConfig.managePensionsSchemeOverviewUrl))
+            @components.return_link("messages__complete__return", appConfig.enableHubV2, schemeName, Some(appConfig.managePensionsSchemeOverviewUrl))
         } else {
-            @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+            @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
         }
 
     }

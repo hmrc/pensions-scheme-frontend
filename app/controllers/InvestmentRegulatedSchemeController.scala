@@ -28,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutBenefitsAndInsurance
-import utils.{Navigator, SectionComplete, UserAnswers}
+import utils.{IDataFromRequest, Navigator, SectionComplete, UserAnswers}
 import views.html.investmentRegulatedScheme
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
                                                     requireData: DataRequiredAction,
                                                     formProvider: InvestmentRegulatedSchemeFormProvider,
                                                     sectionComplete: SectionComplete
-                                                   )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                                   )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -52,14 +52,14 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(investmentRegulatedScheme(appConfig, preparedForm, mode)))
+      Future.successful(Ok(investmentRegulatedScheme(appConfig, preparedForm, mode, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(investmentRegulatedScheme(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(investmentRegulatedScheme(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, InvestmentRegulatedSchemeId, value).flatMap { cacheMap =>
             sectionComplete.setCompleteFlag(request.externalId, IsAboutBenefitsAndInsuranceCompleteId, UserAnswers(cacheMap), value = false).map { answers =>

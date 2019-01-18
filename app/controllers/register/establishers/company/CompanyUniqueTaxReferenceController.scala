@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.establishers.company.companyUniqueTaxReference
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyUniqueTaxReferenceFormProvider
-                                                   )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                                   )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
@@ -53,9 +53,9 @@ class CompanyUniqueTaxReferenceController @Inject()(
         companyName =>
           val redirectResult = request.userAnswers.get(CompanyUniqueTaxReferenceId(index)) match {
             case None =>
-              Ok(companyUniqueTaxReference(appConfig, form, mode, index))
+              Ok(companyUniqueTaxReference(appConfig, form, mode, index, existingSchemeName))
             case Some(value) =>
-              Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index))
+              Ok(companyUniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName))
           }
           Future.successful(redirectResult)
       }
@@ -67,7 +67,7 @@ class CompanyUniqueTaxReferenceController @Inject()(
         companyName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index))),
+              Future.successful(BadRequest(companyUniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName))),
             value =>
               dataCacheConnector.save(
                 request.externalId,

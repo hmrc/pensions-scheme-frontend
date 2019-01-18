@@ -30,7 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.trustees.trusteeKind
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +44,7 @@ class TrusteeKindController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: TrusteeKindFormProvider
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -54,14 +54,14 @@ class TrusteeKindController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(trusteeKind(appConfig, preparedForm, mode, index)))
+      Future.successful(Ok(trusteeKind(appConfig, preparedForm, mode, index, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index))),
+          Future.successful(BadRequest(trusteeKind(appConfig, formWithErrors, mode, index, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, TrusteeKindId(index), value).map { userAnswers =>
             Redirect(navigator.nextPage(TrusteeKindId(index), mode, UserAnswers(userAnswers)))

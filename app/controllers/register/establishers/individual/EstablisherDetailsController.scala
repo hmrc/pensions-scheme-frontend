@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.establishers.individual.establisherDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,21 +43,21 @@ class EstablisherDetailsController @Inject()(
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
                                               formProvider: PersonDetailsFormProvider
-                                            )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                            )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val filledForm = request.userAnswers.get(EstablisherDetailsId(index)).fold(form)(form.fill)
-      Future.successful(Ok(establisherDetails(appConfig, filledForm, mode, index)))
+      Future.successful(Ok(establisherDetails(appConfig, filledForm, mode, index, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index))),
+          Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index, existingSchemeName))),
         value =>
           dataCacheConnector.save(
             request.externalId,

@@ -33,10 +33,10 @@ class UKBankDetailsViewSpec extends QuestionViewBehaviours[UKBankDetails] {
   override val form = new UKBankDetailsFormProvider()()
 
   private def createView() = () =>
-    uKBankDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    uKBankDetails(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    uKBankDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    uKBankDetails(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   val validData: Map[String, String] = Map(
     "bankName" -> "test bank",

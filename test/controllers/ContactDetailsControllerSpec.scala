@@ -95,7 +95,7 @@ class ContactDetailsControllerSpec extends WordSpec with MustMatchers with Optio
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual contactDetails(appConfig, formProvider(), viewmodel)(request, messages).toString
+          contentAsString(result) mustEqual contactDetails(appConfig, formProvider(), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -120,7 +120,8 @@ class ContactDetailsControllerSpec extends WordSpec with MustMatchers with Optio
           contentAsString(result) mustEqual contactDetails(
             appConfig,
             formProvider().fill(ContactDetails("test@test.com", "123456789")),
-            viewmodel
+            viewmodel,
+            None
           )(request, messages).toString
       }
     }
@@ -180,7 +181,8 @@ class ContactDetailsControllerSpec extends WordSpec with MustMatchers with Optio
           contentAsString(result) mustEqual contactDetails(
             appConfig,
             formProvider().bind(Map.empty[String, String]),
-            viewmodel
+            viewmodel,
+            None
           )(request, messages).toString
       }
     }

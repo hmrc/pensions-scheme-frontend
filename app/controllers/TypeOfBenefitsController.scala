@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutBenefitsAndInsurance
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
 import views.html.typeOfBenefits
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: TypeOfBenefitsFormProvider
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
+                                        )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Enumerable.Implicits with Retrievals {
 
   private val form = formProvider()
 
@@ -52,14 +52,14 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(typeOfBenefits(appConfig, preparedForm, mode)))
+      Future.successful(Ok(typeOfBenefits(appConfig, preparedForm, mode, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(typeOfBenefits(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(typeOfBenefits(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, TypeOfBenefitsId, value).map(cacheMap =>
             Redirect(navigator.nextPage(TypeOfBenefitsId, mode, UserAnswers(cacheMap))))

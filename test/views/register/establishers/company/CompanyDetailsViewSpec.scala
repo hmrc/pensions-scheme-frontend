@@ -32,10 +32,10 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
   val firstIndex = Index(1)
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
 
   "CompanyDetails view" must {
 

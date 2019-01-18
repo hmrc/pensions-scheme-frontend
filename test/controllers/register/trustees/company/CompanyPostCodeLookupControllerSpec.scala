@@ -99,7 +99,8 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRe
           contentAsString(result) mustEqual postcodeLookup(
             frontendAppConfig,
             form,
-            viewModel
+            viewModel,
+            None
           )(request, messages).toString
       }
     }

@@ -59,7 +59,7 @@ class EstablisherNinoControllerSpec extends ControllerSpecBase {
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = establisherNino(frontendAppConfig, form, NormalMode,
-    firstIndex)(fakeRequest, messages).toString
+    firstIndex, None)(fakeRequest, messages).toString
 
   "EstablisherNino Controller" must {
 

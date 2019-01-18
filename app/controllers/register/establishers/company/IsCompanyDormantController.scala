@@ -32,7 +32,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompany
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.establishers.isDormant
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +44,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
                                  authenticate: AuthAction,
                                  getData: DataRetrievalAction,
                                  requireData: DataRequiredAction,
-                                 formProvider: IsDormantFormProvider)(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
+                                 formProvider: IsDormantFormProvider)(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with IDataFromRequest with I18nSupport with Retrievals {
 
   private val form: Form[DeclarationDormant] = formProvider()
   private def postCall(mode: Mode, index: Int): Call = routes.IsCompanyDormantController.onSubmit(mode, index)
@@ -54,7 +54,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
       retrieveCompanyName(index) {
         companyName =>
           val preparedForm = request.userAnswers.get(IsCompanyDormantId(index)).fold(form)(v=> form.fill(v))
-          Future.successful(Ok(isDormant(appConfig, preparedForm, companyName, postCall(mode, index))))
+          Future.successful(Ok(isDormant(appConfig, preparedForm, companyName, postCall(mode, index), existingSchemeName)))
       }
   }
 
@@ -63,7 +63,7 @@ class IsCompanyDormantController @Inject()(appConfig: FrontendAppConfig,
       retrieveCompanyName(index) { companyName =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(isDormant(appConfig, formWithErrors, companyName, postCall(mode, index)))),
+            Future.successful(BadRequest(isDormant(appConfig, formWithErrors, companyName, postCall(mode, index), existingSchemeName))),
           {
             case Yes =>
               dataCacheConnector.save(request.externalId, IsCompanyDormantId(index), DeclarationDormant.values(0)).map { cacheMap =>

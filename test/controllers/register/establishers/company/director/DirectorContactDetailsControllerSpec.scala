@@ -71,7 +71,8 @@ class DirectorContactDetailsControllerSpec extends ControllerSpecBase {
   def viewAsString(form: Form[_] = form): String = contactDetails(
     frontendAppConfig,
     form,
-    viewmodel(NormalMode, establisherIndex, directorIndex, directorName)
+    viewmodel(NormalMode, establisherIndex, directorIndex, directorName),
+    None
   )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

@@ -72,7 +72,8 @@ class AddressListControllerSpec extends ControllerSpecBase with Enumerable.Impli
         routes.AddressController.onPageLoad(NormalMode, firstIndex),
         addresses,
         subHeading = Some(establisherName)
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   def address(postCode: String): TolerantAddress = TolerantAddress(

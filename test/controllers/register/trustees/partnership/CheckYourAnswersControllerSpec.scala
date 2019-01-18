@@ -92,7 +92,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       lazy val viewAsString: String = check_your_answers(
         frontendAppConfig,
         Seq(partnershipDetails, partnershipContactDetails),
-        routes.CheckYourAnswersController.onSubmit(firstIndex)
+        routes.CheckYourAnswersController.onSubmit(firstIndex),
+        None
       )(fakeRequest, messages).toString
 
       status(result) mustBe OK

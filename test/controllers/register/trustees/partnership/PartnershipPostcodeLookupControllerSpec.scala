@@ -53,7 +53,7 @@ class PartnershipPostcodeLookupControllerSpec extends ControllerSpecBase with CS
         implicit app => addToken(FakeRequest(routes.PartnershipPostcodeLookupController.onPageLoad(NormalMode, firstIndex))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe postcodeLookup(frontendAppConfig, form, viewModel)(request, messages).toString()
+          contentAsString(result) mustBe postcodeLookup(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }

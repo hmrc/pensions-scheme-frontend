@@ -74,7 +74,8 @@ class InsurerAddressControllerSpec extends ControllerSpecBase with ScalaFutures 
         Message("messages__benefits_insurance_addr__title"),
         Message("messages__benefits_insurance_addr__title"),
         Some(schemeName)
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   val insurerAddressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")

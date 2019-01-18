@@ -29,7 +29,7 @@ class WhatYouWillNeedEstablisherCompanyControllerSpec extends ControllerSpecBase
       FakeAuthAction
     )
 
-  def viewAsString(): String = whatYouWillNeedEstablisherCompany(frontendAppConfig)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedEstablisherCompany(frontendAppConfig, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedEstablisherCompanyController " when {
 

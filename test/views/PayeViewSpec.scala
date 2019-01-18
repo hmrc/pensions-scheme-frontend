@@ -39,10 +39,10 @@ class PayeViewSpec extends ViewBehaviours {
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    paye(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
+    paye(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    paye(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
+    paye(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
 
   "Paye view" when {
     "rendered" must {

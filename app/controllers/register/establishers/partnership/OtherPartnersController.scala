@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablisherPartnership
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.establishers.partnership.otherPartners
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class OtherPartnersController @Inject()(
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: OtherPartnersFormProvider
-                                       ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                       ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -51,8 +51,8 @@ class OtherPartnersController @Inject()(
     implicit request =>
       retrievePartnershipName(establisherIndex) { partnershipName =>
         val redirectResult = request.userAnswers.get(OtherPartnersId(establisherIndex)) match {
-          case None => Ok(otherPartners(appConfig, form, mode, establisherIndex))
-          case Some(value) => Ok(otherPartners(appConfig, form.fill(value), mode, establisherIndex))
+          case None => Ok(otherPartners(appConfig, form, mode, establisherIndex, existingSchemeName))
+          case Some(value) => Ok(otherPartners(appConfig, form.fill(value), mode, establisherIndex, existingSchemeName))
         }
         Future.successful(redirectResult)
       }
@@ -65,7 +65,7 @@ class OtherPartnersController @Inject()(
         partnershipName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(otherPartners(appConfig, formWithErrors, mode, establisherIndex))),
+              Future.successful(BadRequest(otherPartners(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName))),
             value =>
               dataCacheConnector.save(request.externalId, OtherPartnersId(establisherIndex), value).map(cacheMap =>
                 Redirect(navigator.nextPage(OtherPartnersId(establisherIndex), mode, UserAnswers(cacheMap))))

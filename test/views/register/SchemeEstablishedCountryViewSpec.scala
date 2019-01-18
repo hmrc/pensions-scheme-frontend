@@ -34,10 +34,10 @@ class SchemeEstablishedCountryViewSpec extends StringViewBehaviours {
   val form = new SchemeEstablishedCountryFormProvider(countryOptions)()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, Seq.empty)(fakeRequest, messages)
+    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, Seq.empty, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) =>
-    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, inputOptions)(fakeRequest, messages)
+    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, inputOptions, None)(fakeRequest, messages)
 
   "SchemeEstablishedCountry view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))

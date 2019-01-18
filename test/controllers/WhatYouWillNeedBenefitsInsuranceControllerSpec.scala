@@ -34,7 +34,7 @@ class WhatYouWillNeedBenefitsInsuranceControllerSpec extends ControllerSpecBase 
       FakeAuthAction
     )
 
-  def viewAsString(): String = whatYouWillNeedBenefitsInsurance(frontendAppConfig)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedBenefitsInsurance(frontendAppConfig, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedBenefitsInsuranceController" when {
 

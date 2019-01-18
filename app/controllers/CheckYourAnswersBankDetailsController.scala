@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Enumerable, SectionComplete}
+import utils.{CountryOptions, Enumerable, IDataFromRequest, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -37,7 +37,8 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
                                                       getData: DataRetrievalAction,
                                                       requireData: DataRequiredAction,
                                                       implicit val countryOptions: CountryOptions,
-                                                      sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
+                                                      sectionComplete: SectionComplete)(implicit val ec: ExecutionContext)
+  extends FrontendController with Enumerable.Implicits with IDataFromRequest with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -50,7 +51,11 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
         BankAccountDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
       )
 
-      Ok(check_your_answers(appConfig, Seq(bankAccountSection), controllers.routes.CheckYourAnswersBankDetailsController.onSubmit()))
+      Ok(check_your_answers(
+        appConfig,
+        Seq(bankAccountSection),
+        controllers.routes.CheckYourAnswersBankDetailsController.onSubmit(),
+        existingSchemeName))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {

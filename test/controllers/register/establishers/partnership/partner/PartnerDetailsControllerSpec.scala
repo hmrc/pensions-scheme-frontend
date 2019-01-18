@@ -61,7 +61,8 @@ class PartnerDetailsControllerSpec extends ControllerSpecBase {
     form,
     NormalMode,
     firstEstablisherIndex,
-    firstPartnerIndex
+    firstPartnerIndex,
+    None
   )(fakeRequest, messages).toString
 
   private val postRequest = fakeRequest.withFormUrlEncodedBody(("firstName", "testFirstName"), ("lastName", "testLastName"),

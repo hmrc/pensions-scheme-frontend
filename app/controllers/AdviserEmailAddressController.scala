@@ -28,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.WorkingKnowledge
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.adviserEmailAddress
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class AdviserEmailAddressController @Inject()(
                                                requireData: DataRequiredAction,
                                                formProvider: AdviserEmailFormProvider,
                                                dataCacheConnector: UserAnswersCacheConnector
-                                             ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                             ) (implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Retrievals {
 
 
   val form = formProvider()
@@ -55,7 +55,7 @@ class AdviserEmailAddressController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(adviserEmailAddress(appConfig, preparedForm, mode, adviserName)))
+        Future.successful(Ok(adviserEmailAddress(appConfig, preparedForm, mode, adviserName, existingSchemeName)))
       }
   }
 
@@ -64,7 +64,7 @@ class AdviserEmailAddressController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           AdviserNameId.retrieve.right.map { adviserName =>
-            Future.successful(BadRequest(adviserEmailAddress(appConfig, formWithErrors, mode, adviserName)))
+            Future.successful(BadRequest(adviserEmailAddress(appConfig, formWithErrors, mode, adviserName, existingSchemeName)))
           }
         },
         value =>

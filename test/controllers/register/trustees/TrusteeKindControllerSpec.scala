@@ -44,7 +44,7 @@ class TrusteeKindControllerSpec extends ControllerSpecBase {
     new TrusteeKindController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = trusteeKind(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = trusteeKind(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages).toString
 
   "TrusteeKind Controller" must {
 

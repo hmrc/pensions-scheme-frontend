@@ -19,7 +19,7 @@
 @import models.address.Address
 @import viewmodels.address.AddressListViewModel
 
-@(appConfig: FrontendAppConfig, form: Form[_], viewModel: AddressListViewModel)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], viewModel: AddressListViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = viewModel.title,
@@ -58,6 +58,6 @@
 
         @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
     }
 }

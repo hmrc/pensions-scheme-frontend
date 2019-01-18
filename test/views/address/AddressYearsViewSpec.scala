@@ -39,10 +39,10 @@ class AddressYearsViewSpec extends ViewBehaviours {
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    addressYears(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
+    addressYears(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    addressYears(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
+    addressYears(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
 
   "AddressYears view" when {
     "rendered" must {

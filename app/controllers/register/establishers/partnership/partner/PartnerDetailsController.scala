@@ -32,7 +32,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersPartner
-import utils.{Navigator, SectionComplete, UserAnswers}
+import utils.{IDataFromRequest, Navigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.partnership.partner.partnerDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,7 +47,7 @@ class PartnerDetailsController @Inject()(
                                           requireData: DataRequiredAction,
                                           formProvider: PersonDetailsFormProvider,
                                           sectionComplete: SectionComplete
-                                        ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                        ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
 
   private val form = formProvider()
 
@@ -59,7 +59,7 @@ class PartnerDetailsController @Inject()(
             case None => form
             case Some(value) => form.fill(value)
           }
-          Future.successful(Ok(partnerDetails(appConfig, preparedForm, mode, establisherIndex, partnerIndex)))
+          Future.successful(Ok(partnerDetails(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName)))
         }
     }
 
@@ -69,7 +69,7 @@ class PartnerDetailsController @Inject()(
         PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(partnerDetails(appConfig, formWithErrors, mode, establisherIndex, partnerIndex)))
+              Future.successful(BadRequest(partnerDetails(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName)))
             ,
             value =>
               dataCacheConnector.save(request.externalId, PartnerDetailsId(establisherIndex, partnerIndex), value).flatMap {

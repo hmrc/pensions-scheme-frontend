@@ -30,9 +30,9 @@ class MembershipFutureViewSpec extends ViewBehaviours {
 
   val form = new MembershipFutureFormProvider()()
 
-  def createView(): () => HtmlFormat.Appendable = () => membershipFuture(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () => membershipFuture(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => membershipFuture(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => membershipFuture(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   "MembershipFuture view" when {
     "rendered" must {

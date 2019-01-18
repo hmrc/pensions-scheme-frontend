@@ -32,7 +32,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesCompany
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.trustees.company.companyDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +46,7 @@ class CompanyDetailsController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: CompanyDetailsFormProvider
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 
@@ -54,9 +54,9 @@ class CompanyDetailsController @Inject()(
     implicit request =>
       val redirectResult = request.userAnswers.get(CompanyDetailsId(index)) match {
         case None =>
-          Ok(companyDetails(appConfig, form, mode, index))
+          Ok(companyDetails(appConfig, form, mode, index, existingSchemeName))
         case Some(value) =>
-          Ok(companyDetails(appConfig, form.fill(value), mode, index))
+          Ok(companyDetails(appConfig, form.fill(value), mode, index, existingSchemeName))
       }
       Future.successful(redirectResult)
   }
@@ -65,7 +65,7 @@ class CompanyDetailsController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index))),
+          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, existingSchemeName))),
         (value) =>
           request.userAnswers.upsert(CompanyDetailsId(index))(value) {
             _.upsert(TrusteeKindId(index))(Company) { answers =>

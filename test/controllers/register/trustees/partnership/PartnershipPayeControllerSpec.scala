@@ -47,7 +47,7 @@ class PartnershipPayeControllerSpec extends ControllerSpecBase with MustMatchers
         implicit app => addToken(FakeRequest(routes.PartnershipPayeController.onPageLoad(NormalMode, firstIndex))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe paye(frontendAppConfig, form, viewModel)(request, messages).toString()
+          contentAsString(result) mustBe paye(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }

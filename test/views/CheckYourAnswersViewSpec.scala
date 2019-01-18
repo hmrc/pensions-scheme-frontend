@@ -39,6 +39,7 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       appConfig,
       emptyAnswerSections,
       routes.IndexController.onPageLoad(),
+      None,
       returnOverview
     )(fakeRequest, messages)
 
@@ -46,7 +47,8 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     check_your_answers(
       frontendAppConfig,
       sections,
-      routes.IndexController.onPageLoad()
+      routes.IndexController.onPageLoad(),
+      None
     )(fakeRequest, messages)
 
   "check_your_answers view with toggle On" must {

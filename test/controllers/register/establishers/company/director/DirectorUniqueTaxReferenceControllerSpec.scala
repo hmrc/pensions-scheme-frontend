@@ -107,7 +107,8 @@ class DirectorUniqueTaxReferenceControllerSpec extends ControllerSpecBase {
       form,
       NormalMode,
       establisherIndex,
-      directorIndex
+      directorIndex,
+      None
     )(fakeRequest, messages).toString
 
   "DirectorUniqueTaxReference Controller" must {

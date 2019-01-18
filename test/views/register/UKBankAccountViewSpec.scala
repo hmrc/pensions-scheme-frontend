@@ -30,10 +30,10 @@ class UKBankAccountViewSpec extends YesNoViewBehaviours {
 
   val form = new UKBankAccountFormProvider()()
 
-  def createView(): () => HtmlFormat.Appendable = () => uKBankAccount(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () => uKBankAccount(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    uKBankAccount(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    uKBankAccount(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   "UKBankAccount view" must {
 

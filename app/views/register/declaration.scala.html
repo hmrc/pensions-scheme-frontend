@@ -23,7 +23,8 @@
     isCompany: Boolean,
     isDormant: Boolean,
     showMasterTrustDeclaration: Boolean,
-    hasWorkingKnowledge: Boolean)(implicit request: Request[_], messages: Messages)
+    hasWorkingKnowledge: Boolean,
+    schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__declaration__title"),
@@ -105,7 +106,7 @@
 
         @components.submit_button("site.save_and_continue")
 
-        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
 
     }
 }

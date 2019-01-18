@@ -40,7 +40,7 @@ class MembershipPensionRegulatorControllerSpec extends ControllerSpecBase with M
       new DataRequiredActionImpl()
     )
 
-  def viewAsString(): String = membershipPensionRegulator(frontendAppConfig, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(): String = membershipPensionRegulator(frontendAppConfig, NormalMode, None)(fakeRequest, messages).toString
 
   "MembershipPensionRegulatorController" when {
 

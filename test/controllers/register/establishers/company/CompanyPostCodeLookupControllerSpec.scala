@@ -104,7 +104,8 @@ class CompanyPostCodeLookupControllerSpec extends ControllerSpecBase with Mockit
           contentAsString(result) mustEqual postcodeLookup(
             frontendAppConfig,
             form,
-            viewModel
+            viewModel,
+            None
           )(request, messages).toString
       }
     }

@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesCompany
 import utils.checkyouranswers.Ops._
-import utils.{CheckYourAnswersFactory, CountryOptions, Navigator, SectionComplete}
+import utils._
 import viewmodels.{AnswerSection, Message}
 import views.html.check_your_answers
 
@@ -45,7 +45,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            implicit val countryOptions: CountryOptions,
                                            @TrusteesCompany navigator: Navigator,
                                            sectionComplete: SectionComplete
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>
@@ -89,7 +89,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       Future.successful(Ok(check_your_answers(
         appConfig,
         Seq(companyDetailsSection, contactDetailsSection),
-        routes.CheckYourAnswersController.onSubmit(index)
+        routes.CheckYourAnswersController.onSubmit(index),
+        existingSchemeName
       )))
   }
 

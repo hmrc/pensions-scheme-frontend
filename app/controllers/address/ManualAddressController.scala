@@ -28,13 +28,13 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import viewmodels.address.ManualAddressViewModel
 import views.html.address.manualAddress
 
 import scala.concurrent.Future
 
-trait ManualAddressController extends FrontendController with Retrievals with I18nSupport {
+trait ManualAddressController extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
 
   protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
 
@@ -60,7 +60,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
       }
       case Some(value) => form.fill(value)
     }
-    Future.successful(Ok(manualAddress(appConfig, preparedForm, viewModel)))
+    Future.successful(Ok(manualAddress(appConfig, preparedForm, viewModel, existingSchemeName)))
   }
 
   protected def post(
@@ -72,7 +72,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
                       postCodeLookupIdForCleanup: TypedIdentifier[Seq[TolerantAddress]]
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
-      (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel))),
+      (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel, existingSchemeName))),
       address => {
         val existingAddress = request.userAnswers.get(id)
         val selectedAddress = request.userAnswers.get(selectedId)

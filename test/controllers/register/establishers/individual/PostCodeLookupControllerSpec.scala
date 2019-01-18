@@ -73,7 +73,8 @@ class PostCodeLookupControllerSpec extends ControllerSpecBase with MockitoSugar 
         Message("messages__establisher_individual_address__title"),
         Some(establisherName),
         Some(Message("messages__establisher_individual_address_lede"))
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   "Address Controller" must {

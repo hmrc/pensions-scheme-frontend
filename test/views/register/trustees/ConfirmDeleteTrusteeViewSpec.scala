@@ -56,7 +56,8 @@ object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
       frontendAppConfig,
       formLocal,
       trusteeName,
-      postCall
+      postCall,
+      None
     )(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
@@ -64,7 +65,8 @@ object ConfirmDeleteTrusteeViewSpec extends ViewSpecBase {
       frontendAppConfig,
       form,
       trusteeName,
-      postCall
+      postCall,
+      None
     )(fakeRequest, messages)
 
 }

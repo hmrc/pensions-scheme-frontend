@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesCompany
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.trustees.company.companyRegistrationNumber
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class CompanyRegistrationNumberController @Inject()(
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyRegistrationNumberFormProvider
-                                                   ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                                   ) (implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
@@ -51,8 +51,8 @@ class CompanyRegistrationNumberController @Inject()(
     implicit request =>
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
         val redirectResult = request.userAnswers.get(CompanyRegistrationNumberId(index)) match {
-          case None => Ok(companyRegistrationNumber(appConfig, form, mode, index))
-          case Some(value) => Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index))
+          case None => Ok(companyRegistrationNumber(appConfig, form, mode, index, existingSchemeName))
+          case Some(value) => Ok(companyRegistrationNumber(appConfig, form.fill(value), mode, index, existingSchemeName))
         }
         Future.successful(redirectResult)
       }
@@ -63,7 +63,7 @@ class CompanyRegistrationNumberController @Inject()(
       CompanyDetailsId(index).retrieve.right.map { companyDetails =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index))),
+            Future.successful(BadRequest(companyRegistrationNumber(appConfig, formWithErrors, mode, index, existingSchemeName))),
           (value) =>
             dataCacheConnector.save(request.externalId, CompanyRegistrationNumberId(index), value).map(cacheMap =>
               Redirect(navigator.nextPage(CompanyRegistrationNumberId(index), mode, UserAnswers(cacheMap))))

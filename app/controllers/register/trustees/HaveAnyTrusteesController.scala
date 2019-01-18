@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.trustees.haveAnyTrustees
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class HaveAnyTrusteesController @Inject()(
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            formProvider: HaveAnyTrusteesFormProvider
-                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                         )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
@@ -52,14 +52,14 @@ class HaveAnyTrusteesController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode)))
+      Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>
             Redirect(navigator.nextPage(HaveAnyTrusteesId, mode, UserAnswers(cacheMap))))

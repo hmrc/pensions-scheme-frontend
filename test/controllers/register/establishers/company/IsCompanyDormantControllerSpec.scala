@@ -67,7 +67,7 @@ class IsCompanyDormantControllerSpec extends ControllerSpecBase {
       )
     )
 
-  def viewAsString(form: Form[_] = form): String = isDormant(frontendAppConfig, form, companyName, postCall)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = isDormant(frontendAppConfig, form, companyName, postCall, None)(fakeRequest, messages).toString
 
   "IsCompanyDormant Controller" must {
 

@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersIndividual
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.establishers.individual._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class UniqueTaxReferenceController @Inject()(
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
                                               formProvider: UniqueTaxReferenceFormProvider
-                                            ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
+                                            ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport with Enumerable.Implicits {
 
   private val form: Form[UniqueTaxReference] = formProvider()
 
@@ -53,9 +53,9 @@ class UniqueTaxReferenceController @Inject()(
         establisherName =>
           val redirectResult = request.userAnswers.get(UniqueTaxReferenceId(index)) match {
             case None =>
-              Ok(uniqueTaxReference(appConfig, form, mode, index))
+              Ok(uniqueTaxReference(appConfig, form, mode, index, existingSchemeName))
             case Some(value) =>
-              Ok(uniqueTaxReference(appConfig, form.fill(value), mode, index))
+              Ok(uniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName))
           }
           Future.successful(redirectResult)
       }
@@ -67,7 +67,7 @@ class UniqueTaxReferenceController @Inject()(
         establisherName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index))),
+              Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName))),
             (value) =>
               dataCacheConnector.save(
                 request.externalId,

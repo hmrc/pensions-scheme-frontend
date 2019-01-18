@@ -34,7 +34,7 @@ class WhatYouWillNeedBankDetailsControllerSpec extends ControllerSpecBase with M
       FakeAuthAction
     )
 
-  def viewAsString(): String = whatYouWillNeedBankDetails(frontendAppConfig)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedBankDetails(frontendAppConfig, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedBankDetailsController" when {
 

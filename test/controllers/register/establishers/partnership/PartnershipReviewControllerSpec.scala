@@ -53,7 +53,8 @@ class PartnershipReviewControllerSpec extends ControllerSpecBase {
     frontendAppConfig,
     index,
     partnershipName,
-    partnerNames
+    partnerNames,
+    None
   )(fakeRequest, messages).toString
 
   "PartnershipReview Controller" must {

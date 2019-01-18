@@ -26,13 +26,13 @@ import models.requests.DataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import viewmodels.address.AddressListViewModel
 import views.html.address.addressList
 
 import scala.concurrent.Future
 
-trait AddressListController extends FrontendController with I18nSupport {
+trait AddressListController extends FrontendController with IDataFromRequest with I18nSupport {
 
   protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
 
@@ -48,7 +48,7 @@ trait AddressListController extends FrontendController with I18nSupport {
                    (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val form = formProvider(viewModel.addresses)
-    Future.successful(Ok(addressList(appConfig, form, viewModel)))
+    Future.successful(Ok(addressList(appConfig, form, viewModel, existingSchemeName)))
   }
 
   protected def post(viewModel: AddressListViewModel, navigatorId: TypedIdentifier[TolerantAddress], dataId: TypedIdentifier[Address], mode: Mode)
@@ -56,7 +56,7 @@ trait AddressListController extends FrontendController with I18nSupport {
 
     formProvider(viewModel.addresses).bindFromRequest().fold(
       formWithErrors =>
-        Future.successful(BadRequest(addressList(appConfig, formWithErrors, viewModel))),
+        Future.successful(BadRequest(addressList(appConfig, formWithErrors, viewModel, existingSchemeName))),
       addressIndex => {
         val address = viewModel.addresses(addressIndex).copy(country = Some("GB"))
 

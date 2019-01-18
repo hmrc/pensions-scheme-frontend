@@ -29,7 +29,7 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Adviser
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Navigator, SectionComplete}
+import utils.{CountryOptions, IDataFromRequest, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -49,7 +49,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            crypto: ApplicationCrypto,
                                            pensionAdministratorConnector: PensionAdministratorConnector,
                                            sectionComplete: SectionComplete
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -69,7 +69,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         check_your_answers(
           appConfig,
           seqAnswerSection.getOrElse(Seq.empty),
-          controllers.register.adviser.routes.CheckYourAnswersController.onSubmit()
+          controllers.register.adviser.routes.CheckYourAnswersController.onSubmit(),
+          existingSchemeName
         )
       )
   }

@@ -20,7 +20,7 @@
 @import models.Mode
 @import viewmodels.VatViewModel
 
-@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: VatViewModel)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: VatViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @_options = @{
 Vat.options
@@ -70,6 +70,6 @@ Vat.options
 
         @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
     }
 }

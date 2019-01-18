@@ -72,7 +72,7 @@ object OccupationalPensionSchemeControllerSpec {
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    occupationalPensionScheme(base.frontendAppConfig, form, NormalMode)(base.fakeRequest, base.messages).toString()
+    occupationalPensionScheme(base.frontendAppConfig, form, NormalMode, None)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,

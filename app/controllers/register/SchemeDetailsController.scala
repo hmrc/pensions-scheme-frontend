@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{NameMatchingFactory, Navigator, SectionComplete, UserAnswers}
+import utils._
 import views.html.register.schemeDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +45,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         requireData: DataRequiredAction,
                                         formProvider: SchemeDetailsFormProvider,
                                         nameMatchingFactory: NameMatchingFactory,
-                                        sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                        sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport {
 
   private val form = formProvider()
 
@@ -55,21 +55,21 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(schemeDetails(appConfig, preparedForm, mode))
+      Ok(schemeDetails(appConfig, preparedForm, mode, existingSchemeName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(schemeDetails(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>{
           nameMatchingFactory.nameMatching(value.schemeName).flatMap { nameMatching =>
           if (nameMatching.isMatch) {
               Future.successful(BadRequest(schemeDetails(appConfig, form.withError(
                 "schemeName",
                 "messages__error__scheme_name_psa_name_match"
-              ), mode)))
+              ), mode, existingSchemeName)))
             } else {
               dataCacheConnector.save(request.externalId, SchemeDetailsId, value).flatMap { cacheMap =>
                 sectionComplete.setCompleteFlag(request.externalId, IsAboutSchemeCompleteId, UserAnswers(cacheMap), value = false).map { json =>

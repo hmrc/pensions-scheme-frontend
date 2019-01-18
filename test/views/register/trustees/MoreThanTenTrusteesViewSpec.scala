@@ -28,9 +28,9 @@ class MoreThanTenTrusteesViewSpec extends YesNoViewBehaviours {
   val messageKeyPrefix = "moreThanTenTrustees"
   val form = new MoreThanTenTrusteesFormProvider()()
 
-  private def createView() = () => moreThanTenTrustees(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  private def createView() = () => moreThanTenTrustees(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
-  private def createViewUsingForm = (form: Form[_]) => moreThanTenTrustees(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  private def createViewUsingForm = (form: Form[_]) => moreThanTenTrustees(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   "MoreThanTenTrustees view with hub enabled" must {
 

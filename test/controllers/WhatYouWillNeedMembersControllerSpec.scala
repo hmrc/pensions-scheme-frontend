@@ -34,7 +34,7 @@ class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with Mocki
       FakeAuthAction
     )
 
-  def viewAsString(): String = whatYouWillNeedMembers(frontendAppConfig)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedMembers(frontendAppConfig, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedMembersController" when {
 

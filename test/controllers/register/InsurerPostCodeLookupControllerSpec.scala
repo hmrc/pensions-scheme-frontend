@@ -68,7 +68,7 @@ class InsurerPostCodeLookupControllerSpec extends ControllerSpecBase with CSRFRe
           )
 
           status(result) mustBe OK
-          contentAsString(result) mustBe postcodeLookup(frontendAppConfig, form, viewModel)(request, messages).toString()
+          contentAsString(result) mustBe postcodeLookup(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }

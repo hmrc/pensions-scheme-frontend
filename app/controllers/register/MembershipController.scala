@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Enumerable, Navigator, UserAnswers}
+import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.membership
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class MembershipController @Inject()(appConfig: FrontendAppConfig,
                                      getData: DataRetrievalAction,
                                      requireData: DataRequiredAction,
                                      formProvider: MembershipFormProvider
-                                    )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Enumerable.Implicits with Retrievals {
+                                    )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Enumerable.Implicits with Retrievals {
 
   private val form = formProvider()
 
@@ -53,7 +53,7 @@ class MembershipController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(membership(appConfig, preparedForm, mode)))
+        Future.successful(Ok(membership(appConfig, preparedForm, mode, existingSchemeName)))
       }
   }
 
@@ -62,7 +62,7 @@ class MembershipController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
-            Future.successful(BadRequest(membership(appConfig, formWithErrors, mode)))
+            Future.successful(BadRequest(membership(appConfig, formWithErrors, mode, existingSchemeName)))
           },
         value =>
           dataCacheConnector.save(request.externalId, MembershipId, value).map(cacheMap =>

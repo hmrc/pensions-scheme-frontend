@@ -25,13 +25,13 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import viewmodels.VatViewModel
 import views.html.vat
 
 import scala.concurrent.Future
 
-trait VatController extends FrontendController with Retrievals with I18nSupport {
+trait VatController extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
 
   protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
 
@@ -46,14 +46,14 @@ trait VatController extends FrontendController with Retrievals with I18nSupport 
     val preparedForm =
       request.userAnswers.get(id).map(form.fill).getOrElse(form)
 
-    Future.successful(Ok(vat(appConfig, preparedForm, viewmodel)))
+    Future.successful(Ok(vat(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
   def post(id: TypedIdentifier[Vat], mode: Mode, form: Form[Vat], viewmodel: VatViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
-        Future.successful(BadRequest(vat(appConfig, formWithErrors, viewmodel))),
+        Future.successful(BadRequest(vat(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       value =>
         cacheConnector.save(request.externalId, id, value).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap))))

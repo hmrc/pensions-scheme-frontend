@@ -31,10 +31,10 @@ class BenefitsSecuredByInsuranceViewSpec extends YesNoViewBehaviours {
   val form = new BenefitsSecuredByInsuranceFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    benefitsSecuredByInsurance(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   "BenefitsSecuredByInsurance view " must {
 

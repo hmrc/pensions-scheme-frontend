@@ -19,21 +19,20 @@ package controllers.establisher
 import config.FrontendAppConfig
 import controllers.actions._
 import javax.inject.Inject
-import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils.IDataFromRequest
 import views.html.establisher.whatYouWillNeedEstablisherCompany
-import views.html.whatYouWillNeedWorkingKnowledge
 
 class WhatYouWillNeedEstablisherCompanyController @Inject()(appConfig: FrontendAppConfig,
                                                             override val messagesApi: MessagesApi,
                                                             authenticate: AuthAction
-                                                         ) extends FrontendController with I18nSupport {
+                                                         ) extends FrontendController with IDataFromRequest with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>
-      Ok(whatYouWillNeedEstablisherCompany(appConfig))
+      Ok(whatYouWillNeedEstablisherCompany(appConfig, existingSchemeName))
   }
 
   def onSubmit: Action[AnyContent] = authenticate {

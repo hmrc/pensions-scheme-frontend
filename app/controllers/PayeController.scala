@@ -25,13 +25,13 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import viewmodels.PayeViewModel
 import views.html.paye
 
 import scala.concurrent.Future
 
-trait PayeController extends FrontendController with Retrievals with I18nSupport {
+trait PayeController extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
 
   protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
 
@@ -47,7 +47,7 @@ trait PayeController extends FrontendController with Retrievals with I18nSupport
     val filledForm =
       request.userAnswers.get(id).map(form.fill).getOrElse(form)
 
-    Future.successful(Ok(paye(appConfig, filledForm, viewmodel)))
+    Future.successful(Ok(paye(appConfig, filledForm, viewmodel, existingSchemeName)))
   }
 
   protected def post(
@@ -58,7 +58,7 @@ trait PayeController extends FrontendController with Retrievals with I18nSupport
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       formWithErrors =>
-        Future.successful(BadRequest(paye(appConfig, formWithErrors, viewmodel))),
+        Future.successful(BadRequest(paye(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       paye =>
         cacheConnector.save(request.externalId, id, paye).map {
           answers =>

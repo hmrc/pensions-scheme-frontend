@@ -28,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Adviser
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.register.adviser.adviserDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class AdviserDetailsController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: AdviserDetailsFormProvider
-                                        ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                        ) (implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport {
 
   private val form = formProvider()
 
@@ -52,14 +52,14 @@ class AdviserDetailsController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      Ok(adviserDetails(appConfig, preparedForm, mode))
+      Ok(adviserDetails(appConfig, preparedForm, mode, existingSchemeName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(adviserDetails(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(adviserDetails(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, AdviserDetailsId, value).map(cacheMap =>
             Redirect(navigator.nextPage(AdviserDetailsId, mode, UserAnswers(cacheMap))))

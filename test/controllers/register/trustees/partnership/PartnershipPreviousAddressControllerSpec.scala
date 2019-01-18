@@ -89,7 +89,8 @@ class PartnershipPreviousAddressControllerSpec extends ControllerSpecBase with S
         Message("messages__partnershipPreviousAddress__heading"),
         Some(partnershipName),
         None
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   "PartnershipPreviousAddress Controller" must {
