@@ -31,7 +31,8 @@ class WhatYouWillNeedBenefitsInsuranceControllerSpec extends ControllerSpecBase 
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedBenefitsInsuranceController =
     new WhatYouWillNeedBenefitsInsuranceController(frontendAppConfig,
       messagesApi,
-      FakeAuthAction
+      FakeAuthAction,
+      dataRetrievalAction
     )
 
   def viewAsString(): String = whatYouWillNeedBenefitsInsurance(frontendAppConfig, None)(fakeRequest, messages).toString

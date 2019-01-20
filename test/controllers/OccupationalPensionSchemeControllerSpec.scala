@@ -21,9 +21,10 @@ import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions._
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.OccupationalPensionSchemeFormProvider
-import identifiers.OccupationalPensionSchemeId
+import identifiers.{OccupationalPensionSchemeId, SchemeNameId}
 import models.NormalMode
 import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import utils.{FakeNavigator, Navigator, UserAnswers}
@@ -67,12 +68,13 @@ object OccupationalPensionSchemeControllerSpec {
 
   private val formProvider = new OccupationalPensionSchemeFormProvider()
   private val form = formProvider.apply()
-  private val validData: UserAnswers = UserAnswers().occupationalPensionScheme(true)
+  private val validData: UserAnswers = UserAnswers(Json.obj(
+    SchemeNameId.toString -> "Test Scheme Name")).occupationalPensionScheme(true)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    occupationalPensionScheme(base.frontendAppConfig, form, NormalMode, None)(base.fakeRequest, base.messages).toString()
+    occupationalPensionScheme(base.frontendAppConfig, form, NormalMode, Some("Test Scheme Name"))(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,

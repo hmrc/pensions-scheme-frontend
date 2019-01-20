@@ -79,7 +79,7 @@ object InvestmentRegulatedSchemeControllerSpec {
     FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    investmentRegulatedScheme(base.frontendAppConfig, form, NormalMode, None)(base.fakeRequest, base.messages).toString()
+    investmentRegulatedScheme(base.frontendAppConfig, form, NormalMode, Some(schemeName))(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,

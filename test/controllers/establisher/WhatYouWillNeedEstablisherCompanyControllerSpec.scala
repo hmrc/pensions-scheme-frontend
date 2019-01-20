@@ -23,7 +23,7 @@ import views.html.establisher.whatYouWillNeedEstablisherCompany
 
 class WhatYouWillNeedEstablisherCompanyControllerSpec extends ControllerSpecBase {
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedEstablisherCompanyController =
+  private def controller(): WhatYouWillNeedEstablisherCompanyController =
     new WhatYouWillNeedEstablisherCompanyController(frontendAppConfig,
       messagesApi,
       FakeAuthAction

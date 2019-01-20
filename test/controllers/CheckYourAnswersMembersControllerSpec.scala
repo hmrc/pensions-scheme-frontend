@@ -94,7 +94,7 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
       membersSection
     ),
     postUrl,
-    None
+    Some(schemeName)
   )(fakeRequest, messages).toString
 
 }

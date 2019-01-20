@@ -29,15 +29,18 @@ import utils.IDataFromRequest
 import utils.Toggles.enableHubV2
 import views.html.whatYouWillNeedWorkingKnowledge
 
+import scala.concurrent.Future
+
 class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendAppConfig,
                                                           override val messagesApi: MessagesApi,
                                                           authenticate: AuthAction,
-                                                          fs: FeatureSwitchManagementService
+                                                          fs: FeatureSwitchManagementService,
+                                                          getData: DataRetrievalAction
                                                          ) extends FrontendController with IDataFromRequest with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authenticate {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
-      Ok(whatYouWillNeedWorkingKnowledge(appConfig, existingSchemeName))
+      Future.successful(Ok(whatYouWillNeedWorkingKnowledge(appConfig, existingSchemeName)))
   }
 
   def onSubmit: Action[AnyContent] = authenticate {

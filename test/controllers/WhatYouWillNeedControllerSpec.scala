@@ -28,7 +28,7 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar
   private val fakePsaNameCacheConnector = mock[PSANameCacheConnector]
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 
-  private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedController =
+  private def controller(): WhatYouWillNeedController =
     new WhatYouWillNeedController(frontendAppConfigWithHubEnabled,
       messagesApi,
       FakeAuthAction,

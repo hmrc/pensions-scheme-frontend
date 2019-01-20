@@ -26,18 +26,21 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.IDataFromRequest
 import views.html.whatYouWillNeedBenefitsInsurance
 
+import scala.concurrent.Future
+
 class WhatYouWillNeedBenefitsInsuranceController @Inject()(appConfig: FrontendAppConfig,
                                                            override val messagesApi: MessagesApi,
-                                                           authenticate: AuthAction
+                                                           authenticate: AuthAction,
+                                                           getData: DataRetrievalAction
                                                         ) extends FrontendController with IDataFromRequest with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = authenticate {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
-      Ok(whatYouWillNeedBenefitsInsurance(appConfig, existingSchemeName))
+      Future.successful(Ok(whatYouWillNeedBenefitsInsurance(appConfig, existingSchemeName)))
   }
 
-  def onSubmit: Action[AnyContent] = authenticate {
+  def onSubmit: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
-      Redirect(controllers.routes.InvestmentRegulatedSchemeController.onPageLoad(NormalMode))
+      Future.successful(Redirect(controllers.routes.InvestmentRegulatedSchemeController.onPageLoad(NormalMode)))
   }
 }

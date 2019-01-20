@@ -146,14 +146,14 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
     frontendAppConfigWithHubEnabled,
     Seq(beforeYouStart),
     postUrl,
-    None
+    Some("Test Scheme")
   )(fakeRequest, messages).toString
 
   private def viewAsStringWithReturnToManage(): String = check_your_answers(
     frontendAppConfigWithHubEnabled,
     Seq(beforeYouStart),
     postUrl,
-    None,
+    Some("Test Scheme"),
     returnOverview=true
   )(fakeRequest, messages).toString
 
