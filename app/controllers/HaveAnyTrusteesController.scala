@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
-import identifiers.{HaveAnyTrusteesId, SchemeNameId}
+import identifiers.HaveAnyTrusteesId
 import javax.inject.Inject
 import models.Mode
 import models.requests.OptionalDataRequest
@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.BeforeYouStart
-import utils.{Navigator, UserAnswers}
+import utils.{IDataFromRequest, Navigator, UserAnswers}
 import views.html.haveAnyTrustees
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,12 +42,12 @@ class HaveAnyTrusteesController @Inject()(
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            formProvider: HaveAnyTrusteesFormProvider
-                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
+                                         )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 
   private def existingSchemeNameOrEmptyString(implicit request:OptionalDataRequest[AnyContent]):String =
-    request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")
+    existingSchemeName.getOrElse("")
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
