@@ -16,7 +16,7 @@
 
 package utils
 
-import models.requests.DataRequest
+import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.PsaId
@@ -27,5 +27,14 @@ class FakeDataRequest(request: Request[AnyContentAsEmpty.type], externalId: Stri
 object FakeDataRequest {
   def apply(answers: UserAnswers): FakeDataRequest = {
     new FakeDataRequest(FakeRequest("", ""), "test-external-id", answers, PsaId("A0000000"))
+  }
+}
+
+class FakeOptionalDataRequest(request: Request[AnyContentAsEmpty.type], externalId: String, answers: Option[UserAnswers], psaId: PsaId)
+  extends OptionalDataRequest[AnyContent](request, externalId, answers, psaId)
+
+object FakeOptionalDataRequest {
+  def apply(answers: Option[UserAnswers]): FakeOptionalDataRequest = {
+    new FakeOptionalDataRequest(FakeRequest("", ""), "test-external-id", answers, PsaId("A0000000"))
   }
 }
