@@ -30,7 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{IDataFromRequest, Navigator}
+import utils.{Navigator}
 import utils.annotations.EstablishersPartner
 import views.html.register.addPartners
 
@@ -45,7 +45,7 @@ class AddPartnersController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: AddPartnersFormProvider
-                                     ) (implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Retrievals {
+                                     ) (implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 

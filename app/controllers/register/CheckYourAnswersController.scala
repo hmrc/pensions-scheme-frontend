@@ -17,6 +17,7 @@
 package controllers.register
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions._
 import identifiers.register._
 import javax.inject.Inject
@@ -24,9 +25,9 @@ import models.{CheckMode, NormalMode}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
+import utils._
 import utils.annotations.Register
 import utils.checkyouranswers.Ops._
-import utils._
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -40,7 +41,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            implicit val countryOptions: CountryOptions,
                                            @Register navigator: Navigator,
                                            sectionComplete: SectionComplete)(implicit val ec: ExecutionContext)
-  extends FrontendController with Enumerable.Implicits with IDataFromRequest with I18nSupport {
+  extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>

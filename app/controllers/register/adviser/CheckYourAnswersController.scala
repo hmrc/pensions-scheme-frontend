@@ -18,6 +18,7 @@ package controllers.register.adviser
 
 import config.FrontendAppConfig
 import connectors._
+import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.adviser._
 import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
@@ -29,7 +30,7 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Adviser
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, IDataFromRequest, Navigator, SectionComplete}
+import utils.{CountryOptions, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -49,7 +50,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            crypto: ApplicationCrypto,
                                            pensionAdministratorConnector: PensionAdministratorConnector,
                                            sectionComplete: SectionComplete
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>

@@ -40,7 +40,7 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                          implicit val countryOptions: CountryOptions,
                                                          sectionComplete: SectionComplete
                                                         )(implicit val ec: ExecutionContext) extends FrontendController
-  with Enumerable.Implicits with IDataFromRequest with I18nSupport {
+  with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>

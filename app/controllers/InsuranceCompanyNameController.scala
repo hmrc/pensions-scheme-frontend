@@ -28,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutBenefitsAndInsurance
-import utils.{IDataFromRequest, Navigator, UserAnswers}
+import utils.{Navigator, UserAnswers}
 import views.html.insuranceCompanyName
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +40,7 @@ class InsuranceCompanyNameController @Inject()(appConfig: FrontendAppConfig,
                                                authenticate: AuthAction,
                                                getData: DataRetrievalAction,
                                                formProvider: InsuranceCompanyNameFormProvider
-                                              )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Retrievals {
+                                              )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

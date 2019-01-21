@@ -18,6 +18,7 @@ package controllers.register
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import controllers.Retrievals
 import controllers.actions._
 import forms.register.SchemeDetailsFormProvider
 import identifiers.register.{IsAboutSchemeCompleteId, SchemeDetailsId}
@@ -30,8 +31,8 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.annotations.Register
 import utils._
+import utils.annotations.Register
 import views.html.register.schemeDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +46,7 @@ class SchemeDetailsController @Inject()(appConfig: FrontendAppConfig,
                                         requireData: DataRequiredAction,
                                         formProvider: SchemeDetailsFormProvider,
                                         nameMatchingFactory: NameMatchingFactory,
-                                        sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport {
+                                        sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

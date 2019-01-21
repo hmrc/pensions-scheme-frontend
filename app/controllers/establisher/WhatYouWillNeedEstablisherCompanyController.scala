@@ -17,18 +17,18 @@
 package controllers.establisher
 
 import config.FrontendAppConfig
+import controllers.Retrievals
 import controllers.actions._
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.IDataFromRequest
 import views.html.establisher.whatYouWillNeedEstablisherCompany
 
 class WhatYouWillNeedEstablisherCompanyController @Inject()(appConfig: FrontendAppConfig,
                                                             override val messagesApi: MessagesApi,
                                                             authenticate: AuthAction
-                                                         ) extends FrontendController with IDataFromRequest with I18nSupport {
+                                                         ) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = authenticate {
     implicit request =>

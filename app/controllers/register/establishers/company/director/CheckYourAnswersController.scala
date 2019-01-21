@@ -27,7 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersCompanyDirector
-import utils.{CheckYourAnswersFactory, IDataFromRequest, Navigator, SectionComplete}
+import utils.{CheckYourAnswersFactory, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -41,7 +41,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            requireData: DataRequiredAction,
                                            checkYourAnswersFactory: CheckYourAnswersFactory,
                                            sectionComplete: SectionComplete)(implicit val ec: ExecutionContext)
-  extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
+  extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(companyIndex: Index, directorIndex: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

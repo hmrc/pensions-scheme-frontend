@@ -45,7 +45,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            implicit val countryOptions: CountryOptions,
                                            @TrusteesCompany navigator: Navigator,
                                            sectionComplete: SectionComplete
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {
     implicit request =>

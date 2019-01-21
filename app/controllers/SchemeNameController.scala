@@ -47,7 +47,7 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
                                      requireData: DataRequiredAction,
                                      formProvider: SchemeNameFormProvider,
                                      nameMatchingFactory: NameMatchingFactory,
-                                     sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport {
+                                     sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 

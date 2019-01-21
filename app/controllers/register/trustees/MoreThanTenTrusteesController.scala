@@ -30,7 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Trustees
-import utils.{IDataFromRequest, Navigator, UserAnswers}
+import utils.{Navigator, UserAnswers}
 import views.html.register.trustees.moreThanTenTrustees
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +44,7 @@ class MoreThanTenTrusteesController @Inject()(
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: MoreThanTenTrusteesFormProvider
-                                             ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
+                                             ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   private val form: Form[Boolean] = formProvider()
 

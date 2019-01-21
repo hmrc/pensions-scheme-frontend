@@ -44,7 +44,7 @@ class CheckYourAnswersController @Inject()(
                                             @EstablishersCompany navigator: Navigator,
                                             sectionComplete: SectionComplete
                                           )(implicit val ec: ExecutionContext) extends FrontendController
-  with Retrievals with IDataFromRequest with I18nSupport with Enumerable.Implicits {
+  with Retrievals with I18nSupport with Enumerable.Implicits {
 
   def onPageLoad(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>

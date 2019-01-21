@@ -22,7 +22,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.IsDormantFormProvider
-import identifiers.register.DeclarationDormantId
 import identifiers.register.establishers.partnership.IsPartnershipDormantId
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant._
@@ -32,7 +31,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablisherPartnership
-import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.establishers.isDormant
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +44,7 @@ class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
                                                getData: DataRetrievalAction,
                                                requireData: DataRequiredAction,
                                                formProvider: IsDormantFormProvider) (implicit val ec: ExecutionContext) extends FrontendController
-  with Enumerable.Implicits with IDataFromRequest with I18nSupport with Retrievals {
+  with Enumerable.Implicits with I18nSupport with Retrievals {
 
   private val form: Form[DeclarationDormant] = formProvider()
 

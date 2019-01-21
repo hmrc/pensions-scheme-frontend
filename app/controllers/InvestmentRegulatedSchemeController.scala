@@ -28,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.AboutBenefitsAndInsurance
-import utils.{IDataFromRequest, Navigator, SectionComplete, UserAnswers}
+import utils.{Navigator, SectionComplete, UserAnswers}
 import views.html.investmentRegulatedScheme
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class InvestmentRegulatedSchemeController @Inject()(appConfig: FrontendAppConfig
                                                     requireData: DataRequiredAction,
                                                     formProvider: InvestmentRegulatedSchemeFormProvider,
                                                     sectionComplete: SectionComplete
-                                                   )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport {
+                                                   )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 

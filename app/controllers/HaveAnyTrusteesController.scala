@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.BeforeYouStart
-import utils.{IDataFromRequest, Navigator, UserAnswers}
+import utils.{Navigator, UserAnswers}
 import views.html.haveAnyTrustees
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class HaveAnyTrusteesController @Inject()(
                                            authenticate: AuthAction,
                                            getData: DataRetrievalAction,
                                            formProvider: HaveAnyTrusteesFormProvider
-                                         )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport with Retrievals {
+                                         )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form: Form[Boolean] = formProvider()
 

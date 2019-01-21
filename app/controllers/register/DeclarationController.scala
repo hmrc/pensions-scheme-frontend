@@ -40,7 +40,7 @@ import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.Register
-import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.declaration
 import utils.Toggles.enableHubV2
 
@@ -61,7 +61,7 @@ class DeclarationController @Inject()(
                                        crypto: ApplicationCrypto,
                                        pensionAdministratorConnector: PensionAdministratorConnector,
                                        fs: FeatureSwitchManagementService
-                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport with Enumerable.Implicits {
+                                     )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
 
   private val form = formProvider()
 

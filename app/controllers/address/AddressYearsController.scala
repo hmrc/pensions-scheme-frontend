@@ -26,13 +26,13 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{IDataFromRequest, Navigator}
+import utils.{Navigator}
 import viewmodels.address.AddressYearsViewModel
 import views.html.address.addressYears
 
 import scala.concurrent.Future
 
-trait AddressYearsController extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
+trait AddressYearsController extends FrontendController with Retrievals with I18nSupport {
 
   protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
 

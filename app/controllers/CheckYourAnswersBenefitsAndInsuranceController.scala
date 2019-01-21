@@ -26,7 +26,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Toggles.enableHubV2
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Enumerable, IDataFromRequest, SectionComplete}
+import utils.{CountryOptions, Enumerable, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -40,7 +40,7 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                                sectionComplete: SectionComplete,
                                                                implicit val countryOptions: CountryOptions
                                                               )(implicit val ec: ExecutionContext) extends FrontendController
-  with Enumerable.Implicits with IDataFromRequest with I18nSupport {
+  with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>

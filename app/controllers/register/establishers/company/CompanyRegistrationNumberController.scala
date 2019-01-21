@@ -43,7 +43,7 @@ class CompanyRegistrationNumberController @Inject()(
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
                                                      formProvider: CompanyRegistrationNumberFormProvider
-                                                   )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport with Enumerable.Implicits with MapFormats {
+                                                   )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits with MapFormats {
 
   val form = formProvider()
 

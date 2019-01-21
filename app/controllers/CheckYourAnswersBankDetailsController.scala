@@ -25,7 +25,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, Enumerable, IDataFromRequest, SectionComplete}
+import utils.{CountryOptions, Enumerable, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -38,7 +38,7 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
                                                       requireData: DataRequiredAction,
                                                       implicit val countryOptions: CountryOptions,
                                                       sectionComplete: SectionComplete)(implicit val ec: ExecutionContext)
-  extends FrontendController with Enumerable.Implicits with IDataFromRequest with I18nSupport {
+  extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>

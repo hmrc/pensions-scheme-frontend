@@ -25,13 +25,13 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Result}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.{IDataFromRequest, Navigator, UserAnswers}
+import utils.{Navigator, UserAnswers}
 import viewmodels.ContactDetailsViewModel
 import views.html.contactDetails
 
 import scala.concurrent.Future
 
-trait ContactDetailsController extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
+trait ContactDetailsController extends FrontendController with Retrievals with I18nSupport {
 
   protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
 

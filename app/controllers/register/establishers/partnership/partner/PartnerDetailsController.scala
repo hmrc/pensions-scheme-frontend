@@ -32,7 +32,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.EstablishersPartner
-import utils.{IDataFromRequest, Navigator, SectionComplete, UserAnswers}
+import utils.{Navigator, SectionComplete, UserAnswers}
 import views.html.register.establishers.partnership.partner.partnerDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,7 +47,7 @@ class PartnerDetailsController @Inject()(
                                           requireData: DataRequiredAction,
                                           formProvider: PersonDetailsFormProvider,
                                           sectionComplete: SectionComplete
-                                        ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport {
+                                        ) (implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport {
 
   private val form = formProvider()
 

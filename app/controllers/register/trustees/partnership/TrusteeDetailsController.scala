@@ -29,7 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.TrusteesPartnership
-import utils.{Enumerable, IDataFromRequest, Navigator, UserAnswers}
+import utils.{Enumerable, Navigator, UserAnswers}
 import views.html.register.trustees.partnership.partnershipDetails
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class TrusteeDetailsController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: PartnershipDetailsFormProvider
-                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with IDataFromRequest with I18nSupport with Enumerable.Implicits {
+                                        )(implicit val ec: ExecutionContext) extends FrontendController with Retrievals with I18nSupport with Enumerable.Implicits {
   private val form = formProvider()
 
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {

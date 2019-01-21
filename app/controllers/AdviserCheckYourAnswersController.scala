@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.WorkingKnowledge
 import utils.checkyouranswers.Ops._
-import utils.{CountryOptions, IDataFromRequest, Navigator, SectionComplete}
+import utils.{CountryOptions, Navigator, SectionComplete}
 import viewmodels.AnswerSection
 import views.html.check_your_answers
 
@@ -43,7 +43,7 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                   @WorkingKnowledge navigator: Navigator,
                                                   implicit val countryOptions: CountryOptions,
                                                   sectionComplete: SectionComplete
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with IDataFromRequest with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
