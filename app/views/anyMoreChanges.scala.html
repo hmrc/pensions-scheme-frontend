@@ -25,7 +25,7 @@
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
-    title = messages("messages__any_more_changes__add__title"),
+    title = messages("messages__any_more_changes__title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
@@ -34,17 +34,19 @@
         @components.error_summary(form.errors)
 
         @components.heading(
-            headingKey=messages("messages__any_more_changes__add__title")
+            headingKey=messages("messages__any_more_changes__title")
         )
+
+        <p>@messages("messages__any_more_changes__p1")</p>
+        <p>@messages("messages__any_more_changes__p2")</p>
 
         @components.input_yes_no(
             field = form("value"),
-            label = messages("messages__any_more_changes__add_legend_more"),
-            labelClass = Some("bold-small"),
-            hint = Some(messages("messages__any_more_changes__add_hint"))
+            label = messages("messages__any_more_changes__title"),
+            labelClass = Some("visually-hidden")
         )
 
-        @components.submit_button("messages__common__continue")
+        @components.submit_button("site.save_and_continue")
 
         @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
     }
