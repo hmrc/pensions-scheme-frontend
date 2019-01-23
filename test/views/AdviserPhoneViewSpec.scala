@@ -18,6 +18,7 @@ package views
 
 import forms.register.adviser.AdviserEmailFormProvider
 import models.NormalMode
+import org.jsoup.Jsoup
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
@@ -43,6 +44,10 @@ class AdviserPhoneViewSpec extends QuestionViewBehaviours[String] {
     controllers.register.adviser.routes.AdviserPhoneController.onSubmit(NormalMode).url,
     "phone"
   )
+
+  "display the paragraph" in {
+    Jsoup.parse(createViewWithForm(form).toString()) must haveDynamicText(s"messages__${messageKeyPrefix}__p1", adviserName)
+  }
 
   behave like pageWithSubmitButton(createView)
 

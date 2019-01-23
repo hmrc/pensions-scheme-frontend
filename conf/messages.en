@@ -1185,6 +1185,7 @@ messages__adviserName__blank = Enter the name of who has working knowledge of pe
 
 messages__adviser__phone__title = What is the person’s phone number?
 messages__adviser__phone__heading = What is {0}’s phone number?
+messages__adviser__phone__p1 = This will be used if HMRC need to contact {0}.
 
 messages__adviser__phone__blank = Enter a phone number
 messages__adviser__phone__length = The phone number cannot be more than 24 characters
