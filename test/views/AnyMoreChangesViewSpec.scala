@@ -50,7 +50,7 @@ class AnyMoreChangesViewSpec extends YesNoViewBehaviours {
 
     behave like pageWithSubmitButton(createView)
 
-    //behave like pageWithReturnLink(createView, frontendAppConfig.managePensionsSchemeOverviewUrl.url)
+    behave like pageWithReturnLink(createView, getReturnLink)
 
   }
 }
