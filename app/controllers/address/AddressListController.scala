@@ -18,6 +18,7 @@ package controllers.address
 
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
+import controllers.Retrievals
 import forms.address.AddressListFormProvider
 import identifiers.TypedIdentifier
 import models.Mode
@@ -32,7 +33,7 @@ import views.html.address.addressList
 
 import scala.concurrent.Future
 
-trait AddressListController extends FrontendController with I18nSupport {
+trait AddressListController extends FrontendController with Retrievals  with I18nSupport {
 
   protected implicit val ec = play.api.libs.concurrent.Execution.defaultContext
 
@@ -48,7 +49,7 @@ trait AddressListController extends FrontendController with I18nSupport {
                    (implicit request: DataRequest[AnyContent]): Future[Result] = {
 
     val form = formProvider(viewModel.addresses)
-    Future.successful(Ok(addressList(appConfig, form, viewModel)))
+    Future.successful(Ok(addressList(appConfig, form, viewModel, existingSchemeName)))
   }
 
   protected def post(viewModel: AddressListViewModel, navigatorId: TypedIdentifier[TolerantAddress], dataId: TypedIdentifier[Address], mode: Mode)
@@ -56,7 +57,7 @@ trait AddressListController extends FrontendController with I18nSupport {
 
     formProvider(viewModel.addresses).bindFromRequest().fold(
       formWithErrors =>
-        Future.successful(BadRequest(addressList(appConfig, formWithErrors, viewModel))),
+        Future.successful(BadRequest(addressList(appConfig, formWithErrors, viewModel, existingSchemeName))),
       addressIndex => {
         val address = viewModel.addresses(addressIndex).copy(country = Some("GB"))
 

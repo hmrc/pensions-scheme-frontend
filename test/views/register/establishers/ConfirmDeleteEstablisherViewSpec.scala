@@ -70,7 +70,8 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
       formLocal,
       establisherName,
       hintText,
-      postCall
+      postCall,
+      None
     )(fakeRequest, messages)
 
   def createViewUsingForm(hintText:Option[String] = None): Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
@@ -79,7 +80,8 @@ object ConfirmDeleteEstablisherViewSpec extends ViewSpecBase {
       form,
       establisherName,
       hintText,
-      postCall
+      postCall,
+      None
     )(fakeRequest, messages)
 
 }

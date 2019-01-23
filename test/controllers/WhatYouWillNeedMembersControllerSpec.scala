@@ -31,10 +31,11 @@ class WhatYouWillNeedMembersControllerSpec extends ControllerSpecBase with Mocki
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedMembersController =
     new WhatYouWillNeedMembersController(frontendAppConfig,
       messagesApi,
-      FakeAuthAction
+      FakeAuthAction,
+      dataRetrievalAction
     )
 
-  def viewAsString(): String = whatYouWillNeedMembers(frontendAppConfig)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedMembers(frontendAppConfig, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedMembersController" when {
 

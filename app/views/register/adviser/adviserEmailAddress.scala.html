@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.register.adviser.routes._
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, adviserName: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, adviserName: String, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = s"${messages("messages__adviser__email__address__title")}",
@@ -42,7 +42,7 @@
 
         @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
     }
 
 }

@@ -141,7 +141,8 @@ object TrusteeContactDetailsControllerSpec extends ControllerSpecBase {
     contactDetails(
       frontendAppConfig,
       form,
-      viewmodel(NormalMode, index, trustee.fullName)
+      viewmodel(NormalMode, index, trustee.fullName),
+      None
     )(fakeRequest, messages).toString
 
   private def trusteeUserAnswers: UserAnswers = {

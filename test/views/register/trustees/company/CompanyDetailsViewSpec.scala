@@ -31,10 +31,10 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
   val firstIndex = Index(1)
 
   private def createView() = () =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    companyDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+    companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
 
 
   "CompanyDetails view with hub enabled" must {

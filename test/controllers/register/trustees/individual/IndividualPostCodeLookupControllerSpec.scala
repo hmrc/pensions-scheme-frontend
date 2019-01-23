@@ -55,7 +55,7 @@ class IndividualPostCodeLookupControllerSpec extends ControllerSpecBase with CSR
         implicit app => addToken(FakeRequest(routes.IndividualPostCodeLookupController.onPageLoad(NormalMode, firstIndex))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe postcodeLookup(frontendAppConfig, form, viewModel)(request, messages).toString()
+          contentAsString(result) mustBe postcodeLookup(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }

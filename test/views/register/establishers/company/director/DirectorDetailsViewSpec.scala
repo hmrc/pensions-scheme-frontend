@@ -35,10 +35,10 @@ class DirectorDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
   override val form = new PersonDetailsFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
+    directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
+    directorDetails(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None)(fakeRequest, messages)
 
   private val day = LocalDate.now().getDayOfMonth
   private val year = LocalDate.now().getYear

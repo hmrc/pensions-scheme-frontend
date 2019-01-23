@@ -99,7 +99,8 @@ class CompanyPreviousAddressPostCodeLookupControllerSpec extends ControllerSpecB
           contentAsString(result) mustEqual postcodeLookup(
             frontendAppConfig,
             form,
-            viewModel
+            viewModel,
+            None
           )(request, messages).toString
       }
     }

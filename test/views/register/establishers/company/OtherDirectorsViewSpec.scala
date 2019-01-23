@@ -32,10 +32,10 @@ class OtherDirectorsViewSpec extends YesNoViewBehaviours {
   val form = new OtherDirectorsFormProvider()()
 
   private def createView() = () =>
-    otherDirectors(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+    otherDirectors(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    otherDirectors(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+    otherDirectors(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
 
   "OtherDirectors view" must {
 

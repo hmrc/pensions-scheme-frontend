@@ -103,6 +103,7 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       trusteeDetailsSection,
       contactDetailsSection
     ),
-    postUrl
+    postUrl,
+    None
   )(fakeRequest, messages).toString
 }

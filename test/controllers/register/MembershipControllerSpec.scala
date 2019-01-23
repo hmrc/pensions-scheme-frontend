@@ -52,7 +52,7 @@ class MembershipControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  def viewAsString(form: Form[_] = form): String = membership(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = membership(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages).toString
 
   "Membership Controller" must {
 

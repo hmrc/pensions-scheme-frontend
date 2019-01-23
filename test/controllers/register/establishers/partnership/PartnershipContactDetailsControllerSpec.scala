@@ -85,7 +85,8 @@ class PartnershipContactDetailsControllerSpec extends ControllerSpecBase {
     contactDetails(
       frontendAppConfig,
       form,
-      viewmodel(NormalMode, firstIndex, partnershipName)
+      viewmodel(NormalMode, firstIndex, partnershipName),
+      None
     )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

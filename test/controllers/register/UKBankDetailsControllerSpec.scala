@@ -55,7 +55,7 @@ class UKBankDetailsControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  def viewAsString(form: Form[_] = form): String = uKBankDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = uKBankDetails(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages).toString
 
   private val accountNo = RandomUtils.nextInt(10000000, 99999999).toString
   private val sortCode = RandomUtils.nextInt(100000, 999999).toString

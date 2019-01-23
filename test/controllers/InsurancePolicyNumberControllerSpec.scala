@@ -82,7 +82,7 @@ object InsurancePolicyNumberControllerSpec {
     FakeRequest().withFormUrlEncodedBody(("policyNumber", policyNumber))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    insurancePolicyNumber(base.frontendAppConfig, form, NormalMode, companyName)(base.fakeRequest, base.messages).toString()
+    insurancePolicyNumber(base.frontendAppConfig, form, NormalMode, companyName, None)(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,

@@ -43,7 +43,7 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                                   @WorkingKnowledge navigator: Navigator,
                                                   implicit val countryOptions: CountryOptions,
                                                   sectionComplete: SectionComplete
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -60,7 +60,8 @@ class AdviserCheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         check_your_answers(
           appConfig,
           seqAnswerSection,
-          controllers.routes.AdviserCheckYourAnswersController.onSubmit()
+          controllers.routes.AdviserCheckYourAnswersController.onSubmit(),
+          existingSchemeName
         )
       )
   }

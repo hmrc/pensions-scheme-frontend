@@ -98,7 +98,7 @@ class DirectorNinoControllerSpec extends ControllerSpecBase {
       FakeAuthAction, dataRetrievalAction, new DataRequiredActionImpl, formProvider)
 
   def viewAsString(form: Form[_] = form): String = directorNino(frontendAppConfig, form, NormalMode,
-    establisherIndex, directorIndex)(fakeRequest, messages).toString
+    establisherIndex, directorIndex, None)(fakeRequest, messages).toString
 
   "DirectorNino Controller" must {
 

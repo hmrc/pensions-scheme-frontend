@@ -50,14 +50,14 @@ class EstablisherDetailsController @Inject()(
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val filledForm = request.userAnswers.get(EstablisherDetailsId(index)).fold(form)(form.fill)
-      Future.successful(Ok(establisherDetails(appConfig, filledForm, mode, index)))
+      Future.successful(Ok(establisherDetails(appConfig, filledForm, mode, index, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index))),
+          Future.successful(BadRequest(establisherDetails(appConfig, formWithErrors, mode, index, existingSchemeName))),
         value =>
           dataCacheConnector.save(
             request.externalId,

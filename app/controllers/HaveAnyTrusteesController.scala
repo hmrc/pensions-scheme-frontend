@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.actions._
 import forms.register.trustees.HaveAnyTrusteesFormProvider
-import identifiers.{HaveAnyTrusteesId, SchemeNameId}
+import identifiers.HaveAnyTrusteesId
 import javax.inject.Inject
 import models.Mode
 import models.requests.OptionalDataRequest
@@ -47,7 +47,7 @@ class HaveAnyTrusteesController @Inject()(
   private val form: Form[Boolean] = formProvider()
 
   private def existingSchemeNameOrEmptyString(implicit request:OptionalDataRequest[AnyContent]):String =
-    request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")
+    existingSchemeName.getOrElse("")
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>

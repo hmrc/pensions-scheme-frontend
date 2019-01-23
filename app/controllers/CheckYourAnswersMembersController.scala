@@ -38,7 +38,8 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
                                                   sectionComplete: SectionComplete
-                                                 )(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
+                                                 )(implicit val ec: ExecutionContext) extends FrontendController
+  with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -51,7 +52,8 @@ class CheckYourAnswersMembersController @Inject()(appConfig: FrontendAppConfig,
       Ok(check_your_answers(
         appConfig,
         Seq(membersSection),
-        routes.CheckYourAnswersMembersController.onSubmit()
+        routes.CheckYourAnswersMembersController.onSubmit(),
+        existingSchemeName
       ))
   }
 

@@ -32,10 +32,10 @@ class SchemeDetailsViewSpec extends QuestionViewBehaviours[SchemeDetails] {
   override val form = new SchemeDetailsFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    schemeDetails(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    schemeDetails(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   private def schemeOptions = SchemeType.options(frontendAppConfig)
 

@@ -66,7 +66,8 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
                   appConfig,
                   form,
                   trustee.name,
-                  routes.ConfirmDeleteTrusteeController.onSubmit(index, trusteeKind)
+                  routes.ConfirmDeleteTrusteeController.onSubmit(index, trusteeKind),
+                  existingSchemeName
                 )
               )
             )
@@ -106,7 +107,8 @@ class ConfirmDeleteTrusteeController @Inject()(appConfig: FrontendAppConfig,
           appConfig,
           formWithErrors,
           name,
-          routes.ConfirmDeleteTrusteeController.onSubmit(trusteeIndex, trusteeKind)
+          routes.ConfirmDeleteTrusteeController.onSubmit(trusteeIndex, trusteeKind),
+          existingSchemeName
         ))),
       value => {
         val deletionResult = if (value) {

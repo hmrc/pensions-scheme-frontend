@@ -107,7 +107,7 @@ class DeclarationController @Inject()(
       declarationDuties match {
         case Some(hasWorkingKnowledge) => Future.successful(
           status(
-            declaration(appConfig, form, isCompany, isDormant = isDeclarationDormant, showMasterTrustDeclaration, hasWorkingKnowledge)
+            declaration(appConfig, form, isCompany, isDormant = isDeclarationDormant, showMasterTrustDeclaration, hasWorkingKnowledge, existingSchemeName)
           )
         )
         case _ => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))

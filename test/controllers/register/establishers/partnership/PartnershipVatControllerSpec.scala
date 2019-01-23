@@ -47,7 +47,7 @@ class PartnershipVatControllerSpec extends ControllerSpecBase with MustMatchers 
         implicit app => addToken(FakeRequest(routes.PartnershipVatController.onPageLoad(NormalMode, firstIndex))),
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe vat(frontendAppConfig, form, viewModel)(request, messages).toString()
+          contentAsString(result) mustBe vat(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }

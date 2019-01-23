@@ -51,7 +51,7 @@ class UKBankAccountControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  private def viewAsString(form: Form[_] = form) = uKBankAccount(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = uKBankAccount(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages).toString
 
   "UKBankAccount Controller" must {
 

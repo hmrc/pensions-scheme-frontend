@@ -87,7 +87,8 @@ object TrusteeNinoViewSpec extends ViewBehaviours {
       frontendAppConfig,
       form,
       mode,
-      index
+      index,
+      None
     )(fakeRequest, messages)
 
   private def createViewUsingForm: Form[_] => HtmlFormat.Appendable =
@@ -95,7 +96,8 @@ object TrusteeNinoViewSpec extends ViewBehaviours {
       frontendAppConfig,
       form,
       mode,
-      index
+      index,
+      None
     )(fakeRequest, messages)
 
 }

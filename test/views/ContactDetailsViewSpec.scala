@@ -40,10 +40,10 @@ class ContactDetailsViewSpec extends QuestionViewBehaviours[ContactDetails] {
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    contactDetails(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
+    contactDetails(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    contactDetails(frontendAppConfig, form, viewmodel)(fakeRequest, messages)
+    contactDetails(frontendAppConfig, form, viewmodel, None)(fakeRequest, messages)
 
   "ContactDetails view" must {
 

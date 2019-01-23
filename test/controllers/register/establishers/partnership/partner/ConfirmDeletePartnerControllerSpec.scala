@@ -174,7 +174,8 @@ object ConfirmDeletePartnerControllerSpec extends ControllerSpecBase {
     frontendAppConfig,
     form,
     partnerName,
-    postCall
+    postCall,
+    None
   )(fakeRequest, messages).toString
 
 }

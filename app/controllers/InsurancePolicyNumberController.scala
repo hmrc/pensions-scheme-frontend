@@ -52,7 +52,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(insurancePolicyNumber(appConfig, preparedForm, mode, companyName)))
+        Future.successful(Ok(insurancePolicyNumber(appConfig, preparedForm, mode, companyName, existingSchemeName)))
       }
   }
 
@@ -61,7 +61,7 @@ class InsurancePolicyNumberController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           InsuranceCompanyNameId.retrieve.right.map { companyName =>
-            Future.successful(BadRequest(insurancePolicyNumber(appConfig, formWithErrors, mode, companyName)))
+            Future.successful(BadRequest(insurancePolicyNumber(appConfig, formWithErrors, mode, companyName, existingSchemeName)))
           },
         value =>
           dataCacheConnector.save(request.externalId, InsurancePolicyNumberId, value).map(cacheMap =>

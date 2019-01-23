@@ -30,10 +30,10 @@ class BenefitsViewSpec extends ViewBehaviours {
   val form = new BenefitsFormProvider()()
 
   private def createView() = () =>
-    benefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    benefits(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   private def createViewUsingForm = (form: Form[_]) =>
-    benefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    benefits(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   "Benefits view" when {
     "rendered" must {

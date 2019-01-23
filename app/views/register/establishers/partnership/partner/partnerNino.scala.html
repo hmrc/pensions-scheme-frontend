@@ -22,7 +22,7 @@
 @import models.Nino._
 
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, partnerIndex: Index)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, establisherIndex: Index, partnerIndex: Index, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @_options = @{
         Nino.options
@@ -76,7 +76,7 @@
 
         @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
 
     }
 }

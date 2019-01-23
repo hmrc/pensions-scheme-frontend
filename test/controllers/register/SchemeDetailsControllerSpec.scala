@@ -67,7 +67,7 @@ class SchemeDetailsControllerSpec extends ControllerSpecBase {
       FakeSectionComplete
     )
 
-  private def viewAsString(form: Form[_] = form) = schemeDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  private def viewAsString(form: Form[_] = form) = schemeDetails(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages).toString
 
   "SchemeDetails Controller" must {
 

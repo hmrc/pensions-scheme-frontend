@@ -71,7 +71,8 @@ class InsurerAddressListControllerSpec extends ControllerSpecBase with MockitoSu
         routes.InsurerAddressController.onPageLoad(NormalMode),
         addresses,
         subHeading = Some(schemeName)
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   def address(postCode: String): TolerantAddress = TolerantAddress(

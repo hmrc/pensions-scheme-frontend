@@ -51,14 +51,14 @@ class BenefitsSecuredByInsuranceController @Inject()(appConfig: FrontendAppConfi
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(benefitsSecuredByInsurance(appConfig, preparedForm, mode)))
+      Future.successful(Ok(benefitsSecuredByInsurance(appConfig, preparedForm, mode, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(benefitsSecuredByInsurance(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(benefitsSecuredByInsurance(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, BenefitsSecuredByInsuranceId, value).map(cacheMap =>
             Redirect(navigator.nextPage(BenefitsSecuredByInsuranceId, mode, UserAnswers(cacheMap))))

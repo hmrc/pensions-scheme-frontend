@@ -46,14 +46,14 @@ trait VatController extends FrontendController with Retrievals with I18nSupport 
     val preparedForm =
       request.userAnswers.get(id).map(form.fill).getOrElse(form)
 
-    Future.successful(Ok(vat(appConfig, preparedForm, viewmodel)))
+    Future.successful(Ok(vat(appConfig, preparedForm, viewmodel, existingSchemeName)))
   }
 
   def post(id: TypedIdentifier[Vat], mode: Mode, form: Form[Vat], viewmodel: VatViewModel)
           (implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
       (formWithErrors: Form[_]) =>
-        Future.successful(BadRequest(vat(appConfig, formWithErrors, viewmodel))),
+        Future.successful(BadRequest(vat(appConfig, formWithErrors, viewmodel, existingSchemeName))),
       value =>
         cacheConnector.save(request.externalId, id, value).map(cacheMap =>
           Redirect(navigator.nextPage(id, mode, UserAnswers(cacheMap))))

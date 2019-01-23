@@ -24,7 +24,7 @@ class WhatYouWillNeedBenefitsInsuranceViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "what_you_will_need_benefits"
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedBenefitsInsurance(frontendAppConfig)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedBenefitsInsurance(frontendAppConfig, None)(fakeRequest, messages)
 
   "WhatYouWillNeedBenefitsInsurance view" must {
 

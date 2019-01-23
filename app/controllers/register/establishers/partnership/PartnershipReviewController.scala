@@ -48,7 +48,7 @@ class PartnershipReviewController @Inject()(appConfig: FrontendAppConfig,
         case partnershipDetails =>
           val partners: Seq[String] = request.userAnswers.allPartnersAfterDelete(index).map(_.name)
 
-          Future.successful(Ok(partnershipReview(appConfig, index, partnershipDetails.name, partners)))
+          Future.successful(Ok(partnershipReview(appConfig, index, partnershipDetails.name, partners, existingSchemeName)))
       }
   }
 

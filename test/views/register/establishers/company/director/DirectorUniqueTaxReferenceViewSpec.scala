@@ -31,10 +31,10 @@ class DirectorUniqueTaxReferenceViewSpec extends ViewBehaviours {
   val directorIndex = Index(1)
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    directorUniqueTaxReference(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
+    directorUniqueTaxReference(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorUniqueTaxReference(frontendAppConfig, form,
-    NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
+    NormalMode, establisherIndex, directorIndex, None)(fakeRequest, messages)
 
   "CompanyUniqueTaxReference view" when {
     "rendered" must {

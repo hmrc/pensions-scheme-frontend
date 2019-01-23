@@ -81,7 +81,8 @@ class PartnershipAddressControllerSpec extends ControllerSpecBase with ScalaFutu
         Message("messages__trusteePartnershipAddress__heading"),
         Some(partnershipName),
         Some(Message("messages__trusteePartnershipAddress__lede"))
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   "PartnershipAddressController" must {

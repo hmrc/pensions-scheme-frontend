@@ -51,9 +51,9 @@ class UniqueTaxReferenceController @Inject()(
     implicit request =>
       TrusteeDetailsId(index).retrieve.right.flatMap { details =>
         UniqueTaxReferenceId(index).retrieve.right.map { value =>
-          Future.successful(Ok(uniqueTaxReference(appConfig, form.fill(value), mode, index)))
+          Future.successful(Ok(uniqueTaxReference(appConfig, form.fill(value), mode, index, existingSchemeName)))
         }.left.map { _ =>
-          Future.successful(Ok(uniqueTaxReference(appConfig, form, mode, index)))
+          Future.successful(Ok(uniqueTaxReference(appConfig, form, mode, index, existingSchemeName)))
         }
       }
   }
@@ -63,7 +63,7 @@ class UniqueTaxReferenceController @Inject()(
       TrusteeDetailsId(index).retrieve.right.map { details =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index))),
+            Future.successful(BadRequest(uniqueTaxReference(appConfig, formWithErrors, mode, index, existingSchemeName))),
           (value) =>
             dataCacheConnector.save(request.externalId, UniqueTaxReferenceId(index), value).map(cacheMap =>
               Redirect(navigator.nextPage(UniqueTaxReferenceId(index), mode, new UserAnswers(cacheMap))))

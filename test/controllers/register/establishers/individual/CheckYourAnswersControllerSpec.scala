@@ -71,7 +71,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
       val result = controller().onPageLoad(firstIndex)(fakeRequest)
       status(result) mustBe OK
       contentAsString(result) mustBe check_your_answers(frontendAppConfig,
-        Seq(AnswerSection(None, answers)), postUrl)(fakeRequest, messages).toString
+        Seq(AnswerSection(None, answers)), postUrl, None)(fakeRequest, messages).toString
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {

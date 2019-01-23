@@ -93,7 +93,8 @@ object CheckYourAnswersMembersControllerSpec extends ControllerSpecBase {
     Seq(
       membersSection
     ),
-    postUrl
+    postUrl,
+    Some(schemeName)
   )(fakeRequest, messages).toString
 
 }

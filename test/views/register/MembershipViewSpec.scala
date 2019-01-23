@@ -30,9 +30,9 @@ class MembershipViewSpec extends ViewBehaviours {
 
   val form = new MembershipFormProvider()()
 
-  def createView(): () => HtmlFormat.Appendable = () => membership(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () => membership(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
-  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => membership(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => membership(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   "Membership view" when {
     "rendered" must {

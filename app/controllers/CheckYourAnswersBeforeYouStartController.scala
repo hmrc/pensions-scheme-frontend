@@ -39,7 +39,8 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
                                                          requireData: DataRequiredAction,
                                                          implicit val countryOptions: CountryOptions,
                                                          sectionComplete: SectionComplete
-                                                        )(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
+                                                        )(implicit val ec: ExecutionContext) extends FrontendController
+  with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -55,7 +56,11 @@ class CheckYourAnswersBeforeYouStartController @Inject()(appConfig: FrontendAppC
         DeclarationDutiesId.row(routes.WorkingKnowledgeController.onPageLoad(CheckMode).url)
       )
 
-      Ok(check_your_answers(appConfig, Seq(beforeYouStart), routes.CheckYourAnswersBeforeYouStartController.onSubmit(),
+      Ok(check_your_answers(
+        appConfig,
+        Seq(beforeYouStart),
+        routes.CheckYourAnswersBeforeYouStartController.onSubmit(),
+        existingSchemeName,
         returnOverview = !userAnswers.get(IsBeforeYouStartCompleteId).getOrElse(false)))
   }
 

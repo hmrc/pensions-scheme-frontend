@@ -84,7 +84,8 @@ class CompanyRegistrationNumberControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       form,
       NormalMode,
-      index
+      index,
+      None
     )(fakeRequest, messages).toString
 
   "CompanyRegistrationNumber Controller" must {

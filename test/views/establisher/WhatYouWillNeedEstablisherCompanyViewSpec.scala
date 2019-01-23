@@ -23,7 +23,7 @@ import views.html.establisher.whatYouWillNeedEstablisherCompany
 class WhatYouWillNeedEstablisherCompanyViewSpec extends ViewBehaviours {
   val messageKeyPrefix = "whatYouWillNeedEstablisherCompany"
 
-  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedEstablisherCompany(frontendAppConfig)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => whatYouWillNeedEstablisherCompany(frontendAppConfig, None)(fakeRequest, messages)
 
   "WhatYouWillNeedMembers view" must {
 

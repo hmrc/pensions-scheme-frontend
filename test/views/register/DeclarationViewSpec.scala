@@ -33,7 +33,7 @@ class DeclarationViewSpec extends QuestionViewBehaviours[Boolean] {
     form, isCompany = true,
     isDormant = false,
     showMasterTrustDeclaration = true,
-    hasWorkingKnowledge = hasWorkingKnowledge)(fakeRequest, messages)
+    hasWorkingKnowledge = hasWorkingKnowledge, None)(fakeRequest, messages)
 
   "Declaration view where no working knowledge" must {
 

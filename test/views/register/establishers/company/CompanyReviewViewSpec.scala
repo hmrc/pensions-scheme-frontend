@@ -41,9 +41,9 @@ class CompanyReviewViewSpec extends ViewBehaviours {
   )
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    companyReview(frontendAppConfig, index, companyName, directors)(fakeRequest, messages)
+    companyReview(frontendAppConfig, index, companyName, directors, None)(fakeRequest, messages)
 
-  def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, companyName, tenDirectors)(fakeRequest, messages)
+  def createSecView: () => HtmlFormat.Appendable = () => companyReview(frontendAppConfig, index, companyName, tenDirectors, None)(fakeRequest, messages)
 
   "CompanyReview view" must {
     behave like normalPage(

@@ -59,7 +59,7 @@ class HaveAnyTrusteesControllerSpec extends ControllerSpecBase {
     new HaveAnyTrusteesController(frontendAppConfig, messagesApi, FakeUserAnswersCacheConnector, new FakeNavigator(desiredRoute = onwardRoute), FakeAuthAction,
       dataRetrievalAction, formProvider)
 
-  def viewAsString(form: Form[_] = form): String = haveAnyTrustees(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = haveAnyTrustees(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages).toString
 
   "HaveAnyTrustees Controller" must {
 

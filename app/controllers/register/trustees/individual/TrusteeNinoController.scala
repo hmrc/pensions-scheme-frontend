@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.{Navigator}
 import utils.annotations.TrusteesIndividual
 import views.html.register.trustees.individual.trusteeNino
 
@@ -52,7 +52,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
           case Some(nino) => form.fill(nino)
           case _ => form
         }
-        Future.successful(Ok(trusteeNino(appConfig, filledForm, mode, index)))
+        Future.successful(Ok(trusteeNino(appConfig, filledForm, mode, index, existingSchemeName)))
       }
   }
 
@@ -60,7 +60,7 @@ class TrusteeNinoController @Inject()(appConfig: FrontendAppConfig,
     implicit request =>
       form.bindFromRequest().fold(
         errors => TrusteeDetailsId(index).retrieve.right.map { trusteeDetails =>
-          Future.successful(BadRequest(trusteeNino(appConfig, errors, mode, index)))
+          Future.successful(BadRequest(trusteeNino(appConfig, errors, mode, index, existingSchemeName)))
         },
         nino => dataCacheConnector.save(TrusteeNinoId(index), nino).map { userAnswers =>
           Redirect(navigator.nextPage(TrusteeNinoId(index), mode, userAnswers))

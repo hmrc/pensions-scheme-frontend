@@ -74,7 +74,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
       Future.successful(Ok(check_your_answers(
         appConfig,
         Seq(partnerDetails, partnerContactDetails),
-        routes.CheckYourAnswersController.onSubmit(establisherIndex, partnerIndex)
+        routes.CheckYourAnswersController.onSubmit(establisherIndex, partnerIndex),
+        existingSchemeName
       )))
 
   }

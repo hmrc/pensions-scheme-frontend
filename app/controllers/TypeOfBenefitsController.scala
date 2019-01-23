@@ -52,14 +52,14 @@ class TypeOfBenefitsController @Inject()(appConfig: FrontendAppConfig,
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(typeOfBenefits(appConfig, preparedForm, mode)))
+      Future.successful(Ok(typeOfBenefits(appConfig, preparedForm, mode, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(typeOfBenefits(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(typeOfBenefits(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, TypeOfBenefitsId, value).map(cacheMap =>
             Redirect(navigator.nextPage(TypeOfBenefitsId, mode, UserAnswers(cacheMap))))

@@ -29,10 +29,10 @@ class InsuranceCompanyNameViewSpec extends QuestionViewBehaviours[String] {
 
   override val form = new InsuranceCompanyNameFormProvider()()
 
-  def createView: () => HtmlFormat.Appendable = () => insuranceCompanyName(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => insuranceCompanyName(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    insuranceCompanyName(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    insuranceCompanyName(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   "InsuranceCompanyName view" must {
 

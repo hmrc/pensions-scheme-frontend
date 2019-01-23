@@ -33,7 +33,7 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.annotations.BeforeYouStart
-import utils.{NameMatchingFactory, Navigator, SectionComplete, UserAnswers}
+import utils._
 import views.html.schemeName
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,12 +47,12 @@ class SchemeNameController @Inject()(appConfig: FrontendAppConfig,
                                      requireData: DataRequiredAction,
                                      formProvider: SchemeNameFormProvider,
                                      nameMatchingFactory: NameMatchingFactory,
-                                     sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                     sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   private val form = formProvider()
 
   private def existingSchemeNameOrEmptyString(implicit request:OptionalDataRequest[AnyContent]):String =
-    request.userAnswers.flatMap(_.get(SchemeNameId)).getOrElse("")
+    existingSchemeName.getOrElse("")
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData) {
     implicit request =>

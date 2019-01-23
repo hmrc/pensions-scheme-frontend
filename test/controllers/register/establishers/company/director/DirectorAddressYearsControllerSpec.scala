@@ -68,7 +68,8 @@ class DirectorAddressYearsControllerSpec extends ControllerSpecBase {
         Message("messages__director_address_years__heading"),
         Message("messages__director_address_years__heading"),
         Some(director.fullName)
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

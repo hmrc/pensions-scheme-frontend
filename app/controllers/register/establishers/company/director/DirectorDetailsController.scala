@@ -59,7 +59,7 @@ class DirectorDetailsController @Inject()(
             case None => form
             case Some(value) => form.fill(value)
           }
-          Future.successful(Ok(directorDetails(appConfig, preparedForm, mode, establisherIndex, directorIndex)))
+          Future.successful(Ok(directorDetails(appConfig, preparedForm, mode, establisherIndex, directorIndex, existingSchemeName)))
         }
     }
 
@@ -69,7 +69,7 @@ class DirectorDetailsController @Inject()(
         CompanyDetailsId(establisherIndex).retrieve.right.map { companyDetails =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex)))
+              Future.successful(BadRequest(directorDetails(appConfig, formWithErrors, mode, establisherIndex, directorIndex, existingSchemeName)))
             ,
             value =>
               dataCacheConnector.save(request.externalId, DirectorDetailsId(establisherIndex, directorIndex), value).flatMap {

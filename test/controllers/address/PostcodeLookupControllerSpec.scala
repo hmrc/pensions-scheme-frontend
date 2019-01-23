@@ -104,7 +104,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider(), viewmodel)(request, messages).toString
+          contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider(), viewmodel, None)(request, messages).toString
       }
     }
   }
@@ -170,7 +170,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
             val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("value" -> "ZZ11ZZ"))
 
             status(result) mustEqual BAD_REQUEST
-            contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider().withError("value", "foo"), viewmodel)(request, messages).toString
+            contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider().withError("value", "foo"), viewmodel, None)(request, messages).toString
         }
       }
       "the postcode is invalid" in {
@@ -201,7 +201,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
             val form = formProvider().bind(Map("value" -> invalidPostcode))
 
             status(result) mustEqual BAD_REQUEST
-            contentAsString(result) mustEqual postcodeLookup(appConfig, form, viewmodel)(request, messages).toString
+            contentAsString(result) mustEqual postcodeLookup(appConfig, form, viewmodel, None)(request, messages).toString
         }
       }
     }
@@ -234,7 +234,7 @@ class PostcodeLookupControllerSpec extends WordSpec with MustMatchers with Mocki
               val result = controller.onSubmit(viewmodel, UserAnswers(), request.withFormUrlEncodedBody("value" -> "ZZ11ZZ"))
 
               status(result) mustEqual OK
-              contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider().withError("value", "bar"), viewmodel)(request, messages).toString
+              contentAsString(result) mustEqual postcodeLookup(appConfig, formProvider().withError("value", "bar"), viewmodel, None)(request, messages).toString
           }
         }
       }

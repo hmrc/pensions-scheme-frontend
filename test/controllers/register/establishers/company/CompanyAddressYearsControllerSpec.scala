@@ -65,7 +65,8 @@ class CompanyAddressYearsControllerSpec extends ControllerSpecBase {
         Message("messages__company_address_years__title"),
         Message("messages__company_address_years__title"),
         Some(companyName)
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

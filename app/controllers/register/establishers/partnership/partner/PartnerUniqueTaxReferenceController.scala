@@ -51,9 +51,9 @@ class PartnerUniqueTaxReferenceController @Inject()(
     implicit request =>
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.flatMap { partner =>
         PartnerUniqueTaxReferenceId(establisherIndex, partnerIndex).retrieve.right.map { value =>
-          Future.successful(Ok(partnerUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, partnerIndex)))
+          Future.successful(Ok(partnerUniqueTaxReference(appConfig, form.fill(value), mode, establisherIndex, partnerIndex, existingSchemeName)))
         }.left.map { _ =>
-          Future.successful(Ok(partnerUniqueTaxReference(appConfig, form, mode, establisherIndex, partnerIndex)))
+          Future.successful(Ok(partnerUniqueTaxReference(appConfig, form, mode, establisherIndex, partnerIndex, existingSchemeName)))
         }
       }
   }
@@ -64,7 +64,7 @@ class PartnerUniqueTaxReferenceController @Inject()(
       PartnerDetailsId(establisherIndex, partnerIndex).retrieve.right.map { partner =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(partnerUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, partnerIndex))),
+            Future.successful(BadRequest(partnerUniqueTaxReference(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName))),
           (value) =>
             dataCacheConnector.save(
               request.externalId,

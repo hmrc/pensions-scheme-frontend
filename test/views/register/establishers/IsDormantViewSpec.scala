@@ -35,10 +35,10 @@ class IsDormantViewSpec extends ViewBehaviours {
   val form = new IsDormantFormProvider()()
   val postCall: Call = routes.IsCompanyDormantController.onSubmit(NormalMode, 0)
 
-  def createView: () => HtmlFormat.Appendable = () => isDormant(frontendAppConfig, form, companyName, postCall)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => isDormant(frontendAppConfig, form, companyName, postCall, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable =
-    (form: Form[_]) => isDormant(frontendAppConfig, form, companyName, postCall)(fakeRequest, messages)
+    (form: Form[_]) => isDormant(frontendAppConfig, form, companyName, postCall, None)(fakeRequest, messages)
 
   "IsDormant view" must {
     behave like normalPage(createView, messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading", companyName))

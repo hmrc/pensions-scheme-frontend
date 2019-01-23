@@ -24,7 +24,8 @@
     form: Form[_],
     establisherIndex: Int,
     partners: Seq[PartnerEntity],
-    postUrl: Call
+    postUrl: Call,
+    schemeName: Option[String]
 )(implicit request: Request[_], messages: Messages)
 
 @disableSubmission = @{
@@ -66,7 +67,7 @@
             @components.submit_button("site.save_and_continue", disableSubmission)
         }
 
-        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
 
     }
 

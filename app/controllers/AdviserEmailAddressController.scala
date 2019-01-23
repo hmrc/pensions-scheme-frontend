@@ -55,7 +55,7 @@ class AdviserEmailAddressController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(adviserEmailAddress(appConfig, preparedForm, mode, adviserName)))
+        Future.successful(Ok(adviserEmailAddress(appConfig, preparedForm, mode, adviserName, existingSchemeName)))
       }
   }
 
@@ -64,7 +64,7 @@ class AdviserEmailAddressController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           AdviserNameId.retrieve.right.map { adviserName =>
-            Future.successful(BadRequest(adviserEmailAddress(appConfig, formWithErrors, mode, adviserName)))
+            Future.successful(BadRequest(adviserEmailAddress(appConfig, formWithErrors, mode, adviserName, existingSchemeName)))
           }
         },
         value =>

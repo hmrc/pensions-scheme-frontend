@@ -37,7 +37,8 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
                                                       getData: DataRetrievalAction,
                                                       requireData: DataRequiredAction,
                                                       implicit val countryOptions: CountryOptions,
-                                                      sectionComplete: SectionComplete)(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
+                                                      sectionComplete: SectionComplete)(implicit val ec: ExecutionContext)
+  extends FrontendController with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -50,7 +51,11 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
         BankAccountDetailsId.row(controllers.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
       )
 
-      Ok(check_your_answers(appConfig, Seq(bankAccountSection), controllers.routes.CheckYourAnswersBankDetailsController.onSubmit()))
+      Ok(check_your_answers(
+        appConfig,
+        Seq(bankAccountSection),
+        controllers.routes.CheckYourAnswersBankDetailsController.onSubmit(),
+        existingSchemeName))
   }
 
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {

@@ -29,10 +29,10 @@ class AdviserPhoneViewSpec extends QuestionViewBehaviours[String] {
   val form = new AdviserEmailFormProvider().apply()
   val adviserName = "test adviser"
 
-  private val createView: () => HtmlFormat.Appendable = () => adviserPhone(frontendAppConfig, form, NormalMode, adviserName)(fakeRequest, messages)
+  private val createView: () => HtmlFormat.Appendable = () => adviserPhone(frontendAppConfig, form, NormalMode, adviserName, None)(fakeRequest, messages)
 
   private val createViewWithForm: Form[String] => HtmlFormat.Appendable =
-    (form: Form[String]) => adviserPhone(frontendAppConfig, form, NormalMode, adviserName)(fakeRequest, messages)
+    (form: Form[String]) => adviserPhone(frontendAppConfig, form, NormalMode, adviserName, None)(fakeRequest, messages)
 
   behave like normalPage(createView, messageKeyPrefix,
     messages("messages__adviser__phone__heading", adviserName))

@@ -32,10 +32,10 @@ class PartnershipDetailsViewSpec extends QuestionViewBehaviours[PartnershipDetai
   val firstIndex = Index(1)
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex)(fakeRequest, messages)
+    partnershipDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
 
 
   "PartnershipDetails view with hub enabled" must {

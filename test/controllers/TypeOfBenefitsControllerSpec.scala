@@ -21,9 +21,10 @@ import connectors.{FakeUserAnswersCacheConnector, UserAnswersCacheConnector}
 import controllers.actions.{AuthAction, DataRequiredActionImpl, DataRetrievalAction, FakeAuthAction}
 import controllers.behaviours.ControllerWithQuestionPageBehaviours
 import forms.TypeOfBenefitsFormProvider
-import identifiers.TypeOfBenefitsId
+import identifiers.{SchemeNameId, TypeOfBenefitsId}
 import models.{NormalMode, TypeOfBenefits}
 import play.api.data.Form
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import utils.{FakeNavigator, Navigator, UserAnswers}
@@ -65,12 +66,13 @@ class TypeOfBenefitsControllerSpec extends ControllerWithQuestionPageBehaviours 
 object TypeOfBenefitsControllerSpec {
   private val formProvider = new TypeOfBenefitsFormProvider()
   private val form = formProvider.apply()
-  private val validData: UserAnswers = UserAnswers().typeOfBenefits(TypeOfBenefits.values.head)
+  private val validData: UserAnswers = UserAnswers(Json.obj(
+    SchemeNameId.toString -> "Test Scheme Name")).typeOfBenefits(TypeOfBenefits.values.head)
   private val postRequest: FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest().withFormUrlEncodedBody(("value", TypeOfBenefits.values.head.toString))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    typeOfBenefits(base.frontendAppConfig, form, NormalMode)(base.fakeRequest, base.messages).toString()
+    typeOfBenefits(base.frontendAppConfig, form, NormalMode, Some("Test Scheme Name"))(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,
