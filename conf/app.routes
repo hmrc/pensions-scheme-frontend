@@ -189,6 +189,7 @@ POST       /change-who-has-working-knowledge    controllers.AdviserNameControlle
 GET        /check-adviser-answers               controllers.AdviserCheckYourAnswersController.onPageLoad()
 POST       /check-adviser-answers               controllers.AdviserCheckYourAnswersController.onSubmit()
 
-GET        /make-more-changes               controllers.AnyMoreChangesController.onPageLoad()
-POST       /make-more-changes               controllers.AnyMoreChangesController.onSubmit()
+GET        /change-pension-administrator-details/make-more-changes               controllers.AnyMoreChangesController.onPageLoad()
+
+POST       /change-pension-administrator-details/make-more-changes               controllers.AnyMoreChangesController.onSubmit()
 
