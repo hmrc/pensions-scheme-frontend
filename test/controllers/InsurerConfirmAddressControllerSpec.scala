@@ -122,7 +122,8 @@ object InsurerConfirmAddressControllerSpec {
           Message("messages__insurer_confirm_address__title"),
           Message("messages__insurer_confirm_address__h1"),
           None
-        )
+        ),
+        Some(schemeName)
       )(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(

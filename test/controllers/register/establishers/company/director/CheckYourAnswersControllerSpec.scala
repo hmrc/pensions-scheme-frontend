@@ -61,7 +61,7 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase {
     new director.CheckYourAnswersController(frontendAppConfig, messagesApi, new FakeNavigator(onwardRoute), FakeAuthAction,
       dataRetrievalAction, new DataRequiredActionImpl, checkYourAnswersFactory, FakeSectionComplete)
 
-  def viewAsString(): String = check_your_answers(frontendAppConfig, answers, postUrl)(fakeRequest, messages).toString
+  def viewAsString(): String = check_your_answers(frontendAppConfig, answers, postUrl, None)(fakeRequest, messages).toString
 
   "CheckYourAnswers Controller" must {
 

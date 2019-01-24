@@ -76,7 +76,7 @@ object InsuranceCompanyNameControllerSpec {
     FakeRequest().withFormUrlEncodedBody(("companyName", companyName))
 
   private def viewAsString(base: SpecBase)(form: Form[_] = form): Form[_] => String = form =>
-    insuranceCompanyName(base.frontendAppConfig, form, NormalMode)(base.fakeRequest, base.messages).toString()
+    insuranceCompanyName(base.frontendAppConfig, form, NormalMode, Some(schemeName))(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(
     dataRetrievalAction: DataRetrievalAction = base.getEmptyData,

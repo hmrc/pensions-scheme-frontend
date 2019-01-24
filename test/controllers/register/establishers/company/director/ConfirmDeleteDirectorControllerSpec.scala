@@ -174,7 +174,8 @@ object ConfirmDeleteDirectorControllerSpec extends ControllerSpecBase {
     frontendAppConfig,
     form,
     directorName,
-    postCall
+    postCall,
+    None
   )(fakeRequest, messages).toString
 
 }

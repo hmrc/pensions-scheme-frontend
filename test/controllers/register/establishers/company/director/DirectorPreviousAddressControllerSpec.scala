@@ -102,7 +102,8 @@ class DirectorPreviousAddressControllerSpec extends ControllerSpecBase with Mock
           contentAsString(result) mustEqual manualAddress(
             frontendAppConfig,
             form,
-            viewmodel
+            viewmodel,
+            None
           )(request, messages).toString
 
       }

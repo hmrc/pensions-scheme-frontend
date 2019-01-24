@@ -52,7 +52,7 @@ class InvestmentRegulatedControllerSpec extends ControllerSpecBase {
       formProvider
     )
 
-  def viewAsString(form: Form[_] = form): String = investmentRegulated(frontendAppConfig, form, NormalMode)(fakeRequest, messages).toString
+  def viewAsString(form: Form[_] = form): String = investmentRegulated(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages).toString
 
   "InvestmentRegulated Controller" must {
 

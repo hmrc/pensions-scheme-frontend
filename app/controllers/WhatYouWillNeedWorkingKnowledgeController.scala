@@ -28,15 +28,18 @@ import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import utils.Toggles.enableHubV2
 import views.html.whatYouWillNeedWorkingKnowledge
 
+import scala.concurrent.Future
+
 class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendAppConfig,
                                                           override val messagesApi: MessagesApi,
                                                           authenticate: AuthAction,
-                                                          fs: FeatureSwitchManagementService
-                                                         ) extends FrontendController with I18nSupport {
+                                                          fs: FeatureSwitchManagementService,
+                                                          getData: DataRetrievalAction
+                                                         ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = authenticate {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
-      Ok(whatYouWillNeedWorkingKnowledge(appConfig))
+      Future.successful(Ok(whatYouWillNeedWorkingKnowledge(appConfig, existingSchemeName)))
   }
 
   def onSubmit: Action[AnyContent] = authenticate {

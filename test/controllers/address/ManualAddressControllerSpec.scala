@@ -126,7 +126,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
             val result = controller.onPageLoad(viewModel, UserAnswers())
 
             status(result) mustEqual OK
-            contentAsString(result) mustEqual manualAddress(appConfig, formProvider(), viewModel)(request, messages).toString
+            contentAsString(result) mustEqual manualAddress(appConfig, formProvider(), viewModel, None)(request, messages).toString
 
         }
 
@@ -158,7 +158,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
             val result = controller.onPageLoad(viewModel, UserAnswers(Json.obj(fakeAddressId.toString -> testAddress)))
 
             status(result) mustEqual OK
-            contentAsString(result) mustEqual manualAddress(appConfig, formProvider().fill(testAddress), viewModel)(request, messages).toString
+            contentAsString(result) mustEqual manualAddress(appConfig, formProvider().fill(testAddress), viewModel, None)(request, messages).toString
 
         }
       }
@@ -194,7 +194,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
             val result = controller.onPageLoad(viewModel, userAnswers)
 
             status(result) mustEqual OK
-            contentAsString(result) mustEqual manualAddress(appConfig, form, viewModel)(request, messages).toString
+            contentAsString(result) mustEqual manualAddress(appConfig, form, viewModel, None)(request, messages).toString
 
         }
 
@@ -324,7 +324,7 @@ class ManualAddressControllerSpec extends WordSpec with MustMatchers with Mockit
           val result = controller.onSubmit(viewModel, UserAnswers(), request.withFormUrlEncodedBody())
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual manualAddress(appConfig, form, viewModel)(request, messages).toString
+          contentAsString(result) mustEqual manualAddress(appConfig, form, viewModel, None)(request, messages).toString
       }
 
     }

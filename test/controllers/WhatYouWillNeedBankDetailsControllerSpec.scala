@@ -31,10 +31,11 @@ class WhatYouWillNeedBankDetailsControllerSpec extends ControllerSpecBase with M
   def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): WhatYouWillNeedBankDetailsController =
     new WhatYouWillNeedBankDetailsController(frontendAppConfig,
       messagesApi,
-      FakeAuthAction
+      FakeAuthAction,
+      dataRetrievalAction
     )
 
-  def viewAsString(): String = whatYouWillNeedBankDetails(frontendAppConfig)(fakeRequest, messages).toString
+  def viewAsString(): String = whatYouWillNeedBankDetails(frontendAppConfig, None)(fakeRequest, messages).toString
 
   "WhatYouWillNeedBankDetailsController" when {
 

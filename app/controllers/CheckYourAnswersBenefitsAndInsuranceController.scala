@@ -39,7 +39,8 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
                                                                requireData: DataRequiredAction,
                                                                sectionComplete: SectionComplete,
                                                                implicit val countryOptions: CountryOptions
-                                                              )(implicit val ec: ExecutionContext) extends FrontendController with Enumerable.Implicits with I18nSupport {
+                                                              )(implicit val ec: ExecutionContext) extends FrontendController
+  with Enumerable.Implicits with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -57,7 +58,8 @@ class CheckYourAnswersBenefitsAndInsuranceController @Inject()(appConfig: Fronte
       Ok(check_your_answers(
         appConfig,
         Seq(benefitsAndInsuranceSection),
-        routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit()
+        routes.CheckYourAnswersBenefitsAndInsuranceController.onSubmit(),
+        existingSchemeName
       ))
   }
 

@@ -78,7 +78,8 @@ class AddressControllerSpec extends ControllerSpecBase with ScalaFutures {
       Message("messages__establisher_individual_address__title"),
       Some(establisherName),
       Some(Message("messages__establisher_individual_address_lede"))
-    )
+    ),
+    None
   )(fakeRequest, messages).toString
 
   val addressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")

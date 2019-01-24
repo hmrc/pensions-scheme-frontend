@@ -175,7 +175,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with Enumerable
     check_your_answers(
       frontendAppConfig,
       answerSections,
-      postUrl
+      postUrl,
+      None
     )(fakeRequest, messages).toString
 
 }

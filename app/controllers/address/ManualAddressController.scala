@@ -60,7 +60,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
       }
       case Some(value) => form.fill(value)
     }
-    Future.successful(Ok(manualAddress(appConfig, preparedForm, viewModel)))
+    Future.successful(Ok(manualAddress(appConfig, preparedForm, viewModel, existingSchemeName)))
   }
 
   protected def post(
@@ -72,7 +72,7 @@ trait ManualAddressController extends FrontendController with Retrievals with I1
                       postCodeLookupIdForCleanup: TypedIdentifier[Seq[TolerantAddress]]
                     )(implicit request: DataRequest[AnyContent]): Future[Result] = {
     form.bindFromRequest().fold(
-      (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel))),
+      (formWithError: Form[_]) => Future.successful(BadRequest(manualAddress(appConfig, formWithError, viewModel, existingSchemeName))),
       address => {
         val existingAddress = request.userAnswers.get(id)
         val selectedAddress = request.userAnswers.get(selectedId)

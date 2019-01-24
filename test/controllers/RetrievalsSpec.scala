@@ -16,23 +16,23 @@
 
 package controllers
 
-import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.EstablishersId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.{SchemeNameId, TypedIdentifier}
 import models.register.{SchemeDetails, SchemeType}
-import models.requests.DataRequest
+import models.requests.{DataRequest, IdentifiedRequest}
 import models.{CompanyDetails, PartnershipDetails}
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{AnyContent, Result}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.UserAnswers
+import utils.{FakeDataRequest, FakeOptionalDataRequest, UserAnswers}
 
 import scala.concurrent.Future
 
@@ -55,6 +55,20 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
   val secondIdentifier: TypedIdentifier[String] = new TypedIdentifier[String] {
     override def toString: String = "second"
   }
+
+  case class OtherDataRequest[A](request: Request[A], externalId: String, psaId: PsaId)
+    extends WrappedRequest[A](request) with IdentifiedRequest
+
+  class FakeOtherDataRequest(request: Request[AnyContentAsEmpty.type], externalId: String, psaId: PsaId)
+    extends OtherDataRequest[AnyContent](request, externalId, psaId)
+
+  object FakeOtherDataRequest {
+    def apply(): FakeOtherDataRequest = {
+      new FakeOtherDataRequest(FakeRequest("", ""), "test-external-id", PsaId("A0000000"))
+    }
+  }
+
+  val validData = Json.obj(SchemeNameId.toString -> "Test Scheme")
 
   "static" must {
     "return a retrieval which always successfully returns the argument" in {
@@ -149,6 +163,29 @@ class RetrievalsSpec extends ControllerSpecBase with FrontendController with Ret
         val result = controller.retrieve(testIdentifier)(success)
 
         redirectLocation(result) mustBe Some(controllers.routes.SessionExpiredController.onPageLoad().url)
+      }
+    }
+
+    "existingSchemeName" must{
+
+      "return data if calling with DataRequest" in {
+        implicit val request = FakeDataRequest(UserAnswers(validData))
+        controller.existingSchemeName mustBe  Some("Test Scheme")
+      }
+
+      "return data if calling with OptionalDataRequest" in {
+        implicit val request = FakeOptionalDataRequest(Some(UserAnswers(validData)))
+        controller.existingSchemeName mustBe  Some("Test Scheme")
+      }
+
+      "return none if calling with FakeOptionalDataRequest" in {
+        implicit val request = FakeOptionalDataRequest(Some(UserAnswers(Json.obj())))
+        controller.existingSchemeName mustBe None
+      }
+
+      "return none if calling with FakeOtherDataRequest" in {
+        implicit val request = FakeOtherDataRequest()
+        controller.existingSchemeName mustBe None
       }
     }
   }

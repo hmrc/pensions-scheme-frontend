@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.play.views.html._
 @import controllers.routes._
 
-@(appConfig: FrontendAppConfig)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__what_you_will_need_wk__title"),
@@ -39,6 +39,6 @@
 
         @components.submit_button("site.save_and_continue")
 
-        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
     }
 }

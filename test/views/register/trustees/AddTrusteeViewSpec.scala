@@ -58,10 +58,10 @@ class AddTrusteeViewSpec extends YesNoViewBehaviours with EntityListBehaviours {
   val form = new AddTrusteeFormProvider()()
 
   private def createView(trustees: Seq[Trustee[_]] = Seq.empty) = () =>
-    addTrustee(frontendAppConfig, form, NormalMode, trustees)(fakeRequest, messages)
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None)(fakeRequest, messages)
 
   private def createViewUsingForm(trustees: Seq[Trustee[_]] = Seq.empty) = (form: Form[Boolean]) =>
-    addTrustee(frontendAppConfig, form, NormalMode, trustees)(fakeRequest, messages)
+    addTrustee(frontendAppConfig, form, NormalMode, trustees, None)(fakeRequest, messages)
 
   "AddTrustee view" must {
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))

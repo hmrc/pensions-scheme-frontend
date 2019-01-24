@@ -52,8 +52,8 @@ class TrusteeDetailsController @Inject()(
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val redirectResult = request.userAnswers.get(TrusteeDetailsId(index)) match {
-        case None => Ok(trusteeDetails(appConfig, form, mode, index))
-        case Some(value) => Ok(trusteeDetails(appConfig, form.fill(value), mode, index))
+        case None => Ok(trusteeDetails(appConfig, form, mode, index, existingSchemeName))
+        case Some(value) => Ok(trusteeDetails(appConfig, form.fill(value), mode, index, existingSchemeName))
       }
       Future.successful(redirectResult)
   }
@@ -62,7 +62,7 @@ class TrusteeDetailsController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(trusteeDetails(appConfig, formWithErrors, mode, index))),
+          Future.successful(BadRequest(trusteeDetails(appConfig, formWithErrors, mode, index, existingSchemeName))),
         (value) =>
           request.userAnswers.upsert(TrusteeDetailsId(index))(value) {
             _.upsert(TrusteeKindId(index))(Individual) { answers =>

@@ -52,7 +52,7 @@ class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(uKBankDetails(appConfig, preparedForm, mode)))
+        Future.successful(Ok(uKBankDetails(appConfig, preparedForm, mode, existingSchemeName)))
       }
   }
 
@@ -61,7 +61,7 @@ class UKBankDetailsController @Inject()(appConfig: FrontendAppConfig,
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
-            Future.successful(BadRequest(uKBankDetails(appConfig, formWithErrors, mode)))
+            Future.successful(BadRequest(uKBankDetails(appConfig, formWithErrors, mode, existingSchemeName)))
           },
         value =>
           dataCacheConnector.save(request.externalId, UKBankDetailsId, value).map(cacheMap =>

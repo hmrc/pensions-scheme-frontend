@@ -19,7 +19,7 @@
 @import models.{Mode, CheckMode}
 @import controllers.register.establishers.company.routes
 
-@(appConfig: FrontendAppConfig, index: Index, companyName: String, directors: Seq[String])(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, index: Index, companyName: String, directors: Seq[String], schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__companyReview__title"),
@@ -53,6 +53,6 @@
         @components.submit_button("site.confirm")
     }
 
-    @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+    @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
 
 }

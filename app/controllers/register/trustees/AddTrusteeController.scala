@@ -30,7 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsResultException
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.{Navigator}
 import utils.annotations.Trustees
 import views.html.register.trustees.addTrustee
 
@@ -53,7 +53,7 @@ class AddTrusteeController @Inject()(
     implicit request =>
       val trustees = request.userAnswers.allTrusteesAfterDelete
 
-      Future.successful(Ok(addTrustee(appConfig, form, mode, trustees)))
+      Future.successful(Ok(addTrustee(appConfig, form, mode, trustees, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
@@ -66,7 +66,7 @@ class AddTrusteeController @Inject()(
       else {
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(addTrustee(appConfig, formWithErrors, mode, trustees))),
+            Future.successful(BadRequest(addTrustee(appConfig, formWithErrors, mode, trustees, existingSchemeName))),
           value =>
             request.userAnswers.set(AddTrusteeId)(value).fold(
               errors => {

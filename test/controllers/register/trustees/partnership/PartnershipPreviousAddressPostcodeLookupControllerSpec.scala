@@ -106,7 +106,8 @@ class PartnershipPreviousAddressPostcodeLookupControllerSpec extends ControllerS
         Message("messages__partnershipPreviousAddressPostcodeLookup__title"),
         Message("messages__partnershipPreviousAddressPostcodeLookup__title"),
         Some(partnershipName)
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   "PartnershipPreviousAddressPostcodeLookup Controller" must {

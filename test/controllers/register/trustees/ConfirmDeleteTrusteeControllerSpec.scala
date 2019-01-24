@@ -187,7 +187,8 @@ object ConfirmDeleteTrusteeControllerSpec extends ControllerSpecBase {
       frontendAppConfig,
       form,
       trusteeName,
-      routes.ConfirmDeleteTrusteeController.onSubmit(0, trusteeKind)
+      routes.ConfirmDeleteTrusteeController.onSubmit(0, trusteeKind),
+      None
     )(fakeRequest, messages).toString
 
   private def testData[I <: TypedIdentifier.PathDependent](id: I)(value: id.Data)(implicit writes: Writes[id.Data]): DataRetrievalAction = {

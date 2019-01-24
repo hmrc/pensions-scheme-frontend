@@ -57,7 +57,7 @@ class SchemeEstablishedCountryControllerSpec extends ControllerSpecBase {
     ) {}
 
   def viewAsString(form: Form[_] = form): String =
-    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, options)(fakeRequest, messages).toString
+    schemeEstablishedCountry(frontendAppConfig, form, NormalMode, options, None)(fakeRequest, messages).toString
 
   val testAnswer = "territory:AE-AZ"
 

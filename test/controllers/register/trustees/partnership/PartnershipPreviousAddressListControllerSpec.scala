@@ -91,8 +91,8 @@ class PartnershipPreviousAddressListControllerSpec extends ControllerSpecBase {
         title = previousAddressTitle,
         heading = previousAddressHeading,
         subHeading = Some(partnershipName)
-
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   "PartnershipPreviousAddressList Controller" must {

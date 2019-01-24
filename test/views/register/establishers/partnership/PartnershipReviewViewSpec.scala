@@ -44,14 +44,16 @@ class PartnershipReviewViewSpec extends ViewBehaviours {
     frontendAppConfig,
     index,
     partnershipName,
-    partners
+    partners,
+    None
   )(fakeRequest, messages)
 
   def createSecView: () => HtmlFormat.Appendable = () => partnershipReview(
     frontendAppConfig,
     index,
     partnershipName,
-    tenPartners
+    tenPartners,
+    None
   )(fakeRequest, messages)
 
   "PartnershipReview view" must {

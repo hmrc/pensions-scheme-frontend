@@ -20,7 +20,7 @@
 @import models.{Mode, Index}
 @import viewmodels.address.PostcodeLookupViewModel
 
-@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: PostcodeLookupViewModel)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], viewmodel: PostcodeLookupViewModel, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @openLink = {
     <a id="manual-address-link" href="@viewmodel.manualInputCall">
@@ -56,6 +56,6 @@
 
         @components.submit_button("site.find_address")
 
-        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
     }
 }

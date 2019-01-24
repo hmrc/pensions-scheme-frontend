@@ -25,14 +25,17 @@ import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 import views.html.whatYouWillNeedBankDetails
 
+import scala.concurrent.Future
+
 class WhatYouWillNeedBankDetailsController @Inject()(appConfig: FrontendAppConfig,
                                                      override val messagesApi: MessagesApi,
-                                                     authenticate: AuthAction
-                                                    ) extends FrontendController with I18nSupport {
+                                                     authenticate: AuthAction,
+                                                     getData: DataRetrievalAction
+                                                    ) extends FrontendController with I18nSupport with Retrievals {
 
-  def onPageLoad: Action[AnyContent] = authenticate {
+  def onPageLoad: Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
-      Ok(whatYouWillNeedBankDetails(appConfig))
+      Future.successful(Ok(whatYouWillNeedBankDetails(appConfig, existingSchemeName)))
   }
 
   def onSubmit: Action[AnyContent] = authenticate {

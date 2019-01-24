@@ -59,7 +59,7 @@ class PartnerDetailsController @Inject()(
             case None => form
             case Some(value) => form.fill(value)
           }
-          Future.successful(Ok(partnerDetails(appConfig, preparedForm, mode, establisherIndex, partnerIndex)))
+          Future.successful(Ok(partnerDetails(appConfig, preparedForm, mode, establisherIndex, partnerIndex, existingSchemeName)))
         }
     }
 
@@ -69,7 +69,7 @@ class PartnerDetailsController @Inject()(
         PartnershipDetailsId(establisherIndex).retrieve.right.map { partnershipDetails =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(partnerDetails(appConfig, formWithErrors, mode, establisherIndex, partnerIndex)))
+              Future.successful(BadRequest(partnerDetails(appConfig, formWithErrors, mode, establisherIndex, partnerIndex, existingSchemeName)))
             ,
             value =>
               dataCacheConnector.save(request.externalId, PartnerDetailsId(establisherIndex, partnerIndex), value).flatMap {

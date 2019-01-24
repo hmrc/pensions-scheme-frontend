@@ -151,7 +151,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
   private def viewAsString(answerSections: Seq[AnswerSection]) = check_your_answers(
     frontendAppConfig,
     answerSections,
-    postUrl
+    postUrl,
+    None
   )(fakeRequest, messages).toString
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersController =

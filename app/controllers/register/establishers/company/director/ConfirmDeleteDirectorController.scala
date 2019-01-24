@@ -63,7 +63,8 @@ class ConfirmDeleteDirectorController @Inject()(
                     appConfig,
                     form,
                     director.fullName,
-                    routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex)
+                    routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
+                    existingSchemeName
                   )
                 )
               )
@@ -85,7 +86,8 @@ class ConfirmDeleteDirectorController @Inject()(
                 appConfig,
                 formWithErrors,
                 directorDetails.fullName,
-                routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex)
+                routes.ConfirmDeleteDirectorController.onSubmit(establisherIndex, directorIndex),
+                existingSchemeName
               ))),
             value => {
               val deletionResult = if (value) {

@@ -33,10 +33,10 @@ class ConfirmDeletePartnerViewSpec extends YesNoViewBehaviours{
   val form = new ConfirmDeletePartnerFormProvider()()
 
   private def createView() = () =>
-    confirmDeletePartner(frontendAppConfig, form, partnerName, postCall)(fakeRequest, messages)
+    confirmDeletePartner(frontendAppConfig, form, partnerName, postCall, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    confirmDeletePartner(frontendAppConfig, form, partnerName, postCall)(fakeRequest, messages)
+    confirmDeletePartner(frontendAppConfig, form, partnerName, postCall, None)(fakeRequest, messages)
 
   "ConfirmDeleteDirector view" must {
 

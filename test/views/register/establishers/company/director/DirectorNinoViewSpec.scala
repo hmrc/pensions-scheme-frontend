@@ -31,10 +31,10 @@ class DirectorNinoViewSpec extends ViewBehaviours {
   val form = new DirectorNinoFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    directorNino(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex)(fakeRequest, messages)
+    directorNino(frontendAppConfig, form, NormalMode, establisherIndex, directorIndex, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => directorNino(frontendAppConfig, form, NormalMode,
-    establisherIndex, directorIndex)(fakeRequest, messages)
+    establisherIndex, directorIndex, None)(fakeRequest, messages)
 
   "DirectorNino view" when {
     "rendered" must {

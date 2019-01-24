@@ -50,14 +50,14 @@ class CompanyDetailsController @Inject()(
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val formWithData = request.userAnswers.get(CompanyDetailsId(index)).fold(form)(form.fill)
-      Future.successful(Ok(companyDetails(appConfig, formWithData, mode, index)))
+      Future.successful(Ok(companyDetails(appConfig, formWithData, mode, index, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index))),
+          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, existingSchemeName))),
         value =>
           dataCacheConnector.save(
             request.externalId,

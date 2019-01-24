@@ -90,7 +90,7 @@ class TrusteePreviousAddressListControllerSpec extends ControllerSpecBase with C
         val viewModel: AddressListViewModel = addressListViewModel(addresses)
         val form = new AddressListFormProvider()(viewModel.addresses)
 
-        contentAsString(result) mustBe addressList(frontendAppConfig, form, viewModel)(request, messages).toString
+        contentAsString(result) mustBe addressList(frontendAppConfig, form, viewModel, None)(request, messages).toString
       }
 
     }

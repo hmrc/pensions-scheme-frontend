@@ -176,10 +176,10 @@ POST       /adviser-email-address               controllers.AdviserEmailAddressC
 GET        /change-adviser-email-address        controllers.AdviserEmailAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-adviser-email-address        controllers.AdviserEmailAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /working-knowledge-phone-number               controllers.AdviserPhoneController.onPageLoad(mode: Mode = NormalMode)
-POST       /working-knowledge-phone-number               controllers.AdviserPhoneController.onSubmit(mode: Mode = NormalMode)
-GET        /change-working-knowledge-phone-number        controllers.AdviserPhoneController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-working-knowledge-phone-number        controllers.AdviserPhoneController.onSubmit(mode: Mode = CheckMode)
+GET        /adviser-phone-number                controllers.AdviserPhoneController.onPageLoad(mode: Mode = NormalMode)
+POST       /adviser-phone-number                controllers.AdviserPhoneController.onSubmit(mode: Mode = NormalMode)
+GET        /change-adviser-phone-number         controllers.AdviserPhoneController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-adviser-phone-number         controllers.AdviserPhoneController.onSubmit(mode: Mode = CheckMode)
 
 GET        /who-has-working-knowledge           controllers.AdviserNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /who-has-working-knowledge           controllers.AdviserNameController.onSubmit(mode: Mode = NormalMode)

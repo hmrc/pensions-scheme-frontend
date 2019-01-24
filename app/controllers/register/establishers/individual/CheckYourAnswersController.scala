@@ -56,7 +56,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
           checkYourAnswerHelper.previousAddress(index) ++
           checkYourAnswerHelper.contactDetails(index))
       )
-      Future.successful(Ok(check_your_answers(appConfig, sections, routes.CheckYourAnswersController.onSubmit(index))))
+      Future.successful(Ok(check_your_answers(appConfig, sections, routes.CheckYourAnswersController.onSubmit(index), existingSchemeName)))
   }
 
   def onSubmit(index: Index): Action[AnyContent] = (authenticate andThen getData andThen requiredData).async {

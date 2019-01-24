@@ -32,10 +32,10 @@ class PartnershipUniqueTaxReferenceViewSpec extends ViewBehaviours {
   val index = Index(1)
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    partnershipUniqueTaxReference(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+    partnershipUniqueTaxReference(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => partnershipUniqueTaxReference(frontendAppConfig, form,
-    NormalMode, index)(fakeRequest, messages)
+    NormalMode, index, None)(fakeRequest, messages)
 
   "PartnershipUniqueTaxReference view" when {
     "rendered" must {

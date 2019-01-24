@@ -25,7 +25,7 @@ import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Navigator
+import utils.{Navigator}
 import utils.annotations.AboutMembers
 import views.html.membershipPensionRegulator
 
@@ -38,11 +38,11 @@ class MembershipPensionRegulatorController @Inject()(appConfig: FrontendAppConfi
                                                      authenticate: AuthAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction
-                                                    )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                                    )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
-      Ok(membershipPensionRegulator(appConfig, mode))
+      Ok(membershipPensionRegulator(appConfig, mode, existingSchemeName))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData andThen requireData) {

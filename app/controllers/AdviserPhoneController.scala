@@ -54,7 +54,7 @@ class AdviserPhoneController @Inject()(
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(adviserPhone(appConfig, preparedForm, mode, adviserName)))
+        Future.successful(Ok(adviserPhone(appConfig, preparedForm, mode, adviserName, existingSchemeName)))
       }
   }
 
@@ -63,7 +63,7 @@ class AdviserPhoneController @Inject()(
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) => {
           AdviserNameId.retrieve.right.map { adviserName =>
-            Future.successful(BadRequest(adviserPhone(appConfig, formWithErrors, mode, adviserName)))
+            Future.successful(BadRequest(adviserPhone(appConfig, formWithErrors, mode, adviserName, existingSchemeName)))
           }
         },
         value =>

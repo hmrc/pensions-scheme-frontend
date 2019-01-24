@@ -139,7 +139,8 @@ object CheckYourAnswersBenefitsAndInsuranceControllerSpec extends ControllerSpec
     Seq(
       benefitsAndInsuranceSection
     ),
-    postUrl
+    postUrl,
+    None
   )(fakeRequest, messages).toString
 
 }

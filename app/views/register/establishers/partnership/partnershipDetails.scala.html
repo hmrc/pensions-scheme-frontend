@@ -20,7 +20,7 @@
 @import models.{Mode, Index}
 @import models.PartnershipDetails
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index: Index, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
 @main_template(
     title = messages("messages__partnershipDetails__title"),
@@ -40,6 +40,6 @@
 
         @components.submit_button()
 
-        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
     }
 }

@@ -89,7 +89,8 @@ class CompanyPreviousAddressControllerSpec extends ControllerSpecBase with Scala
         Message("messages__companyPreviousAddress__heading"),
         Some(companyName),
         Some(Message("messages__companyAddress__lede"))
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   "CompanyPreviousAddress Controller" must {

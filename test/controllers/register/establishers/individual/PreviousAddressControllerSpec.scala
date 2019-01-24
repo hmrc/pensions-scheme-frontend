@@ -78,7 +78,8 @@ class PreviousAddressControllerSpec extends ControllerSpecBase with ScalaFutures
         Message("messages__establisher_individual_previous_address__title"),
         Some(Message(establisherName)),
         Some(Message("messages__establisher_individual_previous_address_lede"))
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   val addressData = Address("address line 1", "address line 2", Some("test town"), Some("test county"), Some("test post code"), "GB")

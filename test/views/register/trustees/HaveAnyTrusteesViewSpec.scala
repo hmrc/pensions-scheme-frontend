@@ -31,10 +31,10 @@ class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {
   val form = new HaveAnyTrusteesFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    haveAnyTrustees(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    haveAnyTrustees(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => haveAnyTrustees(frontendAppConfig, form,
-    NormalMode)(fakeRequest, messages)
+    NormalMode, None)(fakeRequest, messages)
 
   "HaveAnyTrustees view with hub enabled" must {
 

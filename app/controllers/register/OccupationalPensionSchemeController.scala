@@ -53,7 +53,7 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
           case None => form
           case Some(value) => form.fill(value)
         }
-        Future.successful(Ok(occupationalPensionScheme(appConfig, preparedForm, mode)))
+        Future.successful(Ok(occupationalPensionScheme(appConfig, preparedForm, mode, existingSchemeName)))
       }
   }
 
@@ -62,7 +62,7 @@ class OccupationalPensionSchemeController @Inject()(appConfig: FrontendAppConfig
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
           SchemeDetailsId.retrieve.right.map { schemeDetails =>
-            Future.successful(BadRequest(occupationalPensionScheme(appConfig, formWithErrors, mode)))
+            Future.successful(BadRequest(occupationalPensionScheme(appConfig, formWithErrors, mode, existingSchemeName)))
           },
         value =>
           dataCacheConnector.save(request.externalId, OccupationalPensionSchemeId, value).map(cacheMap =>

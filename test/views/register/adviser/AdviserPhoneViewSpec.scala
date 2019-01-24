@@ -18,6 +18,7 @@ package views.register.adviser
 
 import forms.register.adviser.AdviserEmailFormProvider
 import models.NormalMode
+import org.jsoup.Jsoup
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
@@ -29,10 +30,10 @@ class AdviserPhoneViewSpec extends QuestionViewBehaviours[String] {
   val form = new AdviserEmailFormProvider().apply()
   val adviserName = "test adviser"
 
-  private val createView: () => HtmlFormat.Appendable = () => adviserPhone(frontendAppConfig, form, NormalMode, adviserName)(fakeRequest, messages)
+  private val createView: () => HtmlFormat.Appendable = () => adviserPhone(frontendAppConfig, form, NormalMode, adviserName, None)(fakeRequest, messages)
 
   private val createViewWithForm: Form[String] => HtmlFormat.Appendable =
-    (form: Form[String]) => adviserPhone(frontendAppConfig, form, NormalMode, adviserName)(fakeRequest, messages)
+    (form: Form[String]) => adviserPhone(frontendAppConfig, form, NormalMode, adviserName, None)(fakeRequest, messages)
 
   behave like normalPage(createView, messageKeyPrefix,
     messages("messages__adviser__phone__heading", adviserName))
@@ -43,6 +44,10 @@ class AdviserPhoneViewSpec extends QuestionViewBehaviours[String] {
     controllers.register.adviser.routes.AdviserPhoneController.onSubmit(NormalMode).url,
     "phone"
   )
+
+  "display the paragraph" in {
+    Jsoup.parse(createViewWithForm(form).toString()) must haveDynamicText(s"messages__${messageKeyPrefix}__p1", adviserName)
+  }
 
   behave like pageWithSubmitButton(createView)
 

@@ -99,7 +99,8 @@ class CheckYourAnswersControllerSpec extends ControllerSpecBase with ScalaFuture
       val viewAsString: String = check_your_answers(
         frontendAppConfig,
         Seq(adviserSection),
-        postUrl
+        postUrl,
+        None
       )(fakeRequest, messages).toString
 
       status(result) mustBe OK
@@ -221,7 +222,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase with MockitoSug
   lazy val viewAsString: String = check_your_answers(
     frontendAppConfig,
     Seq(adviserSection),
-    postUrl
+    postUrl,
+    None
   )(fakeRequest, messages).toString
 
 }

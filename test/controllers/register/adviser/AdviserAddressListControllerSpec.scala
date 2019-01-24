@@ -54,7 +54,7 @@ class AdviserAddressListControllerSpec extends ControllerSpecBase with CSRFReque
         retrievalAction,
         (request, result) => {
           status(result) mustBe OK
-          contentAsString(result) mustBe addressList(frontendAppConfig, form, viewModel)(request, messages).toString()
+          contentAsString(result) mustBe addressList(frontendAppConfig, form, viewModel, None)(request, messages).toString()
         }
       )
     }

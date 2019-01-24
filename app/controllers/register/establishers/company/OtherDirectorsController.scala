@@ -51,8 +51,8 @@ class OtherDirectorsController @Inject()(
     implicit request =>
       retrieveCompanyName(establisherIndex) { companyName =>
         val redirectResult = request.userAnswers.get(OtherDirectorsId(establisherIndex)) match {
-          case None => Ok(otherDirectors(appConfig, form, mode, establisherIndex))
-          case Some(value) => Ok(otherDirectors(appConfig, form.fill(value), mode, establisherIndex))
+          case None => Ok(otherDirectors(appConfig, form, mode, establisherIndex, existingSchemeName))
+          case Some(value) => Ok(otherDirectors(appConfig, form.fill(value), mode, establisherIndex, existingSchemeName))
         }
         Future.successful(redirectResult)
       }
@@ -65,7 +65,7 @@ class OtherDirectorsController @Inject()(
         companyName =>
           form.bindFromRequest().fold(
             (formWithErrors: Form[_]) =>
-              Future.successful(BadRequest(otherDirectors(appConfig, formWithErrors, mode, establisherIndex))),
+              Future.successful(BadRequest(otherDirectors(appConfig, formWithErrors, mode, establisherIndex, existingSchemeName))),
             value =>
               dataCacheConnector.save(request.externalId, OtherDirectorsId(establisherIndex), value).map(cacheMap =>
                 Redirect(navigator.nextPage(OtherDirectorsId(establisherIndex), mode, UserAnswers(cacheMap))))

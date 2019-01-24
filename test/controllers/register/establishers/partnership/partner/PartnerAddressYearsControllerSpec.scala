@@ -69,7 +69,8 @@ class PartnerAddressYearsControllerSpec extends ControllerSpecBase {
         heading = Message("messages__partner_address_years__heading"),
         legend = Message("messages__partner_address_years__heading"),
         Some(partner.fullName)
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

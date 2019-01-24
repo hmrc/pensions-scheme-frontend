@@ -30,10 +30,10 @@ class SecuredBenefitsViewSpec extends YesNoViewBehaviours {
 
   val form = new SecuredBenefitsFormProvider()()
 
-  def createView(): () => HtmlFormat.Appendable = () => securedBenefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+  def createView(): () => HtmlFormat.Appendable = () => securedBenefits(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    securedBenefits(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    securedBenefits(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   "SecuredBenefits view" must {
 

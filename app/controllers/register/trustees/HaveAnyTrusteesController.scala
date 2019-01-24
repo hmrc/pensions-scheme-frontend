@@ -52,14 +52,14 @@ class HaveAnyTrusteesController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode)))
+      Future.successful(Ok(haveAnyTrustees(appConfig, preparedForm, mode, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (authenticate andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode))),
+          Future.successful(BadRequest(haveAnyTrustees(appConfig, formWithErrors, mode, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, HaveAnyTrusteesId, value).map(cacheMap =>
             Redirect(navigator.nextPage(HaveAnyTrusteesId, mode, UserAnswers(cacheMap))))

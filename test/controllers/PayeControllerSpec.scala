@@ -73,7 +73,7 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
           val result = controller.onPageLoad(viewmodel, UserAnswers())
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual paye(appConfig, formProvider(), viewmodel)(request, messages).toString
+          contentAsString(result) mustEqual paye(appConfig, formProvider(), viewmodel, None)(request, messages).toString
       }
     }
 
@@ -98,7 +98,8 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
           contentAsString(result) mustEqual paye(
             appConfig,
             formProvider().fill(Paye.Yes("123456789")),
-            viewmodel
+            viewmodel,
+            None
           )(request, messages).toString
       }
     }
@@ -155,7 +156,8 @@ class PayeControllerSpec extends WordSpec with MustMatchers with OptionValues wi
           contentAsString(result) mustEqual paye(
             appConfig,
             formProvider().bind(Map.empty[String, String]),
-            viewmodel
+            viewmodel,
+            None
           )(request, messages).toString
       }
     }

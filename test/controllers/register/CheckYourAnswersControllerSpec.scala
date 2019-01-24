@@ -136,7 +136,8 @@ object CheckYourAnswersControllerSpec extends ControllerSpecBase {
       schemeBenefitsSection,
       bankAccountSection
     ),
-    postUrl
+    postUrl,
+    None
   )(fakeRequest, messages).toString
 
 }

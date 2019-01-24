@@ -54,9 +54,9 @@ class CompanyDetailsController @Inject()(
     implicit request =>
       val redirectResult = request.userAnswers.get(CompanyDetailsId(index)) match {
         case None =>
-          Ok(companyDetails(appConfig, form, mode, index))
+          Ok(companyDetails(appConfig, form, mode, index, existingSchemeName))
         case Some(value) =>
-          Ok(companyDetails(appConfig, form.fill(value), mode, index))
+          Ok(companyDetails(appConfig, form.fill(value), mode, index, existingSchemeName))
       }
       Future.successful(redirectResult)
   }
@@ -65,7 +65,7 @@ class CompanyDetailsController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index))),
+          Future.successful(BadRequest(companyDetails(appConfig, formWithErrors, mode, index, existingSchemeName))),
         (value) =>
           request.userAnswers.upsert(CompanyDetailsId(index))(value) {
             _.upsert(TrusteeKindId(index))(Company) { answers =>

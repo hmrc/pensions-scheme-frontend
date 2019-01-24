@@ -50,14 +50,14 @@ class PartnershipDetailsController @Inject()(
   def onPageLoad(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       val formWithData = request.userAnswers.get(PartnershipDetailsId(index)).fold(form)(form.fill)
-      Future.successful(Ok(partnershipDetails(appConfig, formWithData, mode, index)))
+      Future.successful(Ok(partnershipDetails(appConfig, formWithData, mode, index, existingSchemeName)))
   }
 
   def onSubmit(mode: Mode, index: Index): Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         (formWithErrors: Form[_]) =>
-          Future.successful(BadRequest(partnershipDetails(appConfig, formWithErrors, mode, index))),
+          Future.successful(BadRequest(partnershipDetails(appConfig, formWithErrors, mode, index, existingSchemeName))),
         value =>
           dataCacheConnector.save(request.externalId, PartnershipDetailsId(index), value
           ).map {

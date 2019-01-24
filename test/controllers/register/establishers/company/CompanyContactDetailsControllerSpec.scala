@@ -85,7 +85,8 @@ class CompanyContactDetailsControllerSpec extends ControllerSpecBase {
     contactDetails(
       frontendAppConfig,
       form,
-      viewmodel(NormalMode, firstIndex, companyName)
+      viewmodel(NormalMode, firstIndex, companyName),
+      None
     )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

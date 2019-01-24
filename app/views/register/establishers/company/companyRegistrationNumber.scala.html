@@ -20,7 +20,7 @@
 @import models.CompanyRegistrationNumber._
 @import models.Mode
 
-@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index:Index)(implicit request: Request[_], messages: Messages)
+@(appConfig: FrontendAppConfig, form: Form[_], mode: Mode, index:Index, schemeName: Option[String])(implicit request: Request[_], messages: Messages)
 
     @_options = @{
         CompanyRegistrationNumber.options
@@ -76,6 +76,6 @@
 
             @components.submit_button()
 
-            @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+            @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
         }
     }

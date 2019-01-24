@@ -140,7 +140,8 @@ object PartnershipAddressYearsControllerSpec extends ControllerSpecBase {
     addressYears(
       frontendAppConfig,
       form,
-      viewModel
+      viewModel,
+      None
     )(fakeRequest, messages).toString()
 
   private def partnershipUserAnswers: UserAnswers = {

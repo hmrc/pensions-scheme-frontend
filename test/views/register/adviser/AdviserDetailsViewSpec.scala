@@ -31,10 +31,10 @@ class AdviserDetailsViewSpec extends QuestionViewBehaviours[AdviserDetails] {
   override val form = new AdviserDetailsFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    adviserDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    adviserDetails(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    adviserDetails(frontendAppConfig, form, NormalMode)(fakeRequest, messages)
+    adviserDetails(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
 
   "AdviserDetails view" must {

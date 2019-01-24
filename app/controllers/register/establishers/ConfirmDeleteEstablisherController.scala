@@ -79,7 +79,8 @@ class ConfirmDeleteEstablisherController @Inject()(
                     form,
                     establisher.name,
                     getHintText(establisherKind),
-                    routes.ConfirmDeleteEstablisherController.onSubmit(index, establisherKind)
+                    routes.ConfirmDeleteEstablisherController.onSubmit(index, establisherKind),
+                    existingSchemeName
                   )
                 )
               )
@@ -122,7 +123,8 @@ class ConfirmDeleteEstablisherController @Inject()(
           formWithErrors,
           name,
           getHintText(establisherKind),
-          routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex, establisherKind)
+          routes.ConfirmDeleteEstablisherController.onSubmit(establisherIndex, establisherKind),
+          existingSchemeName
         ))),
       value => {
         val deletionResult = if (value) {

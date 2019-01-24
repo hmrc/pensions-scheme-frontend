@@ -86,7 +86,7 @@ object AdviserEmailAddressControllerSpec {
         base.frontendAppConfig,
         form,
         NormalMode,
-        adviserName
+        adviserName, None
       )(base.fakeRequest, base.messages).toString()
 
   private def controller(base: ControllerSpecBase)(

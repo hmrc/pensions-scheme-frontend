@@ -105,7 +105,8 @@ class PartnerAddressPostcodeLookupControllerSpec extends ControllerSpecBase with
         contentAsString(result) mustEqual postcodeLookup(
           frontendAppConfig,
           form,
-          viewmodel
+          viewmodel,
+          None
         )(request, messages).toString
 
       }

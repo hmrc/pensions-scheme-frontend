@@ -25,7 +25,7 @@ class MembershipPensionRegulatorViewSpec extends ViewBehaviours {
 
   val messageKeyPrefix = "membership_pension_regulator"
 
-  def createView: () => HtmlFormat.Appendable = () => membershipPensionRegulator(frontendAppConfig, NormalMode)(fakeRequest, messages)
+  def createView: () => HtmlFormat.Appendable = () => membershipPensionRegulator(frontendAppConfig, NormalMode, None)(fakeRequest, messages)
 
   "MembershipPensionRegulator view" must {
 

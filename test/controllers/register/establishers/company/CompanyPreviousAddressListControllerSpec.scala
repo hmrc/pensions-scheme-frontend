@@ -91,8 +91,8 @@ class CompanyPreviousAddressListControllerSpec extends ControllerSpecBase {
         title = previousAddressTitle,
         heading = previousAddressHeading,
         subHeading = Some(companyName)
-
-      )
+      ),
+      None
     )(fakeRequest, messages).toString
 
   "CompanyPreviousAddressList Controller" must {

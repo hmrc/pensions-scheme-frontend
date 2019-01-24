@@ -22,7 +22,6 @@ import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions.{AuthAction, DataRequiredAction, DataRetrievalAction}
 import forms.register.establishers.IsDormantFormProvider
-import identifiers.register.DeclarationDormantId
 import identifiers.register.establishers.partnership.IsPartnershipDormantId
 import models.register.DeclarationDormant
 import models.register.DeclarationDormant._
@@ -56,7 +55,7 @@ class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
       retrievePartnershipName(index) {
         partnershipName =>
           val preparedForm = request.userAnswers.get(IsPartnershipDormantId(index)).fold(form)(v => form.fill(v))
-          Future.successful(Ok(isDormant(appConfig, preparedForm, partnershipName, postCall(mode, index))))
+          Future.successful(Ok(isDormant(appConfig, preparedForm, partnershipName, postCall(mode, index), existingSchemeName)))
       }
   }
 
@@ -65,7 +64,7 @@ class IsPartnershipDormantController @Inject()(appConfig: FrontendAppConfig,
       retrievePartnershipName(index) { partnershipName =>
         form.bindFromRequest().fold(
           (formWithErrors: Form[_]) =>
-            Future.successful(BadRequest(isDormant(appConfig, formWithErrors, partnershipName, postCall(mode, index)))),
+            Future.successful(BadRequest(isDormant(appConfig, formWithErrors, partnershipName, postCall(mode, index), existingSchemeName))),
           {
             case Yes =>
               dataCacheConnector.save(request.externalId, IsPartnershipDormantId(index), DeclarationDormant.values(0)).map { cacheMap =>

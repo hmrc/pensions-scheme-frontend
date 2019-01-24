@@ -71,7 +71,8 @@ class PartnerContactDetailsControllerSpec extends ControllerSpecBase {
   def viewAsString(form: Form[_] = form): String = contactDetails(
     frontendAppConfig,
     form,
-    viewmodel(NormalMode, establisherIndex, partnerIndex, partnerName)
+    viewmodel(NormalMode, establisherIndex, partnerIndex, partnerName),
+    None
   )(fakeRequest, messages).toString
 
   val validData: JsObject = Json.obj(

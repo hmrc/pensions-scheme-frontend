@@ -18,6 +18,7 @@ package controllers.register.adviser
 
 import config.FrontendAppConfig
 import connectors._
+import controllers.Retrievals
 import controllers.actions._
 import identifiers.register.adviser._
 import identifiers.register.{DeclarationDutiesId, IsWorkingKnowledgeCompleteId}
@@ -49,7 +50,7 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
                                            crypto: ApplicationCrypto,
                                            pensionAdministratorConnector: PensionAdministratorConnector,
                                            sectionComplete: SectionComplete
-                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport {
+                                          )(implicit val ec: ExecutionContext) extends FrontendController with I18nSupport with Retrievals {
 
   def onPageLoad: Action[AnyContent] = (authenticate andThen getData andThen requireData) {
     implicit request =>
@@ -69,7 +70,8 @@ class CheckYourAnswersController @Inject()(appConfig: FrontendAppConfig,
         check_your_answers(
           appConfig,
           seqAnswerSection.getOrElse(Seq.empty),
-          controllers.register.adviser.routes.CheckYourAnswersController.onSubmit()
+          controllers.register.adviser.routes.CheckYourAnswersController.onSubmit(),
+          existingSchemeName
         )
       )
   }

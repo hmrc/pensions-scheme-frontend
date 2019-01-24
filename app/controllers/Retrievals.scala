@@ -16,17 +16,17 @@
 
 package controllers
 
-import identifiers.TypedIdentifier
 import identifiers.register.SchemeDetailsId
 import identifiers.register.establishers.company.CompanyDetailsId
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.PartnershipDetailsId
+import identifiers.{SchemeNameId, TypedIdentifier}
 import models.person.PersonDetails
 import models.register.SchemeDetails
-import models.requests.DataRequest
+import models.requests.{DataRequest, OptionalDataRequest}
 import models.{CompanyDetails, PartnershipDetails}
 import play.api.libs.json.Reads
-import play.api.mvc.{AnyContent, Result}
+import play.api.mvc.{AnyContent, Result, WrappedRequest}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
 import scala.concurrent.Future
@@ -75,6 +75,13 @@ trait Retrievals {
     }
 
   }
+
+  private[controllers] def existingSchemeName[A <:WrappedRequest[AnyContent]](implicit request:A):Option[String] =
+    request match {
+      case optionalDataRequest: OptionalDataRequest[_] => optionalDataRequest.userAnswers.flatMap(_.get(SchemeNameId))
+      case dataRequest: DataRequest[_] => dataRequest.userAnswers.get(SchemeNameId)
+      case _ => None
+    }
 
   case class ~[A, B](a: A, b: B)
 

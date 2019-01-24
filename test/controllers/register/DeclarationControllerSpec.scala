@@ -251,7 +251,8 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       isCompany,
       isDormant,
       showMasterTrustDeclaration,
-      hasWorkingKnowledge
+      hasWorkingKnowledge,
+      None
     )(fakeRequest, messages).toString
 
   private val individual =

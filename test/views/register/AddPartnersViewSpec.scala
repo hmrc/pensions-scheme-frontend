@@ -51,7 +51,8 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         form,
         establisherIndex,
         partners,
-        postUrl
+        postUrl,
+        None
       )(fakeRequest, messages)
 
   private def createViewUsingForm(partners: Seq[PartnerEntity] = Nil) =
@@ -61,7 +62,8 @@ class AddPartnersViewSpec extends YesNoViewBehaviours with EntityListBehaviours 
         form,
         establisherIndex,
         partners,
-        postUrl
+        postUrl,
+        None
       )(fakeRequest, messages)
 
   "AddPartnershipPartners view" must {

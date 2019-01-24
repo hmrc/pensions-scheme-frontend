@@ -31,10 +31,10 @@ class EstablisherNinoViewSpec extends ViewBehaviours {
   val form = new EstablisherNinoFormProvider()()
 
   def createView(): () => HtmlFormat.Appendable = () =>
-    establisherNino(frontendAppConfig, form, NormalMode, index)(fakeRequest, messages)
+    establisherNino(frontendAppConfig, form, NormalMode, index, None)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => establisherNino(frontendAppConfig, form, NormalMode,
-    index)(fakeRequest, messages)
+    index, None)(fakeRequest, messages)
 
   "EstablisherNino view" when {
     "rendered" must {
