@@ -24,18 +24,19 @@ import views.behaviours.YesNoViewBehaviours
 import views.html.vary.anyMoreChanges
 
 class AnyMoreChangesViewSpec extends YesNoViewBehaviours {
+  val schemeName = Some("Scheme x")
   val messageKeyPrefix = "any_more_changes"
 
   val form = new AnyMoreChangesFormProvider()()
 
   def createView: () => HtmlFormat.Appendable = () =>
-    anyMoreChanges(frontendAppConfig, form)(fakeRequest, messages)
+    anyMoreChanges(frontendAppConfig, form, schemeName)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    anyMoreChanges(appConfig(isHubEnabled = true), form)(fakeRequest, messages)
+    anyMoreChanges(appConfig(isHubEnabled = true), form, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
-    anyMoreChanges(frontendAppConfig, form)(fakeRequest, messages)
+    anyMoreChanges(frontendAppConfig, form, schemeName)(fakeRequest, messages)
 
   "Any More Changes view" must {
 

@@ -21,7 +21,8 @@
 
 @(
     appConfig: FrontendAppConfig,
-    form: Form[_]
+    form: Form[_],
+    schemeName:Option[String]
 )(implicit request: Request[_], messages: Messages)
 
 @main_template(
@@ -48,6 +49,6 @@
 
         @components.submit_button("site.save_and_continue")
 
-        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2)
+        @components.return_link("messages__schemeTaskList__returnlink", appConfig.enableHubV2, schemeName)
     }
 }
