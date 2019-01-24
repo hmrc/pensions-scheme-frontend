@@ -18,13 +18,13 @@ package controllers
 
 import connectors.FakeUserAnswersCacheConnector
 import controllers.actions._
+import controllers.vary.AnyMoreChangesController
 import forms.AnyMoreChangesFormProvider
-import identifiers.DeclarationDutiesId
 import play.api.data.Form
-import play.api.libs.json.Json
 import play.api.test.Helpers._
 import utils.FakeNavigator
-import views.html.anyMoreChanges
+import views.html.vary.anyMoreChanges
+
 
 class AnyMoreChangesControllerSpec extends ControllerSpecBase {
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()

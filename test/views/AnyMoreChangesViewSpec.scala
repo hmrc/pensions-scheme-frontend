@@ -16,12 +16,12 @@
 
 package views
 
-import controllers.routes
+import controllers.vary.routes
 import forms.AnyMoreChangesFormProvider
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.YesNoViewBehaviours
-import views.html.anyMoreChanges
+import views.html.vary.anyMoreChanges
 
 class AnyMoreChangesViewSpec extends YesNoViewBehaviours {
   val messageKeyPrefix = "any_more_changes"

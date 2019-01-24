@@ -16,7 +16,7 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.play.views.html._
-@import controllers.routes._
+@import controllers.vary.routes._
 @import utils.Constants._
 
 @(
@@ -29,7 +29,7 @@
     appConfig = appConfig,
     bodyClasses = None) {
 
-    @helpers.form(action = controllers.routes.AnyMoreChangesController.onSubmit(), 'autoComplete -> "off") {
+    @helpers.form(action = AnyMoreChangesController.onSubmit(), 'autoComplete -> "off") {
 
         @components.error_summary(form.errors)
 
