@@ -135,7 +135,7 @@ site.printThisPage = Print this page
 
 messages__unauthorised__title = You can’t access this service with this account
 
-messages__pension_scheme_registration__title = Pension Scheme Registration - GOV.UK
+messages__pension_scheme_registration__title = Managing pension schemes - GOV.UK
 
 messages__what_you_will_need__title = What you’ll need
 messages__what_you_will_need__lede = Your information will be saved as you progress. If you sign out, your changes will be saved for 28 days. After that time you will need to start from the beginning.
