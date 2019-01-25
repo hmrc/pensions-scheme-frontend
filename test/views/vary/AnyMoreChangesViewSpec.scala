@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.vary
 
 import controllers.vary.routes
 import forms.AnyMoreChangesFormProvider

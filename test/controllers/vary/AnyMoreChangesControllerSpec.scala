@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.vary
 
 import connectors.FakeUserAnswersCacheConnector
+import controllers.ControllerSpecBase
 import controllers.actions._
-import controllers.vary.AnyMoreChangesController
 import forms.AnyMoreChangesFormProvider
 import play.api.data.Form
 import play.api.test.Helpers._
