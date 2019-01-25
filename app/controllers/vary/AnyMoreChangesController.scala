@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import controllers.Retrievals
 import controllers.actions._
-import forms.AnyMoreChangesFormProvider
-import identifiers.AnyMoreChangesId
+import forms.vary.AnyMoreChangesFormProvider
+import identifiers.vary.AnyMoreChangesId
 import javax.inject.Inject
 import models.NormalMode
 import play.api.data.Form

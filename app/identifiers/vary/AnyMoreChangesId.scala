@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package identifiers
+package identifiers.vary
+
+import identifiers.TypedIdentifier
 
 case object AnyMoreChangesId extends TypedIdentifier[Boolean] {
   self =>

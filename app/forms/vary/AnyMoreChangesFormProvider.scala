@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package forms
+package forms.vary
 
 import forms.mappings.Mappings
 import javax.inject.Inject
-import play.api.data.{Form, Forms}
+import play.api.data.Form
 
 class AnyMoreChangesFormProvider @Inject() extends Mappings {
 
