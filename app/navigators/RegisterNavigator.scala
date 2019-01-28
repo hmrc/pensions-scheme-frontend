@@ -19,7 +19,7 @@ package navigators
 import com.google.inject.Inject
 import config.{FeatureSwitchManagementService, FrontendAppConfig}
 import connectors.UserAnswersCacheConnector
-import identifiers.UserResearchDetailsId
+import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
 import identifiers.register._
 import models.{CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
@@ -31,7 +31,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {
-      case ContinueRegistrationId => continueRegistration
+      case ContinueRegistrationId => continueRegistration(from.userAnswers)
       case SchemeDetailsId =>
         NavigateTo.save(controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(NormalMode))
       case SchemeEstablishedCountryId =>
@@ -163,11 +163,19 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
     }
   }
 
-  private def continueRegistration: Option[NavigateTo] =
-    if(featureSwitchManagementService.get("enable-hub-v2"))
-      NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
-    else
+  private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
+    if (featureSwitchManagementService.get("enable-hub-v2")) {
+      userAnswers.get(IsBeforeYouStartCompleteId) match {
+        case Some(true) =>
+          NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+        case _ =>
+          NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
+      }
+    }
+    else {
       NavigateTo.dontSave(controllers.routes.WhatYouWillNeedController.onPageLoad())
+    }
+
 
   private def navigateToTaskList() =
     if(appConfig.enableHubV2)

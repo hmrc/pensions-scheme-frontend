@@ -19,12 +19,12 @@ package navigators
 import base.SpecBase
 import config.{FeatureSwitchManagementServiceTestImpl, FrontendAppConfig}
 import connectors.FakeUserAnswersCacheConnector
-import identifiers.UserResearchDetailsId
+import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
 import identifiers.register._
 import models._
 import models.address.Address
 import models.register.{SchemeDetails, SchemeType}
-import org.scalatest.MustMatchers
+import org.scalatest.{MustMatchers, OptionValues}
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -41,7 +41,8 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     // Start - continue or what you will need
     (ContinueRegistrationId, emptyAnswers, beforeYouStart, false, None, false),
-    (ContinueRegistrationId, savedLastPage, beforeYouStart, false, None, false),
+    (ContinueRegistrationId, beforeYouStartInProgress, beforeYouStart, false, None, false),
+    (ContinueRegistrationId, beforeYouStartCompleted, taskList, false, None, false),
 
     // Scheme registration
     (SchemeDetailsId, emptyAnswers, schemeEstablishedCountry(NormalMode), true, Some(checkYourAnswers), true),
@@ -92,7 +93,7 @@ class RegisterNavigatorSpec extends SpecBase with MustMatchers with NavigatorBeh
 }
 
 //noinspection MutatorLikeMethodIsParameterless
-object RegisterNavigatorSpec {
+object RegisterNavigatorSpec extends OptionValues{
 
   private val lastPage: Call = Call("GET", "http://www.test.com")
 
@@ -109,6 +110,8 @@ object RegisterNavigatorSpec {
   private val hasEstablishers = hasCompanies.schemeDetails(SchemeDetails("test-scheme-name", SchemeType.GroupLifeDeath))
   private val savedLastPage = UserAnswers().lastPage(LastPage(lastPage.method, lastPage.url))
   private val insurerAddress = UserAnswers().insurerAddress(Address("line-1", "line-2", None, None, None, "GB"))
+  private val beforeYouStartCompleted = UserAnswers().set(IsBeforeYouStartCompleteId)(true).asOpt.value
+  private val beforeYouStartInProgress = UserAnswers().set(IsBeforeYouStartCompleteId)(false).asOpt.value
 
   private def benefits(mode: Mode) = controllers.register.routes.BenefitsController.onPageLoad(mode)
 
