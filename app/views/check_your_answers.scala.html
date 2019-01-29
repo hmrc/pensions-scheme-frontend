@@ -24,34 +24,18 @@
 @(appConfig: FrontendAppConfig, answerSections: Seq[Section], postUrl: Call, schemeName: Option[String],
     returnOverview: Boolean = false)(implicit request: Request[_], messages: Messages)
 
-@heading=@{
-    if(appConfig.enableHubV2) {
-        messages("checkYourAnswers.hs.heading")
-    } else {
-        messages("checkYourAnswers.heading")
-    }
-}
-
-@title=@{
-    if(appConfig.enableHubV2) {
-        messages("checkYourAnswers.hs.title")
-    } else {
-        messages("checkYourAnswers.title")
-    }
-}
-
 @returnMessage=@{
     schemeName.fold(messages("messages__complete__return"))(name=>messages("messages__psaSchemeDetails__return_link", name))
 }
 
 @main_template(
-    title = title,
+    title = messages("checkYourAnswers.hs.title"),
     appConfig = appConfig,
     bodyClasses = None) {
 
     @helpers.form(action = postUrl, 'autoComplete -> "off") {
         @components.heading(
-                headingKey = heading
+                headingKey =  messages("checkYourAnswers.hs.heading")
         )
 
         @for((section, i) <- answerSections.zipWithIndex){
