@@ -72,8 +72,6 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
     behave like pageWithReturnLink(
       createView(frontendAppConfigWithoutHubEnabled), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
 
-    behave like normalPageWithTitle(createView(frontendAppConfigWithoutHubEnabled),
-      messageKeyPrefix, messages("checkYourAnswers.title"), messages("checkYourAnswers.heading"))
   }
 
 }
