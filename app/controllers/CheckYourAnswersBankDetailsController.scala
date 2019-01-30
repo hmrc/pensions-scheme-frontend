@@ -61,11 +61,7 @@ class CheckYourAnswersBankDetailsController @Inject()(appConfig: FrontendAppConf
   def onSubmit: Action[AnyContent] = (authenticate andThen getData andThen requireData).async {
     implicit request =>
       sectionComplete.setCompleteFlag(request.externalId, IsAboutBankDetailsCompleteId, request.userAnswers, value = true) map { _ =>
-        if(appConfig.enableHubV2){
-          Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
-        } else {
-          Redirect(controllers.register.routes.SchemeTaskListController.onPageLoad())
-        }
+        Redirect(controllers.routes.SchemeTaskListController.onPageLoad())
       }
   }
 

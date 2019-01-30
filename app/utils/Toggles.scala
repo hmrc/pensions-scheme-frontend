@@ -18,5 +18,4 @@ package utils
 
 object Toggles {
 
-  val enableHubV2: String = "enable-hub-v2"
 }

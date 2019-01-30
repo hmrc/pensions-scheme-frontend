@@ -16,16 +16,14 @@
 
 package controllers
 
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.actions._
-import controllers.register.adviser.routes.WorkingKnowledgeController
 import controllers.routes.AdviserNameController
 import javax.inject.Inject
 import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
-import utils.Toggles.enableHubV2
 import views.html.whatYouWillNeedWorkingKnowledge
 
 import scala.concurrent.Future
@@ -33,7 +31,6 @@ import scala.concurrent.Future
 class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendAppConfig,
                                                           override val messagesApi: MessagesApi,
                                                           authenticate: AuthAction,
-                                                          fs: FeatureSwitchManagementService,
                                                           getData: DataRetrievalAction
                                                          ) extends FrontendController with I18nSupport with Retrievals {
 
@@ -44,12 +41,6 @@ class WhatYouWillNeedWorkingKnowledgeController @Inject()(appConfig: FrontendApp
 
   def onSubmit: Action[AnyContent] = authenticate {
     implicit request =>
-      Redirect(
-        if (fs.get(enableHubV2)) {
-          AdviserNameController.onPageLoad(NormalMode)
-        } else {
-          WorkingKnowledgeController.onPageLoad(NormalMode)
-        }
-      )
+      Redirect(AdviserNameController.onPageLoad(NormalMode))
   }
 }

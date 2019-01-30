@@ -38,7 +38,7 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
     case HaveAnyTrusteesId => NavigateTo.dontSave(EstablishedCountryController.onPageLoad(NormalMode))
     case EstablishedCountryId => NavigateTo.dontSave(WorkingKnowledgeController.onPageLoad(NormalMode))
     case DeclarationDutiesId => checkYourAnswers
-    case CheckYourAnswersId => navigateToTaskList()
+    case CheckYourAnswersId => NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
     case _ => None
   }
 
@@ -72,10 +72,4 @@ class BeforeYouStartNavigator @Inject()(val dataCacheConnector: UserAnswersCache
         NavigateTo.dontSave(SessionExpiredController.onPageLoad())
     }
   }
-
-  private def navigateToTaskList() =
-    if(frontendAppConfig.enableHubV2)
-      NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
-    else
-      NavigateTo.dontSave(controllers.register.routes.SchemeTaskListController.onPageLoad())
 }
