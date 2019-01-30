@@ -34,8 +34,6 @@ class TrusteesCompanyNavigatorSpec extends SpecBase with MustMatchers with Navig
 
   import TrusteesCompanyNavigatorSpec._
 
-  override lazy val frontendAppConfig = frontendAppConfigWithHubEnabled
-
   private def routesTrusteeCompany: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
 
     ("Id", "UserAnswers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (CheckMode)", "Save (CM)"),

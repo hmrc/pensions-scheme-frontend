@@ -21,11 +21,11 @@ import controllers.ControllerSpecBase
 import controllers.actions._
 import controllers.register.DeclarationDutiesControllerSpec.psaId
 import forms.register.DeclarationFormProvider
-import identifiers.{SchemeTypeId, TypedIdentifier}
 import identifiers.register.establishers.company.{CompanyDetailsId, IsCompanyDormantId}
 import identifiers.register.establishers.individual.EstablisherDetailsId
 import identifiers.register.establishers.partnership.{IsPartnershipDormantId, PartnershipDetailsId}
-import identifiers.register.{DeclarationDormantId, DeclarationDutiesId, SchemeDetailsId}
+import identifiers.register.{DeclarationDormantId, SchemeDetailsId}
+import identifiers.{SchemeTypeId, TypedIdentifier}
 import models.person.PersonDetails
 import models.register.{DeclarationDormant, SchemeDetails, SchemeSubmissionResponse, SchemeType}
 import models.{CompanyDetails, PartnershipDetails}
@@ -42,7 +42,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.crypto.ApplicationCrypto
 import uk.gov.hmrc.domain.PsaId
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{FakeFeatureSwitchManagementService, FakeNavigator, UserAnswers}
+import utils.{FakeNavigator, UserAnswers}
 import views.html.register.declaration
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -100,25 +100,7 @@ class DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar wit
     }
 
     "return OK and the correct view " when {
-      "master trust with toggle off" in {
-
-        val data = new FakeDataRetrievalAction(Some(UserAnswers()
-          .set(DeclarationDutiesId)(false)
-          .asOpt
-          .value
-          .set(SchemeDetailsId)(SchemeDetails("Test Scheme Name", SchemeType.MasterTrust))
-          .asOpt
-          .value
-          .json
-        ))
-
-        val result = controller(data, enabledV2 = false).onPageLoad()(fakeRequest)
-
-        status(result) mustBe OK
-        contentAsString(result) mustBe viewAsString(isCompany = false, isDormant = false, showMasterTrustDeclaration = true)
-      }
-
-      "master trust with toggle on" in {
+      "master trust" in {
 
         val data = new FakeDataRetrievalAction(Some(UserAnswers()
           .set(identifiers.DeclarationDutiesId)(false)
@@ -223,8 +205,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
 
   private def controller(dataRetrievalAction: DataRetrievalAction,
                          fakeEmailConnector: EmailConnector = fakeEmailConnector,
-                         fakePsaNameCacheConnector: PSANameCacheConnector = fakePsaNameCacheConnector,
-                         enabledV2: Boolean = true
+                         fakePsaNameCacheConnector: PSANameCacheConnector = fakePsaNameCacheConnector
                         ): DeclarationController =
     new DeclarationController(
       frontendAppConfig,
@@ -239,8 +220,7 @@ object DeclarationControllerSpec extends ControllerSpecBase with MockitoSugar {
       fakeEmailConnector,
       fakePsaNameCacheConnector,
       applicationCrypto,
-      fakePensionAdminstratorConnector,
-      new FakeFeatureSwitchManagementService(enabledV2)
+      fakePensionAdminstratorConnector
     )
 
   private def viewAsString(form: Form[_] = form, isCompany: Boolean, isDormant: Boolean,

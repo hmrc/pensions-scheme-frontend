@@ -17,7 +17,6 @@
 package controllers
 
 import controllers.actions._
-import identifiers.register._
 import identifiers.register.trustees.HaveAnyTrusteesId
 import identifiers.{EstablishedCountryId, IsBeforeYouStartCompleteId, SchemeNameId, SchemeTypeId}
 import models.CheckMode
@@ -69,7 +68,7 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
 
   private def controller(dataRetrievalAction: DataRetrievalAction = getEmptyData): CheckYourAnswersBeforeYouStartController =
     new CheckYourAnswersBeforeYouStartController(
-      frontendAppConfigWithHubEnabled,
+      frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       dataRetrievalAction,
@@ -143,14 +142,14 @@ object CheckYourAnswersBeforeYouStartControllerSpec extends ControllerSpecBase {
   )
 
   private def viewAsString(): String = check_your_answers(
-    frontendAppConfigWithHubEnabled,
+    frontendAppConfig,
     Seq(beforeYouStart),
     postUrl,
     Some("Test Scheme")
   )(fakeRequest, messages).toString
 
   private def viewAsStringWithReturnToManage(): String = check_your_answers(
-    frontendAppConfigWithHubEnabled,
+    frontendAppConfig,
     Seq(beforeYouStart),
     postUrl,
     Some("Test Scheme"),

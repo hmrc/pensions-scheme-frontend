@@ -33,7 +33,7 @@ class AnyMoreChangesViewSpec extends YesNoViewBehaviours {
     anyMoreChanges(frontendAppConfig, form, schemeName)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    anyMoreChanges(appConfig(isHubEnabled = true), form, schemeName)(fakeRequest, messages)
+    anyMoreChanges(frontendAppConfig, form, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     anyMoreChanges(frontendAppConfig, form, schemeName)(fakeRequest, messages)

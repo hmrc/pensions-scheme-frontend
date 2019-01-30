@@ -22,7 +22,7 @@ import models.NormalMode
 import play.api.test.Helpers._
 import utils.UserAnswers
 import viewmodels._
-import views.html.{schemeDetailsTaskList, schemeTaskList}
+import views.html.schemeDetailsTaskList
 
 class SchemeTaskListControllerSpec extends ControllerSpecBase {
 
@@ -36,11 +36,6 @@ class SchemeTaskListControllerSpec extends ControllerSpecBase {
       dataRetrievalAction,
       new DataRequiredActionImpl
     )
-
-  def viewAsString(): String =
-    schemeTaskList(
-      frontendAppConfig, journeyTL
-    )(fakeRequest, messages).toString()
 
   "SchemeTaskList Controller" must {
 
@@ -82,55 +77,4 @@ object SchemeTaskListControllerSpec extends SpecBase with JsonFileReader {
   )
 
   private lazy val changeEstablisherLinkText = messages("messages__schemeTaskList__sectionEstablishers_change_link")
-
-  private val changeEstablisherHeader = JourneyTaskListSection(
-    None,
-    Link(messages(changeEstablisherLinkText),
-      controllers.register.establishers.routes.AddEstablisherController.onPageLoad(NormalMode).url),
-    None
-  )
-
-  private val expectedAboutSection = JourneyTaskListSection(
-    Some(true),
-    Link(messages("messages__schemeTaskList__about_link_text"),
-      controllers.register.routes.CheckYourAnswersController.onPageLoad.url),
-    None)
-
-  private val expectedEstablishersCompany = JourneyTaskListSection(
-    Some(true),
-    Link(messages(messages("messages__schemeTaskList__company_link")),
-      controllers.register.establishers.company.routes.CompanyReviewController.onPageLoad(0).url),
-    Some("Test company name"))
-
-  private val expectedEstablishersIndividual = JourneyTaskListSection(
-    Some(true),
-    Link(messages(messages("messages__schemeTaskList__individual_link")),
-      controllers.register.establishers.individual.routes.CheckYourAnswersController.onPageLoad(1).url),
-    Some("Test individual name"))
-
-  private val expectedTrustees = JourneyTaskListSection(
-    Some(true),
-    Link(messages("messages__schemeTaskList__partnership_link"),
-      controllers.register.trustees.partnership.routes.CheckYourAnswersController.onPageLoad(0).url),
-    Some("Test partnership name"))
-
-  private val expectedWorkingKnowledgeSection = JourneyTaskListSection(
-    Some(true),
-    Link(messages("messages__schemeTaskList__working_knowledge_change_link"),
-      controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad().url),
-    None)
-
-  private val expectedDeclarationLink = Some(Link(messages("messages__schemeTaskList__declaration_link"),
-    controllers.register.routes.DeclarationController.onPageLoad().url))
-
-  private val expectedChangeTrusteeHeader = JourneyTaskListSection(
-    None,
-    Link(messages("messages__schemeTaskList__sectionTrustees_change_link"),
-      controllers.register.trustees.routes.AddTrusteeController.onPageLoad(NormalMode).url),
-    None
-  )
-
-  private val journeyTL = JourneyTaskList(expectedAboutSection, Seq(expectedEstablishersCompany, expectedEstablishersIndividual),
-    Seq(expectedTrustees), expectedWorkingKnowledgeSection, expectedDeclarationLink, expectedChangeTrusteeHeader, changeEstablisherHeader)
-
 }

@@ -39,7 +39,7 @@ class EstablishedCountryViewSpec extends StringViewBehaviours {
     establishedCountry(frontendAppConfig, form, NormalMode, Seq.empty, schemeName)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    establishedCountry(appConfig(isHubEnabled = true), form, CheckMode, Seq.empty, schemeName)(fakeRequest, messages)
+    establishedCountry(frontendAppConfig, form, CheckMode, Seq.empty, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[String] => HtmlFormat.Appendable = (form: Form[String]) =>
     establishedCountry(frontendAppConfig, form, NormalMode, inputOptions, schemeName)(fakeRequest, messages)
@@ -68,7 +68,7 @@ class EstablishedCountryViewSpec extends StringViewBehaviours {
     }
   }
 
-  "EstablishedCountry view in check mode where hub enabled" must {
+  "EstablishedCountry view in check mode" must {
     behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.SchemeTaskListController.onPageLoad().url)
   }
 }

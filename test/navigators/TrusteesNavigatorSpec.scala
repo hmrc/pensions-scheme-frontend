@@ -40,8 +40,6 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import TrusteesNavigatorSpec._
 
-  override lazy val frontendAppConfig = frontendAppConfigWithHubEnabled
-
   private def routesWithHubEnabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (HaveAnyTrusteesId, haveAnyTrusteesTrueWithNoTrustees, trusteeKind(0), false, None, false),
@@ -61,12 +59,12 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
     (ConfirmDeleteTrusteeId, emptyAnswers, addTrustee, true, None, false)
   )
 
-  private def navigator(isHubEnabled: Boolean = true) = new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
+  private val navigator = new TrusteesNavigator(FakeUserAnswersCacheConnector, frontendAppConfig)
 
-  s"${navigator().getClass.getSimpleName}" must {
+  s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator(), FakeUserAnswersCacheConnector, routesWithHubEnabled, dataDescriber)
-    behave like nonMatchingNavigator(navigator())
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithHubEnabled, dataDescriber)
+    behave like nonMatchingNavigator(navigator)
   }
 }
 

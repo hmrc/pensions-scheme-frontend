@@ -16,9 +16,7 @@
 
 package views
 
-import config.FrontendAppConfig
 import controllers.routes
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.twirl.api.HtmlFormat
 import viewmodels.Section
 import views.behaviours.{CheckYourAnswersBehaviours, ViewBehaviours}
@@ -30,13 +28,9 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
 
   private def emptyAnswerSections: Seq[Section] = Nil
 
-  private lazy val frontendAppConfigWithHubEnabled = appConfig(isHubEnabled=true)
-
-  private lazy val frontendAppConfigWithoutHubEnabled = appConfig(isHubEnabled=false)
-  
-  def createView(appConfig : FrontendAppConfig, returnOverview : Boolean = false): () => HtmlFormat.Appendable = () =>
+  def createView(returnOverview: Boolean = false): () => HtmlFormat.Appendable = () =>
     check_your_answers(
-      appConfig,
+      frontendAppConfig,
       emptyAnswerSections,
       routes.IndexController.onPageLoad(),
       None,
@@ -51,27 +45,16 @@ class CheckYourAnswersViewSpec extends CheckYourAnswersBehaviours with ViewBehav
       None
     )(fakeRequest, messages)
 
-  "check_your_answers view with toggle On" must {
+  "check_your_answers view" must {
 
-    behave like normalPageWithTitle(createView(appConfig = frontendAppConfigWithHubEnabled),
-      messageKeyPrefix, messages("checkYourAnswers.hs.title"), messages("checkYourAnswers.hs.heading"))
+    behave like normalPageWithTitle(createView(), messageKeyPrefix, messages("checkYourAnswers.hs.title"), messages("checkYourAnswers.hs.heading"))
 
-    behave like pageWithSubmitButton(createView(appConfig = frontendAppConfigWithHubEnabled))
+    behave like pageWithSubmitButton(createView())
 
-    behave like pageWithReturnLink(
-      createView(appConfig = frontendAppConfigWithHubEnabled), controllers.routes.SchemeTaskListController.onPageLoad().url)
+    behave like pageWithReturnLink(createView(), (controllers.routes.SchemeTaskListController.onPageLoad().url))
 
-    behave like pageWithReturnLink(
-      createView(frontendAppConfigWithHubEnabled, returnOverview = true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
+    behave like pageWithReturnLink(createView(returnOverview = true), frontendAppConfig.managePensionsSchemeOverviewUrl.url)
 
     behave like checkYourAnswersPage(createViewWithData)
   }
-
-  "check_your_answers view with toggle Off" must {
-
-    behave like pageWithReturnLink(
-      createView(frontendAppConfigWithoutHubEnabled), controllers.register.routes.SchemeTaskListController.onPageLoad().url)
-
-  }
-
 }

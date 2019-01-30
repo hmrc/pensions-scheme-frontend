@@ -40,7 +40,7 @@ class TrusteeDetailsViewSpec extends QuestionViewBehaviours[PersonDetails] {
     trusteeDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
 
 
-  "TrusteeDetails view with hub enabled" must {
+  "TrusteeDetails view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 

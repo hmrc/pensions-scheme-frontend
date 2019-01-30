@@ -37,7 +37,7 @@ class CompanyDetailsViewSpec extends QuestionViewBehaviours[CompanyDetails] {
     companyDetails(frontendAppConfig, form, NormalMode, firstIndex, None)(fakeRequest, messages)
 
 
-  "CompanyDetails view with hub enabled" must {
+  "CompanyDetails view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__title"))
 

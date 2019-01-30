@@ -36,7 +36,7 @@ class HaveAnyTrusteesViewSpec extends YesNoViewBehaviours {
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) => haveAnyTrustees(frontendAppConfig, form,
     NormalMode, None)(fakeRequest, messages)
 
-  "HaveAnyTrustees view with hub enabled" must {
+  "HaveAnyTrustees view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages(s"messages__${messageKeyPrefix}__heading"))
 

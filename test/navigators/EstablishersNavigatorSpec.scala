@@ -30,8 +30,6 @@ class EstablishersNavigatorSpec extends SpecBase with MustMatchers with Navigato
 
   import EstablishersNavigatorSpec._
 
-  override lazy val frontendAppConfig = frontendAppConfigWithHubEnabled
-
   private def routes = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (AddEstablisherId(None), emptyAnswers, establisherKind, true, None: Option[Call], false),

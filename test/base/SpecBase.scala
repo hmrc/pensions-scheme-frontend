@@ -34,13 +34,6 @@ trait SpecBase extends PlaySpec with GuiceOneAppPerSuite {
 
   def frontendAppConfig: FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
 
-  def appConfig(isHubEnabled:Boolean): FrontendAppConfig = {
-    val app = new GuiceApplicationBuilder()
-      .configure("features.enable-hub-v2" -> isHubEnabled)
-      .build()
-    app.injector.instanceOf[FrontendAppConfig]
-  }
-
   def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")

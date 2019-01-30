@@ -32,7 +32,7 @@ class MoreThanTenTrusteesViewSpec extends YesNoViewBehaviours {
 
   private def createViewUsingForm = (form: Form[_]) => moreThanTenTrustees(frontendAppConfig, form, NormalMode, None)(fakeRequest, messages)
 
-  "MoreThanTenTrustees view with hub enabled" must {
+  "MoreThanTenTrustees view" must {
 
     behave like normalPage(createView(), messageKeyPrefix, messages("messages__moreThanTenTrustees__heading"))
 

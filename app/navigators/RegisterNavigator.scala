@@ -17,7 +17,7 @@
 package navigators
 
 import com.google.inject.Inject
-import config.{FeatureSwitchManagementService, FrontendAppConfig}
+import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
 import identifiers.UserResearchDetailsId
 import identifiers.register._
@@ -26,12 +26,12 @@ import utils.{Navigator, UserAnswers}
 
 //scalastyle:off cyclomatic.complexity
 class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnector,
-                                  appConfig: FrontendAppConfig,
-                                  featureSwitchManagementService: FeatureSwitchManagementService) extends Navigator {
+                                  appConfig: FrontendAppConfig) extends Navigator {
 
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {
-      case ContinueRegistrationId => continueRegistration
+      case ContinueRegistrationId =>
+        NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
       case SchemeDetailsId =>
         NavigateTo.save(controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(NormalMode))
       case SchemeEstablishedCountryId =>
@@ -162,10 +162,4 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
-
-  private def continueRegistration: Option[NavigateTo] =
-    if(featureSwitchManagementService.get("enable-hub-v2"))
-      NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
-    else
-      NavigateTo.dontSave(controllers.routes.WhatYouWillNeedController.onPageLoad())
 }

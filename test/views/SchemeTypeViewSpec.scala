@@ -17,8 +17,8 @@
 package views
 
 import forms.register.SchemeTypeFormProvider
-import models.{CheckMode, NormalMode}
 import models.register.SchemeType
+import models.{CheckMode, NormalMode}
 import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.behaviours.QuestionViewBehaviours
@@ -34,7 +34,7 @@ class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
   def createView: () => HtmlFormat.Appendable = () => schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    schemeType(appConfig(isHubEnabled = true), form, CheckMode, schemeName)(fakeRequest, messages)
+    schemeType(frontendAppConfig, form, CheckMode, schemeName)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     schemeType(frontendAppConfig, form, NormalMode, schemeName)(fakeRequest, messages)
@@ -78,7 +78,7 @@ class SchemeTypeViewSpec extends QuestionViewBehaviours[SchemeType] {
     }
   }
 
-  "SchemeType view in check mode where hub enabled" must {
+  "SchemeType view in check mode" must {
     behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.SchemeTaskListController.onPageLoad().url)
   }
 }

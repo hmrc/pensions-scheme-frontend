@@ -36,7 +36,7 @@ class WorkingKnowledgeViewSpec extends YesNoViewBehaviours {
     workingKnowledge(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
 
   def createViewInCheckMode: () => HtmlFormat.Appendable = () =>
-    workingKnowledge(appConfig(isHubEnabled = true), form, CheckMode, scheme)(fakeRequest, messages)
+    workingKnowledge(frontendAppConfig, form, CheckMode, scheme)(fakeRequest, messages)
 
   def createViewUsingForm: Form[_] => HtmlFormat.Appendable = (form: Form[_]) =>
     workingKnowledge(frontendAppConfig, form, NormalMode, scheme)(fakeRequest, messages)
@@ -58,7 +58,7 @@ class WorkingKnowledgeViewSpec extends YesNoViewBehaviours {
 
   }
 
-  "Working Knowledge  view in check mode where hub enabled" must {
+  "Working Knowledge  view in check mode" must {
     behave like pageWithReturnLink(createViewInCheckMode, controllers.routes.SchemeTaskListController.onPageLoad().url)
   }
 }

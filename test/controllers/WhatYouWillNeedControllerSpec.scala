@@ -29,7 +29,7 @@ class WhatYouWillNeedControllerSpec extends ControllerSpecBase with MockitoSugar
   private val applicationCrypto = injector.instanceOf[ApplicationCrypto]
 
   private def controller(): WhatYouWillNeedController =
-    new WhatYouWillNeedController(frontendAppConfigWithHubEnabled,
+    new WhatYouWillNeedController(frontendAppConfig,
       messagesApi,
       FakeAuthAction,
       fakePsaNameCacheConnector,
