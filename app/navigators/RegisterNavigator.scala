@@ -19,8 +19,8 @@ package navigators
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersCacheConnector
-import identifiers.UserResearchDetailsId
 import identifiers.register._
+import identifiers.{IsBeforeYouStartCompleteId, UserResearchDetailsId}
 import models.{CheckMode, Mode, NormalMode}
 import utils.{Navigator, UserAnswers}
 
@@ -31,7 +31,7 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
   override protected def routeMap(from: NavigateFrom): Option[NavigateTo] =
     from.id match {
       case ContinueRegistrationId =>
-        NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
+        continueRegistration(from.userAnswers)
       case SchemeDetailsId =>
         NavigateTo.save(controllers.register.routes.SchemeEstablishedCountryController.onPageLoad(NormalMode))
       case SchemeEstablishedCountryId =>
@@ -157,9 +157,17 @@ class RegisterNavigator @Inject()(val dataCacheConnector: UserAnswersCacheConnec
       case Some(true) =>
         NavigateTo.save(controllers.register.adviser.routes.CheckYourAnswersController.onPageLoad())
       case Some(false) =>
-          NavigateTo.save(controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode))
+        NavigateTo.save(controllers.register.adviser.routes.AdviserNameController.onPageLoad(NormalMode))
       case None =>
         NavigateTo.dontSave(controllers.routes.SessionExpiredController.onPageLoad())
     }
   }
+
+  private def continueRegistration(userAnswers: UserAnswers): Option[NavigateTo] =
+    userAnswers.get(IsBeforeYouStartCompleteId) match {
+      case Some(true) =>
+        NavigateTo.dontSave(controllers.routes.SchemeTaskListController.onPageLoad())
+      case _ =>
+        NavigateTo.dontSave(controllers.routes.BeforeYouStartController.onPageLoad())
+    }
 }
