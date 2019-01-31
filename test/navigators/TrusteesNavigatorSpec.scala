@@ -40,7 +40,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   import TrusteesNavigatorSpec._
 
-  private def routesWithHubEnabled: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
+  private def routes: TableFor6[Identifier, UserAnswers, Call, Boolean, Option[Call], Boolean] = Table(
     ("Id", "User Answers", "Next Page (Normal Mode)", "Save (NM)", "Next Page (Check Mode)", "Save (CM)"),
     (HaveAnyTrusteesId, haveAnyTrusteesTrueWithNoTrustees, trusteeKind(0), false, None, false),
     (HaveAnyTrusteesId, haveAnyTrusteesTrueWithOneDeletedTrustee, trusteeKind(1), false, None, false),
@@ -63,7 +63,7 @@ class TrusteesNavigatorSpec extends SpecBase with NavigatorBehaviour {
 
   s"${navigator.getClass.getSimpleName}" must {
     appRunning()
-    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routesWithHubEnabled, dataDescriber)
+    behave like navigatorWithRoutes(navigator, FakeUserAnswersCacheConnector, routes, dataDescriber)
     behave like nonMatchingNavigator(navigator)
   }
 }
