@@ -27,12 +27,12 @@ import views.html.vary.anyMoreChanges
 
 
 class AnyMoreChangesControllerSpec extends ControllerSpecBase {
-  private val schemeName = Some("scheme x")
+  private val schemeName = Some("Test Scheme Name")
   private def onwardRoute = controllers.routes.IndexController.onPageLoad()
   val formProvider = new AnyMoreChangesFormProvider()
   val form = formProvider()
 
-  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeName): AnyMoreChangesController =
+  def controller(dataRetrievalAction: DataRetrievalAction = getMandatorySchemeNameHs): AnyMoreChangesController =
     new AnyMoreChangesController(
       frontendAppConfig,
       messagesApi,
